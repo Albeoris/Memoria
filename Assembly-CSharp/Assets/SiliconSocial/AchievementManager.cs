@@ -2386,6 +2386,7 @@ namespace Assets.SiliconSocial
 
         private static Dictionary<AcheivementKey, AchievementInfo> GetData()
         {
+            SharedDataBytesStorage.SetPCPath();
             if (SharedDataBytesStorage.MetaData.FilePath == String.Empty)
                 throw new Exception("SharedDataBytesStorage not initialized.");
 

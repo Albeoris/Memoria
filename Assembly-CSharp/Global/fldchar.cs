@@ -61,20 +61,17 @@ public class fldchar
                     ff9FieldCharMirror = (ff9FieldCharState.mirror = new FF9FieldCharMirror());
                     ff9Char2 = (ff9FieldCharMirror.chr = ff9Char);
                     ff9Char2.attr = 0u;
-                    ff9FieldCharMirror.geo = ModelFactory.CreateModel(FF9BattleDB.GEO.GetValue((Int32)ff9Char.evt.model), false, true, Configuration.Graphics.ElementsSmoothTexture);
+                    ff9FieldCharMirror.geo = ModelFactory.CreateModel(FF9BattleDB.GEO.GetValue(ff9Char.evt.model), false, true, Configuration.Graphics.ElementsSmoothTexture);
                     ff9FieldCharMirror.geo.name = ff9Char.geo.name + "_mirror";
-                    Shader shader = ShadersLoader.Find(ShadersLoader.GetCurrentFieldMapCharcterShader);
-                    Renderer[] componentsInChildren = ff9FieldCharMirror.geo.GetComponentsInChildren<Renderer>();
-                    Renderer[] array = componentsInChildren;
-                    for (Int32 i = 0; i < (Int32)array.Length; i++)
+                    Shader shader = ShadersLoader.Find(Configuration.Shaders.FieldCharacterShader);
+                    Renderer[] renderers = ff9FieldCharMirror.geo.GetComponentsInChildren<Renderer>();
+                    for (Int32 i = 0; i < renderers.Length; i++)
                     {
-                        Renderer renderer = array[i];
+                        Renderer renderer = renderers[i];
                         renderer.material.shader = shader;
                         renderer.material.SetColor("_Color", new Color(0.5f, 0.5f, 0.5f));
                         if (FF9StateSystem.Common.FF9.fldMapNo == 2653 || FF9StateSystem.Common.FF9.fldMapNo == 2654)
-                        {
                             renderer.material.renderQueue = 2000;
-                        }
                     }
                     ff9FieldCharMirror.geo.transform.SetParent(ff9Char.geo.transform.transform.parent);
                     ff9FieldCharMirror.evt = ff9Char.evt;

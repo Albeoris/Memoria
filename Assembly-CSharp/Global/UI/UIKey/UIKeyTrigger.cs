@@ -81,7 +81,7 @@ public class UIKeyTrigger : MonoBehaviour
 
     public static Boolean IsNeedToRemap()
     {
-        return Application.platform == RuntimePlatform.Android && PersistenSingleton<UIManager>.Instance.Dialogs.IsDialogNeedControl() && (PersistenSingleton<UIManager>.Instance.Dialogs.GetChoiceDialog() == null && EventHUD.CurrentHUD == MinigameHUD.None);
+        return Application.platform == RuntimePlatform.Android && PersistenSingleton<UIManager>.Instance.Dialogs.IsDialogNeedControl() && PersistenSingleton<UIManager>.Instance.Dialogs.GetChoiceDialog() == null && EventHUD.CurrentHUD == MinigameHUD.None;
     }
 
     public void ResetTriggerEvent()
@@ -903,8 +903,8 @@ public class UIKeyTrigger : MonoBehaviour
 
             if (VoicePlayer.scriptRequestedButtonPress && DialogManager.Instance.ActiveDialogList.Any(dial => dial.gameObject.activeInHierarchy && (dial.Style == Dialog.WindowStyle.WindowStyleAuto || dial.Style == Dialog.WindowStyle.WindowStyleTransparent)))
             {
-                ETb.sKey0 &= ~(EventInput.Pcircle | EventInput.Lcircle);
-                EventInput.ReceiveInput(EventInput.Pcircle | EventInput.Lcircle);
+                ETb.sKey &= ~EventInput.GetKeyMaskFromControl(Control.Confirm);
+                EventInput.ReceiveInput(EventInput.GetKeyMaskFromControl(Control.Confirm));
             }
         }
         return false;

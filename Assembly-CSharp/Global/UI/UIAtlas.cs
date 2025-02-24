@@ -96,7 +96,7 @@ public class UIAtlas : MonoBehaviour
             if (newFullAtlas == null)
                 newFullAtlas = new Texture2D(1, 1, AssetManager.DefaultTextureFormat, false);
 
-            if (inputPath.Contains(".png") && File.Exists(inputPath.Remove(inputPath.Length - 4) + ".tpsheet"))
+            if (inputPath.EndsWith(".png") && File.Exists(inputPath.Remove(inputPath.Length - 4) + ".tpsheet"))
                 inputPath = inputPath.Remove(inputPath.Length - 4);
 
             ReadTPSheetFromDisc(newFullAtlas, inputPath + ".tpsheet");

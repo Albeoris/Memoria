@@ -301,8 +301,7 @@ public class BattleActionCode
                     value = args;
                     try
                     {
-                        if (btl.gameObject.GetComponent<Animation>().GetClip(args) == null)
-                            AnimationFactory.AddAnimWithAnimatioName(btl.gameObject, args);
+                        AnimationFactory.AddAnimWithAnimatioName(btl.gameObject, args);
                     }
                     catch (Exception err2)
                     {

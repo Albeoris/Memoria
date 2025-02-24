@@ -1,6 +1,4 @@
-﻿using Assets.Sources.Scripts.UI.Common;
-using Memoria;
-using Memoria.Assets;
+﻿using Memoria;
 using Memoria.Data;
 using Memoria.Scenes;
 using System;
@@ -29,7 +27,6 @@ public partial class BattleHUD : UIScene
                 : base(obj)
             {
                 _scene = scene;
-
                 Attack = new GONavigationButton(obj.GetChild(0));
                 Defend = new GONavigationButton(obj.GetChild(1));
                 Skill1 = new GONavigationButton(obj.GetChild(2));
@@ -54,7 +51,6 @@ public partial class BattleHUD : UIScene
                 {
                     AccessMenu = null;
                 }
-
                 SubscribeOnClick();
             }
 

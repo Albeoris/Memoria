@@ -135,7 +135,7 @@ public static class ff9play
         PLAYER play = FF9StateSystem.Common.FF9.player[slotId];
         CharacterParameter parameter = CharacterParameterList[slotId];
         play.info = new PLAYER_INFO(parameter.Id, CharacterSerialNumber.ZIDANE_DAGGER, parameter.DefaultRow, parameter.DefaultWinPose, 0, parameter.DefaultMenuType);
-        play.pa = new Byte[ff9abil._FF9Abil_PaData.ContainsKey(play.info.menu_type) ? ff9abil._FF9Abil_PaData[play.info.menu_type].Length : 0];
+        play.pa = new Int32[ff9abil._FF9Abil_PaData.TryGetValue(play.info.menu_type, out CharacterAbility[] abilList) ? abilList.Length : 0];
         play.status = 0;
         play.permanent_status = 0;
         play.category = parameter.DefaultCategory;
@@ -230,7 +230,7 @@ public static class ff9play
         if (!lvup && play.level != lv)
             play.exp = ff9level.CharacterLevelUps[lv - 1].ExperienceToLevel;
         play.level = (Byte)lv;
-        Int64 oldStoneUse = play.max.capa - play.cur.capa;
+        UInt32 oldStoneUse = play.max.capa - play.cur.capa;
         Int64 oldHP = play.cur.hp;
         Int64 oldMP = play.cur.mp;
         Int64 oldStoneCapa = play.cur.capa;
@@ -245,10 +245,10 @@ public static class ff9play
         play.max.hp = ff9level.FF9Level_GetHp(play, play.level, play.basis.str);
         play.basis.max_hp = play.max.hp;
         play.max.mp = play.basis.max_mp = ff9level.FF9Level_GetMp(play, play.level, play.basis.mgc);
-        play.max.capa = (Byte)ff9level.FF9Level_GetCap(play, play.level, lvup);
+        play.max.capa = ff9level.FF9Level_GetCap(play, play.level, lvup);
         play.cur.hp = ccommon.min((UInt32)oldHP, play.max.hp);
         play.cur.mp = ccommon.min((UInt32)oldMP, play.max.mp);
-        play.cur.capa = (Byte)(play.max.capa - (UInt64)oldStoneUse);
+        play.cur.capa = play.max.capa - oldStoneUse;
         if (init)
         {
             play.cur.hp = play.max.hp;
@@ -261,10 +261,10 @@ public static class ff9play
             play.cur.hp = ccommon.min((UInt32)oldHP, play.max.hp);
             play.cur.mp = ccommon.min((UInt32)oldMP, play.max.mp);
         }
-        if (oldStoneMax == 99L)
+        if (oldStoneMax == UInt32.MaxValue)
         {
-            play.cur.capa = (Byte)oldStoneCapa;
-            play.max.capa = (Byte)oldStoneMax;
+            play.cur.capa = (UInt32)oldStoneCapa;
+            play.max.capa = (UInt32)oldStoneMax;
         }
         if (oldStoneUse <= play.max.capa)
             return;
@@ -273,23 +273,52 @@ public static class ff9play
 
     public static void FF9Play_Update(PLAYER play)
     {
-        FF9PLAY_INFO info = new FF9PLAY_INFO();
-        FF9PLAY_SKILL skill = new FF9PLAY_SKILL();
-        info.Base = play.basis;
-        info.cur_hp = play.cur.hp;
-        info.cur_mp = play.cur.mp;
-        info.equip.Absorb(play.equip);
-        FF9Play_GetSkill(ref info, ref skill);
-        play.elem.dex = skill.Base[0];
-        play.elem.str = skill.Base[1];
-        play.elem.mgc = skill.Base[2];
-        play.elem.wpr = skill.Base[3];
-        play.defence.PhysicalDefence = skill.defParam[1];
-        play.defence.PhysicalEvade = skill.defParam[2];
-        play.defence.MagicalDefence = skill.defParam[3];
-        play.defence.MagicalEvade = skill.defParam[4];
-        play.max.hp = skill.max_hp;
-        play.max.mp = skill.max_mp;
+        play.max.hp = play.basis.max_hp;
+        play.max.mp = play.basis.max_mp;
+        play.elem.dex = play.basis.dex;
+        play.elem.str = play.basis.str;
+        play.elem.mgc = play.basis.mgc;
+        play.elem.wpr = play.basis.wpr;
+        play.defence.PhysicalDefence = 0;
+        play.defence.PhysicalEvade = 0;
+        play.defence.MagicalDefence = 0;
+        play.defence.MagicalEvade = 0;
+        for (Int32 i = 0; i < 5; ++i)
+        {
+            RegularItem itemId = play.equip[i];
+            if (itemId != RegularItem.NoItem)
+            {
+                if (ff9item.HasItemArmor(itemId))
+                {
+                    ItemDefence defParams = ff9item.GetItemArmor(itemId);
+                    play.defence.PhysicalDefence += defParams.PhysicalDefence;
+                    play.defence.PhysicalEvade += defParams.PhysicalEvade;
+                    play.defence.MagicalDefence += defParams.MagicalDefence;
+                    play.defence.MagicalEvade += defParams.MagicalEvade;
+                }
+                ItemStats equipPrivilege = ff9equip.ItemStatsData[ff9item._FF9Item_Data[itemId].bonus];
+                play.elem.dex += equipPrivilege.dex;
+                play.elem.str += equipPrivilege.str;
+                play.elem.mgc += equipPrivilege.mgc;
+                play.elem.wpr += equipPrivilege.wpr;
+            }
+        }
+        if (play.elem.dex > ff9play.FF9PLAY_STAT_MAX[0])
+            play.elem.dex = ff9play.FF9PLAY_STAT_MAX[0];
+        if (play.elem.str > ff9play.FF9PLAY_STAT_MAX[1])
+            play.elem.str = ff9play.FF9PLAY_STAT_MAX[1];
+        if (play.elem.mgc > ff9play.FF9PLAY_STAT_MAX[2])
+            play.elem.mgc = ff9play.FF9PLAY_STAT_MAX[2];
+        if (play.elem.wpr > ff9play.FF9PLAY_STAT_MAX[3])
+            play.elem.wpr = ff9play.FF9PLAY_STAT_MAX[3];
+        if (play.defence.PhysicalDefence > ff9play.FF9PLAY_DEFPARAM_VAL_MAX)
+            play.defence.PhysicalDefence = ff9play.FF9PLAY_DEFPARAM_VAL_MAX;
+        if (play.defence.PhysicalEvade > ff9play.FF9PLAY_DEFPARAM_VAL_MAX)
+            play.defence.PhysicalEvade = ff9play.FF9PLAY_DEFPARAM_VAL_MAX;
+        if (play.defence.MagicalDefence > ff9play.FF9PLAY_DEFPARAM_VAL_MAX)
+            play.defence.MagicalDefence = ff9play.FF9PLAY_DEFPARAM_VAL_MAX;
+        if (play.defence.MagicalEvade > ff9play.FF9PLAY_DEFPARAM_VAL_MAX)
+            play.defence.MagicalEvade = ff9play.FF9PLAY_DEFPARAM_VAL_MAX;
         play.mpCostFactor = 100;
         play.maxHpLimit = ff9play.FF9PLAY_HP_MAX;
         play.maxMpLimit = ff9play.FF9PLAY_MP_MAX;
@@ -305,57 +334,6 @@ public static class ff9play
             play.cur.hp = play.max.hp;
         if (play.cur.mp > play.max.mp)
             play.cur.mp = play.max.mp;
-    }
-
-    public static FF9PLAY_SKILL FF9Play_GetSkill(ref FF9PLAY_INFO info, ref FF9PLAY_SKILL skill)
-    {
-        skill = new FF9PLAY_SKILL
-        {
-            cur_hp = info.cur_hp,
-            cur_mp = info.cur_mp,
-            max_hp = info.Base.max_hp,
-            max_mp = info.Base.max_mp,
-            Base =
-            {
-                [0] = info.Base.dex,
-                [1] = info.Base.str,
-                [2] = info.Base.mgc,
-                [3] = info.Base.wpr
-            }
-        };
-        if (info.equip[0] != RegularItem.NoItem)
-            skill.defParam[0] = ff9item.GetItemWeapon(info.equip[0]).Ref.Power;
-        for (Int32 i = 0; i < 5; ++i)
-        {
-            RegularItem itemId = info.equip[i];
-            if (itemId != RegularItem.NoItem)
-            {
-                if (ff9item.HasItemArmor(itemId))
-                {
-                    ItemDefence defParams = ff9item.GetItemArmor(itemId);
-                    skill.defParam[1] += defParams.PhysicalDefence;
-                    skill.defParam[2] += defParams.PhysicalEvade;
-                    skill.defParam[3] += defParams.MagicalDefence;
-                    skill.defParam[4] += defParams.MagicalEvade;
-                }
-                ItemStats equipPrivilege = ff9equip.ItemStatsData[ff9item._FF9Item_Data[itemId].bonus];
-                skill.Base[0] += equipPrivilege.dex;
-                skill.Base[1] += equipPrivilege.str;
-                skill.Base[2] += equipPrivilege.mgc;
-                skill.Base[3] += equipPrivilege.wpr;
-            }
-        }
-        for (Int32 i = 0; i < 4; ++i)
-            if (skill.Base[i] > FF9PLAY_STAT_MAX[i])
-                skill.Base[i] = FF9PLAY_STAT_MAX[i];
-        for (Int32 i = 0; i < 5; ++i)
-            if (skill.defParam[i] > FF9PLAY_DEFPARAM_VAL_MAX)
-                skill.defParam[i] = FF9PLAY_DEFPARAM_VAL_MAX;
-        if (skill.cur_hp > skill.max_hp)
-            skill.cur_hp = skill.max_hp;
-        if (skill.cur_mp > skill.max_mp)
-            skill.cur_mp = skill.max_mp;
-        return skill;
     }
 
     public static CharacterId CharacterOldIndexToID(CharacterOldIndex characterIndex)
@@ -475,7 +453,7 @@ public static class ff9play
         foreach (SupportAbility saIndex in play.saExtended)
         {
             if (play.cur.capa >= ff9abil._FF9Abil_SaData[saIndex].GemsCount)
-                play.cur.capa -= ff9abil._FF9Abil_SaData[saIndex].GemsCount;
+                play.cur.capa = (UInt32)(play.cur.capa - ff9abil._FF9Abil_SaData[saIndex].GemsCount);
             else
                 disableSet.Add(saIndex);
         }

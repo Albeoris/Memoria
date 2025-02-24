@@ -185,6 +185,7 @@ public static class btl_vfx
     {
         CharacterSerialNumber serialNo = btl_util.getSerialNumber(btl);
         CharacterBattleParameter btlParam = btl_mot.BattleParameterList[serialNo];
+        BattlePlayerCharacter.PlayerMotionIndex currentMotion = btl_mot.getMotion(btl);
         if (isTrance)
         {
             btl.battleModelIsRendering = true;
@@ -198,24 +199,25 @@ public static class btl_vfx
             GeoTexAnim.geoTexAnimPlay(btl.texanimptr, 2);
         }
         btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect", btl);
+        btl_mot.SetPlayerDefMotion(btl, serialNo, isTrance);
         BattlePlayerCharacter.InitAnimation(btl);
-        //btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
+        if (currentMotion != BattlePlayerCharacter.PlayerMotionIndex.MP_MAX)
+            btl.currentAnimationName = btl.mot[(Int32)currentMotion];
         if (isTrance && btlParam.TranceParameters)
         {
-            btl.weapon_bone = btlParam.TranceWeaponBone;
+            btl.weapon_bone = btl.weapon.ModelId != UInt16.MaxValue ? btlParam.TranceWeaponBone : -1;
             btl.weaponModels[0].scale = btlParam.TranceWeaponSize.ToVector3(true);
             btl.weaponModels[0].offset_pos = btlParam.TranceWeaponOffsetPos.ToVector3(false);
             btl.weaponModels[0].offset_rot = btlParam.GetWeaponRotationFixed(btl.weapon.ModelId, true);
         }
         else
         {
-            btl.weapon_bone = btlParam.WeaponBone;
+            btl.weapon_bone = btl.weapon.ModelId != UInt16.MaxValue ? btlParam.WeaponBone : -1;
             btl.weaponModels[0].scale = btlParam.WeaponSize.ToVector3(true);
             btl.weaponModels[0].offset_pos = btlParam.WeaponOffsetPos.ToVector3(false);
             btl.weaponModels[0].offset_rot = btlParam.GetWeaponRotationFixed(btl.weapon.ModelId, false);
         }
         geo.geoAttach(btl.weapon_geo, btl.gameObject, btl.weapon_bone);
-        AnimationFactory.AddAnimToGameObject(btl.gameObject, btl_mot.BattleParameterList[serialNo].ModelId, true);
         btl2d.ShowMessages(true);
     }
 

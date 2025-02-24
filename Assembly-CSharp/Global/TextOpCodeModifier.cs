@@ -22,221 +22,178 @@ public class TextOpCodeModifier
 
     private static String ReplaceMogIconText(String source)
     {
-        Int32 num = 0;
-        String[] mogIconTargetOpCode = TextOpCodeModifier.MogIconTargetOpCode;
-        for (Int32 i = 0; i < (Int32)mogIconTargetOpCode.Length; i++)
-        {
-            String text = mogIconTargetOpCode[i];
-            if (source.Contains(text))
-            {
-                source = source.Replace(text, TextOpCodeModifier.MogIconReplacedOpCode[num]);
-            }
-            num++;
-        }
+        for (Int32 i = 0; i < TextOpCodeModifier.MogIconTargetOpCode.Length; i++)
+            source = source.Replace(TextOpCodeModifier.MogIconTargetOpCode[i], TextOpCodeModifier.MogIconReplacedOpCode[i]);
         return source;
     }
 
     private static String ReplaceChanbaraText(String source)
     {
-        if (FF9TextTool.FieldZoneId == 2)
+        if (FF9TextTool.FieldZoneId != 2)
+            return source;
+        Int32 searchIndex;
+        Int32 replaceIndex;
+        switch (FF9StateSystem.Settings.CurrentLanguage)
         {
-            String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-            Int32 num2;
-            Int32 num3;
-            switch (currentLanguage)
-            {
-                case "German":
-                    num2 = 0;
-                    num3 = 3;
-                    break;
-                case "Spanish":
-                    num2 = 2;
-                    num3 = 2;
-                    break;
-                case "French":
-                    num2 = 3;
-                    num3 = 3;
-                    break;
-                case "Italian":
-                    num2 = 4;
-                    num3 = 0;
-                    break;
-                case "Japanese":
-                    num2 = 5;
-                    num3 = 1;
-                    break;
-                default:
-                    num2 = 1;
-                    num3 = 2;
-                    break;
-            }
-            String text = TextOpCodeModifier.ChanbaraTargetOpCode[num2];
-            if (source.Contains(text))
-            {
-                String newValue = TextOpCodeModifier.ChanbaraReplacedOpCode[num3];
-                source = source.Replace(text, newValue);
-            }
+            case "German":
+                searchIndex = 0;
+                replaceIndex = 3;
+                break;
+            case "Spanish":
+                searchIndex = 2;
+                replaceIndex = 2;
+                break;
+            case "French":
+                searchIndex = 3;
+                replaceIndex = 3;
+                break;
+            case "Italian":
+                searchIndex = 4;
+                replaceIndex = 0;
+                break;
+            case "Japanese":
+                searchIndex = 5;
+                replaceIndex = 1;
+                break;
+            default:
+                searchIndex = 1;
+                replaceIndex = 2;
+                break;
         }
+        source = source.Replace(TextOpCodeModifier.ChanbaraTargetOpCode[searchIndex], TextOpCodeModifier.ChanbaraReplacedOpCode[replaceIndex]);
         return source;
     }
 
     private static String ReplacePotionShopText(String source)
     {
-        if (FF9TextTool.FieldZoneId == 23)
+        if (FF9TextTool.FieldZoneId != 23)
+            return source;
+        Int32 startIndex;
+        Int32 endIndex;
+        switch (FF9StateSystem.Settings.CurrentLanguage)
         {
-            String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-            Int32 num2;
-            Int32 num3;
-            switch (currentLanguage)
-            {
-                case "German":
-                    return source;
-                case "Spanish":
-                    num2 = 4;
-                    num3 = 5;
-                    break;
-                case "French":
-                    num2 = 6;
-                    num3 = 7;
-                    break;
-                case "Italian":
-                    num2 = 2;
-                    num3 = 3;
-                    break;
-                case "Japanese":
-                    num2 = 8;
-                    num3 = 10;
-                    break;
-                default:
-                    num2 = 0;
-                    num3 = 1;
-                    break;
-            }
-            for (Int32 i = num2; i <= num3; i++)
-            {
-                String text = TextOpCodeModifier.PotionShopTargetOpCode[i];
-                if (source.Contains(text))
-                {
-                    source = source.Replace(text, TextOpCodeModifier.PotionShopReplacedOpCode[i]);
-                }
-            }
+            case "German":
+                return source;
+            case "Spanish":
+                startIndex = 4;
+                endIndex = 5;
+                break;
+            case "French":
+                startIndex = 6;
+                endIndex = 7;
+                break;
+            case "Italian":
+                startIndex = 2;
+                endIndex = 3;
+                break;
+            case "Japanese":
+                startIndex = 8;
+                endIndex = 10;
+                break;
+            default:
+                startIndex = 0;
+                endIndex = 1;
+                break;
         }
+        for (Int32 i = startIndex; i <= endIndex; i++)
+            source = source.Replace(TextOpCodeModifier.PotionShopTargetOpCode[i], TextOpCodeModifier.PotionShopReplacedOpCode[i]);
         return source;
     }
 
     /// <summary>Correcting position of yellow text path in Fossil Roo switches 1,3,4</summary>
 	private static String ReplaceFossilRouteText(String source)
     {
-        if (FF9TextTool.FieldZoneId == 361)
+        if (FF9TextTool.FieldZoneId != 361)
+            return source;
+        Int16 RealScreenSize = Math.Max(FieldMap.PsxScreenWidth, (Int16)(FieldMap.PsxScreenHeightNative * Screen.width / Screen.height));
+        if (source.Contains("[MPOS=224,12]")) // switch 1
         {
-            Int16 RealScreenSize = Math.Max(FieldMap.PsxScreenWidth, (Int16)(FieldMap.PsxScreenHeightNative * Screen.width / Screen.height));
-
-            if (source.Contains("[MPOS=224,12]")) // switch 1
-            {
-                source = source.Replace("[MPOS=224,12]", $"[MPOS={(Int16)(RealScreenSize - 90)},16]");
-            }
-            if (source.Contains("[MPOS=212,12]")) // switch 3/4
-            {
-                source = source.Replace("[STRT=84,6][NANI][MPOS=212,12][IMME]                     ", "[STRT=84,6][NANI][MPOS=212,12][IMME]                                          ");
-                source = source.Replace("[MPOS=212,12]", $"[MPOS={(Int16)(RealScreenSize - 102)},16]");
-            }
-
-            // was:
-            // "[MPOS=224,12]" -> "[MPOS=230,16]",
-            // "[MPOS=212,12]" -> "[MPOS=218,16]"
+            source = source.Replace("[MPOS=224,12]", $"[MPOS={(Int16)(RealScreenSize - 90)},16]");
         }
+        if (source.Contains("[MPOS=212,12]")) // switch 3/4
+        {
+            source = source.Replace("[STRT=84,6][NANI][MPOS=212,12][IMME]                     ", "[STRT=84,6][NANI][MPOS=212,12][IMME]                                          ");
+            source = source.Replace("[MPOS=212,12]", $"[MPOS={(Int16)(RealScreenSize - 102)},16]");
+        }
+        // was:
+        // "[MPOS=224,12]" -> "[MPOS=230,16]",
+        // "[MPOS=212,12]" -> "[MPOS=218,16]"
         return source;
     }
 
     private static String ReplaceAuctionText(String source)
     {
-        if (FF9TextTool.FieldZoneId == 70 || FF9TextTool.FieldZoneId == 741)
+        if (FF9TextTool.FieldZoneId != 70 && FF9TextTool.FieldZoneId != 741)
+            return source;
+        Int32 startIndex;
+        Int32 endIndex;
+        switch (FF9StateSystem.Settings.CurrentLanguage)
         {
-            String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-            Int32 num2;
-            Int32 num3;
-            switch (currentLanguage)
-            {
-                case "German":
-                    num2 = 6;
-                    num3 = 8;
-                    break;
-                case "Spanish":
-                    num2 = 9;
-                    num3 = 11;
-                    break;
-                case "French":
-                    num2 = 12;
-                    num3 = 14;
-                    break;
-                case "Italian":
-                    num2 = 3;
-                    num3 = 5;
-                    break;
-                case "Japanese":
-                    num2 = 15;
-                    num3 = 17;
-                    break;
-                default:
-                    num2 = 0;
-                    num3 = 2;
-                    break;
-            }
-            for (Int32 i = num2; i <= num3; i++)
-            {
-                String text = TextOpCodeModifier.AuctionTargetOpCode[i];
-                if (source.Contains(text))
-                {
-                    source = source.Replace(text, TextOpCodeModifier.AuctionReplacedOpCode[i]);
-                }
-            }
+            case "German":
+                startIndex = 6;
+                endIndex = 8;
+                break;
+            case "Spanish":
+                startIndex = 9;
+                endIndex = 11;
+                break;
+            case "French":
+                startIndex = 12;
+                endIndex = 14;
+                break;
+            case "Italian":
+                startIndex = 3;
+                endIndex = 5;
+                break;
+            case "Japanese":
+                startIndex = 15;
+                endIndex = 17;
+                break;
+            default:
+                startIndex = 0;
+                endIndex = 2;
+                break;
         }
+        for (Int32 i = startIndex; i <= endIndex; i++)
+            source = source.Replace(TextOpCodeModifier.AuctionTargetOpCode[i], TextOpCodeModifier.AuctionReplacedOpCode[i]);
         return source;
     }
 
     private static String ReplaceGyshalShopText(String source)
     {
-        if (FF9TextTool.FieldZoneId == 945)
+        if (FF9TextTool.FieldZoneId != 945)
+            return source;
+        Int32 startIndex;
+        Int32 endIndex;
+        switch (FF9StateSystem.Settings.CurrentLanguage)
         {
-            String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-            Int32 num2;
-            Int32 num3;
-            switch (currentLanguage)
-            {
-                case "German":
-                    num2 = 4;
-                    num3 = 5;
-                    break;
-                case "Spanish":
-                    num2 = 6;
-                    num3 = 7;
-                    break;
-                case "French":
-                    num2 = 0;
-                    num3 = -1;
-                    break;
-                case "Italian":
-                    num2 = 2;
-                    num3 = 3;
-                    break;
-                case "Japanese":
-                    num2 = 8;
-                    num3 = 9;
-                    break;
-                default:
-                    num2 = 0;
-                    num3 = 1;
-                    break;
-            }
-            for (Int32 i = num2; i <= num3; i++)
-            {
-                String text = TextOpCodeModifier.GysahlGreenTargetOpCode[i];
-                if (source.Contains(text))
-                {
-                    source = source.Replace(text, TextOpCodeModifier.GysahlGreenReplacedOpCode[i]);
-                }
-            }
+            case "German":
+                startIndex = 4;
+                endIndex = 5;
+                break;
+            case "Spanish":
+                startIndex = 6;
+                endIndex = 7;
+                break;
+            case "French":
+                startIndex = 0;
+                endIndex = -1;
+                break;
+            case "Italian":
+                startIndex = 2;
+                endIndex = 3;
+                break;
+            case "Japanese":
+                startIndex = 8;
+                endIndex = 9;
+                break;
+            default:
+                startIndex = 0;
+                endIndex = 1;
+                break;
         }
+        for (Int32 i = startIndex; i <= endIndex; i++)
+            source = source.Replace(TextOpCodeModifier.GysahlGreenTargetOpCode[i], TextOpCodeModifier.GysahlGreenReplacedOpCode[i]);
         return source;
     }
 
@@ -244,88 +201,69 @@ public class TextOpCodeModifier
     {
         if (FF9TextTool.FieldZoneId != 166)
             return source;
-
-        String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-
-        Int32 num2;
-        Int32 num3;
-        switch (currentLanguage)
+        Int32 startIndex;
+        Int32 endIndex;
+        switch (FF9StateSystem.Settings.CurrentLanguage)
         {
             case "German":
-                num2 = 6;
-                num3 = 7;
+                startIndex = 6;
+                endIndex = 7;
                 break;
             case "Spanish":
-                num2 = 4;
-                num3 = 5;
+                startIndex = 4;
+                endIndex = 5;
                 break;
             case "French":
-                num2 = 2;
-                num3 = 3;
+                startIndex = 2;
+                endIndex = 3;
                 break;
             case "Italian":
                 return source;
             case "Japanese":
-                num2 = 0;
-                num3 = 1;
+                startIndex = 0;
+                endIndex = 1;
                 break;
             default:
                 return source;
         }
-
-        for (Int32 i = num2; i <= num3; i++)
-        {
-            String text = TextOpCodeModifier.OreShopTargetOpCode[i];
-            if (source.Contains(text))
-            {
-                source = source.Replace(text, TextOpCodeModifier.OreShopReplacedOpCode[i]);
-            }
-        }
-
+        for (Int32 i = startIndex; i <= endIndex; i++)
+            source = source.Replace(TextOpCodeModifier.OreShopTargetOpCode[i], TextOpCodeModifier.OreShopReplacedOpCode[i]);
         return source;
     }
 
     private static String ReplaceEikoCookingText(String source)
     {
-        if (FF9TextTool.FieldZoneId == 358)
+        if (FF9TextTool.FieldZoneId != 358)
+            return source;
+        Int32 startIndex;
+        Int32 endIndex;
+        switch (FF9StateSystem.Settings.CurrentLanguage)
         {
-            String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-            Int32 num2;
-            Int32 num3;
-            switch (currentLanguage)
-            {
-                case "German":
-                    num2 = 8;
-                    num3 = 9;
-                    break;
-                case "Spanish":
-                    num2 = 6;
-                    num3 = 7;
-                    break;
-                case "French":
-                    num2 = 4;
-                    num3 = 5;
-                    break;
-                case "Italian":
-                    return source;
-                case "Japanese":
-                    num2 = 2;
-                    num3 = 3;
-                    break;
-                default:
-                    num2 = 0;
-                    num3 = 1;
-                    break;
-            }
-            for (Int32 i = num2; i <= num3; i++)
-            {
-                String text = TextOpCodeModifier.EikoCookingTargetOpCode[i];
-                if (source.Contains(text))
-                {
-                    source = source.Replace(text, TextOpCodeModifier.EikoCookingReplacedOpCode[i]);
-                }
-            }
+            case "German":
+                startIndex = 8;
+                endIndex = 9;
+                break;
+            case "Spanish":
+                startIndex = 6;
+                endIndex = 7;
+                break;
+            case "French":
+                startIndex = 4;
+                endIndex = 5;
+                break;
+            case "Italian":
+                return source;
+            case "Japanese":
+                startIndex = 2;
+                endIndex = 3;
+                break;
+            default:
+                startIndex = 0;
+                endIndex = 1;
+                break;
         }
+        for (Int32 i = startIndex; i <= endIndex; i++)
+            source = source.Replace(TextOpCodeModifier.EikoCookingTargetOpCode[i], TextOpCodeModifier.EikoCookingReplacedOpCode[i]);
         return source;
     }
 
@@ -333,35 +271,12 @@ public class TextOpCodeModifier
     {
         if (FF9TextTool.FieldZoneId != 344)
             return source;
-
-        String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-        if (currentLanguage != "Japanese")
+        if (FF9StateSystem.Settings.CurrentLanguage != "Japanese")
             return source;
 
-        Int32 num2 = 0;
-        Int32 num3 = 1;
-        for (Int32 i = num2; i <= num3; i++)
-        {
-            String text = TextOpCodeModifier.PandoniumTargetOpCode[i];
-            if (source.Contains(text))
-            {
-                source = source.Replace(text, TextOpCodeModifier.PandoniumReplacedOpcode[i]);
-            }
-        }
+        for (Int32 i = 0; i < TextOpCodeModifier.PandoniumTargetOpCode.Length; i++)
+            source = source.Replace(TextOpCodeModifier.PandoniumTargetOpCode[i], TextOpCodeModifier.PandoniumReplacedOpcode[i]);
         return source;
-    }
-
-    public static String ReplaceChanbaraArrow(String source)
-    {
-        String text = source;
-        if (FF9StateSystem.PCPlatform && !global::GamePad.GetState(PlayerIndex.One).IsConnected)
-        {
-            text = text.Replace("DBTN=UP", "ICON=632");
-            text = text.Replace("DBTN=LEFT", "ICON=633");
-            text = text.Replace("DBTN=RIGHT", "ICON=634");
-            text = text.Replace("DBTN=DOWN", "ICON=635");
-        }
-        return text;
     }
 
     public static readonly String[] ChanbaraTargetOpCode = new String[]
@@ -376,10 +291,10 @@ public class TextOpCodeModifier
 
     public static readonly String[] ChanbaraReplacedOpCode = new String[]
 {
-        "[XTAB=52][YADD=1][DBTN=UP][MOBI=268][XTAB=102][DBTN=TRIANGLE][MOBI=272]\n[XTAB=39][DBTN=LEFT][MOBI=267][FEED=14][DBTN=RIGHT][MOBI=269][FEED=11][DBTN=SQUARE][MOBI=271][FEED=13][DBTN=CROSS][MOBI=273]\n[XTAB=52][YSUB=1][DBTN=DOWN][MOBI=270][XTAB=102][DBTN=CIRCLE][MOBI=274]",
-        "[XTAB=39][YADD=1][DBTN=UP][MOBI=268][XTAB=88][DBTN=TRIANGLE][MOBI=272]\n[XTAB=26][DBTN=LEFT][MOBI=267][FEED=14][DBTN=RIGHT][MOBI=269][FEED=11][DBTN=SQUARE][MOBI=271][FEED=13][DBTN=CROSS][MOBI=273]\n[XTAB=39][YSUB=1][DBTN=DOWN][MOBI=270][XTAB=88][DBTN=CIRCLE][MOBI=274]",
-        "[XTAB=72][YADD=1][DBTN=UP][MOBI=268][XTAB=121][DBTN=TRIANGLE][MOBI=272]\n[XTAB=59][DBTN=LEFT][MOBI=267][FEED=14][DBTN=RIGHT][MOBI=269][FEED=11][DBTN=SQUARE][MOBI=271][FEED=13][DBTN=CROSS][MOBI=273]\n[XTAB=72][YSUB=1][DBTN=DOWN][MOBI=270][XTAB=121][DBTN=CIRCLE][MOBI=274]",
-        "[XTAB=77][YADD=1][DBTN=UP][MOBI=268][XTAB=126][DBTN=TRIANGLE][MOBI=272]\n[XTAB=64][DBTN=LEFT][MOBI=267][FEED=14][DBTN=RIGHT][MOBI=269][FEED=11][DBTN=SQUARE][MOBI=271][FEED=13][DBTN=CROSS][MOBI=273]\n[XTAB=77][YSUB=1][DBTN=DOWN][MOBI=270][XTAB=126][DBTN=CIRCLE][MOBI=274]"
+        "[XTAB=52][YADD=1][DBTN=UP][MOBI=268][XTAB=102][DBTN=TRIANGLE][MOBI=272]\n[XTAB=39][DBTN=LEFT][MOBI=267][FEED=14][DBTN=RIGHT][MOBI=269][FEED=11][DBTN=SQUARE][MOBI=271][FEED=13][DBTN=CIRCLE][MOBI=273]\n[XTAB=52][YSUB=1][DBTN=DOWN][MOBI=270][XTAB=102][DBTN=CROSS][MOBI=274]",
+        "[XTAB=39][YADD=1][DBTN=UP][MOBI=268][XTAB=88][DBTN=TRIANGLE][MOBI=272]\n[XTAB=26][DBTN=LEFT][MOBI=267][FEED=14][DBTN=RIGHT][MOBI=269][FEED=11][DBTN=SQUARE][MOBI=271][FEED=13][DBTN=CIRCLE][MOBI=273]\n[XTAB=39][YSUB=1][DBTN=DOWN][MOBI=270][XTAB=88][DBTN=CROSS][MOBI=274]",
+        "[XTAB=72][YADD=1][DBTN=UP][MOBI=268][XTAB=121][DBTN=TRIANGLE][MOBI=272]\n[XTAB=59][DBTN=LEFT][MOBI=267][FEED=14][DBTN=RIGHT][MOBI=269][FEED=11][DBTN=SQUARE][MOBI=271][FEED=13][DBTN=CIRCLE][MOBI=273]\n[XTAB=72][YSUB=1][DBTN=DOWN][MOBI=270][XTAB=121][DBTN=CROSS][MOBI=274]",
+        "[XTAB=77][YADD=1][DBTN=UP][MOBI=268][XTAB=126][DBTN=TRIANGLE][MOBI=272]\n[XTAB=64][DBTN=LEFT][MOBI=267][FEED=14][DBTN=RIGHT][MOBI=269][FEED=11][DBTN=SQUARE][MOBI=271][FEED=13][DBTN=CIRCLE][MOBI=273]\n[XTAB=77][YSUB=1][DBTN=DOWN][MOBI=270][XTAB=126][DBTN=CROSS][MOBI=274]"
 };
 
     public static readonly String[] AuctionTargetOpCode = new String[]

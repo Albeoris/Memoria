@@ -12,7 +12,7 @@ namespace Memoria.Data
         public Byte Strength;
         public Byte Magic;
         public Byte Will;
-        public Byte Gems;
+        public UInt32 Gems;
 
         public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
@@ -23,7 +23,7 @@ namespace Memoria.Data
             Strength = CsvParser.Byte(raw[3]);
             Magic = CsvParser.Byte(raw[4]);
             Will = CsvParser.Byte(raw[5]);
-            Gems = CsvParser.Byte(raw[6]);
+            Gems = CsvParser.UInt32(raw[6]);
         }
 
         public void WriteEntry(CsvWriter sw, CsvMetaData metadata)
@@ -35,7 +35,7 @@ namespace Memoria.Data
             sw.Byte(Strength);
             sw.Byte(Magic);
             sw.Byte(Will);
-            sw.Byte(Gems);
+            sw.UInt32(Gems);
         }
     }
 }

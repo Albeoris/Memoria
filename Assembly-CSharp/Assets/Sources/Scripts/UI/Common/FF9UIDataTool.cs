@@ -1,4 +1,4 @@
-using FF9;
+﻿using FF9;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
@@ -68,7 +68,7 @@ namespace Assets.Sources.Scripts.UI.Common
                     itemLabel += "\n";
                 itemLabel += $"[{NGUIText.EncodeColor(enabled ? FF9TextTool.White : FF9TextTool.Gray)}]{FF9TextTool.ItemName(kvp.Key)}";
                 if (kvp.Value > 1)
-                    itemLabel += $" � {kvp.Value}";
+                    itemLabel += $" × {kvp.Value}";
                 if (displayStock && Configuration.Interface.SynthIngredientStockDisplayed)
                 {
                     Int32 itemAmount = ff9item.FF9Item_GetCount(kvp.Key);
@@ -118,8 +118,16 @@ namespace Assets.Sources.Scripts.UI.Common
             charHud.MPMaxLabel.text = player.max.mp.ToString();
             if (charHud.MagicStoneLabel != null)
             {
-                charHud.MagicStoneLabel.text = player.cur.capa.ToString();
-                charHud.MagicStoneMaxLabel.text = player.max.capa.ToString();
+                if (player.max.capa == UInt32.MaxValue)
+                {
+                    charHud.MagicStoneLabel.text = "∞";
+                    charHud.MagicStoneMaxLabel.text = "∞";
+                }
+                else
+                {
+                    charHud.MagicStoneLabel.text = player.cur.capa.ToString();
+                    charHud.MagicStoneMaxLabel.text = player.max.capa.ToString();
+                }
             }
             if (charHud.StatusesSpriteList != null)
             {
@@ -352,17 +360,13 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static GameObject ButtonGameObject(Control key, Boolean checkFromConfig, String tag)
         {
-            GameObject result = null;
-            if (tag == NGUIText.JoyStickButtonIcon)
+            if (tag == NGUIText.JoyStickButtonIcon || (PersistenSingleton<HonoInputManager>.Instance.IsControllerConnect && tag != NGUIText.KeyboardButtonIcon))
             {
-                result = FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, FF9UIDataTool.DialogButtonSpriteName(key, checkFromConfig, tag));
-            }
-            else if (PersistenSingleton<HonoInputManager>.Instance.IsControllerConnect && tag != NGUIText.KeyboardButtonIcon)
-            {
-                result = FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, FF9UIDataTool.DialogButtonSpriteName(key, checkFromConfig, tag));
+                return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, FF9UIDataTool.DialogButtonSpriteName(key, checkFromConfig, tag));
             }
             else
             {
+                Int32 memoriaKeyIndex = -1;
                 switch (key)
                 {
                     case Control.Confirm:
@@ -374,43 +378,50 @@ namespace Assets.Sources.Scripts.UI.Common
                     case Control.LeftTrigger:
                     case Control.RightTrigger:
                     {
-                        KeyCode primaryKey;
-                        if (tag == NGUIText.KeyboardButtonIcon)
-                            primaryKey = PersistenSingleton<HonoInputManager>.Instance.DefaultInputKeys[(Int32)key];
-                        else if (checkFromConfig)
-                            primaryKey = PersistenSingleton<HonoInputManager>.Instance.InputKeysPrimary[(Int32)key];
-                        else
-                            primaryKey = PersistenSingleton<HonoInputManager>.Instance.DefaultInputKeys[(Int32)key];
-                        result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, primaryKey);
-                        break;
+                        Int32 keyIndex = (Int32)key;
+                        if (!checkFromConfig)
+                        {
+                            keyIndex = PersistenSingleton<HonoInputManager>.Instance.LogicalControlToPhysicalButton(key);
+                            if (EventInput.isJapaneseLayout)
+                            {
+                                if (keyIndex == 0)
+                                    keyIndex = 1;
+                                else if (keyIndex == 1)
+                                    keyIndex = 0;
+                            }
+                        }
+                        return FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, PersistenSingleton<HonoInputManager>.Instance.InputKeysPrimary[keyIndex]);
                     }
                     case Control.Pause:
-                        if (HonoInputManager.MemoriaKeyBindings[4] == KeyCode.Backspace)
-                            result = FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, "keyboard_button_backspace");
-                        else
-                            result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, HonoInputManager.MemoriaKeyBindings[4]);
+                        memoriaKeyIndex = 4;
                         break;
                     case Control.Select:
-                        result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, HonoInputManager.MemoriaKeyBindings[5]);
+                        memoriaKeyIndex = 5;
                         break;
                     case Control.Up:
-                        result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, HonoInputManager.MemoriaKeyBindings[0]);
-                        break;
+                        //memoriaKeyIndex = 0;
+                        return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, "keyboard_button_arrow_up");
                     case Control.Down:
-                        result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, HonoInputManager.MemoriaKeyBindings[2]);
-                        break;
+                        //memoriaKeyIndex = 2;
+                        return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, "keyboard_button_arrow_down");
                     case Control.Left:
-                        result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, HonoInputManager.MemoriaKeyBindings[1]);
-                        break;
+                        //memoriaKeyIndex = 1;
+                        return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, "keyboard_button_arrow_left");
                     case Control.Right:
-                        result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, HonoInputManager.MemoriaKeyBindings[3]);
-                        break;
+                        //memoriaKeyIndex = 3;
+                        return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, "keyboard_button_arrow_right");
                     case Control.DPad:
-                        result = FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, "ps_dpad");
-                        break;
+                        return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, "ps_dpad");
+                }
+                if (memoriaKeyIndex >= 0)
+                {
+                    if (HonoInputManager.MemoriaKeyBindings[memoriaKeyIndex] == KeyCode.Backspace)
+                        return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, "keyboard_button_backspace");
+                    else
+                        return FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, HonoInputManager.MemoriaKeyBindings[memoriaKeyIndex]);
                 }
             }
-            return result;
+            return null;
         }
 
         private static GameObject GetMobileButtonGameObject(Control key)
@@ -427,11 +438,7 @@ namespace Assets.Sources.Scripts.UI.Common
         public static Vector2 GetButtonSize(Control key, Boolean checkFromConfig, String tag)
         {
             String spriteName = String.Empty;
-            if (tag == NGUIText.JoyStickButtonIcon)
-            {
-                spriteName = FF9UIDataTool.DialogButtonSpriteName(key, checkFromConfig, tag);
-            }
-            else if (PersistenSingleton<HonoInputManager>.Instance.IsControllerConnect && tag != NGUIText.KeyboardButtonIcon)
+            if (tag == NGUIText.JoyStickButtonIcon || (PersistenSingleton<HonoInputManager>.Instance.IsControllerConnect && tag != NGUIText.KeyboardButtonIcon))
             {
                 spriteName = FF9UIDataTool.DialogButtonSpriteName(key, checkFromConfig, tag);
             }
@@ -460,8 +467,8 @@ namespace Assets.Sources.Scripts.UI.Common
                         break;
                 }
             }
-            if (!checkFromConfig && (FF9StateSystem.PCPlatform || FF9StateSystem.AndroidPlatform))
-                if (!global::GamePad.GetState(PlayerIndex.One).IsConnected && key == Control.Pause)
+            if (!checkFromConfig && key == Control.Pause && (FF9StateSystem.PCPlatform || FF9StateSystem.AndroidPlatform))
+                if (!global::GamePad.GetState(PlayerIndex.One).IsConnected)
                     spriteName = "keyboard_button_backspace";
             return FF9UIDataTool.GetSpriteSize("IconAtlas", spriteName);
         }
@@ -685,8 +692,9 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static String DialogButtonSpriteName(Control key, Boolean checkFromConfig, String tag)
         {
+            HonoInputManager inputManager = PersistenSingleton<HonoInputManager>.Instance;
             String result = String.Empty;
-            if (PersistenSingleton<HonoInputManager>.Instance.IsControllerConnect || tag == NGUIText.JoyStickButtonIcon)
+            if (inputManager.IsControllerConnect || tag == NGUIText.JoyStickButtonIcon)
             {
                 Dictionary<String, String> buttonSpriteDictionary;
                 if (Application.platform == RuntimePlatform.Android)
@@ -706,13 +714,9 @@ namespace Assets.Sources.Scripts.UI.Common
                     case Control.LeftTrigger:
                     case Control.RightTrigger:
                     {
-                        String primaryKey;
-                        if (checkFromConfig)
-                            primaryKey = PersistenSingleton<HonoInputManager>.Instance.JoystickKeysPrimary[(Int32)key];
-                        else
-                            primaryKey = PersistenSingleton<HonoInputManager>.Instance.DefaultJoystickInputKeys[(Int32)key];
-                        if (buttonSpriteDictionary.ContainsKey(primaryKey))
-                            result = buttonSpriteDictionary[primaryKey];
+                        String primaryKey = checkFromConfig ? inputManager.JoystickKeysPrimary[(Int32)key] : inputManager.DefaultJoystickInputKeys[(Int32)key];
+                        if (!buttonSpriteDictionary.TryGetValue(primaryKey, out result))
+                            result = String.Empty;
                         break;
                     }
                     case Control.Pause:

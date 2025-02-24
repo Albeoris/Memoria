@@ -7,8 +7,6 @@
 //   Copyright (c) 2006-2007 Frank Blumenberg
 //   Copyright (c) 2010-2016 Tao Yue
 //
-
-//
 /////////////////////////////////////////////////////////////////////////////////
 
 using System;
@@ -20,6 +18,9 @@ namespace Memoria.Prime.PsdFile
     public class ZipImage : ImageData
     {
         private MemoryStream _zipDataStream;
+
+        // We might want to use "Compression.DeflateStream" from Assembly-CSharp.dll instead (in which case it would be moved to Memoria.Prime)
+        // I don't know how / if PSD are (still?) correctly supported
         private DeflateStream _zipStream;
 
         protected override Boolean AltersWrittenData

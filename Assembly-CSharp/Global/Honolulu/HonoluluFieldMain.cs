@@ -132,8 +132,8 @@ public class HonoluluFieldMain : HonoBehavior
         SFXData.Reinit();
         this.ee.StartEvents(map.evtPtr);
         FF9StateSystem.Field.SetTwistAD(this.ee.GetTwistA(), this.ee.GetTwistD());
-        PersistenSingleton<EventEngine>.Instance.eTb.InitMessage();
-        PersistenSingleton<EventEngine>.Instance.eTb.InitMovieHitPoint(MapNo);
+        ETb.InitMessage();
+        ETb.InitMovieHitPoint(MapNo);
         this.FF9.npcCount = (Byte)this.ee.GetNumberNPC();
         this.fieldmap = GameObject.Find("FieldMap").GetComponent<FieldMap>();
         this.ee.updateModelsToBeAdded();
@@ -251,7 +251,7 @@ public class HonoluluFieldMain : HonoBehavior
                         this.FF9FieldMap.nextMode = 7;
                         this.FF9Sys.attr |= 2u;
                         this.FF9.attr |= 2u;
-                        PersistenSingleton<EventEngine>.Instance.eTb.InitMessage();
+                        ETb.InitMessage();
                         PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(false);
                         this.shutdownField();
                         EventService.OpenGameOver();
@@ -634,53 +634,28 @@ public class HonoluluFieldMain : HonoBehavior
     public static void FadeOutMusic()
     {
         if (FF9Snd.GetCurrentMusicId() != -1)
-        {
             FF9Snd.ff9fldsnd_song_vol_intpl(FF9Snd.GetCurrentMusicId(), 30, 0);
-        }
     }
 
     private FieldMap fieldmap;
-
     private GameObject player;
-
     private Boolean isInside;
-
     private FF9StateSystem FF9Sys;
-
     private FF9StateFieldSystem FF9Field;
-
     private FF9StateGlobal FF9;
-
     private FF9StateFieldMap FF9FieldMap;
-
     private EventEngine ee;
 
-    private EMain eMain;
-
     private static Int32 eventEngineRunningCount;
-
     private static Int32 fldMapNoOffset;
 
     private Int32 prevPrg = -1;
-
     private Boolean mbgFrameSkip = true;
-
     private Single debugUILastTouchTime;
-
     private Single showHideDebugUICoolDown = 0.5f;
-
     private Boolean firstFrame = true;
 
     private String stringToEdit = String.Empty;
-
     private String scString = String.Empty;
-
     private String mapIDString = String.Empty;
-
-    internal class EMain
-    {
-        private Boolean gNoEvents;
-        private EventEngine ee;
-        private ETb eTb;
-    }
 }

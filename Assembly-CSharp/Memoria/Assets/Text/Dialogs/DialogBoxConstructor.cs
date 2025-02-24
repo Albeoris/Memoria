@@ -1,6 +1,5 @@
 using Memoria.Data;
 using Memoria.Prime;
-using Memoria.Prime.Exceptions;
 using Memoria.Prime.Text;
 using System;
 using System.Collections.Generic;
@@ -22,7 +21,6 @@ namespace Memoria.Assets
         private readonly StringBuilder _sb;
         private readonly Boolean _isJapanese;
         private readonly FF9StateGlobal _gameState;
-        private readonly ETb _textEngine;
         private String _text;
         private Char[] _chars;
         private Int32 _choiseIndex;
@@ -32,15 +30,10 @@ namespace Memoria.Assets
             _dlg = dlg;
             _text = text;
             _chars = text.ToCharArray();
-
             _sb = new StringBuilder(_chars.Length);
             _sb.Append(NGUIText.FF9WhiteColor); // Clear color
-
             _isJapanese = FF9StateSystem.Settings.CurrentLanguage == "Japanese";
-
             _gameState = FF9StateSystem.Common.FF9;
-            _textEngine = PersistenSingleton<EventEngine>.Instance?.eTb;
-
             _dlg.SignalNumber = ETb.gMesSignal;
         }
 
@@ -254,33 +247,33 @@ namespace Memoria.Assets
         {
             if (_chars[index + 5] == ']')
             {
-                String a = new String(_chars, index, 6);
-                if (a == "[" + NGUIText.NoAnimation + "]")
+                String textTagShort = new String(_chars, index + 1, 4);
+                if (textTagShort == NGUIText.NoAnimation)
                 {
                     _dlg.DialogAnimate.ShowWithoutAnimation = true;
                     index += 5;
                     return;
                 }
-                if (a == "[" + NGUIText.NoFocus + "]")
+                if (textTagShort == NGUIText.NoFocus)
                 {
                     _dlg.FlagButtonInh = true;
                     _dlg.FlagResetChoice = false;
                     index += 5;
                     return;
                 }
-                if (a == "[" + NGUIText.FlashInh + "]")
+                if (textTagShort == NGUIText.FlashInh)
                 {
                     _dlg.TypeEffect = true;
                     index += 5;
                     return;
                 }
-                if (a == "[" + NGUIText.EndSentence + "]")
+                if (textTagShort == NGUIText.EndSentence)
                 {
                     _dlg.EndMode = -1;
                     index += 5;
                     return;
                 }
-                if (a == "[" + NGUIText.NoTurboDialog + "]")
+                if (textTagShort == NGUIText.NoTurboDialog)
                 {
                     UIKeyTrigger.preventTurboKey = true;  // Disable turbo dialog manually. (for Trance Seek purpose)
                     index += 5;
@@ -288,19 +281,16 @@ namespace Memoria.Assets
                 }
             }
 
-            Int32 newIndex = index;
-            String text3 = new String(_chars, index, 5);
-            if (text3 == "[" + NGUIText.StartSentense)
+            Int32 nextIndex = index;
+            String textTag = new String(_chars, index + 1, 4);
+            if (textTag == NGUIText.StartSentense)
             {
-                Int32[] allParametersFromTag = GetAllParametersFromTag(_chars, index, ref newIndex);
-                OnStartSentense(allParametersFromTag);
+                OnStartSentense(GetAllParametersFromTag(_chars, index, ref nextIndex));
             }
-            else if (text3 == "[" + NGUIText.DialogTailPositon)
+            else if (textTag == NGUIText.DialogTailPositon)
             {
-                newIndex = Array.IndexOf(_chars, ']', index + 4);
-                String text4 = new String(_chars, index + 6, newIndex - index - 6);
-                String text5 = text4;
-                switch (text5)
+                nextIndex = Array.IndexOf(_chars, ']', index + 4);
+                switch (new String(_chars, index + 6, nextIndex - index - 6))
                 {
                     case "LOR":
                         _dlg.Tail = Dialog.TailPosition.LowerRight;
@@ -337,125 +327,110 @@ namespace Memoria.Assets
                         break;
                 }
             }
-            else if (text3 == "[" + NGUIText.WidthInfo)
+            else if (textTag == NGUIText.WidthInfo)
             {
-                Int32[] allParametersFromTag2 = GetAllParametersFromTag(_chars, index, ref newIndex);
-                OnWidthsTag(allParametersFromTag2);
+                OnWidthsTag(GetAllParametersFromTag(_chars, index, ref nextIndex));
             }
-            else if (text3 == "[" + NGUIText.PreChoose)
+            else if (textTag == NGUIText.PreChoose)
             {
-                Int32[] allParametersFromTag3 = GetAllParametersFromTag(_chars, index, ref newIndex);
-                OnPreChoose(allParametersFromTag3);
+                OnPreChoose(GetAllParametersFromTag(_chars, index, ref nextIndex));
             }
-            else if (text3 == "[" + NGUIText.PreChooseMask)
+            else if (textTag == NGUIText.PreChooseMask)
             {
-                Int32[] allParametersFromTag4 = GetAllParametersFromTag(_chars, index, ref newIndex);
-                OnPreChooseMask(allParametersFromTag4);
+                OnPreChooseMask(GetAllParametersFromTag(_chars, index, ref nextIndex));
             }
-            else if (text3 == "[" + NGUIText.AnimationTime)
+            else if (textTag == NGUIText.AnimationTime)
             {
-                Int32 oneParameterFromTag = NGUIText.GetOneParameterFromTag(_chars, index, ref newIndex);
-                OnTime(oneParameterFromTag);
+                OnTime(NGUIText.GetOneParameterFromTag(_chars, index, ref nextIndex));
             }
-            else if (text3 == "[" + NGUIText.TextOffset)
+            else if (textTag == NGUIText.TextOffset)
             {
-                Int32[] allParametersFromTag5 = GetAllParametersFromTag(_chars, index, ref newIndex);
+                Int32[] tagParameters = GetAllParametersFromTag(_chars, index, ref nextIndex);
                 if (_dlg.SkipThisChoice(_choiseIndex))
                 {
-                    newIndex = _text.IndexOf('[' + NGUIText.TextOffset, newIndex, StringComparison.Ordinal);
-                    if (newIndex >= 0)
-                    {
-                        newIndex--;
-                    }
+                    nextIndex = _text.IndexOf('[' + NGUIText.TextOffset, nextIndex, StringComparison.Ordinal);
+                    if (nextIndex >= 0)
+                        nextIndex--;
                 }
-                else if (allParametersFromTag5[0] == 18 && allParametersFromTag5[1] == 0)
+                else if (tagParameters[0] == 18 && tagParameters[1] == 0)
                 {
                     _sb.Append("    ");
                 }
                 else
                 {
-                    _sb.Append(text3);
-                    _sb.Append('=');
-                    _sb.Append(allParametersFromTag5[0]);
-                    _sb.Append(',');
-                    _sb.Append(allParametersFromTag5[1]);
-                    _sb.Append(']');
+                    _sb.Append($"[{textTag}={tagParameters[0]},{tagParameters[1]}]");
                 }
                 _choiseIndex++;
             }
             else if (
-                text3 == "[" + NGUIText.CustomButtonIcon ||
-                text3 == "[" + NGUIText.ButtonIcon ||
-                text3 == "[" + NGUIText.JoyStickButtonIcon ||
-                text3 == "[" + NGUIText.KeyboardButtonIcon)
+                textTag == NGUIText.CustomButtonIcon ||
+                textTag == NGUIText.ButtonIcon ||
+                textTag == NGUIText.JoyStickButtonIcon ||
+                textTag == NGUIText.KeyboardButtonIcon)
             {
                 UIKeyTrigger.preventTurboKey = true;  // Disable turbo dialog when a special box appear (Gysahl Greens shop from Chocobo Forest, Eiko when she's cooking, ...)
-                newIndex = Array.IndexOf(_chars, ']', index + 4);
-                String text6 = new String(_chars, index + 6, newIndex - index - 6);
+                nextIndex = Array.IndexOf(_chars, ']', index + 4);
+                String iconName = new String(_chars, index + 6, nextIndex - index - 6);
                 if (!FF9StateSystem.MobilePlatform ||
-                    text3 == "[" + NGUIText.JoyStickButtonIcon ||
-                    text3 == "[" + NGUIText.KeyboardButtonIcon ||
+                    textTag == NGUIText.JoyStickButtonIcon ||
+                    textTag == NGUIText.KeyboardButtonIcon ||
                     NGUIText.ForceShowButton)
                 {
-                    _sb.Append(text3);
+                    _sb.Append('[');
+                    _sb.Append(textTag);
                     _sb.Append('=');
-                    _sb.Append(text6);
+                    _sb.Append(iconName);
                     _sb.Append("] ");
                 }
             }
-            else if (text3 == "[" + NGUIText.IconVar)
+            else if (textTag == NGUIText.IconVar)
             {
-                Int32 oneParameterFromTag2 = NGUIText.GetOneParameterFromTag(_chars, index, ref newIndex);
-                OnIcon(oneParameterFromTag2);
+                OnIcon(NGUIText.GetOneParameterFromTag(_chars, index, ref nextIndex));
             }
-            else if (text3 == "[" + NGUIText.NewIcon)
+            else if (textTag == NGUIText.NewIcon)
             {
-                Int32 oneParameterFromTag3 = NGUIText.GetOneParameterFromTag(_chars, index, ref newIndex);
-                KeepIconEx(oneParameterFromTag3);
+                KeepIconEx(NGUIText.GetOneParameterFromTag(_chars, index, ref nextIndex));
             }
-            else if (text3 == "[" + NGUIText.MobileIcon)
+            else if (textTag == NGUIText.MobileIcon)
             {
-                Int32 oneParameterFromTag4 = NGUIText.GetOneParameterFromTag(_chars, index, ref newIndex);
-                KeepMobileIcon(_sb, oneParameterFromTag4);
+                KeepMobileIcon(_sb, NGUIText.GetOneParameterFromTag(_chars, index, ref nextIndex));
             }
-            else if (text3 == "[" + NGUIText.DialogOffsetPositon)
+            else if (textTag == NGUIText.DialogOffsetPositon)
             {
-                Int32[] allParametersFromTag6 = GetAllParametersFromTag(_chars, index, ref newIndex);
-                OnDialogOffsetPositon(allParametersFromTag6);
+                OnDialogOffsetPositon(GetAllParametersFromTag(_chars, index, ref nextIndex));
             }
-            else if (NGUIText.nameKeywordList.Contains(text3.Remove(0, 1)))
+            else if (NGUIText.nameKeywordList.Contains(textTag))
             {
-                String a2 = text3.Remove(0, 1);
-                newIndex = Array.IndexOf(_chars, ']', index + 4);
-                if (a2 == NGUIText.Zidane)
+                nextIndex = Array.IndexOf(_chars, ']', index + 4);
+                if (textTag == NGUIText.Zidane)
                     OnCharacterName(CharacterId.Zidane);
-                else if (a2 == NGUIText.Vivi)
+                else if (textTag == NGUIText.Vivi)
                     OnCharacterName(CharacterId.Vivi);
-                else if (a2 == NGUIText.Dagger)
+                else if (textTag == NGUIText.Dagger)
                     OnCharacterName(CharacterId.Garnet);
-                else if (a2 == NGUIText.Steiner)
+                else if (textTag == NGUIText.Steiner)
                     OnCharacterName(CharacterId.Steiner);
-                else if (a2 == NGUIText.Freya)
+                else if (textTag == NGUIText.Freya)
                     OnCharacterName(CharacterId.Freya);
-                else if (a2 == NGUIText.Quina)
+                else if (textTag == NGUIText.Quina)
                     OnCharacterName(CharacterId.Quina);
-                else if (a2 == NGUIText.Eiko)
+                else if (textTag == NGUIText.Eiko)
                     OnCharacterName(CharacterId.Eiko);
-                else if (a2 == NGUIText.Amarant)
+                else if (textTag == NGUIText.Amarant)
                     OnCharacterName(CharacterId.Amarant);
-                else if (a2 == NGUIText.Party1)
+                else if (textTag == NGUIText.Party1)
                     OnPartyMemberName(0);
-                else if (a2 == NGUIText.Party2)
+                else if (textTag == NGUIText.Party2)
                     OnPartyMemberName(1);
-                else if (a2 == NGUIText.Party3)
+                else if (textTag == NGUIText.Party3)
                     OnPartyMemberName(2);
-                else if (a2 == NGUIText.Party4)
+                else if (textTag == NGUIText.Party4)
                     OnPartyMemberName(3);
                 else
                 {
                     foreach (KeyValuePair<String, CharacterId> kv in NGUIText.nameCustomKeywords)
                     {
-                        if (a2 == kv.Key)
+                        if (textTag == kv.Key)
                         {
                             OnCharacterName(kv.Value);
                             break;
@@ -463,60 +438,51 @@ namespace Memoria.Assets
                     }
                 }
             }
-            else if (text3 == "[" + NGUIText.NumberVar)
+            else if (textTag == NGUIText.NumberVar)
             {
-                Int32 num10 = 0;
-                Int32 oneParameterFromTag5 = NGUIText.GetOneParameterFromTag(_chars, index, ref num10);
-                OnVariable(oneParameterFromTag5);
+                Int32 bracketEnd = 0;
+                OnVariable(NGUIText.GetOneParameterFromTag(_chars, index, ref bracketEnd));
             }
-            else if (text3 == "[" + NGUIText.ItemNameVar)
+            else if (textTag == NGUIText.ItemNameVar)
             {
-                Int32 oneParameterFromTag6 = NGUIText.GetOneParameterFromTag(_chars, index, ref newIndex);
-                OnItemName(oneParameterFromTag6);
+                OnItemName(NGUIText.GetOneParameterFromTag(_chars, index, ref nextIndex));
             }
-            else if (text3 == "[" + NGUIText.Signal)
+            else if (textTag == NGUIText.Signal)
             {
-                Int32 num11 = Array.IndexOf(_chars, ']', index + 4);
-                String value2 = new String(_chars, index + 6, num11 - index - 6);
-                Int32 signalNumber = Convert.ToInt32(value2);
-                OnSignal(signalNumber);
+                Int32 bracketEnd = Array.IndexOf(_chars, ']', index + 4);
+                String numStr = new String(_chars, index + 6, bracketEnd - index - 6);
+                if (Int32.TryParse(numStr, out Int32 signalNumber))
+                    OnSignal(signalNumber);
             }
-            else if (text3 == "[" + NGUIText.IncreaseSignal)
+            else if (textTag == NGUIText.IncreaseSignal)
             {
                 OnIncreaseSignal();
             }
-            else if (text3 == "[" + NGUIText.DialogAbsPosition)
+            else if (textTag == NGUIText.DialogAbsPosition)
             {
-                Single[] allParameters = NGUIText.GetAllParameters(_chars, index, ref newIndex);
-                _dlg.Position = new Vector2(allParameters[0], allParameters[1]);
+                Single[] tagParameters = NGUIText.GetAllParameters(_chars, index, ref nextIndex);
+                _dlg.Position = new Vector2(tagParameters[0], tagParameters[1]);
             }
-            else if (text3 == "[" + NGUIText.TextVar)
+            else if (textTag == NGUIText.TextVar)
             {
-                Int32[] allParametersFromTag7 = GetAllParametersFromTag(_chars, index, ref newIndex);
-                OnTextVariable(allParametersFromTag7);
+                OnTextVariable(GetAllParametersFromTag(_chars, index, ref nextIndex));
             }
-            else if (text3 == "[" + NGUIText.Choose)
+            else if (textTag == NGUIText.Choose)
             {
                 UIKeyTrigger.preventTurboKey = true; // Disable turbo dialog when a choice appearc
                 Int32 startIndex = Array.IndexOf(_chars, ']', index + 4);
                 OnChoice(startIndex);
             }
-            else if (text3 == "[" + NGUIText.NewPage)
+            else if (textTag == NGUIText.NewPage)
             {
                 OnNewPage();
             }
-            if (newIndex == index)
-            {
+            if (nextIndex == index)
                 _sb.Append(_chars[index]);
-            }
-            else if (newIndex != -1)
-            {
-                index = newIndex;
-            }
+            else if (nextIndex != -1)
+                index = nextIndex;
             else
-            {
                 index = length;
-            }
         }
 
         private void OnNewPage()
@@ -529,20 +495,15 @@ namespace Memoria.Assets
         {
             if (_isJapanese)
             {
-                Int32[] array2 = { -1 };
-                if (_dlg.DisableIndexes != null)
-                {
-                    array2 = (_dlg.DisableIndexes.Count <= 0) ? array2 : _dlg.DisableIndexes.ToArray();
-                }
-
-                _text = ProcessJapaneseChoose(_text, startIndex, array2);
+                Int32[] disabled = _dlg.DisableIndexes != null && _dlg.DisableIndexes.Count > 0 ? _dlg.DisableIndexes.ToArray() : [-1];
+                _text = ProcessJapaneseChoose(_text, startIndex, disabled);
                 _chars = _text.ToArray();
             }
         }
 
-        private void OnTextVariable(Int32[] allParametersFromTag7)
+        private void OnTextVariable(Int32[] tagParameters)
         {
-            _sb.Append(_textEngine.GetStringFromTable(Convert.ToUInt32(allParametersFromTag7[0]), Convert.ToUInt32(allParametersFromTag7[1])));
+            _sb.Append(ETb.GetStringFromTable(Convert.ToUInt32(tagParameters[0]), Convert.ToUInt32(tagParameters[1])));
         }
 
         private void OnIncreaseSignal()
@@ -557,20 +518,18 @@ namespace Memoria.Assets
             _dlg.SignalMode = 1;
         }
 
-        private void OnItemName(Int32 oneParameterFromTag6)
+        private void OnItemName(Int32 tagParameter)
         {
             _sb.Append("[C8B040][HSHD]");
-            _sb.Append(ETb.GetItemName(_textEngine.gMesValue[oneParameterFromTag6]));
+            _sb.Append(ETb.GetItemName(ETb.gMesValue[tagParameter]));
             _sb.Append("[C8C8C8][HSHD]");
         }
 
-        private void OnVariable(Int32 oneParameterFromTag5)
+        private void OnVariable(Int32 tagParameter)
         {
-            Int32 value = _textEngine.gMesValue[oneParameterFromTag5];
-            if (!_dlg.MessageValues.ContainsKey(oneParameterFromTag5))
-            {
-                _dlg.MessageValues.Add(oneParameterFromTag5, value);
-            }
+            Int32 value = ETb.gMesValue[tagParameter];
+            if (!_dlg.MessageValues.ContainsKey(tagParameter))
+                _dlg.MessageValues.Add(tagParameter, value);
             _dlg.MessageNeedUpdate = true;
         }
 
@@ -578,15 +537,12 @@ namespace Memoria.Assets
         {
             Single width = args[0];
             Int32 lineNumber = args[1];
-
             if (width > 0f)
                 width += 3f;
-
             if (width > _dlg.CaptionWidth)
                 _dlg.Width = width;
             else
                 _dlg.Width = _dlg.CaptionWidth;
-
             _dlg.LineNumber = lineNumber;
         }
 
@@ -602,9 +558,9 @@ namespace Memoria.Assets
             _sb.Append(FF9StateSystem.Common.FF9.GetPlayer(charId).Name);
         }
 
-        private void OnDialogOffsetPositon(Int32[] allParametersFromTag6)
+        private void OnDialogOffsetPositon(Int32[] tagParameters)
         {
-            _dlg.OffsetPosition = new Vector3(allParametersFromTag6[0], allParametersFromTag6[1], allParametersFromTag6[2]);
+            _dlg.OffsetPosition = new Vector3(tagParameters[0], tagParameters[1], tagParameters[2]);
         }
 
         internal static Boolean KeepKeyIcon(StringBuilder sb, FFIXTextTagCode tagCode)
@@ -717,22 +673,22 @@ namespace Memoria.Assets
             return true;
         }
 
-        internal static void KeepMobileIcon(StringBuilder sb, Int32 oneParameterFromTag4)
+        internal static void KeepMobileIcon(StringBuilder sb, Int32 tagParameter)
         {
             if (FF9StateSystem.MobilePlatform && !NGUIText.ForceShowButton)
             {
                 sb.Append("[MOBI=");
-                sb.Append(oneParameterFromTag4);
+                sb.Append(tagParameter);
                 sb.Append("] ");
             }
         }
 
-        private void KeepIconEx(Int32 oneParameterFromTag3)
+        private void KeepIconEx(Int32 tagParameter)
         {
-            if ((_textEngine.gMesValue[0] & 1 << oneParameterFromTag3) > 0)
+            if ((ETb.gMesValue[0] & 1 << tagParameter) > 0)
             {
                 _sb.Append("[PNEW=");
-                _sb.Append(oneParameterFromTag3);
+                _sb.Append(tagParameter);
                 _sb.Append("] ");
             }
         }
@@ -794,14 +750,14 @@ namespace Memoria.Assets
             }
         }
 
-        private void OnTime(Int32 oneParameterFromTag)
+        private void OnTime(Int32 tagParameter)
         {
-            if (oneParameterFromTag > 0)
+            if (tagParameter > 0)
             {
-                _dlg.EndMode = oneParameterFromTag;
+                _dlg.EndMode = tagParameter;
                 _dlg.FlagButtonInh = true;
             }
-            else if (oneParameterFromTag == -1)
+            else if (tagParameter == -1)
             {
                 _dlg.FlagButtonInh = true;
             }
@@ -823,90 +779,73 @@ namespace Memoria.Assets
             {
                 _sb.Append("    ");
             }
-
             _choiseIndex++;
         }
 
-        private void OnPreChooseMask(Int32[] allParametersFromTag4)
+        private void OnPreChooseMask(Int32[] tagParameters)
         {
             ETb.sChooseMask = ETb.sChooseMaskInit;
-            _dlg.ChoiceNumber = Convert.ToInt32(allParametersFromTag4[0]);
-            _dlg.CancelChoice = Convert.ToInt32(allParametersFromTag4[1]);
+            _dlg.ChoiceNumber = Convert.ToInt32(tagParameters[0]);
+            _dlg.CancelChoice = Convert.ToInt32(tagParameters[1]);
             _dlg.DefaultChoice = (ETb.sChoose < 0) ? 0 : ETb.sChoose;
             _dlg.LineNumber = ((_dlg.LineNumber >= (Single)_dlg.ChoiceNumber) ? _dlg.LineNumber : (_dlg.LineNumber + _dlg.ChoiceNumber));
             _dlg.ChooseMask = ETb.sChooseMask;
             if (_dlg.DisableIndexes.Count > 0)
             {
                 if (_dlg.DisableIndexes.Contains(_dlg.DefaultChoice) || !_dlg.ActiveIndexes.Contains(_dlg.DefaultChoice))
-                {
                     _dlg.DefaultChoice = _dlg.ActiveIndexes.Min();
-                }
                 if (_dlg.DisableIndexes.Contains(_dlg.CancelChoice) || !_dlg.ActiveIndexes.Contains(_dlg.CancelChoice))
-                {
                     _dlg.CancelChoice = _dlg.ActiveIndexes.Max();
-                }
             }
             else
             {
-                _dlg.DefaultChoice = (_dlg.DefaultChoice < _dlg.ChoiceNumber) ? _dlg.DefaultChoice : (_dlg.ChoiceNumber - 1);
+                _dlg.DefaultChoice = _dlg.DefaultChoice < _dlg.ChoiceNumber ? _dlg.DefaultChoice : _dlg.ChoiceNumber - 1;
             }
             _choiseIndex = 0;
         }
 
-        private void OnPreChoose(Int32[] allParametersFromTag3)
+        private void OnPreChoose(Int32[] tagParameters)
         {
             ETb.sChooseMask = -1;
-            _dlg.ChoiceNumber = Convert.ToInt32(allParametersFromTag3[0]);
-            _dlg.DefaultChoice = (ETb.sChoose < 0) ? 0 : ETb.sChoose;
-            _dlg.DefaultChoice = (_dlg.DefaultChoice < _dlg.ChoiceNumber) ? _dlg.DefaultChoice : (_dlg.ChoiceNumber - 1);
-            Int32 num9 = Convert.ToInt32(allParametersFromTag3[1]);
-            _dlg.CancelChoice = (num9 <= -1) ? (_dlg.ChoiceNumber - 1) : num9;
+            _dlg.ChoiceNumber = tagParameters[0];
+            _dlg.DefaultChoice = ETb.sChoose < 0 ? 0 : ETb.sChoose;
+            _dlg.DefaultChoice = _dlg.DefaultChoice < _dlg.ChoiceNumber ? _dlg.DefaultChoice : _dlg.ChoiceNumber - 1;
+            _dlg.CancelChoice = tagParameters[1] < 0 ? _dlg.ChoiceNumber - 1 : tagParameters[1];
         }
 
-        private void OnWidthsTag(Int32[] allParametersFromTag2)
+        private void OnWidthsTag(Int32[] tagParameters)
         {
-            Int32 num5 = 0;
-            while (num5 + 2 < allParametersFromTag2.Length)
+            Int32 paramIndex = 0;
+            while (paramIndex + 2 < tagParameters.Length)
             {
-                Int32 num6 = 0;
-                Int32 num7 = allParametersFromTag2[num5];
-                Int32 num8 = allParametersFromTag2[num5 + 1];
-                if (_dlg.DisableIndexes.Contains(num7 - 1))
+                Int32 subParamIndex = 0;
+                Int32 lineIndex = tagParameters[paramIndex];
+                Int32 lineWidth = tagParameters[paramIndex + 1];
+                if (_dlg.DisableIndexes.Contains(lineIndex - 1))
+                    lineWidth = 0;
+                List<Int32> subParams = new List<Int32>();
+                Boolean hasSubParam = false;
+                while (tagParameters[paramIndex + 2 + subParamIndex] != -1)
                 {
-                    num8 = 0;
+                    subParams.Add(tagParameters[paramIndex + 2 + subParamIndex]);
+                    hasSubParam = true;
+                    subParamIndex++;
                 }
-                List<Int32> list = new List<Int32>();
-                Boolean flag2 = false;
-                while (allParametersFromTag2[num5 + 2 + num6] != -1)
-                {
-                    list.Add(allParametersFromTag2[num5 + 2 + num6]);
-                    flag2 = true;
-                    num6++;
-                }
-                if (num6 == 0)
-                {
-                    num6 = 1;
-                }
-                num5 += 2 + num6;
-                if (flag2)
-                {
-                    num5++;
-                }
-
-                num8 += (Int32)NGUIText.GetDialogWidthFromSpecialOpcode(list, _textEngine, _dlg.PhraseLabel);
-                if (_dlg.OriginalWidth < num8)
-                {
-                    _dlg.Width = num8;
-                }
+                if (subParamIndex == 0)
+                    subParamIndex = 1;
+                paramIndex += 2 + subParamIndex;
+                if (hasSubParam)
+                    paramIndex++;
+                lineWidth += (Int32)NGUIText.GetDialogWidthFromSpecialOpcode(subParams, _dlg.PhraseLabel);
+                if (_dlg.OriginalWidth < lineWidth)
+                    _dlg.Width = lineWidth;
             }
         }
 
         public static Int32[] GetAllParametersFromTag(Char[] fullText, Int32 currentIndex, ref Int32 closingBracket)
         {
             closingBracket = Array.IndexOf(fullText, ']', currentIndex + 4);
-            String text = new String(fullText, currentIndex + 6, closingBracket - currentIndex - 6);
-            String[] array = text.Split(',');
-            return Array.ConvertAll(array, Int32.Parse);
+            return Array.ConvertAll(new String(fullText, currentIndex + 6, closingBracket - currentIndex - 6).Split(','), Int32.Parse);
         }
 
         // Not supported for Memoria Tags
@@ -932,9 +871,9 @@ namespace Memoria.Assets
 
                 Boolean replacePadding = true;
 
-                for (Int32 k = 0; k < disableChoice.Length; k++)
+                for (Int32 j = 0; j < disableChoice.Length; j++)
                 {
-                    if (i == disableChoice[k])
+                    if (i == disableChoice[j])
                     {
                         replacePadding = false;
                         break;

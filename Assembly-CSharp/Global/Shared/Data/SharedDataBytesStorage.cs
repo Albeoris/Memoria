@@ -6,9 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using UnityEngine;
-using Object = System.Object;
 
 public class SharedDataBytesStorage : ISharedDataStorage
 {
@@ -20,33 +18,29 @@ public class SharedDataBytesStorage : ISharedDataStorage
     private void Awake()
     {
         if (Application.isEditor)
-        {
             this.SetEditorPath();
-        }
         else
-        {
             SetPCPath();
-        }
         ISharedDataLog.Log("MetaData.FilePath: " + MetaData.FilePath);
     }
 
-    private static void SetPCPath()
+    public static void SetPCPath()
     {
         if (!String.IsNullOrEmpty(MetaData.FilePath))
             return;
 
         String fileName;
-        String str2 = "/Steam/EncryptedSavedData";
+        String saveFolder = "/Steam/EncryptedSavedData";
 
         if (FF9StateSystem.PCEStorePlatform)
         {
-            String text2 = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            text2 = text2.Replace('\\', '/');
-            MetaData.DirPath = text2 + "/My Games/FINAL FANTASY IX/EncryptedSaveData";
+            String myDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            myDocuments = myDocuments.Replace('\\', '/');
+            MetaData.DirPath = myDocuments + "/My Games/FINAL FANTASY IX/EncryptedSaveData";
         }
         else
         {
-            MetaData.DirPath = AssetManagerUtil.GetPersistentDataPath() + str2;
+            MetaData.DirPath = AssetManagerUtil.GetPersistentDataPath() + saveFolder;
         }
 
         Directory.CreateDirectory(MetaData.DirPath);
@@ -58,7 +52,6 @@ public class SharedDataBytesStorage : ISharedDataStorage
                 fileName = "SavedData_jp.dat";
             else
                 fileName = "SavedData_ww.dat";
-
             Log.Message($"There is no SavedData_??.dat files. Choose by a language: {fileName}");
         }
         else if (saveDataFiles.Length == 1)
@@ -72,19 +65,17 @@ public class SharedDataBytesStorage : ISharedDataStorage
             foreach (String file in saveDataFiles)
             {
                 DateTime time = File.GetLastWriteTimeUtc(file);
-
                 if (time > lastWriteTime)
                 {
                     lastWritePath = file;
                     lastWriteTime = time;
                 }
             }
-
             fileName = Path.GetFileName(lastWritePath);
             Log.Message($"There is many SavedData_??.dat files. Choose by a last write time: {fileName}");
         }
 
-        MetaData.FilePath = Application.persistentDataPath + str2 + "/" + fileName;
+        MetaData.FilePath = Application.persistentDataPath + saveFolder + "/" + fileName;
     }
 
     private void SetOtherPlatformPath()
@@ -101,59 +92,58 @@ public class SharedDataBytesStorage : ISharedDataStorage
 
     private JsonParser LazyCreateJsonParser()
     {
-        if (this.jsonParserInstance == (UnityEngine.Object)null)
+        if (this.jsonParserInstance == null)
         {
-            GameObject gameObject = new GameObject("JsonParser");
-            this.jsonParserInstance = gameObject.AddComponent<JsonParser>();
+            GameObject jsonGo = new GameObject("JsonParser");
+            this.jsonParserInstance = jsonGo.AddComponent<JsonParser>();
             this.jsonParserInstance.transform.parent = base.transform;
         }
         return this.jsonParserInstance;
     }
 
-    private JSONClass ParseDataListToJsonTree(List<JSONData> dataList, JSONClass rootSchemaNode)
+    private JSONClass ParseDataListToJsonTree(List<JSONData> jsonList, JSONClass rootSchemaNode)
     {
         Stack<SharedDataBytesStorage.JSONNodeWithIndex> stack = new Stack<SharedDataBytesStorage.JSONNodeWithIndex>();
         stack.Push(new SharedDataBytesStorage.JSONNodeWithIndex(rootSchemaNode));
-        ISharedDataLog.Log("dataList.Count: " + dataList.Count);
-        Int32 num = 0;
+        ISharedDataLog.Log("dataList.Count: " + jsonList.Count);
+        Int32 listIndex = 0;
         while (stack.Count > 0)
         {
-            SharedDataBytesStorage.JSONNodeWithIndex jsonnodeWithIndex = stack.Peek();
-            if (jsonnodeWithIndex.Node is JSONClass)
+            SharedDataBytesStorage.JSONNodeWithIndex nextNode = stack.Peek();
+            if (nextNode.Node is JSONClass)
             {
-                List<String> list = ((JSONClass)jsonnodeWithIndex.Node).Dict.Keys.ToList<String>();
-                list.Sort();
-                if (jsonnodeWithIndex.Index < jsonnodeWithIndex.Node.Count)
+                List<String> nodeFieldList = ((JSONClass)nextNode.Node).Dict.Keys.ToList();
+                nodeFieldList.Sort();
+                if (nextNode.Index < nextNode.Node.Count)
                 {
-                    String aKey = list[jsonnodeWithIndex.Index];
-                    JSONNode node = jsonnodeWithIndex.Node[aKey];
+                    String aKey = nodeFieldList[nextNode.Index];
+                    JSONNode node = nextNode.Node[aKey];
                     stack.Push(new SharedDataBytesStorage.JSONNodeWithIndex(node));
-                    jsonnodeWithIndex.Index++;
+                    nextNode.Index++;
                 }
                 else
                 {
                     stack.Pop();
                 }
             }
-            else if (jsonnodeWithIndex.Node is JSONArray)
+            else if (nextNode.Node is JSONArray)
             {
-                if (jsonnodeWithIndex.Index < jsonnodeWithIndex.Node.Count)
+                if (nextNode.Index < nextNode.Node.Count)
                 {
-                    JSONNode node2 = jsonnodeWithIndex.Node[jsonnodeWithIndex.Index];
-                    stack.Push(new SharedDataBytesStorage.JSONNodeWithIndex(node2));
-                    jsonnodeWithIndex.Index++;
+                    JSONNode node = nextNode.Node[nextNode.Index];
+                    stack.Push(new SharedDataBytesStorage.JSONNodeWithIndex(node));
+                    nextNode.Index++;
                 }
                 else
                 {
                     stack.Pop();
                 }
             }
-            else if (jsonnodeWithIndex.Node is JSONData)
+            else if (nextNode.Node is JSONData)
             {
-                JSONData d = dataList[num];
-                ISharedDataLog.Log("data: " + d);
-                jsonnodeWithIndex.Node.Value = d;
-                num++;
+                ISharedDataLog.Log("data: " + jsonList[listIndex]);
+                nextNode.Node.Value = jsonList[listIndex];
+                listIndex++;
                 stack.Pop();
             }
         }
@@ -163,67 +153,59 @@ public class SharedDataBytesStorage : ISharedDataStorage
     private List<JSONData> ParseJsonTreeToDataList(JSONClass rootNode)
     {
         this.tmpParseCount = 0;
-        List<JSONData> list = new List<JSONData>();
+        List<JSONData> jsonList = new List<JSONData>();
         Stack<SharedDataBytesStorage.JSONNodeWithIndex> stack = new Stack<SharedDataBytesStorage.JSONNodeWithIndex>();
         stack.Push(new SharedDataBytesStorage.JSONNodeWithIndex(rootNode));
         while (stack.Count > 0)
         {
-            SharedDataBytesStorage.JSONNodeWithIndex jsonnodeWithIndex = stack.Peek();
-            if (jsonnodeWithIndex.Node is JSONClass)
+            SharedDataBytesStorage.JSONNodeWithIndex nextNode = stack.Peek();
+            if (nextNode.Node is JSONClass)
             {
-                List<String> list2 = ((JSONClass)jsonnodeWithIndex.Node).Dict.Keys.ToList<String>();
-                list2.Sort();
-                if (jsonnodeWithIndex.Index < jsonnodeWithIndex.Node.Count)
+                List<String> nodeFieldList = ((JSONClass)nextNode.Node).Dict.Keys.ToList();
+                nodeFieldList.Sort();
+                if (nextNode.Index < nextNode.Node.Count)
                 {
-                    String aKey = list2[jsonnodeWithIndex.Index];
-                    JSONNode jsonnode = jsonnodeWithIndex.Node[aKey];
+                    String aKey = nodeFieldList[nextNode.Index];
+                    JSONNode jsonnode = nextNode.Node[aKey];
                     if (jsonnode == null)
-                    {
                         ISharedDataLog.LogError("child is null");
-                    }
                     else
-                    {
                         stack.Push(new SharedDataBytesStorage.JSONNodeWithIndex(jsonnode));
-                    }
-                    jsonnodeWithIndex.Index++;
+                    nextNode.Index++;
                 }
                 else
                 {
                     stack.Pop();
                 }
             }
-            else if (jsonnodeWithIndex.Node is JSONArray)
+            else if (nextNode.Node is JSONArray)
             {
-                if (jsonnodeWithIndex.Index < jsonnodeWithIndex.Node.Count)
+                if (nextNode.Index < nextNode.Node.Count)
                 {
-                    JSONNode jsonnode2 = jsonnodeWithIndex.Node[jsonnodeWithIndex.Index];
-                    if (jsonnode2 == null)
-                    {
+                    JSONNode jsonnode = nextNode.Node[nextNode.Index];
+                    if (jsonnode == null)
                         ISharedDataLog.LogError("child is null");
-                    }
                     else
-                    {
-                        stack.Push(new SharedDataBytesStorage.JSONNodeWithIndex(jsonnode2));
-                    }
-                    jsonnodeWithIndex.Index++;
+                        stack.Push(new SharedDataBytesStorage.JSONNodeWithIndex(jsonnode));
+                    nextNode.Index++;
                 }
                 else
                 {
                     stack.Pop();
                 }
+            }
+            else if (nextNode.Node is JSONData)
+            {
+                jsonList.Add((JSONData)nextNode.Node);
+                stack.Pop();
             }
             else
             {
-                if (!(jsonnodeWithIndex.Node is JSONData))
-                {
-                    ISharedDataLog.LogError("Parsing failed!");
-                    return list;
-                }
-                list.Add((JSONData)jsonnodeWithIndex.Node);
-                stack.Pop();
+                ISharedDataLog.LogError("Parsing failed!");
+                return jsonList;
             }
         }
-        return list;
+        return jsonList;
     }
 
     private Boolean ValidateDataListWithSchemaDataList(List<JSONData> data, List<JSONData> schema)
@@ -240,14 +222,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
         }
         if (data.Count != schema.Count)
         {
-            ISharedDataLog.LogError(String.Concat(new Object[]
-            {
-                "data.Count(",
-                data.Count,
-                ") != schema.Count(",
-                schema.Count,
-                ")"
-            }));
+            ISharedDataLog.LogError($"data.Count({data.Count}) != schema.Count({schema.Count})");
             return false;
         }
         return true;
@@ -255,145 +230,89 @@ public class SharedDataBytesStorage : ISharedDataStorage
 
     private Int32 EstimateDataSize(List<JSONData> dataTypeList)
     {
-        Int32 num = 0;
-        foreach (JSONData d in dataTypeList)
+        Int32 dataSize = 0;
+        foreach (JSONData jsonNode in dataTypeList)
         {
-            if (String.Compare(d, SharedDataBytesStorage.TypeByte) == 0)
-            {
-                num++;
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeSByte) == 0)
-            {
-                num++;
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeInt16) == 0)
-            {
-                num += 2;
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeUInt16) == 0)
-            {
-                num += 2;
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeInt32) == 0)
-            {
-                num += 4;
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeUInt32) == 0)
-            {
-                num += 4;
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeInt64) == 0)
-            {
-                num += 8;
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeUInt64) == 0)
-            {
-                num += 8;
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeSingle) == 0)
-            {
-                num += 4;
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeDouble) == 0)
-            {
-                num += 8;
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeBoolean) == 0)
-            {
-                num++;
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeString128) == 0)
-            {
-                num += 128;
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeString4K) == 0)
-            {
-                num += 4096;
-            }
+            String typeName = jsonNode;
+            if (String.Equals(typeName, SharedDataBytesStorage.TypeByte))
+                dataSize++;
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeSByte))
+                dataSize++;
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeInt16))
+                dataSize += 2;
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeUInt16))
+                dataSize += 2;
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeInt32))
+                dataSize += 4;
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeUInt32))
+                dataSize += 4;
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeInt64))
+                dataSize += 8;
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeUInt64))
+                dataSize += 8;
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeSingle))
+                dataSize += 4;
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeDouble))
+                dataSize += 8;
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeBoolean))
+                dataSize++;
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeString128))
+                dataSize += 128;
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeString4K))
+                dataSize += 4096;
             else
-            {
-                ISharedDataLog.LogError("Data type not found, AT type estimation, with type: " + d);
-            }
+                ISharedDataLog.LogError("Data type not found, AT type estimation, with type: " + jsonNode);
         }
-        if (num > 18432)
+        if (dataSize > MetaData.DataReservedSize)
         {
             ISharedDataSerializer.LastErrno = DataSerializerErrorCode.DataCorruption;
-            ISharedDataLog.LogError(String.Concat(new Object[]
-            {
-                "Estimated saved data size(",
-                num,
-                ") larger than Save reserved size(",
-                18432,
-                ")!"
-            }));
+            ISharedDataLog.LogError($"Estimated saved data size({dataSize}) larger than Save reserved size({MetaData.DataReservedSize})!");
         }
-        return num;
+        return dataSize;
     }
 
     private void ReadDataFromStream(List<JSONNode> dataList, List<JSONData> dataTypeList, Stream stream, BinaryReader reader)
     {
         for (Int32 i = 0; i < dataTypeList.Count; i++)
         {
-            JSONData d = dataTypeList[i];
-            if (String.Compare(d, SharedDataBytesStorage.TypeByte) == 0)
-            {
+            String typeName = dataTypeList[i];
+            if (String.Equals(typeName, SharedDataBytesStorage.TypeByte))
                 dataList.Add(reader.ReadByte().ToString());
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeSByte) == 0)
-            {
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeSByte))
                 dataList.Add(reader.ReadSByte().ToString());
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeInt16) == 0)
-            {
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeInt16))
                 dataList.Add(reader.ReadInt16().ToString());
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeUInt16) == 0)
-            {
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeUInt16))
                 dataList.Add(reader.ReadUInt16().ToString());
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeInt32) == 0)
-            {
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeInt32))
                 dataList.Add(reader.ReadInt32().ToString());
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeUInt32) == 0)
-            {
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeUInt32))
                 dataList.Add(reader.ReadUInt32().ToString());
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeInt64) == 0)
-            {
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeInt64))
                 dataList.Add(reader.ReadInt64().ToString());
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeUInt64) == 0)
-            {
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeUInt64))
                 dataList.Add(reader.ReadUInt64().ToString());
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeSingle) == 0)
-            {
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeSingle))
                 dataList.Add(reader.ReadSingle().ToString());
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeDouble) == 0)
-            {
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeDouble))
                 dataList.Add(reader.ReadDouble().ToString());
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeBoolean) == 0)
-            {
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeBoolean))
                 dataList.Add(reader.ReadBoolean().ToString());
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeString128) == 0)
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeString128))
             {
-                String text = Encoding.UTF8.GetString(reader.ReadBytes(128), 0, 128);
-                text = text.Trim(new Char[1]);
-                dataList.Add(text);
+                String str = Encoding.UTF8.GetString(reader.ReadBytes(128), 0, 128);
+                str = str.Trim(new Char[1]);
+                dataList.Add(str);
             }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeString4K) == 0)
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeString4K))
             {
-                String text2 = Encoding.UTF8.GetString(reader.ReadBytes(4096), 0, 4096);
-                text2 = text2.Trim(new Char[1]);
-                dataList.Add(text2);
+                String dataStr = Encoding.UTF8.GetString(reader.ReadBytes(4096), 0, 4096);
+                dataStr = dataStr.Trim(new Char[1]);
+                dataList.Add(dataStr);
             }
             else
             {
-                ISharedDataLog.LogError("Data type not found, AT type parser, with type: " + d);
+                ISharedDataLog.LogError("Data type not found, AT type parser, with type: " + typeName);
             }
         }
     }
@@ -406,71 +325,49 @@ public class SharedDataBytesStorage : ISharedDataStorage
         writer.Write('E');
         for (Int32 i = 0; i < dataTypeList.Count; i++)
         {
-            JSONData d = dataTypeList[i];
-            JSONData jsondata = dataList[i];
-            if (String.Compare(d, SharedDataBytesStorage.TypeByte) == 0)
+            String typeName = dataTypeList[i];
+            JSONData jsonData = dataList[i];
+            if (String.Equals(typeName, SharedDataBytesStorage.TypeByte))
+                writer.Write((Byte)jsonData.AsInt);
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeSByte))
+                writer.Write((SByte)jsonData.AsInt);
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeInt16))
+                writer.Write((Int16)jsonData.AsInt);
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeUInt16))
+                writer.Write((UInt16)jsonData.AsInt);
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeInt32))
+                writer.Write(jsonData.AsInt);
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeUInt32))
+                writer.Write(jsonData.AsUInt);
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeInt64))
+                writer.Write(jsonData.AsLong);
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeUInt64))
+                writer.Write(jsonData.AsULong);
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeSingle))
+                writer.Write(jsonData.AsFloat);
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeDouble))
+                writer.Write(jsonData.AsDouble);
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeBoolean))
+                writer.Write(jsonData.AsBool);
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeString128))
             {
-                writer.Write((Byte)jsondata.AsInt);
+                Byte[] str = Encoding.UTF8.GetBytes(jsonData);
+                Int32 strLen = Encoding.UTF8.GetByteCount(jsonData);
+                Byte[] buffer = new Byte[128];
+                Buffer.BlockCopy(str, 0, buffer, 0, Math.Min(strLen, 128));
+                writer.Write(buffer, 0, 128);
             }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeSByte) == 0)
+            else if (String.Equals(typeName, SharedDataBytesStorage.TypeString4K))
             {
-                writer.Write((SByte)jsondata.AsInt);
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeInt16) == 0)
-            {
-                writer.Write((Int16)jsondata.AsInt);
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeUInt16) == 0)
-            {
-                writer.Write((UInt16)jsondata.AsInt);
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeInt32) == 0)
-            {
-                writer.Write(jsondata.AsInt);
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeUInt32) == 0)
-            {
-                writer.Write(jsondata.AsUInt);
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeInt64) == 0)
-            {
-                writer.Write(jsondata.AsLong);
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeUInt64) == 0)
-            {
-                writer.Write(jsondata.AsULong);
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeSingle) == 0)
-            {
-                writer.Write(jsondata.AsFloat);
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeDouble) == 0)
-            {
-                writer.Write(jsondata.AsDouble);
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeBoolean) == 0)
-            {
-                writer.Write(jsondata.AsBool);
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeString128) == 0)
-            {
-                Byte[] bytes = Encoding.UTF8.GetBytes(jsondata);
-                Int32 byteCount = Encoding.UTF8.GetByteCount(jsondata);
-                Byte[] array = new Byte[128];
-                Buffer.BlockCopy(bytes, 0, array, 0, (Int32)((byteCount <= 128) ? byteCount : 128));
-                writer.Write(array, 0, 128);
-            }
-            else if (String.Compare(d, SharedDataBytesStorage.TypeString4K) == 0)
-            {
-                Byte[] bytes2 = Encoding.UTF8.GetBytes(jsondata);
-                Int32 byteCount2 = Encoding.UTF8.GetByteCount(jsondata);
-                Byte[] array2 = new Byte[4096];
-                Buffer.BlockCopy(bytes2, 0, array2, 0, (Int32)((byteCount2 <= 4096) ? byteCount2 : 4096));
-                writer.Write(array2, 0, 4096);
+                Byte[] dataStr = Encoding.UTF8.GetBytes(jsonData);
+                Int32 dataStrLen = Encoding.UTF8.GetByteCount(jsonData);
+                Byte[] buffer = new Byte[4096];
+                Buffer.BlockCopy(dataStr, 0, buffer, 0, Math.Min(dataStrLen, 4096));
+                writer.Write(buffer, 0, 4096);
             }
             else
             {
-                ISharedDataLog.LogError("Data type not found, AT type parser, with type: " + d);
+                ISharedDataLog.LogError("Data type not found, AT type parser, with type: " + typeName);
             }
         }
     }
@@ -478,64 +375,62 @@ public class SharedDataBytesStorage : ISharedDataStorage
     protected void CreateFileIfDoesNotExist(SharedDataBytesStorage.MetaData metaData)
     {
         if (!Directory.Exists(MetaData.DirPath))
-        {
             Directory.CreateDirectory(MetaData.DirPath);
-        }
         if (!File.Exists(MetaData.FilePath))
         {
             using (FileStream fileStream = File.Open(MetaData.FilePath, FileMode.Create, FileAccess.Write))
             {
-                using (BinaryWriter binaryWriter = new BinaryWriter(fileStream))
+                using (BinaryWriter fileWriter = new BinaryWriter(fileStream))
                 {
-                    metaData.WriteAllFields(fileStream, binaryWriter, this.Encryption);
-                    Int32 num = 320 - (Int32)fileStream.Position;
-                    Byte[] buffer = new Byte[num];
-                    ISharedDataLog.Log("Write to: " + num);
-                    binaryWriter.Write(buffer, 0, num);
-                    Byte[] array = new Byte[965];
-                    using (MemoryStream memoryStream = new MemoryStream(array))
+                    // Write meta-data
+                    metaData.WriteAllFields(fileStream, fileWriter, this.Encryption);
+                    Int32 paddingSize = MetaData.MetaDataReservedSize - (Int32)fileStream.Position;
+                    Byte[] padding = new Byte[paddingSize];
+                    ISharedDataLog.Log("Write to: " + paddingSize);
+                    fileWriter.Write(padding, 0, paddingSize);
+                    // Write empty previews
+                    Byte[] emptySaveRaw = new Byte[965];
+                    using (MemoryStream emptySaveStream = new MemoryStream(emptySaveRaw))
                     {
-                        using (BinaryWriter binaryWriter2 = new BinaryWriter(memoryStream))
+                        using (BinaryWriter emptySaveWriter = new BinaryWriter(emptySaveStream))
                         {
-                            binaryWriter2.Write('N');
-                            binaryWriter2.Write('O');
-                            binaryWriter2.Write('N');
-                            binaryWriter2.Write('E');
+                            emptySaveWriter.Write('N');
+                            emptySaveWriter.Write('O');
+                            emptySaveWriter.Write('N');
+                            emptySaveWriter.Write('E');
                         }
                     }
-                    Byte[] array2 = this.Encryption.Encrypt(array);
-                    Int32 num2 = 1024 - (Int32)array2.Length;
-                    Byte[] array3 = new Byte[num2];
-                    for (Int32 i = 0; i < 150; i++)
+                    Byte[] encryptedEmptySave = this.Encryption.Encrypt(emptySaveRaw);
+                    paddingSize = MetaData.PreviewReservedSize - encryptedEmptySave.Length;
+                    padding = new Byte[paddingSize];
+                    for (Int32 i = 0; i < MetaData.TotalSaveCount; i++)
                     {
-                        binaryWriter.Write(array2, 0, (Int32)array2.Length);
-                        binaryWriter.Write(array3, 0, (Int32)array3.Length);
+                        fileWriter.Write(encryptedEmptySave, 0, encryptedEmptySave.Length);
+                        fileWriter.Write(padding, 0, padding.Length);
                     }
+                    // Write empty saves
                     this.CreateDataSchema();
-                    Int32 dataSize = metaData.DataSize;
-                    Byte[] array4 = new Byte[dataSize + 4];
-                    using (MemoryStream memoryStream2 = new MemoryStream(array4))
+                    Int32 saveSize = metaData.DataSize;
+                    emptySaveRaw = new Byte[saveSize + 4];
+                    using (MemoryStream emptySaveStream = new MemoryStream(emptySaveRaw))
                     {
-                        using (BinaryWriter binaryWriter3 = new BinaryWriter(memoryStream2))
+                        using (BinaryWriter emptySaveWriter = new BinaryWriter(emptySaveStream))
                         {
-                            binaryWriter3.Write('N');
-                            binaryWriter3.Write('O');
-                            binaryWriter3.Write('N');
-                            binaryWriter3.Write('E');
+                            emptySaveWriter.Write('N');
+                            emptySaveWriter.Write('O');
+                            emptySaveWriter.Write('N');
+                            emptySaveWriter.Write('E');
                         }
                     }
-                    Byte[] array5 = this.Encryption.Encrypt(array4);
-                    Int32 num3 = 18432 - (Int32)array5.Length;
-                    Byte[] array6 = new Byte[num3];
-                    Int32 num4 = 18432;
-                    buffer = new Byte[num4];
-                    binaryWriter.Write(array5, 0, (Int32)array5.Length);
-                    binaryWriter.Write(array6, 0, (Int32)array6.Length);
-                    for (Int32 j = 0; j < 150; j++)
+                    encryptedEmptySave = this.Encryption.Encrypt(emptySaveRaw);
+                    paddingSize = MetaData.SaveBlockSize - encryptedEmptySave.Length;
+                    padding = new Byte[paddingSize];
+                    fileWriter.Write(encryptedEmptySave, 0, encryptedEmptySave.Length);
+                    fileWriter.Write(padding, 0, padding.Length);
+                    for (Int32 i = 0; i < MetaData.TotalSaveCount; i++)
                     {
-                        Int32 num5 = (Int32)fileStream.Position;
-                        binaryWriter.Write(array5, 0, (Int32)array5.Length);
-                        binaryWriter.Write(array6, 0, (Int32)array6.Length);
+                        fileWriter.Write(encryptedEmptySave, 0, encryptedEmptySave.Length);
+                        fileWriter.Write(padding, 0, padding.Length);
                     }
                 }
             }
@@ -552,20 +447,16 @@ public class SharedDataBytesStorage : ISharedDataStorage
             this.cReader = new BinaryReader(this.cStream);
             this.cOnFinishDelegate = onFinishDelegate;
         }
-        catch (Exception message)
+        catch (Exception err)
         {
-            ISharedDataLog.LogError(message);
+            ISharedDataLog.LogError(err);
             ISharedDataSerializer.LastErrno = DataSerializerErrorCode.FileCorruption;
             if (this.cStream != null)
-            {
                 this.cStream.Close();
-            }
             if (this.cReader != null)
-            {
                 this.cReader.Close();
-            }
-            this.cStream = (FileStream)null;
-            this.cReader = (BinaryReader)null;
+            this.cStream = null;
+            this.cReader = null;
             onFinishDelegate(-1, null);
             return;
         }
@@ -576,8 +467,8 @@ public class SharedDataBytesStorage : ISharedDataStorage
     {
         this.cReader.Close();
         this.cStream.Close();
-        this.cStream = (FileStream)null;
-        this.cReader = (BinaryReader)null;
+        this.cStream = null;
+        this.cReader = null;
         this.cOnFinishDelegate(outSlotID, slotList);
     }
 
@@ -626,9 +517,9 @@ public class SharedDataBytesStorage : ISharedDataStorage
                 }
             }
         }
-        catch (Exception message)
+        catch (Exception err)
         {
-            ISharedDataLog.LogError(message);
+            ISharedDataLog.LogError(err);
             ISharedDataSerializer.LastErrno = DataSerializerErrorCode.FileCorruption;
             onFinishDelegate(-1, -1, null);
             return;
@@ -654,93 +545,84 @@ public class SharedDataBytesStorage : ISharedDataStorage
         {
             this.CreateDataSchema();
             this.CreateFileIfDoesNotExist(this.metaData);
-            Boolean flag = false;
+            Boolean saveIsValid = false;
             using (FileStream fileStream = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.Read))
             {
-                using (BinaryReader binaryReader = new BinaryReader(fileStream))
+                using (BinaryReader encryptedReader = new BinaryReader(fileStream))
                 {
-                    this.metaData.Read(fileStream, binaryReader, this.Encryption);
-                    fileStream.Seek((Int64)(320 - (Int32)fileStream.Position), SeekOrigin.Current);
+                    this.metaData.Read(fileStream, encryptedReader, this.Encryption);
                     FF9StateSystem.latestSlot = this.metaData.LatestSlot;
                     FF9StateSystem.latestSave = this.metaData.LatestSave;
                     FF9StateSystem.LatestTimestamp = this.metaData.LatestTimestamp;
-                    Int32 num = 153600;
-                    ISharedDataLog.Log("Seek to: " + num);
-                    fileStream.Seek((Int64)num, SeekOrigin.Current);
+                    Int32 saveOffset = MetaData.BaseSaveBlockOffset;
                     if (!isAutoload)
-                    {
-                        Int32 num2 = 18432 + slotID * 15 * 18432 + saveID * 18432;
-                        ISharedDataLog.Log("Seek to: " + num2);
-                        fileStream.Seek((Int64)num2, SeekOrigin.Current);
-                    }
+                        saveOffset += MetaData.SaveBlockSize * (1 + slotID * MetaData.SaveCount + saveID);
+                    ISharedDataLog.Log("Seek to: " + saveOffset);
+                    fileStream.Seek(saveOffset, SeekOrigin.Begin);
                     Int32 cipherSize = this.Encryption.GetCipherSize(this.metaData.DataSize + 4);
-                    Byte[] array = new Byte[cipherSize];
-                    binaryReader.Read(array, 0, (Int32)array.Length);
-                    Byte[] array2 = null;
+                    Byte[] encryptedJson = new Byte[cipherSize];
+                    encryptedReader.Read(encryptedJson, 0, encryptedJson.Length);
+                    Byte[] jsonRaw = null;
                     try
                     {
-                        array2 = this.Encryption.Decrypt(array);
+                        jsonRaw = this.Encryption.Decrypt(encryptedJson);
                     }
-                    catch (Exception message)
+                    catch (Exception err)
                     {
-                        ISharedDataLog.LogError(message);
+                        ISharedDataLog.LogError(err);
                         ISharedDataSerializer.LastErrno = DataSerializerErrorCode.DataCorruption;
-                        return (JSONClass)null;
+                        return null;
                     }
-                    if ((Int32)array2.Length != this.metaData.DataSize + 4)
+                    if (jsonRaw.Length != this.metaData.DataSize + 4)
                     {
-                        ISharedDataLog.LogError("plainText.size and metaData.DataSize is NOT equal, load the old data?");
+                        ISharedDataLog.LogError($"plainText.size({jsonRaw.Length}) and metaData.DataSize({this.metaData.DataSize}) is NOT equal, load the old data?");
                         ISharedDataSerializer.LastErrno = DataSerializerErrorCode.DataCorruption;
-                        return (JSONClass)null;
+                        return null;
                     }
                     try
                     {
-                        using (MemoryStream memoryStream = new MemoryStream(array2))
+                        using (MemoryStream memoryStream = new MemoryStream(jsonRaw))
                         {
-                            using (BinaryReader binaryReader2 = new BinaryReader(memoryStream))
+                            using (BinaryReader jsonReader = new BinaryReader(memoryStream))
                             {
-                                Char[] array3 = binaryReader2.ReadChars(4);
-                                if (array3[0] == 'S' && array3[1] == 'A' && array3[2] == 'V' && array3[3] == 'E')
+                                String magic = new String(jsonReader.ReadChars(4));
+                                if (magic == "SAVE")
                                 {
-                                    flag = true;
-                                    this.ReadDataFromStream(this.dataNodeList, this.dataTypeList, memoryStream, binaryReader2);
+                                    saveIsValid = true;
+                                    this.ReadDataFromStream(this.dataNodeList, this.dataTypeList, memoryStream, jsonReader);
                                 }
                                 else
                                 {
-                                    if (array3[0] != 'N' || array3[1] != 'O' || array3[2] != 'N' || array3[3] != 'E')
+                                    if (magic != "NONE")
                                     {
-                                        ISharedDataLog.LogError("Invalid data");
+                                        ISharedDataLog.LogError($"Save block starts with '{magic}' instead of 'SAVE' or 'NONE'");
                                         ISharedDataSerializer.LastErrno = DataSerializerErrorCode.DataCorruption;
-                                        return (JSONClass)null;
+                                        return null;
                                     }
-                                    flag = false;
+                                    saveIsValid = false;
                                 }
                             }
                         }
                     }
-                    catch (Exception message2)
+                    catch (Exception err)
                     {
-                        ISharedDataLog.LogError(message2);
+                        ISharedDataLog.LogError(err);
                         ISharedDataSerializer.LastErrno = DataSerializerErrorCode.DataCorruption;
-                        return (JSONClass)null;
+                        return null;
                     }
                 }
             }
-            if (!flag)
-            {
-                return (JSONClass)null;
-            }
-            List<JSONData> list = new List<JSONData>();
+            if (!saveIsValid)
+                return null;
+            List<JSONData> jsonList = new List<JSONData>();
             foreach (JSONNode jsonnode in this.dataNodeList)
-            {
-                list.Add((JSONData)jsonnode);
-            }
-            if (!this.ValidateDataListWithSchemaDataList(list, this.dataTypeList))
+                jsonList.Add((JSONData)jsonnode);
+            if (!this.ValidateDataListWithSchemaDataList(jsonList, this.dataTypeList))
             {
                 ISharedDataLog.LogError("Verification failed!");
-                return (JSONClass)null;
+                return null;
             }
-            JSONClass tree = this.ParseDataListToJsonTree(list, this.rootSchemaNode);
+            JSONClass fullTree = this.ParseDataListToJsonTree(jsonList, this.rootSchemaNode);
             String memoriaSavePath = MetaData.GetMemoriaExtraSaveFilePath(isAutoload, slotID, saveID);
             if (!String.IsNullOrEmpty(memoriaSavePath) && File.Exists(memoriaSavePath))
             {
@@ -750,17 +632,17 @@ public class SharedDataBytesStorage : ISharedDataStorage
                     memoriaNode.Add("MetaDataSlotID", slotID.ToString());
                     memoriaNode.Add("MetaDataSaveID", saveID.ToString());
                     memoriaNode.Add("MetaDataFileName", Path.GetFileName(memoriaSavePath));
-                    tree.Add("MemoriaExtraData", memoriaNode);
+                    fullTree.Add("MemoriaExtraData", memoriaNode);
                 }
             }
-            return tree;
+            return fullTree;
         }
-        catch (Exception message3)
+        catch (Exception err)
         {
-            ISharedDataLog.LogError(message3);
+            ISharedDataLog.LogError(err);
             ISharedDataSerializer.LastErrno = DataSerializerErrorCode.FileCorruption;
         }
-        return (JSONClass)null;
+        return null;
     }
 
     protected Boolean Save(Boolean isAutosave, Int32 slotID, Int32 saveID, JSONClass rootNode)
@@ -770,8 +652,8 @@ public class SharedDataBytesStorage : ISharedDataStorage
         {
             JSONClass memoriaNode = rootNode.Remove("MemoriaExtraData")?.AsObject;
             this.CreateDataSchema();
-            List<JSONData> list = this.ParseJsonTreeToDataList(rootNode);
-            if (!this.ValidateDataListWithSchemaDataList(list, this.dataTypeList))
+            List<JSONData> jsonList = this.ParseJsonTreeToDataList(rootNode);
+            if (!this.ValidateDataListWithSchemaDataList(jsonList, this.dataTypeList))
             {
                 ISharedDataLog.LogError("Verification failed!");
                 result = false;
@@ -779,10 +661,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
             else
             {
                 ISharedDataLog.Log("Verification success, start to pack data");
-                Int32 dataSize = this.EstimateDataSize(this.dataTypeList);
-                Byte[] bytes = Encoding.UTF8.GetBytes(this.rootSchemaNode.ToString());
-                Int32 num = (Int32)bytes.Length;
-                this.metaData.DataSize = dataSize;
+                this.metaData.DataSize = this.EstimateDataSize(this.dataTypeList);
                 FF9StateSystem.latestSlot = slotID;
                 FF9StateSystem.latestSave = saveID;
                 this.metaData.LatestSlot = slotID;
@@ -791,36 +670,31 @@ public class SharedDataBytesStorage : ISharedDataStorage
                 FF9StateSystem.LatestTimestamp = totalSeconds;
                 this.metaData.LatestTimestamp = totalSeconds;
                 ISharedDataLog.Log("DataSize: " + this.metaData.DataSize);
-                ISharedDataLog.Log("TotalDataSize should be: " + 150 * this.metaData.DataSize);
+                ISharedDataLog.Log("TotalDataSize should be: " + MetaData.TotalSaveCount * this.metaData.DataSize);
                 this.CreateFileIfDoesNotExist(this.metaData);
                 using (FileStream fileStream = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.ReadWrite))
                 {
-                    using (BinaryReader binaryReader = new BinaryReader(fileStream))
+                    using (BinaryReader fileReader = new BinaryReader(fileStream))
                     {
-                        using (BinaryWriter binaryWriter = new BinaryWriter(fileStream))
+                        using (BinaryWriter fileWriter = new BinaryWriter(fileStream))
                         {
-                            this.metaData.WriteLatestSlotAndSaveAndLatestTimestamp(fileStream, binaryWriter, binaryReader, this.Encryption);
-                            fileStream.Seek((Int64)(320 - (Int32)fileStream.Position), SeekOrigin.Current);
-                            Int32 num2 = 153600;
-                            ISharedDataLog.Log("Seek to: " + num2);
-                            fileStream.Seek((Int64)num2, SeekOrigin.Current);
-                            Byte[] bytes2 = null;
-                            using (MemoryStream memoryStream = new MemoryStream())
+                            this.metaData.WriteLatestSlotAndSaveAndLatestTimestamp(fileStream, fileWriter, fileReader, this.Encryption);
+                            Byte[] jsonRaw;
+                            using (MemoryStream jsonStream = new MemoryStream())
                             {
-                                using (BinaryWriter binaryWriter2 = new BinaryWriter(memoryStream))
+                                using (BinaryWriter jsonStreamWriter = new BinaryWriter(jsonStream))
                                 {
-                                    this.WriteDataToStream(list, this.dataTypeList, memoryStream, binaryWriter2);
-                                    bytes2 = memoryStream.ToArray();
+                                    this.WriteDataToStream(jsonList, this.dataTypeList, jsonStream, jsonStreamWriter);
+                                    jsonRaw = jsonStream.ToArray();
                                 }
                             }
-                            Byte[] array = this.Encryption.Encrypt(bytes2);
+                            Int32 saveOffset = MetaData.BaseSaveBlockOffset;
                             if (!isAutosave)
-                            {
-                                Int32 num3 = 18432 + slotID * 15 * 18432 + saveID * 18432;
-                                ISharedDataLog.Log("Seek to: " + num3);
-                                fileStream.Seek((Int64)num3, SeekOrigin.Current);
-                            }
-                            binaryWriter.Write(array, 0, (Int32)array.Length);
+                                saveOffset += MetaData.SaveBlockSize * (1 + slotID * MetaData.SaveCount + saveID);
+                            ISharedDataLog.Log("Seek to: " + saveOffset);
+                            fileStream.Seek(saveOffset, SeekOrigin.Begin);
+                            Byte[] encryptedJson = this.Encryption.Encrypt(jsonRaw);
+                            fileWriter.Write(encryptedJson, 0, encryptedJson.Length);
                         }
                     }
                 }
@@ -829,9 +703,9 @@ public class SharedDataBytesStorage : ISharedDataStorage
                 result = true;
             }
         }
-        catch (Exception message)
+        catch (Exception err)
         {
-            ISharedDataLog.LogError(message);
+            ISharedDataLog.LogError(err);
             ISharedDataSerializer.LastErrno = DataSerializerErrorCode.FileCorruption;
             result = false;
         }
@@ -997,13 +871,13 @@ public class SharedDataBytesStorage : ISharedDataStorage
                 }
             }
             this.metaData.IsGameFinishFlag = 1;
-            using (FileStream fileStream2 = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.ReadWrite))
+            using (FileStream fileStream = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.ReadWrite))
             {
-                using (BinaryReader binaryReader2 = new BinaryReader(fileStream2))
+                using (BinaryReader binaryReader = new BinaryReader(fileStream))
                 {
-                    using (BinaryWriter binaryWriter = new BinaryWriter(fileStream2))
+                    using (BinaryWriter binaryWriter = new BinaryWriter(fileStream))
                     {
-                        this.metaData.WriteFinishFlag(fileStream2, binaryWriter, binaryReader2, this.Encryption);
+                        this.metaData.WriteFinishFlag(fileStream, binaryWriter, binaryReader, this.Encryption);
                     }
                 }
             }
@@ -1056,13 +930,13 @@ public class SharedDataBytesStorage : ISharedDataStorage
                 }
             }
             this.metaData.SelectedLanguage = selectedLanguage;
-            using (FileStream fileStream2 = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.ReadWrite))
+            using (FileStream fileStream = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.ReadWrite))
             {
-                using (BinaryReader binaryReader2 = new BinaryReader(fileStream2))
+                using (BinaryReader binaryReader = new BinaryReader(fileStream))
                 {
-                    using (BinaryWriter binaryWriter = new BinaryWriter(fileStream2))
+                    using (BinaryWriter binaryWriter = new BinaryWriter(fileStream))
                     {
-                        this.metaData.WriteSelectedLanguage(fileStream2, binaryWriter, binaryReader2, this.Encryption);
+                        this.metaData.WriteSelectedLanguage(fileStream, binaryWriter, binaryReader, this.Encryption);
                     }
                 }
             }
@@ -1115,13 +989,13 @@ public class SharedDataBytesStorage : ISharedDataStorage
                 }
             }
             this.metaData.IsAutoLogin = isAutoLogin;
-            using (FileStream fileStream2 = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.ReadWrite))
+            using (FileStream fileStream = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.ReadWrite))
             {
-                using (BinaryReader binaryReader2 = new BinaryReader(fileStream2))
+                using (BinaryReader binaryReader = new BinaryReader(fileStream))
                 {
-                    using (BinaryWriter binaryWriter = new BinaryWriter(fileStream2))
+                    using (BinaryWriter binaryWriter = new BinaryWriter(fileStream))
                     {
-                        this.metaData.WriteIsAutoLogin(fileStream2, binaryWriter, binaryReader2, this.Encryption);
+                        this.metaData.WriteIsAutoLogin(fileStream, binaryWriter, binaryReader, this.Encryption);
                     }
                 }
             }
@@ -1166,11 +1040,6 @@ public class SharedDataBytesStorage : ISharedDataStorage
         {
             this.CreateDataSchema();
             this.CreateFileIfDoesNotExist(this.metaData);
-            Byte[] array = new Byte[(Int32)systemAchievementStatuses.Length];
-            for (Int32 i = 0; i < (Int32)systemAchievementStatuses.Length; i++)
-            {
-                array[i] = systemAchievementStatuses[i];
-            }
             using (FileStream fileStream = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.Read))
             {
                 using (BinaryReader binaryReader = new BinaryReader(fileStream))
@@ -1178,25 +1047,18 @@ public class SharedDataBytesStorage : ISharedDataStorage
                     this.metaData.Read(fileStream, binaryReader, this.Encryption);
                 }
             }
-            for (Int32 j = 0; j < (Int32)systemAchievementStatuses.Length; j++)
+            for (Int32 i = 0; i < systemAchievementStatuses.Length; i++)
             {
-                this.metaData.SystemAchievementStatuses[j] = array[j];
-                global::Debug.Log(String.Concat(new Object[]
-                {
-                    "SetSystemAchievementStatuses : copying data[",
-                    j,
-                    "] = 0x",
-                    this.metaData.SystemAchievementStatuses[j].ToString("X")
-                }));
+                this.metaData.SystemAchievementStatuses[i] = systemAchievementStatuses[i];
+                global::Debug.Log($"SetSystemAchievementStatuses : copying data[{i}] = 0x{this.metaData.SystemAchievementStatuses[i]:X}");
             }
-            array = null;
-            using (FileStream fileStream2 = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.ReadWrite))
+            using (FileStream fileStream = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.ReadWrite))
             {
-                using (BinaryReader binaryReader2 = new BinaryReader(fileStream2))
+                using (BinaryReader binaryReader = new BinaryReader(fileStream))
                 {
-                    using (BinaryWriter binaryWriter = new BinaryWriter(fileStream2))
+                    using (BinaryWriter binaryWriter = new BinaryWriter(fileStream))
                     {
-                        this.metaData.WriteSystemAchievementStatuses(fileStream2, binaryWriter, binaryReader2, this.Encryption);
+                        this.metaData.WriteSystemAchievementStatuses(fileStream, binaryWriter, binaryReader, this.Encryption);
                     }
                 }
             }
@@ -1285,19 +1147,13 @@ public class SharedDataBytesStorage : ISharedDataStorage
                     this.metaData.Read(fileStream, binaryReader, this.Encryption);
                 }
             }
-            global::Debug.Log(String.Concat(new Object[]
-            {
-                "ByteStorage.ReadSystemData lang = ",
-                this.metaData.SelectedLanguage,
-                ", screenrotation = ",
-                this.metaData.ScreenRotation
-            }));
+            global::Debug.Log($"ByteStorage.ReadSystemData lang = {this.metaData.SelectedLanguage}, screenrotation = {this.metaData.ScreenRotation}");
         }
         catch (Exception message)
         {
             ISharedDataLog.LogError(message);
             ISharedDataSerializer.LastErrno = DataSerializerErrorCode.FileCorruption;
-            onFinishDelegate((SharedDataBytesStorage.MetaData)null);
+            onFinishDelegate(null);
             return;
         }
         onFinishDelegate(this.metaData);
@@ -1327,29 +1183,17 @@ public class SharedDataBytesStorage : ISharedDataStorage
     private const Int32 tmpMaxParseCount = 10000;
 
     public static readonly String TypeByte = typeof(Byte).FullName;
-
     public static readonly String TypeSByte = typeof(SByte).FullName;
-
     public static readonly String TypeInt16 = typeof(Int16).FullName;
-
     public static readonly String TypeUInt16 = typeof(UInt16).FullName;
-
     public static readonly String TypeInt32 = typeof(Int32).FullName;
-
     public static readonly String TypeUInt32 = typeof(UInt32).FullName;
-
     public static readonly String TypeInt64 = typeof(Int64).FullName;
-
     public static readonly String TypeUInt64 = typeof(UInt64).FullName;
-
     public static readonly String TypeSingle = typeof(Single).FullName;
-
     public static readonly String TypeDouble = typeof(Double).FullName;
-
     public static readonly String TypeBoolean = typeof(Boolean).FullName;
-
     public static readonly String TypeString128 = typeof(String).FullName;
-
     public static String TypeString4K = "String4K";
 
     protected JsonParser jsonParserInstance;
@@ -1357,31 +1201,26 @@ public class SharedDataBytesStorage : ISharedDataStorage
     private Int32 tmpParseCount;
 
     private FileStream cStream;
-
     private BinaryReader cReader;
 
     private ISharedDataStorage.OnLoadSlotFinish cOnFinishDelegate;
 
     protected JsonParser jsonParser;
-
     protected SharedDataBytesStorage.MetaData metaData = new SharedDataBytesStorage.MetaData();
-
     protected List<JSONData> dataTypeList;
-
     protected List<JSONNode> dataNodeList;
-
     protected JSONClass rootSchemaNode;
 
     public class MetaData
     {
         public void WriteAllFields(Stream stream, BinaryWriter writer, ISharedDataEncryption encryption)
         {
-            Byte[] bytes = null;
+            Byte[] metaDataRaw = null;
             using (MemoryStream memoryStream = new MemoryStream())
             {
                 using (BinaryWriter binaryWriter = new BinaryWriter(memoryStream))
                 {
-                    binaryWriter.Write(this.Header, 0, 4);
+                    binaryWriter.Write(MetaData.HeaderChars);
                     binaryWriter.Write(this.SaveVersion);
                     binaryWriter.Write(this.DataSize);
                     binaryWriter.Write(this.LatestSlot);
@@ -1392,13 +1231,13 @@ public class SharedDataBytesStorage : ISharedDataStorage
                     binaryWriter.Write(this.IsAutoLogin);
                     binaryWriter.Write(this.SystemAchievementStatuses);
                     binaryWriter.Write(this.ScreenRotation);
-                    Byte[] array = new Byte[249];
-                    binaryWriter.Write(array, 0, (Int32)array.Length);
-                    bytes = memoryStream.ToArray();
+                    Byte[] padding = new Byte[MetaData.MetaDataReservedBuffer];
+                    binaryWriter.Write(padding, 0, padding.Length);
+                    metaDataRaw = memoryStream.ToArray();
                 }
             }
-            Byte[] array2 = encryption.Encrypt(bytes);
-            writer.Write(array2, 0, (Int32)array2.Length);
+            Byte[] encryptedMetadata = encryption.Encrypt(metaDataRaw);
+            writer.Write(encryptedMetadata, 0, encryptedMetadata.Length);
         }
 
         public void WriteLatestSlotAndSaveAndLatestTimestamp(Stream stream, BinaryWriter writer, BinaryReader reader, ISharedDataEncryption encryption)
@@ -1446,23 +1285,15 @@ public class SharedDataBytesStorage : ISharedDataStorage
 
         public void WriteSystemAchievementStatuses(Stream stream, BinaryWriter writer, BinaryReader reader, ISharedDataEncryption encryption)
         {
-            Byte[] array = new Byte[(Int32)this.SystemAchievementStatuses.Length];
-            for (Int32 i = 0; i < (Int32)this.SystemAchievementStatuses.Length; i++)
-            {
-                array[i] = this.SystemAchievementStatuses[i];
-            }
+            Byte[] achievementStatuses = new Byte[this.SystemAchievementStatuses.Length];
+            for (Int32 i = 0; i < this.SystemAchievementStatuses.Length; i++)
+                achievementStatuses[i] = this.SystemAchievementStatuses[i];
             this.Read(stream, reader, encryption);
             stream.Seek(0L, SeekOrigin.Begin);
-            for (Int32 j = 0; j < (Int32)array.Length; j++)
+            for (Int32 i = 0; i < achievementStatuses.Length; i++)
             {
-                this.SystemAchievementStatuses[j] = array[j];
-                global::Debug.Log(String.Concat(new Object[]
-                {
-                    "WriteSystemAchievementStatuses : copying data SystemAchievementStatuses[",
-                    j,
-                    "] = 0x",
-                    this.SystemAchievementStatuses[j].ToString("X")
-                }));
+                this.SystemAchievementStatuses[i] = achievementStatuses[i];
+                global::Debug.Log($"WriteSystemAchievementStatuses : copying data SystemAchievementStatuses[{i}] = 0x{this.SystemAchievementStatuses[i]:X}");
             }
             this.WriteAllFields(stream, writer, encryption);
         }
@@ -1479,12 +1310,12 @@ public class SharedDataBytesStorage : ISharedDataStorage
 
         public void Read(Stream stream, BinaryReader reader, ISharedDataEncryption encryption)
         {
-            Int32 cipherSize = encryption.GetCipherSize(288);
-            Byte[] bytes = reader.ReadBytes(cipherSize);
-            Byte[] buffer = null;
+            Int32 cipherSize = encryption.GetCipherSize(MetaData.MetaDataFullSize);
+            Byte[] encryptedMetadata = reader.ReadBytes(cipherSize);
+            Byte[] metaDataRaw;
             try
             {
-                buffer = encryption.Decrypt(bytes);
+                metaDataRaw = encryption.Decrypt(encryptedMetadata);
             }
             catch (Exception message)
             {
@@ -1492,13 +1323,14 @@ public class SharedDataBytesStorage : ISharedDataStorage
                 ISharedDataSerializer.LastErrno = DataSerializerErrorCode.DataCorruption;
                 return;
             }
-            using (MemoryStream memoryStream = new MemoryStream(buffer))
+            using (MemoryStream memoryStream = new MemoryStream(metaDataRaw))
             {
                 using (BinaryReader binaryReader = new BinaryReader(memoryStream))
                 {
-                    Char[] array = binaryReader.ReadChars(4);
-                    if (array[0] != 'S' && array[1] != 'A' && array[2] != 'V' && array[3] != 'E')
+                    String magic = new String(binaryReader.ReadChars(4));
+                    if (magic != MetaData.Header)
                     {
+                        ISharedDataLog.LogError($"Savefile starts with '{magic}' instead of '{MetaData.Header}'");
                         ISharedDataSerializer.LastErrno = DataSerializerErrorCode.DataCorruption;
                     }
                     else
@@ -1511,51 +1343,28 @@ public class SharedDataBytesStorage : ISharedDataStorage
                         this.IsGameFinishFlag = binaryReader.ReadInt32();
                         this.SelectedLanguage = binaryReader.ReadInt32();
                         this.IsAutoLogin = binaryReader.ReadSByte();
-                        Int32 num = binaryReader.Read(this.SystemAchievementStatuses, 0, (Int32)this.SystemAchievementStatuses.Length);
+                        binaryReader.Read(this.SystemAchievementStatuses, 0, this.SystemAchievementStatuses.Length);
                         this.ScreenRotation = binaryReader.ReadByte();
-                        global::Debug.Log(String.Concat(new Object[]
-                        {
-                            "Meta.Read: SelectedLanguage = ",
-                            this.SelectedLanguage,
-                            ", SystemAchievementStatuses[0] = 0x",
-                            this.SystemAchievementStatuses[0].ToString("X"),
-                            ", ScreenRotation = ",
-                            this.ScreenRotation
-                        }));
+                        global::Debug.Log($"Meta.Read: SelectedLanguage = {this.SelectedLanguage}, SystemAchievementStatuses[0] = 0x{this.SystemAchievementStatuses[0]:X}, ScreenRotation = {this.ScreenRotation}");
                     }
                 }
             }
         }
 
-        private const Int32 metaPlainTextReservedBuffer = 249;
-
-        private const Int32 metaDataSize = 39;
-
-        private const Int32 metaPlainTextSize = 288;
-
+        private const Int32 MetaDataReservedBuffer = 249;
+        private const Int32 MetaDataSize = 39;
+        private const Int32 MetaDataFullSize = 288;
         public const Int32 SlotCount = 10;
-
         public const Int32 SaveCount = 15;
-
         public const Int32 TotalSaveCount = 150;
-
         public const Int32 MetaDataReservedSize = 320;
-
         public const Int32 PreviewReservedSize = 1024;
-
         public const Int32 SaveBlockSize = 18432;
-
         public const Int32 AutosaveReservedSize = 18432;
-
         public const Int32 DataReservedSize = 18432;
-
-        public Char[] Header = new Char[]
-        {
-            'S',
-            'A',
-            'V',
-            'E'
-        };
+        public const Int32 BaseSaveBlockOffset = MetaDataReservedSize + TotalSaveCount * PreviewReservedSize;
+        public const String Header = "SAVE";
+        public static readonly Char[] HeaderChars = ['S', 'A', 'V', 'E'];
 
         public Single SaveVersion = 1f;
 
@@ -1564,15 +1373,10 @@ public class SharedDataBytesStorage : ISharedDataStorage
         public static Int32 SystemAchievementStatusesSize = 1;
 
         public Int32 LatestSlot = -1;
-
         public Int32 LatestSave = -1;
-
         public Double LatestTimestamp = -1.0;
-
         public Int32 IsGameFinishFlag;
-
         public Int32 SelectedLanguage = -1;
-
         public SByte IsAutoLogin;
 
         public Byte[] SystemAchievementStatuses = new Byte[SharedDataBytesStorage.MetaData.SystemAchievementStatusesSize];
@@ -1580,7 +1384,6 @@ public class SharedDataBytesStorage : ISharedDataStorage
         public Byte ScreenRotation;
 
         public static String FilePath = String.Empty;
-
         public static String DirPath = String.Empty;
 
         public static String GetMemoriaExtraSaveFilePath(Boolean isAutosave, Int32 slotID, Int32 saveID)
@@ -1601,7 +1404,6 @@ public class SharedDataBytesStorage : ISharedDataStorage
         }
 
         public JSONNode Node;
-
         public Int32 Index;
     }
 }

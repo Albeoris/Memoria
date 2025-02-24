@@ -405,7 +405,7 @@ public class SettingsState : MonoBehaviour
                         Int32 abilIndex = ff9abil.FF9Abil_GetIndex(player, abilId);
                         if (abilIndex > -1)
                         {
-                            player.pa[abilIndex] = (Byte)ff9abil.FF9Abil_GetMax(player, abilId);
+                            player.pa[abilIndex] = ff9abil.FF9Abil_GetMax(player, abilId);
                             if (BattleAchievement.UpdateAbilitiesAchievement(abilId, false))
                                 gotAchievement = true;
                         }
@@ -422,7 +422,7 @@ public class SettingsState : MonoBehaviour
                         Int32 abilIndex = ff9abil.FF9Abil_GetIndex(player, abilId);
                         if (abilIndex > -1)
                         {
-                            player.pa[abilIndex] = (Byte)ff9abil.FF9Abil_GetMax(player, abilId);
+                            player.pa[abilIndex] = ff9abil.FF9Abil_GetMax(player, abilId);
                             if (BattleAchievement.UpdateAbilitiesAchievement(abilId, false))
                                 gotAchievement = true;
                         }
@@ -453,9 +453,9 @@ public class SettingsState : MonoBehaviour
         {
             player.SetMaxBonusBasisStatus();
             ff9play.FF9Play_ChangeLevel(player, ff9level.LEVEL_COUNT, false);
-            Int32 num = player.max.capa - player.cur.capa;
-            player.max.capa = 99;
-            player.cur.capa = (Byte)(99 - num);
+            UInt32 gemUsage = player.max.capa - player.cur.capa;
+            player.max.capa = UInt32.MaxValue;
+            player.cur.capa = UInt32.MaxValue - gemUsage;
         }
         AchievementManager.ReportAchievement(AcheivementKey.CharLv99, 1);
     }

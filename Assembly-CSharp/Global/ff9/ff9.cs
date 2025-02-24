@@ -6997,12 +6997,12 @@ public static class ff9
             ff9.w_naviLocationDraw = ff9.WorldTitleCloseMode;
         if (ff9.w_frameCounterReady >= closeTime)
         {
-            EventInput.PSXCntlClearPadMask(0, EventInput.Lsquare | EventInput.Lnavi);
+            EventInput.PSXCntlClearPadMask(0, EventInput.Special | EventInput.NaviControl);
             PersistenSingleton<UIManager>.Instance.WorldHUDScene.EnableMapButton = true;
         }
         else
         {
-            EventInput.PSXCntlSetPadMask(0, EventInput.Lsquare | EventInput.Lnavi);
+            EventInput.PSXCntlSetPadMask(0, EventInput.Special | EventInput.NaviControl);
             PersistenSingleton<UIManager>.Instance.WorldHUDScene.EnableMapButton = false;
         }
         if (ff9.w_naviLocationDraw == ff9.WorldTitleFadeInMode)
@@ -9145,7 +9145,7 @@ public static class ff9
             String ebFileName = FF9DBAll.EventDB[MapNo];
             map.evtPtr = EventEngineUtils.loadEventData(ebFileName, EventEngineUtils.ebSubFolderWorld);
             eventEngine.StartEvents(map.evtPtr);
-            eventEngine.eTb.InitMessage();
+            ETb.InitMessage();
             eventEngine.updateModelsToBeAdded();
         }
     }

@@ -43,16 +43,16 @@ namespace Memoria.Data
                 HitSfx = Byte.Parse(raw[11]);
             else
                 HitSfx = (Byte)Id;
+            CustomTexture = null;
             if (metadata.HasOption($"Include{nameof(CustomTexture)}"))
             {
-                var StringTexture = CsvParser.String(raw[12]);
-                CustomTexture = StringTexture.Split(',');
-                for (Int32 i = 0; i < CustomTexture.Length; i++)
-                    CustomTexture[i] = CustomTexture[i].Trim();
-            }
-            else
-            {
-                CustomTexture = new String[0];
+                String StringTexture = CsvParser.String(raw[12]);
+                if (StringTexture.Trim().Length > 0)
+                {
+                    CustomTexture = StringTexture.Split(',');
+                    for (Int32 i = 0; i < CustomTexture.Length; i++)
+                        CustomTexture[i] = CustomTexture[i].Trim();
+                }
             }
         }
 
@@ -76,7 +76,12 @@ namespace Memoria.Data
             if (metadata.HasOption($"Include{nameof(HitSfx)}"))
                 sw.Byte(HitSfx);
             if (metadata.HasOption($"Include{nameof(CustomTexture)}"))
-                sw.String(String.Join(", ", CustomTexture));
+            {
+                if (CustomTexture != null)
+                    sw.String(String.Join(", ", CustomTexture));
+                else
+                    sw.String(String.Empty);
+            }
         }
     }
 }

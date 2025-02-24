@@ -3,7 +3,7 @@
 # Use 0 for a void ability, AA:X for active abilities and SA:X for passive abilities.
 # -----------------------------------
 # Id;AP
-# Ability;UInt8
+# Ability;Int32
 # -----------------------------------
 AA:25;25;# Fire
 AA:26;50;# Fira

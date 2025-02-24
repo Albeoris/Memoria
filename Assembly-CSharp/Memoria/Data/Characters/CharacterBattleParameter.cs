@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Memoria.Prime;
 using Memoria.Prime.CSV;
@@ -56,6 +57,7 @@ namespace Memoria.Data
                 Array.Resize(ref TranceGlowingColor, 3);
             for (Int32 i = 0; i < 34; i++)
                 AnimationId[i] = CsvParser.String(raw[rawIndex++]);
+            FlagDuplicateAnimations(AnimationId);
             AttackSequence = (SpecialEffect)CsvParser.Int32(raw[rawIndex++]);
             WeaponBone = CsvParser.Byte(raw[rawIndex++]);
             ShadowData = CsvParser.ByteArray(raw[rawIndex++]);
@@ -87,6 +89,7 @@ namespace Memoria.Data
             {
                 for (Int32 i = 0; i < 34; i++)
                     TranceAnimationId[i] = CsvParser.String(raw[rawIndex++]);
+                FlagDuplicateAnimations(TranceAnimationId);
                 TranceAttackSequence = (SpecialEffect)CsvParser.Int32(raw[rawIndex++]);
                 TranceWeaponBone = CsvParser.Byte(raw[rawIndex++]);
                 TranceShadowData = CsvParser.ByteArray(raw[rawIndex++]);
@@ -108,7 +111,6 @@ namespace Memoria.Data
                     TranceWeaponOffsetPos = CsvParser.SingleArray(raw[rawIndex++]);
                     TranceWeaponOffsetRot = CsvParser.SingleArray(raw[rawIndex++]);
                 }
-                TranceParameters = true;
             }
         }
 
@@ -137,22 +139,51 @@ namespace Memoria.Data
             }
             if (metadata.HasOption($"Include{nameof(TranceParameters)}"))
             {
-                for (Int32 i = 0; i < 34; i++)
-                    writer.String(TranceAnimationId[i]);
-                writer.Int32((Int32)TranceAttackSequence);
-                writer.Byte(TranceWeaponBone);
-                writer.ByteArray(TranceShadowData);
-                writer.ByteArray(TranceStatusBone);
-                writer.SByteArray(TranceStatusOffsetY);
-                writer.SByteArray(TranceStatusOffsetZ);
-                writer.Int32Array(TranceWeaponSound);
-                if (metadata.HasOption($"IncludeWeaponOffsets"))
+                if (TranceParameters)
                 {
-                    writer.SingleArray(TranceWeaponSize);
-                    writer.SingleArray(TranceWeaponOffsetPos);
-                    writer.SingleArray(TranceWeaponOffsetRot);
+                    for (Int32 i = 0; i < 34; i++)
+                        writer.String(TranceAnimationId[i]);
+                    writer.Int32((Int32)TranceAttackSequence);
+                    writer.Byte(TranceWeaponBone);
+                    writer.ByteArray(TranceShadowData);
+                    writer.ByteArray(TranceStatusBone);
+                    writer.SByteArray(TranceStatusOffsetY);
+                    writer.SByteArray(TranceStatusOffsetZ);
+                    writer.Int32Array(TranceWeaponSound);
+                    if (metadata.HasOption($"IncludeWeaponOffsets"))
+                    {
+                        writer.SingleArray(TranceWeaponSize);
+                        writer.SingleArray(TranceWeaponOffsetPos);
+                        writer.SingleArray(TranceWeaponOffsetRot);
+                    }
+                }
+                else
+                {
+                    for (Int32 i = 0; i < 34; i++)
+                        writer.String(AnimationId[i]);
+                    writer.Int32((Int32)AttackSequence);
+                    writer.Byte(WeaponBone);
+                    writer.ByteArray(ShadowData);
+                    writer.ByteArray(StatusBone);
+                    writer.SByteArray(StatusOffsetY);
+                    writer.SByteArray(StatusOffsetZ);
+                    writer.Int32Array(WeaponSound);
+                    if (metadata.HasOption($"IncludeWeaponOffsets"))
+                    {
+                        writer.SingleArray(WeaponSize);
+                        writer.SingleArray(WeaponOffsetPos);
+                        writer.SingleArray(WeaponOffsetRot);
+                    }
                 }
             }
+        }
+
+        private static void FlagDuplicateAnimations(String[] animList)
+        {
+            HashSet<String> animSet = new HashSet<String>();
+            for (Int32 i = 0; i < animList.Length; i++)
+                if (!animSet.Add(animList[i]))
+                    animList[i] += $" ({i} Duplicate)";
         }
     }
 }

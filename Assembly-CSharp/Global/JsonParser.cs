@@ -797,7 +797,7 @@ public class JsonParser : ISharedDataParser
                 { "mp", p.cur.mp.ToString() },
                 { "at", p.cur.at.ToString() },
                 { "at_coef", p.cur.at_coef.ToString() },
-                { "capa", p.cur.capa.ToString() }
+                { "capa", oldSaveFormat ? ((Byte)p.cur.capa).ToString() : p.cur.capa.ToString() }
             });
             playerClass.Add("max", new JSONClass
             {
@@ -805,7 +805,7 @@ public class JsonParser : ISharedDataParser
                 { "mp", p.max.mp.ToString() },
                 { "at", p.max.at.ToString() },
                 { "at_coef", p.max.at_coef.ToString() },
-                { "capa", p.max.capa.ToString() }
+                { "capa", oldSaveFormat ? ((Byte)p.max.capa).ToString() : p.max.capa.ToString() }
             });
             playerClass.Add("trance", p.trance.ToString());
             playerClass.Add("web_bone", p.wep_bone.ToString());
@@ -874,7 +874,7 @@ public class JsonParser : ISharedDataParser
                 JSONArray apClass = new JSONArray();
                 Int32 paCount = oldSaveFormat ? 48 : p.pa.Length;
                 for (Int32 j = 0; j < paCount; j++)
-                    apClass.Add((j < p.pa.Length ? p.pa[j] : 0).ToString());
+                    apClass.Add((j < p.pa.Length ? (Byte)p.pa[j] : (Byte)0).ToString());
                 playerClass.Add("pa", apClass);
                 JSONArray saClass = new JSONArray();
                 for (Int32 j = 0; j < 2; j++)
@@ -1161,7 +1161,7 @@ public class JsonParser : ISharedDataParser
                 if (playerCurClass["at_coef"] != null)
                     player.cur.at_coef = (SByte)playerCurClass["at_coef"].AsInt;
                 if (playerCurClass["capa"] != null)
-                    player.cur.capa = (Byte)playerCurClass["capa"].AsInt;
+                    player.cur.capa = playerCurClass["capa"].AsUInt;
                 JSONClass playerMaxClass = playerClass["max"].AsObject;
                 if (playerMaxClass["hp"] != null)
                     player.max.hp = (UInt32)playerMaxClass["hp"].AsInt;
@@ -1172,7 +1172,7 @@ public class JsonParser : ISharedDataParser
                 if (playerMaxClass["at_coef"] != null)
                     player.max.at_coef = (SByte)playerMaxClass["at_coef"].AsInt;
                 if (playerMaxClass["capa"] != null)
-                    player.max.capa = (Byte)playerMaxClass["capa"].AsInt;
+                    player.max.capa = playerMaxClass["capa"].AsUInt;
                 if (playerClass["trance"] != null)
                     player.trance = (Byte)playerClass["trance"].AsInt;
                 if (playerClass["wep_bone"] != null)
@@ -1244,7 +1244,7 @@ public class JsonParser : ISharedDataParser
                     if (playerClass["pa"] != null)
                     {
                         for (Int32 j = 0; j < player.pa.Length; j++)
-                            player.pa[j] = (Byte)(j < playerClass["pa"].Count ? playerClass["pa"][j].AsInt : 0);
+                            player.pa[j] = j < playerClass["pa"].Count ? playerClass["pa"][j].AsInt : 0;
                     }
                     else if (playerClass["pa_extended"] != null)
                     {
@@ -1255,7 +1255,7 @@ public class JsonParser : ISharedDataParser
                             {
                                 Int32 abilIndex = ff9abil.FF9Abil_GetIndex(player, apClass["id"].AsInt);
                                 if (abilIndex >= 0)
-                                    player.pa[abilIndex] = (Byte)apClass["cur"].AsInt;
+                                    player.pa[abilIndex] = apClass["cur"].AsInt;
                             }
                         }
                     }

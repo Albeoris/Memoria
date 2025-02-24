@@ -410,7 +410,7 @@ public partial class EventEngine
             {
                 this.gCur.winnum = (Byte)this.getv1(); // arg1: window ID
                 Int32 uiFlags = this.getv1(); // arg2: UI flag list. 3: disable bubble tail 4: mognet format 5: hide window 7: ATE window 8: dialog window
-                this.SetFollow(this.gCur, (Int32)this.gCur.winnum, uiFlags);
+                this.SetFollow(this.gCur, this.gCur.winnum, uiFlags);
                 Int32 textID = this.getv2(); // arg3: text to display
                 if (mapNo == 1757 && scCounter == 6740 && mapIndex == 30)
                 {
@@ -452,7 +452,7 @@ public partial class EventEngine
                     DialogManager.SelectChoice = 15;
                     return 0;
                 }
-                this.eTb.NewMesWin(textID, (Int32)this.gCur.winnum, uiFlags, !this.isPosObj(this.gCur) ? (PosObj)null : (PosObj)this.gCur);
+                ETb.NewMesWin(textID, this.gCur.winnum, uiFlags, !this.isPosObj(this.gCur) ? (PosObj)null : (PosObj)this.gCur);
                 this.gCur.wait = (Byte)254;
                 return 1;
             }
@@ -460,7 +460,7 @@ public partial class EventEngine
             {
                 this.gCur.winnum = (Byte)this.getv1(); // arg1: window ID
                 Int32 uiFlags = this.getv1(); // arg2: UI flag list: 3: disable bubble tail 4: mognet format 5: hide window 7: ATE window 8: dialog window
-                this.SetFollow(this.gCur, (Int32)this.gCur.winnum, uiFlags);
+                this.SetFollow(this.gCur, this.gCur.winnum, uiFlags);
                 Int32 textID = this.getv2(); // arg3: text to display
                 if (mapNo == 1060)
                 {
@@ -498,7 +498,7 @@ public partial class EventEngine
                     return 1;
                 }
                 PersistenSingleton<CheatingManager>.Instance.CheatJumpingRobe();
-                this.eTb.NewMesWin(textID, (Int32)this.gCur.winnum, uiFlags, !this.isPosObj(this.gCur) ? (PosObj)null : (PosObj)this.gCur);
+                ETb.NewMesWin(textID, this.gCur.winnum, uiFlags, !this.isPosObj(this.gCur) ? (PosObj)null : (PosObj)this.gCur);
                 return 0;
             }
             case EBin.event_code_binary.MESA:// 0x95, "WindowSyncEx", "Display a window with text inside and wait until it closes"
@@ -508,8 +508,8 @@ public partial class EventEngine
                 this.gCur.winnum = (Byte)this.getv1(); // arg2: window ID
                 Int32 uiFlags = this.getv1(); // arg3: UI flag list. 3: disable bubble tail 4: mognet format 5: hide window 7: ATE window 8: dialog window
                 Int32 textID = this.getv2(); // arg4: text to display
-                this.SetFollow((Obj)po, (Int32)this.gCur.winnum, uiFlags);
-                this.eTb.NewMesWin(textID, (Int32)this.gCur.winnum, uiFlags, po);
+                this.SetFollow((Obj)po, this.gCur.winnum, uiFlags);
+                ETb.NewMesWin(textID, this.gCur.winnum, uiFlags, po);
                 if (eventCodeBinary == EBin.event_code_binary.MESAN)
                     return 0;
                 this.gCur.wait = (Byte)254;
@@ -519,7 +519,7 @@ public partial class EventEngine
             {
                 Int32 scriptID = this.getv1(); // arg1: text variable's 'Script ID'
                 Int32 value = this.getv2(); // arg2: depends on which text opcode is related to the text variable: [VAR_NUM]: integral value. [VAR_ITEM]: item ID. [VAR_TOKEN]: token number
-                this.eTb.SetMesValue(scriptID, value);
+                ETb.SetMesValue(scriptID, value);
                 return 0;
             }
             case EBin.event_code_binary.CLOSE: // 0x21, "CloseWindow", "Close a window", true, 1, { 1 }, { "Window ID" }, { AT_USPIN }, 0
@@ -534,17 +534,17 @@ public partial class EventEngine
                 //}
 
                 var windowID = this.getv1(); // arg1: window ID determined at its creation
-                this.eTb.DisposWindowByID(windowID, true);
+                ETb.DisposWindowByID(windowID, true);
                 return 0;
             }
             case EBin.event_code_binary.CLOSEALL: // 0xEB, "CloseAllWindows", "Close all the dialogs and UI windows."
             {
-                this.eTb.YWindow_CloseAll(true);
+                ETb.YWindow_CloseAll(true);
                 return 0;
             }
             case EBin.event_code_binary.NOINITMES: // 0x53, "PreventWindowInit", "Seems to prevent new dialog windows to close older ones."
             {
-                this.eTb.InhInitMes();
+                ETb.InhInitMes();
                 return 0;
             }
             case EBin.event_code_binary.WAITMES: // 0x54, "WaitWindow", "Wait until the window is closed"
@@ -578,7 +578,7 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.RAISE: // 0x8E, "RaiseWindows", "Make all the dialogs and windows display over the filters"
             {
-                this.eTb.RaiseAllWindow();
+                ETb.RaiseAllWindow();
                 return 0;
             }
             case EBin.event_code_binary.DISCCHANGE: // 0xAC, "ChangeDisc", "Allow to save the game and change disc"
@@ -996,7 +996,7 @@ public partial class EventEngine
             {
                 this._context.usercontrol = (Byte)0;
                 EIcon.SetHereIcon(0);
-                this.eTb.gMesCount = this.gAnimCount = 0;
+                ETb.gMesCount = this.gAnimCount = 0;
                 PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(false);
                 if (this.gMode == 3)
                     UIManager.World.SetMinimapPressable(false);
@@ -1913,7 +1913,7 @@ public partial class EventEngine
             {
                 Int32 choicesAvailable = this.getv2(); // arg1: boolean list for the different choices
                 Int32 defaultChoice = this.getv1(); // arg2: default choice selected
-                this.eTb.SetChooseParam(choicesAvailable, defaultChoice);
+                ETb.SetChooseParam(choicesAvailable, defaultChoice);
                 return 0;
             }
             case EBin.event_code_binary.SETCAM: // 0x7E, "SetFieldCamera", "Change the field's background camera"
@@ -2251,7 +2251,7 @@ public partial class EventEngine
             {
                 if (mapNo == 2172 && scCounter < 9100 && Localization.GetSymbol() == "JP" && this.gCur.sid == 1 && this.gCur.ip == 2964 && EIcon.AIconMode == 0)
                     return 0; // L. Castle/Telescope
-                EventInput.PSXCntlClearPadMask(0, EventInput.Lmenu);
+                EventInput.PSXCntlClearPadMask(0, EventInput.MenuControl);
                 PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(true);
                 return 0;
             }
@@ -2259,7 +2259,7 @@ public partial class EventEngine
             {
                 if (mapNo == 2172 && scCounter < 9100 && Localization.GetSymbol() == "JP" && this.gCur.sid == 1 && this.gCur.ip == 119 && EIcon.AIconMode == 0)
                     return 0; // L. Castle/Telescope
-                EventInput.PSXCntlSetPadMask(0, EventInput.Lmenu);
+                EventInput.PSXCntlSetPadMask(0, EventInput.MenuControl);
                 PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(false);
                 return 1;
             }

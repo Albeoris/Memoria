@@ -90,13 +90,14 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 	
 <Mod>
 	<Name>Trance Seek</Name>
-	<Version>0.3.29.3</Version>
+	<Version>0.3.31</Version>
 	<InstallationPath>TranceSeek</InstallationPath>
 	<ReleaseDateOriginal>28 Jan 2022</ReleaseDateOriginal>
-	<ReleaseDate>04 Nov 2024</ReleaseDate>
+	<ReleaseDate>08 Feb 2025</ReleaseDate>
 	<Author>DV</Author>
 	<IncompatibleWith>Alternate Fantasy,Amazing Quina,Beatrix Mod,Black Cat - Endgame Shop,David Bowie Edition,Freya Game+,Garnet is Main Character,Play As Kuja,Playable Character Pack,Tantalus</IncompatibleWith>
-	<Description>A hard mod that allows you to experience a new whole adventure! All the monsters and bosses have been redesigned (not only a stats boost but all the AIs are revisited), new skills, mechanics and many other things!
+	<Description>
+A hard mod that allows you to experience a new whole adventure! All the monsters and bosses have been redesigned (not only a stats boost but all the AIs are revisited), new skills, mechanics and many other things!
 
 Currently, Trance Seek is...
 - A thoughtfully increased difficulty, designed for players seeking challenge.
@@ -110,114 +111,89 @@ Currently, Trance Seek is...
 
 This is not an EXTREME hardcore difficult mod: it only adds a higher difficulty than the original version while keeping a constant progression.
 
-It's currently a demo : CD1 + CD2 + CD3 available but almost +30 hours of gameplay !
+It's currently a demo : Disc1/2/3 available but almost +30 hours of gameplay !
 Don't hesitate to try!
 
 /_!_\ IMPORTANT /_!_\
 Recommended language : Français / English (UK)
-Not supported language : Japanese (until full release... sorry !)</Description>
+Not supported language : Japanese (a lot of things get deleted... need to wait until full release... sorry !)</Description>
 	<PatchNotes>
-	------[0.3.29.3]------
+------[0.3.31]------
 
-	- Fixed a softlock at the end of Disc 1, where the last cinematic would not start.
-	- Additional information added at the start of the game, when playing a new game. (concerning certain cheats that no longer exist).
+{Characters}
+- New script on summons, notably concerning the chances of applying status.
+In addition, "Short" type summons are less likely to inflict the associated status alteration (as is damage).
+- [WIP] Review of the cost of learning certain skills, particularly Dagga summons.
 
-	------[0.3.29.2]------
+- When Moug casts a skill for the first time, it will appear in Eiko's skill menu for more details.
+- Moug will have a slightly more ghostly texture after Mount Gulug.
+- Moug's appearance rate has been increased from 1/30 to 1/40.
 
-	- Major hotfix for the difficulty system: "small" mistake where damage is all doubled... woopsi.
-	I made an emergency hotfix a few days after this bug was reported to me, but for players who use only the Memoria launcher, they may not be aware of this fix
-	if they don't update the mod... which is why i am releasing this version!
-	Sorry for the disruption and enjoy!
+- Fixed a bug where Amarant could not critically hit with his weapon under certain conditions.
+- Fixed Beatrix's mechanic, where some of her magics would not grant her the "Redemption" status.
+- Slight change to the formula to prevent players from easily gaining Trance => from 15% to 10% of maximum HP. (not final ?)
+- Fixed a bug with the "Old" status, where malus would accumulate each time the status was applied.
 
-	- Easy Kill monsters (excluding bosses) can now be scanned, especially those in Pandemonium.
-	- Correction of Rataïme's dialogues in English (US) at the start of combat.
-	- Modification to certain scripts (e.g. Maelstorm), where the message will display "Guard!" instead of "Miss!" if the monster is immune.
-	- Correction about the targeting of the "Emerald" item.
-	- Fixed some dialogues.
+{Skills}
+- Improved [Steal] command: from now on, it will benefit from the effect of the old SA Bandit+, meaning that it will be increasingly easy to steal items from a monster.
+The formula is as follows: for each failed theft, add +8 to the theft rate of one of the monster's items, which corresponds to an addition of 3.125% (as the +8 influences a byte value).
+Remember that this bonus is also added if Eye of the Thief fails and also with the SA "Mug".
 
-	------[0.3.29]------
+- Displays an "Eye of the thief!" message on the monster if the theft is successful thanks to this effect.
+- The SA "Bandit+" has been modified => Increases the chance to steal.
+You will also counterattack with [Steal] for each attack received.
 
-	- [WIP] Difficulty modes now available!
-	This is no definitive, but here's an idea I've had in the back of my mind for several months: the ability to choose an in-game difficulty!
-	There are currently 5 difficulty levels:
+- The "Tacle" skill has been renamed "Kick" (only available in French).
+- The "Transmute" skill can no longer be used if Vivi is on Silence.
+- The SA "Concentration" and "Sorcery" now work with "Summons".
+- "Mog Heal" and "Mog Hug" no longer heal if Eiko is under Zombie but inflict damage instead.
+- Fixed "Overload+" SA.
+- Fixed "Auto-Potion+" SA. In addition, a character with a permanent status will no longer use the appropriate remedy (example: Garnet Depression)
+- Much more precise formula for the "Blessing" and "Blessing+" SAs, as well as the Ruby item for Dagga.
+- The "Sorcery" SA has been renamed "Maleficent".
 
-	{Vivi Mode}:
-	→ -50% of damage inflicted by enemies.
-	→ +25% EXP gained from enemies.
-	→ +25% gils gained from enemies.
-	→ Venom is less lethal on players.
+- Fixed a bug in the "Accuracy+" and "Accuracy++" SAs, where the character could miss the target when it is immobilised (example with Freeze status).
+- Corrected the description of the "Overload" and "Overload+" SAs.
+- Correction to the sequence files for several spells, particularly summons, which could force certain hidden monsters to be displayed (e.g. Boss in the Beatrix CD3 quest).
+- Fixed the description of several skills (player and enemy).
+- The SA "Cover" only works if the character is in the front line.
+- The SA "Bandit" has been renamed to "Lupin" in English (US/UK).
+- The AA "Bandit" is renamed "Brigand" in all languages.
+- The "Pakaho" effect has been renamed "Aureole" in French descriptions.
 
-	{Eiko Mode}:
-	→ -25% damage dealt by enemies.
+{Items}
+- New weapon added: the "Claymore" => Two-handed swords allow you to learn unique SAs compared to classic swords.
+- Fixed the "Emerald" item, which was acting like an Elixir.
+- Fixed the SFX of the "Diamond" and "Emerald" items.
+- The cursed ring only deals 25% more damage and only from the [Attack] command.
+- Fixed the description of several items.
+- The items "Hamelin" and "Siren’s Flute" reduce the MP cost of Recover and Life spells respectively to zero (instead of half).
 
-	{Zidane Mode}:
-	→ No modifiers ! (difficulty by default)
+{Monsters / Bosses}
+- Changed Ironite's "Dragon Force" spell effect.
+- Fixed Dagga and Vivi's HP when fighting Maton on Kuja/Necron difficulty.
+- New damage formula for Prison Cage's "Absorb" attack.
+- Improvement to friendly Feather Circle's AI.
+- Improved and corrected combat against Mimics.
+- Fixed Arkh's "Bombardment" sequence file, which was causing a softlock if the attack resulted in a game over.
+- Fixed the AI of Friendly Garuda, which was causing a game over when a character revives with AutoLife.
+- The Sand Worm's "Quicksand" removes Booster and Somni.
+- Optimisation of the Mad Alchemist's AI, particularly in terms of size management, which can lead to visual bugs with Demi, for example.
+Also, these changes to stats adapt correctly to all difficulties.
+- It is no longer possible to check the HP of Tomberries via Scan.
+- The "Elixir" on Ifa's superboss at CD3 also removes all status alterations, allowing him to use her counter-attack.
+- Slight correction to the AI against Lani, who could die under a specific condition.
+- Blind Dragon's "Aïkido" is no longer a precise physical attack, and can therefore be dodged.
+- Fixed the name of some monster/boss attacks.
+- Fixed some dialogue boxes against Lamie.
 
-	{Kuja Mode}:
-	→ +25% Strength/Magic for enemies.
-	→ +10% maximum HP for enemies.
-
-	{Necron Mode} :
-	→ +50% Strength/Magic for enemies.
-	→ +25% maximum HP for enemies.
-	→ EXP gain divided by 2.
-	→ Gils gain divided by 10.
-
-	The main reason for adding this system is to give certain players a chance to discover my mod, without being blocked by the basic difficulty... or for those who like to suffer, hehe!
-
-	I haven't necessarily tested certain difficulties in depth, especially the last ones if they make certain bosses impossible... I'll be fine-tuning this when the Disc 4 will be released, but at least the system is there!
-	It's also possible to change the difficulty at any time with the Mog in the Qu's swamps => In future, this solution will no longer exist and the player will only be able to lower the difficulty
-	but never raise it, which will make Necron Mode rather unique.
-
-	- Change to the chocograph script: rollback of the forest and lagoon scripts to avoid any more problems with the mog (particularly detecting the remaining chocographs).
-	From now on, certain chocographs can only be opened after a certain stage of the game => If you ever come across this type of situation, Zidane will make a reflection at a certain point in the game, which will indicate that the chocograph is open.
-	which will indicate that the chocograph will be available!
-
-	- The frogs in the swamp mini-game can no longer be played if you haven't progressed far enough in the scenario.
-	It is deactivated if one of the following conditions is met:
-	=> More than 10 frogs before the end of Disc 1.
-	=> More than 40 frogs before the end of Disc 2.
-	=> More than 70 frogs before the Shrines.
-
-	- Reverse the reward at 80 and 90 frogs in the swamp mini-game.
-	- [WIP] If the damage does not exceed 15% of the target's Maximum HP, the target will not gain Trance. The formula is not currently definitive.
-	- Stop no longer triggers a Game Over.
-	- Addition of the "Stop" effect on powerful monsters: this state alteration shares the same characteristics as Sleep and Freeze, i.e. the duration is reduced each time it is used.
-	- Addition of the "Zombie" effect on powerful monsters: the next heal given (including absorption) is reduced to 0 and then Zombie is removed.
-	- Optimised the code for "Rei's Wind".
-	- The Dragon effect of "Rei's Wind" has been modified.
-	- Several monsters have had their stealable/gainable items changed.
-	- "Rebirth Flame" from Phoenix now removes "Vanish".
-	- Smoke no longer allows you to escape certain combats.
-	- Cure, Cura and Curaga spells can no longer target knocked-out allies.
-	- The targeting of "Maelstorm" has been corrected following the latest Memoria update.
-	- The duration of "Slow" on powerful enemies is now reduced to 70%.
-	- Fixed the AI of "Sand Worm", which can generate a softlock because of Freyja.
-	- Slight correction to Fabryce's AI.
-	- Correction to Lovecraft's AI.
-	- Lovecraft is now immune to "Gravity" attacks (to avoid a bug caused by his AI).
-	- Steiner's "Sentinel" no longer reduces physical damage by 75% (rollback to 50%, due to the "Defence" status). This probably reflects a slight reworking of his passive...
-	- Change to "Flawless" SA
-	- Correction to the "Power Up" SA
-	- AtoMoug and SidéMoug can be reflected.
-	- Vivi's "Focus" no longer triggers twice if the spell is returned by Reflect and inflicts damage on other targets with a single command.
-	- Fixed multiple formulas that had the wrong damage bonus (example: Berserk gave +25% damage instead of 50%).
-	- Slight correction to "Racket" type weapons, which did not have the damage bonus against enemies from behind.
-	- The SA "Hold Up" (as well as its boosted version) now works with "Mug".
-	- "Healer" SA no longer triggers Zidane's passive.
-	- The gain of gils under "Aboule Gils" and HP under "Mug+" are unified in a single message.
-	- "Auto-Life" no longer works if the target is a Zombie.
-	- Monsters can now use "Auto-Life", protecting them from an attack and leaving them at 1 HP.
-	- It is no longer possible to collect MPs from the Prima Vista bed at Disc 1.
-	- Fixed the script when Beatrix joins the team at Disc 3, where stats were calculated from level 1 and not the level when she leaves Steiner in Alexandria.
-	- Fixed a display bug where the level of a status (such as Emousse) was not refreshed if the size of the model varied (via Mini for example).
-	- It's now possible to fight with the Mog just before Clayra's Beatrix.
-	- It's possible to save when Steiner joins Zidane, during the rescue in Alexandria (Disc 2) (and therefore before the timer).
-	- Markus automatically removes all his equipment when he leaves Steiner in Alexandria (Disc 2).
-	- "Chemist+" code improved.
-	- Improve the code for the various SAs that can restore HP or MP.
-	- Changed a few dialogues.
-	- Fixed a few sequence files.</PatchNotes>
+{Fields}
+- Fixed the Mog in Clayra's temple in all languages.
+- Fixed the music in random battles in the Shadow Field/Desert Palace (2221).
+- Added Beatrix to the last scene of "You are not alone", where all the characters gather near the Mog.
+- Fixed the Mene rewards dialogue box in the "Hot and Cold" zones.
+- Fixed dialogue against Lani in all languages.
+- Fixed the script on the Interior/Ifa field (1759) where the superboss could be available before CD3.</PatchNotes>
 	<Category>Gameplay</Category>
 	<PreviewFileUrl>https://i.ibb.co/HC3GH4j/Logo-Trance-Seek.png</PreviewFileUrl>
 	<PreviewFile>Thumbnail/LogoTranceSeek.png</PreviewFile>
@@ -254,20 +230,21 @@ You should set the priority of this mod to be higher than the priority of the Mo
 
 <Mod>
 	<Name>Support Ability Cost</Name>
-	<Version>4.1.2</Version>
+	<Version>4.1.3</Version>
 	<InstallationPath>KupoGemSATweak</InstallationPath>
-	<ReleaseDate>2024-12-05</ReleaseDate>
+	<ReleaseDate>2025-01-13</ReleaseDate>
 	<ReleaseDateOriginal>2022-4-14</ReleaseDateOriginal>
 	<Author>faospark / Tirlititi </Author>
 	<Description> Allows You to have 1 Gem cost per support ability or Half.
 [1] 1 Gem Cost is activate by default 
 [2] Half the cost of Support abilities
-
+[3] Double the cost of Support abilities
+ 
 Mod Order : Position 1 or on top of Any Gameplay mods such as Alternate Fantasy , Playable Character pack. Tantalus Etc 
 This was the earliest public release of this type of Mod that modifies the Gem Cost of Support Abilities 
 Originally released as part of the tweaks of Kupo Mods formerly Mog Add-ons
 	</Description>
-	<PatchNotes>- changed implention of submods to be compatible with the latest version of the mod manager</PatchNotes>
+	<PatchNotes>added third option for increased difficulty</PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/71w3a8qnfbg5g3lvnl1bd/KupoGemSATweak.zip?rlkey=qnsqgc70ngf3ix9u4f7ut82ob&amp;dl=1</DownloadUrl>
@@ -287,19 +264,25 @@ Originally released as part of the tweaks of Kupo Mods formerly Mog Add-ons
 		<Description>Cuts ability gems to half for support abilites </Description>
 		<Group>g-ab</Group>
 	</SubMod>
+	<SubMod>
+		<Name>Tweak: Double Cost of Support Abilities</Name>
+		<InstallationPath>Features/Tweaks/AbilityDbl</InstallationPath>
+		<Description>Doubles the gem requirement for support abilites for increased difficulty </Description>
+		<Group>g-ab</Group>
+	</SubMod>
 </Mod>
 
 <Mod>
 	<Name>Exp, AP, Gil, Rewards Tweaks</Name>
-	<Version>4.1.2</Version>
+	<Version>4.1.3</Version>
 	<InstallationPath>KupoTweaks</InstallationPath>
-	<ReleaseDate>2024-12-06</ReleaseDate>
+	<ReleaseDate>2025-01-13</ReleaseDate>
 	<ReleaseDateOriginal>2022-08-14</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>As the name suggests, this mod has several options that can multiply your Exp, AP , Gil and After Battle Rewards. 
 Mod Order : On top of any Gameplay Mod.
 Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</Description>
-	<PatchNotes>Improved compatibility with the mod manager</PatchNotes>
+	<PatchNotes>Added Mod Grouping to ensure one mod can be activated per category</PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/z2df6bk4hps21v53j105w/KupoTweaks.zip?rlkey=wfw287bn1u27gz4najtx1jm9a&amp;dl=1</DownloadUrl>
@@ -312,18 +295,21 @@ Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</D
 		<InstallationPath>Features/Tweaks/AP2x</InstallationPath>
 		<Description>Gains 2x AP after battle (Ignores AbilityUp)</Description>
 		<Priority>1</Priority>
+		<Group>AP</Group>
 	</SubMod>
 	<SubMod>
 		<Name>4x AP Gain</Name>
 		<InstallationPath>Features/Tweaks/AP4x</InstallationPath>
 		<Description>Gains 4x AP after battle</Description>
 		<Priority>1</Priority>
+		<Group>AP</Group>
 	</SubMod>
 	<SubMod>
 		<Name>99 AP Gain</Name>
 		<InstallationPath>Features/Tweaks/AP99</InstallationPath>
 		<Description>Gains 99 AP after battle</Description>
 		<Priority>1</Priority>
+		<Group>AP</Group>
 	</SubMod>
 	<Header>Experience Gain Modifier</Header>
 	<SubMod>
@@ -331,18 +317,21 @@ Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</D
 		<InstallationPath>Features/Tweaks/EXP2x</InstallationPath>
 		<Description>Gains 2x EXP after battle</Description>
 		<Priority>1</Priority>
+		<Group>EXP</Group>
 	</SubMod>
 	<SubMod>
 		<Name>4x EXP Gain</Name>
 		<InstallationPath>Features/Tweaks/EXP4x</InstallationPath>
 		<Description>Gains 4x EXP after battle</Description>
 		<Priority>1</Priority>
+		<Group>EXP</Group>
 	</SubMod>
 	<SubMod>
 		<Name>8x EXP Gain</Name>
 		<InstallationPath>Features/Tweaks/EXP8x</InstallationPath>
 		<Description>Gains 8x EXP after battle</Description>
 		<Priority>1</Priority>
+		<Group>EXP</Group>
 	</SubMod>
 	<Header>Earned Gil Modifier</Header>
 	<SubMod>
@@ -350,33 +339,38 @@ Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</D
 		<InstallationPath>Features/Tweaks/2xgil</InstallationPath>
 		<Description>Doubles Gil received after battle</Description>
 		<Priority>1</Priority>
+		<Group>GIL</Group>	
 	</SubMod>
 	<SubMod>
 		<Name>4x gil</Name>
 		<InstallationPath>Features/Tweaks/4xgil</InstallationPath>
 		<Description>4x Gil received after battle</Description>
 		<Priority>1</Priority>
+		<Group>GIL</Group>
 	</SubMod>
 	<SubMod>
 		<Name>8x gil</Name>
 		<InstallationPath>Features/Tweaks/8xgil</InstallationPath>
 		<Description>8x Gil received after battle</Description>
 		<Priority>1</Priority>
+		<Group>GIL</Group>
 	</SubMod>
 	<Header>Item Drop Multiplier</Header>
 	<SubMod>
 		<Name>Get 2x of any item drop after battle </Name>
 		<InstallationPath>Features/Tweaks/2xitem</InstallationPath>
 		<Description>Any item received after battle would be multiplied by 2 ,
-			hence if a monster drops 2 potions you get 4  </Description>
+				hence if a monster drops 2 potions you get 4  </Description>
 		<Priority>1</Priority>
+		<Group>ITEM</Group>
 	</SubMod>
 	<SubMod>
 		<Name>Get 4x of any item drop after battle </Name>
 		<InstallationPath>Features/Tweaks/4xitem</InstallationPath>
 		<Description>Any item received after battle would be multiplied by 4 ,
-			hence if a monster drops 2 potions you get 8  </Description>
+				hence if a monster drops 2 potions you get 8  </Description>
 		<Priority>1</Priority>
+		<Group>ITEM</Group>
 	</SubMod>
 </Mod>
 
@@ -435,9 +429,9 @@ This mod was initially introduced as the Exp challenge tweaks within Kupo Mods, 
 
 <Mod>
 	<Name>Kupo Heroes Pack </Name>
-	<Version>4.1.4</Version>
+	<Version>4.1.6</Version>
 	<InstallationPath>KupoHeroPack</InstallationPath>
-	<ReleaseDate>2024-12-11</ReleaseDate>
+	<ReleaseDate>2025-01-13</ReleaseDate>
 	<ReleaseDateOriginal>2024-05-10</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>A set of Character enhancements that powers up characters and reduces grind. Ideal for players seeking a fresh character experience without changing the story, flow, or core gameplay mechanics.
@@ -462,20 +456,21 @@ Characters:
 
 See the readme.txt for more details.
 
+
 Mod Order:
 - Place above Beatrix and Tantalus mods.
 - Partially compatible with Alternate Fantasy, though some skills may interfere.
 
-Part of Kupo Mods’ Character Enhancements, formerly Mog Add-ons.
+Part of Kupo Mods’ Character formerly Mog Add-ons.
 	</Description>
-	<PatchNotes>Fixed directory of Blue Narciss music</PatchNotes>
+	<PatchNotes>Read the Readme file</PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/4v6b8ijknci17on89ow01/KupoHeroPack.zip?rlkey=xsdn7vf32f41eregepx2fu118&amp;dl=1</DownloadUrl>
 	<PreviewFile>preview/kupo-hero.png</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/78/78-1733396525-286566443.png</PreviewFileUrl>
 	<MinimumMemoriaVersion>2024.05.19</MinimumMemoriaVersion>
-	<Header>All Characters</Header>
+	<Header>General</Header>
 	<SubMod>
 		<Name>Add Resistance to Zombie and Virus </Name>
 		<InstallationPath>Features/All</InstallationPath>
@@ -486,6 +481,17 @@ Part of Kupo Mods’ Character Enhancements, formerly Mog Add-ons.
 		<Name>Bye Auto-Potion </Name>
 		<InstallationPath>Features/NoAutoPotion</InstallationPath>
 		<Description>Replace Auto-Potion with HP and MP 5% </Description>
+	</SubMod>
+	<SubMod>
+		<Name>Phoenix Pinion usable</Name>
+		<InstallationPath>Features/Sitem</InstallationPath>
+		<Description>Phoenix Pinion Usable outside battle </Description>
+	</SubMod>
+	<SubMod>
+		<Name>Mirrored Daggers</Name>
+		<InstallationPath>Features/ZidaneWep</InstallationPath>
+		<Description>Have Zidane Equip identical daggers</Description>
+		<Default/>
 	</SubMod>
 	<Header>Transportation</Header>
 	<SubMod>
@@ -527,7 +533,7 @@ Part of Kupo Mods’ Character Enhancements, formerly Mog Add-ons.
 	<SubMod>
 		<Name>[Steiner] The Queens Knight</Name>
 		<InstallationPath>Features/Steiner</InstallationPath>
-		<Description>Steiner can Equip Save the Queen </Description>
+		<Description>Steiner can Equip Save the Queen, has access to all Vivi's additional spell </Description>
 		<Default/>
 	</SubMod>
 	<SubMod>
@@ -770,10 +776,16 @@ Compatible with Alternate Fantasy</Description>
 	<InstallationPath>GarnetIsMainCharacter</InstallationPath>
 	<Author>piano221</Author>
 	<ReleaseDateOriginal>2021-04-05</ReleaseDateOriginal>
-	<Description>This mod allow you to change Zidane for Garnet as the field main character.</Description>
+	<Description>This mod allow you to change Zidane for Garnet as the field main character.
+
+Currently, this mod must be installed manually from its website:
+1) Download and extract the file "p0data7.bin"
+2) Create a folder "GarnetIsMainCharacter/StreamingAssets/" in the game's directory
+3) Place "p0data7.bin" in that folder</Description>
 	<Category>Character Swap</Category>
 	<Website>https://forums.qhimm.com/index.php?topic=20605.0</Website>
-	<DownloadUrl>https://download944.mediafire.com/ud6vuwre8sag/10illq7tkuxixhb/p0data7.bin</DownloadUrl>
+	<!-- Note: Mediafire download links seem to be temporary (maybe with a long existence, or maybe when the website updates...) -->
+	<!-- <DownloadUrl>https://download944.mediafire.com/ud6vuwre8sag/10illq7tkuxixhb/p0data7.bin</DownloadUrl> -->
 	<DownloadFormat>SingleFileWithPath:StreamingAssets/p0data7.bin</DownloadFormat>
 </Mod>
 
@@ -813,9 +825,9 @@ You should better use the Playable Characters Pack instead. This later one doesn
 
 <Mod>
 	<Name>Kupo UI Suite</Name>
-	<Version>4.1.4</Version>
+	<Version>4.1.5</Version>
 	<InstallationPath>KupoUISuite</InstallationPath>
-	<ReleaseDate>2024-12-06</ReleaseDate>
+	<ReleaseDate>2024-12-22</ReleaseDate>
 	<ReleaseDateOriginal>2021-08-14</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>
@@ -847,7 +859,7 @@ Originally released as part of Kupo Mods formerly Mog-Addons to see previews and
 	<SubMod>
 		<Name>Modern [Transparent]</Name>
 		<InstallationPath>Features/DialogueBox/Modern</InstallationPath>
-		<Description>New Transparent UI</Description>
+		<Description>Recommended to use with Dynamic Backgrounds</Description>
 		<Group>g-ui-theme</Group>
 		<PreviewFile>preview/d2.png</PreviewFile>
 	</SubMod>
@@ -888,7 +900,7 @@ Originally released as part of Kupo Mods formerly Mog-Addons to see previews and
 	<SubMod>
 		<Name>UI Option: No Divider</Name>
 		<InstallationPath>Features/frames/divideless</InstallationPath>
-		<Description>removes dividers in menu</Description>
+		<Description>removes dividers in menu, recommended to be on. </Description>
 		<Priority>4</Priority>
 	</SubMod>
 	<SubMod>
@@ -955,6 +967,13 @@ Originally released as part of Kupo Mods formerly Mog-Addons to see previews and
 		<PreviewFile>preview/f3.png</PreviewFile>
 		<Group>g-menu-bg</Group>
 	</SubMod>
+	<SubMod>
+		<Name>Dynamic</Name>
+		<InstallationPath>Features/Menubg/menubgdynamic</InstallationPath>
+		<Description>Dynamically changes depending on the window </Description>
+		<PreviewFile>preview/f3.png</PreviewFile>
+		<Group>g-menu-bg</Group>
+	</SubMod>
 	<Header>Title Screen</Header>
 	<SubMod>
 		<Name>Recreation</Name>
@@ -995,10 +1014,10 @@ Originally released as part of Kupo Mods formerly Mog-Addons to see previews and
 	<SubMod>
 		<Name>Cards: Triple Triad Mat</Name>
 		<InstallationPath>Features/Cards</InstallationPath>
-		<Description>Triple triad inspired mat and UI for the Game</Description>
+		<Description>Triple triad inspired mat and UI for the Game, This automatically sets the game to be in triple triad mode </Description>
 		<PreviewFile>preview/tm.png</PreviewFile>
 		<Default/>
-	</SubMod>
+	</SubMod>	
 	<SubMod>
 		<Name>Alternate Colored Maps</Name>
 		<InstallationPath>Features/Maps</InstallationPath>
@@ -1014,11 +1033,24 @@ Originally released as part of Kupo Mods formerly Mog-Addons to see previews and
 		<Default/>
 	</SubMod>
 	<SubMod>
+		<Name>Icons: Extended Icons</Name>
+		<InstallationPath>Features/NewElementIcons</InstallationPath>
+		<Description>A Set of Extended Icons that modders can use in game</Description>
+		<PreviewFile>preview/i2.png</PreviewFile>
+		<Default/>
+	</SubMod>
+	<SubMod>
 		<Name>UI Sound: Alt Cursor Sound  </Name>
 		<InstallationPath>Features/CursorSound</InstallationPath>
 		<Description>What i think is a better cursor sound</Description>
 		<Default/>
 	</SubMod>
+	<SubMod>
+		<Name>Key Item Background</Name>
+		<InstallationPath>Features/KeyItem</InstallationPath>
+		<Description>A custom Key Item background when reading description.</Description>
+		<Default/>
+	</SubMod>	
 	<SubMod>
 		<Name>Concept Art Title Loop</Name>
 		<InstallationPath>Features/TitleLogo/TitleLoop</InstallationPath>
@@ -1313,9 +1345,9 @@ Available Themes:
 
 <Mod>
 	<Name>Portraits Pack</Name>
-	<Version>4.2.0</Version>
+	<Version>4.2.2</Version>
 	<InstallationPath>KupoPortraits</InstallationPath>
-	<ReleaseDate>2024-12-11</ReleaseDate>
+	<ReleaseDate>2025-01-13</ReleaseDate>
 	<ReleaseDateOriginal>2021-10-18</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>To DFFOO fans this is where the DFFOO portraits resides
@@ -1331,7 +1363,7 @@ Opera Omnia Alt :  DFFOO Pluto Knight / White Mage
 Mod Order : Must be Place Above the mods mentioned above Playable Character Pack , Beatrix Mod , Tantalus mod and Kupo UI Suite. 
 The Original Portraits Pack, part of the Kupo Mods, formerly Mog Add-ons.
 	</Description>
-	<PatchNotes>Improved compatibility with the mod manager</PatchNotes>
+	<PatchNotes>See Read-me.txt</PatchNotes>
 	<Category>Visual</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/80dpdv5kn378cw27fay0q/KupoPortraits.zip?rlkey=dnb8htsnmqzoehuibij9tarxd&amp;dl=1</DownloadUrl>
@@ -1342,8 +1374,7 @@ The Original Portraits Pack, part of the Kupo Mods, formerly Mog Add-ons.
 	<SubMod>
 		<Name>Default Extended Cast</Name>
 		<InstallationPath>Features/PortraitDefault</InstallationPath>
-		<Description>Default Portraits that includes Kuja, Fratly and Lani [on by Default]</Description>
-		<Default/>
+		<Description>Default Portraits that includes Kuja, Fratly and Lani</Description>
 		<Group>g-port</Group>
 		<PreviewFile>preview/ext.jpg</PreviewFile>
 	</SubMod>
@@ -1453,18 +1484,17 @@ Idea by Snouz and made by DV.</Description>
 
 <Mod>
 	<Name>Modern Labels + </Name>
-	<Version>4.1.2</Version>
+	<Version>4.1.5</Version>
 	<InstallationPath>KupoModernLabels</InstallationPath>
-	<ReleaseDate>2024-12-06</ReleaseDate>
+	<ReleaseDate>2025-01-13</ReleaseDate>
 	<ReleaseDateOriginal>2024-10-01</ReleaseDateOriginal>
 	<Author>faospark</Author>
-	<Description>A mod that replaces old item, spell and UI names / labels to their modern counterparts 
-Ideal for those who were introduced to the series post final fantasy 12. 
-Simply activate and that should work. 
+	<Description>A mod that replaces old item, spell and UI names / labels to their modern counterparts or their now known consistent naming convention 
+Ideal for those who were introduced to the series post final fantasy 12. Simply activate and that should work. 
 For now the primary focus of the mod is the US and UK translation of the game so non english language players feel free to message me if you have something you want to change in your 
 Language of choice. 
 	</Description>
-	<PatchNotes>Improved compatibility with the mod manager </PatchNotes>
+	<PatchNotes>Read Readme file</PatchNotes>
 	<Category>Translation</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/mi4qmy3h2qqoa57bf8wzu/KupoModernLabels.zip?rlkey=hfbawmgaiijosth1u6wcomwbk&amp;st=zcvbfu94&amp;dl=1</DownloadUrl>
@@ -1476,6 +1506,7 @@ Language of choice.
 		<InstallationPath>extended</InstallationPath>
 		<Description>Enable extended field scripts</Description>
 		<Priority>1</Priority>
+		<Default/>
 	</SubMod>
 </Mod>
 
@@ -1493,6 +1524,39 @@ Language of choice.
 	<Website>https://steamcommunity.com/sharedfiles/filedetails/?id=3237680302</Website>
 	<PreviewFileUrl>https://i.imgur.com/8YOLByj.png</PreviewFileUrl>
 	<PreviewFile>Preview.jpg</PreviewFile>
+</Mod>
+
+<Mod>
+	<Name>Hungarian Translation</Name>
+	<Version>1.0</Version>
+	<InstallationPath>TranslationHun</InstallationPath>
+	<ReleaseDate>2025-01-23</ReleaseDate>
+	<ReleaseDateOriginal>2016-09-21</ReleaseDateOriginal>
+	<Author>HUNosítók Team</Author>
+	<Description>A Final Fantasy IX játék magyar fordítása.
+
+Fordítás: Ardea, Konyak, Owen_eX, Zeneger
+Technikai támogatás: noname06
+Eredeti telepítő: Evin</Description>
+	<Category>Translation</Category>
+	<Website>https://magyaritasok.hu/download/2396/final-fantasy-9</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/smkheykr9k84ief7qrnv5/PC_TranslationHungarian.zip?rlkey=ow9amfo4vct78950rlhd928nw&amp;st=61rccqx4&amp;dl=1</DownloadUrl>
+	<MinimumMemoriaVersion>2024-11-17</MinimumMemoriaVersion>
+</Mod>
+
+<Mod>
+	<Name>Modern German</Name>
+	<Version>1.0</Version>
+	<Author>Plasquar</Author>
+	<InstallationPath>ModernGerman</InstallationPath>
+	<Category>Translation</Category>
+	<ReleaseDateOriginal>12 Feb 2025</ReleaseDateOriginal>
+	<ReleaseDate>12 Feb 2025</ReleaseDate>
+	<MinimumMemoriaVersion>2024-08-18</MinimumMemoriaVersion>
+	<Description>Diese Mod behebt ein paar Rechtschreibfehler und aktualisiert die deutsche Übersetzung von FF9 auf die neue deutsche Rechtschreibung.
+ Beispiel: "Wir müßen hier weg!" -> "Wir müssen hier weg!".
+ Diese Mod ist NICHT notwendig, wenn ihr mit "Alternate Fantasy" spielt, dort ist "Modern German" bereits integriert.</Description>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/br6xjl22auu284caaxd8n/PC_ModernGerman.zip?rlkey=2pl7a5cycqg4pgiy53u5lwewp&amp;dl=1</DownloadUrl>
 </Mod>
 
 <!--

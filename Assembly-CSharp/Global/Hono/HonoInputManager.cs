@@ -13,10 +13,7 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
     {
         this.analogControlEnabled = Configuration.AnalogControl.Enabled;
         XInputDotNetPure.GamePad.Threshold = Configuration.AnalogControl.StickThreshold;
-        KeyCode[] array = new KeyCode[3];
-        array[0] = KeyCode.KeypadEnter;
-        array[1] = KeyCode.Mouse1;
-        this.inputKeys3 = array;
+        this.inputKeys3 = [KeyCode.KeypadEnter, KeyCode.Mouse1, KeyCode.None];
         this.inputKeysEmpty = new KeyCode[3];
         this.inputKeys2Android = new KeyCode[]
         {
@@ -40,16 +37,16 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
         };
         this.defaultJoystickInputKeys = new String[]
         {
-            "JoystickButton0",
-            "JoystickButton1",
-            "JoystickButton3",
-            "JoystickButton2",
-            "JoystickButton4",
-            "JoystickButton5",
-            "LeftTrigger",
-            "RightTrigger",
-            "JoystickButton7",
-            "JoystickButton6"
+            "JoystickButton0", // Control.Confirm -> Cross
+            "JoystickButton1", // Control.Cancel  -> Circle
+            "JoystickButton3", // Control.Menu    -> Triangle
+            "JoystickButton2", // Control.Special -> Square
+            "JoystickButton4", // Control.LeftBumper
+            "JoystickButton5", // Control.RightBumper
+            "LeftTrigger",     // Control.LeftTrigger
+            "RightTrigger",    // Control.RightTrigger
+            "JoystickButton7", // Control.Pause
+            "JoystickButton6"  // Control.Select
         };
         this.defaultAndroidJoystickInputKeys = new String[]
         {
@@ -108,6 +105,7 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
         this.hasVAxisSignalNotZero = new Boolean[2];
         this.rightAnalogButtonStatus = new Boolean[3];
         this.isButtonDown = new Boolean[10];
+        this.logicalToButton = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
     }
 
     public static KeyCode[] MemoriaKeyBindings = InitKeyBindings();
@@ -159,32 +157,13 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
         return codes;
     }
 
-
-    static HonoInputManager()
-    {
-        // Note: this type is marked as 'beforefieldinit'.
-        HonoInputManager.PauseUIThresholdKeys = new Int32[]
-        {
-            0,
-            1,
-            2,
-            3,
-            5,
-            4,
-            7,
-            6
-        };
-    }
-
     public Int32[] ThresholdLogicalKeys
     {
         get
         {
             UIManager.UIState state = PersistenSingleton<UIManager>.Instance.State;
             if (state != UIManager.UIState.Pause)
-            {
                 return null;
-            }
             return HonoInputManager.PauseUIThresholdKeys;
         }
     }
@@ -202,16 +181,12 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
     {
         Single axis = UnityEngine.Input.GetAxis(this.SpecificPlatformRightTriggerKey);
         Single axis2 = UnityEngine.Input.GetAxis(this.SpecificPlatformLeftTriggerKey);
-        if (!this.isInputDown[8])
+        if (!this.isInputDown[HonoInputManager.PauseIndex])
         {
             if (axis > 0.19f && axis2 > 0.19f)
-            {
-                this.isInputDown[8] = true;
-            }
-            if (this.isInputDown[8] && this.lastFrameRightTriggerAxis > 0.19f && this.lastFrameLeftTriggerAxis > 0.19f)
-            {
-                this.isInputDown[8] = false;
-            }
+                this.isInputDown[HonoInputManager.PauseIndex] = true;
+            if (this.isInputDown[HonoInputManager.PauseIndex] && this.lastFrameRightTriggerAxis > 0.19f && this.lastFrameLeftTriggerAxis > 0.19f)
+                this.isInputDown[HonoInputManager.PauseIndex] = false;
         }
         this.lastFrameRightTriggerAxis = axis;
         this.lastFrameLeftTriggerAxis = axis2;
@@ -219,39 +194,54 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 
     private void ValidateButtonDown()
     {
-        Int32[] thresholdLogicalKeys = this.ThresholdLogicalKeys;
-        if (thresholdLogicalKeys != null)
+        Int32[] logicalPauseKeys = this.ThresholdLogicalKeys;
+        if (logicalPauseKeys != null)
         {
-            Int32[] array = thresholdLogicalKeys;
-            for (Int32 i = 0; i < (Int32)array.Length; i++)
+            for (Int32 i = 0; i < logicalPauseKeys.Length; i++)
             {
-                Int32 num = array[i];
-                if (this.isInputDown[num])
+                // No need for Control -> Int32 conversion as both Confirm/Cancel are in the list
+                Int32 keyIndex = logicalPauseKeys[i];
+                if (this.isInputDown[keyIndex])
                 {
                     this.downTimer = 0f;
-                    this.isButtonDown[num] = true;
-                    this.isInputDown[num] = false;
+                    this.isButtonDown[keyIndex] = true;
+                    this.isInputDown[keyIndex] = false;
                 }
-                else if (this.isInput[num])
+                else if (this.isInput[keyIndex])
                 {
                     this.downTimer += Time.deltaTime;
-                    if (this.downTimer > 0.01f && this.isButtonDown[num])
+                    if (this.downTimer > HonoInputManager.DownThreshold && this.isButtonDown[keyIndex])
                     {
                         this.downTimer = 0f;
-                        this.isButtonDown[num] = false;
-                        this.isInputDown[num] = true;
+                        this.isButtonDown[keyIndex] = false;
+                        this.isInputDown[keyIndex] = true;
                     }
                 }
-                else if (this.isInputUp[num])
+                else if (this.isInputUp[keyIndex])
                 {
                     this.downTimer = 0f;
-                    this.isButtonDown[num] = false;
+                    this.isButtonDown[keyIndex] = false;
                 }
             }
         }
     }
 
     public Boolean IgnoreCheckingDirectionSources { get; set; }
+
+    public void SetJapaneseLayout(Boolean japaneseLayout)
+    {
+        this.defaultInputKeys[0] = japaneseLayout ? KeyCode.C : KeyCode.X; // Control.Confirm
+        this.defaultInputKeys[1] = japaneseLayout ? KeyCode.X : KeyCode.C; // Control.Cancel
+        this.defaultJoystickInputKeys[0] = japaneseLayout ? "JoystickButton1" : "JoystickButton0";
+        this.defaultJoystickInputKeys[1] = japaneseLayout ? "JoystickButton0" : "JoystickButton1";
+        this.defaultAndroidJoystickInputKeys[0] = japaneseLayout ? "JoystickButton1" : "JoystickButton0";
+        this.defaultAndroidJoystickInputKeys[1] = japaneseLayout ? "JoystickButton0" : "JoystickButton1";
+        this.defaultIOSJoystickInputKeys[0] = japaneseLayout ? "JoystickButton14" : "JoystickButton13";
+        this.defaultIOSJoystickInputKeys[1] = japaneseLayout ? "JoystickButton13" : "JoystickButton14";
+        this.defaultaaaaInputKeys[0] = japaneseLayout ? "JoystickButton1" : "JoystickButton0";
+        this.defaultaaaaInputKeys[1] = japaneseLayout ? "JoystickButton0" : "JoystickButton1";
+        SetPrimaryKeys();
+    }
 
     private void ScanSources()
     {
@@ -301,70 +291,62 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
     private void ScanDirectionSources()
     {
         Control lazyKey = UIManager.Input.GetLazyKey();
-        Single num;
-        Single num2;
+        Single dx;
+        Single dy;
         if (VirtualAnalog.HasInput())
         {
             this.directionAxisSources = SourceControl.Touch;
-            num = VirtualAnalog.Value.x;
-            num2 = VirtualAnalog.Value.y;
+            dx = VirtualAnalog.Value.x;
+            dy = VirtualAnalog.Value.y;
         }
         else
         {
             this.directionAxisSources = (Double)UnityEngine.Input.GetAxis(this.SpecificPlatformHorizontalInputKey) != 0.0 || (Double)UnityEngine.Input.GetAxis(this.SpecificPlatformVerticalInputKey) != 0.0 ? SourceControl.Joystick : ((Double)UnityEngine.Input.GetAxis(this.DefaultHorizontalInputKey) != 0.0 || (Double)UnityEngine.Input.GetAxis(this.DefaultVerticalInputKey) != 0.0 ? SourceControl.KeyBoard : SourceControl.None);
-            num = this.GetHorizontalNavigation();
-            num2 = this.GetVerticalNavigation();
+            dx = this.GetHorizontalNavigation();
+            dy = this.GetVerticalNavigation();
         }
         if (!this.IgnoreCheckingDirectionSources)
         {
-            if (num > 0f)
+            if (dx > 0f)
             {
                 this.inputSources[13] = this.directionAxisSources;
             }
-            else if (num < 0f)
+            else if (dx < 0f)
             {
                 this.inputSources[12] = this.directionAxisSources;
             }
             else
             {
                 if (lazyKey != Control.Right)
-                {
                     this.inputSources[13] = SourceControl.None;
-                }
                 if (lazyKey != Control.Left)
-                {
                     this.inputSources[12] = SourceControl.None;
-                }
             }
-            if (num2 > 0f)
+            if (dy > 0f)
             {
                 this.inputSources[10] = this.directionAxisSources;
             }
-            else if (num2 < 0f)
+            else if (dy < 0f)
             {
                 this.inputSources[11] = this.directionAxisSources;
             }
             else
             {
                 if (lazyKey != Control.Up)
-                {
                     this.inputSources[10] = SourceControl.None;
-                }
                 if (lazyKey != Control.Down)
-                {
                     this.inputSources[11] = SourceControl.None;
-                }
             }
             if (this.directionAxisSources == SourceControl.Joystick || this.directionAxisSources == SourceControl.KeyBoard)
             {
-                this.inputDownSources[10] = (SourceControl)((!this.isVAxisTriggered[0]) ? SourceControl.None : this.directionAxisSources);
-                this.inputDownSources[11] = (SourceControl)((!this.isVAxisTriggered[1]) ? SourceControl.None : this.directionAxisSources);
-                this.inputDownSources[12] = (SourceControl)((!this.isHAxisTriggered[0]) ? SourceControl.None : this.directionAxisSources);
-                this.inputDownSources[13] = (SourceControl)((!this.isHAxisTriggered[1]) ? SourceControl.None : this.directionAxisSources);
-                this.inputUpSources[10] = (SourceControl)((!this.isVAxisUp[0]) ? SourceControl.None : this.directionAxisSources);
-                this.inputUpSources[11] = (SourceControl)((!this.isVAxisUp[1]) ? SourceControl.None : this.directionAxisSources);
-                this.inputUpSources[12] = (SourceControl)((!this.isHAxisUp[0]) ? SourceControl.None : this.directionAxisSources);
-                this.inputUpSources[13] = (SourceControl)((!this.isHAxisUp[1]) ? SourceControl.None : this.directionAxisSources);
+                this.inputDownSources[10] = this.isVAxisTriggered[0] ? this.directionAxisSources : SourceControl.None;
+                this.inputDownSources[11] = this.isVAxisTriggered[1] ? this.directionAxisSources : SourceControl.None;
+                this.inputDownSources[12] = this.isHAxisTriggered[0] ? this.directionAxisSources : SourceControl.None;
+                this.inputDownSources[13] = this.isHAxisTriggered[1] ? this.directionAxisSources : SourceControl.None;
+                this.inputUpSources[10] = this.isVAxisUp[0] ? this.directionAxisSources : SourceControl.None;
+                this.inputUpSources[11] = this.isVAxisUp[1] ? this.directionAxisSources : SourceControl.None;
+                this.inputUpSources[12] = this.isHAxisUp[0] ? this.directionAxisSources : SourceControl.None;
+                this.inputUpSources[13] = this.isHAxisUp[1] ? this.directionAxisSources : SourceControl.None;
             }
         }
     }
@@ -373,14 +355,12 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
     {
         Control lazyKey = UIManager.Input.GetLazyKey();
         if (lazyKey != Control.None)
-        {
             this.inputSources[(Int32)lazyKey] = SourceControl.Touch;
-        }
     }
 
     private void ResetSources()
     {
-        for (Int32 i = 0; i < (Int32)this.inputSources.Length; i++)
+        for (Int32 i = 0; i < this.inputSources.Length; i++)
         {
             this.inputSources[i] = SourceControl.None;
             this.inputDownSources[i] = SourceControl.None;
@@ -390,14 +370,12 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 
     private void TestSource()
     {
-        for (Int32 i = 0; i < (Int32)this.inputSources.Length; i++)
+        for (Int32 i = 0; i < this.inputSources.Length; i++)
         {
             Control control = (Control)i;
             SourceControl source = this.GetSource(control);
             if (source != SourceControl.None)
-            {
                 global::Debug.Log("Found input " + control.ToString() + " from " + source.ToString());
-            }
         }
     }
 
@@ -409,17 +387,11 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
     public SourceControl GetSource(Control key)
     {
         if (this.inputDownSources[(Int32)key] != SourceControl.None)
-        {
             return this.inputDownSources[(Int32)key];
-        }
         if (this.inputSources[(Int32)key] != SourceControl.None)
-        {
             return this.inputSources[(Int32)key];
-        }
         if (this.inputUpSources[(Int32)key] != SourceControl.None)
-        {
             return this.inputUpSources[(Int32)key];
-        }
         return SourceControl.None;
     }
 
@@ -430,14 +402,8 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 
     public Boolean DisablePrimaryKey
     {
-        get
-        {
-            return this.isDisablePrimaryKey;
-        }
-        set
-        {
-            this.isDisablePrimaryKey = value;
-        }
+        get => this.isDisablePrimaryKey;
+        set => this.isDisablePrimaryKey = value;
     }
 
     public KeyCode[] InputKeys2
@@ -445,13 +411,9 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
         get
         {
             if (Application.platform == RuntimePlatform.IPhonePlayer)
-            {
                 return this.inputKeysEmpty;
-            }
             if (Application.platform == RuntimePlatform.Android)
-            {
                 return this.inputKeys2Android;
-            }
             return this.inputKeys2;
         }
     }
@@ -461,108 +423,56 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
         get
         {
             if (Application.platform == RuntimePlatform.IPhonePlayer)
-            {
                 return this.inputKeysEmpty;
-            }
             return this.inputKeys3;
         }
     }
 
-    public KeyCode[] InputKeysPrimary
-    {
-        get
-        {
-            return this.inputKeysPrimary;
-        }
-    }
-
-    public String[] JoystickKeysPrimary
-    {
-        get
-        {
-            return this.joystickKeysPrimary;
-        }
-    }
-
-    public KeyCode[] DefaultInputKeys
-    {
-        get
-        {
-            return this.defaultInputKeys;
-        }
-    }
+    public KeyCode[] InputKeysPrimary => this.inputKeysPrimary;
+    public String[] JoystickKeysPrimary => this.joystickKeysPrimary;
+    public KeyCode[] DefaultInputKeys => this.defaultInputKeys;
 
     public String[] DefaultJoystickInputKeys
     {
         get
         {
             if (Application.platform == RuntimePlatform.IPhonePlayer)
-            {
                 return this.defaultIOSJoystickInputKeys;
-            }
             if (Application.platform == RuntimePlatform.Android)
-            {
                 return this.defaultAndroidJoystickInputKeys;
-            }
             if (FF9StateSystem.aaaaPlatform)
-            {
                 return this.defaultaaaaInputKeys;
-            }
             return this.defaultJoystickInputKeys;
         }
     }
 
-    public String DefaultHorizontalInputKey
-    {
-        get
-        {
-            return this.defaultHorizontalInputKeys;
-        }
-    }
+    public String DefaultHorizontalInputKey => this.defaultHorizontalInputKeys;
 
     public String SpecificPlatformHorizontalInputKey
     {
         get
         {
             if (Application.platform == RuntimePlatform.Android)
-            {
                 return "Horizontal Android";
-            }
             if (Application.platform == RuntimePlatform.IPhonePlayer)
-            {
                 return "Horizontal iOS";
-            }
-
             return "Horizontal";
-
             // I don't know what is that but for DualShock 4 it returns -0.085 for the X-Axis
             // return "Horizontal NonMobile";
         }
     }
 
-    public String DefaultVerticalInputKey
-    {
-        get
-        {
-            return this.defaultVerticalInputKeys;
-        }
-    }
+    public String DefaultVerticalInputKey => this.defaultVerticalInputKeys;
 
     public String SpecificPlatformVerticalInputKey
     {
         get
         {
             if (Application.platform == RuntimePlatform.Android)
-            {
                 return "Vertical Android";
-            }
             if (Application.platform == RuntimePlatform.IPhonePlayer)
-            {
                 return "Vertical iOS";
-            }
-
             return "Vertical";
-
             // I don't know what is that but for DualShock 4 it returns -0.085 for the X-Axis
             // return "Vertical NonMobile";
         }
@@ -573,9 +483,7 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
         get
         {
             if (Application.platform == RuntimePlatform.Android)
-            {
                 return "LeftTrigger Android";
-            }
             return "LeftTrigger";
         }
     }
@@ -585,84 +493,22 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
         get
         {
             if (Application.platform == RuntimePlatform.Android)
-            {
                 return "RightTrigger Android";
-            }
             return "RightTrigger";
         }
     }
 
-    public String SpecificPlatformRightAnalogHorizontalKey
-    {
-        get
-        {
-            return "Right Analog Horizontal";
-        }
-    }
+    public String SpecificPlatformRightAnalogHorizontalKey => "Right Analog Horizontal";
+    public String SpecificPlatformRightAnlogVerticalKey => "Right Analog Vertical";
 
-    public String SpecificPlatformRightAnlogVerticalKey
-    {
-        get
-        {
-            return "Right Analog Vertical";
-        }
-    }
+    public Boolean IsControllerConnect => this.IsJoystickConnect();
+    public Boolean IsRightAnalogDown => this.rightAnalogButtonStatus[0];
+    public Boolean IsRightAnalogPress => this.rightAnalogButtonStatus[1];
+    public Boolean IsRightAnalogUp => this.rightAnalogButtonStatus[2];
 
-    public Boolean IsControllerConnect
-    {
-        get
-        {
-            return this.IsJoystickConnect();
-        }
-    }
-
-    public Boolean IsRightAnalogDown
-    {
-        get
-        {
-            return this.rightAnalogButtonStatus[0];
-        }
-    }
-
-    public Boolean IsRightAnalogPress
-    {
-        get
-        {
-            return this.rightAnalogButtonStatus[1];
-        }
-    }
-
-    public Boolean IsRightAnalogUp
-    {
-        get
-        {
-            return this.rightAnalogButtonStatus[2];
-        }
-    }
-
-    public static Boolean MouseEnabled
-    {
-        get
-        {
-            return HonoInputManager.mouseEnabled;
-        }
-    }
-
-    public static Boolean JoystickEnabled
-    {
-        get
-        {
-            return HonoInputManager.joystickEnabled;
-        }
-    }
-
-    public static Boolean VirtualAnalogEnabled
-    {
-        get
-        {
-            return HonoInputManager.virtualAnalogEnabled;
-        }
-    }
+    public static Boolean MouseEnabled => HonoInputManager.mouseEnabled;
+    public static Boolean JoystickEnabled => HonoInputManager.joystickEnabled;
+    public static Boolean VirtualAnalogEnabled => HonoInputManager.virtualAnalogEnabled;
 
     [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
     private static extern IntPtr GetForegroundWindow();
@@ -677,52 +523,31 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
     {
         IntPtr foregroundWindow = HonoInputManager.GetForegroundWindow();
         if (foregroundWindow == IntPtr.Zero)
-        {
             return false;
-        }
-        int num;
-        HonoInputManager.GetWindowThreadProcessId(foregroundWindow, out num);
-        return num == HonoInputManager.procId;
+        HonoInputManager.GetWindowThreadProcessId(foregroundWindow, out int foregroundId);
+        return foregroundId == HonoInputManager.procId;
     }
 
     private Boolean CheckRawXInput(String unityButton, GamePadState padState)
     {
         if (unityButton == "JoystickButton0")
-        {
             return padState.Buttons.A == ButtonState.Pressed;
-        }
         if (unityButton == "JoystickButton1")
-        {
             return padState.Buttons.B == ButtonState.Pressed;
-        }
         if (unityButton == "JoystickButton2")
-        {
             return padState.Buttons.X == ButtonState.Pressed;
-        }
         if (unityButton == "JoystickButton3")
-        {
             return padState.Buttons.Y == ButtonState.Pressed;
-        }
         if (unityButton == "JoystickButton4")
-        {
             return padState.Buttons.LeftShoulder == ButtonState.Pressed;
-        }
         if (unityButton == "JoystickButton5")
-        {
             return padState.Buttons.RightShoulder == ButtonState.Pressed;
-        }
         if (unityButton == "JoystickButton6")
-        {
             return padState.Buttons.Back == ButtonState.Pressed;
-        }
         if (unityButton == "JoystickButton7")
-        {
             return padState.Buttons.Start == ButtonState.Pressed;
-        }
         if (unityButton == this.SpecificPlatformLeftTriggerKey)
-        {
             return padState.Triggers.Left > 0.75f;
-        }
         return unityButton == this.SpecificPlatformRightTriggerKey && padState.Triggers.Right > 0.75f;
     }
 
@@ -731,16 +556,12 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
         if (!this.isDisablePrimaryKey)
         {
             GamePadState state = GamePad.GetState(PlayerIndex.One);
-            for (Int32 i = 0; i < (Int32)this.KeyName.Length; i++)
+            for (Int32 i = 0; i < this.KeyName.Length; i++)
             {
                 if (ApplicationIsActivated() && VKKeyCodeMapping.ContainsKey(this.inputKeysPrimary[i]) && GetAsyncKeyState(VKKeyCodeMapping[this.inputKeysPrimary[i]]) != 0)
-                {
                     this.isInput[i] = true;
-                }
                 if ((Configuration.Control.AlwaysCaptureGamepad || ApplicationIsActivated()) && this.CheckRawXInput(this.joystickKeysPrimary[i], state))
-                {
                     this.isInput[i] = true;
-                }
             }
         }
     }
@@ -748,25 +569,15 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
     public Boolean CheckPersistentDirectionInput(Control key)
     {
         if (!HonoInputManager.ApplicationIsActivated())
-        {
             return false;
-        }
         if (Application.isEditor)
-        {
             return false;
-        }
         if (key == Control.Left)
-        {
             return HonoInputManager.GetAsyncKeyState(37) != 0 || HonoInputManager.GetAsyncKeyState(65) != 0;
-        }
         if (key == Control.Right)
-        {
             return HonoInputManager.GetAsyncKeyState(39) != 0 || HonoInputManager.GetAsyncKeyState(68) != 0;
-        }
         if (key == Control.Up)
-        {
             return HonoInputManager.GetAsyncKeyState(38) != 0 || HonoInputManager.GetAsyncKeyState(87) != 0;
-        }
         return key == Control.Down && (HonoInputManager.GetAsyncKeyState(40) != 0 || HonoInputManager.GetAsyncKeyState(83) != 0);
     }
 
@@ -783,7 +594,7 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
     private Boolean IsMobileJoystickConnect()
     {
         String[] joystickNames = UnityXInput.Input.GetJoystickNames();
-        return (Int32)joystickNames.Length > 0 && joystickNames[0].Length > 0;
+        return joystickNames.Length > 0 && joystickNames[0].Length > 0;
     }
 
     protected override void Awake()
@@ -827,160 +638,81 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
             for (Int32 i = 0; i < 3; i++)
             {
                 if (UnityXInput.Input.touchCount > 1 && i == 1)
-                {
                     return;
-                }
-                if (UnityXInput.Input.GetButton(this.joystickKeysPrimary[i]) || UnityXInput.Input.GetKey(this.InputKeys2[i]) || UnityXInput.Input.GetKey(this.InputKeys3[i]))
-                {
-                    this.isInput[i] = true;
-                }
-                else
-                {
-                    this.isInput[i] = false;
-                }
-                if (!this.isInputDown[i] && (UnityXInput.Input.GetButtonDown(this.joystickKeysPrimary[i]) || UnityXInput.Input.GetKeyDown(this.InputKeys2[i]) || UnityXInput.Input.GetKeyDown(this.InputKeys3[i])))
-                {
-                    this.isInputDown[i] = true;
-                }
-                else
-                {
-                    this.isInputDown[i] = false;
-                }
-                if (!this.isInputUp[i] && (UnityXInput.Input.GetButtonUp(this.joystickKeysPrimary[i]) || UnityXInput.Input.GetKeyUp(this.InputKeys2[i]) || UnityXInput.Input.GetKeyUp(this.InputKeys3[i])))
-                {
-                    this.isInputUp[i] = true;
-                }
-                else
-                {
-                    this.isInputUp[i] = false;
-                }
+                this.isInput[i] = UnityXInput.Input.GetButton(this.joystickKeysPrimary[i]) || UnityXInput.Input.GetKey(this.InputKeys2[i]) || UnityXInput.Input.GetKey(this.InputKeys3[i]);
+                this.isInputDown[i] = !this.isInputDown[i] && (UnityXInput.Input.GetButtonDown(this.joystickKeysPrimary[i]) || UnityXInput.Input.GetKeyDown(this.InputKeys2[i]) || UnityXInput.Input.GetKeyDown(this.InputKeys3[i]));
+                this.isInputUp[i] = !this.isInputUp[i] && (UnityXInput.Input.GetButtonUp(this.joystickKeysPrimary[i]) || UnityXInput.Input.GetKeyUp(this.InputKeys2[i]) || UnityXInput.Input.GetKeyUp(this.InputKeys3[i]));
             }
         }
         else
         {
-            for (Int32 j = 0; j < (Int32)this.KeyName.Length; j++)
+            for (Int32 i = 0; i < this.KeyName.Length; i++)
             {
-                if (UnityXInput.Input.touchCount > 1 && j == 1)
-                {
+                if (UnityXInput.Input.touchCount > 1 && i == 1)
                     return;
-                }
-                if (this.joystickKeysPrimary[j] == this.SpecificPlatformLeftTriggerKey || this.joystickKeysPrimary[j] == this.SpecificPlatformRightTriggerKey)
-                {
-                    if (UnityXInput.Input.GetKey(this.inputKeysPrimary[j]) || (j < 2 && (UnityXInput.Input.GetKey(this.InputKeys2[j]) || UnityXInput.Input.GetKey(this.InputKeys3[j]))))
-                    {
-                        this.isInput[j] = true;
-                    }
-                    else if (UnityXInput.Input.GetAxisRaw(this.joystickKeysPrimary[j]) != 0f)
-                    {
-                        this.isInput[j] = true;
-                    }
-                    else
-                    {
-                        this.isInput[j] = false;
-                    }
-                }
-                else if (j < 2)
-                {
-                    if (UnityXInput.Input.GetKey(this.inputKeysPrimary[j]) || UnityXInput.Input.GetButton(this.joystickKeysPrimary[j]) || UnityXInput.Input.GetKey(this.InputKeys2[j]) || UnityXInput.Input.GetKey(this.InputKeys3[j]))
-                    {
-                        this.isInput[j] = true;
-                    }
-                    else
-                    {
-                        this.isInput[j] = false;
-                    }
-                }
-                else if (UnityXInput.Input.GetKey(this.inputKeysPrimary[j]) || UnityXInput.Input.GetButton(this.joystickKeysPrimary[j]))
-                {
-                    this.isInput[j] = true;
-                }
+                if (this.joystickKeysPrimary[i] == this.SpecificPlatformLeftTriggerKey || this.joystickKeysPrimary[i] == this.SpecificPlatformRightTriggerKey)
+                    this.isInput[i] = UnityXInput.Input.GetKey(this.inputKeysPrimary[i]) || (i < 2 && (UnityXInput.Input.GetKey(this.InputKeys2[i]) || UnityXInput.Input.GetKey(this.InputKeys3[i]))) || UnityXInput.Input.GetAxisRaw(this.joystickKeysPrimary[i]) != 0f;
+                else if (i < 2)
+                    this.isInput[i] = UnityXInput.Input.GetKey(this.inputKeysPrimary[i]) || UnityXInput.Input.GetButton(this.joystickKeysPrimary[i]) || UnityXInput.Input.GetKey(this.InputKeys2[i]) || UnityXInput.Input.GetKey(this.InputKeys3[i]);
                 else
+                    this.isInput[i] = UnityXInput.Input.GetKey(this.inputKeysPrimary[i]) || UnityXInput.Input.GetButton(this.joystickKeysPrimary[i]);
+                if (this.joystickKeysPrimary[i] == this.SpecificPlatformLeftTriggerKey || this.joystickKeysPrimary[i] == this.SpecificPlatformRightTriggerKey)
                 {
-                    this.isInput[j] = false;
-                }
-                if (this.joystickKeysPrimary[j] == this.SpecificPlatformLeftTriggerKey || this.joystickKeysPrimary[j] == this.SpecificPlatformRightTriggerKey)
-                {
-                    if (!this.isInputDown[j] && (UnityXInput.Input.GetKeyDown(this.inputKeysPrimary[j]) || (j < 2 && (UnityXInput.Input.GetKeyDown(this.InputKeys2[j]) || UnityXInput.Input.GetKeyDown(this.InputKeys3[j])))))
+                    if (!this.isInputDown[i] && (UnityXInput.Input.GetKeyDown(this.inputKeysPrimary[i]) || (i < 2 && (UnityXInput.Input.GetKeyDown(this.InputKeys2[i]) || UnityXInput.Input.GetKeyDown(this.InputKeys3[i])))))
                     {
-                        this.isInputDown[j] = true;
+                        this.isInputDown[i] = true;
                     }
-                    else if (!this.isInputDown[j] && (UnityXInput.Input.GetKeyDown(this.inputKeysPrimary[j]) || UnityXInput.Input.GetAxisRaw(this.joystickKeysPrimary[j]) != 0f))
+                    else if (!this.isInputDown[i] && (UnityXInput.Input.GetKeyDown(this.inputKeysPrimary[i]) || UnityXInput.Input.GetAxisRaw(this.joystickKeysPrimary[i]) != 0f))
                     {
-                        if (!this.hasJoyAxisSignal[j])
+                        if (!this.hasJoyAxisSignal[i])
                         {
-                            this.hasJoyAxisSignal[j] = true;
-                            this.isInputDown[j] = true;
+                            this.hasJoyAxisSignal[i] = true;
+                            this.isInputDown[i] = true;
                         }
                     }
                     else
                     {
-                        this.isInputDown[j] = false;
+                        this.isInputDown[i] = false;
                     }
-                    if (UnityXInput.Input.GetAxisRaw(this.joystickKeysPrimary[j]) == 0f)
-                    {
-                        this.hasJoyAxisSignal[j] = false;
-                    }
+                    if (UnityXInput.Input.GetAxisRaw(this.joystickKeysPrimary[i]) == 0f)
+                        this.hasJoyAxisSignal[i] = false;
                 }
-                else if (j < 2)
+                else if (i < 2)
                 {
-                    if (!this.isInputDown[j] && (UnityXInput.Input.GetKeyDown(this.inputKeysPrimary[j]) || UnityXInput.Input.GetButtonDown(this.joystickKeysPrimary[j]) || UnityXInput.Input.GetKeyDown(this.InputKeys2[j]) || UnityXInput.Input.GetKeyDown(this.InputKeys3[j])))
-                    {
-                        this.isInputDown[j] = true;
-                    }
-                    else
-                    {
-                        this.isInputDown[j] = false;
-                    }
-                }
-                else if (!this.isInputDown[j] && (UnityXInput.Input.GetKeyDown(this.inputKeysPrimary[j]) || UnityXInput.Input.GetButtonDown(this.joystickKeysPrimary[j])))
-                {
-                    this.isInputDown[j] = true;
+                    this.isInputDown[i] = !this.isInputDown[i] && (UnityXInput.Input.GetKeyDown(this.inputKeysPrimary[i]) || UnityXInput.Input.GetButtonDown(this.joystickKeysPrimary[i]) || UnityXInput.Input.GetKeyDown(this.InputKeys2[i]) || UnityXInput.Input.GetKeyDown(this.InputKeys3[i]));
                 }
                 else
                 {
-                    this.isInputDown[j] = false;
+                    this.isInputDown[i] = !this.isInputDown[i] && (UnityXInput.Input.GetKeyDown(this.inputKeysPrimary[i]) || UnityXInput.Input.GetButtonDown(this.joystickKeysPrimary[i]));
                 }
-                if (this.joystickKeysPrimary[j] == this.SpecificPlatformLeftTriggerKey || this.joystickKeysPrimary[j] == this.SpecificPlatformRightTriggerKey)
+                if (this.joystickKeysPrimary[i] == this.SpecificPlatformLeftTriggerKey || this.joystickKeysPrimary[i] == this.SpecificPlatformRightTriggerKey)
                 {
-                    if (!this.isInputUp[j] && (UnityXInput.Input.GetKeyUp(this.inputKeysPrimary[j]) || (j < 2 && (UnityXInput.Input.GetKeyUp(this.InputKeys2[j]) || UnityXInput.Input.GetKeyUp(this.InputKeys3[j])))))
+                    if (!this.isInputUp[i] && (UnityXInput.Input.GetKeyUp(this.inputKeysPrimary[i]) || (i < 2 && (UnityXInput.Input.GetKeyUp(this.InputKeys2[i]) || UnityXInput.Input.GetKeyUp(this.InputKeys3[i])))))
                     {
-                        this.isInputUp[j] = true;
+                        this.isInputUp[i] = true;
                     }
-                    else if (!this.isInputUp[j] && (UnityXInput.Input.GetKeyUp(this.inputKeysPrimary[j]) || UnityXInput.Input.GetAxisRaw(this.joystickKeysPrimary[j]) == 0f))
+                    else if (!this.isInputUp[i] && (UnityXInput.Input.GetKeyUp(this.inputKeysPrimary[i]) || UnityXInput.Input.GetAxisRaw(this.joystickKeysPrimary[i]) == 0f))
                     {
-                        if (this.hasJoyAxisSignalNotZero[j])
+                        if (this.hasJoyAxisSignalNotZero[i])
                         {
-                            this.hasJoyAxisSignalNotZero[j] = false;
-                            this.isInputUp[j] = true;
+                            this.hasJoyAxisSignalNotZero[i] = false;
+                            this.isInputUp[i] = true;
                         }
                     }
                     else
                     {
-                        this.isInputUp[j] = false;
+                        this.isInputUp[i] = false;
                     }
-                    if (UnityXInput.Input.GetAxisRaw(this.joystickKeysPrimary[j]) != 0f)
-                    {
-                        this.hasJoyAxisSignalNotZero[j] = true;
-                    }
+                    if (UnityXInput.Input.GetAxisRaw(this.joystickKeysPrimary[i]) != 0f)
+                        this.hasJoyAxisSignalNotZero[i] = true;
                 }
-                else if (j < 2)
+                else if (i < 2)
                 {
-                    if (!this.isInputUp[j] && (UnityXInput.Input.GetKeyUp(this.inputKeysPrimary[j]) || UnityXInput.Input.GetButtonUp(this.joystickKeysPrimary[j]) || UnityXInput.Input.GetKeyUp(this.InputKeys2[j]) || UnityXInput.Input.GetKeyUp(this.InputKeys3[j])))
-                    {
-                        this.isInputUp[j] = true;
-                    }
-                    else
-                    {
-                        this.isInputUp[j] = false;
-                    }
-                }
-                else if (!this.isInputUp[j] && (UnityXInput.Input.GetKeyUp(this.inputKeysPrimary[j]) || UnityXInput.Input.GetButtonUp(this.joystickKeysPrimary[j])))
-                {
-                    this.isInputUp[j] = true;
+                    this.isInputUp[i] = !this.isInputUp[i] && (UnityXInput.Input.GetKeyUp(this.inputKeysPrimary[i]) || UnityXInput.Input.GetButtonUp(this.joystickKeysPrimary[i]) || UnityXInput.Input.GetKeyUp(this.InputKeys2[i]) || UnityXInput.Input.GetKeyUp(this.InputKeys3[i]));
                 }
                 else
                 {
-                    this.isInputUp[j] = false;
+                    this.isInputUp[i] = !this.isInputUp[i] && (UnityXInput.Input.GetKeyUp(this.inputKeysPrimary[i]) || UnityXInput.Input.GetButtonUp(this.joystickKeysPrimary[i]));
                 }
             }
             this.ScanMobilePrimarySelectKey();
@@ -1097,21 +829,13 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
             this.isVAxisUp[1] = false;
         }
         if (this.GetHorizontalNavigation() != 0f && this.isHAxisTriggered[0])
-        {
             this.hasHAxisSignalNotZero[0] = true;
-        }
         if (this.GetHorizontalNavigation() != 0f && this.isHAxisTriggered[1])
-        {
             this.hasHAxisSignalNotZero[1] = true;
-        }
         if (this.GetVerticalNavigation() != 0f && this.isVAxisTriggered[0])
-        {
             this.hasVAxisSignalNotZero[0] = true;
-        }
         if (this.GetVerticalNavigation() != 0f && this.isVAxisTriggered[1])
-        {
             this.hasVAxisSignalNotZero[1] = true;
-        }
     }
 
     private Boolean GetDirectionKey(Control key)
@@ -1119,17 +843,11 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
         // Threshold: We don't want the stick to be too sensitive for UI navigation
         Single threshold = Mathf.Max(0.3f, AnalogThreadhold);
         if (key == Control.Left)
-        {
             return this.GetHorizontalNavigation() < -threshold || this.CheckPersistentDirectionInput(key);
-        }
         if (key == Control.Right)
-        {
             return this.GetHorizontalNavigation() > threshold || this.CheckPersistentDirectionInput(key);
-        }
         if (key == Control.Up)
-        {
             return this.GetVerticalNavigation() > threshold || this.CheckPersistentDirectionInput(key);
-        }
         return key == Control.Down && (this.GetVerticalNavigation() < -threshold || this.CheckPersistentDirectionInput(key));
     }
 
@@ -1205,31 +923,53 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
     public void SetVirtualAnalogEnable(Boolean value)
     {
         if (value)
-        {
             VirtualAnalog.Enable();
-        }
         else
-        {
             VirtualAnalog.Disable();
-        }
     }
 
     public void SetPrimaryKeys()
     {
         if (FF9StateSystem.Settings.cfg.control == 0UL)
         {
-            for (Int32 i = 0; i < (Int32)this.defaultInputKeys.Length; i++)
+            for (Int32 i = 0; i < this.defaultInputKeys.Length; i++)
             {
                 this.inputKeysPrimary[i] = this.defaultInputKeys[i];
                 this.joystickKeysPrimary[i] = this.DefaultJoystickInputKeys[i];
+                this.logicalToButton[i] = i;
+            }
+            if (EventInput.isJapaneseLayout)
+            {
+                this.logicalToButton[0] = 1;
+                this.logicalToButton[1] = 0;
             }
         }
         else
         {
-            for (Int32 j = 0; j < (Int32)this.defaultInputKeys.Length; j++)
+            String[] defaultKeys = this.DefaultJoystickInputKeys;
+            for (Int32 i = 0; i < this.defaultInputKeys.Length; i++)
             {
-                this.inputKeysPrimary[j] = FF9StateSystem.Settings.cfg.control_data_keyboard[j];
-                this.joystickKeysPrimary[j] = FF9StateSystem.Settings.cfg.control_data_joystick[j];
+                // Kind of assume that "control_data_joystick" and "defaultKeys" contain the same strings (in different orders)
+                // It should always be the case, except maybe if a game save generated on another machine (eg. iOS) is loaded...
+                String customKey = FF9StateSystem.Settings.cfg.control_data_joystick[i];
+                this.inputKeysPrimary[i] = FF9StateSystem.Settings.cfg.control_data_keyboard[i];
+                this.joystickKeysPrimary[i] = customKey;
+                this.logicalToButton[i] = i;
+                for (Int32 j = 0; j < defaultKeys.Length; j++)
+                {
+                    if (customKey == defaultKeys[j])
+                    {
+                        this.logicalToButton[i] = j;
+                        break;
+                    }
+                }
+                if (EventInput.isJapaneseLayout)
+                {
+                    if (this.logicalToButton[i] == 0)
+                        this.logicalToButton[i] = 1;
+                    else if (this.logicalToButton[i] == 1)
+                        this.logicalToButton[i] = 0;
+                }
             }
         }
     }
@@ -1238,11 +978,17 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
     {
         FF9StateSystem.Settings.cfg.control_data_keyboard = new KeyCode[HonoInputManager.DefaultInputKeysCount];
         FF9StateSystem.Settings.cfg.control_data_joystick = new String[HonoInputManager.DefaultInputKeysCount];
-        for (Int32 i = 0; i < (Int32)this.defaultInputKeys.Length; i++)
+        for (Int32 i = 0; i < this.defaultInputKeys.Length; i++)
         {
             FF9StateSystem.Settings.cfg.control_data_keyboard[i] = this.defaultInputKeys[i];
             FF9StateSystem.Settings.cfg.control_data_joystick[i] = this.DefaultJoystickInputKeys[i];
         }
+    }
+
+    /// <summary>Eg.: NGUIText.ButtonNames[LogicalControlToPhysicalButton(control)]</summary>
+    public Int32 LogicalControlToPhysicalButton(Control control)
+    {
+        return this.logicalToButton[(Int32)control];
     }
 
     public void SetControlFlag()
@@ -1275,17 +1021,11 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
                 break;
         }
         if (HonoInputManager.virtualAnalogEnabled && HonoInputManager.joystickEnabled)
-        {
             this.AxisValue = new Func<Vector2>(this.GetInputAxis);
-        }
         else if (HonoInputManager.virtualAnalogEnabled)
-        {
             this.AxisValue = new Func<Vector2>(this.GetVirtualAnalogValue);
-        }
         else if (HonoInputManager.joystickEnabled)
-        {
             this.AxisValue = new Func<Vector2>(this.GetJoyStickValue);
-        }
     }
 
     public Vector2 GetVirtualAnalogValue()
@@ -1326,14 +1066,10 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
     private Vector2 GetInputAxis()
     {
         if (VirtualAnalog.HasInput())
-        {
             return VirtualAnalog.Value;
-        }
         Vector2 inputAxis = new Vector2(this.GetHorizontalNavigation(), this.GetVerticalNavigation());
         if (inputAxis.magnitude > 1 && analogControlEnabled)
-        {
             inputAxis.Normalize();
-        }
         return inputAxis;
     }
 
@@ -1342,17 +1078,11 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
         if (Application.platform == RuntimePlatform.Android)
         {
             if (UnityXInput.Input.GetButton(this.androidJoystickSelectKeys2))
-            {
                 this.isInput[9] = true;
-            }
             if (!this.isInputDown[9] && UnityXInput.Input.GetButtonDown(this.androidJoystickSelectKeys2))
-            {
                 this.isInputDown[9] = true;
-            }
             if (!this.isInputUp[9] && UnityXInput.Input.GetButtonUp(this.androidJoystickSelectKeys2))
-            {
                 this.isInputUp[9] = true;
-            }
         }
     }
 
@@ -1360,22 +1090,16 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
     {
         if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer || Application.isEditor)
         {
-            for (Int32 i = 0; i < (Int32)this.KeyName.Length; i++)
+            for (Int32 i = 0; i < this.KeyName.Length; i++)
             {
                 if (this.joystickKeysPrimary[i] == "Empty")
                 {
                     if (this.rightAnalogButtonStatus[1])
-                    {
                         this.isInput[i] = true;
-                    }
                     if (!this.isInputDown[i] && this.rightAnalogButtonStatus[0])
-                    {
                         this.isInputDown[i] = true;
-                    }
                     if (!this.isInputUp[i] && this.rightAnalogButtonStatus[2])
-                    {
                         this.isInputUp[i] = true;
-                    }
                 }
             }
         }
@@ -1391,17 +1115,11 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
             this.rightAnalogButtonStatus[1] = false;
             this.rightAnalogButtonStatus[2] = false;
             if (magnitude > HonoInputManager.AnalogThreadhold && this.rightAnalogMagnitude == 0f)
-            {
                 this.rightAnalogButtonStatus[0] = true;
-            }
             else if (magnitude > HonoInputManager.AnalogThreadhold && this.rightAnalogMagnitude > 0f)
-            {
                 this.rightAnalogButtonStatus[1] = true;
-            }
             else if (magnitude == 0f && this.rightAnalogMagnitude > 0f)
-            {
                 this.rightAnalogButtonStatus[2] = true;
-            }
             this.rightAnalogMagnitude = magnitude;
         }
     }
@@ -1417,31 +1135,24 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
     }
 
     public const Single TriggerThreshold = 0.19f;
-
     private const Single DownThreshold = 0.01f;
-
     private const Int32 PauseIndex = 8;
 
-    private static readonly Int32[] PauseUIThresholdKeys;
+    private static readonly Int32[] PauseUIThresholdKeys = [0, 1, 2, 3, 5, 4, 7, 6];
 
     private Boolean[] isButtonDown;
 
     private Single downTimer;
-
     private Single lastFrameRightTriggerAxis;
-
     private Single lastFrameLeftTriggerAxis;
 
     private SourceControl[] inputSources = new SourceControl[14];
-
     private SourceControl[] inputDownSources = new SourceControl[14];
-
     private SourceControl[] inputUpSources = new SourceControl[14];
 
     private SourceControl directionAxisSources;
 
     public static Int32 DefaultInputKeysCount = 10;
-
     public static Single AnalogThreadhold = Configuration.AnalogControl.StickThreshold;
 
     private static Int32 procId;
@@ -1462,7 +1173,6 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
     };
 
     private KeyCode[] inputKeysPrimary = new KeyCode[10];
-
     private KeyCode[] inputKeys2 = new KeyCode[]
     {
         KeyCode.Return,
@@ -1470,67 +1180,45 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
         HonoInputManager.MemoriaKeyBindings[4] == KeyCode.Escape ? KeyCode.None : KeyCode.Escape,
         KeyCode.Tab
     };
-
     private KeyCode[] inputKeys3;
-
     private KeyCode[] inputKeysEmpty;
-
     private KeyCode[] inputKeys2Android;
-
     private String[] joystickKeysPrimary;
-
     private KeyCode[] defaultInputKeys;
-
     private String[] defaultJoystickInputKeys;
-
     private String[] defaultAndroidJoystickInputKeys;
-
     private String[] defaultIOSJoystickInputKeys;
-
     private String[] defaultaaaaInputKeys;
 
     private String androidJoystickSelectKeys2;
-
     private String defaultHorizontalInputKeys;
-
     private String defaultVerticalInputKeys;
 
     private Boolean[] isInput;
-
     private Boolean[] isInputDown;
-
     private Boolean[] isInputUp;
-
     private Boolean[] hasJoyAxisSignal;
-
     private Boolean[] hasJoyAxisSignalNotZero;
-
     private Boolean[] isHAxisTriggered;
-
     private Boolean[] isVAxisTriggered;
-
     private Boolean[] isHAxisUp;
-
     private Boolean[] isVAxisUp;
-
     private Boolean[] hasHAxisSignal;
-
     private Boolean[] hasVAxisSignal;
-
     private Boolean[] hasHAxisSignalNotZero;
-
     private Boolean[] hasVAxisSignalNotZero;
 
     private Boolean isDisablePrimaryKey;
-
     private Boolean analogControlEnabled;
 
     [SerializeField]
     private Boolean[] rightAnalogButtonStatus;
-
     private Single rightAnalogMagnitude;
 
     private Func<Vector2> AxisValue;
+
+    [NonSerialized]
+    private Int32[] logicalToButton;
 
     public static List<KeyCode> AcceptKeyCodeList = new List<KeyCode>
     {
@@ -1598,272 +1286,75 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
     };
 
     private static Boolean mouseEnabled = false;
-
     private static Boolean joystickEnabled = false;
-
     private static Boolean virtualAnalogEnabled = false;
 
     private static Dictionary<KeyCode, Int32> VKKeyCodeMapping = new Dictionary<KeyCode, Int32>
     {
-        {
-            KeyCode.Comma,
-            188
-        },
-        {
-            KeyCode.Minus,
-            189
-        },
-        {
-            KeyCode.Period,
-            190
-        },
-        {
-            KeyCode.Slash,
-            191
-        },
-        {
-            KeyCode.Alpha0,
-            48
-        },
-        {
-            KeyCode.Alpha1,
-            49
-        },
-        {
-            KeyCode.Alpha2,
-            50
-        },
-        {
-            KeyCode.Alpha3,
-            51
-        },
-        {
-            KeyCode.Alpha4,
-            52
-        },
-        {
-            KeyCode.Alpha5,
-            53
-        },
-        {
-            KeyCode.Alpha6,
-            54
-        },
-        {
-            KeyCode.Alpha7,
-            55
-        },
-        {
-            KeyCode.Alpha8,
-            56
-        },
-        {
-            KeyCode.Alpha9,
-            57
-        },
-        {
-            KeyCode.Equals,
-            187
-        },
-        {
-            KeyCode.Semicolon,
-            186
-        },
-        {
-            KeyCode.LeftBracket,
-            219
-        },
-        {
-            KeyCode.Backslash,
-            220
-        },
-        {
-            KeyCode.RightBracket,
-            221
-        },
-        {
-            KeyCode.A,
-            65
-        },
-        {
-            KeyCode.B,
-            66
-        },
-        {
-            KeyCode.C,
-            67
-        },
-        {
-            KeyCode.D,
-            68
-        },
-        {
-            KeyCode.E,
-            69
-        },
-        {
-            KeyCode.F,
-            70
-        },
-        {
-            KeyCode.G,
-            71
-        },
-        {
-            KeyCode.H,
-            72
-        },
-        {
-            KeyCode.I,
-            73
-        },
-        {
-            KeyCode.J,
-            74
-        },
-        {
-            KeyCode.K,
-            75
-        },
-        {
-            KeyCode.L,
-            76
-        },
-        {
-            KeyCode.M,
-            77
-        },
-        {
-            KeyCode.N,
-            78
-        },
-        {
-            KeyCode.O,
-            79
-        },
-        {
-            KeyCode.P,
-            80
-        },
-        {
-            KeyCode.Q,
-            81
-        },
-        {
-            KeyCode.R,
-            82
-        },
-        {
-            KeyCode.S,
-            83
-        },
-        {
-            KeyCode.T,
-            84
-        },
-        {
-            KeyCode.U,
-            85
-        },
-        {
-            KeyCode.V,
-            86
-        },
-        {
-            KeyCode.W,
-            87
-        },
-        {
-            KeyCode.X,
-            88
-        },
-        {
-            KeyCode.Y,
-            89
-        },
-        {
-            KeyCode.Z,
-            90
-        },
-        {
-            KeyCode.Keypad0,
-            96
-        },
-        {
-            KeyCode.Keypad1,
-            97
-        },
-        {
-            KeyCode.Keypad2,
-            98
-        },
-        {
-            KeyCode.Keypad3,
-            99
-        },
-        {
-            KeyCode.Keypad4,
-            100
-        },
-        {
-            KeyCode.Keypad5,
-            101
-        },
-        {
-            KeyCode.Keypad6,
-            102
-        },
-        {
-            KeyCode.Keypad7,
-            103
-        },
-        {
-            KeyCode.Keypad8,
-            104
-        },
-        {
-            KeyCode.Keypad9,
-            105
-        },
-        {
-            KeyCode.KeypadPeriod,
-            110
-        },
-        {
-            KeyCode.KeypadDivide,
-            111
-        },
-        {
-            KeyCode.KeypadMultiply,
-            106
-        },
-        {
-            KeyCode.KeypadMinus,
-            109
-        },
-        {
-            KeyCode.KeypadPlus,
-            107
-        },
-        {
-            KeyCode.F8,
-            119
-        },
-        {
-            KeyCode.F9,
-            120
-        },
-        {
-            KeyCode.F10,
-            121
-        },
-        {
-            KeyCode.F11,
-            122
-        },
-        {
-            KeyCode.F12,
-            123
-        }
+        { KeyCode.Comma,          188 },
+        { KeyCode.Minus,          189 },
+        { KeyCode.Period,         190 },
+        { KeyCode.Slash,          191 },
+        { KeyCode.Alpha0,         48 },
+        { KeyCode.Alpha1,         49 },
+        { KeyCode.Alpha2,         50 },
+        { KeyCode.Alpha3,         51 },
+        { KeyCode.Alpha4,         52 },
+        { KeyCode.Alpha5,         53 },
+        { KeyCode.Alpha6,         54 },
+        { KeyCode.Alpha7,         55 },
+        { KeyCode.Alpha8,         56 },
+        { KeyCode.Alpha9,         57 },
+        { KeyCode.Equals,         187 },
+        { KeyCode.Semicolon,      186 },
+        { KeyCode.LeftBracket,    219 },
+        { KeyCode.Backslash,      220 },
+        { KeyCode.RightBracket,   221 },
+        { KeyCode.A,              65 },
+        { KeyCode.B,              66 },
+        { KeyCode.C,              67 },
+        { KeyCode.D,              68 },
+        { KeyCode.E,              69 },
+        { KeyCode.F,              70 },
+        { KeyCode.G,              71 },
+        { KeyCode.H,              72 },
+        { KeyCode.I,              73 },
+        { KeyCode.J,              74 },
+        { KeyCode.K,              75 },
+        { KeyCode.L,              76 },
+        { KeyCode.M,              77 },
+        { KeyCode.N,              78 },
+        { KeyCode.O,              79 },
+        { KeyCode.P,              80 },
+        { KeyCode.Q,              81 },
+        { KeyCode.R,              82 },
+        { KeyCode.S,              83 },
+        { KeyCode.T,              84 },
+        { KeyCode.U,              85 },
+        { KeyCode.V,              86 },
+        { KeyCode.W,              87 },
+        { KeyCode.X,              88 },
+        { KeyCode.Y,              89 },
+        { KeyCode.Z,              90 },
+        { KeyCode.Keypad0,        96 },
+        { KeyCode.Keypad1,        97 },
+        { KeyCode.Keypad2,        98 },
+        { KeyCode.Keypad3,        99 },
+        { KeyCode.Keypad4,        100 },
+        { KeyCode.Keypad5,        101 },
+        { KeyCode.Keypad6,        102 },
+        { KeyCode.Keypad7,        103 },
+        { KeyCode.Keypad8,        104 },
+        { KeyCode.Keypad9,        105 },
+        { KeyCode.KeypadPeriod,   110 },
+        { KeyCode.KeypadDivide,   111 },
+        { KeyCode.KeypadMultiply, 106 },
+        { KeyCode.KeypadMinus,    109 },
+        { KeyCode.KeypadPlus,     107 },
+        { KeyCode.F8,             119 },
+        { KeyCode.F9,             120 },
+        { KeyCode.F10,            121 },
+        { KeyCode.F11,            122 },
+        { KeyCode.F12,            123 }
     };
 }

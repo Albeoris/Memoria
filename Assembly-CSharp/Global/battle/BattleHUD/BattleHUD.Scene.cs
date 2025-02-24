@@ -39,6 +39,8 @@ public partial class BattleHUD : UIScene
                 DisplayTargetPointer();
             }
         }
+        if (!_isFromPause || _usingMainMenu)
+            UpdateSprites();
 
         if (_usingMainMenu)
         {

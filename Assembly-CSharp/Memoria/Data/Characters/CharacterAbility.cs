@@ -9,7 +9,7 @@ namespace Memoria.Data
         private const Boolean ExportWithType = true;
 
         public Int32 Id;
-        public Byte Ap;
+        public Int32 Ap;
 
         public BattleAbilityId ActiveId => ff9abil.GetActiveAbilityFromAbilityId(Id);
         public SupportAbility PassiveId => ff9abil.GetSupportAbilityFromAbilityId(Id);
@@ -20,13 +20,13 @@ namespace Memoria.Data
             Int32 index = 0;
 
             Id = CsvParser.AnyAbility(raw[index++]);
-            Ap = CsvParser.Byte(raw[index++]);
+            Ap = CsvParser.Int32(raw[index++]);
         }
 
         public void WriteEntry(CsvWriter writer, CsvMetaData metadata)
         {
             writer.AnyAbility(Id);
-            writer.Byte(Ap);
+            writer.Int32(Ap);
         }
     }
 }

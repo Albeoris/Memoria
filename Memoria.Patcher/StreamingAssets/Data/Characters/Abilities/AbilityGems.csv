@@ -3,7 +3,7 @@
 # You must set at least 64 different items.
 # -----------------------------------------------
 # Comment;Id;Gems;BoostedVersion(s)
-# ;Int32;UInt8;Int32[]
+# ;Int32;Int32;Int32[]
 # -----------------------------------------------
 Auto-Reflect;0;15;
 Auto-Float;1;6;

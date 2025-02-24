@@ -130,7 +130,7 @@ namespace FF9
             if (index < 0)
                 return -1;
             Int32 oldAP = player.pa[index];
-            player.pa[index] = (Byte)ap;
+            player.pa[index] = ap;
             return oldAP;
         }
 

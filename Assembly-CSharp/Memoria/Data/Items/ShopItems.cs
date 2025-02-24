@@ -15,6 +15,13 @@ namespace Memoria.Data
         public RegularItem this[Int32 index] => ItemIds[index];
         public Int32 Length => ItemIds.Count;
 
+        public ShopItems() { }
+        public ShopItems(Int32 id)
+        {
+            Comment = String.Empty;
+            Id = id;
+        }
+
         public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
             Comment = CsvParser.String(raw[0]);

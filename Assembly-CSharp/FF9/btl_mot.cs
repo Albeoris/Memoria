@@ -185,18 +185,18 @@ namespace FF9
 
         public static Boolean checkMotion(BTL_DATA btl, Byte index)
         {
-            if ((Int32)index > (Int32)btl.mot.Length)
+            if (index > btl.mot.Length)
                 return false;
-            String b = btl.mot[(Int32)index];
-            return btl.currentAnimationName == b;
+            String motName = btl.mot[index];
+            return btl.currentAnimationName == motName;
         }
 
         public static Boolean checkMotion(BTL_DATA btl, BattlePlayerCharacter.PlayerMotionIndex index)
         {
-            if ((Int32)index > (Int32)btl.mot.Length)
+            if ((Int32)index > btl.mot.Length)
                 return false;
-            String b = btl.mot[(Int32)index];
-            return btl.currentAnimationName == b;
+            String motName = btl.mot[(Int32)index];
+            return btl.currentAnimationName == motName;
         }
 
         public static Boolean IsLoopingMotion(BattlePlayerCharacter.PlayerMotionIndex index)
@@ -878,13 +878,26 @@ namespace FF9
                 geo.geoWeaponMeshShow(btl, i);
         }
 
-        public static void SetPlayerDefMotion(BTL_DATA btl, CharacterSerialNumber serial_no, UInt32 cnt)
+        public static void SetPlayerDefMotion(BTL_DATA btl, CharacterSerialNumber serial_no, Boolean trance = false)
         {
-            String[] animSource = btl_mot.BattleParameterList[serial_no].AnimationId;
-            String[] animDest = FF9StateSystem.Battle.FF9Battle.p_mot[cnt];
+            CharacterBattleParameter btlParam = btl_mot.BattleParameterList[serial_no];
+            if (trance && btlParam.TranceParameters)
+            {
+                for (Int32 i = 0; i < 34; i++)
+                {
+                    if (String.IsNullOrEmpty(btlParam.TranceAnimationId[i]))
+                        btl.mot[i] = btlParam.AnimationId[i];
+                    else
+                        btl.mot[i] = btlParam.TranceAnimationId[i];
+                }
+            }
+            else
+            {
+                for (Int32 i = 0; i < 34; i++)
+                    btl.mot[i] = btlParam.AnimationId[i];
+            }
             for (Int32 i = 0; i < 34; i++)
-                animDest[i] = animSource[i];
-            btl.mot = animDest;
+                AnimationFactory.AddAnimWithAnimatioName(btl.gameObject, btl.mot[i]);
             btl.animFlag = 0;
             btl.animSpeed = 1f;
             btl.animFrameFrac = 0f;

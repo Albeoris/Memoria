@@ -46,7 +46,7 @@ public static class btl_eqp
         if (btl.weapon.ModelId != UInt16.MaxValue)
         {
             String modelName = FF9BattleDB.GEO.GetValue(btl.weapon.ModelId);
-            if (modelName.Contains("GEO_WEP"))
+            if (modelName.StartsWith("GEO_WEP"))
                 mainWeapon.geo = ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + modelName + "/" + modelName, true, true, Configuration.Graphics.ElementsSmoothTexture);
             else
                 mainWeapon.geo = ModelFactory.CreateModel(modelName, true, true, Configuration.Graphics.ElementsSmoothTexture);
@@ -70,7 +70,7 @@ public static class btl_eqp
                     btl.weaponRenderer[i].material.mainTexture = AssetManager.Load<Texture2D>(btl.weapon.CustomTexture[i], false);
             }
         }
-        else if (btl.weapon.CustomTexture != null) // Other kind of model have no btl.weaponMeshCount
+        else if (btl.weapon.CustomTexture != null && btl.weapon.CustomTexture.Length > 0) // Other kind of model have no btl.weaponMeshCount
         {
             ModelFactory.ChangeModelTexture(mainWeapon.geo, btl.weapon.CustomTexture);
         }
@@ -102,7 +102,7 @@ public static class btl_eqp
                     secondWeapon.geo = UnityEngine.Object.Instantiate(mainWeapon.geo);
                 else if (String.Equals(mode, "NONE"))
                     secondWeapon.geo = new GameObject(DummyWeaponName);
-                else if (mode.Contains("GEO_WEP"))
+                else if (mode.StartsWith("GEO_WEP"))
                     secondWeapon.geo = ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + mode + "/" + mode, true, true, Configuration.Graphics.ElementsSmoothTexture);
                 else
                     secondWeapon.geo = ModelFactory.CreateModel(mode, true, true, Configuration.Graphics.ElementsSmoothTexture);
@@ -127,7 +127,7 @@ public static class btl_eqp
         }
         foreach (BTL_DATA.WEAPON_MODEL weapon in btl.weaponModels)
             if (weapon.geo != null && weapon.bone >= 0)
-                    geo.geoAttach(weapon.geo, btl.gameObject, weapon.bone);
+                geo.geoAttach(weapon.geo, btl.gameObject, weapon.bone);
     }
 
     public static void SetupWeaponAttachmentFromMonster(BTL_DATA.WEAPON_MODEL weapon, SB2_MON_PARM monsterParam, Int32 index)
