@@ -667,7 +667,7 @@ public class SaveLoadUI : UIScene
             UIEventListener.Get(fileTransform.gameObject).onClick += this.onClick;
         }
         this.screenFadePanel = this.ScreenFadeGameObject.GetParent().GetComponent<UIPanel>();
-        UIScene.SetupYesNoLabels(this.OverWriteDialog.GetChild(1), this.OverWriteDialog.GetChild(2), this.onClick);
+        UIScene.SetupYesNoLabels(this.OverWriteDialog.transform, this.OverWriteDialog.GetChild(1), this.OverWriteDialog.GetChild(2), this.onClick);
         this.background = new GOMenuBackground(this.transform.GetChild(8).gameObject, "save_load_bg");
     }
 

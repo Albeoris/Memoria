@@ -107,7 +107,7 @@ namespace Assets.Sources.Scripts.UI.Common
                     charHud.MagicStoneTextColor = (player.cur.capa == 0) ? FF9TextTool.Yellow : FF9TextTool.White;
             }
             charHud.Self.SetActive(true);
-            charHud.NameLabel.rawText = player.Name;
+            charHud.NameLabel.SetText(player.NameTag);
             charHud.LvLabel.rawText = player.level.ToString();
             charHud.HPLabel.rawText = player.cur.hp.ToString();
             charHud.HPMaxLabel.rawText = player.max.hp.ToString();
@@ -346,13 +346,11 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static Vector2 GetIconSize(Int32 id)
         {
-            String spriteName = String.Empty;
-            Vector2 spriteSize = new Vector2(0f, 0f);
             if (id == FF9UIDataTool.NewIconId)
-                spriteSize = new Vector2(115f, 64f);
-            else if (FF9UIDataTool.IconSpriteName.ContainsKey(id))
-                spriteSize = FF9UIDataTool.GetSpriteSize("IconAtlas", FF9UIDataTool.IconSpriteName[id]);
-            return spriteSize;
+                return new Vector2(115f, 64f);
+            if (FF9UIDataTool.IconSpriteName.ContainsKey(id))
+                return FF9UIDataTool.GetSpriteSize("IconAtlas", FF9UIDataTool.IconSpriteName[id]);
+            return Vector2.zero;
         }
 
         public static GameObject ButtonGameObject(Control key, Boolean checkFromConfig, String tag)
@@ -593,8 +591,8 @@ namespace Assets.Sources.Scripts.UI.Common
         private static String CheckIconLocalize(String spriteName)
         {
             String key = spriteName + "#" + FF9StateSystem.Settings.CurrentLanguage;
-            if (FF9UIDataTool.iconLocalizeList.ContainsKey(key))
-                spriteName = FF9UIDataTool.iconLocalizeList[key];
+            if (FF9UIDataTool.iconLocalizeList.TryGetValue(key, out String localSpriteName))
+                return localSpriteName;
             return spriteName;
         }
 

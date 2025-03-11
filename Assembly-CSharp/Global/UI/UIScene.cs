@@ -298,7 +298,7 @@ public class UIScene : MonoBehaviour
     }
 
     /// <summary>Rarely, Yes/No dialog prompts are distinct UILabels instead of being part of a [CHOO] text</summary>
-    public static void SetupYesNoLabels(GameObject yesGo, GameObject noGo, UIEventListener.VoidDelegate onButtonClick = null)
+    public static void SetupYesNoLabels(Transform container, GameObject yesGo, GameObject noGo, UIEventListener.VoidDelegate onButtonClick = null)
     {
         UILabel yesLabel = yesGo.GetComponent<UILabel>();
         UILabel noLabel = noGo.GetComponent<UILabel>();
@@ -314,7 +314,16 @@ public class UIScene : MonoBehaviour
         }
         yesLabel.alignment = NGUIText.Alignment.Center;
         noLabel.alignment = NGUIText.Alignment.Center;
-        yesLabel.SetRawRect((yesLabel.pivotOffset.x - 0.5f) * yesLabel.width, yesLabel.transform.localPosition.y, 120f, yesLabel.height);
+        yesLabel.updateAnchors = UIRect.AnchorUpdate.OnUpdate;
+        yesLabel.leftAnchor.target = container;
+        yesLabel.rightAnchor.target = container;
+        yesLabel.leftAnchor.relative = 0.5f;
+        yesLabel.rightAnchor.relative = 0.5f;
+        yesLabel.leftAnchor.absolute = -60;
+        yesLabel.rightAnchor.absolute = 60;
+        yesLabel.ResetAnchors();
+        yesLabel.UpdateAnchors();
+        //yesLabel.SetRawRect((yesLabel.pivotOffset.x - 0.5f) * yesLabel.width, yesLabel.transform.localPosition.y, 120f, yesLabel.height);
         //noLabel.SetRawRect(0f, noLabel.transform.localPosition.y, 120f, noLabel.height); // Unneeded: it is anchored to yesLabel
     }
 

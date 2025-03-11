@@ -144,7 +144,7 @@ public partial class BattleHUD : UIScene
             }
         }
 
-        _battleDialogLabel.rawText = _battleDialogLabel.PhrasePreOpcodeSymbol(str);
+        _battleDialogLabel.rawText = str;
         BattleDialogGameObject.SetActive(true);
     }
 
@@ -154,7 +154,7 @@ public partial class BattleHUD : UIScene
         switch (info)
         {
             case LibraInformation.Name:
-                return [Singleton<HelpDialog>.Instance.PhraseLabel.PhrasePreOpcodeSymbol(unit.Name)];
+                return [unit.NameTag];
             case LibraInformation.Level:
                 return [FF9TextTool.BattleLibraText(10) + unit.Level.ToString()];
             case LibraInformation.HP:
@@ -910,7 +910,7 @@ public partial class BattleHUD : UIScene
                 }
                 else
                 {
-                    _targetPanel.Players[playerIndex].Name.Label.rawText = unit.Name;
+                    _targetPanel.Players[playerIndex].Name.Label.rawText = unit.NameTag;
                 }
                 ++playerIndex;
             }
@@ -958,7 +958,7 @@ public partial class BattleHUD : UIScene
                 GameObject labelObj = playerHUD.GameObject;
                 UILabel nameLabel = playerHUD.Name.Label;
                 labelObj.SetActive(true);
-                nameLabel.rawText = unit.Player.Name;
+                nameLabel.rawText = unit.Player.NameTag;
                 if (_currentCharacterHp[playerIndex] == ParameterStatus.Dead)
                 {
                     if (_cursorType == CursorGroup.Individual)
@@ -1008,7 +1008,7 @@ public partial class BattleHUD : UIScene
                 GameObject labelObj = enemyHUD.GameObject;
                 UILabel nameLabel = enemyHUD.Name.Label;
                 labelObj.SetActive(true);
-                nameLabel.rawText = nameLabel.PhrasePreOpcodeSymbol(unit.Enemy.Name);
+                nameLabel.rawText = unit.Enemy.Name;
                 if (_currentEnemyDieState[enemyIndex])
                 {
                     if (_cursorType == CursorGroup.Individual)
@@ -1074,7 +1074,7 @@ public partial class BattleHUD : UIScene
 
     private void DisplayCharacterParameter(UI.PanelParty.Character playerHud, BattleUnit bd, DamageAnimationInfo hp, DamageAnimationInfo mp)
     {
-        playerHud.Name.SetText(bd.Player.Name);
+        playerHud.Name.SetText(bd.Player.NameTag);
         playerHud.HP.SetText(String.IsNullOrEmpty(bd.UILabelHP) ? hp.CurrentValue.ToString() : bd.UILabelHP);
         playerHud.MP.SetText(String.IsNullOrEmpty(bd.UILabelMP) ? mp.CurrentValue.ToString() : bd.UILabelMP);
         ParameterStatus parameterStatus = CheckHPState(bd);
@@ -2297,7 +2297,7 @@ public partial class BattleHUD : UIScene
             if (unit.IsPlayer)
             {
                 GONavigationButton targetHud = _targetPanel.Players[playerIndex];
-                String targetName = displayName ? unit.Player.Name : String.Empty;
+                String targetName = displayName ? unit.Player.NameTag : String.Empty;
                 targetHud.ButtonGroup.Help.Enable = true;
                 targetHud.ButtonGroup.Help.Text = cursorHelp + "\n" + targetName;
                 ++playerIndex;
@@ -2305,7 +2305,7 @@ public partial class BattleHUD : UIScene
             else
             {
                 GONavigationButton targetHud = _targetPanel.Enemies[enemyIndex];
-                String targetName = displayName ? Singleton<HelpDialog>.Instance.PhraseLabel.PhrasePreOpcodeSymbol(unit.Enemy.Name) : String.Empty;
+                String targetName = displayName ? unit.Enemy.Name : String.Empty;
                 targetHud.ButtonGroup.Help.Enable = true;
                 targetHud.ButtonGroup.Help.Text = cursorHelp + "\n" + targetName;
                 ++enemyIndex;

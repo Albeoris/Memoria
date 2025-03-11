@@ -346,14 +346,14 @@ namespace Memoria.Assets
             Directory.CreateDirectory(exportDirectoryHW);
             String textAsLoc = "";
             String textAsHW = $"#HW filetype TEXT_LOCALIZATION\n#HW language {symbol.ToLower()}\n\n";
-            foreach (String header in new String[] { "KEY", "Symbol" })
+            foreach (String header in new String[] { LanguageMap.LanguageKey, LanguageMap.SymbolKey })
             {
                 textAsLoc += $"{header},{Localization.ProcessEntryForCSVWriting(allEntries[header])}\n";
                 textAsHW += $"#HW entry {header}\n{allEntries[header]}\n\n";
             }
             foreach (KeyValuePair<String, String> pair in allEntries)
             {
-                if (pair.Key == "KEY" || pair.Key == "Symbol")
+                if (pair.Key == LanguageMap.LanguageKey || pair.Key == LanguageMap.SymbolKey)
                     continue;
                 textAsLoc += $"{pair.Key},{Localization.ProcessEntryForCSVWriting(pair.Value)}\n";
                 textAsHW += $"#HW entry {pair.Key}\n{pair.Value}\n\n";

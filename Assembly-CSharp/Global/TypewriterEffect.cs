@@ -1,23 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
 
 [RequireComponent(typeof(UILabel))]
 [AddComponentMenu("NGUI/Interaction/Typewriter Effect")]
 public class TypewriterEffect : MonoBehaviour
 {
-    public Boolean IsActive
+    public void SetActive(Boolean active, Boolean fromStart)
     {
-        get => this.mActive;
-        set
-        {
-            if (this.mActive == value)
-                return;
-            this.mActive = value;
-            if (this.mActive)
-                this.mPreviousTime = RealTime.time;
-        }
+        this.mActive = active;
+        this.enabled = active;
+        if (this.mActive)
+            this.mPreviousTime = RealTime.time;
+        if (fromStart && this.mLabel != null)
+            this.mLabel.Parser.AppearProgress = 0f;
     }
 
     private void Update()
@@ -32,25 +28,21 @@ public class TypewriterEffect : MonoBehaviour
                 this.mDialog = this.mLabel.DialogWindow;
                 this.mPreviousTime = RealTime.time;
                 this.mReset = false;
-                this.mLabel.Parser.ResetProgress();
             }
         }
         if (this.mLabel == null)
             return;
         if (this.mDialog != null && this.mDialog.CurrentState != Dialog.State.TextAnimation)
-        {
-            this.mLabel.Parser.ResetProgress();
             return;
-        }
 
         Single currentTime = RealTime.time;
         Single progress = (currentTime - this.mPreviousTime) * (HonoBehaviorSystem.Instance.IsFastForwardModeActive() ? FF9StateSystem.Settings.FastForwardFactor : 1f);
         this.mPreviousTime = currentTime;
-        if (this.mLabel.Parser.AdvanceProgress(this.mLabel.Parser.AppearProgress + progress) && this.mDialog != null)
+        if (this.mLabel.Parser.AdvanceProgress(progress) && this.mDialog != null)
             this.mDialog.AfterSentenseShown();
     }
 
-    // [DBG] all dummied except mDialog, mLabel, mPreviousTime, mActive and mReset
+    // All dummied except mDialog, mLabel, mPreviousTime, mActive and mReset
     public static TypewriterEffect current;
 
     public Single charsPerSecond = 20f;
@@ -77,7 +69,7 @@ public class TypewriterEffect : MonoBehaviour
     private Int32 ff9Signal;
     private Single mNextChar;
     private Boolean mReset = true;
-    private Boolean mActive;
+    private Boolean mActive = false;
 
     private Dictionary<Int32, Single> mDynamicCharsPerSecond;
     private Dictionary<Int32, Single> mWaitList;

@@ -500,19 +500,17 @@ public static class NGUIMath
             if (Vector3.Cross(mousePos - screenPoints[i], screenPoints[j] - screenPoints[i]).z >= 0)
                 isInside = false;
         }
-        if (!isInside)
+        if (isInside)
+            return 0f;
+        Single dist = -1f;
+        for (Int32 i = 0; i < 4; i++)
         {
-            Single dist = -1f;
-            for (Int32 i = 0; i < 4; i++)
-            {
-                Int32 j = i < 3 ? i + 1 : 0;
-                Single lineDist = NGUIMath.DistancePointToLineSegment(mousePos, screenPoints[i], screenPoints[j]);
-                if (lineDist < dist || dist < 0f)
-                    dist = lineDist;
-            }
-            return dist;
+            Int32 j = i < 3 ? i + 1 : 0;
+            Single lineDist = NGUIMath.DistancePointToLineSegment(mousePos, screenPoints[i], screenPoints[j]);
+            if (lineDist < dist || dist < 0f)
+                dist = lineDist;
         }
-        return 0f;
+        return dist;
     }
 
     public static Single DistanceToRectangle(Vector3[] worldPoints, Vector2 mousePos, Camera cam)

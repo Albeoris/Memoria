@@ -1,5 +1,6 @@
 using Memoria.Prime;
 using Memoria.Prime.CSV;
+using Memoria.Prime.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,9 +11,10 @@ namespace Memoria.Assets
 {
     internal sealed class LanguageMap
     {
-        private const String LanguageKey = "KEY";
-        private const String SymbolKey = "Symbol";
-        private const String ReadingDirectionKey = "ReadingDirection";
+        public const String LanguageKey = "KEY";
+        public const String SymbolKey = "Symbol";
+        public const String ReadingDirectionKey = "ReadingDirection";
+        public const String DigitShapesKey = "DigitShapes";
 
         private readonly String[] _knownLanguages;
         private readonly Dictionary<String, SortedList<String, String>> _languages;
@@ -95,6 +97,8 @@ namespace Memoria.Assets
             }
             _currentSymbol = Get(SymbolKey);
             NGUIText.readingDirection = Localization.GetWithDefault(ReadingDirectionKey) == UnicodeBIDI.DIRECTION_NAME_RIGHT_TO_LEFT ? UnicodeBIDI.LanguageReadingDirection.RightToLeft : UnicodeBIDI.LanguageReadingDirection.LeftToRight;
+            if (!Localization.GetWithDefault(DigitShapesKey).TryEnumParse(out NGUIText.digitShapes))
+                NGUIText.digitShapes = UnicodeBIDI.DigitShapes.Latin;
             UIRoot.Broadcast("OnLocalize");
         }
 
@@ -152,7 +156,7 @@ namespace Memoria.Assets
                 if (String.IsNullOrEmpty(key))
                     continue;
 
-                if (firstEntry && !init && key == "KEY")
+                if (firstEntry && !init && key == LanguageKey)
                 {
                     Dictionary<Int32, String> customLayout = new Dictionary<Int32, String>();
                     for (Int32 i = 1; i < cells.size; i++)
@@ -160,7 +164,7 @@ namespace Memoria.Assets
                         String value = cells[i];
                         foreach (String language in cellLanguages.Values)
                         {
-                            if (_languages[language]["KEY"] == value)
+                            if (_languages[language][LanguageKey] == value)
                             {
                                 customLayout.Add(i, language);
                                 break;
@@ -227,8 +231,8 @@ namespace Memoria.Assets
 
                     switch (entry.Prefix)
                     {
-                        case "KEY":
-                        case "Symbol":
+                        case LanguageKey:
+                        case SymbolKey:
                         case "Name":
                         case "":
                             continue;

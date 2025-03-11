@@ -197,6 +197,8 @@ public class ConfigUI : UIScene
     [NonSerialized]
     private GOConfigSliderMinMax battleSpeedSlider;
     [NonSerialized]
+    private GOFrameBackground warningBackground;
+    [NonSerialized]
     private GOMenuBackground background;
 
     private UILabel masterSkillLabel;
@@ -706,6 +708,7 @@ public class ConfigUI : UIScene
                         ButtonGroupState.RemoveCursorMemorize(WarningMenuGroupButton);
                         ButtonGroupState.ActiveGroup = WarningMenuGroupButton;
                         ButtonGroupState.HoldActiveStateOnGroup(ConfigGroupButton);
+                        warningBackground.Caption.Label.Parser.ResetBeforeVariableTags();
                     });
                 }
                 else if (config?.Configurator == Configurator.ControlTutorial)
@@ -1624,7 +1627,11 @@ public class ConfigUI : UIScene
         configScrollButton.DisplayScrollButton(false, false);
         transform.GetChild(3).GetChild(4).gameObject.SetActive(false);
         backButtonGameObject = ControlPanelGroup.GetChild(1);
-        UIScene.SetupYesNoLabels(WarningDialog.GetChild(0).GetChild(2), WarningDialog.GetChild(0).GetChild(3), onClick);
+        UIScene.SetupYesNoLabels(WarningDialog.transform, WarningDialog.GetChild(0).GetChild(2), WarningDialog.GetChild(0).GetChild(3), onClick);
+        warningBackground = new GOFrameBackground(WarningDialog.GetChild(1));
+        masterSkillLabel.overflowMethod = UILabel.Overflow.ShrinkContent;
+        lvMaxLabel.overflowMethod = UILabel.Overflow.ShrinkContent;
+        gilMaxLabel.overflowMethod = UILabel.Overflow.ShrinkContent;
 
         // If the cheats of the Configuration menu are disabled, remove them and expand the ConfigList menu
         if (!Configuration.Cheats.MasterSkill && !Configuration.Cheats.LvMax && !Configuration.Cheats.GilMax)

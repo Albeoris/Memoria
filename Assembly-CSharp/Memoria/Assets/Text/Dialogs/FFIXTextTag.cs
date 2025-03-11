@@ -26,6 +26,14 @@ namespace Memoria.Assets
             TextOffset = textOff;
         }
 
+        public static List<FFIXTextTag> DeepListCopy(List<FFIXTextTag> from)
+        {
+            List<FFIXTextTag> copy = new List<FFIXTextTag>(from.Count);
+            foreach (FFIXTextTag tag in from)
+                copy.Add(new FFIXTextTag(tag.Code, tag.Param, tag.TextOffset));
+            return copy;
+        }
+
         public String StringParam(Int32 index)
         {
             if (Param != null && Param.Length > index)
@@ -54,6 +62,15 @@ namespace Memoria.Assets
             return 0;
         }
 
+        public Rect RectMinMaxParam(Int32 index)
+        {
+            Single xMin = SingleParam(index);
+            Single yMin = SingleParam(index + 1);
+            Single xMax = SingleParam(index + 2);
+            Single yMax = SingleParam(index + 3);
+            return new Rect(xMin, yMin, xMax - xMin, yMax - yMin);
+        }
+
         public static FFIXTextTag TryRead(String txt, ref Int32 offset)
         {
             if (txt[offset] == '{')
@@ -63,19 +80,22 @@ namespace Memoria.Assets
                     return null;
                 String fullTag = txt.Substring(offset + 1, endOffset - offset - 1);
                 String[] parameters = null;
-                if (fullTag[0] == 'W' && Char.IsNumber(fullTag[1]))
+                if (fullTag.Length >= 2)
                 {
-                    parameters = fullTag.Substring(1).Split('H');
-                    if (parameters.Length != 2)
-                        return null;
-                    return new FFIXTextTag(FFIXTextTagCode.DialogSize, parameters);
+                    if (fullTag[0] == 'W' && Char.IsNumber(fullTag[1]))
+                    {
+                        parameters = fullTag.Substring(1).Split('H');
+                        if (parameters.Length != 2)
+                            return null;
+                        return new FFIXTextTag(FFIXTextTagCode.DialogSize, parameters);
+                    }
+                    if (fullTag[0] == 'y' && (fullTag[1] == '-' || Char.IsNumber(fullTag[1])))
+                        return new FFIXTextTag(FFIXTextTagCode.DialogY, [fullTag.Substring(1)]);
+                    if (fullTag[0] == 'x' && (fullTag[1] == '-' || Char.IsNumber(fullTag[1])))
+                        return new FFIXTextTag(FFIXTextTagCode.DialogX, [fullTag.Substring(1)]);
+                    if (fullTag[0] == 'f' && (fullTag[1] == '-' || Char.IsNumber(fullTag[1])))
+                        return new FFIXTextTag(FFIXTextTagCode.DialogF, [fullTag.Substring(1)]);
                 }
-                if (fullTag[0] == 'y' && (fullTag[1] == '-' || Char.IsNumber(fullTag[1])))
-                    return new FFIXTextTag(FFIXTextTagCode.DialogY, [fullTag.Substring(1)]);
-                if (fullTag[0] == 'x' && (fullTag[1] == '-' || Char.IsNumber(fullTag[1])))
-                    return new FFIXTextTag(FFIXTextTagCode.DialogX, [fullTag.Substring(1)]);
-                if (fullTag[0] == 'f' && (fullTag[1] == '-' || Char.IsNumber(fullTag[1])))
-                    return new FFIXTextTag(FFIXTextTagCode.DialogF, [fullTag.Substring(1)]);
                 Int32 spaceIndex = fullTag.IndexOf(' ');
                 if (spaceIndex >= 0)
                 {
@@ -160,7 +180,11 @@ namespace Memoria.Assets
                 tagParams = ["Off"];
             }
             if (OriginalTagNames.TryGetValue(tagName, out FFIXTextTagCode tag))
+            {
+                if (tag == FFIXTextTagCode.DialogF && tagParams != null && tagParams.Length == 1 && Int32.TryParse(tagParams[0], out Int32 feedOffset) && feedOffset > SByte.MaxValue)
+                    tagParams[0] = "0"; // Negative offsets [FEED=255] (mostly used in key item descriptions) are prevented. Note that many of the [FEED] offsets of key items are different from the PSX version
                 return tag;
+            }
             if (tagName == NGUIText.YSubOffset)
             {
                 if (tagParams.Length > 0)
@@ -292,6 +316,7 @@ namespace Memoria.Assets
             { NGUIText.MessageSpeed, FFIXTextTagCode.Speed },
             { NGUIText.Shadow, FFIXTextTagCode.ShadowToggle },
             { NGUIText.NoShadow, FFIXTextTagCode.ShadowOff },
+            { NGUIText.BackgroundColor, FFIXTextTagCode.BackgroundRGBA },
             { NGUIText.ButtonIcon, FFIXTextTagCode.DefaultButton },
             { NGUIText.CustomButtonIcon, FFIXTextTagCode.CustomButton },
             { NGUIText.NoFocus, FFIXTextTagCode.NoFocus },
@@ -306,6 +331,7 @@ namespace Memoria.Assets
             { NGUIText.MessageFeed, FFIXTextTagCode.DialogF },
             { NGUIText.MessageTab, FFIXTextTagCode.DialogX },
             { NGUIText.YAddOffset, FFIXTextTagCode.DialogY },
+            { NGUIText.TextFrame, FFIXTextTagCode.TextFrame },
             { NGUIText.IconVar, FFIXTextTagCode.Icon },
             { NGUIText.PreChoose, FFIXTextTagCode.PreChoose },
             { NGUIText.PreChooseMask, FFIXTextTagCode.PreChooseMask },
@@ -315,6 +341,7 @@ namespace Memoria.Assets
             { NGUIText.TableStart, FFIXTextTagCode.Table },
             { NGUIText.WidthInfo, FFIXTextTagCode.Widths },
             { NGUIText.Center, FFIXTextTagCode.Center },
+            { NGUIText.Sound, FFIXTextTagCode.Sound },
             { NGUIText.Signal, FFIXTextTagCode.Signal },
             { NGUIText.NewPage, FFIXTextTagCode.NewPage },
             { NGUIText.MobileIcon, FFIXTextTagCode.Mobile },

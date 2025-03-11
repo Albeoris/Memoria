@@ -1,9 +1,6 @@
-﻿using Assets.Sources.Scripts.UI.Common;
-using Memoria;
-using Memoria.Prime;
-using Memoria.Scenes;
-using System;
+﻿using System;
 using UnityEngine;
+using Assets.Sources.Scripts.UI.Common;
 
 public class QuitUI : MonoBehaviour
 {
@@ -162,6 +159,6 @@ public class QuitUI : MonoBehaviour
 
     public void Awake()
     {
-        UIScene.SetupYesNoLabels(WarningDialog.GetChild(0).GetChild(2), WarningDialog.GetChild(0).GetChild(3), onClick);
+        UIScene.SetupYesNoLabels(transform, WarningDialog.GetChild(0).GetChild(2), WarningDialog.GetChild(0).GetChild(3), onClick);
     }
 }

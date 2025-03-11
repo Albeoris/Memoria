@@ -325,8 +325,8 @@ namespace Memoria.Assets
                     {
                         InsertTextGUI.SetActive(true);
                         backgroundGo.SetActive(true);
-                        input.selected = true;
-                        input.text = ""; // Reset text input.
+                        input.isSelected = true;
+                        input.value = ""; // Reset text input.
                         CreateInsertText = false;
                     }
 

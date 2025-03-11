@@ -105,6 +105,8 @@ public class UIPointer : MonoBehaviour
                 this.pointerTween.enabled = false;
             }
         }
+        if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Battle && !UIManager.IsUIStateMenu(PersistenSingleton<UIManager>.Instance.State))
+            this.SetMoggleAnimation(false);
     }
 
     public void SetBlinkActive(Boolean isActive)
@@ -121,7 +123,7 @@ public class UIPointer : MonoBehaviour
 
     public void SetHelpActive(Boolean isActive, Boolean isImmediate)
     {
-        if (PersistenSingleton<UIManager>.Instance.UnityScene != UIManager.Scene.Battle)
+        if (PersistenSingleton<UIManager>.Instance.UnityScene != UIManager.Scene.Battle || UIManager.IsUIStateMenu(PersistenSingleton<UIManager>.Instance.State))
         {
             if (isActive)
             {

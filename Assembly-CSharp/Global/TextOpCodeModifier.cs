@@ -8,7 +8,8 @@ public class TextOpCodeModifier
 {
     public static String Modify(String source)
     {
-        source = TextOpCodeModifier.ReplaceMogIconText(source);
+        // [DBG] Check what can be removed / updated
+        source = TextOpCodeModifier.ReplaceMogIconText(source); // [DBG] change into a gif
         source = TextOpCodeModifier.ReplaceChanbaraText(source);
         source = TextOpCodeModifier.ReplacePotionShopText(source);
         source = TextOpCodeModifier.ReplaceFossilRouteText(source);

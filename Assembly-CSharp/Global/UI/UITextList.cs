@@ -171,16 +171,11 @@ public class UITextList : MonoBehaviour
             for (Int32 i = 0; i < this.paragraphs.size; i++)
             {
                 UITextList.Paragraph paragraph = this.mParagraphs.buffer[i];
-                //NGUIText.WrapText(paragraph.text, out String text); [DBG]
-                //paragraph.lines = text.Split(['\n']);
+                paragraph.lines = paragraph.text.Split(this.mSeparator);
                 this.mTotalLines += paragraph.lines.Length;
             }
-            this.mTotalLines = 0;
-            for (Int32 i = 0; i < this.mParagraphs.size; i++)
-                this.mTotalLines += this.mParagraphs.buffer[i].lines.Length;
-            UIScrollBar uiscrollBar = this.scrollBar as UIScrollBar;
-            if (uiscrollBar != null)
-                uiscrollBar.barSize = this.mTotalLines != 0 ? 1f - (Single)this.scrollHeight / this.mTotalLines : 1f;
+            if (this.scrollBar is UIScrollBar scroller)
+                scroller.barSize = this.mTotalLines != 0 ? 1f - (Single)this.scrollHeight / this.mTotalLines : 1f;
             this.UpdateVisibleText();
         }
     }

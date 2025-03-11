@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Memoria.Assets
@@ -6,6 +7,7 @@ namespace Memoria.Assets
     public class FFIXTextModifier
     {
         public BetterList<Color> colors = new BetterList<Color>();
+        public List<Background> backgroundColors = new List<Background>();
         public Int32 sub;
         public Boolean bold;
         public Boolean italic;
@@ -18,6 +20,7 @@ namespace Memoria.Assets
         public Boolean mirror;
         public Boolean choice;
         public Vector2 extraOffset;
+        public Vector2 frameOffset;
         public Single? tabX;
         public DialogImage insertImage;
         public Single appearanceSpeed;
@@ -25,6 +28,7 @@ namespace Memoria.Assets
         public void Reset()
         {
             colors.Clear();
+            backgroundColors.Clear();
             sub = 0;
             bold = false;
             italic = false;
@@ -37,6 +41,7 @@ namespace Memoria.Assets
             mirror = false;
             choice = false;
             extraOffset = Vector2.zero;
+            frameOffset = Vector2.zero;
             tabX = null;
             insertImage = null;
             SetAppearanceSpeed(-1f);
@@ -54,11 +59,12 @@ namespace Memoria.Assets
             appearanceSpeed = 30f / (Configuration.Graphics.FieldTPS * Dialog.FF9TextSpeedRatio * baseRatio);
         }
 
-        public void UpdateSettingsAfterTag(ref Single currentX, ref Single currentY, ref Boolean afterImage, ref BetterList<DialogImage> specialImages, ref Color32 textColor, ref Color gradientColorBottom, ref Color gradientColorTop, NGUIText.Alignment defaultAlignment, Int32 printedLine, Single typicalCharacterHeight)
+        public void UpdateSettingsAfterTag(ref Single currentX, ref Single currentY, ref Boolean afterImage, ref BetterList<DialogImage> specialImages, ref Color32 textColor, ref Color gradientColorBottom, ref Color gradientColorTop, NGUIText.Alignment defaultAlignment, Int32 printedLine, Single typicalCharacterHeight, LinkedListNode<TextDirectionBlock> bidiBlock)
         {
+            Boolean invertXOffset = bidiBlock != null ? !bidiBlock.Value.ltr : false;
             if (extraOffset != Vector2.zero)
             {
-                currentX += extraOffset.x;
+                currentX += invertXOffset ? -extraOffset.x : extraOffset.x;
                 currentY += extraOffset.y;
                 extraOffset = Vector2.zero;
                 afterImage = false;
@@ -76,21 +82,26 @@ namespace Memoria.Assets
                         break;
                     }
                 }
-                insertImage.LocalPosition = new Vector3(currentX, -currentY);
+                if (invertXOffset)
+                    currentX -= insertImage.Size.x;
+                insertImage.LocalPosition = new Vector3(currentX, currentY);
                 insertImage.PrintedLine = printedLine;
                 insertImage.Mirror = mirror;
-                currentX += insertImage.Size.x;
+                if (!invertXOffset)
+                    currentX += insertImage.Size.x;
                 if (NGUIText.ShouldAlignImageVertically(insertImage))
-                    insertImage.LocalPosition.y += insertImage.Size.y + insertImage.Offset.y - typicalCharacterHeight;
+                    insertImage.LocalPosition.y += typicalCharacterHeight + insertImage.Offset.y - insertImage.Size.y;
                 insertImage.IsRegistered = true;
                 if (!recycleImg)
                     specialImages.Add(insertImage);
+                if (bidiBlock != null)
+                    bidiBlock.Value.images.Add(insertImage);
                 insertImage = null;
                 afterImage = true;
             }
             else if (tabX.HasValue)
             {
-                currentX = tabX.Value;
+                currentX = invertXOffset ? -tabX.Value : tabX.Value;
                 tabX = null;
                 afterImage = false;
             }
@@ -114,6 +125,37 @@ namespace Memoria.Assets
                 gradientColorTop = NGUIText.gradientTop * colorFromOpcode;
             }
             NGUIText.alignment = justified ? NGUIText.Alignment.Justified : (center ? NGUIText.Alignment.Center : defaultAlignment);
+        }
+
+        public struct Background
+        {
+            public Color color;
+            public Rect relativeOffset;
+            public Rect pixelOffset;
+
+            public Background(Color col)
+            {
+                color = col;
+                relativeOffset = new Rect(0f, 0f, 1f, 1f);
+                pixelOffset = new Rect(0f, 0f, 0f, 0f);
+            }
+
+            public Background(Color col, Rect relRect, Rect absRect)
+            {
+                color = col;
+                relativeOffset = relRect;
+                pixelOffset = absRect;
+            }
+
+            public Rect ApplyRect(Single x, Single y, Single w, Single h)
+            {
+                Rect rect = new Rect();
+                rect.xMin = x + relativeOffset.xMin * w + pixelOffset.xMin;
+                rect.yMin = -y - relativeOffset.yMin * h - pixelOffset.yMin;
+                rect.xMax = x + relativeOffset.xMax * w + pixelOffset.xMax;
+                rect.yMax = -y - relativeOffset.yMax * h - pixelOffset.yMax;
+                return rect;
+            }
         }
     }
 }

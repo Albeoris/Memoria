@@ -17,7 +17,7 @@ public class HelpDialog : Singleton<HelpDialog>
 
     public String Phrase
     {
-        set => this.phrase = NGUIText.FF9DarkBlueColor + this.phraseLabel.PhrasePreOpcodeSymbol(value);
+        set => this.phrase = NGUIText.FF9DarkBlueColor + value;
     }
 
     public Vector2 Position
@@ -45,6 +45,8 @@ public class HelpDialog : Singleton<HelpDialog>
     {
         set => this.clipRect = value;
     }
+
+    public Vector2 BodySize => new Vector2(this.bodyWidget.width, this.bodyWidget.height);
 
     public Int32 Depth
     {
@@ -93,13 +95,11 @@ public class HelpDialog : Singleton<HelpDialog>
         Single tailX = 0f;
         if (PersistenSingleton<UIManager>.Instance.UnityScene != UIManager.Scene.Battle || UIManager.IsUIStateMenu(PersistenSingleton<UIManager>.Instance.State))
         {
-            this.phraseLabel.overflowMethod = UILabel.Overflow.ResizeFreely;
             tailX = this.FF9Help_ComputeWindow();
             rectVector = this.dialogRect;
         }
         else
         {
-            this.phraseLabel.overflowMethod = UILabel.Overflow.ShrinkContent;
             this.dialogTail = HelpDialog.FF9HELP_NONE;
             if (Configuration.Interface.IsEnabled)
             {

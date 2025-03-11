@@ -32,15 +32,9 @@ public class UILocalize : MonoBehaviour
                 {
                     UIInput uiinput = NGUITools.FindInParents<UIInput>(uilabel.gameObject);
                     if (uiinput != null && uiinput.label == uilabel)
-                    {
                         uiinput.defaultText = value;
-                    }
                     else
-                    {
-                        String text = uilabel.PhrasePreOpcodeSymbol(value);
-                        text = this.OverwriteText(text);
-                        uilabel.rawText = text;
-                    }
+                        uilabel.rawText = this.OverwriteText(value);
                 }
                 else if (uisprite != null)
                 {

@@ -525,10 +525,10 @@ namespace Assets.Sources.Scripts.UI.Common
             return (id >= FF9TextTool.worldLocationText.Length) ? String.Empty : FF9TextTool.worldLocationText[id];
         }
 
-        public static String RemoveOpCode(String textList)
+        public static String RemoveOpCode(String str)
         {
             String pattern = @"\[[^\]]*\]|\{[^\}]*\}";
-            return Regex.Replace(textList, pattern, String.Empty);
+            return Regex.Replace(str, pattern, String.Empty);
         }
 
         public static String[] GetTableText(UInt32 index)

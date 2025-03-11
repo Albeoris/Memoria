@@ -205,7 +205,7 @@ public class BattleResultUI : UIScene
                 UInt64 nextLvl = (player.level >= ff9level.LEVEL_COUNT) ? player.exp : ff9level.CharacterLevelUps[player.level].ExperienceToLevel;
                 BattleResultUI.CharacterBattleResultInfoHUD infoHUD = this.characterBRInfoHudList[i];
                 infoHUD.Content.SetActive(true);
-                infoHUD.NameLabel.rawText = player.Name;
+                infoHUD.NameLabel.SetText(player.NameTag);
                 infoHUD.LevelLabel.rawText = player.level.ToString();
                 infoHUD.ExpLabel.rawText = player.exp.ToString();
                 infoHUD.NextLvLabel.rawText = (nextLvl - player.exp).ToString();

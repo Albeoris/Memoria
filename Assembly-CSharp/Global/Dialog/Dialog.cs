@@ -86,10 +86,10 @@ public class Dialog : MonoBehaviour
             ETb.sChooseInit = 0;
         }
         ETb.sChoose = this.SelectChoice;
-        if (this.startChoiceRow > -1)
+        if (this.startChoiceRow >= 0)
         {
             this.isMuteSelectSound = true;
-            base.StartCoroutine("InitializeChoiceProcess");
+            base.StartCoroutine(InitializeChoiceProcess());
         }
     }
 
@@ -102,14 +102,25 @@ public class Dialog : MonoBehaviour
         Single startYPos = this.phraseLabel.transform.localPosition.y;
         Int32 totalLine = this.CurrentParser.LineInfo.Count + this.disableIndexes.Count();
         Int32 lineControl = this.startChoiceRow;
-        Single choiceCursorX = 0f;
-        if (!IsETbDialog)
+        Single choiceWidth = IsETbDialog ? this.phraseLabel.printedSize.x : 0f;
+        List<Single> choiceYPos = new List<Single>();
+
+        // Setup choice box colliders and cursor positions
+        for (Int32 line = this.startChoiceRow; line < totalLine; line++)
         {
-            // UI dialogs with choices: choices are centered
-            for (Int32 line = this.startChoiceRow; line < this.CurrentParser.LineInfo.Count; line++)
-                choiceCursorX = Math.Max(choiceCursorX, this.CurrentParser.LineInfo[line].Width);
-            choiceCursorX = (this.phraseLabel.width - choiceCursorX) / 2f;
+            if (this.disableIndexes.Contains(line - this.startChoiceRow))
+                continue;
+            Rect lineRect = this.CurrentParser.GetLineRenderRect(lineControl);
+            if (!IsETbDialog) // UI dialogs with choices have centered choices while ETb dialogs have side-aligned choices
+                choiceWidth = Math.Max(choiceWidth, lineRect.width);
+            choiceYPos.Add((lineRect.yMin + lineRect.yMax) / 2f);
+            lineControl++;
         }
+        if (!IsETbDialog)
+            choiceWidth += 2 * NGUIText.ChoiceIndent;
+
+        // Create the choice widgets
+        lineControl = 0;
         for (Int32 line = this.startChoiceRow; line < totalLine; line++)
         {
             if (this.disableIndexes.Contains(line - this.startChoiceRow))
@@ -122,11 +133,9 @@ public class Dialog : MonoBehaviour
             UIKeyNavigation choiceKeyNav = choice.GetComponent<UIKeyNavigation>();
             choice.name = "Choice#" + line;
             choice.transform.parent = this.ChooseContainerGameObject.transform;
-            choice.transform.position = this.PhraseGameObject.transform.position;
-            Rect lineRect = this.CurrentParser.GetLineRenderRect(lineControl);
-            Vector3 localPos = new Vector3(choiceCursorX, startYPos + (lineRect.yMin + lineRect.yMax) / 2f, 0f);
-            choice.transform.localPosition = localPos;
-            choiceWidget.width = Mathf.RoundToInt(this.phraseLabel.width - choiceCursorX); // [DBG] to check
+            choice.transform.position = this.phraseLabel.transform.position;
+            choice.transform.localPosition = new Vector3(0f, startYPos + choiceYPos[lineControl], 0f);
+            choiceWidget.width = Mathf.RoundToInt(choiceWidth);
             choiceWidget.height = (Int32)Dialog.DialogLineHeight;
             if (line - this.startChoiceRow == this.defaultChoice)
                 choiceKeyNav.startsSelected = true;
@@ -263,6 +272,33 @@ public class Dialog : MonoBehaviour
         }
     }
 
+    public String[] ChoicePhrases
+    {
+        get
+        {
+            if (this.startChoiceRow < 0)
+                return [this.CurrentParser.ParsedText];
+            List<String> phrases = new List<String>();
+            Int32 newLinePos = 0;
+            if (this.startChoiceRow > 0)
+            {
+                newLinePos = this.CurrentParser.ParsedText.IndexOf('\n');
+                for (Int32 i = 1; i < this.startChoiceRow && newLinePos >= 0; i++)
+                    newLinePos = this.CurrentParser.ParsedText.IndexOf('\n', newLinePos + 1);
+            }
+            phrases.Add(this.CurrentParser.ParsedText.Substring(0, newLinePos));
+            Int32 nextNewLinePos = this.CurrentParser.ParsedText.IndexOf('\n', newLinePos + 1);
+            while (nextNewLinePos >= 0)
+            {
+                phrases.Add(this.CurrentParser.ParsedText.Substring(newLinePos + 1, nextNewLinePos));
+                newLinePos = nextNewLinePos;
+                nextNewLinePos = this.CurrentParser.ParsedText.IndexOf('\n', newLinePos + 1);
+            }
+            phrases.Add(this.CurrentParser.ParsedText.Substring(newLinePos + 1));
+            return phrases.ToArray();
+        }
+    }
+
     public String Caption
     {
         get => this.caption;
@@ -290,8 +326,6 @@ public class Dialog : MonoBehaviour
     public Single LineNumberHint { get; set; }
     public Single HeightHint => LineNumberHint * Dialog.DialogLineHeight;
     public Vector2 SizeHint => new Vector2(WidthHint, HeightHint);
-
-    public Single OriginalWidth => this.originalWidth;
 
     public Single Width
     {
@@ -406,19 +440,13 @@ public class Dialog : MonoBehaviour
         set => this.textId = value;
     }
 
-    public Dictionary<Int32, Int32> MessageValues => this.messageValues;
-    public Boolean MessageNeedUpdate
-    {
-        get => this.messageNeedUpdate;
-        set => this.messageNeedUpdate = value;
-    }
-
     public List<String> SubPage => this.subPage;
     public Int32 CurrentPage => this.currentPage;
 
     public Single DialogShowTime => this.dialogShowTime;
     public Single DialogHideTime => this.dialogHideTime;
 
+    public Int32 OverlayMessageNumber => this.overlayMessageNumber;
     public Boolean IsOverlayDialog
     {
         get
@@ -427,7 +455,10 @@ public class Dialog : MonoBehaviour
                 return this.isOverlayDialog;
             EventEngine instance = PersistenSingleton<EventEngine>.Instance;
             if (instance == null)
-                return this.isOverlayDialog;
+            {
+                this.isOverlayDialog = false;
+                return false;
+            }
             if (instance.gMode == 1)
             {
                 if (FF9TextTool.FieldZoneId == 23) // Mist Gates, buying potions
@@ -524,12 +555,12 @@ public class Dialog : MonoBehaviour
         this.tailSprite = this.TailGameObject.GetComponent<UISprite>();
         this.dialogAnimator = base.gameObject.GetComponent<DialogAnimator>();
         this.phraseWidgetDefault = this.phraseWidget.pivot;
-        this.phraseEffect.enabled = true;
     }
 
     public void Show()
     {
         this.OverwriteDialogParameter();
+        this.phraseEffect.SetActive(false, false);
         this.dialogShowTime = RealTime.time;
         this.AutomaticSize();
         this.InitializeDialogTransition();
@@ -554,7 +585,7 @@ public class Dialog : MonoBehaviour
             return;
         }
         this.isActive = false;
-        if (this.startChoiceRow > -1)
+        if (this.startChoiceRow >= 0)
         {
             ButtonGroupState.DisableAllGroup(true);
             PersistenSingleton<UIManager>.Instance.Dialogs.HideChoiceHud();
@@ -567,7 +598,7 @@ public class Dialog : MonoBehaviour
         }
         this.currentState = Dialog.State.CloseAnimation;
         this.dialogAnimator.HideDialog();
-        if (this.CapType == Dialog.CaptionType.Mognet && this.StartChoiceRow > -1)
+        if (this.CapType == Dialog.CaptionType.Mognet && this.StartChoiceRow >= 0)
             UIManager.Input.ResetTriggerEvent();
     }
 
@@ -607,7 +638,7 @@ public class Dialog : MonoBehaviour
         Singleton<DialogManager>.Instance.ReleaseDialogToPool(this);
         if (this.AfterDialogHidden != null)
         {
-            this.AfterDialogHidden(this.startChoiceRow > -1 ? this.SelectChoice : -1);
+            this.AfterDialogHidden(this.startChoiceRow >= 0 ? this.SelectChoice : -1);
             this.AfterDialogHidden = null;
         }
         this.Reset();
@@ -635,12 +666,12 @@ public class Dialog : MonoBehaviour
         }
         if (this.currentState == Dialog.State.CompleteAnimation)
         {
-            if (this.startChoiceRow > -1)
+            if (this.startChoiceRow >= 0)
                 this.SelectChoice = this.choiceList.IndexOf(ButtonGroupState.ActiveButton);
             if (!this.ignoreInputFlag && (this.startChoiceRow < 0 || this.isChoiceReady))
                 this.Hide();
         }
-        else if (this.startChoiceRow > -1 && this.defaultChoice > -1 && (this.currentState == Dialog.State.OpenAnimation || this.currentState == Dialog.State.TextAnimation))
+        else if (this.startChoiceRow >= 0 && this.defaultChoice >= 0 && (this.currentState == Dialog.State.OpenAnimation || this.currentState == Dialog.State.TextAnimation))
         {
             // Fix fast player inputs not applying the correct cancel choice for windows that are closed by scripts (eg. Memoria save points or World Map mog dialogs)
             this.SelectChoice = this.defaultChoice;
@@ -654,7 +685,7 @@ public class Dialog : MonoBehaviour
 
     public void OnKeyCancel(GameObject go)
     {
-        if (this.startChoiceRow > -1 && this.cancelChoice > -1)
+        if (this.startChoiceRow >= 0 && this.cancelChoice >= 0)
         {
             if (this.currentState == Dialog.State.CompleteAnimation)
             {
@@ -728,7 +759,7 @@ public class Dialog : MonoBehaviour
         Single posX = this.position.x;
         Single posY = this.position.y;
         Boolean isTailUpper;
-        if (this.id == 9)
+        if (this.id == DialogManager.UIDialogId)
         {
             this.Panel.depth = Dialog.DialogMaximumDepth + Dialog.DialogAdditionalRaiseDepth + 2;
             this.phrasePanel.depth = this.Panel.depth + 1;
@@ -1045,8 +1076,6 @@ public class Dialog : MonoBehaviour
         this.phraseLabel.ReleaseAllIcons();
         this.phraseLabel.fixedAlignment = false;
         this.phraseLabel.rawText = String.Empty;
-        this.messageValues.Clear();
-        this.messageNeedUpdate = false;
         this.subPage.Clear();
         this.currentPage = 0;
         this.dialogAnimator.Pause = false;
@@ -1258,43 +1287,75 @@ public class Dialog : MonoBehaviour
 
     private void UpdateMessageValue()
     {
-        if (this.currentState == Dialog.State.CompleteAnimation && this.messageNeedUpdate && !this.IsOverlayDialog && (this.HasMessageValueChanged() || this.HasOverlayChanged()))
-            this.ReplaceMessageValue();
+        if (this.currentState == Dialog.State.CompleteAnimation && (this.HasMessageValueChanged() || this.HasOverlayChanged()))
+            this.CurrentParser.ResetBeforeVariableTags();
     }
 
     private Boolean HasMessageValueChanged()
     {
-        foreach (KeyValuePair<Int32, Int32> messPair in this.messageValues)
+        foreach (KeyValuePair<Int32, Int32> messPair in this.CurrentParser.VariableMessageValues)
             if (ETb.gMesValue[messPair.Key] != messPair.Value)
                 return true;
         return false;
     }
 
-    private void ReplaceMessageValue()
-    {
-        // [DBG] To check
-        //if (this.overlayMessageNumber == i)
-        //    formattedValue = NGUIText.FF9PinkColor + formattedValue + NGUIText.FF9WhiteColor;
-        this.CurrentParser.ResetBeforeVariableTags();
-        this.phraseLabel.MarkAsChanged();
-    }
-
     private Boolean HasOverlayChanged()
     {
+        /* (Vanilla) overlay dialogs are a bit tricky:
+         * - It consists of 2 dialogs displayed at a time: 1 complete non-overlay, and 1 overlay
+         * - The complete non-overlay is the full dialog sentence (eg. "Place how many Item? [NUMB=6][NUMB=7] Ore ...")
+         * - The overlay dialog consists of only one number tag and a color tag, with an attempt to have that number be placed exactly over the complete dialog's number (eg. "[MPOS=30,58][B880E0][HSHD][NUMB=6]")
+         * - There can be multiple overlay dialogs when there are multiple digits that can be modified by the player, but only 1 is displayed at a time (the selected digit)
+         * - It is hacky to have the overlay be placed exactly over the complete dialog's digit, and difficult with non-fixed text fonts
+         * - Thus the overlay dialogs are hidden (moved out of the screen) and the purple color indication is added to the complete dialog instead
+         * Non-vanilla overlays can be done by using only the full dialog and with a secondary parameter in [NUMB] tags:
+        set digit_selection = 0
+        SetTextVariable( 0, num % 10 ) // Setup units digit
+        SetTextVariable( 1, (num / 10) % 10 ) // Setup tens digit
+        SetTextVariable( 2, digit_selection ) // Setup digit selection: units digit is selected
+        WindowAsync( ..., "How many? [NUMB=1,2][NUMB=0,2]" )
+        while ( !IsButton(720896L) ) {
+            if ( IsButtonDown(128) ) { // Press "left": select tens digits
+                set digit_selection = 1
+            }
+            if ( IsButtonDown(32) ) { // Press "right": select units digits
+                set digit_selection = 0
+            }
+            if ( IsButton(16) ) { // Press "up": increase the value of "num"
+                if ( digit_selection == 0 && num + 1 <= 99 ) {
+                    set num += 1
+                }
+                if ( digit_selection == 1 && num + 10 <= 99 ) {
+                    set num += 10
+                }
+            }
+            if ( IsButton(64) ) { // Press "down": decrease the value of "num"
+                if ( digit_selection == 0 && num - 1 >= 0 ) {
+                    set num -= 1
+                }
+                if ( digit_selection == 1 && num - 10 >= 0 ) {
+                    set num -= 10
+                }
+            }
+            // Update the overlay selection and the value in the message
+            SetTextVariable( 0, num % 10 )
+            SetTextVariable( 1, (num / 10) % 10 )
+            SetTextVariable( 2, digit_selection )
+            Wait( 1 )
+        }
+        */
         if (this.IsOverlayDialog)
             return false;
         Dialog overlayDialog = Singleton<DialogManager>.Instance.GetOverlayDialog();
         Int32 messNum = -1;
         if (overlayDialog != null)
-        {
-            using (Dictionary<Int32, Int32>.Enumerator enumerator = overlayDialog.MessageValues.GetEnumerator())
-            {
+            using (Dictionary<Int32, Int32>.Enumerator enumerator = overlayDialog.CurrentParser.VariableMessageValues.GetEnumerator())
                 if (enumerator.MoveNext())
                     messNum = enumerator.Current.Key;
-            }
-        }
         if (messNum != this.overlayMessageNumber)
         {
+            // The ID used by the overlay's dialog [NUMB=ID] and by the script's "SetTextVariable(ID, ...)"
+            // We use that ID to know which digit must be colored in purple
             this.overlayMessageNumber = messNum;
             return true;
         }
@@ -1318,14 +1379,14 @@ public class Dialog : MonoBehaviour
         {
             if (this.currentState != Dialog.State.CompleteAnimation)
                 this.dialogAnimator.Pause = true;
-            this.phraseEffect.IsActive = false;
+            this.phraseEffect.SetActive(false, false);
         }
         else
         {
             if (this.currentState != Dialog.State.CompleteAnimation)
                 this.dialogAnimator.Pause = false;
-            this.phraseEffect.IsActive = true;
-            if (this.StartChoiceRow > -1)
+            this.phraseEffect.SetActive(true, false);
+            if (this.StartChoiceRow >= 0)
             {
                 this.isMuteSelectSound = true;
                 ButtonGroupState.ActiveGroup = Dialog.DialogGroupButton;
@@ -1347,7 +1408,7 @@ public class Dialog : MonoBehaviour
         this.phrase = this.CurrentParser.InitialText;
         this.phraseLabel.ReleaseAllIcons();
         this.phraseLabel.Parser = this.CurrentParser;
-        this.CurrentParser.ResetProgress();
+        this.CurrentParser.AppearProgress = 0f;
         this.ResetChoose();
     }
 
@@ -1360,7 +1421,6 @@ public class Dialog : MonoBehaviour
 
     private void AutomaticSize()
     {
-        this.phraseLabel.overflowMethod = UILabel.Overflow.ResizeFreely;
         if (!this.CanAutoResize())
         {
             // Use the size specified by STRT tags
@@ -1383,16 +1443,9 @@ public class Dialog : MonoBehaviour
             allPagesLineCount = Math.Max(allPagesLineCount, parser.DialogLineCount);
         }
         this.phraseLabel.Parser = this.CurrentParser;
-        if (allPagesWidth < this.originalWidth / 2f)
-        {
-            allPagesWidth = this.originalWidth - 1f;
-        }
-        else
-        {
-            foreach (DialogImage dialogImage in this.CurrentParser.SpecialImages)
-                if (dialogImage.Id == 27) // [DBG] check if still taken into account - help_mog_dialog
-                    allPagesWidth += 8f;
-        }
+        foreach (FFIXTextTag tag in this.CurrentParser.ParsedTagList)
+            if (tag.Code == FFIXTextTagCode.Icon && tag.IntParam(0) == 27)
+                allPagesWidth += 8f;
         Single extraPadding = Dialog.DialogPhraseXPadding * 2f / UIManager.ResourceXMultipier;
         allPagesWidth = Math.Max(allPagesWidth, this.captionWidth + extraPadding) + 1f;
         this.Width = Math.Max(allPagesWidth, this.WidthHint);
@@ -1401,7 +1454,7 @@ public class Dialog : MonoBehaviour
 
     private Boolean CanAutoResize()
     {
-        if (this.id == 9)
+        if (this.id == DialogManager.UIDialogId)
             return false;
         if (PersistenSingleton<EventEngine>.Instance.gMode == 1)
         {
@@ -1411,7 +1464,7 @@ public class Dialog : MonoBehaviour
                 // Fossil Roo (surely the lever dialogs and path displays)
                 if (this.windowStyle == Dialog.WindowStyle.WindowStyleTransparent)
                     return false;
-                if (this.windowStyle == Dialog.WindowStyle.WindowStylePlain && this.startChoiceRow == -1)
+                if (this.windowStyle == Dialog.WindowStyle.WindowStylePlain && this.startChoiceRow < 0)
                     return false;
             }
             if (EventHUD.CurrentHUD == MinigameHUD.Auction && this.windowStyle == Dialog.WindowStyle.WindowStyleTransparent)
@@ -1464,7 +1517,7 @@ public class Dialog : MonoBehaviour
         {
             if (FF9StateSystem.Common.FF9.fldMapNo == 2951) // Chocobo's Lagoon
             {
-                if (this.targetPos != null && this.targetPos.uid == 13 && this.startChoiceRow > -1) // Moogle
+                if (this.targetPos != null && this.targetPos.uid == 13 && this.startChoiceRow >= 0) // Moogle
                 {
                     this.Po = null;
                     this.windowStyle = Dialog.WindowStyle.WindowStyleNoTail;
@@ -1617,8 +1670,8 @@ public class Dialog : MonoBehaviour
 
     private Boolean isForceTailPosition;
     private Single tailMargin;
-    private Single originalWidth;
-    private Int32 lineNumber; // [DBG] Turn to Single if possible
+    private Single originalWidth; // Dummied
+    private Int32 lineNumber;
 
     private Vector2 size = Vector2.zero;
 
@@ -1664,11 +1717,11 @@ public class Dialog : MonoBehaviour
 
     private Boolean typeAnimationEffect = true;
 
-    private Dictionary<Int32, Single> messageSpeed; // [DBG] delete if possible
-    private Dictionary<Int32, Single> messageWait; // [DBG] delete if possible
-
+    // Dummied
+    private Dictionary<Int32, Single> messageSpeed;
+    private Dictionary<Int32, Single> messageWait;
     [SerializeField]
-    private List<DialogImage> imageList = new List<DialogImage>(); // [DBG] delete if possible
+    private List<DialogImage> imageList;
 
     private PosObj targetPos;
 
@@ -1687,11 +1740,10 @@ public class Dialog : MonoBehaviour
     [SerializeField]
     private Boolean focusToActor = true;
 
-    private Int32 signalNumber; // [DBG] delete if possible
-    private Int32 signalMode; // [DBG] delete if possible
-
-    private Dictionary<Int32, Int32> messageValues = new Dictionary<Int32, Int32>();
-
+    // Dummied
+    private Int32 signalNumber;
+    private Int32 signalMode;
+    private Dictionary<Int32, Int32> messageValues;
     private Boolean messageNeedUpdate;
 
     private Int32 currentPage;

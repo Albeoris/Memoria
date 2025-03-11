@@ -378,6 +378,7 @@
     <Compile Include="Memoria\Assets\Text\Dialogs\DialogImage.cs" />
     <Compile Include="Memoria\Assets\Text\Dialogs\FFIXTextModifier.cs" />
     <Compile Include="Memoria\Assets\Text\Dialogs\TextParser.cs" />
+    <Compile Include="Memoria\Assets\Text\Strings\TextDirectionBlock.cs" />
     <Compile Include="Memoria\Assets\Text\Strings\UnicodeBIDI.cs" />
     <Compile Include="Memoria\Assets\TIMUtils.cs" />
     <Compile Include="Memoria\Assets\Text\Strings\ITextReader.cs" />
@@ -481,11 +482,7 @@
     <Compile Include="Memoria\Assets\3DModel\AnimationClipReader.cs" />
     <Compile Include="Memoria\Assets\ModelViewer\BoneHierarchyNode.cs" />
     <Compile Include="Memoria\Assets\ModelViewer\ModelViewerScene.cs" />
-    <Compile Include="Memoria\Assets\Text\Dialogs\DialogBoxConstructor.cs" />
-    <Compile Include="Memoria\Assets\Text\Dialogs\DialogBoxController.cs" />
-    <Compile Include="Memoria\Assets\Text\Dialogs\DialogBoxRenderer.cs" />
     <Compile Include="Memoria\Assets\Text\Dialogs\DialogBoxSymbols.cs" />
-    <Compile Include="Memoria\Assets\Text\Dialogs\DialogLabelFilter.cs" />
     <Compile Include="Memoria\Assets\Text\Dialogs\FFIXTextTag.cs" />
     <Compile Include="Memoria\Assets\Text\Dialogs\FFIXTextTagCode.cs" />
     <Compile Include="Memoria\Assets\Text\CharacterNamesFormatter.cs" />

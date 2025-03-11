@@ -1,9 +1,10 @@
-﻿using Memoria.Assets;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Memoria.Assets;
+using Memoria.Scenes;
 
 public class TutorialUI : UIScene
 {
@@ -131,6 +132,8 @@ public class TutorialUI : UIScene
         this.battleTutorialImage2Pointer = this.ContentPanel.GetChild(1).GetChild(2).GetComponent<UISprite>();
         this.battleBottomLocalize = this.ContentPanel.GetChild(3).GetComponent<UILocalize>();
         this.battleOkButton = this.ContentPanel.GetChild(4).GetComponent<UIButton>();
+        this.OkButton = new GOIsolatedButton(this.ContentPanel.GetChild(4));
+        //this.battleRightLabel.width = 100; // [DBG]
     }
 
     private void HideTutorial()
@@ -147,7 +150,7 @@ public class TutorialUI : UIScene
     private void AnimatePanel(Vector3 scale)
     {
         this.ContentPanel.GetParent().SetActive(true);
-        EventDelegate.Add(TweenScale.Begin(this.ContentPanel, this.duration, scale).onFinished, new EventDelegate.Callback(this.AfterShowBattleTutorial));
+        EventDelegate.Add(TweenScale.Begin(this.ContentPanel, this.duration, scale).onFinished, this.AfterShowBattleTutorial);
     }
 
     public void OnOKButtonClick()
@@ -176,6 +179,8 @@ public class TutorialUI : UIScene
 
     private void AfterShowBattleTutorial()
     {
+        this.OkButton.Label.Label.Parser.ResetBeforeVariableTags();
+        this.battleBottomLabel.Parser.ResetBeforeVariableTags();
         base.Loading = false;
     }
 
@@ -274,10 +279,7 @@ public class TutorialUI : UIScene
         }
         else
         {
-            this.Hide(delegate
-            {
-                this.HideTutorial();
-            });
+            this.Hide(this.HideTutorial);
         }
     }
 
@@ -317,6 +319,7 @@ public class TutorialUI : UIScene
         this.battleBottomLabel.rawText = this.libraMessages[0];
         this.battleBottomLabel.fontSize = 42;
         this.battleBottomLabel.overflowMethod = UILabel.Overflow.ResizeFreely;
+        this.battleBottomLabel.gameObject.SetActive(true);
         this.libraPage = 0;
         base.Loading = true;
         this.AnimatePanel(new Vector3(1f, 1f, 1f));
@@ -370,6 +373,8 @@ public class TutorialUI : UIScene
     private UILocalize battleBottomLocalize;
     [NonSerialized]
     private UIButton battleOkButton;
+    [NonSerialized]
+    private GOIsolatedButton OkButton;
 
     [NonSerialized]
     public String libraTitle;
@@ -379,6 +384,26 @@ public class TutorialUI : UIScene
     public Texture2D libraPhoto;
     [NonSerialized]
     public Int32 libraPage;
+
+    private class GOIsolatedButton : GOWidget
+    {
+        public readonly UIButton Button;
+        public readonly BoxCollider BoxCollider;
+        public readonly OnScreenButton OnScreenButton;
+        public readonly UISprite Highlight;
+        public readonly GOLocalizableLabel Label;
+        public readonly GOThinBackground Background;
+
+        public GOIsolatedButton(GameObject go) : base(go)
+        {
+            Button = go.GetComponent<UIButton>();
+            BoxCollider = go.GetComponent<BoxCollider>();
+            OnScreenButton = go.GetComponent<OnScreenButton>();
+            Highlight = go.GetChild(0).GetComponent<UISprite>();
+            Label = new GOLocalizableLabel(go.GetChild(1));
+            Background = new GOThinBackground(go.GetChild(2));
+        }
+    }
 
     public enum Mode
     {

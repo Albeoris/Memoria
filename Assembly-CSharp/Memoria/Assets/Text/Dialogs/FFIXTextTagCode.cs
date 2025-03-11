@@ -73,6 +73,8 @@ namespace Memoria.Assets
         Green,
         /// <summary>[909090][HSHD]</summary>
         Grey,
+        /// <summary>[BCOL=?,?,?,?]...[/BCOL]</summary>
+        BackgroundRGBA,
 
         /// <summary>[INCS][TIME=-1]</summary>
         IncreaseSignal,
@@ -114,6 +116,8 @@ namespace Memoria.Assets
         Position,
         /// <summary>[SPAY=?]</summary>
         SpacingY,
+        /// <summary>[FRAM=?,?]</summary>
+        TextFrame,
 
         /// <summary>[SPRT=?,?,...]</summary>
         Sprite,
@@ -186,6 +190,8 @@ namespace Memoria.Assets
         /// <summary>[CBTN=PAD]</summary>
         PadEx,
 
+        /// <summary>[PSND=?,?,?,?]</summary>
+        Sound,
         /// <summary>[SIGL=0], [SIGL=1], [SIGL=2]</summary>
         Signal,
         /// <summary>[TIME=?]</summary>

@@ -29,7 +29,10 @@ namespace Memoria.Assets
 
         public static String Get(String key)
         {
-            return Provider.Get(key);
+            String str = Provider.Get(key);
+            if (key == "StatusDetailHelp") // Fix: Status help in StatusUI
+                str = str.Replace("[YADD=4]", "").Replace("[YSUB=4]", "");
+            return str;
         }
 
         public static String ProcessEntryForCSVWriting(String entry)
@@ -68,7 +71,7 @@ namespace Memoria.Assets
         private static Dictionary<String, Dictionary<String, String>> _defaultDictionary = new Dictionary<String, Dictionary<String, String>>()
         {
             // The base reading direction of the language
-            { "ReadingDirection", new Dictionary<String, String>()
+            { LanguageMap.ReadingDirectionKey, new Dictionary<String, String>()
                 {
                     { "US", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
                     { "UK", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
@@ -77,6 +80,18 @@ namespace Memoria.Assets
                     { "FR", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
                     { "GR", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
                     { "IT", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT }
+                }
+            },
+            // The digit shapes of the language
+            { LanguageMap.DigitShapesKey, new Dictionary<String, String>()
+                {
+                    { "US", UnicodeBIDI.DIGIT_SHAPES_LATIN },
+                    { "UK", UnicodeBIDI.DIGIT_SHAPES_LATIN },
+                    { "JP", UnicodeBIDI.DIGIT_SHAPES_LATIN },
+                    { "ES", UnicodeBIDI.DIGIT_SHAPES_LATIN },
+                    { "FR", UnicodeBIDI.DIGIT_SHAPES_LATIN },
+                    { "GR", UnicodeBIDI.DIGIT_SHAPES_LATIN },
+                    { "IT", UnicodeBIDI.DIGIT_SHAPES_LATIN }
                 }
             },
             // Language name in the title menu's button

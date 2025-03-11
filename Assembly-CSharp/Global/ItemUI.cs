@@ -251,6 +251,7 @@ public class ItemUI : UIScene
                         Loading = false;
                         ButtonGroupState.ActiveGroup = ArrangeMenuGroupButton;
                         ButtonGroupState.HoldActiveStateOnGroup(SubMenuGroupButton);
+                        _arrangeDialog.Background.Caption.Label.Parser.ResetBeforeVariableTags();
                     });
                     Loading = true;
                     break;
@@ -805,7 +806,7 @@ public class ItemUI : UIScene
             _keyItemDetailName.rawText = FF9TextTool.ImportantItemName(keyItemId);
             _keyItemDetailDescription.spacingY = _defaultSkinLabelSpacingY;
             String description = FF9TextTool.ImportantItemSkin(keyItemId);
-            _keyItemDetailDescription.rawText = _keyItemDetailDescription.PhrasePreOpcodeSymbol(description);
+            _keyItemDetailDescription.rawText = description;
             Loading = true;
             // ISSUE: method pointer
             _keyItemSkinTransition.TweenIn(new Byte[1], () =>

@@ -31,6 +31,8 @@ namespace Memoria.Assets
                             startPos = tagEndPos;
                             break;
                         case FFIXTextTagCode.Table:
+                            if (text.EndsWith("[ENDN]"))
+                                text = text.Remove(text.Length - "[ENDN]".Length);
                             return text.Substring(tagEndPos).Split('\n').ToList();
                     }
                     textPos = tagEndPos;
@@ -77,15 +79,17 @@ namespace Memoria.Assets
 
         public static void ParseInitialAndConstantTextTags(TextParser parser)
         {
-            if (!parser.LabelContainer.supportEncoding)
+            if (!parser.LabelContainer.supportEncoding || parser.ParsedText.Length == 0)
                 return;
             StringBuilder sb = new StringBuilder(parser.ParsedText.Length + 10);
             Dialog dialog = parser.LabelContainer.DialogWindow;
-            Int32 textPos = 0;
-            while (textPos < parser.ParsedText.Length)
+            List<String> parsingText = [parser.ParsedText];
+            List<Int32> parsingTextPos = [0];
+            while (parsingText.Count > 0)
             {
-                Int32 tagEndPos = textPos;
-                FFIXTextTag tag = FFIXTextTag.TryRead(parser.ParsedText, ref tagEndPos);
+                Int32 stackIndex = parsingText.Count - 1;
+                Int32 tagEndPos = parsingTextPos[stackIndex];
+                FFIXTextTag tag = FFIXTextTag.TryRead(parsingText[stackIndex], ref tagEndPos);
                 if (tag != null)
                 {
                     if (FFIXTextTag.ConstantTextReplaceTags.Contains(tag.Code))
@@ -98,11 +102,16 @@ namespace Memoria.Assets
                                 parser.ParsedTagList.Add(tag);
                             }
                         }
+                        else if (tag.Code == FFIXTextTagCode.Text)
+                        {
+                            parsingTextPos.Add(0);
+                            parsingText.Add(DialogBoxSymbols.ParseSingleConstantTextReplaceTag(tag));
+                        }
                         else
                         {
                             sb.Append(DialogBoxSymbols.ParseSingleConstantTextReplaceTag(tag));
                         }
-                        textPos = tagEndPos;
+                        parsingTextPos[stackIndex] = tagEndPos;
                     }
                     else
                     {
@@ -111,12 +120,19 @@ namespace Memoria.Assets
                             tag.TextOffset = sb.Length;
                             parser.ParsedTagList.Add(tag);
                         }
-                        textPos = tagEndPos;
+                        parsingTextPos[stackIndex] = tagEndPos;
                     }
                 }
                 else
                 {
-                    sb.Append(parser.ParsedText[textPos++]);
+                    sb.Append(parsingText[stackIndex][parsingTextPos[stackIndex]++]);
+                }
+                stackIndex = parsingText.Count - 1;
+                while (stackIndex >= 0 && parsingTextPos[stackIndex] >= parsingText[stackIndex].Length)
+                {
+                    parsingText.RemoveAt(stackIndex);
+                    parsingTextPos.RemoveAt(stackIndex);
+                    stackIndex--;
                 }
             }
             parser.ParsedText = sb.ToString();
@@ -131,8 +147,13 @@ namespace Memoria.Assets
                 if (tag.Code == FFIXTextTagCode.Variable)
                 {
                     Int32 mesScriptId = tag.IntParam(0);
+                    Int32 numbOffset = parser.ParsedTagList[i].TextOffset;
+                    Boolean isSelectedOverlay = tag.Param.Length >= 2 ? ETb.gMesValue[tag.IntParam(1)] == mesScriptId : dialog != null && dialog.OverlayMessageNumber == mesScriptId;
                     parser.VariableMessageValues[mesScriptId] = ETb.gMesValue[mesScriptId];
-                    parser.ReplaceTag(i--, ETb.gMesValue[mesScriptId].ToString());
+                    if (isSelectedOverlay)
+                        parser.ReplaceTag(i--, ETb.gMesValue[mesScriptId].ToString(), [new FFIXTextTag(FFIXTextTagCode.Pink), new FFIXTextTag(FFIXTextTagCode.ShadowToggle)], [new FFIXTextTag(FFIXTextTagCode.White), new FFIXTextTag(FFIXTextTagCode.ShadowToggle)]);
+                    else
+                        parser.ReplaceTag(i--, ETb.gMesValue[mesScriptId].ToString());
                 }
                 else if (tag.Code == FFIXTextTagCode.Item)
                 {
@@ -140,11 +161,7 @@ namespace Memoria.Assets
                     Int32 itemOffset = parser.ParsedTagList[i].TextOffset;
                     String itemName = ETb.GetItemName(ETb.gMesValue[mesScriptId]);
                     parser.VariableMessageValues[mesScriptId] = ETb.gMesValue[mesScriptId];
-                    parser.ReplaceTag(i--, itemName);
-                    parser.InsertTag(new FFIXTextTag(FFIXTextTagCode.Yellow), itemOffset);
-                    parser.InsertTag(new FFIXTextTag(FFIXTextTagCode.ShadowToggle), itemOffset);
-                    parser.InsertTag(new FFIXTextTag(FFIXTextTagCode.White), itemOffset + itemName.Length);
-                    parser.InsertTag(new FFIXTextTag(FFIXTextTagCode.ShadowToggle), itemOffset + itemName.Length);
+                    parser.ReplaceTag(i--, itemName, [new FFIXTextTag(FFIXTextTagCode.Yellow), new FFIXTextTag(FFIXTextTagCode.ShadowToggle)], [new FFIXTextTag(FFIXTextTagCode.White), new FFIXTextTag(FFIXTextTagCode.ShadowToggle)]);
                 }
             }
         }
@@ -194,7 +211,7 @@ namespace Memoria.Assets
             switch (tag.Code)
             {
                 case FFIXTextTagCode.Wait:
-                    NGUIText.progressStep += tag.SingleParam(0) / 30f;
+                    NGUIText.progressStep = Math.Max(0f, NGUIText.progressStep + tag.SingleParam(0) / 30f);
                     break;
                 case FFIXTextTagCode.Speed:
                     modifiers.SetAppearanceSpeed(tag.SingleParam(0));
@@ -205,6 +222,11 @@ namespace Memoria.Assets
                 case FFIXTextTagCode.MoveCaret:
                     OnTab(modifiers, tag.SingleParam(0), tag.SingleParam(1));
                     return true;
+                case FFIXTextTagCode.Choice:
+                    modifiers.choice = true;
+                    if (dialog == null || dialog.IsETbDialog)
+                        modifiers.frameOffset.x += NGUIText.ChoiceIndent;
+                    break;
                 case FFIXTextTagCode.ShadowToggle:
                     modifiers.highShadow = !modifiers.highShadow;
                     return true;
@@ -212,50 +234,31 @@ namespace Memoria.Assets
                     modifiers.highShadow = false;
                     return true;
                 case FFIXTextTagCode.TextRGBA:
-                    if (tag.Param.Length == 0)
-                    {
-                        if (modifiers.colors != null && modifiers.colors.size > 1)
-                            modifiers.colors.RemoveAt(modifiers.colors.size - 1);
-                    }
-                    else if (tag.Param.Length == 1)
-                    {
-                        NGUIText.mAlpha = tag.SingleParam(0);
-                    }
-                    else if (tag.Param.Length == 3)
-                    {
-                        OnTextColor32(modifiers, tag.SingleParam(0), tag.SingleParam(1), tag.SingleParam(2));
-                    }
-                    else if (tag.Param.Length == 4)
-                    {
-                        if (modifiers.colors != null)
-                        {
-                            Color textColor = new Color(tag.SingleParam(0), tag.SingleParam(1), tag.SingleParam(2), tag.SingleParam(3));
-                            if (NGUIText.premultiply && textColor.a != 1f)
-                                textColor = Color.Lerp(NGUIText.mInvisible, textColor, textColor.a);
-                            modifiers.colors.Add(textColor);
-                        }
-                    }
+                    OnTextColorRGBA(modifiers, tag);
                     return true;
                 case FFIXTextTagCode.White:
-                    OnTextColor32(modifiers, 200, 200, 200);
+                    OnTextColor(modifiers, FF9TextTool.White);
                     return true;
                 case FFIXTextTagCode.Pink:
-                    OnTextColor32(modifiers, 184, 128, 224);
+                    OnTextColor(modifiers, FF9TextTool.Magenta);
                     return true;
                 case FFIXTextTagCode.Cyan:
-                    OnTextColor32(modifiers, 104, 192, 216);
+                    OnTextColor(modifiers, FF9TextTool.Cyan);
                     return true;
                 case FFIXTextTagCode.Brown:
-                    OnTextColor32(modifiers, 208, 96, 80);
+                    OnTextColor(modifiers, FF9TextTool.Red);
                     return true;
                 case FFIXTextTagCode.Yellow:
-                    OnTextColor32(modifiers, 200, 176, 64);
+                    OnTextColor(modifiers, FF9TextTool.Yellow);
                     return true;
                 case FFIXTextTagCode.Green:
-                    OnTextColor32(modifiers, 120, 200, 64);
+                    OnTextColor(modifiers, FF9TextTool.Green);
                     return true;
                 case FFIXTextTagCode.Grey:
-                    OnTextColor32(modifiers, 144, 144, 144);
+                    OnTextColor(modifiers, FF9TextTool.Gray);
+                    return true;
+                case FFIXTextTagCode.BackgroundRGBA:
+                    OnBackgroundColorRGBA(modifiers, tag);
                     return true;
                 case FFIXTextTagCode.Time:
                     OnTime(dialog, tag.IntParam(0));
@@ -267,7 +270,7 @@ namespace Memoria.Assets
                     modifiers.extraOffset.y += tag.SingleParam(0) * UIManager.ResourceYMultipier;
                     return true;
                 case FFIXTextTagCode.DialogX:
-                    modifiers.tabX = tag.SingleParam(0) * UIManager.ResourceXMultipier; // [DBG] was UIManager.ResourceYMultipier?
+                    modifiers.tabX = tag.SingleParam(0) * UIManager.ResourceXMultipier;
                     return true;
                 case FFIXTextTagCode.DialogF:
                     OnFeed(modifiers, tag.IntParam(0));
@@ -276,8 +279,23 @@ namespace Memoria.Assets
                     if (label != null)
                         label.spacingY = tag.IntParam(0);
                     return true;
+                case FFIXTextTagCode.TextFrame: // TODO: might want to add optional parameters, such as width/height, maybe a frame outline or internal color...
+                    modifiers.frameOffset.x += tag.SingleParam(0) * UIManager.ResourceXMultipier;
+                    modifiers.frameOffset.y += tag.SingleParam(1) * UIManager.ResourceYMultipier;
+                    return true;
                 case FFIXTextTagCode.Sprite:
                     modifiers.insertImage = NGUIText.CreateSpriteImage(tag.Param);
+                    return true;
+                case FFIXTextTagCode.Icon:
+                    modifiers.insertImage = NGUIText.CreateIconImage(tag.IntParam(0));
+                    return true;
+                case FFIXTextTagCode.IconEx:
+                    if ((ETb.gMesValue[0] & (1 << tag.IntParam(0))) != 0)
+                        modifiers.insertImage = NGUIText.CreateIconImage(FF9UIDataTool.NewIconId);
+                    return true;
+                case FFIXTextTagCode.Mobile:
+                    if (NGUIText.ShowMobileButtons)
+                        modifiers.insertImage = NGUIText.CreateIconImage(tag.IntParam(0));
                     return true;
                 case FFIXTextTagCode.DefaultButton:
                     modifiers.insertImage = NGUIText.CreateButtonImage(tag.StringParam(0), false, NGUIText.ButtonIcon);
@@ -381,17 +399,6 @@ namespace Memoria.Assets
                 case FFIXTextTagCode.PadEx:
                     modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.DPad], true, NGUIText.CustomButtonIcon);
                     return true;
-                case FFIXTextTagCode.Icon:
-                    modifiers.insertImage = NGUIText.CreateIconImage(tag.IntParam(0));
-                    return true;
-                case FFIXTextTagCode.IconEx:
-                    if ((ETb.gMesValue[0] & (1 << tag.IntParam(0))) != 0)
-                        modifiers.insertImage = NGUIText.CreateIconImage(FF9UIDataTool.NewIconId);
-                    return true;
-                case FFIXTextTagCode.Mobile:
-                    if (NGUIText.ShowMobileButtons)
-                        modifiers.insertImage = NGUIText.CreateIconImage(tag.IntParam(0));
-                    return true;
                 case FFIXTextTagCode.TurboOff:
                     UIKeyTrigger.preventTurboKey = true;
                     return true;
@@ -444,6 +451,9 @@ namespace Memoria.Assets
                     break;
                 case FFIXTextTagCode.Signal:
                     OnSignal(dialog, tag.IntParam(0));
+                    break;
+                case FFIXTextTagCode.Sound:
+                    OnSound(tag);
                     break;
             }
         }
@@ -513,6 +523,11 @@ namespace Memoria.Assets
         {
             switch (tag.Code)
             {
+                case FFIXTextTagCode.Table:
+                case FFIXTextTagCode.NewPage:
+                case FFIXTextTagCode.End:
+                    // No need to keep these tags registered any longer
+                    return true;
                 case FFIXTextTagCode.Instantly:
                     if (dialog != null)
                         dialog.TypeEffect = false;
@@ -616,6 +631,8 @@ namespace Memoria.Assets
                         dialog.DefaultChoice = dialog.ActiveIndexes.Min();
                     if (dialog.DisableIndexes.Contains(dialog.CancelChoice) || !dialog.ActiveIndexes.Contains(dialog.CancelChoice))
                         dialog.CancelChoice = dialog.ActiveIndexes.Max();
+                    if (dialog.LineNumberHint > dialog.ChoiceNumber)
+                        dialog.LineNumberHint -= dialog.DisableIndexes.Count;
                 }
                 else
                 {
@@ -633,17 +650,59 @@ namespace Memoria.Assets
             }
         }
 
-        private static void OnTextColor32(FFIXTextModifier modifiers, Single r, Single g, Single b)
+        private static void OnTextColorRGBA(FFIXTextModifier modifiers, FFIXTextTag tag)
+        {
+            if (tag.Param.Length == 0)
+            {
+                if (modifiers.colors != null && modifiers.colors.size > 1)
+                    modifiers.colors.RemoveAt(modifiers.colors.size - 1);
+            }
+            else if (tag.Param.Length == 1)
+            {
+                NGUIText.mAlpha = tag.SingleParam(0);
+            }
+            else if (tag.Param.Length == 3)
+            {
+                OnTextColor(modifiers, new Color(tag.SingleParam(0), tag.SingleParam(1), tag.SingleParam(2)));
+            }
+            else if (tag.Param.Length == 4)
+            {
+                if (modifiers.colors != null)
+                {
+                    Color textColor = new Color(tag.SingleParam(0), tag.SingleParam(1), tag.SingleParam(2), tag.SingleParam(3));
+                    if (NGUIText.premultiply && textColor.a != 1f)
+                        textColor = Color.Lerp(NGUIText.mInvisible, textColor, textColor.a);
+                    modifiers.colors.Add(textColor);
+                }
+            }
+        }
+
+        private static void OnTextColor(FFIXTextModifier modifiers, Color textColor)
         {
             if (modifiers.colors != null)
             {
-                Color textColor = new Color(r, g, b);
                 if (modifiers.colors.size > 0)
                     textColor.a = modifiers.colors[modifiers.colors.size - 1].a;
                 if (NGUIText.premultiply && textColor.a != 1f)
                     textColor = Color.Lerp(NGUIText.mInvisible, textColor, textColor.a);
                 modifiers.colors.Add(textColor);
             }
+        }
+
+        private static void OnBackgroundColorRGBA(FFIXTextModifier modifiers, FFIXTextTag tag)
+        {
+            if ((tag.Param.Length == 0 || (tag.Param.Length == 1 && tag.StringParam(0) == "Off")) && modifiers.backgroundColors.Count > 0)
+                modifiers.backgroundColors.RemoveAt(modifiers.backgroundColors.Count - 1);
+            else if (tag.Param.Length == 1)
+                modifiers.backgroundColors.Add(new FFIXTextModifier.Background(new Color(1f, 1f, 1f, tag.SingleParam(0) * NGUIText.tint.a)));
+            else if (tag.Param.Length == 3)
+                modifiers.backgroundColors.Add(new FFIXTextModifier.Background(new Color(tag.SingleParam(0), tag.SingleParam(1), tag.SingleParam(2), NGUIText.tint.a)));
+            else if (tag.Param.Length == 4)
+                modifiers.backgroundColors.Add(new FFIXTextModifier.Background(new Color(tag.SingleParam(0), tag.SingleParam(1), tag.SingleParam(2), tag.SingleParam(3) * NGUIText.tint.a)));
+            else if (tag.Param.Length == 8)
+                modifiers.backgroundColors.Add(new FFIXTextModifier.Background(new Color(tag.SingleParam(0), tag.SingleParam(1), tag.SingleParam(2), tag.SingleParam(3) * NGUIText.tint.a), new Rect(0f, 0f, 1f, 1f), tag.RectMinMaxParam(4)));
+            else if (tag.Param.Length == 12)
+                modifiers.backgroundColors.Add(new FFIXTextModifier.Background(new Color(tag.SingleParam(0), tag.SingleParam(1), tag.SingleParam(2), tag.SingleParam(3) * NGUIText.tint.a), tag.RectMinMaxParam(4), tag.RectMinMaxParam(8)));
         }
 
         private static void OnTime(Dialog dialog, Int32 timeParam)
@@ -674,6 +733,14 @@ namespace Memoria.Assets
                 ETb.gMesSignal = signal;
         }
 
+        private static void OnSound(FFIXTextTag tag)
+        {
+            // TODO: allow sound parameter to be given as an asset path
+            Single volume = tag.Param.Length > 1 ? tag.SingleParam(1) : 1f;
+            Single pitch = tag.Param.Length > 3 ? tag.SingleParam(3) : 1f;
+            SoundLib.PlaySoundEffect(tag.IntParam(0), volume, tag.SingleParam(2), pitch);
+        }
+
         private static void OnTailPosition(Dialog dialog, Dialog.TailPosition tailPos)
         {
             if (dialog != null)
@@ -686,19 +753,15 @@ namespace Memoria.Assets
             {
                 if (width > 0f)
                     width += 3f;
-                dialog.WidthHint = width;
+                if (!dialog.IsETbDialog) // Discard width hint for usual dialogs, because dialog width is too much font-dependant
+                    dialog.WidthHint = width;
                 dialog.LineNumberHint = lineNumber;
             }
         }
 
         private static void OnFeed(FFIXTextModifier modifiers, Int32 feedParam)
         {
-            if (feedParam == 255)
-                modifiers.extraOffset.x += 0f * UIManager.ResourceXMultipier; // [DBG] check with PSX renders (key item descriptions)
-            else if (feedParam == 254)
-                modifiers.extraOffset.x += 0f * UIManager.ResourceXMultipier;
-            else
-                modifiers.extraOffset.x += feedParam * UIManager.ResourceXMultipier;
+            modifiers.extraOffset.x += feedParam * UIManager.ResourceXMultipier;
         }
 
         private static void OnWidths(Dialog dialog, Int32[] tagParameters)
@@ -728,8 +791,7 @@ namespace Memoria.Assets
                     if (hasSubParam)
                         paramIndex++;
                     lineWidth += (Int32)NGUIText.GetDialogWidthFromSpecialOpcode(subParams, dialog.PhraseLabel);
-                    if (dialog.OriginalWidth < lineWidth)
-                        dialog.Width = lineWidth;
+                    dialog.WidthHint = Math.Max(dialog.WidthHint, lineWidth);
                 }
             }
         }

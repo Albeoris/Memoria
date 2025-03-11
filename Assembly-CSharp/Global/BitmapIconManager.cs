@@ -17,21 +17,20 @@ internal class BitmapIconManager : Singleton<BitmapIconManager>
             PlaceBitmapIcon(dialogImg);
             return dialogImg.SpriteGo;
         }
-        GameObject imgGo;
         if (!String.IsNullOrEmpty(dialogImg.SpriteName))
-            imgGo = FF9UIDataTool.SpriteGameObject(dialogImg.AtlasName, dialogImg.SpriteName);
+            dialogImg.SpriteGo = FF9UIDataTool.SpriteGameObject(dialogImg.AtlasName, dialogImg.SpriteName);
         else if (dialogImg.IsButton)
-            imgGo = FF9UIDataTool.ButtonGameObject((Control)dialogImg.Id, dialogImg.checkFromConfig, dialogImg.tag);
+            dialogImg.SpriteGo = FF9UIDataTool.ButtonGameObject((Control)dialogImg.Id, dialogImg.checkFromConfig, dialogImg.tag);
         else
-            imgGo = FF9UIDataTool.IconGameObject(dialogImg.Id);
-        if (imgGo == null)
+            dialogImg.SpriteGo = FF9UIDataTool.IconGameObject(dialogImg.Id);
+        if (dialogImg.SpriteGo == null)
         {
             Log.Warning("[BitmapIconManager] Could not create image: " + (!String.IsNullOrEmpty(dialogImg.SpriteName) ? dialogImg.AtlasName + ":" + dialogImg.SpriteName : (dialogImg.IsButton ? "Button " + dialogImg.Id : "Icon " + dialogImg.Id)));
             return null;
         }
-        imgGo.transform.parent = label.transform;
-        dialogImg.SpriteGo = imgGo;
-        return imgGo;
+        dialogImg.SpriteGo.transform.parent = label.transform;
+        PlaceBitmapIcon(dialogImg);
+        return dialogImg.SpriteGo;
     }
 
     public void PlaceBitmapIcon(DialogImage dialogImg)
@@ -39,6 +38,7 @@ internal class BitmapIconManager : Singleton<BitmapIconManager>
         GameObject imgGo = dialogImg.SpriteGo;
         if (imgGo == null)
             return;
+        imgGo.SetActive(true);
         if (dialogImg.Rescale)
         {
             Vector2 defaultSize = FF9UIDataTool.GetSpriteSize(dialogImg.AtlasName, dialogImg.SpriteName);
@@ -48,7 +48,7 @@ internal class BitmapIconManager : Singleton<BitmapIconManager>
         {
             imgGo.transform.localScale = Vector3.one;
         }
-        imgGo.transform.localPosition = new Vector3(dialogImg.LocalPosition.x, dialogImg.LocalPosition.y, 0f);
+        imgGo.transform.localPosition = new Vector3(dialogImg.LocalPosition.x, -dialogImg.LocalPosition.y, 0f);
         UISprite sprite = imgGo.GetComponent<UISprite>();
         if (sprite != null)
         {
@@ -57,11 +57,26 @@ internal class BitmapIconManager : Singleton<BitmapIconManager>
             else
                 sprite.flip = UIBasicSprite.Flip.Nothing;
         }
-        imgGo.SetActive(true);
+        UILabel keyLabel = imgGo.transform.childCount > 0 ? imgGo.GetChild(0).GetComponent<UILabel>() : null;
+        if (keyLabel != null && dialogImg.Mirror && keyLabel.rawText.Length >= 1 && keyLabel.rawText[0] != '[')
+            keyLabel.rawText = "[MIRR]" + keyLabel.rawText;
+    }
+
+    public void SetBitmapIconAlpha(GameObject imgGo, Single alpha)
+    {
+        if (imgGo == null)
+            return;
+        UISprite sprite = imgGo.GetComponent<UISprite>();
+        if (sprite != null && sprite.alpha != alpha)
+            sprite.alpha = alpha;
+        UILabel keyLabel = imgGo.transform.childCount > 0 ? imgGo.GetChild(0).GetComponent<UILabel>() : null;
+        if (keyLabel != null && keyLabel.alpha != alpha)
+            keyLabel.alpha = alpha;
     }
 
     public void RemoveBitmapIcon(GameObject bitmap)
     {
+        SetBitmapIconAlpha(bitmap, 1f);
         FF9UIDataTool.ReleaseBitmapIconToPool(bitmap);
     }
 

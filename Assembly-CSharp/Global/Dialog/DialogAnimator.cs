@@ -113,7 +113,13 @@ public class DialogAnimator : MonoBehaviour
         this.bodySprite.width = (Int32)this.dialog.Size.x;
         this.bodySprite.height = (Int32)this.dialog.Size.y;
         this.clipPanel.baseClipRegion = new Vector4(this.clipPanel.baseClipRegion.x, this.getCenterValue(this.dialog.Tail, 1f), this.dialog.ClipSize.x, this.dialog.ClipSize.y);
+        if (!this.dialog.IsETbDialog)
+            this.dialog.CurrentParser.ResetBeforeVariableTags(); // UI dialogs sometimes need to wrap their text after the frame grew to their full size
         this.dialog.CurrentState = Dialog.State.TextAnimation;
+        if (this.dialog.TypeEffect)
+            this.phraseTextEffect.SetActive(true, true);
+        else
+            this.dialog.CurrentParser.AdvanceProgress(this.dialog.CurrentParser.AppearProgressMax);
         yield return new WaitForEndOfFrame();
         this.pauseAnimation = false;
         this.dialog.AfterShown();
@@ -126,6 +132,7 @@ public class DialogAnimator : MonoBehaviour
         if (this.dialog.TypeEffect)
         {
             this.dialog.CurrentState = Dialog.State.TextAnimation;
+            this.phraseTextEffect.SetActive(true, true);
         }
         else
         {

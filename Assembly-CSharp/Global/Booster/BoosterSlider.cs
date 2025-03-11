@@ -319,12 +319,12 @@ public class BoosterSlider : MonoBehaviour
                 Int32 doubleLine = text.LastIndexOf("\n\n");
                 if (doubleLine >= 0)
                     text = text.Remove(doubleLine, 1);
+                if (text.EndsWith("[ENDN]"))
+                    text = text.Remove(text.Length - "[ENDN]".Length);
                 text += "\n[MOVE=140,0]" + optionText;
             }
             ETb.sChoose = 1;
             Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(text, 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(0f, 0f), Dialog.CaptionType.None);
-            //dialog.PhraseLabel.fixedAlignment = true;
-            //ButtonGroupState.SetPointerOffsetToGroup(new Vector2(620f, 0f), Dialog.DialogGroupButton);
             dialog.AfterDialogHidden = this.OnConfirmDialogHidden;
             this.warningCallback = callback;
             if (PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.Config)

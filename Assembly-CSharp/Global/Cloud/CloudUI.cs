@@ -886,8 +886,9 @@ public class CloudUI : UIScene
         this.downloadButtonLabel = this.DownloadButton.GetChild(1).GetComponent<UILabel>();
         this.overWriteDialogDespLabel = this.OverWriteDialog.GetChild(0).GetComponent<UILabel>();
         this.successfulAccessLabel = this.SuccessfulAccessPanel.GetChild(0).GetComponent<UILabel>();
-        UIScene.SetupYesNoLabels(this.OverWriteDialog.GetChild(1), this.OverWriteDialog.GetChild(2), this.onClick);
+        UIScene.SetupYesNoLabels(this.OverWriteDialog.transform, this.OverWriteDialog.GetChild(1), this.OverWriteDialog.GetChild(2), this.onClick);
         this.background = new GOMenuBackground(this.transform.GetChild(9).gameObject, "cloud_bg");
+        //this.some label.width = 100; // [DBG]
     }
 
     private const String SubMenuGroupButton = "Cloud.SubMenu";

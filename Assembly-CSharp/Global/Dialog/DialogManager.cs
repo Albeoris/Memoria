@@ -9,28 +9,6 @@ using UnityEngine;
 
 public class DialogManager : Singleton<DialogManager>
 {
-    public void StartAppearanceProcess(TextParser parser)
-    {
-        base.StartCoroutine(this.AppearanceProcess(parser));
-    }
-
-    private IEnumerator AppearanceProcess(TextParser parser)
-    {
-        Single progress = 0f;
-        Single prevTime = RealTime.time;
-        while (!parser.AdvanceProgress(progress))
-        {
-            yield return new WaitForEndOfFrame();
-            progress += (RealTime.time - prevTime) * (HonoBehaviorSystem.Instance.IsFastForwardModeActive() ? FF9StateSystem.Settings.FastForwardFactor : 1f);
-            prevTime = RealTime.time;
-            //parser.LabelContainer.Update(); // [DBG] maybe not required
-        }
-        Dialog dialog = parser.LabelContainer.DialogWindow;
-        if (dialog != null && dialog.CurrentState == Dialog.State.TextAnimation)
-            dialog.AfterSentenseShown();
-        yield break;
-    }
-
     public static Int32 SelectChoice
     {
         get => DialogManager.selectChoice;
@@ -498,8 +476,9 @@ public class DialogManager : Singleton<DialogManager>
         base.gameObject.GetComponent<BoxCollider>().enabled = value;
     }
 
+    public const Int32 UIDialogId = 9;
+
     private const Byte InitialDialogCount = 10;
-    private const Int32 UIDialogId = 9;
 
     private static Int32 selectChoice;
 

@@ -77,7 +77,9 @@ public class CardUI : UIScene
                         ButtonGroupState.RemoveCursorMemorize(CardUI.DiscardDialogButtonGroup);
                         ButtonGroupState.ActiveGroup = CardUI.DiscardDialogButtonGroup;
                         ButtonGroupState.HoldActiveStateOnGroup(CardUI.CardGroupButton);
+                        _uiDiscardDialog.ShowMessage(true);
                     });
+                    _uiDiscardDialog.ShowMessage(false);
                     prevOffsetButton.enabled = false;
                     nextOffsetButton.enabled = false;
                     deleteCardId = currentCardId;
@@ -98,6 +100,7 @@ public class CardUI : UIScene
                     base.Loading = false;
                     ButtonGroupState.ActiveGroup = CardUI.CardGroupButton;
                 });
+                _uiDiscardDialog.ShowMessage(false);
                 prevOffsetButton.enabled = true;
                 nextOffsetButton.enabled = true;
                 ButtonGroupState.DisableAllGroup(true);
@@ -187,6 +190,7 @@ public class CardUI : UIScene
                     base.Loading = false;
                     ButtonGroupState.ActiveGroup = CardUI.CardGroupButton;
                 });
+                _uiDiscardDialog.ShowMessage(false);
                 prevOffsetButton.enabled = true;
                 nextOffsetButton.enabled = true;
             }
@@ -622,6 +626,12 @@ public class CardUI : UIScene
 
             if (Configuration.TetraMaster.DiscardAutoButton)
                 AddAutoButton();
+
+            foreach (var button in Choices)
+            {
+                button.Content.Localize.TextOverwriting += PrependCenterText;
+                button.Transform.localPosition = new Vector3(0, button.Transform.localPosition.y, button.Transform.localPosition.z);
+            }
         }
 
         public void AddAutoButton()
@@ -635,14 +645,13 @@ public class CardUI : UIScene
             autoGo.name = "Auto";
             autoGo.transform.SetParent(TextPanel.transform, false);
             autoGo.transform.localPosition = new Vector3(0, -386f, 0);
-            autoButton.Content.Localize.key = null;
-            autoButton.Content.Label.rawText = "Auto";
+            autoButton.Content.Localize.key = "AutoBattleCamera";
             Choices.Add(autoButton);
-            foreach (var button in Choices)
-            {
-                button.Content.Localize.TextOverwriting += PrependCenterText;
-                button.Transform.localPosition = new Vector3(0, button.Transform.localPosition.y, button.Transform.localPosition.z);
-            }
+        }
+
+        public void ShowMessage(Boolean show)
+        {
+            TextPanel.gameObject.SetActive(show);
         }
 
         private static void PrependCenterText(String key, ref String text)
