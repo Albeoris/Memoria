@@ -13,7 +13,7 @@ public class TypewriterEffect : MonoBehaviour
         if (this.mActive)
             this.mPreviousTime = RealTime.time;
         if (fromStart && this.mLabel != null)
-            this.mLabel.Parser.AppearProgress = 0f;
+            this.mLabel.Parser.ResetProgress();
     }
 
     private void Update()

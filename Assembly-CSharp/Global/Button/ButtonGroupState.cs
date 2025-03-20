@@ -535,7 +535,7 @@ public class ButtonGroupState : MonoBehaviour
             Vector3 helpPos = UIRoot.list[0].transform.InverseTransformPoint(button.widget.worldCenter);
             helpPos.x += invertPointer ? button.widget.width / 2f + 3f * UIPointer.PointerSize.x / 4f : -button.widget.width / 2f;
             Singleton<HelpDialog>.Instance.Phrase = String.IsNullOrEmpty(button.Help.TextKey) ? button.Help.Text : Localization.Get(button.Help.TextKey);
-            Singleton<HelpDialog>.Instance.PointerOffset = ButtonGroupState.pointerOffsetList.TryGetValue(button.GroupName, out Vector2 offset) ? offset : new Vector2(0f, 0f);
+            Singleton<HelpDialog>.Instance.PointerOffset = ButtonGroupState.GetPointerOffsetOfGroup(button.GroupName);
             Singleton<HelpDialog>.Instance.PointerLimitRect = ButtonGroupState.pointerLimitRectList.TryGetValue(button.GroupName, out Vector4 limits) ? limits : UIManager.UIScreenCoOrdinate;
             Singleton<HelpDialog>.Instance.Position = helpPos;
             Singleton<HelpDialog>.Instance.Tail = button.Help.Tail;
@@ -644,9 +644,20 @@ public class ButtonGroupState : MonoBehaviour
 
     public static void UpdatePointerPropertyForGroup(String group)
     {
-        Singleton<PointerManager>.Instance.PointerOffset = ButtonGroupState.pointerOffsetList.TryGetValue(group, out Vector2 offset) ? offset : new Vector2(0f, 0f);
+        Singleton<PointerManager>.Instance.PointerOffset = ButtonGroupState.GetPointerOffsetOfGroup(group);
         Singleton<PointerManager>.Instance.PointerLimitRect = ButtonGroupState.pointerLimitRectList.TryGetValue(group, out Vector4 limits) ? limits : UIManager.UIScreenCoOrdinate;
         Singleton<PointerManager>.Instance.PointerDepth = ButtonGroupState.pointerDepthList.TryGetValue(group, out Int32 depth) ? depth : 5;
+    }
+
+    private static Vector2 GetPointerOffsetOfGroup(String group)
+    {
+        if (ButtonGroupState.pointerOffsetList.TryGetValue(group, out Vector2 offset))
+        {
+            if (NGUIText.readingDirection == UnicodeBIDI.LanguageReadingDirection.RightToLeft)
+                offset.x *= -1;
+            return offset;
+        }
+        return Vector2.zero;
     }
 
     public static Dictionary<String, List<GameObject>> ButtonGroupList = new Dictionary<String, List<GameObject>>();

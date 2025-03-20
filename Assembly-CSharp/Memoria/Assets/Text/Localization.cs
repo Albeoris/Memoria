@@ -19,7 +19,7 @@ namespace Memoria.Assets
         public static String CurrentLanguage
         {
             get => Provider.CurrentLanguage;
-            set => Provider.SelectLanguage(value);
+            set => Provider.SelectLanguage(value); // [DBG] https://github.com/Albeoris/Memoria/issues/515
         }
 
         public static String GetSymbol()
@@ -128,6 +128,18 @@ namespace Memoria.Assets
                     { "FR", "%p" },
                     { "GR", "%p" },
                     { "IT", "%p" }
+                }
+            },
+            // Panel caption for magic stones (used to show "MP" in the Ability menu instead, since PSX)
+            { "MagicStoneCaption", new Dictionary<String, String>()
+                {
+                    { "US", "MG ST" },
+                    { "UK", "MG ST" },
+                    { "JP", "魔石力" },
+                    { "ES", "PIEDRAS" },
+                    { "FR", "MAGIK" },
+                    { "GR", "MG ST" },
+                    { "IT", "PIETRE" }
                 }
             },
             // New options in the config menu

@@ -192,7 +192,11 @@ public class Dialog : MonoBehaviour
         this.activeIndexes.Clear();
         this.disableIndexes.Clear();
         if (mask == -1)
+        {
+            for (Int32 i = 0; i < choiceExactNumber; i++)
+                this.activeIndexes.Add(i);
             return;
+        }
         for (Int32 i = 0; i < choiceExactNumber; i++)
         {
             if (i < this.choiceNumber && (mask & 1) == 0)
@@ -265,7 +269,7 @@ public class Dialog : MonoBehaviour
             this.subPage = DialogBoxSymbols.ParseTextSplitTags(value);
             for (Int32 i = 0; i < this.subPage.Count; i++)
             {
-                this.subPage[i] = NGUIText.FF9WhiteColor + this.subPage[i];
+                this.subPage[i] = NGUIText.FF9WhiteColor + this.subPage[i]; // [DBG] "[YADD=28][MIRR][SPRT=FaceAtlas,face00][MIRR][YSUB=28][FRAM=32,0]"
                 this.PageParsers.Add(new TextParser(this.phraseLabel, this.subPage[i]));
             }
             this.PrepareNextPage();
@@ -326,6 +330,7 @@ public class Dialog : MonoBehaviour
     public Single LineNumberHint { get; set; }
     public Single HeightHint => LineNumberHint * Dialog.DialogLineHeight;
     public Vector2 SizeHint => new Vector2(WidthHint, HeightHint);
+    public Boolean UseSizeHint { get; set; }
 
     public Single Width
     {
@@ -426,6 +431,8 @@ public class Dialog : MonoBehaviour
 
     public Boolean IsReadyToFollow => this.isReadyToFollow;
 
+    public Int32 FollowDialog { get; set; }
+
     public Dialog.State CurrentState
     {
         get => this.currentState;
@@ -463,8 +470,7 @@ public class Dialog : MonoBehaviour
             {
                 if (FF9TextTool.FieldZoneId == 23) // Mist Gates, buying potions
                 {
-                    String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-                    switch (currentLanguage)
+                    switch (FF9StateSystem.Settings.CurrentLanguage)
                     {
                         case "Japanese":
                         case "French":
@@ -480,8 +486,7 @@ public class Dialog : MonoBehaviour
                 }
                 else if (FF9TextTool.FieldZoneId == 70 || FF9TextTool.FieldZoneId == 741) // Treno, bidding in Auction House
                 {
-                    String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-                    switch (currentLanguage)
+                    switch (FF9StateSystem.Settings.CurrentLanguage)
                     {
                         case "English(US)":
                         case "English(UK)":
@@ -498,8 +503,7 @@ public class Dialog : MonoBehaviour
                 }
                 else if (FF9TextTool.FieldZoneId == 358) // Madain Sari, choosing for how many people to cook
                 {
-                    String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-                    switch (currentLanguage)
+                    switch (FF9StateSystem.Settings.CurrentLanguage)
                     {
                         case "Japanese":
                         case "French":
@@ -521,8 +525,7 @@ public class Dialog : MonoBehaviour
                 }
                 else if (FF9TextTool.FieldZoneId == 945) // Chocobo Places, buying Gysahl Greens
                 {
-                    String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-                    if (currentLanguage == "Japanese")
+                    if (FF9StateSystem.Settings.CurrentLanguage == "Japanese")
                         this.isOverlayDialog = this.textId == 251 || this.textId == 252;
                     else
                         this.isOverlayDialog = this.textId == 252 || this.textId == 253;
@@ -607,10 +610,10 @@ public class Dialog : MonoBehaviour
         this.InitializeChoice();
         if (!this.typeAnimationEffect)
         {
-            this.CurrentParser.AdvanceProgress(this.CurrentParser.AppearProgressMax);
+            this.CurrentParser.AdvanceProgressToMax();
             this.currentState = Dialog.State.CompleteAnimation;
             if (base.gameObject.activeInHierarchy && this.endMode > 0)
-                base.StartCoroutine("AutoHide");
+                base.StartCoroutine(AutoHide());
         }
         if (this.AfterDialogShown != null)
             this.AfterDialogShown(this.id);
@@ -625,7 +628,7 @@ public class Dialog : MonoBehaviour
         this.currentState = Dialog.State.CompleteAnimation;
         UIDebugMarker.DebugLog($"AfterSentenseShown Id:{this.Id} Animation State:{this.currentState}");
         if (this.endMode > 0 && base.gameObject.activeInHierarchy)
-            base.StartCoroutine("AutoHide");
+            base.StartCoroutine(AutoHide());
         if (this.AfterDialogSentenseShown != null)
             this.AfterDialogSentenseShown();
     }
@@ -678,7 +681,7 @@ public class Dialog : MonoBehaviour
         }
         if (this.currentState == Dialog.State.TextAnimation && this.typeAnimationEffect)
         {
-            this.CurrentParser.AdvanceProgress(this.CurrentParser.AppearProgressMax);
+            this.CurrentParser.AdvanceProgressToMax();
             this.AfterSentenseShown();
         }
     }
@@ -1040,6 +1043,7 @@ public class Dialog : MonoBehaviour
         this.isReadyToFollow = false;
         this.isForceTailPosition = false;
         this.focusToActor = true;
+        this.FollowDialog = -1;
         this.isActive = false;
         this.ff9Position = Vector2.zero;
         this.bodySprite.alpha = 1f;
@@ -1068,6 +1072,7 @@ public class Dialog : MonoBehaviour
         this.WidthHint = 0f;
         this.LineNumberHint = 1f;
         this.lineNumber = 0;
+        this.UseSizeHint = false;
         this.id = -1;
         this.textId = -1;
         this.endMode = -1;
@@ -1308,6 +1313,7 @@ public class Dialog : MonoBehaviour
          * - There can be multiple overlay dialogs when there are multiple digits that can be modified by the player, but only 1 is displayed at a time (the selected digit)
          * - It is hacky to have the overlay be placed exactly over the complete dialog's digit, and difficult with non-fixed text fonts
          * - Thus the overlay dialogs are hidden (moved out of the screen) and the purple color indication is added to the complete dialog instead
+         * There is one vanilla exception: for selecting the orientation of the Pandemonium's elevator, the (single) overlay dialog is used for real because there is no number to be placed over in the complete dialog
          * Non-vanilla overlays can be done by using only the full dialog and with a secondary parameter in [NUMB] tags:
         set digit_selection = 0
         SetTextVariable( 0, num % 10 ) // Setup units digit
@@ -1371,6 +1377,16 @@ public class Dialog : MonoBehaviour
             else
                 this.isReadyToFollow = false;
         }
+        else if (this.FollowDialog >= 0)
+        {
+            Dialog follow = DialogManager.Instance.GetDialogByWindowID(this.FollowDialog);
+            if (follow != null)
+            {
+                if (this.tailPosition != Dialog.TailPosition.UpperLeft)
+                    this.setTailPosition(Dialog.TailPosition.UpperLeft);
+                base.gameObject.transform.position = follow.panel.worldCorners[1] + this.panel.cachedTransform.TransformVector(new Vector3(this.position.x + this.ClipSize.x / 2f, -this.position.y - this.ClipSize.y / 2f));
+            }
+        }
     }
 
     public void PauseDialog(Boolean isPause)
@@ -1408,7 +1424,7 @@ public class Dialog : MonoBehaviour
         this.phrase = this.CurrentParser.InitialText;
         this.phraseLabel.ReleaseAllIcons();
         this.phraseLabel.Parser = this.CurrentParser;
-        this.CurrentParser.AppearProgress = 0f;
+        this.CurrentParser.ResetProgress();
         this.ResetChoose();
     }
 
@@ -1444,18 +1460,17 @@ public class Dialog : MonoBehaviour
         }
         this.phraseLabel.Parser = this.CurrentParser;
         foreach (FFIXTextTag tag in this.CurrentParser.ParsedTagList)
-            if (tag.Code == FFIXTextTagCode.Icon && tag.IntParam(0) == 27)
+            if (tag.Code == FFIXTextTagCode.Icon && tag.IntParam(0) >= 27 && tag.IntParam(0) <= 29)
                 allPagesWidth += 8f;
         Single extraPadding = Dialog.DialogPhraseXPadding * 2f / UIManager.ResourceXMultipier;
-        allPagesWidth = Math.Max(allPagesWidth, this.captionWidth + extraPadding) + 1f;
-        this.Width = Math.Max(allPagesWidth, this.WidthHint);
-        this.LineNumber = Mathf.CeilToInt(Math.Max(this.LineNumberHint, allPagesLineCount));
+        this.Width = Math.Max(allPagesWidth, this.captionWidth + extraPadding) + 1f;
+        this.LineNumber = Mathf.CeilToInt(Math.Max(this.LineNumberHint, allPagesLineCount)); // LineNumberHint specified by STRT tags is used if it requests more lines than needed
     }
 
     private Boolean CanAutoResize()
     {
         if (this.id == DialogManager.UIDialogId)
-            return false;
+            return this.WidthHint == 0f;
         if (PersistenSingleton<EventEngine>.Instance.gMode == 1)
         {
             Int32 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
@@ -1471,8 +1486,7 @@ public class Dialog : MonoBehaviour
                 return false;
             if (EventHUD.CurrentHUD == MinigameHUD.ChocoHot && this.windowStyle == Dialog.WindowStyle.WindowStylePlain)
             {
-                String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-                switch (currentLanguage)
+                switch (FF9StateSystem.Settings.CurrentLanguage)
                 {
                     case "Japanese":
                     case "English(UK)":
@@ -1482,7 +1496,7 @@ public class Dialog : MonoBehaviour
                 return this.textId != 276;
             }
         }
-        return true;
+        return !this.UseSizeHint;
     }
 
     private Boolean ForceUpperTail()
@@ -1513,7 +1527,7 @@ public class Dialog : MonoBehaviour
 
     private void OverwriteDialogParameter()
     {
-        if (FF9StateSystem.MobilePlatform && this.id < 9)
+        if (FF9StateSystem.MobilePlatform && this.id < DialogManager.UIDialogId)
         {
             if (FF9StateSystem.Common.FF9.fldMapNo == 2951) // Chocobo's Lagoon
             {

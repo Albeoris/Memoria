@@ -133,7 +133,6 @@ public class TutorialUI : UIScene
         this.battleBottomLocalize = this.ContentPanel.GetChild(3).GetComponent<UILocalize>();
         this.battleOkButton = this.ContentPanel.GetChild(4).GetComponent<UIButton>();
         this.OkButton = new GOIsolatedButton(this.ContentPanel.GetChild(4));
-        //this.battleRightLabel.width = 100; // [DBG]
     }
 
     private void HideTutorial()
@@ -223,7 +222,7 @@ public class TutorialUI : UIScene
         {
             base.Loading = false;
         };
-        dialog.AfterDialogHidden = new Dialog.DialogIntDelegate(this.AfterHideQuadmistTutorial);
+        dialog.AfterDialogHidden = this.AfterHideQuadmistTutorial;
         TweenPosition tweenPos = dialog.GetComponent<TweenPosition>();
         if (tweenPos != null)
             tweenPos.enabled = false;
@@ -267,7 +266,7 @@ public class TutorialUI : UIScene
         {
             base.Loading = false;
         };
-        dialog.AfterDialogHidden = new Dialog.DialogIntDelegate(this.AfterHideBasicControlTutorial);
+        dialog.AfterDialogHidden = this.AfterHideBasicControlTutorial;
     }
 
     private void AfterHideBasicControlTutorial(Int32 choice)

@@ -669,6 +669,10 @@ public class SaveLoadUI : UIScene
         this.screenFadePanel = this.ScreenFadeGameObject.GetParent().GetComponent<UIPanel>();
         UIScene.SetupYesNoLabels(this.OverWriteDialog.transform, this.OverWriteDialog.GetChild(1), this.OverWriteDialog.GetChild(2), this.onClick);
         this.background = new GOMenuBackground(this.transform.GetChild(8).gameObject, "save_load_bg");
+        this.FileListPanel.GetChild(2).GetChild(4).GetChild(0).GetComponent<UILabel>().rightAnchor.Set(1f, -68);
+        this.OverWriteDialog.GetChild(3).GetChild(0).GetComponent<UILabel>().rightAnchor.Set(1f, -32);
+        this.gameObject.GetChild(5).GetChild(2).GetChild(0).GetComponent<UILabel>().rightAnchor.Set(1f, -32);
+        this.LoadingAccessPanel.GetChild(3).GetChild(0).GetComponent<UILabel>().rightAnchor.Set(1f, -32);
     }
 
     private const String SlotGroupButton = "Save.Slot";

@@ -466,26 +466,23 @@ public class CardUI : UIScene
             cardListHUD.CardHighlightAnimation.enabled = false;
             UIEventListener.Get(cardListHUD.Self).onClick += onClick;
         }
+        cardDetailTransition = TransitionPanel.GetChild(0).GetComponent<HonoTweenPosition>();
+        deleteDialogTransition = TransitionPanel.GetChild(1).GetComponent<HonoTweenClipping>();
         foreach (Transform transf in CardInfoPanel.GetChild(0).GetChild(0).transform)
             cardDetailHudList.Add(new CardDetailHUD(transf.gameObject));
         UIEventListener.Get(DeleteSubmenuButton).Click += onClick;
-
         _uiDiscardDialog = new DiscardDialogHUD(DeleteDialogGameObject);
         foreach (var button in _uiDiscardDialog.Choices)
             button.EventListener.onClick += onClick;
 
-        infoPanel = new GOCardInfoPanel(PlayerInfoPanel);
+        infoPanel = new GOCardPlayerInfoPanel(PlayerInfoPanel);
+        background = new GOMenuBackground(transform.GetChild(6).gameObject, "card_bg");
 
-        cardDetailTransition = TransitionPanel.GetChild(0).GetComponent<HonoTweenPosition>();
-        deleteDialogTransition = TransitionPanel.GetChild(1).GetComponent<HonoTweenClipping>();
-        UILabel collectorLevel = PlayerInfoPanel.GetChild(0).GetChild(0).GetChild(0).GetComponent<UILabel>();
-        collectorLevel.SetAnchor((Transform)null);
-        collectorLevel.width = 332;
-        collectorLevel.height = 40;
+        cardNameLabel.rightAnchor.Set(CardInfoPanel.transform, 1f, -40);
         cardNameLabel.fixedAlignment = true;
+        cardNameLabel.overflowMethod = UILabel.Overflow.ShrinkContent;
         totalCardNumberLabel.fixedAlignment = true;
-
-        background = new GOMenuBackground(this.transform.GetChild(6).gameObject, "card_bg");
+        CardInfoPanel.GetChild(1).GetChild(2).GetComponent<UILabel>().rightAnchor.Set(1f, -40);
     }
 
     private const String CardGroupButton = "Card.Card";
@@ -514,7 +511,7 @@ public class CardUI : UIScene
     [NonSerialized]
     private GOMenuBackground background;
     [NonSerialized]
-    private GOCardInfoPanel infoPanel;
+    private GOCardPlayerInfoPanel infoPanel;
 
     //private ButtonGroupState discardConfirmButton;
     //private ButtonGroupState discardCancelButton;
@@ -567,7 +564,7 @@ public class CardUI : UIScene
         public ButtonGroupState CardButtonGroup;
     }
 
-    private class GOCardInfoPanel : GOWidget
+    private class GOCardPlayerInfoPanel : GOWidget
     {
         public GOLocalizableLabel CollectorLevelLabel;
         public UISprite CollectorLevelSprite;
@@ -586,7 +583,7 @@ public class CardUI : UIScene
         public UILabel DrawValue;
         public GOFrameBackground Background;
 
-        public GOCardInfoPanel(GameObject go) : base(go)
+        public GOCardPlayerInfoPanel(GameObject go) : base(go)
         {
             CollectorLevelLabel = new GOLocalizableLabel(go.GetChild(0).GetChild(0).GetChild(0));
             CollectorLevelSprite = go.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<UISprite>();
@@ -604,6 +601,10 @@ public class CardUI : UIScene
             DrawColon = go.GetChild(1).GetChild(2).GetChild(1).GetComponent<UILabel>();
             DrawValue = go.GetChild(1).GetChild(2).GetChild(2).GetComponent<UILabel>();
             Background = new GOFrameBackground(go.GetChild(2));
+            CollectorLevelLabel.Label.SetAnchor((Transform)null);
+            CollectorLevelLabel.Label.width = 332;
+            CollectorLevelLabel.Label.height = 40;
+            Background.Caption.Label.rightAnchor.Set(1f, -40);
         }
     }
 

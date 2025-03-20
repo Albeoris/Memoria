@@ -14,7 +14,7 @@ namespace Memoria.Assets
         public const Int32 MaxTagLength = 32;
 
         public readonly FFIXTextTagCode Code;
-        public readonly String[] Param;
+        public String[] Param;
 
         public Int32 TextOffset = 0;
         public Single AppearStep = 0f;
@@ -50,15 +50,15 @@ namespace Memoria.Assets
 
         public Int32 IntParam(Int32 index)
         {
-            if (Param != null && Param.Length > index && Int32.TryParse(Param[index], out Int32 result))
-                return result;
+            if (Param != null && Param.Length > index && Single.TryParse(Param[index], out Single result))
+                return (Int32)result;
             return 0;
         }
 
         public UInt32 UIntParam(Int32 index)
         {
-            if (Param != null && Param.Length > index && UInt32.TryParse(Param[index], out UInt32 result))
-                return result;
+            if (Param != null && Param.Length > index && Single.TryParse(Param[index], out Single result))
+                return (UInt32)result;
             return 0;
         }
 
@@ -314,9 +314,11 @@ namespace Memoria.Assets
             { NGUIText.NoAnimation, FFIXTextTagCode.NoAnimation },
             { NGUIText.NoTypeEffect, FFIXTextTagCode.Instantly },
             { NGUIText.MessageSpeed, FFIXTextTagCode.Speed },
+            { NGUIText.TagAnimation, FFIXTextTagCode.TagAnimation },
             { NGUIText.Shadow, FFIXTextTagCode.ShadowToggle },
             { NGUIText.NoShadow, FFIXTextTagCode.ShadowOff },
             { NGUIText.BackgroundColor, FFIXTextTagCode.BackgroundRGBA },
+            { NGUIText.ChangeFont, FFIXTextTagCode.ChangeFont },
             { NGUIText.ButtonIcon, FFIXTextTagCode.DefaultButton },
             { NGUIText.CustomButtonIcon, FFIXTextTagCode.CustomButton },
             { NGUIText.NoFocus, FFIXTextTagCode.NoFocus },
@@ -383,6 +385,12 @@ namespace Memoria.Assets
         [
             FFIXTextTagCode.Variable,
             FFIXTextTagCode.Item,
+        ];
+
+        public static HashSet<FFIXTextTagCode> TabCodes =
+        [
+            FFIXTextTagCode.DialogX,
+            FFIXTextTagCode.TextFrame
         ];
 
         public static readonly TwoWayDictionary<String, CharacterId> CharacterNameTags = new TwoWayDictionary<String, CharacterId>();

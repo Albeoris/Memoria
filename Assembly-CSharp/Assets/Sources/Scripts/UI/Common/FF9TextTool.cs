@@ -219,7 +219,6 @@ namespace Assets.Sources.Scripts.UI.Common
             IsLoading = false;
         }
 
-        //private static readonly HashSet<int> zones = new HashSet<int>();
         private static IEnumerable InitializeFieldTextInternal()
         {
             PersistenSingleton<UIManager>.Instance.SetEventEnable(false);
@@ -231,26 +230,12 @@ namespace Assets.Sources.Scripts.UI.Common
                 yield break;
             }
 
-            //if (zones.Add(fieldZoneId))
-            //    Log.Message($"InitializeFieldTextInternal: {fieldZoneId}");
             IsLoading = true;
 
             foreach (var state in FieldImporter.LoadAsync())
             {
                 yield return state;
             }
-
-            //TextLoader loader = new TextLoader("/Field/" + GetFieldTextFileName(fieldZoneId) + ".mes");
-            //while (loader.Loading)
-            //    yield return 0;
-
-            //if (loader.Text != null)
-            //{
-            //    String source = TextOpCodeModifier.Modify(loader.Text);
-            //    String[] text = ExtractSentense(source);
-            //    FF9TextTool.SetFieldText(text);
-            //    FF9TextTool.SetTableText(ExtractTableText(text));
-            //}
 
             IsLoading = false;
             PersistenSingleton<UIManager>.Instance.SetEventEnable(true);

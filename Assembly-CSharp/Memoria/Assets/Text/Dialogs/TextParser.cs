@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,6 +18,7 @@ namespace Memoria.Assets
 
         // Properly initialised when Step >= ConstantReplaceTags
         public List<FFIXTextTag> ParsedTagList = new List<FFIXTextTag>();
+        public List<TextAnimatedTag> AnimatedTags = new List<TextAnimatedTag>();
 
         // Properly initialised when Step >= ChoiceSetup
         public List<FFIXTextTag> VariableTagList = new List<FFIXTextTag>();
@@ -58,48 +60,41 @@ namespace Memoria.Assets
 
         public void Parse(ParseStep target)
         {
-            try
+            if (Step == ParseStep.Page && target > ParseStep.Page)
             {
-                if (Step == ParseStep.Page && target > ParseStep.Page)
-                {
-                    DialogBoxSymbols.ParseInitialAndConstantTextTags(this);
-                    Step++;
-                }
-                if (Step == ParseStep.ConstantReplaceTags && target > ParseStep.ConstantReplaceTags)
-                {
-                    DialogBoxSymbols.ParseChoiceTags(this);
-                    Step++;
-                    VariableTagList = FFIXTextTag.DeepListCopy(ParsedTagList);
-                    VariableText = ParsedText;
-                }
-                if (Step == ParseStep.ChoiceSetup && target > ParseStep.ChoiceSetup)
-                {
-                    DialogBoxSymbols.ParseVariableTextReplaceTags(this);
-                    Step++;
-                }
-                if (Step == ParseStep.VariableReplaceTags && target > ParseStep.VariableReplaceTags)
-                {
-                    if (ShouldUseBIDI)
-                    {
-                        Bidi = new UnicodeBIDI(ParsedText.ToCharArray(), NGUIText.readingDirection, NGUIText.digitShapes);
-                        ParsedText = new String(Bidi.FullText.ToArray());
-                    }
-                    Step++;
-                }
-                if (Step == ParseStep.BIDI && target > ParseStep.BIDI)
-                {
-                    LabelContainer.GenerateWrapping();
-                    Step++;
-                }
-                if (Step == ParseStep.Wrapped && target > ParseStep.Wrapped)
-                {
-                    LabelContainer.GenerateTextRender();
-                    Step++;
-                }
+                DialogBoxSymbols.ParseInitialAndConstantTextTags(this);
+                Step++;
             }
-            catch (Exception err)
+            if (Step == ParseStep.ConstantReplaceTags && target > ParseStep.ConstantReplaceTags)
             {
-                Memoria.Prime.Log.Error($"[DBG] parse to {target}, fail at {Step}: {err}");
+                DialogBoxSymbols.ParseChoiceTags(this);
+                Step++;
+                VariableTagList = FFIXTextTag.DeepListCopy(ParsedTagList);
+                VariableText = ParsedText;
+            }
+            if (Step == ParseStep.ChoiceSetup && target > ParseStep.ChoiceSetup)
+            {
+                DialogBoxSymbols.ParseVariableTextReplaceTags(this);
+                Step++;
+            }
+            if (Step == ParseStep.VariableReplaceTags && target > ParseStep.VariableReplaceTags)
+            {
+                if (ShouldUseBIDI)
+                {
+                    Bidi = new UnicodeBIDI(ParsedText.ToCharArray(), NGUIText.readingDirection, NGUIText.digitShapes);
+                    ParsedText = new String(Bidi.FullText.ToArray());
+                }
+                Step++;
+            }
+            if (Step == ParseStep.BIDI && target > ParseStep.BIDI)
+            {
+                LabelContainer.GenerateWrapping();
+                Step++;
+            }
+            if (Step == ParseStep.Wrapped && target > ParseStep.Wrapped)
+            {
+                LabelContainer.GenerateTextRender();
+                Step++;
             }
         }
 
@@ -139,10 +134,7 @@ namespace Memoria.Assets
             VertexAppearStep.Clear();
             FinalAlpha.Clear();
             foreach (DialogImage dialogImage in SpecialImages)
-            {
-                LabelContainer.HideIcon(dialogImage);
                 dialogImage.IsRegistered = false;
-            }
             Step = ParseStep.ChoiceSetup;
             LabelContainer.MarkAsChanged();
         }
@@ -152,12 +144,22 @@ namespace Memoria.Assets
             if (Step == ParseStep.Page)
                 return;
             ResetBeforeVariableTags();
+            foreach (DialogImage dialogImage in SpecialImages)
+                LabelContainer.HideIcon(dialogImage);
             VariableTagList.Clear();
             VariableText = String.Empty;
             ParsedText = InitialText;
             ParsedTagList.Clear();
+            AnimatedTags.Clear();
             LabelContainer.ReleaseAllIcons();
             Step = ParseStep.Page;
+        }
+
+        public void ResetProgress()
+        {
+            AppearProgress = 0f;
+            foreach (TextAnimatedTag animTag in AnimatedTags)
+                animTag.Reset();
         }
 
         public void ComputeAppearProgressMax()
@@ -237,8 +239,8 @@ namespace Memoria.Assets
             if (tagsAfter != null)
             {
                 insertPos += replaceStr.Length;
-                for (Int32 i = 0; i < tagsAfter.Length; i++)
-                    tagsAfter[i].TextOffset = insertPos;
+                foreach (FFIXTextTag tag in tagsAfter)
+                    tag.TextOffset = insertPos;
                 Int32 insertTagPos = ParsedTagList.FindIndex(tag => tag.TextOffset >= insertPos);
                 if (insertTagPos < 0)
                     insertTagPos = ParsedTagList.Count;
@@ -246,21 +248,25 @@ namespace Memoria.Assets
             }
         }
 
+        public void AdvanceProgressToMax(Boolean markChange = true)
+        {
+            AdvanceProgress(AppearProgressMax, markChange);
+        }
+
         public Boolean AdvanceProgress(Single progress, Boolean markChange = true)
         {
             if (AppearProgress >= AppearProgressMax)
                 return true;
             Single nextStep = AppearProgress + progress;
-            for (Int32 i = 0; i < ParsedTagList.Count; i++)
-                if (ParsedTagList[i].AppearStep >= AppearProgress && ParsedTagList[i].AppearStep <= nextStep)
-                    DialogBoxSymbols.OnAppearTag(ParsedTagList[i], LabelContainer.DialogWindow, LabelContainer);
+            foreach (TextAnimatedTag animTag in AnimatedTags)
+                if (animTag.Tag.AppearStep >= AppearProgress && animTag.Tag.AppearStep <= nextStep)
+                    animTag.AppearTime = RealTime.time;
+            foreach (FFIXTextTag tag in ParsedTagList)
+                if (tag.AppearStep >= AppearProgress && tag.AppearStep <= nextStep)
+                    DialogBoxSymbols.OnAppearTag(tag, LabelContainer.DialogWindow, LabelContainer);
             AppearProgress = nextStep;
             if (markChange)
-            {
-                // Print icons here and not only in "ApplyRenderProgress" to make sure the sprites are updated before the "LateUpdate" Unity cycling step
-                UpdateIconDisplay();
                 LabelContainer.MarkAsChanged();
-            }
             return AppearProgress >= AppearProgressMax;
         }
 
@@ -273,20 +279,22 @@ namespace Memoria.Assets
                 else
                     Colors.buffer[i].a = VertexAppearStep[i] <= AppearProgress ? FinalAlpha[i] : (Byte)0;
             }
-            UpdateIconDisplay();
+            LabelContainer.StartCoroutine(UpdateIconDisplay());
         }
 
-        private void UpdateIconDisplay()
+        private IEnumerator UpdateIconDisplay()
         {
-            for (Int32 i = 0; i < SpecialImages.size; i++)
+            yield return new WaitForEndOfFrame();
+            foreach (DialogImage dialogImage in SpecialImages)
             {
-                if (!SpecialImages[i].IsRegistered || SpecialImages[i].AppearStep >= AppearProgress + FadingPreviewTime)
-                    LabelContainer.HideIcon(SpecialImages[i]);
-                else if (SpecialImages[i].AppearStep > AppearProgress)
-                    LabelContainer.PrintIcon(SpecialImages[i], (AppearProgress + FadingPreviewTime - SpecialImages[i].AppearStep) / FadingPreviewTime);
+                if (!dialogImage.IsRegistered || dialogImage.AppearStep >= AppearProgress + FadingPreviewTime)
+                    LabelContainer.HideIcon(dialogImage);
+                else if (dialogImage.AppearStep > AppearProgress)
+                    LabelContainer.PrintIcon(dialogImage, (AppearProgress + FadingPreviewTime - dialogImage.AppearStep) / FadingPreviewTime);
                 else
-                    LabelContainer.PrintIcon(SpecialImages[i]);
+                    LabelContainer.PrintIcon(dialogImage);
             }
+            yield break;
         }
 
         public void AddVertex(Vector3 pos, Vector2 uv, Color32 col, Single appearStep)

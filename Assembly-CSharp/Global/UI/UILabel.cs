@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using Memoria.Assets;
@@ -37,6 +38,16 @@ public class UILabel : UIWidget
 
     public void PreloadAllIcons()
     {
+        foreach (FFIXTextTag tag in this.Parser.ParsedTagList)
+        {
+            DialogImage newImg = null;
+            if (DialogBoxSymbols.ParseImageTag(tag, ref newImg) && newImg != null && !this.Parser.SpecialImages.Any(img => DialogImage.CompareImages(newImg, img)))
+                this.Parser.SpecialImages.Add(newImg);
+        }
+        foreach (TextAnimatedTag animTag in this.Parser.AnimatedTags)
+            foreach (DialogImage animImage in animTag.GetImages())
+                if (!this.Parser.SpecialImages.Any(img => DialogImage.CompareImages(animImage, img)))
+                    this.Parser.SpecialImages.Add(animImage);
         foreach (DialogImage dialogImage in this.Parser.SpecialImages)
         {
             if (!dialogImage.IsShown && dialogImage.SpriteGo == null)
@@ -132,11 +143,9 @@ public class UILabel : UIWidget
                 this.SetActiveFont(null);
                 base.RemoveFromPanel();
                 this.mTrueTypeFont = value;
-                this.shouldBeProcessed = true;
+                this.MarkAsChanged();
                 this.mFont = null;
                 this.SetActiveFont(value);
-                if (this.mActiveTTF != null)
-                    base.MarkAsChanged();
             }
         }
     }
@@ -213,7 +222,7 @@ public class UILabel : UIWidget
             if (this.mFontSize != value)
             {
                 this.mFontSize = value;
-                this.shouldBeProcessed = true;
+                this.MarkAsChanged();
             }
         }
     }
@@ -226,7 +235,7 @@ public class UILabel : UIWidget
             if (this.mFontStyle != value)
             {
                 this.mFontStyle = value;
-                this.shouldBeProcessed = true;
+                this.MarkAsChanged();
             }
         }
     }
@@ -239,13 +248,15 @@ public class UILabel : UIWidget
             if (this.mAlignment != value)
             {
                 this.mAlignment = value;
-                this.shouldBeProcessed = true;
+                this.MarkAsChanged();
             }
         }
     }
 
     /// <summary>Prevent using right alignment for right-to-left languages</summary>
     public Boolean fixedAlignment { get; set; } = false;
+    /// <summary>Prevent word wrap</summary>
+    public Boolean preventWrapping { get; set; } = false;
 
     public Boolean applyGradient
     {
@@ -322,7 +333,7 @@ public class UILabel : UIWidget
             if (this.mUseFloatSpacing != value)
             {
                 this.mUseFloatSpacing = value;
-                this.shouldBeProcessed = true;
+                this.MarkAsChanged();
             }
         }
     }
@@ -367,7 +378,7 @@ public class UILabel : UIWidget
             if (this.mEncoding != value)
             {
                 this.mEncoding = value;
-                this.shouldBeProcessed = true;
+                this.MarkAsChanged();
                 this.Parser.ResetCompletly();
             }
         }
@@ -381,7 +392,7 @@ public class UILabel : UIWidget
             if (this.mSymbols != value)
             {
                 this.mSymbols = value;
-                this.shouldBeProcessed = true;
+                this.MarkAsChanged();
             }
         }
     }
@@ -394,7 +405,7 @@ public class UILabel : UIWidget
             if (this.mOverflow != value)
             {
                 this.mOverflow = value;
-                this.shouldBeProcessed = true;
+                this.MarkAsChanged();
             }
         }
     }
@@ -407,7 +418,7 @@ public class UILabel : UIWidget
             if (this.mMaxLineCount != 1 != value)
             {
                 this.mMaxLineCount = value ? 0 : 1;
-                this.shouldBeProcessed = true;
+                this.MarkAsChanged();
             }
         }
     }
@@ -450,7 +461,7 @@ public class UILabel : UIWidget
             if (this.mMaxLineCount != value)
             {
                 this.mMaxLineCount = Mathf.Max(value, 0);
-                this.shouldBeProcessed = true;
+                this.MarkAsChanged();
                 if (this.overflowMethod == UILabel.Overflow.ShrinkContent)
                     this.MakePixelPerfect();
             }
@@ -465,7 +476,7 @@ public class UILabel : UIWidget
             if (this.mEffectStyle != value)
             {
                 this.mEffectStyle = value;
-                this.shouldBeProcessed = true;
+                this.MarkAsChanged();
             }
         }
     }
@@ -479,7 +490,7 @@ public class UILabel : UIWidget
             {
                 this.mEffectColor = value;
                 if (this.mEffectStyle != UILabel.Effect.None)
-                    this.shouldBeProcessed = true;
+                    this.MarkAsChanged();
             }
         }
     }
@@ -492,7 +503,7 @@ public class UILabel : UIWidget
             if (this.mEffectDistance != value)
             {
                 this.mEffectDistance = value;
-                this.shouldBeProcessed = true;
+                this.MarkAsChanged();
             }
         }
     }
@@ -585,7 +596,7 @@ public class UILabel : UIWidget
 
     protected override void UpgradeFrom265()
     {
-        Memoria.Prime.Log.Message($"[DBG] UpgradeFrom265 of {this.gameObject}: {this.mText.Replace('\n', '+')}");
+        System.IO.File.AppendAllText("aaaaadebuglabel.txt", $"[DBG] UpgradeFrom265 of {this.gameObject}: {this.mText.Replace('\n', '+')}");
         this.ProcessText();
         if (this.mShrinkToFit)
         {
@@ -655,6 +666,17 @@ public class UILabel : UIWidget
             this.mMultiline = true;
         }
         this.mPremultiply = this.material != null && this.material.shader != null && this.material.shader.name.Contains("Premultiplied");
+    }
+
+    protected override void OnUpdate()
+    {
+        Boolean resetRender = false;
+        if (this.mParser != null)
+            foreach (TextAnimatedTag animTag in this.mParser.AnimatedTags)
+                resetRender = animTag.ApplyTime(RealTime.time) || resetRender;
+        if (resetRender)
+            this.MarkAsChanged();
+        base.OnUpdate();
     }
 
     /// <summary>Same as "label.rawText = text" but re-process the text even if it is the same as before</summary>
@@ -758,13 +780,13 @@ public class UILabel : UIWidget
         {
             if (!this.isValid)
                 return;
-            this.mParser.ResetRender(); // [DBG] See if it can be removed
+            this.mParser.ResetRender();
             this.mParser.Parse(TextParser.ParseStep.Render);
             Dialog dialog = this.DialogWindow;
             if (dialog != null && (dialog.StartChoiceRow >= 0 || dialog.IsOverlayDialog))
                 UIKeyTrigger.preventTurboKey = true;
             if (this.DialogWindow == null)
-                this.mParser.AdvanceProgress(this.mParser.AppearProgressMax, false);
+                this.mParser.AdvanceProgressToMax(false);
             this.mParser.ApplyRenderProgress();
             this.geometry.verts = new BetterList<Vector3>(this.mParser.Vertices);
             this.geometry.uvs = new BetterList<Vector2>(this.mParser.UVs);
@@ -1021,6 +1043,7 @@ public class UILabel : UIWidget
             NGUIText.alignment = this.alignment;
         }
         NGUIText.fixedAlignment = this.fixedAlignment;
+        NGUIText.preventWrapping = this.preventWrapping;
         NGUIText.UpdateFontSizes(true);
     }
 

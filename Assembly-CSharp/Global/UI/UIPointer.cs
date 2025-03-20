@@ -56,7 +56,7 @@ public class UIPointer : MonoBehaviour
                 this.referenceVector.x *= -1;
         }
         Vector3 targetPosition = base.transform.localPosition + this.referenceVector;
-        targetPosition.x += invertPointer ? -this.pointerOffset.x : this.pointerOffset.x;
+        targetPosition.x += this.pointerOffset.x;
         targetPosition.y += this.pointerOffset.y;
         if (this.behavior == PointerManager.LimitRectBehavior.Hide)
         {

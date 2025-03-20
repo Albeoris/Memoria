@@ -133,16 +133,15 @@ public class PointerManager : Singleton<PointerManager>
 
     private UIPointer GetPointerFromPool(Int32 depth = 5)
     {
+        GameObject panel = PointerManager.PointerPanelManager.GetPanel(depth);
         UIPointer pointer;
         if (this.pointerPool.Count > 0)
         {
-            GameObject panel = PointerManager.PointerPanelManager.GetPanel(depth);
             pointer = this.pointerPool.Pop();
             pointer.transform.parent = panel.transform;
         }
         else
         {
-            GameObject panel = PointerManager.PointerPanelManager.GetPanel(depth);
             GameObject pointerInstance = NGUITools.AddChild(panel, this.PointerPrefab);
             pointer = pointerInstance.GetComponent<UIPointer>();
         }

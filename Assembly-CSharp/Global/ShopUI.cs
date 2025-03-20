@@ -38,7 +38,7 @@ public class ShopUI : UIScene
             ButtonGroupState.SetScrollButtonToGroup(this.shopItemScrollList.ScrollButton, ShopUI.ItemGroupButton);
             ButtonGroupState.SetScrollButtonToGroup(this.shopWeaponScrollList.ScrollButton, ShopUI.WeaponGroupButton);
             ButtonGroupState.SetScrollButtonToGroup(this.shopSellItemScrollList.ScrollButton, ShopUI.SellItemGroupButton);
-            ButtonGroupState.SetPointerDepthToGroup(4, ShopUI.SellItemGroupButton);
+            ButtonGroupState.SetPointerDepthToGroup(6, ShopUI.QuantityGroupButton);
             if (this.type == ShopUI.ShopType.Synthesis) // No Buy/Sell options: directly select items
                 ButtonGroupState.ActiveGroup = ShopUI.WeaponGroupButton;
             else
@@ -672,8 +672,7 @@ public class ShopUI : UIScene
             RegularItem itemId = this.itemIdList[this.currentItemIndex];
             this.itemFundLabel.rawText = Localization.GetWithDefault("GilSymbol").Replace("%", FF9StateSystem.Common.FF9.party.gil.ToString());
             this.itemCountLabel.rawText = ff9item.FF9Item_GetCount(itemId).ToString();
-            this.requiredItem1Hud.Self.SetActive(false);
-            this.requiredItem2Hud.Self.SetActive(false);
+            this.requiredItemsLabel.gameObject.SetActive(false);
         }
         else if (shopType == ShopUI.ShopType.Weapon)
         {
@@ -691,8 +690,7 @@ public class ShopUI : UIScene
                 this.weaponEquipLabel.color = FF9TextTool.Gray;
                 this.weaponEquipTextLabel.color = FF9TextTool.Gray;
             }
-            this.requiredItem1Hud.Self.SetActive(false);
-            this.requiredItem2Hud.Self.SetActive(false);
+            this.requiredItemsLabel.gameObject.SetActive(false);
         }
         else if (shopType == ShopUI.ShopType.Synthesis)
         {
@@ -710,43 +708,10 @@ public class ShopUI : UIScene
                 this.weaponEquipLabel.color = FF9TextTool.Gray;
                 this.weaponEquipTextLabel.color = FF9TextTool.Gray;
             }
-            ItemListDetailWithIconHUD[] hud = new ItemListDetailWithIconHUD[] { this.requiredItem1Hud, this.requiredItem2Hud };
+            this.requiredItemsLabel.gameObject.SetActive(true);
             Dictionary<RegularItem, Int32> ingredients = synth.IngredientsAsDictionary();
-            if (synth.Ingredients.Length <= 2)
-            {
-                for (Int32 i = 1; i >= 0; i--)
-                {
-                    if (i < synth.Ingredients.Length && synth.Ingredients[i] != RegularItem.NoItem)
-                    {
-                        hud[i].Self.SetActive(true);
-                        FF9UIDataTool.DisplayItem(synth.Ingredients[i], hud[i].IconSprite, hud[i].NameLabel, ff9item.FF9Item_GetCount(synth.Ingredients[i]) >= ingredients[synth.Ingredients[i]], true);
-                        ingredients[synth.Ingredients[i]]--;
-                    }
-                    else
-                    {
-                        hud[i].Self.SetActive(false);
-                    }
-                }
-            }
-            else
-            {
-                Dictionary<RegularItem, Int32>[] ingrSplit = new Dictionary<RegularItem, Int32>[] { new Dictionary<RegularItem, Int32>(), new Dictionary<RegularItem, Int32>() };
-                Dictionary<RegularItem, Boolean>[] ingrEnabled = new Dictionary<RegularItem, Boolean>[] { new Dictionary<RegularItem, Boolean>(), new Dictionary<RegularItem, Boolean>() };
-                Int32 numInFirstLabel = (ingredients.Count + 1) / 2;
-                Int32 ingrNum = 0;
-                foreach (KeyValuePair<RegularItem, Int32> kvp in ingredients)
-                {
-                    Int32 splitIndex = ingrNum < numInFirstLabel ? 0 : 1;
-                    ingrSplit[splitIndex].Add(kvp.Key, kvp.Value);
-                    ingrEnabled[splitIndex].Add(kvp.Key, ff9item.FF9Item_GetCount(kvp.Key) >= kvp.Value);
-                    ingrNum++;
-                }
-                for (Int32 i = 0; i < 2; i++)
-                {
-                    hud[i].Self.SetActive(true);
-                    FF9UIDataTool.DisplayMultipleItems(ingrSplit[i], hud[i].IconSprite, hud[i].NameLabel, ingrEnabled[i], true);
-                }
-            }
+            Dictionary<RegularItem, Boolean> ingrEnabled = new Dictionary<RegularItem, Boolean>();
+            FF9UIDataTool.DisplayMultipleItems(this.requiredItemsLabel, ingredients, kvp => ff9item.FF9Item_GetCount(kvp.Key) >= kvp.Value, true);
         }
     }
 
@@ -1257,7 +1222,7 @@ public class ShopUI : UIScene
             this.charInfoHud.Add(new ShopUI.CharacterWeaponInfoHUD(transform.gameObject));
         this.requiredItem1Hud = new ItemListDetailWithIconHUD(this.RequiredItemPanel.GetChild(1), false);
         this.requiredItem2Hud = new ItemListDetailWithIconHUD(this.RequiredItemPanel.GetChild(2), false);
-        this.confirmItemHud = new ItemListDetailWithIconHUD(this.InputQuantityDialog.GetChild(0), false);
+        this.confirmItemHud = new ItemListDetailWithIconHUD(this.InputQuantityDialog.GetChild(0), true);
         this.confirmQuantityLabel = this.InputQuantityDialog.GetChild(0).GetChild(2).GetComponent<UILabel>();
         this.confirmPriceLabel = this.InputQuantityDialog.GetChild(3).GetChild(1).GetComponent<UILabel>();
         this.confirmFundLabel = this.InfoDialog.GetChild(0).GetChild(1).GetComponent<UILabel>();
@@ -1279,9 +1244,31 @@ public class ShopUI : UIScene
         UIEventListener.Get(this.InputQuantityDialog.GetChild(2).GetChild(1)).onClick += this.onClickPlus;
         UIEventListener.Get(this.InputQuantityDialog.GetChild(2).GetChild(2)).onClick += this.onClickMinus;
         this.triggerCounter = ShopUI.TRIGGER_DURATION;
+        this.requiredItemsLabel = this.requiredItem1Hud.NameLabel;
+        this.requiredItem1Hud.IconSprite.gameObject.SetActive(false);
+        this.requiredItem2Hud.Self.SetActive(false);
+        this.requiredItemsLabel.overflowMethod = UILabel.Overflow.ClampContent;
+        this.requiredItemsLabel.preventWrapping = true;
+        this.requiredItemsLabel.multiLine = true;
+        this.requiredItemsLabel.color = Color.white;
+        this.requiredItemsLabel.pivot = UIWidget.Pivot.TopLeft;
+        this._background = new GOMenuBackground(this.transform.GetChild(7).gameObject, "shop_bg");
+        this.confirmItemHud.NameLabel.overflowMethod = UILabel.Overflow.ShrinkContent;
         this.confirmQuantityLabel.width = 60;
         this.confirmQuantityLabel.height = 64;
-        this._background = new GOMenuBackground(this.transform.GetChild(7).gameObject, "shop_bg");
+        this._shopItemPanel.Background.Panel.Name.Label.fixedAlignment = true;
+        this._shopWeaponPanel.Background.Panel.Name.Label.fixedAlignment = true;
+        this._shopSellItemPanel.Background.Panel.Name.Label.fixedAlignment = true;
+        this._shopSellItemPanel.Background.Panel.Name2.Label.fixedAlignment = true;
+        this.InputQuantityDialog.GetChild(6).GetChild(2).GetComponent<UILabel>().rightAnchor.Set(1f, -40);
+        this.InfoDialog.GetChild(3).GetChild(2).GetComponent<UILabel>().rightAnchor.Set(1f, -40);
+        this.confirmCountLabel.rightAnchor.Set(1f, 0);
+        this.weaponCountLabel.rightAnchor.Set(1f, 0);
+        this.requiredItemsLabel.leftAnchor.Set(this.ItemInfoPanel.transform, 0f, 25);
+        this.requiredItemsLabel.rightAnchor.Set(this.ItemInfoPanel.transform, 1f, -25);
+        this.requiredItemsLabel.topAnchor.Set(1f, 25);
+        this.requiredItemsLabel.bottomAnchor.Set(0f, -104);
+        this.InputQuantityDialog.GetParent().GetComponent<UIPanel>().depth += 1;
     }
 
     private void Update()
@@ -1440,9 +1427,11 @@ public class ShopUI : UIScene
     private UILabel weaponEquipTextLabel;
     private UILabel weaponEquipLabel;
 
-    private ItemListDetailWithIconHUD requiredItem1Hud;
+    private ItemListDetailWithIconHUD requiredItem1Hud; // Dummied: requiredItemLabel is used instead
     private ItemListDetailWithIconHUD requiredItem2Hud;
     private ItemListDetailWithIconHUD confirmItemHud;
+    [NonSerialized]
+    private UILabel requiredItemsLabel;
 
     private UILabel confirmQuantityLabel;
     private UILabel confirmPriceLabel;

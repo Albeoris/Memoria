@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Data;
+using Memoria.Prime.Text;
 
 namespace Memoria.Assets
 {
@@ -120,6 +121,17 @@ namespace Memoria.Assets
                             tag.TextOffset = sb.Length;
                             parser.ParsedTagList.Add(tag);
                         }
+                        else if (tag.Code == FFIXTextTagCode.TagAnimation)
+                        {
+                            if (FFIXTextTag.OriginalTagNames.TryGetValue(tag.StringParam(0), out FFIXTextTagCode animatedCode) || tag.StringParam(0).TryEnumParse(out animatedCode))
+                            {
+                                FFIXTextTag animatedTag = new FFIXTextTag(animatedCode);
+                                TextAnimatedTag animTag = new TextAnimatedTag(tag, animatedTag);
+                                animatedTag.TextOffset = sb.Length;
+                                parser.ParsedTagList.Add(animatedTag);
+                                parser.AnimatedTags.Add(animTag);
+                            }
+                        }
                         parsingTextPos[stackIndex] = tagEndPos;
                     }
                 }
@@ -175,14 +187,11 @@ namespace Memoria.Assets
             if (choiceIndex < 0)
                 return;
             Int32 choicePos = parser.ParsedTagList[choiceIndex].TextOffset;
-            FFIXTextTag preChoice = parser.ParsedTagList.FirstOrDefault(tag => tag.Code == FFIXTextTagCode.PreChoose);
-            FFIXTextTag preChoiceMask = parser.ParsedTagList.FirstOrDefault(tag => tag.Code == FFIXTextTagCode.PreChooseMask);
+            FFIXTextTag preChoice = parser.ParsedTagList.FirstOrDefault(tag => tag.Code == FFIXTextTagCode.PreChoose); // can be null
+            FFIXTextTag preChoiceMask = parser.ParsedTagList.FirstOrDefault(tag => tag.Code == FFIXTextTagCode.PreChooseMask); // can be null
             Int32 choiceCount = parser.ParsedText.Substring(choicePos).Count(c => c == '\n') + 1;
             dialog.StartChoiceRow = parser.ParsedText.Substring(0, choicePos).Count(c => c == '\n');
-            if (preChoice != null)
-                OnPreChoose(preChoice, dialog);
-            if (preChoiceMask != null)
-                OnPreChooseMask(preChoiceMask, dialog, choiceCount);
+            SetupChoose(preChoice, preChoiceMask, dialog, choiceCount);
             if (dialog.DisableIndexes.Count > 0)
             {
                 List<KeyValuePair<Int32, Int32>> linesToRemove = new List<KeyValuePair<Int32, Int32>>();
@@ -260,6 +269,9 @@ namespace Memoria.Assets
                 case FFIXTextTagCode.BackgroundRGBA:
                     OnBackgroundColorRGBA(modifiers, tag);
                     return true;
+                case FFIXTextTagCode.ChangeFont:
+                    OnFontChange(modifiers, tag);
+                    return true;
                 case FFIXTextTagCode.Time:
                     OnTime(dialog, tag.IntParam(0));
                     return true;
@@ -271,133 +283,21 @@ namespace Memoria.Assets
                     return true;
                 case FFIXTextTagCode.DialogX:
                     modifiers.tabX = tag.SingleParam(0) * UIManager.ResourceXMultipier;
+                    NGUIText.fixedLineAlignment = true;
                     return true;
                 case FFIXTextTagCode.DialogF:
-                    OnFeed(modifiers, tag.IntParam(0));
+                    OnFeed(modifiers, tag.SingleParam(0));
                     return true;
                 case FFIXTextTagCode.SpacingY:
                     if (label != null)
                         label.spacingY = tag.IntParam(0);
                     return true;
-                case FFIXTextTagCode.TextFrame: // TODO: might want to add optional parameters, such as width/height, maybe a frame outline or internal color...
+                case FFIXTextTagCode.TextFrame:
+                    // TODO: might want to add optional parameters, such as width/height, maybe a frame outline or internal color...
+                    // Also, it currently doesn't work correctly with RTL reading direction
                     modifiers.frameOffset.x += tag.SingleParam(0) * UIManager.ResourceXMultipier;
                     modifiers.frameOffset.y += tag.SingleParam(1) * UIManager.ResourceYMultipier;
-                    return true;
-                case FFIXTextTagCode.Sprite:
-                    modifiers.insertImage = NGUIText.CreateSpriteImage(tag.Param);
-                    return true;
-                case FFIXTextTagCode.Icon:
-                    modifiers.insertImage = NGUIText.CreateIconImage(tag.IntParam(0));
-                    return true;
-                case FFIXTextTagCode.IconEx:
-                    if ((ETb.gMesValue[0] & (1 << tag.IntParam(0))) != 0)
-                        modifiers.insertImage = NGUIText.CreateIconImage(FF9UIDataTool.NewIconId);
-                    return true;
-                case FFIXTextTagCode.Mobile:
-                    if (NGUIText.ShowMobileButtons)
-                        modifiers.insertImage = NGUIText.CreateIconImage(tag.IntParam(0));
-                    return true;
-                case FFIXTextTagCode.DefaultButton:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(tag.StringParam(0), false, NGUIText.ButtonIcon);
-                    return true;
-                case FFIXTextTagCode.CustomButton:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(tag.StringParam(0), true, NGUIText.CustomButtonIcon);
-                    return true;
-                case FFIXTextTagCode.KeyboardButton:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(tag.StringParam(0), false, NGUIText.KeyboardButtonIcon);
-                    return true;
-                case FFIXTextTagCode.JoyStickButton:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(tag.StringParam(0), true, NGUIText.JoyStickButtonIcon);
-                    return true;
-                case FFIXTextTagCode.Up:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Up], false, NGUIText.ButtonIcon);
-                    return true;
-                case FFIXTextTagCode.Down:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Down], false, NGUIText.ButtonIcon);
-                    return true;
-                case FFIXTextTagCode.Left:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Left], false, NGUIText.ButtonIcon);
-                    return true;
-                case FFIXTextTagCode.Right:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Right], false, NGUIText.ButtonIcon);
-                    return true;
-                case FFIXTextTagCode.Circle:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Cancel], false, NGUIText.ButtonIcon);
-                    return true;
-                case FFIXTextTagCode.Cross:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Confirm], false, NGUIText.ButtonIcon);
-                    return true;
-                case FFIXTextTagCode.Triangle:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Menu], false, NGUIText.ButtonIcon);
-                    return true;
-                case FFIXTextTagCode.Square:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Special], false, NGUIText.ButtonIcon);
-                    return true;
-                case FFIXTextTagCode.R1:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.RightBumper], false, NGUIText.ButtonIcon);
-                    return true;
-                case FFIXTextTagCode.R2:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.RightTrigger], false, NGUIText.ButtonIcon);
-                    return true;
-                case FFIXTextTagCode.L1:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.LeftBumper], false, NGUIText.ButtonIcon);
-                    return true;
-                case FFIXTextTagCode.L2:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.LeftTrigger], false, NGUIText.ButtonIcon);
-                    return true;
-                case FFIXTextTagCode.Select:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Select], false, NGUIText.ButtonIcon);
-                    return true;
-                case FFIXTextTagCode.Start:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Pause], false, NGUIText.ButtonIcon);
-                    return true;
-                case FFIXTextTagCode.Pad:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.DPad], false, NGUIText.ButtonIcon);
-                    return true;
-                case FFIXTextTagCode.UpEx:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Up], true, NGUIText.CustomButtonIcon);
-                    return true;
-                case FFIXTextTagCode.DownEx:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Down], true, NGUIText.CustomButtonIcon);
-                    return true;
-                case FFIXTextTagCode.LeftEx:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Left], true, NGUIText.CustomButtonIcon);
-                    return true;
-                case FFIXTextTagCode.RightEx:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Right], true, NGUIText.CustomButtonIcon);
-                    return true;
-                case FFIXTextTagCode.CircleEx:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Cancel], true, NGUIText.CustomButtonIcon);
-                    return true;
-                case FFIXTextTagCode.CrossEx:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Confirm], true, NGUIText.CustomButtonIcon);
-                    return true;
-                case FFIXTextTagCode.TriangleEx:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Menu], true, NGUIText.CustomButtonIcon);
-                    return true;
-                case FFIXTextTagCode.SquareEx:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Special], true, NGUIText.CustomButtonIcon);
-                    return true;
-                case FFIXTextTagCode.R1Ex:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.RightBumper], true, NGUIText.CustomButtonIcon);
-                    return true;
-                case FFIXTextTagCode.R2Ex:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.RightTrigger], true, NGUIText.CustomButtonIcon);
-                    return true;
-                case FFIXTextTagCode.L1Ex:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.LeftBumper], true, NGUIText.CustomButtonIcon);
-                    return true;
-                case FFIXTextTagCode.L2Ex:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.LeftTrigger], true, NGUIText.CustomButtonIcon);
-                    return true;
-                case FFIXTextTagCode.SelectEx:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Select], true, NGUIText.CustomButtonIcon);
-                    return true;
-                case FFIXTextTagCode.StartEx:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Pause], true, NGUIText.CustomButtonIcon);
-                    return true;
-                case FFIXTextTagCode.PadEx:
-                    modifiers.insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.DPad], true, NGUIText.CustomButtonIcon);
+                    modifiers.tabX = 0f;
                     return true;
                 case FFIXTextTagCode.TurboOff:
                     UIKeyTrigger.preventTurboKey = true;
@@ -434,6 +334,130 @@ namespace Memoria.Assets
                     return true;
                 case FFIXTextTagCode.IgnoreColor:
                     modifiers.ignoreColor = tag.StringParam(0) != "Off";
+                    return true;
+            }
+            return ParseImageTag(tag, ref modifiers.insertImage);
+        }
+
+        public static Boolean ParseImageTag(FFIXTextTag tag, ref DialogImage insertImage)
+        {
+            switch (tag.Code)
+            {
+                case FFIXTextTagCode.Sprite:
+                    insertImage = NGUIText.CreateSpriteImage(tag.Param);
+                    return true;
+                case FFIXTextTagCode.Icon:
+                    insertImage = NGUIText.CreateIconImage(tag.IntParam(0));
+                    return true;
+                case FFIXTextTagCode.IconEx:
+                    if ((ETb.gMesValue[0] & (1 << tag.IntParam(0))) != 0)
+                        insertImage = NGUIText.CreateIconImage(FF9UIDataTool.NewIconId);
+                    return true;
+                case FFIXTextTagCode.Mobile:
+                    if (NGUIText.ShowMobileButtons)
+                        insertImage = NGUIText.CreateIconImage(tag.IntParam(0));
+                    return true;
+                case FFIXTextTagCode.DefaultButton:
+                    insertImage = NGUIText.CreateButtonImage(tag.StringParam(0), false, NGUIText.ButtonIcon);
+                    return true;
+                case FFIXTextTagCode.CustomButton:
+                    insertImage = NGUIText.CreateButtonImage(tag.StringParam(0), true, NGUIText.CustomButtonIcon);
+                    return true;
+                case FFIXTextTagCode.KeyboardButton:
+                    insertImage = NGUIText.CreateButtonImage(tag.StringParam(0), false, NGUIText.KeyboardButtonIcon);
+                    return true;
+                case FFIXTextTagCode.JoyStickButton:
+                    insertImage = NGUIText.CreateButtonImage(tag.StringParam(0), true, NGUIText.JoyStickButtonIcon);
+                    return true;
+                case FFIXTextTagCode.Up:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Up], false, NGUIText.ButtonIcon);
+                    return true;
+                case FFIXTextTagCode.Down:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Down], false, NGUIText.ButtonIcon);
+                    return true;
+                case FFIXTextTagCode.Left:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Left], false, NGUIText.ButtonIcon);
+                    return true;
+                case FFIXTextTagCode.Right:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Right], false, NGUIText.ButtonIcon);
+                    return true;
+                case FFIXTextTagCode.Circle:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Cancel], false, NGUIText.ButtonIcon);
+                    return true;
+                case FFIXTextTagCode.Cross:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Confirm], false, NGUIText.ButtonIcon);
+                    return true;
+                case FFIXTextTagCode.Triangle:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Menu], false, NGUIText.ButtonIcon);
+                    return true;
+                case FFIXTextTagCode.Square:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Special], false, NGUIText.ButtonIcon);
+                    return true;
+                case FFIXTextTagCode.R1:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.RightBumper], false, NGUIText.ButtonIcon);
+                    return true;
+                case FFIXTextTagCode.R2:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.RightTrigger], false, NGUIText.ButtonIcon);
+                    return true;
+                case FFIXTextTagCode.L1:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.LeftBumper], false, NGUIText.ButtonIcon);
+                    return true;
+                case FFIXTextTagCode.L2:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.LeftTrigger], false, NGUIText.ButtonIcon);
+                    return true;
+                case FFIXTextTagCode.Select:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Select], false, NGUIText.ButtonIcon);
+                    return true;
+                case FFIXTextTagCode.Start:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Pause], false, NGUIText.ButtonIcon);
+                    return true;
+                case FFIXTextTagCode.Pad:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.DPad], false, NGUIText.ButtonIcon);
+                    return true;
+                case FFIXTextTagCode.UpEx:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Up], true, NGUIText.CustomButtonIcon);
+                    return true;
+                case FFIXTextTagCode.DownEx:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Down], true, NGUIText.CustomButtonIcon);
+                    return true;
+                case FFIXTextTagCode.LeftEx:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Left], true, NGUIText.CustomButtonIcon);
+                    return true;
+                case FFIXTextTagCode.RightEx:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Right], true, NGUIText.CustomButtonIcon);
+                    return true;
+                case FFIXTextTagCode.CircleEx:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Cancel], true, NGUIText.CustomButtonIcon);
+                    return true;
+                case FFIXTextTagCode.CrossEx:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Confirm], true, NGUIText.CustomButtonIcon);
+                    return true;
+                case FFIXTextTagCode.TriangleEx:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Menu], true, NGUIText.CustomButtonIcon);
+                    return true;
+                case FFIXTextTagCode.SquareEx:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Special], true, NGUIText.CustomButtonIcon);
+                    return true;
+                case FFIXTextTagCode.R1Ex:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.RightBumper], true, NGUIText.CustomButtonIcon);
+                    return true;
+                case FFIXTextTagCode.R2Ex:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.RightTrigger], true, NGUIText.CustomButtonIcon);
+                    return true;
+                case FFIXTextTagCode.L1Ex:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.LeftBumper], true, NGUIText.CustomButtonIcon);
+                    return true;
+                case FFIXTextTagCode.L2Ex:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.LeftTrigger], true, NGUIText.CustomButtonIcon);
+                    return true;
+                case FFIXTextTagCode.SelectEx:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Select], true, NGUIText.CustomButtonIcon);
+                    return true;
+                case FFIXTextTagCode.StartEx:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.Pause], true, NGUIText.CustomButtonIcon);
+                    return true;
+                case FFIXTextTagCode.PadEx:
+                    insertImage = NGUIText.CreateButtonImage(NGUIText.ButtonNames[(Int32)Control.DPad], true, NGUIText.CustomButtonIcon);
                     return true;
             }
             return false;
@@ -584,11 +608,10 @@ namespace Memoria.Assets
                     OnTailPosition(dialog, Dialog.TailPosition.DialogPosition);
                     return true;
                 case FFIXTextTagCode.DialogSize:
-                    OnDialogSize(dialog, tag.SingleParam(0), tag.IntParam(1));
+                    OnDialogSize(dialog, tag.SingleParam(0), tag.SingleParam(1), tag.IntParam(2) > 0);
                     return true;
                 case FFIXTextTagCode.Position:
-                    if (dialog != null)
-                        dialog.Position = new Vector2(tag.SingleParam(0), tag.SingleParam(1));
+                    OnDialogPosition(dialog, tag);
                     return true;
                 case FFIXTextTagCode.Offset:
                     if (dialog != null)
@@ -598,32 +621,44 @@ namespace Memoria.Assets
                     // Unused anymore (it was complicated and uses the PSX binary text tag format, only for variable width that is now automatically handled)
                     //OnWidths(dialog, ...);
                     return true;
+                case FFIXTextTagCode.TagAnimation:
+                    return true;
             }
             return false;
         }
 
-        private static void OnPreChoose(FFIXTextTag tag, Dialog dialog)
+        private static void SetupChoose(FFIXTextTag preTag, FFIXTextTag maskTag, Dialog dialog, Int32 choiceExactCount)
         {
             if (dialog != null)
             {
-                ETb.sChooseMask = -1;
-                dialog.ChoiceNumber = tag.IntParam(0);
-                dialog.DefaultChoice = ETb.sChoose < 0 ? 0 : ETb.sChoose;
-                dialog.DefaultChoice = dialog.DefaultChoice < dialog.ChoiceNumber ? dialog.DefaultChoice : dialog.ChoiceNumber - 1;
-                dialog.CancelChoice = tag.IntParam(1);
-                if (dialog.CancelChoice < 0)
-                    dialog.CancelChoice = dialog.ChoiceNumber - 1;
-            }
-        }
-
-        private static void OnPreChooseMask(FFIXTextTag tag, Dialog dialog, Int32 choiceExactCount)
-        {
-            if (dialog != null)
-            {
-                ETb.sChooseMask = ETb.sChooseMaskInit;
-                dialog.ChoiceNumber = tag.IntParam(0);
-                dialog.CancelChoice = tag.IntParam(1);
-                dialog.DefaultChoice = ETb.sChoose < 0 ? 0 : ETb.sChoose;
+                if (preTag != null && maskTag != null)
+                {
+                    dialog.ChoiceNumber = preTag.IntParam(0);
+                    dialog.ChoiceNumber = maskTag.IntParam(0);
+                    dialog.CancelChoice = maskTag.IntParam(1);
+                    dialog.DefaultChoice = ETb.sChoose < 0 ? 0 : ETb.sChoose;
+                }
+                else if (preTag != null)
+                {
+                    dialog.ChoiceNumber = preTag.IntParam(0);
+                    dialog.DefaultChoice = ETb.sChoose < 0 ? 0 : ETb.sChoose;
+                    dialog.DefaultChoice = dialog.DefaultChoice < dialog.ChoiceNumber ? dialog.DefaultChoice : dialog.ChoiceNumber - 1;
+                    dialog.CancelChoice = preTag.IntParam(1);
+                    if (dialog.CancelChoice < 0)
+                        dialog.CancelChoice = dialog.ChoiceNumber - 1;
+                }
+                else if (maskTag != null)
+                {
+                    dialog.ChoiceNumber = maskTag.IntParam(0);
+                    dialog.CancelChoice = maskTag.IntParam(1);
+                    dialog.DefaultChoice = ETb.sChoose < 0 ? 0 : ETb.sChoose;
+                }
+                else
+                {
+                    dialog.ChoiceNumber = choiceExactCount;
+                    dialog.CancelChoice = choiceExactCount - 1;
+                    dialog.DefaultChoice = 0;
+                }
                 dialog.SetupChooseMask(ETb.sChooseMask, choiceExactCount);
                 if (dialog.DisableIndexes.Count > 0)
                 {
@@ -636,7 +671,8 @@ namespace Memoria.Assets
                 }
                 else
                 {
-                    dialog.DefaultChoice = dialog.DefaultChoice < dialog.ChoiceNumber ? dialog.DefaultChoice : dialog.ChoiceNumber - 1;
+                    dialog.DefaultChoice = Math.Min(dialog.DefaultChoice, choiceExactCount - 1);
+                    dialog.CancelChoice = Math.Min(dialog.CancelChoice, choiceExactCount - 1);
                 }
             }
         }
@@ -648,6 +684,12 @@ namespace Memoria.Assets
                 modifiers.extraOffset.x += (dx - 4f) * UIManager.ResourceXMultipier;
                 modifiers.extraOffset.y += dy * UIManager.ResourceYMultipier;
             }
+        }
+
+        private static void OnFeed(FFIXTextModifier modifiers, Single feedParam)
+        {
+            if (!modifiers.choice)
+                modifiers.extraOffset.x += feedParam * UIManager.ResourceXMultipier;
         }
 
         private static void OnTextColorRGBA(FFIXTextModifier modifiers, FFIXTextTag tag)
@@ -705,6 +747,38 @@ namespace Memoria.Assets
                 modifiers.backgroundColors.Add(new FFIXTextModifier.Background(new Color(tag.SingleParam(0), tag.SingleParam(1), tag.SingleParam(2), tag.SingleParam(3) * NGUIText.tint.a), tag.RectMinMaxParam(4), tag.RectMinMaxParam(8)));
         }
 
+        private static void OnFontChange(FFIXTextModifier modifiers, FFIXTextTag tag)
+        {
+            Single fontScale = NGUIText.fontScale;
+            String param = tag.StringParam(0);
+            if (param == "RESET")
+            {
+                fontScale = 1f;
+            }
+            else
+            {
+                Char operation = param.Length > 0 ? param[0] : ' ';
+                if (!Single.TryParse(param.Substring(Math.Min(1, param.Length)), out Single diff) || diff < 0f)
+                    return;
+                if (operation == '+')
+                    fontScale += diff;
+                else if (operation == '-')
+                    fontScale = Math.Max(0.1f, fontScale - diff);
+                else if (operation == '*')
+                    fontScale = Math.Max(0.1f, fontScale * diff);
+                else if (operation == '/' && diff > 0f)
+                    fontScale = Math.Max(0.1f, fontScale / diff);
+            }
+            if (fontScale != NGUIText.fontScale)
+            {
+                Single oldHeight = NGUIText.GetGlyphHeight('A');
+                NGUIText.fontScale = fontScale;
+                NGUIText.UpdateFontSizes(false);
+                Single newHeight = NGUIText.GetGlyphHeight('A');
+                modifiers.extraOffset.y = oldHeight - newHeight;
+            }
+        }
+
         private static void OnTime(Dialog dialog, Int32 timeParam)
         {
             if (dialog != null)
@@ -747,21 +821,25 @@ namespace Memoria.Assets
                 dialog.Tail = tailPos;
         }
 
-        private static void OnDialogSize(Dialog dialog, Single width, Int32 lineNumber)
+        private static void OnDialogSize(Dialog dialog, Single width, Single lineNumber, Boolean forceSize)
         {
             if (dialog != null)
             {
                 if (width > 0f)
                     width += 3f;
-                if (!dialog.IsETbDialog) // Discard width hint for usual dialogs, because dialog width is too much font-dependant
-                    dialog.WidthHint = width;
+                dialog.WidthHint = width;
                 dialog.LineNumberHint = lineNumber;
             }
         }
 
-        private static void OnFeed(FFIXTextModifier modifiers, Int32 feedParam)
+        private static void OnDialogPosition(Dialog dialog, FFIXTextTag tag)
         {
-            modifiers.extraOffset.x += feedParam * UIManager.ResourceXMultipier;
+            if (dialog != null)
+            {
+                dialog.Position = new Vector2(tag.SingleParam(0), tag.SingleParam(1));
+                if (tag.Param.Length > 2)
+                    dialog.FollowDialog = tag.IntParam(2);
+            }
         }
 
         private static void OnWidths(Dialog dialog, Int32[] tagParameters)

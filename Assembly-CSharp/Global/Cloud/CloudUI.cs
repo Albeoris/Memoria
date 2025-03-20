@@ -791,14 +791,7 @@ public class CloudUI : UIScene
                 this.DisplayFileInfo(this.cloudFileHud, this.cloudPreview, this.corruptFile == CloudUI.Sync.Download, ISharedDataSerializer.LastErrno);
                 this.DisplayTimeStamp();
                 this.CheckData();
-                if (this.syncState == CloudUI.Sync.Upload)
-                {
-                    ButtonGroupState.ActiveGroup = CloudUI.CloudFileGroupButton;
-                }
-                else
-                {
-                    ButtonGroupState.ActiveGroup = CloudUI.LocalFileGroupButton;
-                }
+                ButtonGroupState.ActiveGroup = this.syncState == CloudUI.Sync.Upload ? CloudUI.CloudFileGroupButton : CloudUI.LocalFileGroupButton;
                 ButtonGroupState.HoldActiveStateOnGroup(CloudUI.SubMenuGroupButton);
             });
         }
@@ -810,33 +803,25 @@ public class CloudUI : UIScene
         if (this.isLocalFileExist)
         {
             if (ButtonGroupState.ActiveGroup == CloudUI.SubMenuGroupButton)
-            {
                 ButtonGroupState.SetButtonEnable(this.UploadButton, true);
-            }
             this.uploadButtonLabel.color = FF9TextTool.White;
         }
         else
         {
             if (ButtonGroupState.ActiveGroup == CloudUI.SubMenuGroupButton)
-            {
                 ButtonGroupState.SetButtonEnable(this.UploadButton, false);
-            }
             this.uploadButtonLabel.color = FF9TextTool.Gray;
         }
         if (this.isCloudFileExist)
         {
             if (ButtonGroupState.ActiveGroup == CloudUI.SubMenuGroupButton)
-            {
                 ButtonGroupState.SetButtonEnable(this.DownloadButton, true);
-            }
             this.downloadButtonLabel.color = FF9TextTool.White;
         }
         else
         {
             if (ButtonGroupState.ActiveGroup == CloudUI.SubMenuGroupButton)
-            {
                 ButtonGroupState.SetButtonEnable(this.DownloadButton, false);
-            }
             this.downloadButtonLabel.color = FF9TextTool.Gray;
         }
     }
@@ -888,7 +873,15 @@ public class CloudUI : UIScene
         this.successfulAccessLabel = this.SuccessfulAccessPanel.GetChild(0).GetComponent<UILabel>();
         UIScene.SetupYesNoLabels(this.OverWriteDialog.transform, this.OverWriteDialog.GetChild(1), this.OverWriteDialog.GetChild(2), this.onClick);
         this.background = new GOMenuBackground(this.transform.GetChild(9).gameObject, "cloud_bg");
-        //this.some label.width = 100; // [DBG]
+        this.helpTitleLabel.rightAnchor.absolute = -this.helpSlotLabel.width - 15;
+        this.FileListPanel.GetChild(3).GetChild(4).GetChild(0).GetComponent<UILabel>().rightAnchor.Set(1f, -28);
+        this.OverWriteDialog.GetChild(3).GetChild(0).GetComponent<UILabel>().rightAnchor.Set(1f, -32);
+        this.gameObject.GetChild(6).GetChild(2).GetChild(0).GetComponent<UILabel>().rightAnchor.Set(1f, -32);
+        this.LoadingAccessDialog.GetChild(3).GetChild(0).GetComponent<UILabel>().rightAnchor.Set(1f, -32);
+        this.localFileHud.LeaderNameLabel.fixedAlignment = true;
+        this.cloudFileHud.LeaderNameLabel.fixedAlignment = true;
+        this.localFileHud.FileNoLabel.fixedAlignment = true;
+        this.cloudFileHud.FileNoLabel.fixedAlignment = true;
     }
 
     private const String SubMenuGroupButton = "Cloud.SubMenu";

@@ -47,43 +47,56 @@ namespace Assets.Sources.Scripts.UI.Common
             }
         }
 
-        public static void DisplayMultipleItems(Dictionary<RegularItem, Int32> items, UISprite itemIcon, UILabel itemName, Dictionary<RegularItem, Boolean> isEnable, Boolean displayStock = false)
+        public static void DisplayMultipleItems(UILabel label, Dictionary<RegularItem, Int32> items, Func<KeyValuePair<RegularItem, Int32>, Boolean> enabledCheck, Boolean displayStock = false)
         {
+            Int32 validItemCount = 0;
+            foreach (KeyValuePair<RegularItem, Int32> kvp in items)
+            {
+                if (kvp.Key == RegularItem.NoItem || kvp.Value <= 0)
+                    continue;
+                validItemCount++;
+            }
+            Int32 columnCount = validItemCount > 4 ? 2 : 1;
+            Single shrinkFactor = validItemCount <= 2 ? 1f
+                : validItemCount <= 4 ? 2f / validItemCount
+                : validItemCount <= 8 ? 2f / 4
+                : 2f / ((validItemCount + 1) / 2);
+            Single spacingY = 10f * shrinkFactor;
             String itemLabel = String.Empty;
-            String spriteName = String.Empty;
-            Boolean allEnabled = items.Keys.All(itemId => isEnable.TryGetValue(itemId, out Boolean enabled) && enabled);
+            Int32 columnIndex = 0;
             foreach (KeyValuePair<RegularItem, Int32> kvp in items)
             {
                 if (kvp.Key == RegularItem.NoItem || kvp.Value <= 0)
                     continue;
                 FF9ITEM_DATA item = ff9item._FF9Item_Data[kvp.Key];
-                if (!isEnable.TryGetValue(kvp.Key, out Boolean enabled))
-                    enabled = false;
-                Byte colorIndex = allEnabled ? item.color : (Byte)15;
-                String itemSpriteName = "item" + item.shape.ToString("0#") + "_" + colorIndex.ToString("0#");
-                if (String.IsNullOrEmpty(spriteName))
-                    spriteName = itemSpriteName;
-                if (itemLabel.Length > 0)
-                    itemLabel += "\n";
-                itemLabel += $"{NGUIText.EncodeColor(enabled ? FF9TextTool.White : FF9TextTool.Gray)}{FF9TextTool.ItemName(kvp.Key)}";
+                Boolean enabled = enabledCheck(kvp);
+                String itemSpriteName = $"item{item.shape:0#}_{(enabled ? item.color : 15):0#}";
+                String labelColor = NGUIText.EncodeColor(enabled ? FF9TextTool.White : FF9TextTool.Gray);
+                if (itemLabel.Length == 0)
+                    itemLabel += $"[YADD={spacingY}]";
+                else if (columnIndex > 0)
+                    itemLabel += $"[YADD={2f * shrinkFactor}][XTAB={106f * columnIndex / columnCount}]";
+                else
+                    itemLabel += $"\n[YADD={spacingY}]";
+                itemLabel += $"{labelColor}[SPRT={itemSpriteName},{64f * shrinkFactor},{64f * shrinkFactor}]  [FEED=1][YSUB={2f * shrinkFactor}]";
                 if (kvp.Value > 1)
-                    itemLabel += $" × {kvp.Value}";
+                    itemLabel += $"{kvp.Value} × ";
+                itemLabel += FF9TextTool.ItemName(kvp.Key);
                 if (displayStock && Configuration.Interface.SynthIngredientStockDisplayed)
                 {
                     Int32 itemAmount = ff9item.FF9Item_GetCount(kvp.Key);
                     if (itemAmount > 0)
                         itemLabel += $" ({itemAmount})";
                 }
+                columnIndex++;
+                if (columnIndex >= columnCount)
+                {
+                    columnIndex = 0;
+                    spacingY += 10f * shrinkFactor;
+                }
             }
-            if (itemIcon != null)
-                itemIcon.spriteName = spriteName;
-            if (itemName != null)
-            {
-                itemName.multiLine = true;
-                itemName.overflowMethod = UILabel.Overflow.ShrinkContent;
-                itemName.color = Color.white;
-                itemName.rawText = itemLabel;
-            }
+            label.fontSize = Mathf.RoundToInt(36 * shrinkFactor);
+            label.rawText = itemLabel;
         }
 
         public static void DisplayCharacterDetail(PLAYER player, CharacterDetailHUD charHud)
@@ -376,7 +389,6 @@ namespace Assets.Sources.Scripts.UI.Common
                         Int32 keyIndex = (Int32)key;
                         if (!checkFromConfig)
                         {
-                            keyIndex = PersistenSingleton<HonoInputManager>.Instance.LogicalControlToPhysicalButton(key);
                             if (EventInput.isJapaneseLayout)
                             {
                                 if (keyIndex == 0)
@@ -384,6 +396,7 @@ namespace Assets.Sources.Scripts.UI.Common
                                 else if (keyIndex == 1)
                                     keyIndex = 0;
                             }
+                            keyIndex = (Int32)PersistenSingleton<HonoInputManager>.Instance.PhysicalButtonToLogicalControl(keyIndex);
                         }
                         return FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, PersistenSingleton<HonoInputManager>.Instance.InputKeysPrimary[keyIndex]);
                     }

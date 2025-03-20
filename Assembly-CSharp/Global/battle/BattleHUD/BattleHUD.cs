@@ -958,7 +958,7 @@ public partial class BattleHUD : UIScene
                 GameObject labelObj = playerHUD.GameObject;
                 UILabel nameLabel = playerHUD.Name.Label;
                 labelObj.SetActive(true);
-                nameLabel.rawText = unit.Player.NameTag;
+                nameLabel.SetText(unit.Player.NameTag);
                 if (_currentCharacterHp[playerIndex] == ParameterStatus.Dead)
                 {
                     if (_cursorType == CursorGroup.Individual)

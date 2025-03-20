@@ -377,6 +377,7 @@
     <Compile Include="Memoria\Assets\FieldCreator\WavefrontObject.cs" />
     <Compile Include="Memoria\Assets\Text\Dialogs\DialogImage.cs" />
     <Compile Include="Memoria\Assets\Text\Dialogs\FFIXTextModifier.cs" />
+    <Compile Include="Memoria\Assets\Text\Dialogs\TextAnimatedTag.cs" />
     <Compile Include="Memoria\Assets\Text\Dialogs\TextParser.cs" />
     <Compile Include="Memoria\Assets\Text\Strings\TextDirectionBlock.cs" />
     <Compile Include="Memoria\Assets\Text\Strings\UnicodeBIDI.cs" />

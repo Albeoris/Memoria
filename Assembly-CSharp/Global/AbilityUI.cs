@@ -1467,6 +1467,21 @@ public class AbilityUI : UIScene
         this._abilityPanel = new GOScrollablePanel(this.ActiveAbilityListPanel);
         this._supportPanel = new GOScrollablePanel(this.SupportAbilityListPanel);
         this._background = new GOMenuBackground(this.transform.GetChild(7).gameObject, "ability_bg");
+        this.abilityInfoHud.Background.Caption.Label.rightAnchor.Set(1f, -40);
+        this.CharacterDetailPanel.GetChild(4).GetChild(3).GetComponent<UILabel>().rightAnchor.Set(1f, -20);
+        this._abilityPanel.Background.Panel.Name.Label.fixedAlignment = true;
+        this._abilityPanel.Background.Panel.Name2.Label.fixedAlignment = true;
+        this._supportPanel.Background.Panel.Name.Label.fixedAlignment = true;
+        this._supportPanel.Background.Panel.Name2.Label.fixedAlignment = true;
+        this._supportPanel.Background.Panel.Info.Label.leftAnchor.Set(0f, 68);
+        this._supportPanel.Background.Panel.Info2.Label.leftAnchor.Set(0.5f, 68);
+        this._supportPanel.Background.Panel.Info.Localize.key = "MagicStoneCaption";
+        this._supportPanel.Background.Panel.Info2.Localize.key = "MagicStoneCaption";
+        this.TargetListPanel.GetChild(3).GetChild(2).GetComponent<UILabel>().rightAnchor.Set(1f, -40);
+        this.useSubMenuLabel.leftAnchor.Set(0f, 0);
+        this.useSubMenuLabel.rightAnchor.Set(1f, 0);
+        this.equipSubMenuLabel.leftAnchor.Set(0f, 0);
+        this.equipSubMenuLabel.rightAnchor.Set(1f, 0);
     }
 
     private Boolean IsSubMenuDisabledByMainMenu(Boolean useMenu)
@@ -1476,7 +1491,7 @@ public class AbilityUI : UIScene
         return enabledSet.Count > 0 && !enabledSet.Contains(MainMenuUI.SubMenu.Ability.ToString()) && !enabledSet.Contains(subMenuStr);
     }
 
-    public class AbilityInfoHUD
+    internal class AbilityInfoHUD
     {
         public GameObject Self;
         public ButtonGroupState Button;
@@ -1486,6 +1501,7 @@ public class AbilityUI : UIScene
         public UILabel EquipmentLabel;
         public UILabel EquipmentColon;
         public UISprite[] EquipmentSpriteList;
+        public GOFrameBackground Background;
 
         public AbilityInfoHUD(GameObject go)
         {
@@ -1497,6 +1513,7 @@ public class AbilityUI : UIScene
             this.EquipmentLabel = go.GetChild(1).GetChild(0).GetComponent<UILabel>();
             this.EquipmentColon = go.GetChild(1).GetChild(1).GetComponent<UILabel>();
             this.SetupEquipmentList();
+            this.Background = new GOFrameBackground(go.GetChild(2));
         }
 
         public void ClearEquipmentIcon()

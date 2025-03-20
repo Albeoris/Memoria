@@ -392,8 +392,16 @@ public class MainMenuUI : UIScene
         ButtonGroupState.RemoveCursorMemorize(MainMenuUI.SubMenuGroupButton);
         ButtonGroupState.SetPointerDepthToGroup(10, MainMenuUI.SubMenuGroupButton);
         ButtonGroupState.SetPointerDepthToGroup(12, MainMenuUI.OrderGroupButton);
-        ButtonGroupState.SetPointerOffsetToGroup(new Vector2(10f, 0f), MainMenuUI.CharacterGroupButton);
-        ButtonGroupState.SetPointerOffsetToGroup(new Vector2(30f, -28f), MainMenuUI.OrderGroupButton);
+        if (NGUIText.readingDirection == UnicodeBIDI.LanguageReadingDirection.RightToLeft)
+        {
+            ButtonGroupState.SetPointerOffsetToGroup(new Vector2(80f, 0f), MainMenuUI.CharacterGroupButton);
+            ButtonGroupState.SetPointerOffsetToGroup(new Vector2(100f, -28f), MainMenuUI.OrderGroupButton);
+        }
+        else
+        {
+            ButtonGroupState.SetPointerOffsetToGroup(new Vector2(10f, 0f), MainMenuUI.CharacterGroupButton);
+            ButtonGroupState.SetPointerOffsetToGroup(new Vector2(30f, -28f), MainMenuUI.OrderGroupButton);
+        }
         ButtonGroupState.ActiveGroup = MainMenuUI.SubMenuGroupButton;
     }
 
@@ -732,6 +740,9 @@ public class MainMenuUI : UIScene
         locationFrame.leftAnchor.Set(0f, 30f);
 
         this.Background = new GOMenuBackground(this.transform.GetChild(4).gameObject, "main_menu_bg");
+
+        this.LocationInfoPanel.GetChild(1).GetChild(2).GetComponent<UILabel>().rightAnchor.absolute = -40;
+        this.GenericInfoPanel.GetChild(2).GetChild(2).GetComponent<UILabel>().rightAnchor.absolute = -40;
     }
 
     public GameObject SubMenuPanel;

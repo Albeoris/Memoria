@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria;
-using Memoria.Assets;
 using UnityEngine;
 
 public class DialogManager : Singleton<DialogManager>

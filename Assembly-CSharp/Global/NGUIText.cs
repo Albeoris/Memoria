@@ -9,6 +9,9 @@ using UnityEngine;
 
 public static class NGUIText
 {
+    #pragma warning disable CS0162 // Disable "Unreachable code detected"
+    private const Boolean DEBUG_DRAW_OUTLINE = false; // Draw the bounding box of UILabels
+
     public static Boolean ShowMobileButtons => FF9StateSystem.MobilePlatform && !NGUIText.ForceShowButton;
     public static Boolean ForceShowButton
     {
@@ -211,8 +214,8 @@ public static class NGUIText
         dialogImage.Size = FF9UIDataTool.GetIconSize(iconId);
         if (iconId == 180) // text_lv_us_uk_jp_gr_it
             dialogImage.Offset = new Vector3(0f, 5.5f); // was 15.2f
-        else if (iconId == 27) // help_mog_dialog
-            dialogImage.Offset = new Vector3(0f, Math.Max(0f, dialogImage.Size.y / 2f + 30f));
+        else if (iconId >= 27 && iconId <= 29) // help_mog_dialog
+            dialogImage.Offset = new Vector3(0f, Math.Max(0f, dialogImage.Size.y * 0.7f));
         else
             dialogImage.Offset = new Vector3(0f, 10f);
         dialogImage.Id = iconId;
@@ -262,6 +265,8 @@ public static class NGUIText
             return null;
         }
         dialogImage.Offset = new Vector3(0f, 10f);
+        if (dialogImage.Rescale)
+            dialogImage.Offset.y *= dialogImage.Size.y / Math.Max(1f, FF9UIDataTool.GetSpriteSize(dialogImage.AtlasName, dialogImage.SpriteName).y);
         dialogImage.Id = -1;
         dialogImage.IsButton = false;
         dialogImage.AppearStep = NGUIText.progressStep;
@@ -521,7 +526,7 @@ public static class NGUIText
         Alignment finalAlignement = NGUIText.alignment;
         if (dialog != null && !dialog.IsETbDialog && NGUIText.mTextModifiers.choice)
             finalAlignement = Alignment.Center;
-        else if (NGUIText.readingDirection == UnicodeBIDI.LanguageReadingDirection.RightToLeft && !NGUIText.fixedAlignment && finalAlignement == Alignment.Left)
+        else if (NGUIText.readingDirection == UnicodeBIDI.LanguageReadingDirection.RightToLeft && !NGUIText.fixedLineAlignment && finalAlignement == Alignment.Left)
             finalAlignement = Alignment.Right;
         lineInfo.Alignment = finalAlignement;
         switch (finalAlignement)
@@ -725,10 +730,11 @@ public static class NGUIText
 
     public static Boolean WrapText(TextParser parser, Boolean cancelOnFail)
     {
+        Dialog dialog = parser.LabelContainer.DialogWindow;
         List<TextParser.Line> lineList = new List<TextParser.Line>();
         TextParser.Line currentLine = new TextParser.Line(0f, NGUIText.finalLineHeight);
         lineList.Add(currentLine);
-        if (NGUIText.regionWidth < 1 || NGUIText.regionHeight < 1 || NGUIText.finalLineHeight < 1f)
+        if (dialog == null && (NGUIText.regionWidth < 1 || NGUIText.regionHeight < 1 || NGUIText.finalLineHeight < 1f))
         {
             if (!cancelOnFail)
             {
@@ -740,7 +746,7 @@ public static class NGUIText
         Single maxHeight = NGUIText.maxLines <= 0 ? NGUIText.regionHeight : Mathf.Min(NGUIText.regionHeight, NGUIText.finalLineHeight * NGUIText.maxLines);
         Int32 maxLineCount = NGUIText.maxLines <= 0 ? 1000000 : NGUIText.maxLines;
         maxLineCount = Mathf.FloorToInt(Mathf.Min(maxLineCount, maxHeight / NGUIText.finalLineHeight) + 0.01f);
-        if (maxLineCount == 0)
+        if (dialog == null && maxLineCount == 0)
         {
             if (!cancelOnFail)
             {
@@ -749,8 +755,8 @@ public static class NGUIText
             }
             return false;
         }
-        Dialog dialog = parser.LabelContainer.DialogWindow;
         List<FFIXTextTag> tabTags = new List<FFIXTextTag>();
+        List<Int32> addedLines = new List<Int32>();
         String wrappedText = parser.ParsedText; // wrappedText and parser.ParsedText may differ only in spaces replaced by newlines
         NGUIText.Prepare(wrappedText);
         NGUIText.mTextModifiers.Reset();
@@ -759,15 +765,16 @@ public static class NGUIText
         Int32 lastPossibleBreakPos = 0;
         Int32 currentLineCount = 1;
         Int32 prevCh = 0;
+        Boolean preventWordBreak = NGUIText.preventWrapping;
         Boolean hasSpecialCharacter = false;
         Boolean noBreakableSpaceYet = true;
-        Boolean preventWordBreak = false;
         Boolean wordsPreserved = true;
         Boolean afterImage = false;
         Single lastPossibleBreakX = 0f;
         Single currentTabX = 0f;
         Single currentX = 0f;
         Single offsetY = 0f;
+        Single lineHeight = NGUIText.finalLineHeight;
         Int32 tagIndex = 0;
         Int32 texti;
         for (texti = 0; texti <= textLength; texti++)
@@ -825,10 +832,11 @@ public static class NGUIText
             {
                 if (currentLineCount == maxLineCount)
                     break;
-                currentLine = new TextParser.Line(currentLine.BaseY + NGUIText.finalLineHeight, NGUIText.finalLineHeight);
+                currentLine = new TextParser.Line(currentLine.BaseY + lineHeight, NGUIText.finalLineHeight);
                 lineList.Add(currentLine);
                 noBreakableSpaceYet = true;
                 currentLineCount++;
+                lineHeight = NGUIText.finalLineHeight;
                 lastPossibleBreakPos = texti;
                 lastPossibleBreakX = 0f;
                 currentTabX = 0f;
@@ -863,7 +871,7 @@ public static class NGUIText
                 if (!isSpace || !afterImage)
                 {
                     currentX += advanceX;
-                    if (Mathf.RoundToInt(currentX + NGUIText.mTextModifiers.frameOffset.x) > NGUIText.regionWidth)
+                    if (dialog == null && Mathf.RoundToInt(currentX + NGUIText.mTextModifiers.frameOffset.x) > NGUIText.regionWidth)
                     {
                         if (preventWordBreak)
                         {
@@ -879,7 +887,9 @@ public static class NGUIText
                             lastPossibleBreakPos = Math.Max(lastPossibleBreakPos, texti - 1);
                             if (NGUIText.ReplaceSpaceWithNewline(ref wrappedText, lastPossibleBreakPos))
                             {
-                                currentLine = new TextParser.Line(currentLine.BaseY + NGUIText.finalLineHeight, NGUIText.finalLineHeight);
+                                addedLines.Add(lastPossibleBreakPos);
+                                currentLine = new TextParser.Line(currentLine.BaseY + lineHeight, NGUIText.finalLineHeight);
+                                lineHeight = NGUIText.finalLineHeight;
                                 lineList.Add(currentLine);
                                 if (currentTabX != 0f)
                                     tabTags.Add(new FFIXTextTag(FFIXTextTagCode.DialogX, [(currentTabX / UIManager.ResourceXMultipier).ToString()], lastPossibleBreakPos + 1));
@@ -909,8 +919,10 @@ public static class NGUIText
                                 break;
                             if (NGUIText.ReplaceSpaceWithNewline(ref wrappedText, lastPossibleBreakPos))
                             {
+                                addedLines.Add(lastPossibleBreakPos);
                                 currentLine.Width = lastPossibleBreakX + NGUIText.mTextModifiers.frameOffset.x;
-                                currentLine = new TextParser.Line(currentLine.BaseY + NGUIText.finalLineHeight, NGUIText.finalLineHeight);
+                                currentLine = new TextParser.Line(currentLine.BaseY + lineHeight, NGUIText.finalLineHeight);
+                                lineHeight = NGUIText.finalLineHeight;
                                 lineList.Add(currentLine);
                                 if (currentTabX != 0f)
                                     tabTags.Add(new FFIXTextTag(FFIXTextTagCode.DialogX, [(currentTabX / UIManager.ResourceXMultipier).ToString()], lastPossibleBreakPos + 1));
@@ -941,6 +953,8 @@ public static class NGUIText
             parser.ParsedText = wrappedText;
             parser.RemovePart(texti, textLength - texti);
             parser.LineInfo = lineList;
+            if (parser.Bidi != null)
+                parser.Bidi.RegisterWrappingNewLines(addedLines, NGUIText.readingDirection);
         }
         return success;
     }
@@ -969,11 +983,11 @@ public static class NGUIText
         Rect bmUvRect = default;
         Single bmTextureFactorX = 0f;
         Single bmTextureFactorY = 0f;
-        Single ftSize = NGUIText.finalSize * NGUIText.pixelDensity;
         Boolean invertXOffset = false;
         Boolean displacedStrike = false;
         Boolean afterImage = false;
         Int32 printedLine = 0;
+        NGUIText.fixedLineAlignment = NGUIText.fixedAlignment;
         NGUIText.Alignment defaultAlignment = NGUIText.alignment;
         BetterList<Int32> imgNotYetAligned = new BetterList<Int32>();
         if (NGUIText.bitmapFont != null)
@@ -1022,10 +1036,11 @@ public static class NGUIText
                 if (useBIDI)
                     currentX = TextDirectionBlock.ResolveRenderLine(bidiBlocks, parser.Vertices);
                 lineWidth = Math.Max(lineWidth, currentX - NGUIText.finalSpacingX);
-                NGUIText.Align(parser.LineInfo[printedLine], parser.Vertices, lineFirstVIndex, printedLine, lineWidth, 4, parser.SpecialImages, dialog);
+                NGUIText.Align(parser.LineInfo[printedLine], parser.Vertices, lineFirstVIndex, printedLine, NGUIText.readingDirection == UnicodeBIDI.LanguageReadingDirection.RightToLeft ? lineWidth : lineWidth + NGUIText.mTextModifiers.frameOffset.x, 4, parser.SpecialImages, dialog);
                 NGUIText.alignment = defaultAlignment;
                 NGUIText.mTextModifiers.ResetLine();
                 NGUIText.progressStep += NGUIText.mTextModifiers.appearanceSpeed;
+                NGUIText.fixedLineAlignment = NGUIText.fixedAlignment;
                 lineFirstVIndex = parser.Vertices.size;
                 parser.LineInfo[printedLine].EndVertexIndex = lineFirstVIndex;
                 printedLine++;
@@ -1109,8 +1124,8 @@ public static class NGUIText
                     {
                         if (NGUIText.gradient)
                         {
-                            colBottom = NGUIText.ComputeGradientColor(gradientColorBottom, gradientColorTop, glyphInfo.v0.y, ftSize);
-                            colTop = NGUIText.ComputeGradientColor(gradientColorBottom, gradientColorTop, glyphInfo.v1.y, ftSize);
+                            colBottom = NGUIText.ComputeGradientColor(gradientColorBottom, gradientColorTop, glyphInfo.v0.y, NGUIText.finalSize * NGUIText.pixelDensity);
+                            colTop = NGUIText.ComputeGradientColor(gradientColorBottom, gradientColorTop, glyphInfo.v1.y, NGUIText.finalSize * NGUIText.pixelDensity);
                         }
                         else
                         {
@@ -1277,8 +1292,8 @@ public static class NGUIText
                         }
                         if (NGUIText.gradient)
                         {
-                            colBottom = NGUIText.ComputeGradientColor(gradientColorBottom, gradientColorTop, lineGlyph.v0.y, ftSize);
-                            colTop = NGUIText.ComputeGradientColor(gradientColorBottom, gradientColorTop, lineGlyph.v1.y, ftSize);
+                            colBottom = NGUIText.ComputeGradientColor(gradientColorBottom, gradientColorTop, lineGlyph.v0.y, NGUIText.finalSize * NGUIText.pixelDensity);
+                            colTop = NGUIText.ComputeGradientColor(gradientColorBottom, gradientColorTop, lineGlyph.v1.y, NGUIText.finalSize * NGUIText.pixelDensity);
                             for (Int32 i = 0; i < charCopyCount; i++)
                             {
                                 cols.Add(colBottom);
@@ -1313,12 +1328,11 @@ public static class NGUIText
             if (useBIDI)
                 currentX = TextDirectionBlock.ResolveRenderLine(bidiBlocks, parser.Vertices);
             lineWidth = Math.Max(lineWidth, currentX - NGUIText.finalSpacingX);
-            NGUIText.Align(parser.LineInfo[printedLine], parser.Vertices, lineFirstVIndex, printedLine, lineWidth, 4, parser.SpecialImages, dialog);
+            NGUIText.Align(parser.LineInfo[printedLine], parser.Vertices, lineFirstVIndex, printedLine, NGUIText.readingDirection == UnicodeBIDI.LanguageReadingDirection.RightToLeft ? lineWidth : lineWidth + NGUIText.mTextModifiers.frameOffset.x, 4, parser.SpecialImages, dialog);
         }
         parser.LineInfo[printedLine].EndVertexIndex = parser.Vertices.size;
-        //DrawBoundingFrames(parser, 0, Color.red); // [DBG]
-        //DrawBoundingFrames(parser, 1, Color.white);
-        //DrawBoundingFrames(parser, 2, Color.green);
+        if (NGUIText.DEBUG_DRAW_OUTLINE)
+            DrawBoundingFrames(parser, 2, Color.green);
         parser.ApplyOffset(parser.LabelContainer.GetApplyOffset());
         parser.ComputeAppearProgressMax();
         return;
@@ -1356,9 +1370,12 @@ public static class NGUIText
             parser.AddSegment(new Vector3(overlaySize.x, 0f), overlaySize, Color.green, Color.green, 0f);
             parser.AddSegment(overlaySize, new Vector3(0f, overlaySize.y), Color.green, Color.green, 0f);
             parser.AddSegment(new Vector3(0f, overlaySize.y), Vector3.zero, Color.green, Color.green, 0f);
-            Vector3 shift = new Vector3(0f, Mathf.Lerp(-parser.LabelContainer.printedSize.y, 0f, parser.LabelContainer.pivotOffset.y) - overlaySize.y / 2f);
-            for (Int32 i = parser.Vertices.size - 16; i < parser.Vertices.size; i++)
-                parser.Vertices[i] += shift;
+            if (parser.LabelContainer.pivotOffset.y != 1f)
+            {
+                Vector3 shift = new Vector3(0f, Mathf.Lerp(-parser.LabelContainer.printedSize.y, 0f, parser.LabelContainer.pivotOffset.y) - overlaySize.y / 2f);
+                for (Int32 i = parser.Vertices.size - 16; i < parser.Vertices.size; i++)
+                    parser.Vertices[i] += shift;
+            }
         }
     }
 
@@ -1449,6 +1466,9 @@ public static class NGUIText
     public const Int32 FF9TIM_ID_DMG_SLASH = 174;
     public const Int32 FF9TIM_ID_DMG_CRITICAL_YELLOW = 179;
 
+    public const String TextIdentifier = "TXID"; // Not actually text tags but rather can be placed before a string
+    public const String LoadMes = "LOADMES"; // Not actually text tags but rather can be placed at the start of a .mes file
+
     public const String StartSentense = "STRT";
     public const String Choose = "CHOO";
     public const String AnimationTime = "TIME";
@@ -1456,6 +1476,7 @@ public static class NGUIText
     public const String NoAnimation = "NANI";
     public const String NoTypeEffect = "IMME";
     public const String MessageSpeed = "SPED";
+    public const String TagAnimation = "ANIM";
     public const String Zidane = "ZDNE";
     public const String Vivi = "VIVI";
     public const String Dagger = "DGGR";
@@ -1471,6 +1492,7 @@ public static class NGUIText
     public const String Shadow = "HSHD";
     public const String NoShadow = "NSHD";
     public const String BackgroundColor = "BCOL";
+    public const String ChangeFont = "FONT";
     public const String ButtonIcon = "DBTN";
     public const String NoFocus = "NFOC";
     public const String IncreaseSignal = "INCS";
@@ -1541,7 +1563,9 @@ public static class NGUIText
     public static Color tint = Color.white;
     public static UnicodeBIDI.LanguageReadingDirection readingDirection = UnicodeBIDI.LanguageReadingDirection.LeftToRight;
     public static UnicodeBIDI.DigitShapes digitShapes = UnicodeBIDI.DigitShapes.Latin;
+    public static Boolean preventWrapping = false;
     public static Boolean fixedAlignment = false;
+    public static Boolean fixedLineAlignment = false;
 
     public static UILabel.Effect shadowEffect = UILabel.Effect.None;
     public static Vector2 shadowDistance = Vector2.zero;

@@ -491,6 +491,7 @@ public class PartySettingUI : UIScene
         }
         this.currentCharacterHud = new CharacterDetailPartyHUD(this.OutsidePartyPanel.GetChild(0), false);
         this.background = new GOMenuBackground(this.transform.GetChild(5).gameObject, "party_setting_bg");
+        this.CurrentPartyPanel.GetChild(1).GetChild(2).GetComponent<UILabel>().rightAnchor.Set(1f, -40);
     }
 
     private void ExtendSelectSlots()

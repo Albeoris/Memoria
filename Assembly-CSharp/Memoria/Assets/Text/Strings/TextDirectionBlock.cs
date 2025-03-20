@@ -9,7 +9,7 @@ namespace Memoria.Assets
         public Boolean ltr;
         public Int32 start; // Either start/end are different
         public Int32 end;
-        public Boolean isTabBlock; // Tab blocks are isolated blocks containing only one [XTAB] tag
+        public Boolean isTabBlock; // Tab blocks are isolated blocks containing only one [XTAB] or [FRAM] tag
         public List<FFIXTextTag> tags = new List<FFIXTextTag>(); // or tags.Count > 0
         public LinkedListNode<TextDirectionBlock> nextByProgress = null;
 
@@ -45,7 +45,7 @@ namespace Memoria.Assets
                     {
                         if (tagList[tagIndex].TextOffset != j || tagRegistered.Contains(tagList[tagIndex]))
                             continue;
-                        if (j != block.start || block.isTabBlock || tagList[tagIndex].Code == FFIXTextTagCode.DialogX)
+                        if (j != block.start || block.isTabBlock || FFIXTextTag.TabCodes.Contains(tagList[tagIndex].Code))
                         {
                             if (block.ltr)
                                 block.end = j;
@@ -53,7 +53,7 @@ namespace Memoria.Assets
                                 block.start = j;
                             if (block.start != block.end || block.tags.Count > 0)
                                 blockList.AddLast(block);
-                            block = new TextDirectionBlock(blockLtr, j, tagList[tagIndex].Code == FFIXTextTagCode.DialogX);
+                            block = new TextDirectionBlock(blockLtr, j, FFIXTextTag.TabCodes.Contains(tagList[tagIndex].Code));
                         }
                         block.tags.Add(tagList[tagIndex]);
                         tagRegistered.Add(tagList[tagIndex]);

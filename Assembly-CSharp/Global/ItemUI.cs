@@ -996,8 +996,6 @@ public class ItemUI : UIScene
         _keyItemPanel = new GOScrollablePanel(KeyItemListPanel);
         _arrangeDialog = new ArrangeDialogHUD(ArrangeDialog);
 
-        RemoveLeftAnchorFromItemNumberLabels();
-
         foreach (var button in _arrangeDialog.Choices)
             button.EventListener.Click += onClick;
 
@@ -1006,20 +1004,13 @@ public class ItemUI : UIScene
         _arrangeTransition = TransitionGroup.GetChild(2).GetComponent<HonoTweenClipping>();
 
         _background = new GOMenuBackground(this.transform.GetChild(6).gameObject, "item_bg");
-    }
 
-    private void RemoveLeftAnchorFromItemNumberLabels()
-    {
-        GameObject itemListCaptionBackgroundPanel = ItemListPanel.GetChild(2).GetChild(4);
-        foreach (UILabel label in itemListCaptionBackgroundPanel.GetComponentsInChildren<UILabel>(true))
-        {
-            if (label.rawText == "NUM")
-            {
-                label.leftAnchor.absolute -= 90;
-                label.UpdateAnchors();
-                return;
-            }
-        }
+        _itemPanel.Background.Panel.Name.Label.fixedAlignment = true;
+        _itemPanel.Background.Panel.Name2.Label.fixedAlignment = true;
+        _itemPanel.Background.Panel.Info.Label.leftAnchor.absolute -= 90;
+        _itemPanel.Background.Panel.Info2.Label.leftAnchor.absolute -= 90;
+        _keyItemPanel.Background.Panel.Name.Label.fixedAlignment = true;
+        _keyItemPanel.Background.Panel.Info.Label.fixedAlignment = true;
     }
 
     private struct KeyItemDetailHUD

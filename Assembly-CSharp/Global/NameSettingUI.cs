@@ -177,6 +177,8 @@ public sealed class NameSettingUI : UIScene
     {
         FadingComponent = ScreenFadeGameObject.GetComponent<HonoFading>();
         NameInputField.characterLimit = 12;
+        Warning.transform.AddX(-50f);
+        Warning.GetComponent<UILabel>().width = 500;
     }
 
     private void Start()

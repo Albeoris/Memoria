@@ -21,7 +21,7 @@ public static class ETb
     {
         ETb.sChoose = 0;
         DialogManager.SelectChoice = ETb.sChoose;
-        ETb.sChooseMaskInit = -1;
+        ETb.sChooseMask = -1;
         ETb.sChooseInit = 0;
         ETb.gMesCount = 0;
         EventInput.IsNeedAddStartSignal = false;
@@ -225,7 +225,7 @@ public static class ETb
 
     public static void SetChooseParam(Int32 availMask, Int32 initAbsoluteOptionIndex)
     {
-        ETb.sChooseMaskInit = availMask;
+        ETb.sChooseMask = availMask;
         Int32 initAvailOptionIndex = -1;
         while (initAbsoluteOptionIndex >= 0 && availMask > 0)
         {
@@ -480,9 +480,8 @@ public static class ETb
 
     public static Int32 gMesSignal;
     public static Int32 sChoose;
-    public static Int32 sChooseMaskInit = -1;
-    public static Int32 sChooseInit;
     public static Int32 sChooseMask = -1;
+    public static Int32 sChooseInit;
 
     private static Single lastPlaySound;
     private static Int32 LastATEDialogID = -1;

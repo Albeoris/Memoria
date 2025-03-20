@@ -11,32 +11,17 @@ using Object = System.Object;
 
 public class WorldHUD : UIScene
 {
-    public WorldHUD.State CurrentState
-    {
-        get
-        {
-            return this.currentState;
-        }
-    }
+    public WorldHUD.State CurrentState => this.currentState;
 
     public Int32 CurrentCharacterStateIndex
     {
-        get
-        {
-            return this.currentCharacterStateIndex;
-        }
-        set
-        {
-            this.currentCharacterStateIndex = value;
-        }
+        get => this.currentCharacterStateIndex;
+        set => this.currentCharacterStateIndex = value;
     }
 
     public Boolean EnableMapButton
     {
-        set
-        {
-            this.enableMapButton = value;
-        }
+        set => this.enableMapButton = value;
     }
 
     public override void Show(UIScene.SceneVoidDelegate afterFinished = null)
@@ -117,27 +102,23 @@ public class WorldHUD : UIScene
     {
         if (FF9StateSystem.PCPlatform && this.controlPointEnable && HonoInputManager.MouseEnabled && !this.ignorePointerProcess)
         {
-            Vector2 v = Input.mousePosition;
             Camera camera = NGUITools.FindCameraForLayer(base.gameObject.layer);
-            Vector3 v2 = camera.ScreenToWorldPoint(v);
-            Vector3 vector = base.transform.worldToLocalMatrix.MultiplyPoint3x4(v2);
-            vector.x += (Single)this.mapWidget.width / 2f;
-            vector.y += (Single)this.mapWidget.height / 2f;
-            vector.x -= (Single)this.mapPointerWidget.width / 2f - 8f;
-            vector.y -= 14f;
-            vector.x = Mathf.Clamp(vector.x, this.FullMapBorder.x, this.FullMapBorder.y);
-            vector.y = Mathf.Clamp(vector.y, this.FullMapBorder.z, this.FullMapBorder.w);
-            Int32 num = this.DetectLocation(vector);
-            if (this.currentLocationIndex != num)
+            Vector3 mousePos = base.transform.worldToLocalMatrix.MultiplyPoint3x4(camera.ScreenToWorldPoint(Input.mousePosition));
+            mousePos.x += this.mapWidget.width / 2f;
+            mousePos.y += this.mapWidget.height / 2f;
+            mousePos.x -= this.mapPointerWidget.width / 2f - 8f;
+            mousePos.y -= 14f;
+            mousePos.x = Mathf.Clamp(mousePos.x, this.FullMapBorder.x, this.FullMapBorder.y);
+            mousePos.y = Mathf.Clamp(mousePos.y, this.FullMapBorder.z, this.FullMapBorder.w);
+            Int32 hoverLocation = this.DetectLocation(mousePos);
+            if (this.currentLocationIndex != hoverLocation)
             {
-                this.currentLocationIndex = num;
+                this.currentLocationIndex = hoverLocation;
                 this.DisplayLocationName(this.currentLocationIndex);
             }
-            if (num != -1)
-            {
-                vector = this.GetPositionToSnap(this.currentLocationIndex);
-            }
-            this.mapPointerWidget.transform.localPosition = vector;
+            if (hoverLocation >= 0)
+                mousePos = this.GetPositionToSnap(this.currentLocationIndex);
+            this.mapPointerWidget.transform.localPosition = mousePos;
         }
     }
 
@@ -146,20 +127,14 @@ public class WorldHUD : UIScene
         if (base.OnKeyConfirm(go) && this.currentState == WorldHUD.State.FullMap)
         {
             BubbleUI instance = Singleton<BubbleUI>.Instance;
-            Boolean flag;
+            Boolean allowAutoPilot = true;
             if (FF9StateSystem.MobilePlatform)
             {
                 SourceControl source = PersistenSingleton<HonoInputManager>.Instance.GetSource(Control.Confirm);
-                flag = (instance.helpButton.gameObject.Equals(go) || instance.primaryButton.Equals(go) || source == SourceControl.Joystick || source == SourceControl.KeyBoard);
+                allowAutoPilot = instance.helpButton.gameObject.Equals(go) || instance.primaryButton.Equals(go) || source == SourceControl.Joystick || source == SourceControl.KeyBoard;
             }
-            else
-            {
-                flag = true;
-            }
-            if (flag && this.currentLocationIndex != -1 && this.CheckUsingAirShip() && !Singleton<VirtualAnalog>.Instance.IsShown && !this.ignorePointerProcess)
-            {
+            if (allowAutoPilot && this.currentLocationIndex >= 0 && this.CheckUsingAirShip() && !Singleton<VirtualAnalog>.Instance.IsShown && !this.ignorePointerProcess)
                 this.ProcessTouchedLocation();
-            }
         }
         return true;
     }
@@ -167,9 +142,7 @@ public class WorldHUD : UIScene
     public override Boolean OnKeyCancel(GameObject go)
     {
         if (base.OnKeyCancel(go) && this.currentCharacterStateIndex == 0 && this.currentState != WorldHUD.State.FullMap && !Singleton<BubbleUI>.Instance.beachButton.gameObject.activeInHierarchy && UIManager.Input.ContainsAndroidQuitKey())
-        {
             UIManager.Input.OnQuitCommandDetected();
-        }
         return true;
     }
 
@@ -180,9 +153,7 @@ public class WorldHUD : UIScene
             if (this.currentState == WorldHUD.State.HUD || this.currentState == WorldHUD.State.HUDNoMiniMap)
             {
                 if (PersistenSingleton<UIManager>.Instance.Dialogs.Visible && !EventCollision.IsRidingChocobo())
-                {
                     PersistenSingleton<UIManager>.Instance.HideAllHUD();
-                }
                 if (this.currentCharacterStateIndex == 0)
                 {
                     this.Hide(delegate
@@ -237,14 +208,10 @@ public class WorldHUD : UIScene
     {
         if (base.OnKeySelect(go))
         {
-            if (ff9.w_moveMogPtr != (UnityEngine.Object)null && PersistenSingleton<EventEngine>.Instance.objIsVisible(ff9.w_moveMogPtr.originalActor))
-            {
+            if (ff9.w_moveMogPtr != null && PersistenSingleton<EventEngine>.Instance.objIsVisible(ff9.w_moveMogPtr.originalActor))
                 return false;
-            }
-            if (!PersistenSingleton<SceneDirector>.Instance.PendingNextScene.Equals(string.Empty) || !PersistenSingleton<SceneDirector>.Instance.PendingCurrentScene.Equals(string.Empty))
-            {
+            if (!PersistenSingleton<SceneDirector>.Instance.PendingNextScene.Equals(String.Empty) || !PersistenSingleton<SceneDirector>.Instance.PendingCurrentScene.Equals(String.Empty))
                 return false;
-            }
             if (this.isSelectEnable)
             {
                 if (!FF9StateSystem.Battle.isEncount && this.currentState == WorldHUD.State.HUD && this.enableMapButton)
@@ -271,7 +238,7 @@ public class WorldHUD : UIScene
                 else if (this.currentState == WorldHUD.State.FullMap)
                 {
                     this.currentState = WorldHUD.State.HUDNoMiniMap;
-                    PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(true, (Action)null);
+                    PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(true, null);
                     ff9.w_naviMode = 0;
                     this.SetButtonVisible(true);
                     this.FullMapPanel.SetActive(false);
@@ -283,7 +250,7 @@ public class WorldHUD : UIScene
                 else if (this.currentState == WorldHUD.State.HUDNoMiniMap && this.enableMapButton)
                 {
                     this.currentState = WorldHUD.State.HUD;
-                    PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(true, (Action)null);
+                    PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(true, null);
                     ff9.w_naviMode = 1;
                     this.SetButtonVisible(true);
                     this.MiniMapPanel.SetActive(true);
@@ -302,7 +269,7 @@ public class WorldHUD : UIScene
         {
             if (isPress)
             {
-                PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(false, (Action)null);
+                PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(false, null);
                 if (go == this.moveLeftGameObject)
                 {
                     this.moveRightGameObject.GetComponent<UIButton>().enabled = false;
@@ -316,7 +283,7 @@ public class WorldHUD : UIScene
             }
             else
             {
-                PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(true, (Action)null);
+                PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(true, null);
                 if (go == this.moveLeftGameObject)
                 {
                     this.moveRightGameObject.GetComponent<UIButton>().enabled = true;
@@ -336,16 +303,7 @@ public class WorldHUD : UIScene
     private void OnFullMapHover(GameObject go, Boolean isHover)
     {
         if (this.currentState == WorldHUD.State.FullMap)
-        {
-            if (isHover)
-            {
-                this.controlPointEnable = true;
-            }
-            else
-            {
-                this.controlPointEnable = false;
-            }
-        }
+            this.controlPointEnable = isHover;
     }
 
     private void OnFullMapNavigator(GameObject go, KeyCode key)
@@ -357,41 +315,29 @@ public class WorldHUD : UIScene
         if ((HonoInputManager.JoystickEnabled || HonoInputManager.VirtualAnalogEnabled) && PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.WorldHUD)
         {
             if (this.ignorePointerProcess)
-            {
                 return;
-            }
             this.inputAxis = PersistenSingleton<HonoInputManager>.Instance.GetAxis();
             if (this.inputAxis.magnitude > this.directionAnalogThreshold)
             {
                 this.pointerPosition += this.inputAxis * this.pointerSpeed * Time.deltaTime;
                 UICamera.EventWaitTime = Time.deltaTime;
                 if (this.pointerPosition.x > this.FullMapBorder.y)
-                {
                     this.pointerPosition.x = this.FullMapBorder.x;
-                }
                 else if (this.pointerPosition.x < this.FullMapBorder.x)
-                {
                     this.pointerPosition.x = this.FullMapBorder.y;
-                }
                 if (this.pointerPosition.y > this.FullMapBorder.w)
-                {
                     this.pointerPosition.y = this.FullMapBorder.z;
-                }
                 else if (this.pointerPosition.y < this.FullMapBorder.z)
-                {
                     this.pointerPosition.y = this.FullMapBorder.w;
-                }
                 Vector3 positionToSnap = this.pointerPosition;
-                Int32 num = this.DetectLocation(positionToSnap);
-                if (this.currentLocationIndex != num)
+                Int32 locationIndex = this.DetectLocation(positionToSnap);
+                if (this.currentLocationIndex != locationIndex)
                 {
-                    this.currentLocationIndex = num;
+                    this.currentLocationIndex = locationIndex;
                     this.DisplayLocationName(this.currentLocationIndex);
                 }
-                if (num != -1)
-                {
+                if (locationIndex != -1)
                     positionToSnap = this.GetPositionToSnap(this.currentLocationIndex);
-                }
                 this.mapPointerWidget.transform.localPosition = positionToSnap;
             }
         }
@@ -399,22 +345,18 @@ public class WorldHUD : UIScene
 
     private Int32 DetectLocation(Vector3 onScreenPosition)
     {
-        Int32 result = -1;
-        Single num = Single.PositiveInfinity;
+        Int32 locationIndex = -1;
+        Single bestDist = Single.PositiveInfinity;
         foreach (WorldHUD.LocationPostionHudData locationPostionHudData in this.locationPointerList)
         {
-            Single num2 = locationPostionHudData.DistanceTo(onScreenPosition - this.referencePosition);
-            if (num2 < num)
+            Single dist = locationPostionHudData.DistanceTo(onScreenPosition - this.referencePosition);
+            if (dist < this.snapRadius && dist < bestDist)
             {
-                num = num2;
-                Int32 siblingIndex = locationPostionHudData.gameobject.transform.GetSiblingIndex();
-            }
-            if (num2 < this.snapRadius)
-            {
-                result = locationPostionHudData.gameobject.transform.GetSiblingIndex();
+                locationIndex = locationPostionHudData.gameobject.transform.GetSiblingIndex();
+                bestDist = dist;
             }
         }
-        return result;
+        return locationIndex;
     }
 
     private void OnLocationHover(GameObject go, Boolean isHover)
@@ -431,24 +373,24 @@ public class WorldHUD : UIScene
         }
     }
 
-    private void OnLocaltionClick(GameObject go)
+    private void OnLocationClick(GameObject go)
     {
         if (this.currentState == WorldHUD.State.FullMap && (FF9StateSystem.MobilePlatform || FF9StateSystem.PCPlatform))
         {
-            Int32 num = 0;
-            Int32 num2 = -1;
+            Int32 index = 0;
+            Int32 locationIndex = -1;
             foreach (WorldHUD.LocationPostionHudData locationPostionHudData in this.locationPointerList)
             {
-                if (locationPostionHudData.gameobject.transform.position.Equals(go.transform.position))
+                if (locationPostionHudData.gameobject.transform.position == go.transform.position)
                 {
-                    num2 = num;
+                    locationIndex = index;
                     break;
                 }
-                num++;
+                index++;
             }
-            if (num2 != -1 && this.currentLocationIndex != num2)
+            if (locationIndex >= 0 && this.currentLocationIndex != locationIndex)
             {
-                this.currentLocationIndex = num2;
+                this.currentLocationIndex = locationIndex;
                 this.mapPointerWidget.transform.localPosition = this.GetPositionToSnap(this.currentLocationIndex);
                 this.DisplayLocationName(this.currentLocationIndex);
             }
@@ -459,7 +401,7 @@ public class WorldHUD : UIScene
     {
         if (choice == 0)
         {
-            ff9.w_frameAutoid = (Int32)((Byte)this.navigateLocationIndex);
+            ff9.w_frameAutoid = (Byte)this.navigateLocationIndex;
             ff9.w_frameSetParameter(34, 0);
             ff9.w_naviMode = 0;
             this.currentState = WorldHUD.State.HUD;
@@ -491,7 +433,7 @@ public class WorldHUD : UIScene
         PersistenSingleton<EventEngine>.Instance.SetUserControl(true);
         PersistenSingleton<EventEngine>.Instance.eBin.setVarManually(9173, 0);
         Singleton<BubbleUI>.Instance.SetGameObjectActive(false);
-        PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(true, (Action)null);
+        PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(true, null);
         PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(true);
     }
 
@@ -503,14 +445,7 @@ public class WorldHUD : UIScene
         this.mapHelpButtonGameObject.SetActive(isActive && FF9StateSystem.MobilePlatform);
         this.mapRightBumperGameObject.SetActive(isActive && FF9StateSystem.MobilePlatform);
         this.mapLeftBumperGameObject.SetActive(isActive && FF9StateSystem.MobilePlatform);
-        if (!isActive)
-        {
-            this.DisplayLocationName(-1);
-        }
-        else
-        {
-            this.DisplayLocationName(this.currentLocationIndex);
-        }
+        this.DisplayLocationName(isActive ? this.currentLocationIndex : -1);
     }
 
     private Int32 GetConfirmDialogStartSize()
@@ -538,21 +473,17 @@ public class WorldHUD : UIScene
         }
         else
         {
-            Vector3 vector = (this.currentLocationIndex == -1) ? Vector3.zero : this.locationPointerList[this.currentLocationIndex].gameobject.transform.position;
-            Vector3 rhs = vector;
-            Int32 num = 0;
-            while (vector == rhs)
+            Vector3 currentLocationPos = this.currentLocationIndex < 0 ? Vector3.zero : this.locationPointerList[this.currentLocationIndex].gameobject.transform.position;
+            Vector3 nextLocationPos = currentLocationPos;
+            Int32 loopCounter = 0;
+            while (currentLocationPos == nextLocationPos)
             {
                 if (isPressedLeftBumper)
                 {
                     if (this.currentLocationIndex >= this.locationPointerList.Count - 1)
-                    {
                         this.currentLocationIndex = 0;
-                    }
                     else
-                    {
                         this.currentLocationIndex++;
-                    }
                 }
                 else if (this.currentLocationIndex <= 0)
                 {
@@ -562,12 +493,10 @@ public class WorldHUD : UIScene
                 {
                     this.currentLocationIndex--;
                 }
-                rhs = this.locationPointerList[this.currentLocationIndex].gameobject.transform.position;
-                num++;
-                if (num >= this.locationPointerList.Count)
-                {
+                nextLocationPos = this.locationPointerList[this.currentLocationIndex].gameobject.transform.position;
+                loopCounter++;
+                if (loopCounter >= this.locationPointerList.Count)
                     break;
-                }
             }
         }
     }
@@ -580,8 +509,8 @@ public class WorldHUD : UIScene
             locId = 49; // Chocobo's Paradise (I think)
         this.ShowMapPointer(false);
         String message = Localization.Get("NavigateDialog").Replace("{0}", this.locationName[locId + 1]);
-        Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog($"[{NGUIText.StartSentense}=0,3][{NGUIText.Center}=0]{message}", 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.None);
-        dialog.AfterDialogHidden = new Dialog.DialogIntDelegate(this.OnConfirmNavi);
+        Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog($"[STRT=0,3][CENT=0]{message}", 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.None);
+        dialog.AfterDialogHidden = this.OnConfirmNavi;
         EventInput.IsProcessingInput = false;
     }
 
@@ -808,33 +737,33 @@ public class WorldHUD : UIScene
         Vector2 planePosition = WMUIData.PlanePosition;
         Int32 activeMapNo = WMUIData.ActiveMapNo;
         this.referencePosition = new Vector3(0f, 0f, 0f);
-        Vector3 b = new Vector3(0f, 0f, 0f);
-        Vector2 a = new Vector2((Single)this.mapWidget.width, (Single)this.mapWidget.height);
+        Vector3 mapWidgetOffset = new Vector3(0f, 0f, 0f);
+        Vector2 mapWidgetSize = new Vector2(this.mapWidget.width, this.mapWidget.height);
         if (activeMapNo == 1)
         {
             this.referencePosition = new Vector3(0f, 0f, 0f);
-            b = new Vector3(-18f, 14f, 0f);
-            a -= new Vector2(96f, 80f);
+            mapWidgetOffset = new Vector3(-18f, 14f, 0f);
+            mapWidgetSize -= new Vector2(96f, 80f);
         }
         else
         {
             this.referencePosition = new Vector3(10f, 0f, 0f);
-            b = new Vector3(0f, 32f, 0f);
-            a -= new Vector2(100f, 90f);
+            mapWidgetOffset = new Vector3(0f, 32f, 0f);
+            mapWidgetSize -= new Vector2(100f, 90f);
         }
-        this.mapPlayerPointer.transform.localPosition = new Vector3(a.x * mainCharacterPosition.x, a.y * mainCharacterPosition.y, 0f);
-        this.mapPlayerPointer.transform.localPosition += b;
+        this.mapPlayerPointer.transform.localPosition = new Vector3(mapWidgetSize.x * mainCharacterPosition.x, mapWidgetSize.y * mainCharacterPosition.y, 0f);
+        this.mapPlayerPointer.transform.localPosition += mapWidgetOffset;
         this.mapPlayerPointer.transform.localRotation = Quaternion.Euler(new Vector3(0f, 0f, -mainCharacterRotationY - 90f));
-        this.mapPointerWidget.transform.localPosition = new Vector3(a.x * mainCharacterPosition.x, a.y * mainCharacterPosition.y, 0f);
-        this.mapPointerWidget.transform.localPosition += b;
-        this.mapPlayerVision.transform.localPosition = new Vector3(a.x * cameraPosition.x, a.y * cameraPosition.y, 0f);
-        this.mapPlayerVision.transform.localPosition += b;
+        this.mapPointerWidget.transform.localPosition = new Vector3(mapWidgetSize.x * mainCharacterPosition.x, mapWidgetSize.y * mainCharacterPosition.y, 0f);
+        this.mapPointerWidget.transform.localPosition += mapWidgetOffset;
+        this.mapPlayerVision.transform.localPosition = new Vector3(mapWidgetSize.x * cameraPosition.x, mapWidgetSize.y * cameraPosition.y, 0f);
+        this.mapPlayerVision.transform.localPosition += mapWidgetOffset;
         this.mapPlayerVision.transform.localRotation = Quaternion.Euler(new Vector3(0f, 0f, -cameraRotationY - 90f));
         if (WMUIData.ChocoboIsAvailable)
         {
             this.mapChocoboPointer.gameObject.SetActive(true);
-            this.mapChocoboPointer.transform.localPosition = new Vector3(a.x * chocoboPosition.x, a.y * chocoboPosition.y, 0f);
-            this.mapChocoboPointer.transform.localPosition += b;
+            this.mapChocoboPointer.transform.localPosition = new Vector3(mapWidgetSize.x * chocoboPosition.x, mapWidgetSize.y * chocoboPosition.y, 0f);
+            this.mapChocoboPointer.transform.localPosition += mapWidgetOffset;
         }
         else
         {
@@ -843,8 +772,8 @@ public class WorldHUD : UIScene
         if (WMUIData.PlaneIsAvailable)
         {
             this.mapPlanePointer.gameObject.SetActive(true);
-            this.mapPlanePointer.transform.localPosition = new Vector3(a.x * planePosition.x, a.y * planePosition.y, 0f);
-            this.mapPlanePointer.transform.localPosition += b;
+            this.mapPlanePointer.transform.localPosition = new Vector3(mapWidgetSize.x * planePosition.x, mapWidgetSize.y * planePosition.y, 0f);
+            this.mapPlanePointer.transform.localPosition += mapWidgetOffset;
         }
         else
         {
@@ -854,35 +783,31 @@ public class WorldHUD : UIScene
         this.mapLocationPointerPanel.transform.localPosition = this.referencePosition;
         this.referencePosition += this.pointerOffset;
         this.pointerPosition = this.mapPointerWidget.transform.localPosition;
-        Int32 num = 0;
-        Vector2 vector = new Vector2(12.5f, -12.5f);
+        Int32 locationIndex = 0;
+        Vector2 locationObjectOffset = new Vector2(12.5f, -12.5f);
         for (Int32 i = 0; i < 64; i++)
         {
             ff9.navipos navipos = navigationLocaition[activeMapNo, i];
             if (WMUIData.LocationAvailable(i))
             {
-                if (this.locationPointerList.Count <= num)
+                if (this.locationPointerList.Count <= locationIndex)
                 {
-                    GameObject gameObject = NGUITools.AddChild(this.mapLocationPointerPanel, this.LocationPointerPrefab);
-                    gameObject.name = "Location Pointer#" + i;
-                    gameObject.transform.localPosition = new Vector3(vector.x + (float)navipos.vx * UIManager.ResourceXMultipier, vector.y + ((float)(-(float)navipos.vy) * UIManager.ResourceYMultipier + a.y), 0f);
+                    GameObject locationPositionGo = NGUITools.AddChild(this.mapLocationPointerPanel, this.LocationPointerPrefab);
+                    locationPositionGo.name = "Location Pointer#" + i;
+                    locationPositionGo.transform.localPosition = new Vector3(locationObjectOffset.x + navipos.vx * UIManager.ResourceXMultipier, locationObjectOffset.y - navipos.vy * UIManager.ResourceYMultipier + mapWidgetSize.y, 0f);
                     if (HonoInputManager.MouseEnabled)
-                    {
-                        UIEventListener uieventListener = UIEventListener.Get(gameObject);
-                        uieventListener.onHover = (UIEventListener.BoolDelegate)Delegate.Combine(uieventListener.onHover, new UIEventListener.BoolDelegate(this.OnLocationHover));
-                    }
-                    UIEventListener uieventListener2 = UIEventListener.Get(gameObject);
-                    uieventListener2.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener2.onClick, new UIEventListener.VoidDelegate(this.OnLocaltionClick));
-                    this.locationPointerList.Add(new WorldHUD.LocationPostionHudData(gameObject, i));
+                        UIEventListener.Get(locationPositionGo).onHover += this.OnLocationHover;
+                    UIEventListener.Get(locationPositionGo).onClick += this.OnLocationClick;
+                    this.locationPointerList.Add(new WorldHUD.LocationPostionHudData(locationPositionGo, i));
                 }
                 else
                 {
-                    WorldHUD.LocationPostionHudData locationPostionHudData = this.locationPointerList[num];
+                    WorldHUD.LocationPostionHudData locationPostionHudData = this.locationPointerList[locationIndex];
                     locationPostionHudData.gameobject.name = "Location Pointer#" + i;
                     locationPostionHudData.locationId = i;
-                    locationPostionHudData.transform.localPosition = new Vector3(vector.x + (float)navipos.vx * UIManager.ResourceXMultipier, vector.y + ((float)(-(float)navipos.vy) * UIManager.ResourceYMultipier + a.y), 0f);
+                    locationPostionHudData.transform.localPosition = new Vector3(locationObjectOffset.x + navipos.vx * UIManager.ResourceXMultipier, locationObjectOffset.y - navipos.vy * UIManager.ResourceYMultipier + mapWidgetSize.y, 0f);
                 }
-                num++;
+                locationIndex++;
             }
         }
     }

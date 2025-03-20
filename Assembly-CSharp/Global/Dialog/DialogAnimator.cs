@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 
 public class DialogAnimator : MonoBehaviour
@@ -42,19 +43,19 @@ public class DialogAnimator : MonoBehaviour
     public void ShowDialog()
     {
         this.progress = 0.3f;
-        base.StartCoroutine("StartShowDialog");
+        base.StartCoroutine(StartShowDialog());
     }
 
     public void HideDialog()
     {
         this.progress = 0f;
         if (base.gameObject.activeInHierarchy)
-            base.StartCoroutine("StartHideDialog");
+            base.StartCoroutine(StartHideDialog());
     }
 
     public void ShowNewPage()
     {
-        base.StartCoroutine("StartShowNewPage");
+        base.StartCoroutine(StartShowNewPage());
     }
 
     private IEnumerator StartShowDialog()
@@ -73,7 +74,7 @@ public class DialogAnimator : MonoBehaviour
         {
             while (this.pauseAnimation)
                 yield return new WaitForEndOfFrame();
-            while ((FF9StateSystem.Field.FF9Field.attr & 1u) != 0u && this.dialog.Id != 9 && (MBG.IsNull || !MBG.Instance.isFMV055A))
+            while ((FF9StateSystem.Field.FF9Field.attr & 1u) != 0u && this.dialog.Id != DialogManager.UIDialogId && (MBG.IsNull || !MBG.Instance.isFMV055A))
             {
                 this.borderSprite.alpha = 0f;
                 this.tailSprite.alpha = 0f;
@@ -113,13 +114,11 @@ public class DialogAnimator : MonoBehaviour
         this.bodySprite.width = (Int32)this.dialog.Size.x;
         this.bodySprite.height = (Int32)this.dialog.Size.y;
         this.clipPanel.baseClipRegion = new Vector4(this.clipPanel.baseClipRegion.x, this.getCenterValue(this.dialog.Tail, 1f), this.dialog.ClipSize.x, this.dialog.ClipSize.y);
-        if (!this.dialog.IsETbDialog)
-            this.dialog.CurrentParser.ResetBeforeVariableTags(); // UI dialogs sometimes need to wrap their text after the frame grew to their full size
         this.dialog.CurrentState = Dialog.State.TextAnimation;
         if (this.dialog.TypeEffect)
             this.phraseTextEffect.SetActive(true, true);
         else
-            this.dialog.CurrentParser.AdvanceProgress(this.dialog.CurrentParser.AppearProgressMax);
+            this.dialog.CurrentParser.AdvanceProgressToMax();
         yield return new WaitForEndOfFrame();
         this.pauseAnimation = false;
         this.dialog.AfterShown();
@@ -136,7 +135,7 @@ public class DialogAnimator : MonoBehaviour
         }
         else
         {
-            this.phraseLabel.Parser.AdvanceProgress(this.phraseLabel.Parser.AppearProgressMax);
+            this.phraseLabel.Parser.AdvanceProgressToMax();
             this.dialog.CurrentState = Dialog.State.CompleteAnimation;
         }
         yield break;

@@ -949,7 +949,7 @@ public class ConfigUI : UIScene
                 else if (go.GetParent().GetParent() == configScrollView.gameObject && !cursorInList)
                 {
                     cursorInList = true;
-                    ButtonGroupState.SetPointerLimitRectToGroup(new Vector4(-745f, -170f, -665f, 321f), ConfigGroupButton);
+                    ButtonGroupState.SetPointerLimitRectToGroup(ConfigList.GetComponent<UIWidget>(), configScrollView.ItemHeight, ConfigGroupButton);
                     ButtonGroupState.UpdatePointerPropertyForGroup(ConfigGroupButton);
                     ButtonGroupState.UpdateActiveButton();
                 }
@@ -1644,9 +1644,10 @@ public class ConfigUI : UIScene
         else
         {
             ConfigFieldList[ConfigFieldList.Count - 1].ConfigParent.GetComponent<UIKeyNavigation>().onDown = masterSkillButtonGameObject;
+            BoosterPanel.GetChild(4).GetChild(4).GetComponent<UILabel>().rightAnchor.Set(1f, -28);
         }
-
         background = new GOMenuBackground(transform.GetChild(8).gameObject, "config_bg");
+        ConfigList.GetChild(2).GetChild(4).GetChild(0).GetComponent<UILabel>().rightAnchor.Set(1f, -28);
     }
 
     private class GOConfigSliderMinMax : GOWidget

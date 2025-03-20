@@ -24,7 +24,7 @@ namespace Memoria.Assets
 
         /// <summary>Text with ligatures, join characters and mirrored characters</summary>
         public readonly List<Char> FullText;
-        /// <summary>Sorted list of directional blocks (each block must be rendered after the previous)</summary>
+        /// <summary>Sorted list of directional blocks (each block must be rendered right of the previous one)</summary>
         public readonly List<DirectionBlock> Directions;
 
         public UnicodeBIDI(Char[] text, LanguageReadingDirection paragraphDirection, DigitShapes digitShapes = DigitShapes.Latin)
@@ -246,6 +246,53 @@ namespace Memoria.Assets
                     Directions[i] = dir;
                 }
             }
+        }
+
+        public void RegisterWrappingNewLines(List<Int32> newLineIndices, LanguageReadingDirection paragraphDirection)
+        {
+            if (newLineIndices.Count == 0)
+                return;
+            HashSet<Int32> nlProcessed = new HashSet<Int32>();
+            foreach (Int32 index in newLineIndices)
+            {
+                Int32 blockSplit = Directions.FindIndex(block => index >= block.start && index < block.end);
+                if (blockSplit < 0)
+                    continue;
+                DirectionBlock beforeBlock = Directions[blockSplit];
+                DirectionBlock afterBlock = new DirectionBlock(beforeBlock.ltr, index + 1, beforeBlock.end);
+                beforeBlock.end = index;
+                Directions.Insert(beforeBlock.ltr ? blockSplit + 1 : blockSplit, afterBlock);
+                if (paragraphDirection == LanguageReadingDirection.RightToLeft)
+                {
+                    // RTL paragraph: all the blocks on the splitted line that were left of the splitting point are now moved to the next line, and should thus be placed after all the blocks that were on their right
+                    Int32 leftBlockStart = blockSplit;
+                    Int32 rightBlockEnd = blockSplit + 1;
+                    while (leftBlockStart > 0 && !DirectionBlockEndsLineLeft(leftBlockStart, nlProcessed))
+                        leftBlockStart--;
+                    while (rightBlockEnd + 1 < Directions.Count && !DirectionBlockEndsLineRight(rightBlockEnd, nlProcessed))
+                        rightBlockEnd++;
+                    List<DirectionBlock> leftBlockList = new List<DirectionBlock>(blockSplit - leftBlockStart + 1);
+                    for (Int32 i = leftBlockStart; i <= blockSplit; i++)
+                        leftBlockList.Add(Directions[leftBlockStart]);
+                    Directions.RemoveRange(leftBlockStart, blockSplit - leftBlockStart + 1);
+                    Directions.InsertRange(rightBlockEnd + leftBlockStart - blockSplit, leftBlockList);
+                }
+                nlProcessed.Add(index);
+            }
+        }
+
+        private Boolean DirectionBlockEndsLineLeft(Int32 blockIndex, HashSet<Int32> newLineIndices)
+        {
+            if (Directions[blockIndex].ltr)
+                return Directions[blockIndex].start == 0 || (FullText[Directions[blockIndex].start - 1] == '\n' || newLineIndices.Contains(Directions[blockIndex].start - 1));
+            return Directions[blockIndex].end == FullText.Count || (FullText[Directions[blockIndex].end] == '\n' || newLineIndices.Contains(Directions[blockIndex].end));
+        }
+
+        private Boolean DirectionBlockEndsLineRight(Int32 blockIndex, HashSet<Int32> newLineIndices)
+        {
+            if (Directions[blockIndex].ltr)
+                return Directions[blockIndex].end == FullText.Count || (FullText[Directions[blockIndex].end] == '\n' || newLineIndices.Contains(Directions[blockIndex].end));
+            return Directions[blockIndex].start == 0 || (FullText[Directions[blockIndex].start - 1] == '\n' || newLineIndices.Contains(Directions[blockIndex].start - 1));
         }
 
         private void ApplyWordJoining(ref Int32 index)

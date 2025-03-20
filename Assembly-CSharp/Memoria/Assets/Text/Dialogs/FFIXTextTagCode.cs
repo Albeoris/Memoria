@@ -75,6 +75,8 @@ namespace Memoria.Assets
         Grey,
         /// <summary>[BCOL=?,?,?,?]...[/BCOL]</summary>
         BackgroundRGBA,
+        /// <summary>[FONT=?]</summary>
+        ChangeFont,
 
         /// <summary>[INCS][TIME=-1]</summary>
         IncreaseSignal,
@@ -106,11 +108,11 @@ namespace Memoria.Assets
         DialogPosition,
         /// <summary>[STRT=?,?]</summary>
         DialogSize,
-        /// <summary>[YADD]</summary>
+        /// <summary>[YADD=?] or [YSUB=?]</summary>
         DialogY,
-        /// <summary>[XTAB]</summary>
+        /// <summary>[XTAB=?]</summary>
         DialogX,
-        /// <summary>[FEED]</summary>
+        /// <summary>[FEED=?]</summary>
         DialogF,
         /// <summary>[MPOS=?,?]</summary>
         Position,
@@ -230,6 +232,8 @@ namespace Memoria.Assets
         Mobile,
         /// <summary>[SPED=?]</summary>
         Speed,
+        /// <summary>[ANIM=?,?,?...]</summary>
+        TagAnimation,
         /// <summary>[WDTH=?,?,?...]</summary>
         Widths,
         /// <summary>[OFFT=?,?,?]</summary>
