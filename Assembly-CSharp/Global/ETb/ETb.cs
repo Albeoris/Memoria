@@ -21,7 +21,7 @@ public static class ETb
     {
         ETb.sChoose = 0;
         DialogManager.SelectChoice = ETb.sChoose;
-        ETb.sChooseMaskInit = -1;
+        ETb.sChooseMask = -1;
         ETb.sChooseInit = 0;
         ETb.gMesCount = 0;
         EventInput.IsNeedAddStartSignal = false;
@@ -92,26 +92,9 @@ public static class ETb
         if (ETb.IsSkipped(instance, mes, winID, flags, targetPo))
             return;
         ETb.DisposWindowByID(winID, true);
-        Dialog.CaptionType captionType = Dialog.CaptionType.None;
-        Dialog.WindowStyle windowStyle;
-        if ((flags & ETb.WindowChatStyle) > 0)
-        {
-            windowStyle = Dialog.WindowStyle.WindowStyleAuto;
-        }
-        else
-        {
-            windowStyle = Dialog.WindowStyle.WindowStylePlain;
-            if ((flags & ETb.winMOG) > 0)
-                captionType = Dialog.CaptionType.Mognet;
-            else if ((flags & ETb.winATE) > 0)
-                captionType = Dialog.CaptionType.ActiveTimeEvent;
-        }
-        if (windowStyle == Dialog.WindowStyle.WindowStylePlain)
+        ETb.FlagsToStyles(flags, out Dialog.WindowStyle windowStyle, out Dialog.CaptionType captionType);
+        if (windowStyle != Dialog.WindowStyle.WindowStyleAuto)
             targetPo = null;
-        if ((flags & ETb.WindowTransparentStyle) > 0)
-            windowStyle = Dialog.WindowStyle.WindowStyleTransparent;
-        else if ((flags & ETb.WindowChatStyleWithoutTail) > 0)
-            windowStyle = Dialog.WindowStyle.WindowStyleNoTail;
         if ((flags & ETb.ResetChooseMask) <= 0)
         {
             ETb.sChoose = ETb.sChooseInit;
@@ -179,6 +162,43 @@ public static class ETb
         ETb.FixChocoAccidenlyFly(dialog);
     }
 
+    public static void FlagsToStyles(Int32 flags, out Dialog.WindowStyle winStyle, out Dialog.CaptionType captionType)
+    {
+        captionType = Dialog.CaptionType.None;
+        if ((flags & ETb.WindowChatStyle) > 0)
+        {
+            winStyle = Dialog.WindowStyle.WindowStyleAuto;
+        }
+        else
+        {
+            winStyle = Dialog.WindowStyle.WindowStylePlain;
+            if ((flags & ETb.winMOG) > 0)
+                captionType = Dialog.CaptionType.Mognet;
+            else if ((flags & ETb.winATE) > 0)
+                captionType = Dialog.CaptionType.ActiveTimeEvent;
+        }
+        if ((flags & ETb.WindowTransparentStyle) > 0)
+            winStyle = Dialog.WindowStyle.WindowStyleTransparent;
+        else if ((flags & ETb.WindowChatStyleWithoutTail) > 0)
+            winStyle = Dialog.WindowStyle.WindowStyleNoTail;
+    }
+
+    public static Int32 StylesToFlag(Dialog.WindowStyle winStyle, Dialog.CaptionType captionType)
+    {
+        Int32 flags = 0;
+        if (winStyle == Dialog.WindowStyle.WindowStyleAuto)
+            flags |= ETb.WindowChatStyle;
+        else if (winStyle == Dialog.WindowStyle.WindowStyleTransparent)
+            flags |= ETb.WindowTransparentStyle;
+        else if (winStyle == Dialog.WindowStyle.WindowStyleNoTail)
+            flags |= ETb.WindowChatStyleWithoutTail;
+        if (captionType == Dialog.CaptionType.Mognet)
+            flags |= ETb.winMOG;
+        else if (captionType == Dialog.CaptionType.ActiveTimeEvent)
+            flags |= ETb.winATE;
+        return flags;
+    }
+
     public static Boolean MesWinActive(Int32 num)
     {
         return Singleton<DialogManager>.Instance.CheckDialogShowing(num);
@@ -225,7 +245,7 @@ public static class ETb
 
     public static void SetChooseParam(Int32 availMask, Int32 initAbsoluteOptionIndex)
     {
-        ETb.sChooseMaskInit = availMask;
+        ETb.sChooseMask = availMask;
         Int32 initAvailOptionIndex = -1;
         while (initAbsoluteOptionIndex >= 0 && availMask > 0)
         {
@@ -247,18 +267,17 @@ public static class ETb
 
     public static String GetStringFromTable(UInt32 bank, UInt32 index)
     {
-        String result = String.Empty;
-        if (bank < 4u && index < 8u)
+        if (index < 8u)
         {
             String[] tableText = FF9TextTool.GetTableText(bank);
             if (tableText != null)
             {
                 Int32 tableIndex = ETb.gMesValue[index];
                 if (tableIndex < tableText.Length)
-                    result = tableText[tableIndex];
+                    return tableText[tableIndex];
             }
         }
-        return result;
+        return String.Empty;
     }
 
     private static Boolean IsSkipped(EventEngine eventEngine, Int32 mes, Int32 winID, Int32 flags, PosObj targetPo)
@@ -481,9 +500,8 @@ public static class ETb
 
     public static Int32 gMesSignal;
     public static Int32 sChoose;
-    public static Int32 sChooseMaskInit = -1;
-    public static Int32 sChooseInit;
     public static Int32 sChooseMask = -1;
+    public static Int32 sChooseInit;
 
     private static Single lastPlaySound;
     private static Int32 LastATEDialogID = -1;

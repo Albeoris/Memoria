@@ -158,10 +158,10 @@ public class ConfigUI : UIScene
     public GameObject TransitionGroup;
     public GameObject ControlPanelGroup;
 
-    private static String ConfigGroupButton = "Config.Config";
-    private static String WarningMenuGroupButton = "Config.Warning";
-    private static String CustomControllerGroupButton = "Config.Controller";
-    private static String ControllerTypeGroupButton = "Config.ControllerType";
+    private const String ConfigGroupButton = "Config.Config";
+    private const String WarningMenuGroupButton = "Config.Warning";
+    private const String CustomControllerGroupButton = "Config.Controller";
+    private const String ControllerTypeGroupButton = "Config.ControllerType";
 
     private static List<Configurator> ConfigSliderIdList = new List<Configurator>(new[]
     {
@@ -192,6 +192,12 @@ public class ConfigUI : UIScene
     private GameObject lvMaxButtonGameObject;
     private GameObject gilMaxButtonGameObject;
     private GameObject backButtonGameObject;
+    [NonSerialized]
+    private GOConfigSliderMinMax fieldMessageSlider;
+    [NonSerialized]
+    private GOConfigSliderMinMax battleSpeedSlider;
+    [NonSerialized]
+    private GOFrameBackground warningBackground;
     [NonSerialized]
     private GOMenuBackground background;
 
@@ -337,12 +343,8 @@ public class ConfigUI : UIScene
     private void InitializeCustomControllerJoystick()
     {
         GameObject buttonPanel = FF9StateSystem.MobilePlatform ? CustomControllerMobilePanel : CustomControllerJoystickPanel;
-        if (FF9StateSystem.MobilePlatform)
-        {
-            buttonPanel = this.CustomControllerMobilePanel;
-            if (FF9StateSystem.AndroidTVPlatform)
-                buttonPanel.GetChild(2).GetChild(0).GetComponent<UILocalize>().key = "AndroidTVControlPressStart";
-        }
+        if (FF9StateSystem.MobilePlatform && FF9StateSystem.AndroidTVPlatform)
+            buttonPanel.GetChild(2).GetChild(0).GetComponent<UILocalize>().key = "AndroidTVControlPressStart";
         customControllerCount = buttonPanel.GetChild(0).transform.childCount;
         foreach (Transform trans in buttonPanel.GetChild(0).transform)
         {
@@ -706,6 +708,7 @@ public class ConfigUI : UIScene
                         ButtonGroupState.RemoveCursorMemorize(WarningMenuGroupButton);
                         ButtonGroupState.ActiveGroup = WarningMenuGroupButton;
                         ButtonGroupState.HoldActiveStateOnGroup(ConfigGroupButton);
+                        warningBackground.Caption.Label.Parser.ResetBeforeVariableTags();
                     });
                 }
                 else if (config?.Configurator == Configurator.ControlTutorial)
@@ -946,7 +949,7 @@ public class ConfigUI : UIScene
                 else if (go.GetParent().GetParent() == configScrollView.gameObject && !cursorInList)
                 {
                     cursorInList = true;
-                    ButtonGroupState.SetPointerLimitRectToGroup(new Vector4(-745f, -170f, -665f, 321f), ConfigGroupButton);
+                    ButtonGroupState.SetPointerLimitRectToGroup(ConfigList.GetComponent<UIWidget>(), configScrollView.ItemHeight, ConfigGroupButton);
                     ButtonGroupState.UpdatePointerPropertyForGroup(ConfigGroupButton);
                     ButtonGroupState.UpdateActiveButton();
                 }
@@ -1289,7 +1292,7 @@ public class ConfigUI : UIScene
                 else if (configField.Configurator >= Configurator.SoundVolume)
                 {
                     // Update the label with the volume value
-                    configField.ConfigParent.GetChild(1).GetChild(0).GetComponent<UILabel>().text = ((Int32)Math.Round(configField.Value * 20) * 5).ToString();
+                    configField.ConfigParent.GetChild(1).GetChild(0).GetComponent<UILabel>().rawText = ((Int32)Math.Round(configField.Value * 20) * 5).ToString();
                 }
                 if (configField.Value == previousValue)
                     playSound = false;
@@ -1551,6 +1554,10 @@ public class ConfigUI : UIScene
             {
                 configField.ConfigChoice.Add(trans.GetChild(1).GetChild(1).gameObject);
                 configField.IsSlider = true;
+                if (configField.Configurator == Configurator.FieldMessage)
+                    fieldMessageSlider = new GOConfigSliderMinMax(trans.GetChild(1).gameObject);
+                else if (configField.Configurator == Configurator.BattleSpeed)
+                    battleSpeedSlider = new GOConfigSliderMinMax(trans.GetChild(1).gameObject);
                 UIEventListener.Get(configField.ConfigChoice[0]).onSelect += OnSelectValue;
             }
             else if (configField.Configurator == Configurator.Title)
@@ -1586,9 +1593,9 @@ public class ConfigUI : UIScene
         }
 
         // Update onUp and onDown
-        for (int i = 0; i < ConfigFieldList.Count; i++)
+        for (Int32 i = 0; i < ConfigFieldList.Count; i++)
         {
-            var navig = ConfigFieldList[i].ConfigParent.GetComponent<UIKeyNavigation>();
+            UIKeyNavigation navig = ConfigFieldList[i].ConfigParent.GetComponent<UIKeyNavigation>();
             navig.onUp = null;
             if (i > 1) navig.onUp = ConfigFieldList[i - 1].ConfigParent;
             navig.onDown = null;
@@ -1601,8 +1608,6 @@ public class ConfigUI : UIScene
         configScrollButton = ConfigList.GetChild(0).GetComponent<ScrollButton>();
         configScrollView = ConfigList.GetChild(1).GetComponent<SnapDragScrollView>();
         configScrollView.MaxItem = ConfigFieldList.Count;
-        UIEventListener.Get(WarningDialog.GetChild(0).GetChild(2)).onClick += onClick;
-        UIEventListener.Get(WarningDialog.GetChild(0).GetChild(3)).onClick += onClick;
         warningTransition = TransitionGroup.GetChild(0).GetComponent<HonoTweenClipping>();
         hitpointScreenButton = WarningDialogHitPoint.GetChild(0).GetComponent<OnScreenButton>();
         UIEventListener.Get(KeyboardButton).onClick += onClick;
@@ -1622,11 +1627,16 @@ public class ConfigUI : UIScene
         configScrollButton.DisplayScrollButton(false, false);
         transform.GetChild(3).GetChild(4).gameObject.SetActive(false);
         backButtonGameObject = ControlPanelGroup.GetChild(1);
+        UIScene.SetupYesNoLabels(WarningDialog.transform, WarningDialog.GetChild(0).GetChild(2), WarningDialog.GetChild(0).GetChild(3), onClick);
+        warningBackground = new GOFrameBackground(WarningDialog.GetChild(1));
+        masterSkillLabel.overflowMethod = UILabel.Overflow.ShrinkContent;
+        lvMaxLabel.overflowMethod = UILabel.Overflow.ShrinkContent;
+        gilMaxLabel.overflowMethod = UILabel.Overflow.ShrinkContent;
 
         // If the cheats of the Configuration menu are disabled, remove them and expand the ConfigList menu
         if (!Configuration.Cheats.MasterSkill && !Configuration.Cheats.LvMax && !Configuration.Cheats.GilMax)
         {
-            ConfigList.GetComponent<UIWidget>().bottomAnchor.SetVertical(this.ConfigList.GetComponent<UIWidget>().cachedTransform.parent, -940f);
+            ConfigList.GetComponent<UIWidget>().bottomAnchor.SetVertical(ConfigList.GetComponent<UIWidget>().cachedTransform.parent, -940f);
             BoosterPanel.SetActive(false);
             Destroy(BoosterPanel);
             configScrollView.VisibleItem += 2;
@@ -1634,8 +1644,28 @@ public class ConfigUI : UIScene
         else
         {
             ConfigFieldList[ConfigFieldList.Count - 1].ConfigParent.GetComponent<UIKeyNavigation>().onDown = masterSkillButtonGameObject;
+            BoosterPanel.GetChild(4).GetChild(4).GetComponent<UILabel>().rightAnchor.Set(1f, -28);
         }
+        background = new GOMenuBackground(transform.GetChild(8).gameObject, "config_bg");
+        ConfigList.GetChild(2).GetChild(4).GetChild(0).GetComponent<UILabel>().rightAnchor.Set(1f, -28);
+    }
 
-        background = new GOMenuBackground(this.transform.GetChild(8).gameObject, "config_bg");
+    private class GOConfigSliderMinMax : GOWidget
+    {
+        public GOLocalizableLabel MinLabel;
+        public GOSlider Config;
+        public GOLocalizableLabel MaxLabel;
+        public UISprite Highlight;
+        public GOThinBackground Background;
+
+        public GOConfigSliderMinMax(GameObject go) : base(go)
+        {
+            MinLabel = new GOLocalizableLabel(go.GetChild(0));
+            Config = new GOSlider(go.GetChild(1));
+            MaxLabel = new GOLocalizableLabel(go.GetChild(2));
+            Highlight = go.GetChild(3).GetComponent<UISprite>();
+            Background = new GOThinBackground(go.GetChild(4));
+            MaxLabel.Label.fixedAlignment = true;
+        }
     }
 }

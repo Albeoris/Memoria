@@ -138,8 +138,8 @@ public sealed class NameSettingUI : UIScene
     private void SetData()
     {
         Background.sprite2D = AssetManager.Load<Sprite>("EmbeddedAsset/UI/Sprites/" + GetBackgroundSpritePath(), false);
-        MaxCharacterLabel.text = Localization.Get("MaxCharacters") + (Application.platform != RuntimePlatform.WindowsPlayer ? String.Empty : Localization.Get("MaxCharacters2"));
-        CharacterProfile.text = FF9TextTool.CharacterProfile(_subNumber);
+        MaxCharacterLabel.rawText = Localization.Get("MaxCharacters") + (Application.platform != RuntimePlatform.WindowsPlayer ? String.Empty : Localization.Get("MaxCharacters2"));
+        CharacterProfile.rawText = FF9TextTool.CharacterProfile(_subNumber);
         NameInputField.value = _isDefaultName ? FF9TextTool.CharacterDefaultName(SubNo) : FF9StateSystem.Common.FF9.GetPlayer(SubNo).Name;
     }
 
@@ -156,22 +156,29 @@ public sealed class NameSettingUI : UIScene
 
     public void SetCharacterName()
     {
-        FF9StateSystem.Common.FF9.GetPlayer(SubNo).Name = NameInputField.value;
+        FF9StateSystem.Common.FF9.GetPlayer(SubNo).Name = NameInputField.value.Trim();
         Hide(() => PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.FieldHUD));
     }
 
     private Char ValidateInput(String text, Int32 charIndex, Char addedChar)
     {
-        if (Char.IsLetter(addedChar))
+        if (Char.IsLetter(addedChar) || (addedChar == ' ' && charIndex > 0))
+            return addedChar;
+        // Might want to add a couple of allowed characters (Myanmar? things like that, that are not recognised with IsLetter...)
+        UnicodeBIDI.CharacterClass unicodeClass = UnicodeBIDI.GetBIDIClass(addedChar);
+        if (unicodeClass == UnicodeBIDI.CharacterClass.Arabic_Letter || unicodeClass == UnicodeBIDI.CharacterClass.Arabic_Number)
             return addedChar;
         if (Regex.IsMatch(addedChar.ToString(), "[^\\u3041-\\u3096\\u30A0-\\u30FF\\u3400-\\u4DB5\\u4E00-\\u9FCB\\uF900-\\uFA6A\\u0021-\\u007E\\u00C0-\\u00FF\\uFF41-\\uFF5A]"))
-            return Char.MinValue;
+            return '\0';
         return addedChar;
     }
 
     private void Awake()
     {
         FadingComponent = ScreenFadeGameObject.GetComponent<HonoFading>();
+        NameInputField.characterLimit = 12;
+        Warning.transform.AddX(-50f);
+        Warning.GetComponent<UILabel>().width = 500;
     }
 
     private void Start()

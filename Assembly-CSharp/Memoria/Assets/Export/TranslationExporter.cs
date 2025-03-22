@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Threading;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Data;
@@ -29,7 +29,6 @@ namespace Memoria.Assets
                     return;
                 }
 
-                DataPatchers.Initialize();
                 InitialiseStaticBatches();
 
                 ExportFieldTexts(exportSymbol, modFolder);
@@ -346,14 +345,14 @@ namespace Memoria.Assets
             Directory.CreateDirectory(exportDirectoryHW);
             String textAsLoc = "";
             String textAsHW = $"#HW filetype TEXT_LOCALIZATION\n#HW language {symbol.ToLower()}\n\n";
-            foreach (String header in new String[] { "KEY", "Symbol" })
+            foreach (String header in new String[] { LanguageMap.LanguageKey, LanguageMap.SymbolKey })
             {
                 textAsLoc += $"{header},{Localization.ProcessEntryForCSVWriting(allEntries[header])}\n";
                 textAsHW += $"#HW entry {header}\n{allEntries[header]}\n\n";
             }
             foreach (KeyValuePair<String, String> pair in allEntries)
             {
-                if (pair.Key == "KEY" || pair.Key == "Symbol")
+                if (pair.Key == LanguageMap.LanguageKey || pair.Key == LanguageMap.SymbolKey)
                     continue;
                 textAsLoc += $"{pair.Key},{Localization.ProcessEntryForCSVWriting(pair.Value)}\n";
                 textAsHW += $"#HW entry {pair.Key}\n{pair.Value}\n\n";
@@ -506,7 +505,7 @@ namespace Memoria.Assets
                 }
                 str = $"[STRT={width},{lineNo}]" + str;
             }
-            if (!str.EndsWith("]")) // ...and ends with either [ENDN] or [TIME=XXX]
+            if (new Regex(@"(\[ENDN\]|\[TIME=[\-0-9]+\]|\{TIME [\-0-9]+\})").Match(str).Success) // ...and ends with either [ENDN] or [TIME=XXX] or {Time XXX}
                 str += "[ENDN]";
             if (addCounterCode)
                 return $"[TXID={txtId}]" + str;

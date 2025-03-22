@@ -223,7 +223,7 @@ public class FieldHUD : UIScene
     {
         SceneVoidDelegate action = OnShownAction;
         if (afterFinished != null)
-            action = (SceneVoidDelegate)Delegate.Combine(action, afterFinished);
+            action += afterFinished;
         base.Show(action);
         PersistenSingleton<UIManager>.Instance.Booster.SetBoosterState(PersistenSingleton<UIManager>.Instance.UnityScene);
         VirtualAnalog.Init(gameObject);
@@ -237,7 +237,7 @@ public class FieldHUD : UIScene
     {
         SceneVoidDelegate action = OnHideAfterHide;
         if (afterFinished != null)
-            action = (SceneVoidDelegate)Delegate.Combine(action, afterFinished);
+            action += afterFinished;
         base.Hide(action);
         PauseButtonGameObject.SetActive(false);
         HelpButtonGameObject.SetActive(false);
@@ -376,19 +376,14 @@ public class FieldHUD : UIScene
         if (_previousDebugState == ShowDebugButton)
             return;
         _previousDebugState = ShowDebugButton;
-
         gameObject.GetChild(1).SetActive(ShowDebugButton);
     }
 
     private void Awake()
     {
         FadingComponent = ScreenFadeGameObject.GetComponent<HonoFading>();
-
-        UIEventListener uiEventListener1 = UIEventListener.Get(MenuButtonGameObject);
-        uiEventListener1.Press += OnPressButton;
-
-        UIEventListener uiEventListener2 = UIEventListener.Get(PauseButtonGameObject);
-        uiEventListener2.Press += OnPressButton;
+        UIEventListener.Get(MenuButtonGameObject).Press += OnPressButton;
+        UIEventListener.Get(PauseButtonGameObject).Press += OnPressButton;
     }
 
     private void OnShownAction()
@@ -476,7 +471,7 @@ public class FieldHUD : UIScene
 
     private static void OnDialogClickAttach()
     {
-        Singleton<DialogManager>.Instance.AttachDialog(NGUIText.GetTestingResource(), 0, 0, Dialog.TailPosition.AutoPosition, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.None);
+        Singleton<DialogManager>.Instance.AttachDialog(String.Empty, 0, 0, Dialog.TailPosition.AutoPosition, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.None);
     }
 
     private static void OnSaveClickSwitchScene()

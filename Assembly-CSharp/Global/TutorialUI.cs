@@ -1,9 +1,10 @@
-﻿using Memoria.Assets;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Memoria.Assets;
+using Memoria.Scenes;
 
 public class TutorialUI : UIScene
 {
@@ -131,6 +132,7 @@ public class TutorialUI : UIScene
         this.battleTutorialImage2Pointer = this.ContentPanel.GetChild(1).GetChild(2).GetComponent<UISprite>();
         this.battleBottomLocalize = this.ContentPanel.GetChild(3).GetComponent<UILocalize>();
         this.battleOkButton = this.ContentPanel.GetChild(4).GetComponent<UIButton>();
+        this.OkButton = new GOIsolatedButton(this.ContentPanel.GetChild(4));
     }
 
     private void HideTutorial()
@@ -147,14 +149,14 @@ public class TutorialUI : UIScene
     private void AnimatePanel(Vector3 scale)
     {
         this.ContentPanel.GetParent().SetActive(true);
-        EventDelegate.Add(TweenScale.Begin(this.ContentPanel, this.duration, scale).onFinished, new EventDelegate.Callback(this.AfterShowBattleTutorial));
+        EventDelegate.Add(TweenScale.Begin(this.ContentPanel, this.duration, scale).onFinished, this.AfterShowBattleTutorial);
     }
 
     public void OnOKButtonClick()
     {
         if (this.DisplayMode == TutorialUI.Mode.Libra && ++this.libraPage < this.libraMessages.Count)
         {
-            this.battleBottomLabel.text = this.libraMessages[this.libraPage];
+            this.battleBottomLabel.rawText = this.libraMessages[this.libraPage];
         }
         else
         {
@@ -176,6 +178,8 @@ public class TutorialUI : UIScene
 
     private void AfterShowBattleTutorial()
     {
+        this.OkButton.Label.Label.Parser.ResetBeforeVariableTags();
+        this.battleBottomLabel.Parser.ResetBeforeVariableTags();
         base.Loading = false;
     }
 
@@ -195,8 +199,8 @@ public class TutorialUI : UIScene
         this.battleTutorialDialogImage2.spriteName = Localization.Get($"TutorialTapOnCharacterIcon{platformUpper}");
         this.battleTutorialImage2Dialog.spriteName = "tutorial_help_02";
         this.battleTutorialImage2Pointer.spriteName = "tutorial_help_cursor";
-        this.battleLeftLabel.text = Localization.Get($"TutorialLeftParagraph{platformUpper}");
-        this.battleRightLabel.text = Localization.Get($"TutorialRightParagraph{platformUpper}");
+        this.battleLeftLabel.rawText = Localization.Get($"TutorialLeftParagraph{platformUpper}");
+        this.battleRightLabel.rawText = Localization.Get($"TutorialRightParagraph{platformUpper}");
         this.headerLabel.fontSize = 36;
         this.battleBottomLabel.SetAnchor(target: this.ContentPanel.transform, relTop: 0.33f);
         this.battleBottomLabel.fontSize = 24;
@@ -218,7 +222,7 @@ public class TutorialUI : UIScene
         {
             base.Loading = false;
         };
-        dialog.AfterDialogHidden = new Dialog.DialogIntDelegate(this.AfterHideQuadmistTutorial);
+        dialog.AfterDialogHidden = this.AfterHideQuadmistTutorial;
         TweenPosition tweenPos = dialog.GetComponent<TweenPosition>();
         if (tweenPos != null)
             tweenPos.enabled = false;
@@ -262,7 +266,7 @@ public class TutorialUI : UIScene
         {
             base.Loading = false;
         };
-        dialog.AfterDialogHidden = new Dialog.DialogIntDelegate(this.AfterHideBasicControlTutorial);
+        dialog.AfterDialogHidden = this.AfterHideBasicControlTutorial;
     }
 
     private void AfterHideBasicControlTutorial(Int32 choice)
@@ -274,10 +278,7 @@ public class TutorialUI : UIScene
         }
         else
         {
-            this.Hide(delegate
-            {
-                this.HideTutorial();
-            });
+            this.Hide(this.HideTutorial);
         }
     }
 
@@ -297,7 +298,7 @@ public class TutorialUI : UIScene
         photoSprite.height = this.libraPhoto.height;
         photoSprite.texture = this.libraPhoto;
         this.headerLocalize.enabled = false;
-        this.headerLabel.text = this.libraTitle;
+        this.headerLabel.rawText = this.libraTitle;
         this.headerLabel.fontSize = 44;
         this.battleTutorialImage1.spriteName = String.Empty;
         this.battleTutorialImage1.spriteName = "libra_photo";
@@ -310,14 +311,14 @@ public class TutorialUI : UIScene
         this.battleTutorialDialogImage2.spriteName = String.Empty;
         this.battleTutorialImage2Dialog.spriteName = String.Empty;
         this.battleTutorialImage2Pointer.spriteName = String.Empty;
-        this.battleLeftLabel.text = String.Empty;
-        this.battleRightLabel.text = String.Empty;
+        this.battleLeftLabel.rawText = String.Empty;
+        this.battleRightLabel.rawText = String.Empty;
         this.battleBottomLocalize.enabled = false;
         this.battleBottomLabel.SetAnchor(target: this.ContentPanel.transform, left: 100f + photoSprite.width);
-        this.battleBottomLabel.text = this.libraMessages[0];
+        this.battleBottomLabel.rawText = this.libraMessages[0];
         this.battleBottomLabel.fontSize = 42;
         this.battleBottomLabel.overflowMethod = UILabel.Overflow.ResizeFreely;
-        this.battleBottomLabel.PrintIconAfterProcessedText = true;
+        this.battleBottomLabel.gameObject.SetActive(true);
         this.libraPage = 0;
         base.Loading = true;
         this.AnimatePanel(new Vector3(1f, 1f, 1f));
@@ -371,6 +372,8 @@ public class TutorialUI : UIScene
     private UILocalize battleBottomLocalize;
     [NonSerialized]
     private UIButton battleOkButton;
+    [NonSerialized]
+    private GOIsolatedButton OkButton;
 
     [NonSerialized]
     public String libraTitle;
@@ -380,6 +383,26 @@ public class TutorialUI : UIScene
     public Texture2D libraPhoto;
     [NonSerialized]
     public Int32 libraPage;
+
+    private class GOIsolatedButton : GOWidget
+    {
+        public readonly UIButton Button;
+        public readonly BoxCollider BoxCollider;
+        public readonly OnScreenButton OnScreenButton;
+        public readonly UISprite Highlight;
+        public readonly GOLocalizableLabel Label;
+        public readonly GOThinBackground Background;
+
+        public GOIsolatedButton(GameObject go) : base(go)
+        {
+            Button = go.GetComponent<UIButton>();
+            BoxCollider = go.GetComponent<BoxCollider>();
+            OnScreenButton = go.GetComponent<OnScreenButton>();
+            Highlight = go.GetChild(0).GetComponent<UISprite>();
+            Label = new GOLocalizableLabel(go.GetChild(1));
+            Background = new GOThinBackground(go.GetChild(2));
+        }
+    }
 
     public enum Mode
     {

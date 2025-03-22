@@ -109,9 +109,9 @@ namespace Memoria.Scenes
             ButtonGroupState.SetButtonAnimation(button.Self, true);
             button.NameLabel.overflowMethod = UILabel.Overflow.ResizeFreely;
             button.NameLabel.alignment = NGUIText.Alignment.Left;
-            button.NameLabel.text = selectData.Label;
+            button.NameLabel.rawText = selectData.Label;
             button.NameLabel.color = selectData.Valid ? FF9TextTool.White : FF9TextTool.Gray;
-            button.NumberLabel.text = String.Empty;
+            button.NumberLabel.rawText = String.Empty;
             button.IconSpriteAnimation.Pause();
             button.IconSprite.enabled = false;
             widget.pivot = UIWidget.Pivot.Left;
@@ -130,9 +130,9 @@ namespace Memoria.Scenes
             ButtonGroupState.SetButtonAnimation(button.Self, true);
             button.NameLabel.overflowMethod = UILabel.Overflow.ResizeFreely;
             button.NameLabel.alignment = NGUIText.Alignment.Left;
-            button.NameLabel.text = toggleData.Label;
+            button.NameLabel.rawText = toggleData.Label;
             button.NameLabel.color = toggleData.Valid ? FF9TextTool.White : FF9TextTool.Gray;
-            button.NumberLabel.text = String.Empty;
+            button.NumberLabel.rawText = String.Empty;
             if (toggleData.IsToggled)
             {
                 button.IconSprite.atlas = FF9UIDataTool.IconAtlas;

@@ -19,7 +19,7 @@ namespace Memoria.Assets
         public static String CurrentLanguage
         {
             get => Provider.CurrentLanguage;
-            set => Provider.SelectLanguage(value);
+            set => Provider.SelectLanguage(value); // [DBG] https://github.com/Albeoris/Memoria/issues/515
         }
 
         public static String GetSymbol()
@@ -29,7 +29,10 @@ namespace Memoria.Assets
 
         public static String Get(String key)
         {
-            return Provider.Get(key);
+            String str = Provider.Get(key);
+            if (key == "StatusDetailHelp") // Fix: Status help in StatusUI
+                str = str.Replace("[YADD=4]", "").Replace("[YSUB=4]", "");
+            return str;
         }
 
         public static String ProcessEntryForCSVWriting(String entry)
@@ -68,7 +71,7 @@ namespace Memoria.Assets
         private static Dictionary<String, Dictionary<String, String>> _defaultDictionary = new Dictionary<String, Dictionary<String, String>>()
         {
             // The base reading direction of the language
-            { "ReadingDirection", new Dictionary<String, String>()
+            { LanguageMap.ReadingDirectionKey, new Dictionary<String, String>()
                 {
                     { "US", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
                     { "UK", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
@@ -77,6 +80,18 @@ namespace Memoria.Assets
                     { "FR", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
                     { "GR", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
                     { "IT", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT }
+                }
+            },
+            // The digit shapes of the language
+            { LanguageMap.DigitShapesKey, new Dictionary<String, String>()
+                {
+                    { "US", UnicodeBIDI.DIGIT_SHAPES_LATIN },
+                    { "UK", UnicodeBIDI.DIGIT_SHAPES_LATIN },
+                    { "JP", UnicodeBIDI.DIGIT_SHAPES_LATIN },
+                    { "ES", UnicodeBIDI.DIGIT_SHAPES_LATIN },
+                    { "FR", UnicodeBIDI.DIGIT_SHAPES_LATIN },
+                    { "GR", UnicodeBIDI.DIGIT_SHAPES_LATIN },
+                    { "IT", UnicodeBIDI.DIGIT_SHAPES_LATIN }
                 }
             },
             // Language name in the title menu's button
@@ -101,6 +116,30 @@ namespace Memoria.Assets
                     { "FR", "%[YSUB=1.3][sub]G" },
                     { "GR", "%[YSUB=1.3][sub]G" },
                     { "IT", "%[YSUB=1.3][sub]G" }
+                }
+            },
+            // Number of points for Tetra Master
+            { "CardPoints", new Dictionary<String, String>()
+                {
+                    { "US", "%p" },
+                    { "UK", "%p" },
+                    { "JP", "%p" },
+                    { "ES", "%p" },
+                    { "FR", "%p" },
+                    { "GR", "%p" },
+                    { "IT", "%p" }
+                }
+            },
+            // Panel caption for magic stones (used to show "MP" in the Ability menu instead, since PSX)
+            { "MagicStoneCaption", new Dictionary<String, String>()
+                {
+                    { "US", "MG ST" },
+                    { "UK", "MG ST" },
+                    { "JP", "魔石力" },
+                    { "ES", "PIEDRAS" },
+                    { "FR", "MAGIK" },
+                    { "GR", "MG ST" },
+                    { "IT", "PIETRE" }
                 }
             },
             // New options in the config menu

@@ -1,11 +1,12 @@
-﻿using Memoria.Assets;
-using Memoria.Data;
-using Memoria.Prime;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Memoria;
+using Memoria.Assets;
+using Memoria.Data;
+using Memoria.Prime;
 using UnityEngine;
 
 namespace Assets.Sources.Scripts.UI.Common
@@ -219,7 +220,6 @@ namespace Assets.Sources.Scripts.UI.Common
             IsLoading = false;
         }
 
-        //private static readonly HashSet<int> zones = new HashSet<int>();
         private static IEnumerable InitializeFieldTextInternal()
         {
             PersistenSingleton<UIManager>.Instance.SetEventEnable(false);
@@ -231,26 +231,10 @@ namespace Assets.Sources.Scripts.UI.Common
                 yield break;
             }
 
-            //if (zones.Add(fieldZoneId))
-            //    Log.Message($"InitializeFieldTextInternal: {fieldZoneId}");
             IsLoading = true;
 
             foreach (var state in FieldImporter.LoadAsync())
-            {
                 yield return state;
-            }
-
-            //TextLoader loader = new TextLoader("/Field/" + GetFieldTextFileName(fieldZoneId) + ".mes");
-            //while (loader.Loading)
-            //    yield return 0;
-
-            //if (loader.Text != null)
-            //{
-            //    String source = TextOpCodeModifier.Modify(loader.Text);
-            //    String[] text = ExtractSentense(source);
-            //    FF9TextTool.SetFieldText(text);
-            //    FF9TextTool.SetTableText(ExtractTableText(text));
-            //}
 
             IsLoading = false;
             PersistenSingleton<UIManager>.Instance.SetEventEnable(true);
@@ -296,6 +280,7 @@ namespace Assets.Sources.Scripts.UI.Common
             return table;
         }
 
+        /// <summary>Dummied: table texts are now extracted whenever they are requested from other texts</summary>
         public static String[][] ExtractTableText(IEnumerable<String> extactedList)
         {
             String[] array = extactedList.Where(t => t.Contains("[TBLE=")).ToArray();
@@ -469,7 +454,7 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static String FieldText(Int32 textId)
         {
-            return FF9TextTool.fieldText.TryGetValue(textId, out String result) ? result : String.Empty;
+            return FF9TextTool.fieldText.TryGetValue(textId, out String result) ? TextOpCodeModifier.Modify(result) : String.Empty;
         }
 
         public static String CharacterProfile(Int32 charId)
@@ -496,43 +481,49 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static String ChocoboUIText(Int32 id)
         {
-            return (id >= (Int32)FF9TextTool.chocoUIText.Length) ? String.Empty : FF9TextTool.chocoUIText[id];
+            return (id >= FF9TextTool.chocoUIText.Length) ? String.Empty : FF9TextTool.chocoUIText[id];
         }
 
         public static String CardLevelName(Int32 id)
         {
-            return (id >= (Int32)FF9TextTool.cardLvName.Length) ? String.Empty : FF9TextTool.cardLvName[id];
+            return (id >= FF9TextTool.cardLvName.Length) ? String.Empty : FF9TextTool.cardLvName[id];
         }
 
         public static String BattleFollowText(Int32 id)
         {
-            return (id >= (Int32)FF9TextTool.followText.Length) ? String.Empty : FF9TextTool.followText[id];
+            return (id >= FF9TextTool.followText.Length) ? String.Empty : FF9TextTool.followText[id];
         }
 
         public static String BattleLibraText(Int32 id)
         {
-            return (id >= (Int32)FF9TextTool.libraText.Length) ? String.Empty : FF9TextTool.libraText[id];
+            return (id >= FF9TextTool.libraText.Length) ? String.Empty : FF9TextTool.libraText[id];
         }
 
         public static String BattleCommandTitleText(Int32 id)
         {
-            return (id >= (Int32)FF9TextTool.cmdTitleText.Length) ? String.Empty : FF9TextTool.cmdTitleText[id];
+            return (id >= FF9TextTool.cmdTitleText.Length) ? String.Empty : FF9TextTool.cmdTitleText[id];
         }
 
         public static String WorldLocationText(Int32 id)
         {
-            return (id >= (Int32)FF9TextTool.worldLocationText.Length) ? String.Empty : FF9TextTool.worldLocationText[id];
+            return (id >= FF9TextTool.worldLocationText.Length) ? String.Empty : FF9TextTool.worldLocationText[id];
         }
 
-        public static String RemoveOpCode(String textList)
+        public static String RemoveOpCode(String str)
         {
             String pattern = @"\[[^\]]*\]|\{[^\}]*\}";
-            return Regex.Replace(textList, pattern, String.Empty);
+            return Regex.Replace(str, pattern, String.Empty);
         }
 
         public static String[] GetTableText(UInt32 index)
         {
-            return ((UInt64)index >= (UInt64)((Int64)FF9TextTool.tableText.Length)) ? null : FF9TextTool.tableText[(Int32)((UIntPtr)index)];
+            if (FF9TextTool.tableText.TryGetValue(index, out String[] table))
+                return table;
+            if (!FF9TextTool.fieldText.TryGetValue((Int32)index, out String rawText))
+                return null;
+            table = DialogBoxSymbols.ParseTextSplitTags(rawText).ToArray();
+            FF9TextTool.tableText[index] = table;
+            return table;
         }
 
         public static String GetDialogCaptionText(Dialog.CaptionType captionType)
@@ -584,7 +575,7 @@ namespace Assets.Sources.Scripts.UI.Common
         public static String[] libraText;
         public static String[] worldLocationText;
 
-        private static String[][] tableText;
+        private static Dictionary<UInt32, String[]> tableText = new Dictionary<UInt32, String[]>();
 
         public static Dictionary<Int32, String> locationName = new Dictionary<Int32, String>();
 
@@ -595,12 +586,12 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static void SetSupportAbilityName(SupportAbility id, String value)
         {
-            supportAbilityName[id] = value;
+            supportAbilityName[id] = TextPatcher.PatchDatabaseString(value, typeof(SupportAbility).Name, (Int32)id, true, false);
         }
 
         public static void SetSupportAbilityHelpDesc(SupportAbility id, String value)
         {
-            supportAbilityHelpDesc[id] = value;
+            supportAbilityHelpDesc[id] = TextPatcher.PatchDatabaseString(value, typeof(SupportAbility).Name, (Int32)id, false, true);
         }
 
         public static void SetFieldText(String[] value)
@@ -615,9 +606,9 @@ namespace Assets.Sources.Scripts.UI.Common
             FieldTextUpdated?.Invoke(id);
         }
 
-        public static void SetTableText(String[][] value)
+        public static void ClearTableText()
         {
-            tableText = value;
+            tableText.Clear();
         }
 
         public static void SetBattleText(String[] value)
@@ -633,12 +624,12 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static void SetCommandName(BattleCommandId id, String value)
         {
-            commandName[id] = value;
+            commandName[id] = TextPatcher.PatchDatabaseString(value, typeof(BattleCommandId).Name, (Int32)id, true, false);
         }
 
         public static void SetCommandHelpDesc(BattleCommandId id, String value)
         {
-            commandHelpDesc[id] = value;
+            commandHelpDesc[id] = TextPatcher.PatchDatabaseString(value, typeof(BattleCommandId).Name, (Int32)id, false, true);
         }
 
         public static void SetCmdTitleText(String[] value)
@@ -663,7 +654,7 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static void SetCardName(TetraMasterCardId id, String value)
         {
-            cardName[id] = value;
+            cardName[id] = TextPatcher.PatchDatabaseString(value, typeof(TetraMasterCardId).Name, (Int32)id, true, false);
         }
 
         public static void SetChocoUiText(String[] value)
@@ -683,42 +674,42 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static void SetItemName(RegularItem id, String value)
         {
-            itemName[id] = value;
+            itemName[id] = TextPatcher.PatchDatabaseString(value, typeof(RegularItem).Name, (Int32)id, true, false);
         }
 
         public static void SetItemHelpDesc(RegularItem id, String value)
         {
-            itemHelpDesc[id] = value;
+            itemHelpDesc[id] = TextPatcher.PatchDatabaseString(value, typeof(RegularItem).Name, (Int32)id, false, true);
         }
 
         public static void SetItemBattleDesc(RegularItem id, String value)
         {
-            itemBattleDesc[id] = value;
+            itemBattleDesc[id] = TextPatcher.PatchDatabaseString(value, typeof(RegularItem).Name, (Int32)id, false, true);
         }
 
         public static void SetImportantItemName(Int32 id, String value)
         {
-            importantItemName[id] = value;
+            importantItemName[id] = TextPatcher.PatchDatabaseString(value, "KeyItem", id, true, false);
         }
 
         public static void SetImportantItemHelpDesc(Int32 id, String value)
         {
-            importantItemHelpDesc[id] = value;
+            importantItemHelpDesc[id] = TextPatcher.PatchDatabaseString(value, "KeyItem", id, false, true);
         }
 
         public static void SetImportantSkinDesc(Int32 id, String value)
         {
-            importantSkinDesc[id] = value;
+            importantSkinDesc[id] = TextPatcher.PatchDatabaseString(value, "KeyItem", id, false, false);
         }
 
         public static void SetActionAbilityName(BattleAbilityId id, String value)
         {
-            actionAbilityName[id] = value;
+            actionAbilityName[id] = TextPatcher.PatchDatabaseString(value, typeof(BattleAbilityId).Name, (Int32)id, true, false);
         }
 
         public static void SetActionAbilityHelpDesc(BattleAbilityId id, String value)
         {
-            actionAbilityHelpDesc[id] = value;
+            actionAbilityHelpDesc[id] = TextPatcher.PatchDatabaseString(value, typeof(BattleAbilityId).Name, (Int32)id, false, true);
         }
 
         public static void SetCharacterNames(Dictionary<CharacterId, String> value)

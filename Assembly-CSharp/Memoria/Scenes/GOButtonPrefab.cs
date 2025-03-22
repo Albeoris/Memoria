@@ -30,7 +30,6 @@ namespace Memoria.Scenes
             ButtonGroup = obj.GetExactComponent<ButtonGroupState>();
             ScrollKeyNavigation = obj.GetExactComponent<ScrollItemKeyNavigation>();
             DragScrollView = obj.GetExactComponent<UIDragScrollView>();
-            BoxCollider = obj.GetExactComponent<BoxCollider>();
             if (obj.GetComponent<RecycleListItem>() != null)
                 ListItem = obj.GetExactComponent<RecycleListItem>();
 
@@ -44,6 +43,8 @@ namespace Memoria.Scenes
                 elementIndex++;
             NameLabel = content.GetChild(elementIndex++)?.GetComponent<UILabel>();
             NumberLabel = content.GetChild(elementIndex++)?.GetComponent<UILabel>();
+            if (NameLabel != null)
+                NameLabel.fixedAlignment = true;
         }
     }
 }

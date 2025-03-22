@@ -4,7 +4,6 @@ using Memoria.Assets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using UnityEngine;
 
@@ -129,8 +128,8 @@ public class VoicePlayer : SoundPlayer
             candidates.Add($"Voices/{lang}/{FieldZoneId}/va_{messageNumber}_{dialog.Po.uid}{pageIndex}");
 
         // Path using the character name at the top of the box
-        String[] msgStrings = dialog.Phrase.Split(["[CHOO]"], StringSplitOptions.None);
-        String msgString = msgStrings.Length > 0 ? messageOpcodeRegex.Replace(msgStrings[0], (match) => { return ""; }) : "";
+        String[] msgStrings = dialog.ChoicePhrases;
+        String msgString = msgStrings[0];
         if (msgString.Length > 0 && (
             // Languages have various ways of presenting the name
             msgString.Contains("\n“") || // English
@@ -139,7 +138,7 @@ public class VoicePlayer : SoundPlayer
             msgString.Contains("\n─") // Italian, Spanish
             ))
         {
-            string name = msgString.Split('\n')[0].Replace(":", "").Trim();
+            String name = msgString.Split('\n')[0].Replace(":", "").Trim();
             candidates.Add($"Voices/{lang}/{FieldZoneId}/va_{messageNumber}_{name}{pageIndex}");
         }
 
@@ -217,9 +216,8 @@ public class VoicePlayer : SoundPlayer
                     return;
 
                 String vaOptionPath = candidates.Last() + "_" + optionIndex;
-                String[] options = msgStrings.Length >= 2 ? msgStrings[1].Split('\n') : [];
                 Int32 selectedVisibleOption = dialog.ActiveIndexes.Count > 0 ? Math.Max(0, dialog.ActiveIndexes.FindIndex(index => index == optionIndex)) : optionIndex;
-                String optString = selectedVisibleOption < options.Length ? messageOpcodeRegex.Replace(options[selectedVisibleOption].Trim(), (match) => { return ""; }) : "[Invalid option index]";
+                String optString = selectedVisibleOption + 1 < msgStrings.Length ? msgStrings[selectedVisibleOption + 1].Trim() : "[Invalid option index]";
 
                 if (!AssetManager.HasAssetOnDisc($"Sounds/{vaOptionPath}.akb", true, true) && !AssetManager.HasAssetOnDisc($"Sounds/{vaOptionPath}.ogg", true, false))
                 {
@@ -467,8 +465,6 @@ public class VoicePlayer : SoundPlayer
             }
         }
     }
-
-    private static readonly Regex messageOpcodeRegex = new Regex(@"\[[A-Za-z0-9=]*\]");
 
     public static Dictionary<Dialog, SoundProfile> soundOfDialog = new Dictionary<Dialog, SoundProfile>();
 

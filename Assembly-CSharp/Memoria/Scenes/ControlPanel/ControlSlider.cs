@@ -26,7 +26,7 @@ namespace Memoria.Scenes
             set
             {
                 _value = value;
-                ValueLabel.text = _value.ToString("0.##");
+                ValueLabel.rawText = _value.ToString("0.##");
                 if (ValueToSlide != null)
                     Slider.value = Mathf.Clamp01(ValueToSlide(value));
                 else
@@ -72,7 +72,7 @@ namespace Memoria.Scenes
                     _value = SlideToValue(Mathf.Clamp01(Slider.ScreenToValue(UICamera.lastEventPosition)));
                 else
                     _value = Mathf.Clamp01(Slider.ScreenToValue(UICamera.lastEventPosition));
-                ValueLabel.text = _value.ToString("0.##");
+                ValueLabel.rawText = _value.ToString("0.##");
                 SlideAction(Value);
             };
             sliderListener.onDrag += (go, delta) =>
@@ -83,7 +83,7 @@ namespace Memoria.Scenes
                     _value = SlideToValue(Mathf.Clamp01(Slider.ScreenToValue(UICamera.lastEventPosition)));
                 else
                     _value = Mathf.Clamp01(Slider.ScreenToValue(UICamera.lastEventPosition));
-                ValueLabel.text = _value.ToString("0.##");
+                ValueLabel.rawText = _value.ToString("0.##");
                 SlideAction(Value);
             };
         }

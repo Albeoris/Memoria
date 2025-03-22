@@ -61,7 +61,7 @@ public partial class BattleHUD : UIScene
 
             public void SetCaptionText(String text)
             {
-                Caption.Caption.Label.text = text;
+                Caption.Caption.Label.rawText = text;
             }
 
             public IEnumerable<GONavigationButton> EnumerateButtons(Boolean includeMenuIfPossible = true)

@@ -144,6 +144,34 @@ namespace Memoria.Prime.Text
             return result.ToString();
         }
 
+        /// <summary>Search for the (n+1)-th occurence of a string</summary>
+        /// <returns>The index position of that occurence or -1 if the search string was not found enough times</returns>
+        public static Int32 FindNthOccurence(this String str, String search, Int32 n)
+        {
+            Int32 pos = 0;
+            while (n >= 0)
+            {
+                pos = str.IndexOf(search, pos) + 1;
+                if (pos <= 0)
+                    return -1;
+                n--;
+            }
+            return pos;
+        }
+
+        /// <summary>Non-regex search count</summary>
+        public static Int32 OccurenceCount(this String str, String search)
+        {
+            Int32 pos = str.IndexOf(search);
+            Int32 count = 0;
+            while (pos >= 0)
+            {
+                count++;
+                pos = str.IndexOf(search, pos + 1);
+            }
+            return count;
+        }
+
         public static String TrimEnd(this String source, String sufix, StringComparison comparisonType)
         {
             if (source == null)

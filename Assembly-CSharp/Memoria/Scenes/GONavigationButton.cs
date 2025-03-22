@@ -26,7 +26,7 @@ namespace Memoria.Scenes
 
         public void SetLabelText(String value)
         {
-            Name.Label.text = value;
+            Name.Label.rawText = value;
         }
 
         public void SetLabelColor(Color value)

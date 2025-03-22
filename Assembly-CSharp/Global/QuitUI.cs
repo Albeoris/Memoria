@@ -1,14 +1,13 @@
-﻿using Assets.Sources.Scripts.UI.Common;
-using Memoria;
-using Memoria.Prime;
-using Memoria.Scenes;
-using System;
+﻿using System;
 using UnityEngine;
+using Assets.Sources.Scripts.UI.Common;
 
 public class QuitUI : MonoBehaviour
 {
-    public static String WarningMenuGroupButton = "Quit.Warning";
+    public const String WarningMenuGroupButton = "Quit.Warning";
+
     public static Boolean AcceptQuit = true;
+
     public GameObject WarningDialog;
     public Boolean isShowQuitUI;
 
@@ -22,7 +21,7 @@ public class QuitUI : MonoBehaviour
     private Single previousVibRight;
     private Action onFinishHideQuitUI;
 
-    public void Show(Action onFinishHideQuitUICallback)
+    public void Show(Action resumeCallback)
     {
         if (isShowQuitUI)
             return;
@@ -30,7 +29,7 @@ public class QuitUI : MonoBehaviour
         isShowQuitUI = true;
         gameObject.SetActive(true);
         DisplayWindowBackground(gameObject);
-        onFinishHideQuitUI = onFinishHideQuitUICallback;
+        onFinishHideQuitUI = resumeCallback;
         previousPlayerControlEnable = PersistenSingleton<UIManager>.Instance.IsPlayerControlEnable;
         previousMenuControlEnable = PersistenSingleton<UIManager>.Instance.IsMenuControlEnable;
         previousEventEnable = PersistenSingleton<UIManager>.Instance.IsEventEnable;
@@ -45,9 +44,7 @@ public class QuitUI : MonoBehaviour
         PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(false);
         PersistenSingleton<UIManager>.Instance.SetEventEnable(false);
         if (PersistenSingleton<UIManager>.Instance.Dialogs != null)
-        {
             PersistenSingleton<UIManager>.Instance.Dialogs.PauseAllDialog(true);
-        }
         if (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.QuadMistBattle)
         {
             QuadMistGame.main.Pause();
@@ -66,36 +63,24 @@ public class QuitUI : MonoBehaviour
     public void Hide()
     {
         if (!isShowQuitUI)
-        {
             return;
-        }
         isShowQuitUI = false;
         gameObject.SetActive(false);
         if (String.IsNullOrEmpty(previousActiveGroup))
-        {
             ButtonGroupState.DisableAllGroup();
-        }
         else
-        {
             ButtonGroupState.ActiveGroup = previousActiveGroup;
-        }
         FF9StateSystem.Settings.StartGameTime = Time.time;
         PersistenSingleton<UIManager>.Instance.SetEventEnable(previousEventEnable);
         PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(previousMenuControlEnable);
         PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(previousPlayerControlEnable, null);
         PersistenSingleton<HonoInputManager>.Instance.DisablePrimaryKey = previousDisablePrimaryKey;
         if (PersistenSingleton<UIManager>.Instance.Dialogs != null)
-        {
             PersistenSingleton<UIManager>.Instance.Dialogs.PauseAllDialog(false);
-        }
         if (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.QuadMistBattle)
-        {
             QuadMistGame.main.Resume();
-        }
         else if (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.EndGame || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Title)
-        {
             Time.timeScale = previousTimescale;
-        }
         vib.VIB_actuatorSet(0, previousVibLeft, previousVibRight);
         vib.VIB_actuatorSet(1, previousVibLeft, previousVibRight);
         if (onFinishHideQuitUI != null)
@@ -109,9 +94,7 @@ public class QuitUI : MonoBehaviour
     {
         String text = ButtonGroupState.ActiveGroup;
         if (text.Equals(WarningMenuGroupButton))
-        {
             text = String.Empty;
-        }
         previousActiveGroup = text;
     }
 
@@ -176,12 +159,6 @@ public class QuitUI : MonoBehaviour
 
     public void Awake()
     {
-        UIEventListener.Get(WarningDialog.GetChild(0).GetChild(2)).Click += onClick;
-        UIEventListener.Get(WarningDialog.GetChild(0).GetChild(3)).Click += onClick;
-        if (Configuration.Control.WrapSomeMenus)
-        {
-            WarningDialog.GetChild(0).GetChild(2).GetExactComponent<UIKeyNavigation>().wrapUpDown = true;
-            WarningDialog.GetChild(0).GetChild(3).GetExactComponent<UIKeyNavigation>().wrapUpDown = true;
-        }
+        UIScene.SetupYesNoLabels(transform, WarningDialog.GetChild(0).GetChild(2), WarningDialog.GetChild(0).GetChild(3), onClick);
     }
 }

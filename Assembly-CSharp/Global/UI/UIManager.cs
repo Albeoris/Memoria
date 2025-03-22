@@ -800,7 +800,7 @@ public class UIManager : PersistenSingleton<UIManager>
                     if (c is UISprite sprite)
                         res += $", SpriteName: {sprite.spriteName}, Atlas: {sprite.atlas?.name ?? "[No Atlas]"}";
                     if (c is UILabel label)
-                        res += $", Label: {label.text.Replace("\n", "\\n")}";
+                        res += $", Label: {label.rawText.Replace("\n", "\\n")}";
                 }
                 if (c is UILocalize localize)
                     res += $" - Localize: {localize.key}";

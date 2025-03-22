@@ -1,9 +1,9 @@
-﻿using Assets.Sources.Scripts.UI.Common;
+﻿using System;
+using System.Collections.Generic;
+using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Data;
-using UnityEngine;
-using System;
-using System.Collections.Generic;
+using Memoria.Assets;
 
 public class PLAYER
 {
@@ -119,6 +119,7 @@ public class PLAYER
         return 0;
     }
 
+    public String NameTag => $"[{FFIXTextTag.CharacterNameTags.GetKey(Index)}]";
     public String Name
     {
         get

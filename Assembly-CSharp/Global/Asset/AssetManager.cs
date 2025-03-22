@@ -113,6 +113,7 @@ public static class AssetManager
             foreach (AssetFolder folder in FolderHighToLow)
                 folder.ReadFileList();
         }
+        DataPatchers.Initialize();
         AssetManager.IsFullyInitialized = true;
     }
 
