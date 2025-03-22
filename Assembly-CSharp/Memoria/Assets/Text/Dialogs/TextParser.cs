@@ -54,6 +54,8 @@ namespace Memoria.Assets
         public TextParser(UILabel container, String text)
         {
             LabelContainer = container;
+            if (!String.IsNullOrEmpty(text) && container.DialogWindow == null && container.InputField == null)
+                text = TextPatcher.PatchInterfaceString(text, container);
             InitialText = text;
             ParsedText = text;
         }
@@ -290,9 +292,9 @@ namespace Memoria.Assets
                 if (!dialogImage.IsRegistered || dialogImage.AppearStep >= AppearProgress + FadingPreviewTime)
                     LabelContainer.HideIcon(dialogImage);
                 else if (dialogImage.AppearStep > AppearProgress)
-                    LabelContainer.PrintIcon(dialogImage, (AppearProgress + FadingPreviewTime - dialogImage.AppearStep) / FadingPreviewTime);
+                    LabelContainer.PrintIcon(dialogImage, dialogImage.Alpha * (AppearProgress + FadingPreviewTime - dialogImage.AppearStep) / FadingPreviewTime);
                 else
-                    LabelContainer.PrintIcon(dialogImage);
+                    LabelContainer.PrintIcon(dialogImage, dialogImage.Alpha);
             }
             yield break;
         }

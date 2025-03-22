@@ -400,6 +400,7 @@
     <Compile Include="Memoria\Configuration\Structure\WorldmapSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\InterfaceSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\ShadersSection.cs" />
+    <Compile Include="Memoria\Configuration\TextPatcher.cs" />
     <Compile Include="Memoria\Data\Battle\BattleCommandHelper.cs" />
     <Compile Include="Memoria\Data\Battle\BattleCommandMenu.cs" />
     <Compile Include="Memoria\Data\Battle\BattleMagicSwordSet.cs" />

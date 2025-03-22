@@ -71,14 +71,14 @@ namespace Memoria.Assets
             }
             else if (insertImage != null)
             {
-                Boolean recycleImg = false;
-                foreach (DialogImage img in specialImages)
+                Int32 recycleImgIndex = -1;
+                for (Int32 i = 0; i < specialImages.size; i++)
                 {
-                    if (!img.IsRegistered && DialogImage.CompareImages(img, insertImage))
+                    if (!specialImages[i].IsRegistered && DialogImage.CompareImages(specialImages[i], insertImage))
                     {
-                        // This dialog image was already generated (typically from a previous NGUIText.GenerateTextRender call)
-                        insertImage = img;
-                        recycleImg = true;
+                        // This dialog image was potentially already generated (typically from a previous NGUIText.GenerateTextRender call): recycle its gameobject
+                        insertImage.SpriteGo = specialImages[i].SpriteGo;
+                        recycleImgIndex = i;
                         break;
                     }
                 }
@@ -92,8 +92,10 @@ namespace Memoria.Assets
                 if (NGUIText.ShouldAlignImageVertically(insertImage))
                     insertImage.LocalPosition.y += typicalCharacterHeight + insertImage.Offset.y - insertImage.Size.y;
                 insertImage.IsRegistered = true;
-                if (!recycleImg)
+                if (recycleImgIndex < 0)
                     specialImages.Add(insertImage);
+                else
+                    specialImages[recycleImgIndex] = insertImage;
                 if (bidiBlock != null)
                     bidiBlock.Value.images.Add(insertImage);
                 insertImage = null;

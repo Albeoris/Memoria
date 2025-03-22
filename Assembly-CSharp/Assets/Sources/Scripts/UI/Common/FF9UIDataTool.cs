@@ -521,7 +521,7 @@ namespace Assets.Sources.Scripts.UI.Common
                 case "QuadMistCardAtlas": spriteData = FF9UIDataTool.QuadMistCardAtlas.GetSprite(spriteName); break;
             }
             if (spriteData == null)
-                return new Vector2(64f, 64f);
+                return Vector2.zero;
             return new Vector2(spriteData.width + spriteData.paddingLeft + spriteData.paddingRight, spriteData.height + spriteData.paddingTop + spriteData.paddingBottom);
         }
 

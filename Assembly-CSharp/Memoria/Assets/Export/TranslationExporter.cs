@@ -29,7 +29,6 @@ namespace Memoria.Assets
                     return;
                 }
 
-                DataPatchers.Initialize();
                 InitialiseStaticBatches();
 
                 ExportFieldTexts(exportSymbol, modFolder);

@@ -1643,7 +1643,6 @@ public class TitleUI : UIScene
         this.slashScreen = new SlashScreen(null, this.SpashText, this.SlideShowObject, this.SlideShowFadingObject, this.TitleImageTextObject0, this.TitleImageTextObject1, this.TitleImageTextJpObject0, this.TitleImageTextJpObject1);
         UICamera.onNavigate += this.OnKeyNavigate;
 
-        DataPatchers.Initialize();
         ScriptsLoader.InitializeAsync();
         QualitySettings.antiAliasing = Configuration.Graphics.AntiAliasing;
     }

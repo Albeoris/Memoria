@@ -171,8 +171,8 @@ public class UILabel : UIWidget
                 return;
             if (String.IsNullOrEmpty(value))
                 value = String.Empty;
-            this.mText = value;
             this.mParser = new TextParser(this, value);
+            this.mText = this.mParser.InitialText;
             this.ReleaseAllIcons();
             this.MarkAsChanged();
             if (this.autoResizeBoxCollider)

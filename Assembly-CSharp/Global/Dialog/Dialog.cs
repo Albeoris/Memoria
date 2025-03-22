@@ -269,7 +269,7 @@ public class Dialog : MonoBehaviour
             this.subPage = DialogBoxSymbols.ParseTextSplitTags(value);
             for (Int32 i = 0; i < this.subPage.Count; i++)
             {
-                this.subPage[i] = NGUIText.FF9WhiteColor + this.subPage[i]; // [DBG] "[YADD=28][MIRR][SPRT=FaceAtlas,face00][MIRR][YSUB=28][FRAM=32,0]"
+                this.subPage[i] = NGUIText.FF9WhiteColor + this.subPage[i];
                 this.PageParsers.Add(new TextParser(this.phraseLabel, this.subPage[i]));
             }
             this.PrepareNextPage();
@@ -652,8 +652,7 @@ public class Dialog : MonoBehaviour
         if (FF9StateSystem.Common.FF9.fldMapNo == 2951 || FF9StateSystem.Common.FF9.fldMapNo == 2952)
         {
             // Chocobo's Lagoon & Air Garden
-            String symbol = Localization.GetSymbol();
-            if (symbol == "JP" && Singleton<DialogManager>.Instance.PressMesId == 245 && Singleton<DialogManager>.Instance.ReleaseMesId == 226)
+            if (Localization.GetSymbol() == "JP" && Singleton<DialogManager>.Instance.PressMesId == 245 && Singleton<DialogManager>.Instance.ReleaseMesId == 226)
                 return;
             if (Singleton<DialogManager>.Instance.PressMesId == 246 && Singleton<DialogManager>.Instance.ReleaseMesId == 227)
                 return;
@@ -661,8 +660,7 @@ public class Dialog : MonoBehaviour
         else if (FF9StateSystem.Common.FF9.fldMapNo == 2950)
         {
             // Chocobo's Forest
-            String symbol = Localization.GetSymbol();
-            if (symbol == "JP" && Singleton<DialogManager>.Instance.PressMesId == 245 && Singleton<DialogManager>.Instance.ReleaseMesId == 225)
+            if (Localization.GetSymbol() == "JP" && Singleton<DialogManager>.Instance.PressMesId == 245 && Singleton<DialogManager>.Instance.ReleaseMesId == 225)
                 return;
             if (Singleton<DialogManager>.Instance.PressMesId == 246 && Singleton<DialogManager>.Instance.ReleaseMesId == 226)
                 return;

@@ -26,6 +26,7 @@ namespace Memoria
     {
         public const String MemoriaDictionaryPatcherPath = "DictionaryPatch.txt";
         public const String MemoriaBattlePatcherPath = "BattlePatch.txt";
+        public const String MemoriaTextPatcherPath = "TextPatch.txt";
 
         public static Char[] SpaceSeparators = [' ', '\t'];
 
@@ -41,17 +42,14 @@ namespace Memoria
                     if (String.IsNullOrEmpty(folder.FolderPath))
                         continue;
                     if (folder.TryFindAssetInModOnDisc(DataPatchers.MemoriaDictionaryPatcherPath, out String dictionaryPath))
-                    {
-                        String[] patch = File.ReadAllLines(dictionaryPath);
-                        DataPatchers.PatchDictionaries(patch);
-                    }
+                        DataPatchers.PatchDictionaries(File.ReadAllLines(dictionaryPath));
                     if (folder.TryFindAssetInModOnDisc(DataPatchers.MemoriaBattlePatcherPath, out String battlePath))
-                    {
-                        String[] patch = File.ReadAllLines(battlePath);
-                        DataPatchers.PatchBattles(patch);
-                    }
+                        DataPatchers.PatchBattles(File.ReadAllLines(battlePath));
+                    if (folder.TryFindAssetInModOnDisc(DataPatchers.MemoriaTextPatcherPath, out String textPath))
+                        TextPatcher.PatchTexts(File.ReadAllLines(textPath));
                 }
                 _isInitialized = true;
+                Log.Message($"[DataPatchers] Initialized");
             }
             catch (Exception err)
             {

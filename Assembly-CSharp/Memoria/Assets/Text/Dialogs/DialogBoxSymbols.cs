@@ -160,7 +160,7 @@ namespace Memoria.Assets
                 {
                     Int32 mesScriptId = tag.IntParam(0);
                     Int32 numbOffset = parser.ParsedTagList[i].TextOffset;
-                    Boolean isSelectedOverlay = tag.Param.Length >= 2 ? ETb.gMesValue[tag.IntParam(1)] == mesScriptId : dialog != null && dialog.OverlayMessageNumber == mesScriptId;
+                    Boolean isSelectedOverlay = tag.ParamCount >= 2 ? ETb.gMesValue[tag.IntParam(1)] == mesScriptId : dialog != null && dialog.OverlayMessageNumber == mesScriptId;
                     parser.VariableMessageValues[mesScriptId] = ETb.gMesValue[mesScriptId];
                     if (isSelectedOverlay)
                         parser.ReplaceTag(i--, ETb.gMesValue[mesScriptId].ToString(), [new FFIXTextTag(FFIXTextTagCode.Pink), new FFIXTextTag(FFIXTextTagCode.ShadowToggle)], [new FFIXTextTag(FFIXTextTagCode.White), new FFIXTextTag(FFIXTextTagCode.ShadowToggle)]);
@@ -237,7 +237,10 @@ namespace Memoria.Assets
                         modifiers.frameOffset.x += NGUIText.ChoiceIndent;
                     break;
                 case FFIXTextTagCode.ShadowToggle:
-                    modifiers.highShadow = !modifiers.highShadow;
+                    if (tag.ParamCount > 0)
+                        tag.StringParam(0).TryEnumParse(out NGUIText.shadowEffect);
+                    else
+                        modifiers.highShadow = !modifiers.highShadow;
                     return true;
                 case FFIXTextTagCode.ShadowOff:
                     modifiers.highShadow = false;
@@ -350,7 +353,7 @@ namespace Memoria.Assets
                     insertImage = NGUIText.CreateIconImage(tag.IntParam(0));
                     return true;
                 case FFIXTextTagCode.IconEx:
-                    if ((ETb.gMesValue[0] & (1 << tag.IntParam(0))) != 0)
+                    if ((ETb.gMesValue[0] & (1 << tag.IntParam(0))) != 0) // [DBG] icon is shifted in dialogs?! Moguo tutorials
                         insertImage = NGUIText.CreateIconImage(FF9UIDataTool.NewIconId);
                     return true;
                 case FFIXTextTagCode.Mobile:
@@ -694,20 +697,20 @@ namespace Memoria.Assets
 
         private static void OnTextColorRGBA(FFIXTextModifier modifiers, FFIXTextTag tag)
         {
-            if (tag.Param.Length == 0)
+            if (tag.ParamCount == 0)
             {
                 if (modifiers.colors != null && modifiers.colors.size > 1)
                     modifiers.colors.RemoveAt(modifiers.colors.size - 1);
             }
-            else if (tag.Param.Length == 1)
+            else if (tag.ParamCount == 1)
             {
                 NGUIText.mAlpha = tag.SingleParam(0);
             }
-            else if (tag.Param.Length == 3)
+            else if (tag.ParamCount == 3)
             {
                 OnTextColor(modifiers, new Color(tag.SingleParam(0), tag.SingleParam(1), tag.SingleParam(2)));
             }
-            else if (tag.Param.Length == 4)
+            else if (tag.ParamCount == 4)
             {
                 if (modifiers.colors != null)
                 {
@@ -733,17 +736,17 @@ namespace Memoria.Assets
 
         private static void OnBackgroundColorRGBA(FFIXTextModifier modifiers, FFIXTextTag tag)
         {
-            if ((tag.Param.Length == 0 || (tag.Param.Length == 1 && tag.StringParam(0) == "Off")) && modifiers.backgroundColors.Count > 0)
+            if ((tag.ParamCount == 0 || (tag.ParamCount == 1 && tag.StringParam(0) == "Off")) && modifiers.backgroundColors.Count > 0)
                 modifiers.backgroundColors.RemoveAt(modifiers.backgroundColors.Count - 1);
-            else if (tag.Param.Length == 1)
+            else if (tag.ParamCount == 1)
                 modifiers.backgroundColors.Add(new FFIXTextModifier.Background(new Color(1f, 1f, 1f, tag.SingleParam(0) * NGUIText.tint.a)));
-            else if (tag.Param.Length == 3)
+            else if (tag.ParamCount == 3)
                 modifiers.backgroundColors.Add(new FFIXTextModifier.Background(new Color(tag.SingleParam(0), tag.SingleParam(1), tag.SingleParam(2), NGUIText.tint.a)));
-            else if (tag.Param.Length == 4)
+            else if (tag.ParamCount == 4)
                 modifiers.backgroundColors.Add(new FFIXTextModifier.Background(new Color(tag.SingleParam(0), tag.SingleParam(1), tag.SingleParam(2), tag.SingleParam(3) * NGUIText.tint.a)));
-            else if (tag.Param.Length == 8)
+            else if (tag.ParamCount == 8)
                 modifiers.backgroundColors.Add(new FFIXTextModifier.Background(new Color(tag.SingleParam(0), tag.SingleParam(1), tag.SingleParam(2), tag.SingleParam(3) * NGUIText.tint.a), new Rect(0f, 0f, 1f, 1f), tag.RectMinMaxParam(4)));
-            else if (tag.Param.Length == 12)
+            else if (tag.ParamCount == 12)
                 modifiers.backgroundColors.Add(new FFIXTextModifier.Background(new Color(tag.SingleParam(0), tag.SingleParam(1), tag.SingleParam(2), tag.SingleParam(3) * NGUIText.tint.a), tag.RectMinMaxParam(4), tag.RectMinMaxParam(8)));
         }
 
@@ -810,8 +813,8 @@ namespace Memoria.Assets
         private static void OnSound(FFIXTextTag tag)
         {
             // TODO: allow sound parameter to be given as an asset path
-            Single volume = tag.Param.Length > 1 ? tag.SingleParam(1) : 1f;
-            Single pitch = tag.Param.Length > 3 ? tag.SingleParam(3) : 1f;
+            Single volume = tag.ParamCount > 1 ? tag.SingleParam(1) : 1f;
+            Single pitch = tag.ParamCount > 3 ? tag.SingleParam(3) : 1f;
             SoundLib.PlaySoundEffect(tag.IntParam(0), volume, tag.SingleParam(2), pitch);
         }
 
@@ -834,10 +837,11 @@ namespace Memoria.Assets
 
         private static void OnDialogPosition(Dialog dialog, FFIXTextTag tag)
         {
+            // [DBG] Maybe shift position in widescreen (check Festival of the Hunt)
             if (dialog != null)
             {
                 dialog.Position = new Vector2(tag.SingleParam(0), tag.SingleParam(1));
-                if (tag.Param.Length > 2)
+                if (tag.ParamCount > 2)
                     dialog.FollowDialog = tag.IntParam(2);
             }
         }

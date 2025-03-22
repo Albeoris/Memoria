@@ -19,6 +19,8 @@ namespace Memoria.Assets
         public Int32 TextOffset = 0;
         public Single AppearStep = 0f;
 
+        public Int32 ParamCount => Param?.Length ?? 0;
+
         public FFIXTextTag(FFIXTextTagCode code, String[] param = null, Int32 textOff = 0)
         {
             Code = code;
@@ -43,21 +45,21 @@ namespace Memoria.Assets
 
         public Single SingleParam(Int32 index)
         {
-            if (Param != null && Param.Length > index && Single.TryParse(Param[index], out Single result))
+            if (ParamCount > index && Single.TryParse(Param[index], out Single result))
                 return result;
             return 0f;
         }
 
         public Int32 IntParam(Int32 index)
         {
-            if (Param != null && Param.Length > index && Single.TryParse(Param[index], out Single result))
+            if (ParamCount > index && Single.TryParse(Param[index], out Single result))
                 return (Int32)result;
             return 0;
         }
 
         public UInt32 UIntParam(Int32 index)
         {
-            if (Param != null && Param.Length > index && Single.TryParse(Param[index], out Single result))
+            if (ParamCount > index && Single.TryParse(Param[index], out Single result))
                 return (UInt32)result;
             return 0;
         }
@@ -254,7 +256,7 @@ namespace Memoria.Assets
                 {
                     sb.Append("Unknown ").Append(((Int32)Code).ToString("X2"));
                 }
-                if (Param?.Length > 0)
+                if (ParamCount > 0)
                 {
                     sb.Append(' ');
                     sb.Append(String.Join(",", Param));
@@ -265,27 +267,27 @@ namespace Memoria.Assets
             {
                 if (Code == FFIXTextTagCode.TextRGBA)
                 {
-                    if (Param.Length == 0)
+                    if (ParamCount == 0)
                         return $"[-]";
-                    if (Param.Length == 1)
+                    if (ParamCount == 1)
                         return $"[{NGUIText.EncodeAlpha(SingleParam(0))}]";
-                    if (Param.Length == 3)
+                    if (ParamCount == 3)
                         return $"[{NGUIText.EncodeColor24(new Color(SingleParam(0), SingleParam(1), SingleParam(2)))}]";
-                    if (Param.Length == 4)
+                    if (ParamCount == 4)
                         return $"[{NGUIText.EncodeColor32(new Color(SingleParam(0), SingleParam(1), SingleParam(2), SingleParam(3)))}]";
                 }
                 else if (Code == FFIXTextTagCode.CharacterName)
                 {
-                    if (Param.Length == 1 && CharacterNameTags.TryGetKey((CharacterId)IntParam(0), out String charTagName))
+                    if (ParamCount == 1 && CharacterNameTags.TryGetKey((CharacterId)IntParam(0), out String charTagName))
                         return $"[{charTagName}]";
                 }
                 else if (Code == FFIXTextTagCode.Party)
                 {
-                    if (Param.Length == 1)
+                    if (ParamCount == 1)
                         return $"[PTY{Param[0]}]";
                 }
 
-                Boolean isClosingTag = Param.Length == 1 && Param[0] == "Off";
+                Boolean isClosingTag = ParamCount == 1 && Param[0] == "Off";
                 sb.Append('[');
                 if (isClosingTag)
                     sb.Append('/');
@@ -293,7 +295,7 @@ namespace Memoria.Assets
                     sb.Append(tagName);
                 else
                     sb.Append("Unknown").Append(((Int32)Code).ToString("X2"));
-                if (Param.Length > 0 && !isClosingTag)
+                if (ParamCount > 0 && !isClosingTag)
                 {
                     sb.Append('=');
                     sb.Append(String.Join(",", Param));

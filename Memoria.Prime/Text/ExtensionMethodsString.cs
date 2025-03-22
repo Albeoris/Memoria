@@ -159,6 +159,19 @@ namespace Memoria.Prime.Text
             return pos;
         }
 
+        /// <summary>Non-regex search count</summary>
+        public static Int32 OccurenceCount(this String str, String search)
+        {
+            Int32 pos = str.IndexOf(search);
+            Int32 count = 0;
+            while (pos >= 0)
+            {
+                count++;
+                pos = str.IndexOf(search, pos + 1);
+            }
+            return count;
+        }
+
         public static String TrimEnd(this String source, String sufix, StringComparison comparisonType)
         {
             if (source == null)

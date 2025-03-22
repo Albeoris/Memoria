@@ -1,11 +1,12 @@
-﻿using Memoria.Assets;
-using Memoria.Data;
-using Memoria.Prime;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Memoria;
+using Memoria.Assets;
+using Memoria.Data;
+using Memoria.Prime;
 using UnityEngine;
 
 namespace Assets.Sources.Scripts.UI.Common
@@ -233,9 +234,7 @@ namespace Assets.Sources.Scripts.UI.Common
             IsLoading = true;
 
             foreach (var state in FieldImporter.LoadAsync())
-            {
                 yield return state;
-            }
 
             IsLoading = false;
             PersistenSingleton<UIManager>.Instance.SetEventEnable(true);
@@ -455,7 +454,7 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static String FieldText(Int32 textId)
         {
-            return FF9TextTool.fieldText.TryGetValue(textId, out String result) ? result : String.Empty;
+            return FF9TextTool.fieldText.TryGetValue(textId, out String result) ? TextOpCodeModifier.Modify(result) : String.Empty;
         }
 
         public static String CharacterProfile(Int32 charId)
@@ -587,12 +586,12 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static void SetSupportAbilityName(SupportAbility id, String value)
         {
-            supportAbilityName[id] = value;
+            supportAbilityName[id] = TextPatcher.PatchDatabaseString(value, typeof(SupportAbility).Name, (Int32)id, true, false);
         }
 
         public static void SetSupportAbilityHelpDesc(SupportAbility id, String value)
         {
-            supportAbilityHelpDesc[id] = value;
+            supportAbilityHelpDesc[id] = TextPatcher.PatchDatabaseString(value, typeof(SupportAbility).Name, (Int32)id, false, true);
         }
 
         public static void SetFieldText(String[] value)
@@ -625,12 +624,12 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static void SetCommandName(BattleCommandId id, String value)
         {
-            commandName[id] = value;
+            commandName[id] = TextPatcher.PatchDatabaseString(value, typeof(BattleCommandId).Name, (Int32)id, true, false);
         }
 
         public static void SetCommandHelpDesc(BattleCommandId id, String value)
         {
-            commandHelpDesc[id] = value;
+            commandHelpDesc[id] = TextPatcher.PatchDatabaseString(value, typeof(BattleCommandId).Name, (Int32)id, false, true);
         }
 
         public static void SetCmdTitleText(String[] value)
@@ -655,7 +654,7 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static void SetCardName(TetraMasterCardId id, String value)
         {
-            cardName[id] = value;
+            cardName[id] = TextPatcher.PatchDatabaseString(value, typeof(TetraMasterCardId).Name, (Int32)id, true, false);
         }
 
         public static void SetChocoUiText(String[] value)
@@ -675,42 +674,42 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static void SetItemName(RegularItem id, String value)
         {
-            itemName[id] = value;
+            itemName[id] = TextPatcher.PatchDatabaseString(value, typeof(RegularItem).Name, (Int32)id, true, false);
         }
 
         public static void SetItemHelpDesc(RegularItem id, String value)
         {
-            itemHelpDesc[id] = value;
+            itemHelpDesc[id] = TextPatcher.PatchDatabaseString(value, typeof(RegularItem).Name, (Int32)id, false, true);
         }
 
         public static void SetItemBattleDesc(RegularItem id, String value)
         {
-            itemBattleDesc[id] = value;
+            itemBattleDesc[id] = TextPatcher.PatchDatabaseString(value, typeof(RegularItem).Name, (Int32)id, false, true);
         }
 
         public static void SetImportantItemName(Int32 id, String value)
         {
-            importantItemName[id] = value;
+            importantItemName[id] = TextPatcher.PatchDatabaseString(value, "KeyItem", id, true, false);
         }
 
         public static void SetImportantItemHelpDesc(Int32 id, String value)
         {
-            importantItemHelpDesc[id] = value;
+            importantItemHelpDesc[id] = TextPatcher.PatchDatabaseString(value, "KeyItem", id, false, true);
         }
 
         public static void SetImportantSkinDesc(Int32 id, String value)
         {
-            importantSkinDesc[id] = value;
+            importantSkinDesc[id] = TextPatcher.PatchDatabaseString(value, "KeyItem", id, false, false);
         }
 
         public static void SetActionAbilityName(BattleAbilityId id, String value)
         {
-            actionAbilityName[id] = value;
+            actionAbilityName[id] = TextPatcher.PatchDatabaseString(value, typeof(BattleAbilityId).Name, (Int32)id, true, false);
         }
 
         public static void SetActionAbilityHelpDesc(BattleAbilityId id, String value)
         {
-            actionAbilityHelpDesc[id] = value;
+            actionAbilityHelpDesc[id] = TextPatcher.PatchDatabaseString(value, typeof(BattleAbilityId).Name, (Int32)id, false, true);
         }
 
         public static void SetCharacterNames(Dictionary<CharacterId, String> value)

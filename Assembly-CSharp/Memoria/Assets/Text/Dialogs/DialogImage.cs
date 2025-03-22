@@ -26,9 +26,11 @@ public class DialogImage
     public Boolean Rescale = false;
     [NonSerialized]
     public Boolean Mirror = false;
+    [NonSerialized]
+    public Single Alpha = 1f;
 
     public static Boolean CompareImages(DialogImage first, DialogImage second)
     {
-        return first.Id == second.Id && first.checkFromConfig == second.checkFromConfig && first.IsButton == second.IsButton && first.tag == second.tag;
+        return first.Id == second.Id && first.AtlasName == second.AtlasName && first.SpriteName == second.SpriteName && first.checkFromConfig == second.checkFromConfig && first.IsButton == second.IsButton && first.tag == second.tag;
     }
 }

@@ -121,7 +121,7 @@ public class DialogManager : Singleton<DialogManager>
             }
             else if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Field || PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.World)
             {
-                dialogFromPool.Phrase = FF9TextTool.FieldText(textId);
+                dialogFromPool.Phrase = TextPatcher.PatchDialogString(FF9TextTool.FieldText(textId), dialogFromPool);
 
                 // Subscribe
                 // TODO: https://github.com/Albeoris/Memoria/issues/515
@@ -129,7 +129,7 @@ public class DialogManager : Singleton<DialogManager>
                 {
                     if (id == textId)
                     {
-                        dialogFromPool.Phrase = FF9TextTool.FieldText(textId);
+                        dialogFromPool.Phrase = TextPatcher.PatchDialogString(FF9TextTool.FieldText(textId), dialogFromPool);
                         dialogFromPool.Show();
                     }
                 };

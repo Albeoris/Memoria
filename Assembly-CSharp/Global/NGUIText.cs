@@ -259,6 +259,16 @@ public static class NGUIText
             Single.TryParse(args[3], out dialogImage.Size.y);
             dialogImage.Rescale = true;
         }
+        else if (args.Length == 5)
+        {
+            dialogImage.AtlasName = args[0];
+            dialogImage.SpriteName = args[1];
+            dialogImage.Size = new Vector2();
+            Single.TryParse(args[2], out dialogImage.Size.x);
+            Single.TryParse(args[3], out dialogImage.Size.y);
+            Single.TryParse(args[4], out dialogImage.Alpha);
+            dialogImage.Rescale = true;
+        }
         else
         {
             Log.Warning($"[NGUIText] Unsupported parameters for \"{NGUIText.IconSprite}\": expect between 1 and 4 parameters, got {args.Length}: {String.Join(", ", args)}");
