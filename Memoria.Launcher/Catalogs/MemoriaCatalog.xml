@@ -1648,7 +1648,7 @@ Check them out at https://www.nexusmods.com/finalfantasy9/mods/</Description>
 	<InstallationPath>Chinese (FFSky Rebirth)</InstallationPath>
 	<ReleaseDate>2025-03-24</ReleaseDate>
 	<ReleaseDateOriginal>2025-03-24</ReleaseDateOriginal>
-	<Author>：Team "Tribute to FFIX cn 2008"</Author>
+	<Author>Team "Tribute to FFIX cn 2008"</Author>
 	<Description>                        水晶的记忆    十七载的传承
 
         ChineseFFSkyRebirth 是一款基于 Memoria 引擎开发的中文mod，全面继承了 2008 年 《最终幻想 IX》PS 版汉化版的所有元素，并在此基础上进行了进一步的优化与提升。
@@ -1662,8 +1662,8 @@ Check them out at https://www.nexusmods.com/finalfantasy9/mods/</Description>
         Team "Tribute to FFIX cn 2008" 祝您游戏愉快！</Description>
 	<PatchNotes>Version 0.9 为最终幻想IX 2008年ps版汉化的移植作品，在此基础上重新制作和调整了全部图片部分，以及结局动画。</PatchNotes>
 	<Category>Translation</Category>
-	<Website>yuyu</Website>
-	<DownloadUrl>https://www.mediafire.com/file/36whznxe5bed6ny/Chinese_%2528FFSky_Rebirth%2529.rar/file</DownloadUrl>
+	<Website>http://bbs.ffsky.com/forum.php?mod=viewthread&amp;tid=2279024</Website>
+	<DownloadUrl>https://download1078.mediafire.com/r8jkbk1iahdgC19MXS_yYgwLe7pYwZUAjPWorCys8s5VxlLW-MnFH6tZHRQO2_zoK6i7ZzzTWTAh3jh8QXiOa2Pkz94p58YPhU-0pKZZ6fHtS--Dl1hpv1bIqc5lK_dsbm-LfMFc5uD8Lldu9Um8ovzQPcpf2gPyRGajJ9oNQ3E/36whznxe5bed6ny/Chinese+%28FFSky+Rebirth%29.rar</DownloadUrl>
 	<PreviewFileUrl>http://www.duose.com/p/2007/0723/61360_5625.jpg</PreviewFileUrl>
 	<MinimumMemoriaVersion>2024-12-04</MinimumMemoriaVersion>
 </Mod>
