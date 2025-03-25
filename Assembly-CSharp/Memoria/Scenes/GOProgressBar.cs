@@ -19,9 +19,23 @@ namespace Memoria.Scenes
             Foreground = new GOForegroundWidget(obj.GetChild(0));
         }
 
+        private Single previous = 2f;
+        private Single step = 0f;
+
         public void SetProgress(Single value)
         {
-            ProgressBar.value = value;
+            if (value < previous || FF9StateSystem.Settings.IsFastForward)
+            {
+                ProgressBar.value = value;
+                step = 0f;
+            }
+            else if (previous != value)
+            {
+                // Smooths the progress bar
+                step = (value - previous) * (Single)Configuration.Graphics.BattleTPS / (Single)Configuration.Graphics.BattleFPS;
+            }
+            ProgressBar.value = Mathf.Min(ProgressBar.value + step, value);
+            previous = value;
         }
     }
 }
