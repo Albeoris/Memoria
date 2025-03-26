@@ -1,0 +1,128 @@
+﻿<Window x:Class="Installer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Installer"
+        mc:Ignorable="d"
+        Title="Memoria Engine Installer" 
+        Height="470" 
+        Width="500" 
+        ResizeMode="NoResize" 
+        WindowStyle="None">
+    <Grid x:Name="MainWindowGrid">
+        <Image x:Name="Launcher"
+            Stretch="UniformToFill"
+            VerticalAlignment="Top"
+            RenderOptions.BitmapScalingMode="HighQuality"
+            Source="/images/new_launcher_bg.jpg" />
+        <Image x:Name="LogoImage"
+            Height="250"
+            VerticalAlignment="Top"
+            HorizontalAlignment="Left"
+            Margin="20,-33,0,0"
+            RenderOptions.BitmapScalingMode="HighQuality"
+            Source="/images/FF9_logo.png" />
+        
+        <Grid x:Name="TitleGrid" Background="Black" Margin="0,0,0,445" MouseDown="TitleGrid_MouseDown">
+            <TextBlock Margin="5,2,0,0">
+                <Run FontSize="11pt" FontWeight="SemiBold" Foreground="White">Memoria Engine Setup</Run>
+            </TextBlock>
+            <TextBlock Margin="480,0,0,5">
+                <Run x:Name="CloseBtnTxt" 
+                     MouseEnter="CloseBtnTxt_MouseEnter" 
+                     MouseLeave="CloseBtnTxt_MouseLeave"
+                     MouseDown="CloseBtnTxt_MouseDown"
+                     Foreground="White" FontWeight="Bold" FontSize="13pt">X</Run>
+            </TextBlock>
+        </Grid>
+
+        <Grid x:Name="SettingsGrid" Margin="5, 205, 5, 210">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="12*"></ColumnDefinition>
+                    <ColumnDefinition Width="5"></ColumnDefinition>
+                    <ColumnDefinition Width="4*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <TextBlock Margin="0,7,0,0">
+                <Run Foreground="White">Game Install Location:</Run>
+                </TextBlock>
+                <TextBox x:Name="GamePathText" 
+                         FontSize="11pt" 
+                         Grid.Row="1" Grid.Column="0" 
+                         IsReadOnly="True" 
+                         VerticalAlignment="Center"
+                         MouseDown="GamePathText_MouseDown" TextChanged="GamePathText_TextChanged"></TextBox>
+                <Button x:Name="GamePathBrowseBtn" Content="Browse" Grid.Row="1" Grid.Column="2" Click="GamePathBrowseBtn_Click" />
+            </Grid>
+        </Grid>
+        
+        <Grid x:Name="ProgressGrid" Margin="5, 350, 5, 50" Visibility="Hidden">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,10,0,0" Foreground="White" x:Name="ProgressText">
+                   Waiting for User
+                </TextBlock>
+                <ProgressBar x:Name="ProgressBar" Grid.Row="1" Height="35" Value="0">
+                    <ProgressBar.Style>
+                        <Style TargetType="ProgressBar">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ProgressBar">
+                                        <Grid MinHeight="14" MinWidth="200" Background="Gray">
+                                            <Border x:Name="PART_Track" CornerRadius="2" Background="Gray" />
+                                            <Border x:Name="PART_Indicator" CornerRadius="2" Background="#FFE4C271" HorizontalAlignment="Left">
+                                                <Grid ClipToBounds="True">
+                                                    <Rectangle x:Name="PART_GlowRect" Width="100" HorizontalAlignment="Left" Margin="-100,0,0,0">
+                                                        <Rectangle.Fill>
+                                                            <LinearGradientBrush StartPoint="0,1" EndPoint="1,0">
+                                                                <GradientStop Color="#FFE4C271" Offset="0.5" />
+                                                                <GradientStop Color="Transparent" Offset="1" />
+                                                            </LinearGradientBrush>
+                                                        </Rectangle.Fill>
+                                                    </Rectangle>
+                                                </Grid>
+                                            </Border>
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsIndeterminate" Value="True">
+                                                <Trigger.EnterActions>
+                                                    <BeginStoryboard>
+                                                        <Storyboard RepeatBehavior="Forever">
+                                                            <DoubleAnimation Storyboard.TargetName="PART_GlowRect" Storyboard.TargetProperty="(Canvas.Left)" From="-100" To="200" Duration="0:0:2" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </Trigger.EnterActions>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ProgressBar.Style>
+                </ProgressBar>
+            </Grid>
+        </Grid>
+
+        <Grid x:Name="ModsGrid">
+        </Grid>
+        <Button x:Name="InstallBtn" Content="Install" Margin="400,430,5,5" IsEnabled="False" Click="InstallBtn_Click" />
+        <Button x:Name="CancelBtn" Content="Cancel" Margin="300,430,105,5" IsEnabled="True" Click="CancelBtn_Click" />
+        <CheckBox x:Name="TermsChkBx" Margin="10,440,250,12" Click="TermsChkBx_Click">
+            <TextBlock x:Name="TermsLbl">
+            <Run Foreground="White">I Agree to the</Run>
+            <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" Foreground="White" NavigateUri="https://raw.githubusercontent.com/Albeoris/Memoria/refs/heads/main/LICENSE">MIT License for Memoria</Hyperlink>
+            </TextBlock>
+        </CheckBox>
+    </Grid>
+</Window>
