@@ -115,7 +115,7 @@ public partial class BattleHUD : UIScene
         if (replacePos >= 0)
             return commandTitle.Substring(0, replacePos) + abilityName + commandTitle.Substring(replacePos + 1);
 
-        switch (Localization.GetSymbol())
+        switch (Localization.CurrentDisplaySymbol)
         {
             case "JP":
                 return $"{abilityName}{commandTitle}";

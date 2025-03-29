@@ -64,6 +64,14 @@ public class BattleResultUI : UIScene
         this.screenFadePanel.depth = 5;
     }
 
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        if (this.currentState >= BattleResultUI.ResultState.StartGilAndItem)
+            this.DisplayGilAndItemInfo();
+    }
+
     public override Boolean OnKeyConfirm(GameObject go)
     {
         if (base.OnKeyConfirm(go))
@@ -101,7 +109,7 @@ public class BattleResultUI : UIScene
                 case BattleResultUI.ResultState.StartGilAndItem:
                     if (!this.UpdateItem())
                     {
-                        this.ItemOverflowPanelTween.TweenIn((Action)null);
+                        this.ItemOverflowPanelTween.TweenIn(null);
                         this.currentState = BattleResultUI.ResultState.ItemFullDialog;
                     }
                     else if (this.gilValue.value == 0u)
@@ -137,7 +145,7 @@ public class BattleResultUI : UIScene
                     break;
                 case BattleResultUI.ResultState.End:
                     this.currentState = BattleResultUI.ResultState.Hide;
-                    this.Hide((UIScene.SceneVoidDelegate)null);
+                    this.Hide(null);
                     break;
             }
         }
@@ -147,9 +155,7 @@ public class BattleResultUI : UIScene
     public override void OnKeyQuit()
     {
         if (this.currentState != BattleResultUI.ResultState.Hide && !base.Loading)
-        {
             base.OnKeyQuit();
-        }
     }
 
     private void DisplayEXPAndAPInfo()
@@ -172,14 +178,12 @@ public class BattleResultUI : UIScene
         {
             this.ItemDetailPanel.SetActive(true);
             this.noItemLabel.SetActive(false);
-            Int32 num = 0;
-            foreach (FF9ITEM ff9ITEM in this.itemList)
+            for (Int32 i = 0; i < this.itemList.Count; i++)
             {
-                ItemListDetailWithIconHUD itemListDetailWithIconHUD = this.itemHudList[num];
+                ItemListDetailWithIconHUD itemListDetailWithIconHUD = this.itemHudList[i];
                 itemListDetailWithIconHUD.Self.SetActive(true);
-                FF9UIDataTool.DisplayItem(ff9ITEM.id, itemListDetailWithIconHUD.IconSprite, itemListDetailWithIconHUD.NameLabel, true);
-                itemListDetailWithIconHUD.NumberLabel.rawText = ff9ITEM.count.ToString();
-                num++;
+                FF9UIDataTool.DisplayItem(this.itemList[i].id, itemListDetailWithIconHUD.IconSprite, itemListDetailWithIconHUD.NameLabel, true);
+                itemListDetailWithIconHUD.NumberLabel.rawText = this.itemList[i].count.ToString();
             }
         }
         else
@@ -256,7 +260,7 @@ public class BattleResultUI : UIScene
         if (!this.isLevelUpSoundPlayed)
             FF9Sfx.FF9SFX_Play(683);
         this.isLevelUpSoundPlayed = true;
-        this.levelUpSpriteTween[index].TweenIn(new Byte[1], delegate
+        this.levelUpSpriteTween[index].TweenIn([0], delegate
         {
             this.levelUpSpriteTween[index].dialogList[0].SetActive(false);
             this.StartCoroutine(this.WaitAndPlayNextAnimation(index));
@@ -277,10 +281,8 @@ public class BattleResultUI : UIScene
             characterBattleResultInfoHUD.Content.SetActive(false);
         foreach (ItemListDetailWithIconHUD itemListDetailWithIconHUD in this.itemHudList)
             itemListDetailWithIconHUD.Self.SetActive(false);
-        HonoTweenPosition[] array = this.levelUpSpriteTween;
         foreach (HonoTweenPosition honoTweenPosition in this.levelUpSpriteTween)
             honoTweenPosition.dialogList[0].SetActive(false);
-        HonoTweenClipping[] array2 = this.abilityLearnedPanelTween;
         foreach (HonoTweenClipping honoTweenClipping in this.abilityLearnedPanelTween)
             honoTweenClipping.ClipGameObject.SetActive(false);
         this.cardHud.Self.SetActive(false);
@@ -345,27 +347,17 @@ public class BattleResultUI : UIScene
         this.ClearUI();
         this.DisplayEXPAndAPInfo();
         this.DisplayCharacterInfo();
-        this.infoPanelTween.TweenIn(new Byte[1], (UIScene.SceneVoidDelegate)null);
-        this.helpPanelTween.TweenIn(new Byte[1], (UIScene.SceneVoidDelegate)null);
-        this.expLeftSideTween.TweenIn(new Byte[]
-        {
-            0,
-            1,
-            2
-        }, null);
-        this.expRightSideTween.TweenIn(new Byte[]
-        {
-            0,
-            1,
-            2
-        }, null);
+        this.infoPanelTween.TweenIn([0], null);
+        this.helpPanelTween.TweenIn([0], null);
+        this.expLeftSideTween.TweenIn([0, 1, 2], null);
+        this.expRightSideTween.TweenIn([0, 1, 2], null);
         this.totalLevelUp = new Int32[4];
         this.finishedLevelUpAnimation = new Int32[4];
         this.abilityLearned[0] = new List<Int32>();
         this.abilityLearned[1] = new List<Int32>();
         this.abilityLearned[2] = new List<Int32>();
         this.abilityLearned[3] = new List<Int32>();
-        this.isReadyToShowNextAbil = new Boolean[] { true, true, true, true };
+        this.isReadyToShowNextAbil = [true, true, true, true];
         Boolean skipEXPAndAP = true;
         for (Int32 i = 0; i < this.expValue.Length && skipEXPAndAP; i++)
             if (this.expValue[i].value != 0u)
@@ -748,20 +740,10 @@ public class BattleResultUI : UIScene
 
     private void ApplyTweenAndFade()
     {
-        this.expLeftSideTween.TweenOut(new Byte[]
-        {
-            0,
-            1,
-            2
-        }, null);
-        this.expRightSideTween.TweenOut(new Byte[]
-        {
-            0,
-            1,
-            2
-        }, null);
+        this.expLeftSideTween.TweenOut([0, 1, 2], null);
+        this.expRightSideTween.TweenOut([0, 1, 2], null);
         base.Loading = true;
-        base.FadingComponent.FadePingPong(new UIScene.SceneVoidDelegate(this.AfterShowGilAndItem), delegate
+        base.FadingComponent.FadePingPong(this.AfterShowGilAndItem, delegate
         {
             base.Loading = false;
         });
@@ -818,16 +800,20 @@ public class BattleResultUI : UIScene
         this.helpPanelTween = this.TransitionPanel.GetChild(3).GetComponent<HonoTweenPosition>();
         this.ItemOverflowPanelTween = this.TransitionPanel.GetChild(4).GetComponent<HonoTweenClipping>();
         this.ItemPanelTween = this.TransitionPanel.GetChild(5).GetComponent<HonoTweenClipping>();
-        this.levelUpSpriteTween = new HonoTweenPosition[4];
-        this.levelUpSpriteTween[0] = this.TransitionPanel.GetChild(6).GetComponent<HonoTweenPosition>();
-        this.levelUpSpriteTween[1] = this.TransitionPanel.GetChild(7).GetComponent<HonoTweenPosition>();
-        this.levelUpSpriteTween[2] = this.TransitionPanel.GetChild(8).GetComponent<HonoTweenPosition>();
-        this.levelUpSpriteTween[3] = this.TransitionPanel.GetChild(9).GetComponent<HonoTweenPosition>();
-        this.abilityLearnedPanelTween = new HonoTweenClipping[4];
-        this.abilityLearnedPanelTween[0] = this.TransitionPanel.GetChild(10).GetComponent<HonoTweenClipping>();
-        this.abilityLearnedPanelTween[1] = this.TransitionPanel.GetChild(11).GetComponent<HonoTweenClipping>();
-        this.abilityLearnedPanelTween[2] = this.TransitionPanel.GetChild(12).GetComponent<HonoTweenClipping>();
-        this.abilityLearnedPanelTween[3] = this.TransitionPanel.GetChild(13).GetComponent<HonoTweenClipping>();
+        this.levelUpSpriteTween =
+        [
+            this.TransitionPanel.GetChild(6).GetComponent<HonoTweenPosition>(),
+            this.TransitionPanel.GetChild(7).GetComponent<HonoTweenPosition>(),
+            this.TransitionPanel.GetChild(8).GetComponent<HonoTweenPosition>(),
+            this.TransitionPanel.GetChild(9).GetComponent<HonoTweenPosition>()
+        ];
+        this.abilityLearnedPanelTween =
+        [
+            this.TransitionPanel.GetChild(10).GetComponent<HonoTweenClipping>(),
+            this.TransitionPanel.GetChild(11).GetComponent<HonoTweenClipping>(),
+            this.TransitionPanel.GetChild(12).GetComponent<HonoTweenClipping>(),
+            this.TransitionPanel.GetChild(13).GetComponent<HonoTweenClipping>()
+        ];
         if (FF9StateSystem.MobilePlatform)
             this.AllPanel.GetChild(3).GetChild(0).GetComponent<UILocalize>().key = "TouchToConfirm";
         this.GilAndItemPhrasePanel.GetChild(0).GetComponent<UIPanel>().depth = 2;

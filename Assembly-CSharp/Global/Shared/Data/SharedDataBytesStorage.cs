@@ -49,7 +49,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
         String[] saveDataFiles = Directory.GetFiles(MetaData.DirPath, "SavedData_??.dat");
         if (saveDataFiles.Length == 0)
         {
-            if (Localization.CurrentLanguage == "Japanese")
+            if (Localization.CurrentSymbol == "JP")
                 fileName = "SavedData_jp.dat";
             else
                 fileName = "SavedData_ww.dat";

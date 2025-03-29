@@ -33,144 +33,86 @@ using static AssetManager;
 
 public class TitleUI : UIScene
 {
-    private static String MenuGroupButton = "Title.Menu";
-
-    private static String LanguageGroupButton = "Title.MenuLanguage";
-
-    private static String StaffRollGroupButton = "Title.MenuStaffRoll";
-
-    private static String LicenseGroupButton = "Title.MenuLicense";
-
-    private static String MovieGalleryGroupButton = "MovieGallery.Thumbnail";
+    private const String MenuGroupButton = "Title.Menu";
+    private const String LanguageGroupButton = "Title.MenuLanguage";
+    private const String StaffRollGroupButton = "Title.MenuStaffRoll";
+    private const String LicenseGroupButton = "Title.MenuLicense";
+    private const String MovieGalleryGroupButton = "MovieGallery.Thumbnail";
 
     public GameObject MenuPanelObject;
-
     public GameObject MenuGroupPanel;
-
     public GameObject MenuLanguageButton;
-
     public GameObject MenuStaffButton;
-
     public GameObject MenuStaffPCButton;
-
     public GameObject MenuMovieButton;
-
     public GameObject MenuBlackjackButton;
-
     public GameObject MenuBlackjackPCButton;
-
     public GameObject FaqsButton;
-
     public GameObject SquareEnixButton;
-
     public GameObject AchievementButton;
-
     public GameObject ScreenRotateButton;
-
     public GameObject SlideShowObject;
-
     public GameObject SlideShowHitArea;
-
     public GameObject TitleImageTextObject0;
-
     public GameObject TitleImageTextObject1;
-
     public GameObject TitleImageTextJpObject0;
-
     public GameObject TitleImageTextJpObject1;
-
     public GameObject SelectLanguagePanel;
-
     public GameObject LanguageGroupPanel;
-
     public GameObject BackButton;
-
     public GameObject StaffPanel;
-
     public GameObject StaffBackButton;
-
     public GameObject StaffLicenseButton;
 
     public UIProgressBar StaffScrollBar;
 
     public UILabel StaffLabel;
-
     public UIWidget StaffScrollContainer;
-
     public UIWidget StaffFFIXLogo;
-
     public UIWidget StaffForeground;
 
     public GameObject LicensePanel;
-
     public GameObject LicenseBackButton;
-
     public UILabel LicensePageIndicator;
-
     public UICenterOnChild LicenseCenterOnChild;
 
     public GameObject MoviePanel;
-
     public GameObject MovieBackButton;
-
     public UICenterOnChild MovieCenterOnChild;
-
     public UIGrid MoviePagerGrid;
-
     public UIGrid MoviePageGrid;
-
     public UIScrollView MovieScrollView;
-
     public UIWidget MovieForeGround;
-
     public GameObject MovieHitArea;
 
     public GameObject ScreenFadeGameObject;
-
     public GameObject LoadingIcon;
 
     private GameObject continueButton;
-
     private GameObject newGameButton;
-
     private GameObject loadGameButton;
-
     private GameObject cloudButton;
-
     private GameObject startGameObject;
 
     private GameObject englishUSButton;
-
     private GameObject japaneseButton;
-
     private GameObject germanButton;
-
     private GameObject spanishButton;
-
     private GameObject italianButton;
-
     private GameObject frenchButton;
-
     private GameObject englishUKButton;
 
     private UISprite rotateButtonSprite;
-
     private UISprite continueButtonSprite;
-
     private UISprite cloudButtonSprite;
 
     private Boolean canSync;
-
     private Boolean canContinue;
 
     private SlideShow idleScreen;
-
     public Single idleTime = 20f;
-
     private Timer timer;
-
     private SlideShow.Type idleScreenType = SlideShow.Type.Sequence1;
-
     public GameObject SlideShowFadingObject;
 
     public Boolean SplashScreenEnabled = true;
@@ -178,25 +120,18 @@ public class TitleUI : UIScene
     public Boolean ForceCheckingAutoSave;
 
     public UILabel SpashText;
-
     public UISprite LogoSprite;
-
     private SlashScreen slashScreen;
 
     private Boolean IsJustLaunchApp = true;
 
     private Single staffScrollingTime = 180f;
-
     private Boolean isStaffScene;
-
     private Boolean isLicenseScene;
-
     private Boolean isPlayingMovie;
 
     private Int32 currentMoviePageIndex;
-
     private ButtonGroupState[] movieThumbnails;
-
     private List<GameObject> movieThumbnailList;
 
     private static readonly String[] MovieFiles =
@@ -248,7 +183,6 @@ public class TitleUI : UIScene
     private GameObject selectedMovieThumbnail;
 
     private Boolean fromAchievementPage;
-
     private Boolean authenticatedBeforeClickingAchievementPage;
 
     private Int32 licensePageNum;
@@ -256,20 +190,13 @@ public class TitleUI : UIScene
     private Boolean playSoundFMV000 = true;
 
     private Single doubleClickInterval = 0.35f;
-
     private Single clickedTimer = -1f;
-
     private Boolean isPaused;
 
-    public string GClunguage;
+    public String GClunguage;
 
-    public bool IsSplashTextActive
-    {
-        get
-        {
-            return this.SpashText != (UnityEngine.Object)null && this.SpashText.isActiveAndEnabled;
-        }
-    }
+    public Boolean IsJustLaunch => this.IsJustLaunchApp;
+    public Boolean IsSplashTextActive => this.SpashText != null && this.SpashText.isActiveAndEnabled;
 
     public class UiElement
     {
@@ -1170,15 +1097,15 @@ public class TitleUI : UIScene
     private void OnFaqsButtonClick()
     {
         FF9Sfx.FF9SFX_Play(103);
-        switch (Localization.CurrentLanguage)
+        switch (Localization.CurrentSymbol)
         {
-            case "English(US)": Application.OpenURL("http://an.sqexm.net/sp/site/Page/sqmk/ff9/help/help_us");  break;
-            case "English(UK)": Application.OpenURL("http://an.sqexm.net/sp/site/Page/sqmk/ff9/help/help_uk");  break;
-            case "Japanese":    Application.OpenURL("http://an.sqexm.net/sp/site/Page/sqmk/ff9/help/help_jp");  break;
-            case "Spanish":     Application.OpenURL("http://an.sqexm.net/sp/site/Page/sqmk/ff9/help/help_spa"); break;
-            case "French":      Application.OpenURL("http://an.sqexm.net/sp/site/Page/sqmk/ff9/help/help_fra"); break;
-            case "German":      Application.OpenURL("http://an.sqexm.net/sp/site/Page/sqmk/ff9/help/help_ger"); break;
-            case "Italian":     Application.OpenURL("http://an.sqexm.net/sp/site/Page/sqmk/ff9/help/help_ita"); break;
+            case "US": Application.OpenURL("http://an.sqexm.net/sp/site/Page/sqmk/ff9/help/help_us");  break;
+            case "UK": Application.OpenURL("http://an.sqexm.net/sp/site/Page/sqmk/ff9/help/help_uk");  break;
+            case "JP": Application.OpenURL("http://an.sqexm.net/sp/site/Page/sqmk/ff9/help/help_jp");  break;
+            case "ES": Application.OpenURL("http://an.sqexm.net/sp/site/Page/sqmk/ff9/help/help_spa"); break;
+            case "FR": Application.OpenURL("http://an.sqexm.net/sp/site/Page/sqmk/ff9/help/help_fra"); break;
+            case "GR": Application.OpenURL("http://an.sqexm.net/sp/site/Page/sqmk/ff9/help/help_ger"); break;
+            case "IT": Application.OpenURL("http://an.sqexm.net/sp/site/Page/sqmk/ff9/help/help_ita"); break;
         }
     }
 
@@ -1188,15 +1115,15 @@ public class TitleUI : UIScene
             return;
 
         FF9Sfx.FF9SFX_Play(103);
-        switch (Localization.CurrentLanguage)
+        switch (Localization.CurrentSymbol)
         {
-            case "English(US)": Application.OpenURL("http://sqex-bridge.jp/");  break;
-            case "English(UK)": Application.OpenURL("http://sqex-bridge.jp/");  break;
-            case "Japanese":    Application.OpenURL("http://sqex-bridge.jp/");  break;
-            case "Spanish":     Application.OpenURL("http://sqex-bridge.jp/");  break;
-            case "French":      Application.OpenURL("http://sqex-bridge.jp/");  break;
-            case "German":      Application.OpenURL("http://sqex-bridge.jp/");  break;
-            case "Italian":     Application.OpenURL("http://sqex-bridge.jp/");  break;
+            case "US": Application.OpenURL("http://sqex-bridge.jp/"); break;
+            case "UK": Application.OpenURL("http://sqex-bridge.jp/"); break;
+            case "JP": Application.OpenURL("http://sqex-bridge.jp/"); break;
+            case "ES": Application.OpenURL("http://sqex-bridge.jp/"); break;
+            case "FR": Application.OpenURL("http://sqex-bridge.jp/"); break;
+            case "GR": Application.OpenURL("http://sqex-bridge.jp/"); break;
+            case "IT": Application.OpenURL("http://sqex-bridge.jp/"); break;
         }
     }
 
@@ -1290,15 +1217,15 @@ public class TitleUI : UIScene
 
     private GameObject GetGameObjectFromCurrentLanguage()
     {
-        switch (Localization.CurrentLanguage)
+        switch (Localization.CurrentSymbol)
         {
-            case "English(US)": return this.englishUSButton;
-            case "Japanese":    return this.japaneseButton;
-            case "German":      return this.germanButton;
-            case "Spanish":     return this.spanishButton;
-            case "Italian":     return this.italianButton;
-            case "French":      return this.frenchButton;
-            case "English(UK)": return this.englishUKButton;
+            case "US": return this.englishUSButton;
+            case "JP": return this.japaneseButton;
+            case "GR": return this.germanButton;
+            case "ES": return this.spanishButton;
+            case "IT": return this.italianButton;
+            case "FR": return this.frenchButton;
+            case "UK": return this.englishUKButton;
         }
         return null;
     }
@@ -1500,7 +1427,7 @@ public class TitleUI : UIScene
 
     private void Awake()
     {
-        ExpansionVerifier.printLog("TitleUI: awake lang = " + FF9StateSystem.Settings.CurrentLanguage);
+        ExpansionVerifier.printLog("TitleUI: awake lang = " + Localization.CurrentSymbol);
         FadingComponent = this.ScreenFadeGameObject.GetComponent<HonoFading>();
         this.continueButton = this.MenuGroupPanel.GetChild(0);
         this.newGameButton = this.MenuGroupPanel.GetChild(1);
@@ -1805,17 +1732,11 @@ public class TitleUI : UIScene
             //TextureHelper.WriteTextureToFile(TextureHelper.CopyAsReadable(Resources.Load<Sprite>("EmbeddedAsset/UI/Sprites/US/title_image_07_text0").texture), "StreamingAssets/UI/Sprites/US/title_image_07_text0.png");
             //TextureHelper.WriteTextureToFile(TextureHelper.CopyAsReadable(Resources.Load<Sprite>("EmbeddedAsset/UI/Sprites/US/title_image_07_text1").texture), "StreamingAssets/UI/Sprites/US/title_image_07_text1.png");
 
-            String text = Localization.GetSymbol();
-            //if (text.Equals("JP"))
-            //{
-            //    text = "US";
-            //}
+            String lang = Localization.CurrentDisplaySymbol;
             if (seqIndex != 0)
-            {
                 idx += 4;
-            }
 
-            return LoadSprite("UI/Sprites/" + text + "/title_image_0" + idx.ToString(CultureInfo.InvariantCulture) + "_text" + textId.ToString(CultureInfo.InvariantCulture));
+            return LoadSprite("UI/Sprites/" + lang + "/title_image_0" + idx.ToString(CultureInfo.InvariantCulture) + "_text" + textId.ToString(CultureInfo.InvariantCulture));
         }
 
         private Sprite LoadSprite(String relativePath)
@@ -1840,7 +1761,7 @@ public class TitleUI : UIScene
             this.ui2dSprite = this.slideShowObject.GetComponent<UI2DSprite>();
             if (kind == Type.Sequence1 || kind == Type.Sequence2)
             {
-                if (Localization.GetSymbol() == "JP")
+                if (Localization.CurrentDisplaySymbol == "JP")
                 {
                     this.titleImageText0 = this.titleImageTextJpObject0.GetComponent<UI2DSprite>();
                     this.titleImageText1 = this.titleImageTextJpObject1.GetComponent<UI2DSprite>();
@@ -2102,11 +2023,7 @@ public class TitleUI : UIScene
         public void Play(SceneVoidDelegate postSplashScreenFadeOut, SceneVoidDelegate postMenuFadeIn)
         {
             this.honoFading.tweenAlpha.value = 1f;
-            String text = Localization.GetSymbol();
-            //if (text.Equals("JP"))
-            //{
-            //    text = "US";
-            //}
+            String text = Localization.CurrentDisplaySymbol;
             this.spashText.rawText = AssetManager.LoadString("EmbeddedAsset/Text/" + text + "/Title/warning");
             this.spashText.alignment = NGUIText.Alignment.Left;
             this.spashText.gameObject.SetActive(true);

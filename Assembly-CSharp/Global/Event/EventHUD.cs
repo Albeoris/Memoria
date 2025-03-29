@@ -46,7 +46,7 @@ public class EventHUD
             }
             else if (FF9TextTool.FieldZoneId == 22) // Lindblum Castle (1)
             {
-                switch (Localization.GetSymbol())
+                switch (Localization.CurrentSymbol)
                 {
                     case "JP":
                     case "IT":
@@ -69,7 +69,7 @@ public class EventHUD
             }
             else if (FF9TextTool.FieldZoneId == 23) // Mist Gates
             {
-                switch (Localization.GetSymbol())
+                switch (Localization.CurrentSymbol)
                 {
                     case "JP":
                     case "FR":
@@ -100,7 +100,7 @@ public class EventHUD
             }
             else if (FF9TextTool.FieldZoneId == 70 || FF9TextTool.FieldZoneId == 741) // Treno (1) and Treno (2)
             {
-                switch (Localization.GetSymbol())
+                switch (Localization.CurrentSymbol)
                 {
                     case "US":
                     case "UK":
@@ -115,7 +115,7 @@ public class EventHUD
             }
             else if (FF9TextTool.FieldZoneId == 71) // Qu's Marsh
             {
-                switch (Localization.GetSymbol())
+                switch (Localization.CurrentSymbol)
                 {
                     case "US":
                     case "UK":
@@ -145,7 +145,7 @@ public class EventHUD
             }
             else if (FF9TextTool.FieldZoneId == 358) // Madain Sari (1)
             {
-                switch (Localization.GetSymbol())
+                switch (Localization.CurrentSymbol)
                 {
                     case "JP":
                     case "FR":
@@ -190,7 +190,7 @@ public class EventHUD
                 }
                 else
                 {
-                    if (Localization.GetSymbol() == "JP")
+                    if (Localization.CurrentSymbol == "JP")
                         isSpecialHUD = mesId == 250;
                     else
                         isSpecialHUD = mesId == 251; // "I'll give you one for 50 Gil (Stock: 0) [...]"
@@ -200,7 +200,7 @@ public class EventHUD
             }
             else if (FF9TextTool.FieldZoneId == 946) // Alexandria (Ruin)
             {
-                switch (Localization.GetSymbol())
+                switch (Localization.CurrentSymbol)
                 {
                     case "US":
                     case "UK":

@@ -64,7 +64,10 @@ namespace Assets.Sources.Scripts.UI.Common
             Single spacingY = 10f * shrinkFactor;
             String itemLabel = String.Empty;
             Int32 columnIndex = 0;
-            foreach (KeyValuePair<RegularItem, Int32> kvp in items)
+            IEnumerable<KeyValuePair<RegularItem, Int32>> enumerator = items;
+            if (items.Count == 1 && items.First().Value == 2)
+                enumerator = new List<KeyValuePair<RegularItem, Int32>>([new(items.First().Key, 1), new(items.First().Key, 1)]);
+            foreach (KeyValuePair<RegularItem, Int32> kvp in enumerator)
             {
                 if (kvp.Key == RegularItem.NoItem || kvp.Value <= 0)
                     continue;
@@ -603,7 +606,7 @@ namespace Assets.Sources.Scripts.UI.Common
 
         private static String CheckIconLocalize(String spriteName)
         {
-            String key = spriteName + "#" + FF9StateSystem.Settings.CurrentLanguage;
+            String key = spriteName + "#" + Localization.CurrentDisplayLanguage;
             if (FF9UIDataTool.iconLocalizeList.TryGetValue(key, out String localSpriteName))
                 return localSpriteName;
             return spriteName;
@@ -787,7 +790,7 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static Sprite LoadWorldTitle(SByte titleId, Boolean isShadow)
         {
-            String langSymbol = Localization.GetSymbol();
+            String langSymbol = Localization.CurrentDisplaySymbol;
             String spriteName = GetWorldTitleSpriteName(titleId, isShadow, langSymbol);
             Sprite sprite;
             if (FF9UIDataTool.worldTitleSpriteList.ContainsKey(spriteName))

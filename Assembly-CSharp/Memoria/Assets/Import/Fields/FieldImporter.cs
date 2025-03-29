@@ -27,6 +27,7 @@ namespace Memoria.Assets
         private volatile AutoResetEvent _watcherEvent;
         private volatile Task _watcherTask;
         private Int32 _fieldZoneId;
+        private String _fieldLanguage;
         private String _fieldFileName;
         private String[] _original;
         private TxtEntry[] _external;
@@ -379,18 +380,20 @@ namespace Memoria.Assets
         protected override Boolean LoadInternal()
         {
             Int32 fieldZoneId = FF9TextTool.FieldZoneId;
-            if (fieldZoneId == _fieldZoneId)
+            String fieldLanguage = EmbadedTextResources.CurrentSymbol ?? Localization.CurrentSymbol;
+            if (fieldZoneId == _fieldZoneId && fieldLanguage == _fieldLanguage)
                 return true;
 
-            FF9TextTool.fieldText.Clear();
+            FF9TextTool.LoadingZoneBatch.fieldText.Clear();
             String path = EmbadedTextResources.GetCurrentPath("/Field/" + FF9TextTool.GetFieldTextFileName(fieldZoneId) + ".mes");
-            FF9TextTool.ImportStrtWithCumulativeModFiles<Int32>(path, FF9TextTool.fieldText);
+            FF9TextTool.ImportStrtWithCumulativeModFiles<Int32>(path, FF9TextTool.LoadingZoneBatch.fieldText);
 
             FF9TextTool.ClearTableText();
 
-            if (FF9TextTool.fieldText.Count == 0)
+            if (FF9TextTool.LoadingZoneBatch.fieldText.Count == 0)
                 return false;
             _fieldZoneId = fieldZoneId;
+            _fieldLanguage = Localization.CurrentSymbol;
             return true;
         }
 

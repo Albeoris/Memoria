@@ -113,6 +113,7 @@ public class ItemUI : UIScene
             afterFinished?.Invoke();
         };
 
+        _fastSwitch = false;
         SceneDirector.FadeEventSetColor(FadeMode.Sub, Color.black);
         base.Show(afterShowAction);
         UpdateUserInterface();
@@ -222,6 +223,23 @@ public class ItemUI : UIScene
         ButtonGroupState.RemoveCursorMemorize(SubMenuGroupButton);
         ButtonGroupState.RemoveCursorMemorize(ItemGroupButton);
         ButtonGroupState.RemoveCursorMemorize(KeyItemGroupButton);
+    }
+
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        if (_itemScrollList.isActiveAndEnabled)
+            _itemScrollList.UpdateTableViewImp();
+        if (_keyItemScrollList.isActiveAndEnabled)
+            _keyItemScrollList.UpdateTableViewImp();
+        if (_isShowingKeyItemDesp)
+        {
+            Int32 keyItemId = _keyItemIdList[_currentItemIndex];
+            _keyItemDetailName.rawText = FF9TextTool.ImportantItemName(keyItemId);
+            _keyItemDetailDescription.spacingY = _defaultSkinLabelSpacingY;
+            _keyItemDetailDescription.rawText = FF9TextTool.ImportantItemSkin(keyItemId);
+        }
     }
 
     public override Boolean OnKeyConfirm(GameObject go)
@@ -805,8 +823,7 @@ public class ItemUI : UIScene
             Int32 keyItemId = _keyItemIdList[_currentItemIndex];
             _keyItemDetailName.rawText = FF9TextTool.ImportantItemName(keyItemId);
             _keyItemDetailDescription.spacingY = _defaultSkinLabelSpacingY;
-            String description = FF9TextTool.ImportantItemSkin(keyItemId);
-            _keyItemDetailDescription.rawText = description;
+            _keyItemDetailDescription.rawText = FF9TextTool.ImportantItemSkin(keyItemId);
             Loading = true;
             // ISSUE: method pointer
             _keyItemSkinTransition.TweenIn(new Byte[1], () =>
@@ -959,15 +976,15 @@ public class ItemUI : UIScene
         PersistenSingleton<UIManager>.Instance.MainMenuScene.ScreenFadeGameObject.GetParent().GetComponent<UIPanel>().depth = 100;
         _chocoboDialog.Hide();
 
-        SceneVoidDelegate fAmCache3 = () =>
+        SceneDirector.FF9Wipe_FadeInEx(12);
+        _fastSwitch = false;
+        Hide(delegate()
         {
             PersistenSingleton<UIManager>.Instance.MainMenuScene.SubMenuPanel.SetActive(false);
             PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.WorldHUD);
             PersistenSingleton<UIManager>.Instance.MainMenuScene.NeedTweenAndHideSubMenu = true;
             PersistenSingleton<UIManager>.Instance.MainMenuScene.ScreenFadeGameObject.GetParent().GetComponent<UIPanel>().depth = 10;
-        };
-
-        Hide(fAmCache3);
+        });
     }
 
     private void Awake()

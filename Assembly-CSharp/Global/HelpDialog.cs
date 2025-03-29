@@ -1,6 +1,7 @@
-﻿using Memoria;
+﻿using System;
+using System.Collections;
+using Memoria;
 using Memoria.Assets;
-using System;
 using UnityEngine;
 
 public class HelpDialog : Singleton<HelpDialog>
@@ -64,6 +65,19 @@ public class HelpDialog : Singleton<HelpDialog>
         this.InitializeDialog();
     }
 
+    public void OnLocalize()
+    {
+        if (this.isActiveAndEnabled)
+            base.StartCoroutine(OnLocalizeDelayed());
+    }
+
+    private IEnumerator OnLocalizeDelayed()
+    {
+        yield return new WaitForEndOfFrame();
+        ButtonGroupState.RefreshHelpDialog();
+        yield break;
+    }
+
     public void HideDialog()
     {
         base.gameObject.SetActive(false);
@@ -123,7 +137,7 @@ public class HelpDialog : Singleton<HelpDialog>
                 // this.dialogRect.y = 880f;
                 // this.dialogRect.z = 420f;
                 // this.dialogRect.w = 332f;
-                if (Localization.CurrentLanguage != "Japanese")
+                if (Localization.CurrentDisplaySymbol != "JP")
                     this.phraseLabel.fontSize = 32;
             }
             else

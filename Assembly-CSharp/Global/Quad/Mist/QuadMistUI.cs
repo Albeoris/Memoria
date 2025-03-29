@@ -9,8 +9,6 @@ using UnityEngine;
 
 public class QuadMistUI : UIScene
 {
-    public Boolean AllowGameCancel => FF9StateSystem.Common.FF9.miniGameArg != 124 && FF9StateSystem.Common.FF9.miniGameArg != 125 && FF9StateSystem.Common.FF9.miniGameArg != 126 && FF9StateSystem.Common.FF9.miniGameArg != 127;
-
     public QuadMistUI.CardState State
     {
         set => currentState = value;
@@ -27,9 +25,9 @@ public class QuadMistUI : UIScene
             }
             else
             {
-                String phrase = Localization.Get("QuadMistDiscardNotice");
-                Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(phrase, 100, 3, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(105f, 90f), Dialog.CaptionType.None);
-                dialog.AfterDialogHidden = onDiscardNoticeHidden;
+                dialogMessageKey = "QuadMistDiscardNotice";
+                dialogMessage = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(dialogMessageKey), 100, 3, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(105f, 90f), Dialog.CaptionType.None);
+                dialogMessage.AfterDialogHidden = onDiscardNoticeHidden;
                 isDialogShowing = true;
             }
         };
@@ -45,7 +43,7 @@ public class QuadMistUI : UIScene
             BuildCard();
             UpdateAmountLabel();
         }
-        textAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/QuadMist/Atlas/QuadMist Text " + Localization.GetSymbol() + " Atlas", false);
+        UpdateAtlas();
         PersistenSingleton<UIManager>.Instance.SetUIPauseEnable(false);
         DisplayInfo();
         DisplayCardList();
@@ -53,20 +51,32 @@ public class QuadMistUI : UIScene
         {
             DisplayCardDetail();
             DiscardTitle.SetActive(false);
-            TitleSprite.atlas = textAtlas;
             TitleSprite.gameObject.SetActive(true);
             CardSelectedPanel.SetActive(true);
-            BackButton.SetActive(AllowGameCancel);
+            BackButton.SetActive(QuadMistGame.AllowGameCancel);
         }
         else
         {
             TitleSprite.gameObject.SetActive(false);
             DiscardTitle.SetActive(true);
+            CardSelectedPanel.SetActive(false);
+            BackButton.SetActive(false);
+        }
+    }
+
+    private void UpdateAtlas()
+    {
+        textAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/QuadMist/Atlas/QuadMist Text " + Localization.CurrentDisplaySymbol + " Atlas", false);
+        if (currentState == QuadMistUI.CardState.CardSelection)
+        {
+            TitleSprite.atlas = textAtlas;
+        }
+        else
+        {
             discardTitleSprite.atlas = textAtlas;
-            UISprite[] array = discardTitleBulletSprite;
             foreach (UISprite sprite in discardTitleBulletSprite)
                 sprite.atlas = textAtlas;
-            switch (Localization.GetSymbol())
+            switch (Localization.CurrentDisplaySymbol)
             {
                 case "US":
                 case "UK":
@@ -98,21 +108,19 @@ public class QuadMistUI : UIScene
             }
             discardTitleBulletWidget[0].UpdateAnchors();
             discardTitleBulletWidget[1].UpdateAnchors();
-            CardSelectedPanel.SetActive(false);
-            BackButton.SetActive(false);
         }
     }
 
     public override void Hide(UIScene.SceneVoidDelegate afterFinished = null)
     {
-        UIScene.SceneVoidDelegate afterFinishedDelegate = delegate
+        UIScene.SceneVoidDelegate afterHideAction = delegate
         {
             PersistenSingleton<UIManager>.Instance.State = UIManager.UIState.QuadMistBattle;
         };
         if (afterFinished != null)
-            afterFinishedDelegate += afterFinished;
+            afterHideAction += afterFinished;
         base.NextSceneIsModal = false;
-        base.Hide(afterFinishedDelegate);
+        base.Hide(afterHideAction);
         RemoveCursorMemorize();
         cardInfoContentGameObject.SetActive(false);
     }
@@ -120,6 +128,21 @@ public class QuadMistUI : UIScene
     private void RemoveCursorMemorize()
     {
         ButtonGroupState.RemoveCursorMemorize(QuadMistUI.CardGroupButton);
+    }
+
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        if (cardInfoContentGameObject.activeInHierarchy && currentCardId >= 0 && count[currentCardId] > 0)
+        {
+            FF9UIDataTool.DisplayCard(GetCardInfo(currentCardId, currentCardOffset), cardDetailHudList[0], false);
+            cardNameLabel.rawText = FF9TextTool.CardName((TetraMasterCardId)currentCardId);
+        }
+        // TODO: for some reason, the dialog doesn't like when the number of lines changes there
+        //if (dialogMessage != null)
+        //    dialogMessage.ChangePhraseSoft(Localization.Get(dialogMessageKey));
+        UpdateAtlas();
     }
 
     public override Boolean OnKeyConfirm(GameObject go)
@@ -138,9 +161,9 @@ public class QuadMistUI : UIScene
                     if (selectedCardList.Count > 4)
                     {
                         cardInfoContentGameObject.SetActive(false);
-                        String phrase = Localization.Get("QuadMistConfirmSelection");
-                        Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(phrase, 100, 3, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(105f, 90f), Dialog.CaptionType.None);
-                        dialog.AfterDialogHidden = onConfirmDialogHidden;
+                        dialogMessageKey = "QuadMistConfirmSelection";
+                        dialogMessage = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(dialogMessageKey), 100, 3, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(105f, 90f), Dialog.CaptionType.None);
+                        dialogMessage.AfterDialogHidden = onConfirmDialogHidden;
                     }
                 }
             }
@@ -148,9 +171,9 @@ public class QuadMistUI : UIScene
             {
                 deleteCardId = currentCardId;
                 ETb.sChoose = 1;
-                String phrase = Localization.Get("QuadMistDiscardConfirm");
-                Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(phrase, 100, 3, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(194f, 38f), Dialog.CaptionType.None);
-                dialog.AfterDialogHidden = onDiscardConfirmHidden;
+                dialogMessageKey = "QuadMistDiscardConfirm";
+                dialogMessage = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(dialogMessageKey), 100, 3, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(194f, 38f), Dialog.CaptionType.None);
+                dialogMessage.AfterDialogHidden = onDiscardConfirmHidden;
             }
         }
         return true;
@@ -167,12 +190,12 @@ public class QuadMistUI : UIScene
                 DisplayCardList();
                 DisplayCardDetail();
             }
-            else if (AllowGameCancel)
+            else if (QuadMistGame.AllowGameCancel)
             {
                 ETb.sChoose = 1;
-                String phrase = Localization.Get("QuadMistEndCardGame");
-                Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(phrase, 100, 3, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(105f, 90f), Dialog.CaptionType.None);
-                dialog.AfterDialogHidden = onQuitDialogHidden;
+                dialogMessageKey = "QuadMistEndCardGame";
+                dialogMessage = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(dialogMessageKey), 100, 3, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(105f, 90f), Dialog.CaptionType.None);
+                dialogMessage.AfterDialogHidden = onQuitDialogHidden;
             }
         }
         return true;
@@ -282,6 +305,7 @@ public class QuadMistUI : UIScene
 
     private void onConfirmDialogHidden(Int32 choice)
     {
+        dialogMessage = null;
         if (choice == 0)
         {
             Hide(delegate
@@ -303,6 +327,7 @@ public class QuadMistUI : UIScene
 
     private void onQuitDialogHidden(Int32 choice)
     {
+        dialogMessage = null;
         if (choice == 0)
         {
             isNeedToBuildCard = true;
@@ -317,6 +342,7 @@ public class QuadMistUI : UIScene
 
     private void onDiscardNoticeHidden(Int32 choice)
     {
+        dialogMessage = null;
         isDialogShowing = false;
         DisplayCardDetail();
         ButtonGroupState.ActiveGroup = QuadMistUI.CardGroupButton;
@@ -324,6 +350,7 @@ public class QuadMistUI : UIScene
 
     private void onDiscardConfirmHidden(Int32 choice)
     {
+        dialogMessage = null;
         if (choice == 0)
         {
             QuadMistDatabase.MiniGame_AwayCard((TetraMasterCardId)deleteCardId, currentCardOffset);
@@ -592,6 +619,10 @@ public class QuadMistUI : UIScene
     private Int32 currentCardOffset;
     private Int32 deleteCardId;
 
+    [NonSerialized]
+    private Dialog dialogMessage;
+    [NonSerialized]
+    private String dialogMessageKey;
     private Boolean isDialogShowing;
 
     private List<QuadMistCard> selectedCardList = new List<QuadMistCard>();

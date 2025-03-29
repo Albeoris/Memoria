@@ -107,7 +107,7 @@ public partial class BattleHUD : UIScene
     public String GetBattleCommandTitle(CMD_DATA pCmd)
     {
         if (pCmd.regist != null && pCmd.regist.bi.player == 0)
-            return pCmd.aa.Name;
+            return GetEnemyCommandDisplayName(pCmd.aa);
         if (btl_util.IsCommandMonsterTransform(pCmd))
         {
             AA_DATA aaData = btl_util.GetCommandMonsterAttack(pCmd);
@@ -386,6 +386,7 @@ public partial class BattleHUD : UIScene
 
     public void UpdateUserInterface(Boolean forceUpdate = false)
     {
+        // [DBG] bugs appeared (label font size, detail header initialisation, bad status button)
         Int32 partyCount = FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits().Count(unit => unit.IsPlayer);
         if (partyCount == _playerDetailCount && !forceUpdate)
             return;

@@ -169,6 +169,20 @@ public class PartySettingUI : UIScene
         ButtonGroupState.RemoveCursorMemorize(MoveCharGroupButton);
     }
 
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        DisplayHelpInfo();
+        CharacterId[] menu = this.info.menu;
+        for (Int32 i = 0; i < menu.Length; i++)
+        {
+            CharacterDetailPartyHUD memberHUD = this.currentPartyHudList[i];
+            if (menu[i] == CharacterId.NONE)
+                memberHUD.EmptyLabel.rawText = String.Format(Localization.Get("EmptyCharNumber"), i + 1);
+        }
+    }
+
     public override GameObject OnKeyNavigate(KeyCode direction, GameObject currentObj, GameObject nextObj)
     {
         if (nextObj != null || currentObj == null)
@@ -322,11 +336,10 @@ public class PartySettingUI : UIScene
 
     private void DisplayCharacters()
     {
-        Int32 hudIndex = 0;
         CharacterId[] menu = this.info.menu;
         for (Int32 i = 0; i < menu.Length; i++)
         {
-            CharacterDetailPartyHUD characterDetailPartyHUD = this.currentPartyHudList[hudIndex++];
+            CharacterDetailPartyHUD characterDetailPartyHUD = this.currentPartyHudList[i];
             if (menu[i] != CharacterId.NONE)
             {
                 PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(menu[i]);
@@ -338,7 +351,7 @@ public class PartySettingUI : UIScene
             }
             else
             {
-                characterDetailPartyHUD.EmptyLabel.rawText = String.Format(Localization.Get("EmptyCharNumber"), hudIndex);
+                characterDetailPartyHUD.EmptyLabel.rawText = String.Format(Localization.Get("EmptyCharNumber"), i + 1);
                 characterDetailPartyHUD.Content.SetActive(false);
                 characterDetailPartyHUD.EmptyLabel.gameObject.SetActive(true);
             }

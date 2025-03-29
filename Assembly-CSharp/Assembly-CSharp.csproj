@@ -393,10 +393,12 @@
     <Compile Include="Memoria\Battle\Calculator\EatResult.cs" />
     <Compile Include="Memoria\Battle\Scripts\IOverloadableMethod.cs" />
     <Compile Include="Memoria\Battle\Scripts\IStatusScript.cs" />
+    <Compile Include="Memoria\Configuration\Access\Lang.cs" />
     <Compile Include="Memoria\Configuration\Access\Worldmap.cs" />
     <Compile Include="Memoria\Configuration\Access\Interface.cs" />
     <Compile Include="Memoria\Configuration\Access\Shaders.cs" />
     <Compile Include="Memoria\Configuration\IniFile.cs" />
+    <Compile Include="Memoria\Configuration\Structure\LangSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\WorldmapSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\InterfaceSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\ShadersSection.cs" />

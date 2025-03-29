@@ -24,10 +24,11 @@ namespace Memoria.Assets
         private String _currentLanguage;
         private String _currentSymbol;
         private SortedList<String, String> _current;
+        private SortedList<String, String> _secondary;
 
         public LanguageMap()
         {
-            Byte[] tableData = ReadEmbadedTable();
+            Byte[] tableData = ReadEmbeddedTable();
 
             ByteReader reader = new ByteReader(tableData);
             BetterList<String> cells = reader.ReadCSV();
@@ -58,6 +59,7 @@ namespace Memoria.Assets
             _failbackLanguage = cellLanguages[1];
             _failback = _languages[_failbackLanguage];
             _current = _failback;
+            _secondary = _failback;
 
             LoadModText(cellLanguages);
             LoadExternalText();
@@ -78,6 +80,20 @@ namespace Memoria.Assets
         public void Broadcast()
         {
             SelectLanguage(LanguagePrefs.Key);
+            UIRoot.Broadcast("OnLocalize");
+        }
+
+        public void SelectSecondaryLanguage(String language)
+        {
+            if (_languages.TryGetValue(language, out var languageDic))
+            {
+                _secondary = languageDic;
+            }
+            else
+            {
+                _secondary = _failback;
+                Log.Error($"[LocalizationDictionary] Cannot find localisation data for the language [{language}].");
+            }
         }
 
         public void SelectLanguage(String language)
@@ -99,7 +115,6 @@ namespace Memoria.Assets
             NGUIText.readingDirection = Localization.GetWithDefault(ReadingDirectionKey) == UnicodeBIDI.DIRECTION_NAME_RIGHT_TO_LEFT ? UnicodeBIDI.LanguageReadingDirection.RightToLeft : UnicodeBIDI.LanguageReadingDirection.LeftToRight;
             if (!Localization.GetWithDefault(DigitShapesKey).TryEnumParse(out NGUIText.digitShapes))
                 NGUIText.digitShapes = UnicodeBIDI.DigitShapes.Latin;
-            UIRoot.Broadcast("OnLocalize");
         }
 
         private Boolean TryGetAlternativeKey(String key, out String alternativeKey)
@@ -118,29 +133,14 @@ namespace Memoria.Assets
             return false;
         }
 
-        public String Get(String key)
+        public String Get(String key, Boolean secondaryLang = false)
         {
-            if (TryGetAlternativeKey(key, out var alternativeKey))
-            {
-                if (TryGetValue(alternativeKey, out var alternativeValue))
-                    return alternativeValue;
-            }
-
-            if (TryGetValue(key, out var value))
+            SortedList<String, String> dict = secondaryLang ? _secondary : _current;
+            if (TryGetAlternativeKey(key, out var alternativeKey) && dict.TryGetValue(alternativeKey, out var alternativeValue))
+                return alternativeValue;
+            if (dict.TryGetValue(key, out var value))
                 return value;
-
             return key;
-        }
-
-        private Boolean TryGetValue(String key, out String value)
-        {
-            if (_current.TryGetValue(key, out value))
-                return true;
-
-            //if (_failback.TryGetValue(key, out value))
-            //    return true;
-
-            return false;
         }
 
         private void ReadText(ByteReader reader, Dictionary<Int32, String> cellLanguages, Boolean init)
@@ -244,7 +244,7 @@ namespace Memoria.Assets
             Log.Message("[LocalizationDictionary] Loading completed successfully.");
         }
 
-        private static Byte[] ReadEmbadedTable()
+        private static Byte[] ReadEmbeddedTable()
         {
             return AssetManager.LoadBytes("EmbeddedAsset/Manifest/Text/Localization.txt");
         }
@@ -264,6 +264,21 @@ namespace Memoria.Assets
             {
                 Debug.LogError("Unable to add '" + key + "' to the Localization dictionary.\n" + ex.Message);
             }
+        }
+
+        public String SymbolToLanguage(String symbol)
+        {
+            foreach (var kvp in _languages)
+                if (kvp.Value.TryGetValue(SymbolKey, out String langSymbol) && symbol == langSymbol)
+                    return kvp.Key;
+            return "English(US)";
+        }
+
+        public String LanguageToSymbol(String lang)
+        {
+            if (_languages.TryGetValue(lang, out SortedList<String, String> dict) && dict.TryGetValue(SymbolKey, out String symbol))
+                return symbol;
+            return "US";
         }
 
         private static class LanguagePrefs

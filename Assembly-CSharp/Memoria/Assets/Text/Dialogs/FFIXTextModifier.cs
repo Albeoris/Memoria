@@ -71,6 +71,7 @@ namespace Memoria.Assets
             }
             else if (insertImage != null)
             {
+                Single frameOffsetX = NGUIText.readingDirection == UnicodeBIDI.LanguageReadingDirection.RightToLeft ? -frameOffset.x : frameOffset.x;
                 Int32 recycleImgIndex = -1;
                 for (Int32 i = 0; i < specialImages.size; i++)
                 {
@@ -84,8 +85,9 @@ namespace Memoria.Assets
                 }
                 if (invertXOffset)
                     currentX -= insertImage.Size.x;
-                insertImage.LocalPosition = new Vector3(currentX, currentY);
+                insertImage.LocalPosition = new Vector3(frameOffsetX + currentX, currentY);
                 insertImage.PrintedLine = printedLine;
+                insertImage.AppearStep = NGUIText.progressStep;
                 insertImage.Mirror = mirror;
                 if (!invertXOffset)
                     currentX += insertImage.Size.x;

@@ -9,7 +9,7 @@ namespace Memoria.Assets
         public static Dictionary<CharacterId, String> CharacterDefaultNames()
         {
             Dictionary<CharacterId, String> nameDict;
-            if (DefaultNamesByLang.TryGetValue(EmbadedTextResources.CurrentSymbol ?? Localization.GetSymbol(), out nameDict))
+            if (DefaultNamesByLang.TryGetValue(Localization.CurrentSymbol, out nameDict))
                 return nameDict;
             return new Dictionary<CharacterId, String>();
         }

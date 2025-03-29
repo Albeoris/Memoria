@@ -88,6 +88,26 @@ public class StatusUI : UIScene
         PersistenSingleton<UIManager>.Instance.MainMenuScene.StartSubmenuTweenIn();
     }
 
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        PLAYER player = FF9StateSystem.Common.FF9.party.member[_currentPartyIndex];
+        CharacterCommandSet cmdSet = CharacterCommands.CommandSets[player.info.menu_type];
+        SetupCommandLabel(_attackLabel, BattleCommandMenu.Attack, player, cmdSet);
+        SetupCommandLabel(_ability1Label, BattleCommandMenu.Ability1, player, cmdSet);
+        SetupCommandLabel(_ability2Label, BattleCommandMenu.Ability2, player, cmdSet);
+        SetupCommandLabel(_itemLabel, BattleCommandMenu.Item, player, cmdSet);
+        FF9UIDataTool.DisplayItem(player.equip[0], _equipmentHud.Weapon.IconSprite, _equipmentHud.Weapon.NameLabel, true);
+        FF9UIDataTool.DisplayItem(player.equip[1], _equipmentHud.Head.IconSprite, _equipmentHud.Head.NameLabel, true);
+        FF9UIDataTool.DisplayItem(player.equip[2], _equipmentHud.Wrist.IconSprite, _equipmentHud.Wrist.NameLabel, true);
+        FF9UIDataTool.DisplayItem(player.equip[3], _equipmentHud.Body.IconSprite, _equipmentHud.Body.NameLabel, true);
+        FF9UIDataTool.DisplayItem(player.equip[4], _equipmentHud.Accessory.IconSprite, _equipmentHud.Accessory.NameLabel, true);
+        for (Int32 index = 0; index < _abilityHudList.Count; ++index)
+            DrawAbilityInfo(_abilityHudList[index], index);
+        DisplayHelp(false);
+    }
+
     public override Boolean OnKeyConfirm(GameObject go)
     {
         if (!base.OnKeyConfirm(go))
@@ -221,7 +241,7 @@ public class StatusUI : UIScene
         return true;
     }
 
-    private void DisplayHelp(Boolean isPlaySE)
+    private void DisplayHelp(Boolean playSound)
     {
         if (ButtonGroupState.HelpEnabled)
         {
@@ -231,16 +251,14 @@ public class StatusUI : UIScene
             Singleton<HelpDialog>.Instance.Tail = false;
             Singleton<HelpDialog>.Instance.Depth = 5;
             Singleton<HelpDialog>.Instance.ShowDialog();
-            if (!isPlaySE)
-                return;
-            FF9Sfx.FF9SFX_Play(682);
+            if (playSound)
+                FF9Sfx.FF9SFX_Play(682);
         }
         else
         {
             Singleton<HelpDialog>.Instance.HideDialog();
-            if (!isPlaySE)
-                return;
-            FF9Sfx.FF9SFX_Play(101);
+            if (playSound)
+                FF9Sfx.FF9SFX_Play(101);
         }
     }
 

@@ -1,12 +1,11 @@
-﻿using Assets.Scripts.Common;
+﻿using System;
+using System.Collections.Generic;
+using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Scenes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class MainMenuUI : UIScene
@@ -96,7 +95,7 @@ public class MainMenuUI : UIScene
         else
         {
             this.screenFadePanel.depth = 7;
-            this.submenuTransition.AnimationTime = (!FF9StateSystem.Settings.IsFastForward) ? Configuration.Interface.FadeDuration : Configuration.Interface.FadeDuration / FF9StateSystem.Settings.FastForwardFactor;
+            this.submenuTransition.AnimationTime = FF9StateSystem.Settings.IsFastForward ? Configuration.Interface.FadeDuration / FF9StateSystem.Settings.FastForwardFactor : Configuration.Interface.FadeDuration;
             this.submenuTransition.TweenOut(null);
         }
         base.Hide(afterHideAction);
@@ -104,7 +103,7 @@ public class MainMenuUI : UIScene
 
     public void StartSubmenuTweenIn()
     {
-        this.submenuTransition.AnimationTime = (!FF9StateSystem.Settings.IsFastForward) ? Configuration.Interface.FadeDuration : Configuration.Interface.FadeDuration / FF9StateSystem.Settings.FastForwardFactor;
+        this.submenuTransition.AnimationTime = FF9StateSystem.Settings.IsFastForward ? Configuration.Interface.FadeDuration / FF9StateSystem.Settings.FastForwardFactor : Configuration.Interface.FadeDuration;
         this.submenuTransition.TweenIn(null);
     }
 
@@ -122,6 +121,18 @@ public class MainMenuUI : UIScene
         ButtonGroupState.RemoveCursorMemorize(MainMenuUI.CharacterGroupButton);
         ButtonGroupState.RemoveCursorMemorize(MainMenuUI.OrderGroupButton);
         ButtonGroupState.DisableAllGroup(false);
+    }
+
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Field)
+            FF9StateSystem.Common.FF9.mapNameStr = FF9TextTool.LocationName(FF9StateSystem.Common.FF9.fldMapNo);
+        else if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.World)
+            FF9StateSystem.Common.FF9.mapNameStr = FF9TextTool.WorldLocationText(PersistenSingleton<EventEngine>.Instance.GetSysvar(192));
+        DisplayGeneralInfo();
+        DisplayHelp(currentMenu);
     }
 
     public override Boolean OnKeyConfirm(GameObject go)
@@ -450,7 +461,7 @@ public class MainMenuUI : UIScene
                 if (player != null)
                 {
                     UInt32 exp = (player.level < ff9level.LEVEL_COUNT) ? ff9level.CharacterLevelUps[player.level].ExperienceToLevel : player.exp;
-                    Int32 expSpriteKey = (Localization.CurrentLanguage == "English(US)" || Localization.CurrentLanguage == "English(UK)" || Localization.CurrentLanguage == "German") ? 82 : 64;
+                    Int32 expSpriteKey = (Localization.CurrentDisplaySymbol == "US" || Localization.CurrentDisplaySymbol == "UK" || Localization.CurrentDisplaySymbol == "GR") ? 82 : 64;
                     help += $"{Localization.Get("EXP")}[XTAB={expSpriteKey}]{player.exp}\n";
                     help += $"{Localization.Get("NextLevel")}[XTAB={expSpriteKey}]{exp - player.exp}";
                 }
@@ -689,7 +700,7 @@ public class MainMenuUI : UIScene
             this.CardSubMenu.transform.localScale = buttonScale;
             this.PartySubMenu.transform.localScale = buttonScale;
             this.ConfigSubMenu.transform.localScale = buttonScale;
-            //this.PartySubMenu.active = true;
+            this.PartySubMenu.active = true;
             table.repositionNow = true;
         }
 

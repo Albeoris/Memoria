@@ -200,7 +200,7 @@ public class UIManager : PersistenSingleton<UIManager>
 
     public void OnLevelWasLoaded(Int32 sceneNo)
     {
-        Localization.CurrentLanguage = FF9StateSystem.Settings.CurrentLanguage;
+        Localization.SetCurrentLanguage(FF9StateSystem.Settings.CurrentLanguage, this, null, false);
         this.WorldHUDScene.gameObject.SetActive(false);
         this.FieldHUDScene.gameObject.SetActive(false);
         this.BattleHUDScene.gameObject.SetActive(false);

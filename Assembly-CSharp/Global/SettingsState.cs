@@ -140,9 +140,7 @@ public class SettingsState : MonoBehaviour
                 Log.Message($"[VoiceActing] Language forced to '{CurrentLanguage}'");
             }
             PersistenSingleton<UIManager>.Instance.TitleScene.SetRotateScreen();
-            Localization.CurrentLanguage = CurrentLanguage;
-            UIManager.Field.InitializeATEText();
-            StartCoroutine(PersistenSingleton<FF9TextTool>.Instance.UpdateTextLocalization(callback));
+            Localization.SetCurrentLanguage(CurrentLanguage, this, callback);
             EventInput.ChangeInputLayout(CurrentLanguage);
         };
 
@@ -207,12 +205,7 @@ public class SettingsState : MonoBehaviour
     {
         ISharedDataSerializer.OnSetSelectedLanguage func = errNo =>
         {
-            //if (errNo != DataSerializerErrorCode.Success)
-            //    ;
-            CurrentLanguage = language;
-            Localization.CurrentLanguage = language;
-            UIManager.Field.InitializeATEText();
-            StartCoroutine(PersistenSingleton<FF9TextTool>.Instance.UpdateTextLocalization(callback));
+            Localization.SetCurrentLanguage(language, this, callback);
         };
 
         FF9StateSystem.Serializer.SetSelectedLanguage(LanguageName.ConvertToLanguageCode(language), func);
@@ -222,13 +215,10 @@ public class SettingsState : MonoBehaviour
     {
         ISharedDataSerializer.OnSetScreenRotation func = errNo =>
         {
-            //if (errNo != DataSerializerErrorCode.Success)
-            //    ;
             ScreenRotation = screenRotation;
             Debug.Log("FF9StateSystem.Serializer.SetScreenRotation: errNo = " + errNo + ", screenRotation = " + screenRotation + ", ScreenRotation = " + ScreenRotation);
-            if (callback == null)
-                return;
-            callback();
+            if (callback != null)
+                callback();
         };
 
         Debug.Log("SettingsState.SetScreenRotation screenRotation = " + screenRotation);

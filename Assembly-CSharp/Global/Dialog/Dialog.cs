@@ -470,13 +470,13 @@ public class Dialog : MonoBehaviour
             {
                 if (FF9TextTool.FieldZoneId == 23) // Mist Gates, buying potions
                 {
-                    switch (FF9StateSystem.Settings.CurrentLanguage)
+                    switch (Localization.CurrentSymbol)
                     {
-                        case "Japanese":
-                        case "French":
+                        case "JP":
+                        case "FR":
                             this.isOverlayDialog = this.textId == 154 || this.textId == 155;
                             break;
-                        case "Italian":
+                        case "IT":
                             this.isOverlayDialog = this.textId == 149 || this.textId == 150;
                             break;
                         default:
@@ -486,10 +486,10 @@ public class Dialog : MonoBehaviour
                 }
                 else if (FF9TextTool.FieldZoneId == 70 || FF9TextTool.FieldZoneId == 741) // Treno, bidding in Auction House
                 {
-                    switch (FF9StateSystem.Settings.CurrentLanguage)
+                    switch (Localization.CurrentSymbol)
                     {
-                        case "English(US)":
-                        case "English(UK)":
+                        case "US":
+                        case "UK":
                             this.isOverlayDialog = this.textId == 204 || this.textId == 205 || this.textId == 206;
                             break;
                         default:
@@ -503,19 +503,19 @@ public class Dialog : MonoBehaviour
                 }
                 else if (FF9TextTool.FieldZoneId == 358) // Madain Sari, choosing for how many people to cook
                 {
-                    switch (FF9StateSystem.Settings.CurrentLanguage)
+                    switch (Localization.CurrentSymbol)
                     {
-                        case "Japanese":
-                        case "French":
+                        case "JP":
+                        case "FR":
                             this.isOverlayDialog = this.textId == 874 || this.textId == 875;
                             break;
-                        case "Spanish":
+                        case "ES":
                             this.isOverlayDialog = this.textId == 859 || this.textId == 860;
                             break;
-                        case "German":
+                        case "GR":
                             this.isOverlayDialog = this.textId == 875 || this.textId == 876;
                             break;
-                        case "Italian":
+                        case "IT":
                             this.isOverlayDialog = this.textId == 889 || this.textId == 890;
                             break;
                         default:
@@ -525,7 +525,7 @@ public class Dialog : MonoBehaviour
                 }
                 else if (FF9TextTool.FieldZoneId == 945) // Chocobo Places, buying Gysahl Greens
                 {
-                    if (FF9StateSystem.Settings.CurrentLanguage == "Japanese")
+                    if (Localization.CurrentSymbol == "JP")
                         this.isOverlayDialog = this.textId == 251 || this.textId == 252;
                     else
                         this.isOverlayDialog = this.textId == 252 || this.textId == 253;
@@ -613,7 +613,14 @@ public class Dialog : MonoBehaviour
             this.CurrentParser.AdvanceProgressToMax();
             this.currentState = Dialog.State.CompleteAnimation;
             if (base.gameObject.activeInHierarchy && this.endMode > 0)
-                base.StartCoroutine(AutoHide());
+            {
+                if (this.AutoHideCoroutine != null)
+                {
+                    base.StopCoroutine(this.AutoHideCoroutine);
+                    this.AutoHideCoroutine = null;
+                }
+                this.AutoHideCoroutine = base.StartCoroutine(AutoHide());
+            }
         }
         if (this.AfterDialogShown != null)
             this.AfterDialogShown(this.id);
@@ -628,7 +635,14 @@ public class Dialog : MonoBehaviour
         this.currentState = Dialog.State.CompleteAnimation;
         UIDebugMarker.DebugLog($"AfterSentenseShown Id:{this.Id} Animation State:{this.currentState}");
         if (this.endMode > 0 && base.gameObject.activeInHierarchy)
-            base.StartCoroutine(AutoHide());
+        {
+            if (this.AutoHideCoroutine != null)
+            {
+                base.StopCoroutine(this.AutoHideCoroutine);
+                this.AutoHideCoroutine = null;
+            }
+            this.AutoHideCoroutine = base.StartCoroutine(AutoHide());
+        }
         if (this.AfterDialogSentenseShown != null)
             this.AfterDialogSentenseShown();
     }
@@ -647,12 +661,53 @@ public class Dialog : MonoBehaviour
         this.Reset();
     }
 
+    public void ChangePhraseSoft(String newPhrase)
+    {
+        // Don't prevent or delay AutoHide: it creates too much trouble
+        //if (this.AutoHideCoroutine != null)
+        //{
+        //    base.StopCoroutine(this.AutoHideCoroutine);
+        //    this.AutoHideCoroutine = null;
+        //}
+        Dialog.State previousState = this.currentState;
+        Int32 previousChoice = this.selectedChoice;
+        Int32 previousDepth = this.Panel.depth;
+        this.currentPage = 0;
+        this.Phrase = newPhrase;
+        this.AutomaticSize();
+        this.InitializeDialogTransition(); // [DBG] Choco beak depth figure no Y-aligned at all + pointer/label of card win selection are off?
+        this.Panel.depth = previousDepth;
+        this.phrasePanel.depth = previousDepth + 1;
+        if (this.choiceNumber > 0)
+        {
+            this.InitializeChoice();
+            this.defaultChoice = previousChoice;
+            this.selectedChoice = previousChoice;
+            DialogManager.SelectChoice = previousChoice;
+        }
+        this.currentState = Dialog.State.OpenAnimation;
+        this.dialogAnimator.ShowNewPage();
+    }
+
+    public void OnLocalize()
+    {
+        if (!this.isActiveAndEnabled || (this.currentState != Dialog.State.OpenAnimation && this.currentState != Dialog.State.TextAnimation && this.currentState != Dialog.State.CompleteAnimation))
+            return;
+        if (this.textId >= 0)
+        {
+            if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Battle)
+                this.ChangePhraseSoft(FF9TextTool.BattleText(textId));
+            else if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Field || PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.World)
+                this.ChangePhraseSoft(TextPatcher.PatchDialogString(FF9TextTool.FieldText(textId), this));
+        }
+    }
+
     public void OnKeyConfirm(GameObject go)
     {
         if (FF9StateSystem.Common.FF9.fldMapNo == 2951 || FF9StateSystem.Common.FF9.fldMapNo == 2952)
         {
             // Chocobo's Lagoon & Air Garden
-            if (Localization.GetSymbol() == "JP" && Singleton<DialogManager>.Instance.PressMesId == 245 && Singleton<DialogManager>.Instance.ReleaseMesId == 226)
+            if (Localization.CurrentSymbol == "JP" && Singleton<DialogManager>.Instance.PressMesId == 245 && Singleton<DialogManager>.Instance.ReleaseMesId == 226)
                 return;
             if (Singleton<DialogManager>.Instance.PressMesId == 246 && Singleton<DialogManager>.Instance.ReleaseMesId == 227)
                 return;
@@ -660,7 +715,7 @@ public class Dialog : MonoBehaviour
         else if (FF9StateSystem.Common.FF9.fldMapNo == 2950)
         {
             // Chocobo's Forest
-            if (Localization.GetSymbol() == "JP" && Singleton<DialogManager>.Instance.PressMesId == 245 && Singleton<DialogManager>.Instance.ReleaseMesId == 225)
+            if (Localization.CurrentSymbol == "JP" && Singleton<DialogManager>.Instance.PressMesId == 245 && Singleton<DialogManager>.Instance.ReleaseMesId == 225)
                 return;
             if (Singleton<DialogManager>.Instance.PressMesId == 246 && Singleton<DialogManager>.Instance.ReleaseMesId == 226)
                 return;
@@ -734,7 +789,7 @@ public class Dialog : MonoBehaviour
             // Epilogue: Stage
             DialogManager.Instance.ForceControlByEvent(true);
             //yield break; // Leads to problems
-            String lang = Localization.GetSymbol();
+            String lang = Localization.CurrentSymbol;
             waitTime += lang != "US" && lang != "JP" ? 0.56f : -0.22f;
         }
         while (waitTime > 0f || VoicePlayer.HasDialogVoice(this))
@@ -1484,11 +1539,11 @@ public class Dialog : MonoBehaviour
                 return false;
             if (EventHUD.CurrentHUD == MinigameHUD.ChocoHot && this.windowStyle == Dialog.WindowStyle.WindowStylePlain)
             {
-                switch (FF9StateSystem.Settings.CurrentLanguage)
+                switch (Localization.CurrentSymbol)
                 {
-                    case "Japanese":
-                    case "English(UK)":
-                    case "English(US)":
+                    case "JP":
+                    case "UK":
+                    case "US":
                         return this.textId != 275; // "Depth:     "
                 }
                 return this.textId != 276;
@@ -1596,6 +1651,9 @@ public class Dialog : MonoBehaviour
 
     [NonSerialized]
     public Dialog.OnSelectedOptionChangeDelegate OnOptionChange = null;
+
+    [NonSerialized]
+    public Coroutine AutoHideCoroutine = null;
 
     public GameObject BodyGameObject;
     public GameObject BorderGameObject;

@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Assets.Sources.Scripts.UI.Common;
@@ -353,7 +354,7 @@ namespace Memoria.Assets
                     insertImage = NGUIText.CreateIconImage(tag.IntParam(0));
                     return true;
                 case FFIXTextTagCode.IconEx:
-                    if ((ETb.gMesValue[0] & (1 << tag.IntParam(0))) != 0) // [DBG] icon is shifted in dialogs?! Moguo tutorials
+                    if (tag.ParamCount == 0 || (ETb.gMesValue[0] & (1 << tag.IntParam(0))) != 0)
                         insertImage = NGUIText.CreateIconImage(FF9UIDataTool.NewIconId);
                     return true;
                 case FFIXTextTagCode.Mobile:
@@ -471,13 +472,13 @@ namespace Memoria.Assets
             switch (tag.Code)
             {
                 case FFIXTextTagCode.IncreaseSignal:
-                    OnSignal(dialog, -1);
+                    OnSignal(label, -1);
                     break;
                 case FFIXTextTagCode.IncreaseSignalEx:
-                    OnSignal(dialog, -1);
+                    OnSignal(label, -1);
                     break;
                 case FFIXTextTagCode.Signal:
-                    OnSignal(dialog, tag.IntParam(0));
+                    OnSignal(label, tag.IntParam(0));
                     break;
                 case FFIXTextTagCode.Sound:
                     OnSound(tag);
@@ -802,12 +803,41 @@ namespace Memoria.Assets
             }
         }
 
-        private static void OnSignal(Dialog dialog, Int32 signal)
+        private static Single lastSignalProcess = 0f;
+        private static Queue<Int32> signalQueue = new Queue<Int32>();
+
+        private static void OnSignal(UILabel label, Int32 signal)
         {
-            if (signal < 0)
-                ETb.gMesSignal++;
+            if (lastSignalProcess != EventEngine.LastProcessTime)
+            {
+                if (signal < 0)
+                    ETb.gMesSignal++;
+                else
+                    ETb.gMesSignal = signal;
+                lastSignalProcess = EventEngine.LastProcessTime;
+            }
             else
-                ETb.gMesSignal = signal;
+            {
+                // Make sure that 2 signals are not triggered on the same EventEngine tick (eg. Steiner's line "YES![WAIT=30][SIGL=1] THAT'S IT![WAIT=25][SIGL=2]")
+                signalQueue.Enqueue(signal);
+                if (signalQueue.Count == 1)
+                    label.StartCoroutine(OnSignalDelayed());
+            }
+        }
+
+        private static IEnumerator OnSignalDelayed()
+        {
+            while (signalQueue.Count > 0)
+            {
+                while (lastSignalProcess == EventEngine.LastProcessTime)
+                    yield return new WaitForEndOfFrame();
+                Int32 nextSignal = signalQueue.Dequeue();
+                if (nextSignal < 0)
+                    ETb.gMesSignal++;
+                else
+                    ETb.gMesSignal = nextSignal;
+            }
+            yield break;
         }
 
         private static void OnSound(FFIXTextTag tag)
@@ -837,7 +867,6 @@ namespace Memoria.Assets
 
         private static void OnDialogPosition(Dialog dialog, FFIXTextTag tag)
         {
-            // [DBG] Maybe shift position in widescreen (check Festival of the Hunt)
             if (dialog != null)
             {
                 dialog.Position = new Vector2(tag.SingleParam(0), tag.SingleParam(1));

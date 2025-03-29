@@ -47,19 +47,19 @@ namespace Assets.Scripts.Common
 
         public static Boolean IsBattleScene()
         {
-            return String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, SceneDirector.BattleMapSceneName) == 0 
-                || String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, "BattleMapDebug") == 0 
-                || String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, "SpecialEffectDebugRoom") == 0;
+            return String.Equals(PersistenSingleton<SceneDirector>.Instance.CurrentScene, SceneDirector.BattleMapSceneName)
+                || String.Equals(PersistenSingleton<SceneDirector>.Instance.CurrentScene, "BattleMapDebug")
+                || String.Equals(PersistenSingleton<SceneDirector>.Instance.CurrentScene, "SpecialEffectDebugRoom");
         }
 
         public static Boolean IsFieldScene()
         {
-            return String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, SceneDirector.FieldMapSceneName) == 0;
+            return String.Equals(PersistenSingleton<SceneDirector>.Instance.CurrentScene, SceneDirector.FieldMapSceneName);
         }
 
         public static Boolean IsWorldScene()
         {
-            return String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, SceneDirector.WorldMapSceneName) == 0;
+            return String.Equals(PersistenSingleton<SceneDirector>.Instance.CurrentScene, SceneDirector.WorldMapSceneName);
         }
 
         public static void ReplaceNow(String nextScene)

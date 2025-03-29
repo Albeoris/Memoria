@@ -1,7 +1,8 @@
-﻿using Assets.Sources.Scripts.UI.Common;
+﻿using System;
+using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Data;
-using System;
+using Memoria.Assets;
 using UnityEngine;
 
 public static class ETb
@@ -120,19 +121,19 @@ public static class ETb
 
         if (FF9StateSystem.Common.FF9.fldMapNo == 1657) // Iifa Tree/Tree Roots
         {
-            switch (FF9StateSystem.Settings.CurrentLanguage)
+            switch (Localization.CurrentSymbol)
             {
-                case "English(US)":
-                case "English(UK)":
-                case "Spanish":
-                case "German":
-                case "Italian":
+                case "US":
+                case "UK":
+                case "ES":
+                case "GR":
+                case "IT":
                     dialog.FocusToActor = mes != 183 && mes != 166; // "H-Hey!" or "Whoa!" when Amarant passes next to Vivi/Garnet/Eiko on the narrow root
                     break;
-                case "Japanese":
+                case "JP":
                     dialog.FocusToActor = mes != 187 && mes != 170;
                     break;
-                case "French":
+                case "FR":
                     dialog.FocusToActor = mes != 185 && mes != 168;
                     break;
             }
@@ -149,7 +150,7 @@ public static class ETb
 
         ETb.gMesCount++;
         EIcon.SetHereIcon(0);
-        String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
+        String currentLanguage = Localization.CurrentSymbol;
         EMinigame.EidolonMuralAchievement(currentLanguage, mes);
         EMinigame.ExcellentLuckColorFortuneTellingAchievement(currentLanguage, mes);
         EMinigame.ProvokeMogAchievement(currentLanguage, mes);
@@ -287,12 +288,11 @@ public static class ETb
             Int32 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
             if (fldMapNo == 1652) // Iifa Tree/Roots
             {
-                String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-                switch (currentLanguage)
+                switch (Localization.CurrentSymbol)
                 {
-                    case "Japanese":
+                    case "JP":
                         return mes == 146;
-                    case "French":
+                    case "FR":
                         return mes == 144;
                 }
                 return mes == 142; // Zidane: "How far is it gonna go...?"

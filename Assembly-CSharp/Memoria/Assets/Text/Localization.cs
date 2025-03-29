@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using Assets.Sources.Scripts.UI.Common;
+using Assets.Scripts.Common;
+using UnityEngine;
 
 namespace Memoria.Assets
 {
     public static class Localization
     {
         internal static readonly LanguageMap Provider;
+
+        private static Boolean useSecondaryLanguage = false;
+        private static String loadedSecondarySymbol = String.Empty;
 
         static Localization()
         {
@@ -16,20 +22,53 @@ namespace Memoria.Assets
         public static ICollection<String> KnownLanguages => Provider.KnownLanguages;
         public static Dictionary<String, Dictionary<String, String>> DefaultDictionary => _defaultDictionary;
 
-        public static String CurrentLanguage
+        /// <summary>The language name ("English(US)", "Japanese", "Spanish"...) of the currently displayed language</summary>
+        public static String CurrentDisplayLanguage => useSecondaryLanguage ? Provider.SymbolToLanguage(Configuration.Lang.DualLanguage) : Provider.CurrentLanguage;
+        /// <summary>The language symbol ("US", "JP", "ES"...) of the currently displayed language</summary>
+        public static String CurrentDisplaySymbol => useSecondaryLanguage ? Configuration.Lang.DualLanguage : Provider.CurrentSymbol;
+        /// <summary>The language name ("English(US)", "Japanese", "Spanish"...) of the current primary language</summary>
+        public static String CurrentLanguage => Provider.CurrentLanguage;
+        /// <summary>The language symbol ("US", "JP", "ES"...) of the current primary language</summary>
+        public static String CurrentSymbol => Provider.CurrentSymbol;
+
+        public static void SetCurrentLanguage(String lang, MonoBehaviour caller = null, Action callback = null, Boolean updateDatabase = true)
         {
-            get => Provider.CurrentLanguage;
-            set => Provider.SelectLanguage(value); // [DBG] https://github.com/Albeoris/Memoria/issues/515
+            FF9StateSystem.Settings.CurrentLanguage = lang;
+            Provider.SelectLanguage(lang);
+            if (caller != null && updateDatabase)
+            {
+                UIManager.Field.InitializeATEText();
+                caller.StartCoroutine(PersistenSingleton<FF9TextTool>.Instance.UpdateTextLocalization(callback));
+            }
+            UIRoot.Broadcast("OnLocalize");
         }
 
-        public static String GetSymbol()
+        public static Boolean UseSecondaryLanguage
         {
-            return Provider.CurrentSymbol;
+            get => useSecondaryLanguage;
+            set
+            {
+                if (String.IsNullOrEmpty(Configuration.Lang.DualLanguage) || Configuration.Lang.DualLanguage == CurrentSymbol || Configuration.Export.Enabled || PersistenSingleton<UIManager>.Instance.TitleScene?.IsJustLaunch == true)
+                    value = false;
+                if (useSecondaryLanguage == value)
+                    return;
+                useSecondaryLanguage = value;
+                if (value && loadedSecondarySymbol != Configuration.Lang.DualLanguage)
+                {
+                    String symbol = Configuration.Lang.DualLanguage;
+                    String lang = Provider.SymbolToLanguage(symbol);
+                    Provider.SelectSecondaryLanguage(lang);
+                    FF9TextTool.LoadSecondaryLanguage(symbol);
+                    loadedSecondarySymbol = symbol;
+                }
+                if (Configuration.Lang.DualLanguageMode == 1)
+                    UIRoot.Broadcast("OnLocalize");
+            }
         }
 
         public static String Get(String key)
         {
-            String str = Provider.Get(key);
+            String str = Provider.Get(key, UseSecondaryLanguage);
             if (key == "StatusDetailHelp") // Fix: Status help in StatusUI
                 str = str.Replace("[YADD=4]", "").Replace("[YSUB=4]", "");
             return str;
@@ -55,12 +94,25 @@ namespace Memoria.Assets
         /// <summary>For keys not present in vanilla</summary>
         public static String GetWithDefault(String key)
         {
-            String value = Provider.Get(key);
+            String value = Provider.Get(key, UseSecondaryLanguage);
             if (!String.Equals(value, key))
+            {
+                if (key == "OrderTargetHelp") // Fix: swap order help bugged because of commas
+                {
+                    if (value == "Elige la misma posición para\ncambiar entre [A85038]vanguardia y\nretaguardia[383838]")
+                        value += ", u otra para\nmover el personaje.";
+                    else if (value == " u otra para\nmover el personaje.")
+                        value = "Choisissez un personnage.\nSi c’est le même, [A85038]il change de\nposition[383838]. Si c’en est un autre,\n[A85038]ils échangent leur place[383838].";
+                    else if (value == "Choisissez un personnage.\nSi c’est le même")
+                        value = "Charakter wählen. Wiederholtes [CBTN=CROSS] \nverschiebt Charakter in [A85038]vordere[383838]\noder [A85038]hintere[383838] Reihe. Durch wählen\neines anderen Charakters werden\ndie [A85038]Positionen[383838] vertauscht.";
+                    else if (value == " [A85038]il change de\nposition[383838]. Si c’en est un autre")
+                        value = "Seleziona stessa posizione\nper cambiare fra [A85038]1a linea/2a\nlinea[383838] oppure un’altra posizione\nper [A85038]spostare il personaggio[383838].";
+                }
                 return value;
+            }
             if (_defaultDictionary.TryGetValue(key, out Dictionary<String, String> defaultValue))
             {
-                if (defaultValue.TryGetValue(Provider.CurrentSymbol, out value))
+                if (defaultValue.TryGetValue(CurrentDisplaySymbol, out value))
                     return value;
                 else if (defaultValue.TryGetValue(GetFallbackSymbol(), out value))
                     return value;
@@ -128,6 +180,17 @@ namespace Memoria.Assets
                     { "FR", "%p" },
                     { "GR", "%p" },
                     { "IT", "%p" }
+                }
+            },
+            { "AutoDiscardHelp", new Dictionary<String, String>()
+                {
+                    { "US", "Discard all unnecessary cards." },
+                    { "UK", "Discard all unnecessary cards." },
+                    { "JP", "不要なカードをすべて捨てます。" },
+                    { "ES", "Descarta todas las cartas innecesarias." },
+                    { "FR", "Jeter les cartes superflues." },
+                    { "GR", "Werfen Sie alle unnötigen Karten weg." },
+                    { "IT", "Scarta tutte le carte non necessarie." }
                 }
             },
             // Panel caption for magic stones (used to show "MP" in the Ability menu instead, since PSX)
@@ -242,6 +305,73 @@ namespace Memoria.Assets
                     { "IT", "Testo Automatico" }
                 }
             },
+            // Black Jack labels
+            { "BlackJackBankroll", new Dictionary<String, String>()
+                {
+                    { "US", "BANKROLL" },
+                    { "UK", "BANKROLL" },
+                    { "JP", "財源" },
+                    { "ES", "EFECTIVO" },
+                    { "FR", "FONDS" },
+                    { "GR", "BANK" },
+                    { "IT", "CONTANTE" }
+                }
+            },
+            { "BlackJackWager", new Dictionary<String, String>()
+                {
+                    { "US", "WAGER" },
+                    { "UK", "WAGER" },
+                    { "JP", "賭け" },
+                    { "ES", "APUESTA" },
+                    { "FR", "MISE" },
+                    { "GR", "WETTE" },
+                    { "IT", "PUNTATA" }
+                }
+            },
+            { "BlackJackStand", new Dictionary<String, String>()
+                {
+                    { "US", "STAND" },
+                    { "UK", "STAND" },
+                    { "JP", "スタンド" },
+                    { "ES", "PLANTARSE" },
+                    { "FR", "RESTE" },
+                    { "GR", "STEHT" },
+                    { "IT", "STARE" }
+                }
+            },
+            { "BlackJackHit", new Dictionary<String, String>()
+                {
+                    { "US", "HIT" },
+                    { "UK", "HIT" },
+                    { "JP", "ヒット" },
+                    { "ES", "PEDIR" },
+                    { "FR", "CARTE" },
+                    { "GR", "KARTE" },
+                    { "IT", "CARTA" }
+                }
+            },
+            { "BlackJackDouble", new Dictionary<String, String>()
+                {
+                    { "US", "DOUBLE" },
+                    { "UK", "DOUBLE" },
+                    { "JP", "ダブルダウン" },
+                    { "ES", "DOBLAR" },
+                    { "FR", "DOUBLE" },
+                    { "GR", "VERDOPPELN" },
+                    { "IT", "RADDOPPIO" }
+                }
+            },
+            { "BlackJackSplit", new Dictionary<String, String>()
+                {
+                    { "US", "SPLIT" },
+                    { "UK", "SPLIT" },
+                    { "JP", "スプリット" },
+                    { "ES", "SEPARAR" },
+                    { "FR", "SPLIT" },
+                    { "GR", "TEILEN" },
+                    { "IT", "DIVISIONE" }
+                }
+            },
             // Mix battle message
             { "FailedMixMessage", new Dictionary<String, String>()
                 {
@@ -294,9 +424,9 @@ namespace Memoria.Assets
                     { "UK", "Absorb [FFCC00]%[FFFFFF]" },
                     { "JP", "[FFCC00]%[FFFFFF]属性を吸収" },
                     { "ES", "Absorber el elemento [FFCC00]%[FFFFFF]" },
-                    { "FR", "Absorbe l'élément [FFCC00]%[FFFFFF]" },
+                    { "FR", "Absorbe l’élément [FFCC00]%[FFFFFF]" },
                     { "GR", "Absorbiert [FFCC00]%[FFFFFF]-Element" },
-                    { "IT", "Assorbire l'elemento [FFCC00]%[FFFFFF]" }
+                    { "IT", "Assorbire l’elemento [FFCC00]%[FFFFFF]" }
                 }
             },
             { "StatusImmune", new Dictionary<String, String>()

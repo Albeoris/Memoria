@@ -9,8 +9,7 @@ using UnityEngine;
 
 public static class NGUIText
 {
-    #pragma warning disable CS0162 // Disable "Unreachable code detected"
-    private const Boolean DEBUG_DRAW_OUTLINE = false; // Draw the bounding box of UILabels
+    private static Boolean DEBUG_DRAW_OUTLINE = false; // Draw the bounding box of UILabels
 
     public static Boolean ShowMobileButtons => FF9StateSystem.MobilePlatform && !NGUIText.ForceShowButton;
     public static Boolean ForceShowButton
@@ -204,7 +203,6 @@ public static class NGUIText
         dialogImage.Id = (Int32)control;
         dialogImage.tag = tag;
         dialogImage.checkFromConfig = checkConfig;
-        dialogImage.AppearStep = NGUIText.progressStep;
         return dialogImage;
     }
 
@@ -220,7 +218,6 @@ public static class NGUIText
             dialogImage.Offset = new Vector3(0f, 10f);
         dialogImage.Id = iconId;
         dialogImage.IsButton = false;
-        dialogImage.AppearStep = NGUIText.progressStep;
         return dialogImage;
     }
 
@@ -279,7 +276,6 @@ public static class NGUIText
             dialogImage.Offset.y *= dialogImage.Size.y / Math.Max(1f, FF9UIDataTool.GetSpriteSize(dialogImage.AtlasName, dialogImage.SpriteName).y);
         dialogImage.Id = -1;
         dialogImage.IsButton = false;
-        dialogImage.AppearStep = NGUIText.progressStep;
         return dialogImage;
     }
 

@@ -780,7 +780,7 @@ public class UILabel : UIWidget
         {
             if (!this.isValid)
                 return;
-            this.mParser.ResetRender();
+            this.mParser.ResetRender(); // In theory, it would be enough there to only update mParser.UVs, but that optimisation would require storing logical UV datas in an extra list
             this.mParser.Parse(TextParser.ParseStep.Render);
             Dialog dialog = this.DialogWindow;
             if (dialog != null && (dialog.StartChoiceRow >= 0 || dialog.IsOverlayDialog))

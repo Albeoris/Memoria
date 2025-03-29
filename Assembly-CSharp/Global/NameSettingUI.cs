@@ -54,11 +54,19 @@ public sealed class NameSettingUI : UIScene
 
     public override void Hide(SceneVoidDelegate afterFinished = null)
     {
-        SceneVoidDelegate action = () => PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(PersistenSingleton<UIManager>.Instance.IsMenuControlEnable);
+        SceneVoidDelegate afterHideAction = () => PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(PersistenSingleton<UIManager>.Instance.IsMenuControlEnable);
         if (afterFinished != null)
-            action = (SceneVoidDelegate)Delegate.Combine(action, afterFinished);
-        base.Hide(action);
+            afterHideAction += afterFinished;
+        base.Hide(afterHideAction);
         PersistenSingleton<HonoInputManager>.Instance.DisablePrimaryKey = false;
+    }
+
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        MaxCharacterLabel.rawText = GetMaxCharacterString();
+        CharacterProfile.rawText = FF9TextTool.CharacterProfile(_subNumber);
     }
 
     public override Boolean OnKeyConfirm(GameObject go)
@@ -138,9 +146,17 @@ public sealed class NameSettingUI : UIScene
     private void SetData()
     {
         Background.sprite2D = AssetManager.Load<Sprite>("EmbeddedAsset/UI/Sprites/" + GetBackgroundSpritePath(), false);
-        MaxCharacterLabel.rawText = Localization.Get("MaxCharacters") + (Application.platform != RuntimePlatform.WindowsPlayer ? String.Empty : Localization.Get("MaxCharacters2"));
+        MaxCharacterLabel.rawText = GetMaxCharacterString();
         CharacterProfile.rawText = FF9TextTool.CharacterProfile(_subNumber);
         NameInputField.value = _isDefaultName ? FF9TextTool.CharacterDefaultName(SubNo) : FF9StateSystem.Common.FF9.GetPlayer(SubNo).Name;
+    }
+
+    private String GetMaxCharacterString()
+    {
+        String str = Localization.Get("MaxCharacters").Replace("8", "12");
+        if (Application.platform == RuntimePlatform.WindowsPlayer)
+            str += Localization.Get("MaxCharacters2");
+        return str;
     }
 
     private String GetBackgroundSpritePath()

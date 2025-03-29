@@ -1,42 +1,23 @@
-﻿using Assets.Sources.Scripts.UI.Common;
-using System;
+﻿using System;
 using System.Collections;
+using Assets.Sources.Scripts.UI.Common;
+using Memoria.Data;
 using UnityEngine;
-using Object = System.Object;
 
 public class QuadMistCardNameDialogSlider : MonoBehaviour
 {
     public Boolean IsShowCardName
     {
-        get
-        {
-            return this.isShowCardName;
-        }
-        set
-        {
-            this.isShowCardName = value;
-        }
+        get => this.isShowCardName;
+        set => this.isShowCardName = value;
     }
 
-    public Boolean IsShowing
-    {
-        get
-        {
-            return this.isShowing;
-        }
-    }
-
-    public Boolean IsReady
-    {
-        get
-        {
-            return this.isReady;
-        }
-    }
+    public Boolean IsShowing => this.isShowing;
+    public Boolean IsReady => this.isReady;
 
     public void ShowCardNameDialog(Hand playerHand)
     {
-        if (playerHand.SelectedUI == (UnityEngine.Object)null)
+        if (playerHand.SelectedUI == null)
         {
             this.HideCardNameDialog(playerHand);
         }
@@ -50,10 +31,16 @@ public class QuadMistCardNameDialogSlider : MonoBehaviour
     public void HideCardNameDialog(Hand playerHand)
     {
         this.isShowing = false;
-        if (this.dialog != (UnityEngine.Object)null)
-        {
+        if (this.dialog != null)
             base.StartCoroutine(this.HideDialogWithCoroutine(playerHand));
-        }
+    }
+
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        if (this.dialog != null && this.dialog.CurrentState > Dialog.State.Initial && this.dialog.CurrentState < Dialog.State.StartHide)
+            this.dialog.ChangePhraseSoft($"[STRT=0,1][CENT][NANI][IMME]{FF9TextTool.CardName(this.cardId)}[TIME=-1]");
     }
 
     private IEnumerator ShowDialogWithCoroutine(Hand playerHand)
@@ -61,8 +48,8 @@ public class QuadMistCardNameDialogSlider : MonoBehaviour
         this.isReady = false;
         if (this.dialog != null)
             Singleton<DialogManager>.Instance.ReleaseDialogToPool(this.dialog);
-        String cardName = FF9TextTool.CardName(playerHand.SelectedUI.Data.id);
-        this.dialog = Singleton<DialogManager>.Instance.AttachDialog($"[STRT=0,1][CENT][NANI][IMME]{cardName}[TIME=-1]", 0, 1, Dialog.TailPosition.AutoPosition, Dialog.WindowStyle.WindowStylePlain, new Vector2(10000f, 10000f), Dialog.CaptionType.None);
+        this.cardId = playerHand.SelectedUI.Data.id;
+        this.dialog = Singleton<DialogManager>.Instance.AttachDialog($"[STRT=0,1][CENT][NANI][IMME]{FF9TextTool.CardName(this.cardId)}[TIME=-1]", 0, 1, Dialog.TailPosition.AutoPosition, Dialog.WindowStyle.WindowStylePlain, new Vector2(10000f, 10000f), Dialog.CaptionType.None);
         this.dialog.Panel.depth -= 2;
         this.dialog.phrasePanel.depth -= 2;
         while (this.dialog.CurrentState != Dialog.State.CompleteAnimation)
@@ -94,10 +81,8 @@ public class QuadMistCardNameDialogSlider : MonoBehaviour
         this.isReady = false;
         Vector2 targetPosition = this.CalculateDialogTargetPosition(playerHand.Select, playerHand.Count);
         TweenPosition tweenPos = this.dialog.GetComponent<TweenPosition>();
-        if (tweenPos == (UnityEngine.Object)null)
-        {
+        if (tweenPos == null)
             tweenPos = this.dialog.gameObject.AddComponent<TweenPosition>();
-        }
         Single duration = 0.3f;
         tweenPos.from = targetPosition;
         tweenPos.to = new Vector3(targetPosition.x + 800f, targetPosition.y);
@@ -113,62 +98,55 @@ public class QuadMistCardNameDialogSlider : MonoBehaviour
         }
         UnityEngine.Object.Destroy(tweenPos);
         Singleton<DialogManager>.Instance.ReleaseDialogToPool(this.dialog);
-        this.dialog = (Dialog)null;
+        this.dialog = null;
         this.isReady = true;
         yield break;
     }
 
     private Vector2 CalculateDialogTargetPosition(Int32 currentCardIndex, Int32 totalCards)
     {
-        Single num;
-        Single num2;
+        Single x;
+        Single y;
         if (totalCards == 5)
         {
-            num = 564f;
+            x = 564f;
             if (currentCardIndex == 4)
             {
-                num2 = -292f;
-                num2 += this.dialog.Size.y * 0.5f;
+                y = -292f;
+                y += this.dialog.Size.y * 0.5f;
             }
             else
             {
-                Single num3 = 286f;
-                num2 = num3 - 202f * (Single)currentCardIndex;
-                num2 -= this.dialog.Size.y * 0.5f;
+                y = 286f - 202f * currentCardIndex;
+                y -= this.dialog.Size.y * 0.5f;
             }
         }
         else
         {
-            num = 583f;
+            x = 583f;
             if (currentCardIndex == 3)
             {
-                num2 = -236f;
-                num2 += this.dialog.Size.y * 0.5f;
+                y = -236f;
+                y += this.dialog.Size.y * 0.5f;
             }
             else
             {
-                Single num4 = 236f;
-                Single num5 = 500f;
-                num2 = num4 - num5 / 2f * (Single)currentCardIndex;
-                num2 -= this.dialog.Size.y * 0.5f;
+                y = 236f - 500f / 2f * currentCardIndex;
+                y -= this.dialog.Size.y * 0.5f;
             }
         }
-        if (num + this.dialog.Size.x / 2f > 771.5f)
-        {
-            num = 771.5f - this.dialog.Size.x / 2f - 20f;
-        }
-        return new Vector2(num, num2);
+        if (x + this.dialog.Size.x / 2f > 771.5f)
+            x = 771.5f - this.dialog.Size.x / 2f - 20f;
+        return new Vector2(x, y);
     }
 
     public AnimationCurve AnimationCurv;
-
     private Dialog dialog;
-
     private Boolean isShowCardName;
-
     private Boolean isShowing;
-
     private Boolean isReady = true;
-
     public HonoTweenPosition TweenPosition;
+
+    [NonSerialized]
+    private TetraMasterCardId cardId;
 }

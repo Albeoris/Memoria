@@ -1,9 +1,10 @@
-﻿using Assets.Sources.Scripts.UI.Common;
-using System;
+﻿using System;
+using Assets.Sources.Scripts.UI.Common;
+using Memoria.Assets;
 
 public class TextOpCodeModifier
 {
-    public static String Modify(String source)
+    public static String Modify(String source, Int32 textId)
     {
         source = TextOpCodeModifier.ReplaceMogIconText(source); // Mog icon of Mognet letters
         source = TextOpCodeModifier.ReplaceChanbaraText(source); // Blank sword minigame
@@ -39,25 +40,25 @@ public class TextOpCodeModifier
             return source;
         Int32 searchIndex;
         Int32 replaceIndex;
-        switch (FF9StateSystem.Settings.CurrentLanguage)
+        switch (Localization.CurrentDisplaySymbol)
         {
-            case "German":
+            case "GR":
                 searchIndex = 0;
                 replaceIndex = 3;
                 break;
-            case "Spanish":
+            case "ES":
                 searchIndex = 2;
                 replaceIndex = 2;
                 break;
-            case "French":
+            case "FR":
                 searchIndex = 3;
                 replaceIndex = 3;
                 break;
-            case "Italian":
+            case "IT":
                 searchIndex = 4;
                 replaceIndex = 0;
                 break;
-            case "Japanese":
+            case "JP":
                 searchIndex = 5;
                 replaceIndex = 1;
                 break;
@@ -113,7 +114,7 @@ public class TextOpCodeModifier
     {
         if (FF9TextTool.FieldZoneId != 344)
             return source;
-        if (FF9StateSystem.Settings.CurrentLanguage != "Japanese")
+        if (Localization.CurrentDisplaySymbol != "JP")
             return source;
         // This is the position of the modifiable number in the text for Pandemonium's elevator: it is adjusted for the usual font heights but it is not a robust adjustment
         return source.Replace("[MPOS=20,68]", "[MPOS=20,62]");

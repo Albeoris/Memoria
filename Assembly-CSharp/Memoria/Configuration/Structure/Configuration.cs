@@ -22,6 +22,7 @@ namespace Memoria
         private volatile BattleSection _battle;
         private volatile IconsSection _icons;
         private volatile AudioSection _audio;
+        private volatile LangSection _lang;
         private volatile VoiceActingSection _voiceActing;
         private volatile SaveFileSection _saves;
         private volatile SpeedrunSection _speedrun;
@@ -44,6 +45,7 @@ namespace Memoria
             BindingSection(out _battle, v => _battle = v);
             BindingSection(out _icons, v => _icons = v);
             BindingSection(out _audio, v => _audio = v);
+            BindingSection(out _lang, v => _lang = v);
             BindingSection(out _voiceActing, v => _voiceActing = v);
             BindingSection(out _saves, v => _saves = v);
             BindingSection(out _speedrun, v => _speedrun = v);

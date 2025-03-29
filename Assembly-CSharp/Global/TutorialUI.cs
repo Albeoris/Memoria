@@ -41,6 +41,7 @@ public class TutorialUI : UIScene
 
     public override void Hide(UIScene.SceneVoidDelegate afterFinished = null)
     {
+        this.tutorialDialog = null;
         UIScene.SceneVoidDelegate sceneVoidDelegate = delegate
         {
             if (!this.isFromPause)
@@ -86,6 +87,30 @@ public class TutorialUI : UIScene
         if (afterFinished != null)
             sceneVoidDelegate += afterFinished;
         base.Hide(sceneVoidDelegate);
+    }
+
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        if (this.DisplayMode == TutorialUI.Mode.Battle)
+        {
+            String platformUpper = FF9StateSystem.MobilePlatform ? "Mobile" : "PC";
+            this.battleTutorialDialogImage2.spriteName = Localization.Get($"TutorialTapOnCharacterIcon{platformUpper}");
+            this.battleLeftLabel.rawText = Localization.Get($"TutorialLeftParagraph{platformUpper}");
+            this.battleRightLabel.rawText = Localization.Get($"TutorialRightParagraph{platformUpper}");
+        }
+        else if (this.DisplayMode == TutorialUI.Mode.BasicControl)
+        {
+            String key = this.GetBasicControlTutorialKey();
+            if (this.tutorialDialog != null && !String.IsNullOrEmpty(key))
+                this.tutorialDialog.ChangePhraseSoft(Localization.Get(key));
+        }
+        else if (this.DisplayMode == TutorialUI.Mode.QuadMist)
+        {
+            if (this.tutorialDialog != null && this.QuadmistTutorialID <= 3)
+                this.tutorialDialog.ChangePhraseSoft(Localization.Get(TutorialUI.QuadMistLocalizeKey + this.QuadmistTutorialID));
+        }
     }
 
     public override Boolean OnKeyConfirm(GameObject go)
@@ -185,7 +210,7 @@ public class TutorialUI : UIScene
 
     private void DisplayBattleTutorial()
     {
-        String suffix = Localization.CurrentLanguage == "Japanese" ? "_jp" : String.Empty;
+        String suffix = Localization.CurrentDisplaySymbol == "JP" ? "_jp" : String.Empty;
         String platform = FF9StateSystem.MobilePlatform ? "mobile" : "pc";
         String platformUpper = FF9StateSystem.MobilePlatform ? "Mobile" : "PC";
         this.headerLocalize.enabled = true;
@@ -217,13 +242,13 @@ public class TutorialUI : UIScene
             return;
         base.Loading = true;
         String key = TutorialUI.QuadMistLocalizeKey + this.QuadmistTutorialID;
-        Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(key), 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.None);
-        dialog.AfterDialogShown = delegate (Int32 choice)
+        this.tutorialDialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(key), 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.None);
+        this.tutorialDialog.AfterDialogShown = delegate (Int32 choice)
         {
             base.Loading = false;
         };
-        dialog.AfterDialogHidden = this.AfterHideQuadmistTutorial;
-        TweenPosition tweenPos = dialog.GetComponent<TweenPosition>();
+        this.tutorialDialog.AfterDialogHidden = this.AfterHideQuadmistTutorial;
+        TweenPosition tweenPos = this.tutorialDialog.GetComponent<TweenPosition>();
         if (tweenPos != null)
             tweenPos.enabled = false;
     }
@@ -239,6 +264,19 @@ public class TutorialUI : UIScene
     private void DisplayBasicControlTutorial()
     {
         base.Loading = true;
+        String key = this.GetBasicControlTutorialKey();
+        if (String.IsNullOrEmpty(key))
+            return;
+        this.tutorialDialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(key), 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.None);
+        this.tutorialDialog.AfterDialogShown = delegate (Int32 choice)
+        {
+            base.Loading = false;
+        };
+        this.tutorialDialog.AfterDialogHidden = this.AfterHideBasicControlTutorial;
+    }
+
+    private String GetBasicControlTutorialKey()
+    {
         String prefix;
         if (FF9StateSystem.MobilePlatform)
         {
@@ -258,15 +296,9 @@ public class TutorialUI : UIScene
             prefix = "PC";
             this.lastPage = 2;
         }
-        if (this.BasicControlTutorialID > this.lastPage)
-            return;
-        String key = prefix + TutorialUI.BasicControlLocalizeKey + this.BasicControlTutorialID;
-        Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(key), 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.None);
-        dialog.AfterDialogShown = delegate (Int32 choice)
-        {
-            base.Loading = false;
-        };
-        dialog.AfterDialogHidden = this.AfterHideBasicControlTutorial;
+        if (this.BasicControlTutorialID <= this.lastPage)
+            return prefix + TutorialUI.BasicControlLocalizeKey + this.BasicControlTutorialID;
+        return null;
     }
 
     private void AfterHideBasicControlTutorial(Int32 choice)
@@ -383,6 +415,9 @@ public class TutorialUI : UIScene
     public Texture2D libraPhoto;
     [NonSerialized]
     public Int32 libraPage;
+
+    [NonSerialized]
+    private Dialog tutorialDialog;
 
     private class GOIsolatedButton : GOWidget
     {

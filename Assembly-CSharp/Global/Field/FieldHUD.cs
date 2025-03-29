@@ -40,6 +40,9 @@ public class FieldHUD : UIScene
     private Single _previousVibRight;
     private EventEngine _eventEngineCache;
 
+    [NonSerialized]
+    private Dialog skipMovieDialog;
+
     public MinigameHUD CurrentMinigameHUD => _currentMinigameHUD;
 
     public Int32 PauseWidth
@@ -53,10 +56,6 @@ public class FieldHUD : UIScene
     }
 
     public EventEngine eventEngine => _eventEngineCache ?? (_eventEngineCache = GameObject.Find("EventEngine").GetComponent<EventEngine>());
-
-    public FieldHUD()
-    {
-    }
 
     public Boolean IsDisplayChanbaraHUD()
     {
@@ -164,10 +163,8 @@ public class FieldHUD : UIScene
                 if (_racingHippaulHUDPrefab == null)
                     _racingHippaulHUDPrefab = Resources.Load("EmbeddedAsset/UI/Prefabs/Racing Hippaul HUD Container") as GameObject;
                 _currentMinigameHUDGameObject = NGUITools.AddChild(MinigameHUDContainer, _racingHippaulHUDPrefab);
-                if (FF9StateSystem.Settings.CurrentLanguage == "Japanese")
-                {
+                if (Localization.CurrentSymbol == "JP")
                     _currentMinigameHUDGameObject.transform.GetChild(1).GetComponent<EventButton>().KeyCommand = Control.Confirm;
-                }
                 break;
             case MinigameHUD.SwingACage:
                 if (_swingACageHUDPrefab == null)
@@ -245,6 +242,14 @@ public class FieldHUD : UIScene
         PersistenSingleton<UIManager>.Instance.SetEventEnable(false);
     }
 
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        if (skipMovieDialog != null)
+            skipMovieDialog.ChangePhraseSoft(Localization.Get("SkipMovieDialog"));
+    }
+
     public override Boolean OnKeyMenu(GameObject go)
     {
         if (base.OnKeyMenu(go))
@@ -269,14 +274,14 @@ public class FieldHUD : UIScene
 
     public override Boolean OnKeyConfirm(GameObject go)
     {
-        if (base.OnKeyConfirm(go) && MovieHitArea.activeSelf && (!MBG.IsNull && !MBG.Instance.IsFinished()))
+        if (base.OnKeyConfirm(go) && MovieHitArea.activeSelf && !MBG.IsNull && !MBG.Instance.IsFinished())
         {
             MovieHitArea.SetActive(false);
             ETb.sChoose = 1;
-            Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get("SkipMovieDialog"), 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.Notice);
+            skipMovieDialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get("SkipMovieDialog"), 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.Notice);
             isShowSkipMovieDialog = true;
-            dialog.AfterDialogShown = OnKeyConfirmAfterDialogShown;
-            dialog.AfterDialogHidden = OnKeyConfirmAfterDialogHidden;
+            skipMovieDialog.AfterDialogShown = OnKeyConfirmAfterDialogShown;
+            skipMovieDialog.AfterDialogHidden = OnKeyConfirmAfterDialogHidden;
         }
         return true;
     }
@@ -436,6 +441,7 @@ public class FieldHUD : UIScene
             vib.VIB_actuatorSet(1, _previousVibLeft, _previousVibRight);
         }
         isShowSkipMovieDialog = false;
+        skipMovieDialog = null;
     }
 
     private void OnItemShopClickHide()

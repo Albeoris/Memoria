@@ -59,6 +59,16 @@ public class CardUI : UIScene
         ButtonGroupState.RemoveCursorMemorize(CardUI.CardGroupButton);
     }
 
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        if (count[currentCardId] > 0)
+            cardNameLabel.rawText = FF9TextTool.CardName((TetraMasterCardId)currentCardId);
+        levelLabel.rawText = Localization.GetWithDefault("CardPoints").Replace("%", point.ToString());
+        classNameLabel.rawText = FF9TextTool.CardLevelName(lv_collector);
+    }
+
     public override Boolean OnKeyConfirm(GameObject go)
     {
         if (base.OnKeyConfirm(go))
@@ -286,8 +296,7 @@ public class CardUI : UIScene
             if (DiscardAutoButton != null)
             {
                 DiscardAutoButton.Help.Enable = true;
-                DiscardAutoButton.Help.TextKey = String.Empty;
-                DiscardAutoButton.Help.Text = "Discard all unnecessary cards.";
+                DiscardAutoButton.Help.TextKey = "AutoDiscardHelp";
                 DiscardAutoButton.Help.Tail = true;
             }
 

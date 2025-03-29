@@ -12,7 +12,7 @@ public class UILocalize : MonoBehaviour
 
     private String OverwriteText(String text)
     {
-        if (this.key == "Collector" && Localization.CurrentLanguage == "German")
+        if (this.key == "Collector" && Localization.CurrentDisplaySymbol == "GR")
             text = text.Substring(0, text.Length - 1);
         if (TextOverwriting != null)
             TextOverwriting(this.key, ref text);

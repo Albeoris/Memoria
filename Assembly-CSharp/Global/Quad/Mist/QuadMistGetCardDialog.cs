@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class QuadMistGetCardDialog : MonoBehaviour
 {
+    public static Dialog Dialog => QuadMistGetCardDialog.main.dialog;
+
     private void Start()
     {
         base.gameObject.SetActive(false);

@@ -80,8 +80,8 @@ public class SaveLoadUI : UIScene
             this.currentFile = -1;
             this.setSerializeType(this.Type);
             this.screenFadePanel.depth = 7;
-            this.DisplaySlot();
-            this.DisplayHelp();
+            this.DisplaySlot(true);
+            this.DisplayHelp(true);
         }
     }
 
@@ -99,6 +99,31 @@ public class SaveLoadUI : UIScene
             afterHideDelegate += afterFinished;
         base.Hide(afterHideDelegate);
         this.screenFadePanel.depth = 10;
+    }
+
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        if (this.currentSlot >= 0)
+            this.helpSlotLabel.rawText = String.Format(Localization.Get("SlotNo"), this.currentSlot + 1);
+        if (this.dataInfos != null && this.FileListPanel.activeInHierarchy)
+        {
+            Int32 saveID = 0;
+            foreach (SharedDataPreviewSlot dataInfo in this.dataInfos)
+            {
+                SaveLoadUI.FileInfoHUD fileInfoHUD = this.fileInfoHudList[saveID];
+                fileInfoHUD.FileNoLabel.rawText = String.Format(Localization.Get("FileNo"), (saveID + 1).ToString("0#"));
+                fileInfoHUD.GilLabel.rawText = Localization.GetWithDefault("GilSymbol").Replace("%", dataInfo.Gil.ToString());
+                if (fileInfoHUD.Button.Help.TextKey == "CorruptFile")
+                    fileInfoHUD.EmptySlotTextLabel.rawText = Localization.Get("CorruptFile");
+                else if (fileInfoHUD.Button.Help.TextKey == "NoSaveHelp")
+                    fileInfoHUD.EmptySlotTextLabel.rawText = Localization.Get("EmptyFile");
+                saveID++;
+            }
+        }
+        DisplaySlot(false);
+        DisplayHelp(false);
     }
 
     public override Boolean OnKeyConfirm(GameObject go)
@@ -241,7 +266,7 @@ public class SaveLoadUI : UIScene
         return true;
     }
 
-    private void DisplayHelp()
+    private void DisplayHelp(Boolean updateActive)
     {
         Int32 saveID = 0;
         foreach (ButtonGroupState buttonGroupState in this.slotNameButtonList)
@@ -252,7 +277,8 @@ public class SaveLoadUI : UIScene
                 buttonGroupState.Help.Text = String.Format(Localization.Get("LoadSlotHelp"), saveID + 1);
             saveID++;
         }
-        this.HelpDespLabelGameObject.SetActive(FF9StateSystem.PCPlatform);
+        if (updateActive)
+            this.HelpDespLabelGameObject.SetActive(FF9StateSystem.PCPlatform);
     }
 
     private void DisplayFile(List<SharedDataPreviewSlot> data)
@@ -461,7 +487,7 @@ public class SaveLoadUI : UIScene
         yield break;
     }
 
-    private void DisplaySlot()
+    private void DisplaySlot(Boolean updateActive)
     {
         Int32 slotID = 0;
         foreach (UILabel uilabel in this.slotNameLabelList)
@@ -470,10 +496,13 @@ public class SaveLoadUI : UIScene
             uilabel.color = FF9TextTool.White;
             slotID++;
         }
-        this.currentSlot = FF9StateSystem.Settings.LatestSlot;
         this.helpSlotLabel.rawText = String.Format(Localization.Get("SlotNo"), this.currentSlot + 1);
-        this.SlotListPanel.SetActive(true);
-        this.FileListPanel.SetActive(false);
+        if (updateActive)
+        {
+            this.currentSlot = FF9StateSystem.Settings.LatestSlot;
+            this.SlotListPanel.SetActive(true);
+            this.FileListPanel.SetActive(false);
+        }
         FF9UIDataTool.DisplayTextLocalize(this.HelpTitleLabel, "SaveHelpSlot");
     }
 
@@ -497,6 +526,7 @@ public class SaveLoadUI : UIScene
             if (this.type == SaveLoadUI.SerializeType.Load)
             {
                 Boolean isNodata = true;
+                this.dataInfos = data;
                 foreach (SharedDataPreviewSlot slot in data)
                 {
                     if (slot != null)
@@ -519,6 +549,7 @@ public class SaveLoadUI : UIScene
                     data.Add(null);
             }
             ButtonGroupState.MuteActiveSound = true;
+            this.dataInfos = data;
             base.Loading = true;
             base.FadingComponent.FadePingPong(delegate
             {
@@ -702,6 +733,9 @@ public class SaveLoadUI : UIScene
     private List<SaveLoadUI.FileInfoHUD> fileInfoHudList = new List<SaveLoadUI.FileInfoHUD>();
     private List<UILabel> slotNameLabelList = new List<UILabel>();
     private List<ButtonGroupState> slotNameButtonList = new List<ButtonGroupState>();
+
+    [NonSerialized]
+    private List<SharedDataPreviewSlot> dataInfos;
 
     private UIPanel screenFadePanel;
 

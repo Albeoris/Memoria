@@ -1,6 +1,7 @@
-﻿using Assets.Scripts.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Assets.Scripts.Common;
+using Memoria.Assets;
 using UnityEngine;
 
 public class EndGameHUD : UIScene
@@ -11,7 +12,7 @@ public class EndGameHUD : UIScene
         this.hasDoubleAllowed = false;
         this.hasSplitAllowed = false;
         this.hasJustChangeToPlayState = true;
-        this.changeWageAmountCounter = 0.115f;
+        this.changeWageAmountCounter = EndGameHUD.CHANGE_WAGE_AMOUNT_DURATION;
         this.lastChangeWageButtonState = Control.None;
         this.doubleButton = this.doubleButtonGo.GetComponent<UIButton>();
         this.doubleButtonLabel = this.doubleButtonGo.GetComponentInChildren<UILabel>();
@@ -29,28 +30,40 @@ public class EndGameHUD : UIScene
         this.BankRollLabel.rawText = EndGameMain.Instance.bankRoll.ToString();
         this.WageAmountLabel.rawText = EndGameMain.Instance.wager.ToString();
         foreach (GameObject go in this.buttonGoList)
-        {
-            UIEventListener uieventListener = UIEventListener.Get(go);
-            uieventListener.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener.onClick, new UIEventListener.VoidDelegate(this.onClick));
-        }
-        UIEventListener uieventListener2 = UIEventListener.Get(this.minusButtonGo);
-        uieventListener2.onPress = (UIEventListener.BoolDelegate)Delegate.Combine(uieventListener2.onPress, new UIEventListener.BoolDelegate(this.onMinusOrPlusPress));
+            UIEventListener.Get(go).onClick += this.onClick;
+        UIEventListener.Get(this.minusButtonGo).onPress += this.onMinusOrPlusPress;
         SceneDirector.FadeEventSetColor(FadeMode.Sub, Color.black);
+        this.gameObject.GetChild(0).GetComponent<UILabel>().rawText = Localization.GetWithDefault("BlackJackBankroll");
+        this.gameObject.GetChild(2).GetComponent<UILabel>().rawText = Localization.GetWithDefault("BlackJackWager");
+        this.standButtonGo.GetChild(0).GetComponent<UILabel>().rawText = Localization.GetWithDefault("BlackJackStand");
+        this.hitButtonGo.GetChild(0).GetComponent<UILabel>().rawText = Localization.GetWithDefault("BlackJackHit");
     }
 
     public override void Hide(UIScene.SceneVoidDelegate afterFinished = null)
     {
         base.NextSceneIsModal = false;
-        UIScene.SceneVoidDelegate sceneVoidDelegate = delegate
+        UIScene.SceneVoidDelegate afterFinishedDelegate = delegate
         {
             PersistenSingleton<UIManager>.Instance.State = UIManager.UIState.Initial;
         };
         if (afterFinished != null)
-        {
-            sceneVoidDelegate = (UIScene.SceneVoidDelegate)Delegate.Combine(sceneVoidDelegate, afterFinished);
-        }
-        base.Hide(sceneVoidDelegate);
+            afterFinishedDelegate += afterFinished;
+        base.Hide(afterFinishedDelegate);
         ButtonGroupState.DisableAllGroup(true);
+    }
+
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        this.gameObject.GetChild(0).GetComponent<UILabel>().rawText = Localization.GetWithDefault("BlackJackBankroll");
+        this.gameObject.GetChild(2).GetComponent<UILabel>().rawText = Localization.GetWithDefault("BlackJackWager");
+        this.standButtonGo.GetChild(0).GetComponent<UILabel>().rawText = Localization.GetWithDefault("BlackJackStand");
+        this.hitButtonGo.GetChild(0).GetComponent<UILabel>().rawText = Localization.GetWithDefault("BlackJackHit");
+        if (this.doubleButton.isEnabled)
+            this.doubleButtonLabel.rawText = Localization.GetWithDefault("BlackJackDouble");
+        if (this.splitButton.isEnabled)
+            this.splitButtonLabel.rawText = Localization.GetWithDefault("BlackJackSplit");
     }
 
     private void onMinusOrPlusPress(GameObject go, Boolean isDown)
@@ -118,10 +131,8 @@ public class EndGameHUD : UIScene
 
     private void Update()
     {
-        if (EndGameMain.Instance == (UnityEngine.Object)null)
-        {
+        if (EndGameMain.Instance == null)
             return;
-        }
         EndGameDef.FF9EndingGameState endingGameState = EndGameMain.Instance.endGame.GetEndingGameState();
         if (endingGameState == EndGameDef.FF9EndingGameState.ENDGAME_STATE_WAGER)
         {
@@ -157,10 +168,8 @@ public class EndGameHUD : UIScene
                     {
                         this.DecreaseWager();
                         if (this.changeWageAmountCounter < 0.0575f)
-                        {
                             this.changeWageAmountCounter = 0f;
-                        }
-                        this.changeWageAmountCounter += 0.115f;
+                        this.changeWageAmountCounter += EndGameHUD.CHANGE_WAGE_AMOUNT_DURATION;
                     }
                 }
                 this.lastChangeWageButtonState = Control.LeftBumper;
@@ -183,10 +192,8 @@ public class EndGameHUD : UIScene
                     {
                         this.IncreaseWager();
                         if (this.changeWageAmountCounter < 0.0575f)
-                        {
                             this.changeWageAmountCounter = 0f;
-                        }
-                        this.changeWageAmountCounter += 0.115f;
+                        this.changeWageAmountCounter += EndGameHUD.CHANGE_WAGE_AMOUNT_DURATION;
                     }
                 }
                 this.lastChangeWageButtonState = Control.RightBumper;
@@ -199,9 +206,7 @@ public class EndGameHUD : UIScene
         else
         {
             if (!this.hasJustChangeToPlayState)
-            {
                 this.HasJustChangeToPlayState();
-            }
             this.hasJustChangeToPlayState = true;
             if (EndGameMain.Instance.endGame.ff9endingGameDoubleAllowed != this.hasDoubleAllowed)
             {
@@ -239,7 +244,7 @@ public class EndGameHUD : UIScene
     {
         if (isEnable)
         {
-            this.doubleButtonLabel.rawText = "DOUBLE";
+            this.doubleButtonLabel.rawText = Localization.GetWithDefault("BlackJackDouble");
             this.doubleButton.isEnabled = true;
         }
         else
@@ -254,7 +259,7 @@ public class EndGameHUD : UIScene
     {
         if (isEnable)
         {
-            this.splitButtonLabel.rawText = "SPLIT";
+            this.splitButtonLabel.rawText = Localization.GetWithDefault("BlackJackSplit");
             this.splitButton.isEnabled = true;
         }
         else
@@ -350,6 +355,8 @@ public class EndGameHUD : UIScene
     }
 
     private const Single CHANGE_WAGE_AMOUNT_DURATION = 0.115f;
+    private const String BlackJackWagerGroupButton = "BlackJack.Buttons.Wager";
+    private const String BlackJackDealGroupButton = "BlackJack.Buttons.Deal";
 
     public UILabel WageAmountLabel;
 
@@ -368,10 +375,6 @@ public class EndGameHUD : UIScene
     private Single changeWageAmountCounter;
 
     private Control lastChangeWageButtonState;
-
-    private static String BlackJackWagerGroupButton = "BlackJack.Buttons.Wager";
-
-    private static String BlackJackDealGroupButton = "BlackJack.Buttons.Deal";
 
     private List<GameObject> buttonGoList;
 

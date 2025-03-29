@@ -25,7 +25,6 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static Int32 FieldZoneId => fieldZoneId;
         public static Int32 BattleZoneId => battleZoneId;
-        public static Dictionary<Int32, String> LocationNames => locationName;
 
         public static readonly BattleImporter BattleImporter = new BattleImporter();
         public static readonly FieldImporter FieldImporter = new FieldImporter();
@@ -63,6 +62,13 @@ namespace Assets.Sources.Scripts.UI.Common
             return EmbadedSentenseLoader.LoadSentense(EmbadedTextResources.GetCurrentPath("/Battle/" + battleZoneId + ".mes"));
         }
 
+        public static IEnumerator InitializeBattleText()
+        {
+            //Log.Message(nameof(InitializeBattleText));
+            BattleImporter.InitializationTask?.WaitSafe();
+            return InitializeBattleTextInternal().GetEnumerator();
+        }
+
         public static IEnumerator InitializeFieldText()
         {
             //Log.Message(nameof(InitializeFieldText));
@@ -92,13 +98,6 @@ namespace Assets.Sources.Scripts.UI.Common
         {
             Log.Message(nameof(InitializeCommandText));
             return InitializeCommandTextInternal().GetEnumerator();
-        }
-
-        public static IEnumerator InitializeBattleText()
-        {
-            Log.Message(nameof(InitializeBattleText));
-            BattleImporter.InitializationTask?.WaitSafe();
-            return InitializeBattleTextInternal().GetEnumerator();
         }
 
         public static IEnumerator InitializeLocationText()
@@ -154,24 +153,6 @@ namespace Assets.Sources.Scripts.UI.Common
             IsLoading = false;
         }
 
-        private static IEnumerable InitializeBattleTextInternal()
-        {
-            if (battleZoneId == -1)
-            {
-                PersistenSingleton<UIManager>.Instance.SetEventEnable(true);
-                yield return 0;
-                yield break;
-            }
-
-            IsLoading = true;
-
-            foreach (var state in BattleImporter.LoadAsync())
-                yield return state;
-
-            IsLoading = false;
-            PersistenSingleton<UIManager>.Instance.SetEventEnable(true);
-        }
-
         private static IEnumerable InitializeCommandTextInternal()
         {
             IsLoading = true;
@@ -220,6 +201,33 @@ namespace Assets.Sources.Scripts.UI.Common
             IsLoading = false;
         }
 
+        private static IEnumerable InitializeBattleTextInternal()
+        {
+            if (battleZoneId == -1)
+            {
+                PersistenSingleton<UIManager>.Instance.SetEventEnable(true);
+                yield return 0;
+                yield break;
+            }
+
+            IsLoading = true;
+
+            foreach (var state in BattleImporter.LoadAsync())
+                yield return state;
+
+            if (Configuration.Lang.DualLanguageMode != 0 && !String.IsNullOrEmpty(Configuration.Lang.DualLanguage))
+            {
+                EmbadedTextResources.CurrentSymbol = Configuration.Lang.DualLanguage;
+                loadSecondaryZone = true;
+                BattleImporter.LoadSync();
+                loadSecondaryZone = false;
+                EmbadedTextResources.CurrentSymbol = null;
+            }
+
+            IsLoading = false;
+            PersistenSingleton<UIManager>.Instance.SetEventEnable(true);
+        }
+
         private static IEnumerable InitializeFieldTextInternal()
         {
             PersistenSingleton<UIManager>.Instance.SetEventEnable(false);
@@ -236,6 +244,15 @@ namespace Assets.Sources.Scripts.UI.Common
             foreach (var state in FieldImporter.LoadAsync())
                 yield return state;
 
+            if (Configuration.Lang.DualLanguageMode != 0 && !String.IsNullOrEmpty(Configuration.Lang.DualLanguage))
+            {
+                EmbadedTextResources.CurrentSymbol = Configuration.Lang.DualLanguage;
+                loadSecondaryZone = true;
+                FieldImporter.LoadSync();
+                loadSecondaryZone = false;
+                EmbadedTextResources.CurrentSymbol = null;
+            }
+
             IsLoading = false;
             PersistenSingleton<UIManager>.Instance.SetEventEnable(true);
         }
@@ -250,12 +267,8 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static String CharacterDefaultName(CharacterId charId)
         {
-            if (FF9StateSystem.Settings.CurrentLanguage == null)
-                FF9StateSystem.Settings.CurrentLanguage = FF9StateSystem.Settings.GetSystemLanguage();
-
             if (characterNames == null)
                 characterNames = CharacterNamesFormatter.CharacterDefaultNames();
-
             return characterNames.TryGetValue(charId, out String name) ? name : "Unknown";
         }
 
@@ -343,7 +356,7 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public IEnumerator UpdateTextLocalization(Action setMenuLanguageCallback)
         {
-            FF9TextTool.locationName.Clear();
+            DisplayBatch.locationName.Clear();
             yield return base.StartCoroutine(FF9TextTool.InitializeItemText());
             yield return base.StartCoroutine(FF9TextTool.InitializeImportantItemText());
             yield return base.StartCoroutine(FF9TextTool.InitializeAbilityText());
@@ -357,6 +370,20 @@ namespace Assets.Sources.Scripts.UI.Common
             yield break;
         }
 
+        public static void UpdateTextLocalizationNow()
+        {
+            DisplayBatch.locationName.Clear();
+            new ItemImporter().LoadSync();
+            new KeyItemImporter().LoadSync();
+            new AbilityImporter().LoadSync();
+            new SkillImporter().LoadSync();
+            new CommandImporter().LoadSync();
+            new LocationNameImporter().LoadSync();
+            foreach (EtcImporter importer in EtcImporter.EnumerateImporters())
+                importer.LoadSync();
+            new CharacterNamesImporter().LoadSync();
+        }
+
         public IEnumerator UpdateFieldText(Int32 _zoneId)
         {
             FF9TextTool.fieldZoneId = _zoneId;
@@ -365,7 +392,7 @@ namespace Assets.Sources.Scripts.UI.Common
             yield break;
         }
 
-        public Boolean UpdateFieldTextNow(Int32 _zoneId)
+        public static Boolean UpdateFieldTextNow(Int32 _zoneId)
         {
             FF9TextTool.fieldZoneId = _zoneId;
             return FF9TextTool.FieldImporter.LoadSync();
@@ -379,7 +406,7 @@ namespace Assets.Sources.Scripts.UI.Common
             yield break;
         }
 
-        public Boolean UpdateBattleTextNow(Int32 _zoneId)
+        public static Boolean UpdateBattleTextNow(Int32 _zoneId)
         {
             FF9TextTool.battleZoneId = _zoneId;
             return FF9TextTool.BattleImporter.LoadSync();
@@ -387,57 +414,57 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static String ItemName(RegularItem id)
         {
-            return FF9TextTool.itemName.TryGetValue(id, out String result) ? result : String.Empty;
+            return DisplayBatch.itemName.TryGetValue(id, out String result) ? result : String.Empty;
         }
 
         public static String ItemHelpDescription(RegularItem id)
         {
-            return FF9TextTool.itemHelpDesc.TryGetValue(id, out String result) ? result : String.Empty;
+            return DisplayBatch.itemHelpDesc.TryGetValue(id, out String result) ? result : String.Empty;
         }
 
         public static String ItemBattleDescription(RegularItem id)
         {
-            return FF9TextTool.itemBattleDesc.TryGetValue(id, out String result) ? result : String.Empty;
+            return DisplayBatch.itemBattleDesc.TryGetValue(id, out String result) ? result : String.Empty;
         }
 
         public static String ImportantItemName(Int32 id)
         {
-            return FF9TextTool.importantItemName.TryGetValue(id, out String result) ? result : String.Empty;
+            return DisplayBatch.importantItemName.TryGetValue(id, out String result) ? result : String.Empty;
         }
 
         public static String ImportantItemHelpDescription(Int32 id)
         {
-            return FF9TextTool.importantItemHelpDesc.TryGetValue(id, out String result) ? result : String.Empty;
+            return DisplayBatch.importantItemHelpDesc.TryGetValue(id, out String result) ? result : String.Empty;
         }
 
         public static String ImportantItemSkin(Int32 id)
         {
-            return FF9TextTool.importantSkinDesc.TryGetValue(id, out String result) ? result : String.Empty;
+            return DisplayBatch.importantSkinDesc.TryGetValue(id, out String result) ? result : String.Empty;
         }
 
         public static String ActionAbilityName(BattleAbilityId id)
         {
-            return FF9TextTool.actionAbilityName.TryGetValue(id, out String result) ? result : String.Empty;
+            return DisplayBatch.actionAbilityName.TryGetValue(id, out String result) ? result : String.Empty;
         }
 
         public static String ActionAbilityHelpDescription(BattleAbilityId id)
         {
-            return FF9TextTool.actionAbilityHelpDesc.TryGetValue(id, out String result) ? result : String.Empty;
+            return DisplayBatch.actionAbilityHelpDesc.TryGetValue(id, out String result) ? result : String.Empty;
         }
 
         public static String SupportAbilityName(SupportAbility id)
         {
-            return FF9TextTool.supportAbilityName.TryGetValue(id, out String result) ? result : String.Empty;
+            return DisplayBatch.supportAbilityName.TryGetValue(id, out String result) ? result : String.Empty;
         }
 
         public static String SupportAbilityHelpDescription(SupportAbility id)
         {
-            return FF9TextTool.supportAbilityHelpDesc.TryGetValue(id, out String result) ? result : String.Empty;
+            return DisplayBatch.supportAbilityHelpDesc.TryGetValue(id, out String result) ? result : String.Empty;
         }
 
         public static String CommandName(BattleCommandId id)
         {
-            Boolean isValid = FF9TextTool.commandName.TryGetValue(id, out String name);
+            Boolean isValid = DisplayBatch.commandName.TryGetValue(id, out String name);
             if (id == BattleCommandId.AccessMenu && isValid)
                 if (name == "None" || name == "みてい")
                     return Localization.Get("Menu");
@@ -446,15 +473,15 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static String CommandHelpDescription(BattleCommandId id)
         {
-            if (id == BattleCommandId.AccessMenu && FF9TextTool.commandHelpDesc.TryGetValue(id, out String help))
+            if (id == BattleCommandId.AccessMenu && DisplayBatch.commandHelpDesc.TryGetValue(id, out String help))
                 if (help == "" || help == "みていを使います。")
                     return Localization.Get("Menu");
-            return FF9TextTool.commandHelpDesc.TryGetValue(id, out String result) ? result : String.Empty;
+            return DisplayBatch.commandHelpDesc.TryGetValue(id, out String result) ? result : String.Empty;
         }
 
         public static String FieldText(Int32 textId)
         {
-            return FF9TextTool.fieldText.TryGetValue(textId, out String result) ? TextOpCodeModifier.Modify(result) : String.Empty;
+            return DisplayBatch.fieldText.TryGetValue(textId, out String result) ? TextOpCodeModifier.Modify(result, textId) : String.Empty;
         }
 
         public static String CharacterProfile(Int32 charId)
@@ -464,49 +491,49 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static String LocationName(Int32 id)
         {
-            return FF9TextTool.locationName.TryGetValue(id, out String result) ? result : String.Empty;
+            return DisplayBatch.locationName.TryGetValue(id, out String result) ? result : String.Empty;
         }
 
-        public static Boolean IsBattleTextLoaded => FF9TextTool.battleText != null;
+        public static Boolean IsBattleTextLoaded => MainBatch.battleText != null;
 
         public static String BattleText(Int32 id)
         {
-            return FF9TextTool.battleText.TryGetValue(id, out String result) ? result : Localization.Get("EnemyDummy");
+            return DisplayBatch.battleText.TryGetValue(id, out String result) ? result : Localization.Get("EnemyDummy");
         }
 
         public static String CardName(TetraMasterCardId id)
         {
-            return FF9TextTool.cardName.TryGetValue(id, out String result) ? result : String.Empty;
+            return DisplayBatch.cardName.TryGetValue((Int32)id, out String result) ? result : String.Empty;
         }
 
         public static String ChocoboUIText(Int32 id)
         {
-            return (id >= FF9TextTool.chocoUIText.Length) ? String.Empty : FF9TextTool.chocoUIText[id];
+            return DisplayBatch.chocoUIText.TryGetValue(id, out String result) ? result : String.Empty;
         }
 
         public static String CardLevelName(Int32 id)
         {
-            return (id >= FF9TextTool.cardLvName.Length) ? String.Empty : FF9TextTool.cardLvName[id];
+            return DisplayBatch.cardLvName.TryGetValue(id, out String result) ? result : String.Empty;
         }
 
         public static String BattleFollowText(Int32 id)
         {
-            return (id >= FF9TextTool.followText.Length) ? String.Empty : FF9TextTool.followText[id];
+            return DisplayBatch.followText.TryGetValue(id, out String result) ? result : String.Empty;
         }
 
         public static String BattleLibraText(Int32 id)
         {
-            return (id >= FF9TextTool.libraText.Length) ? String.Empty : FF9TextTool.libraText[id];
+            return DisplayBatch.libraText.TryGetValue(id, out String result) ? result : String.Empty;
         }
 
         public static String BattleCommandTitleText(Int32 id)
         {
-            return (id >= FF9TextTool.cmdTitleText.Length) ? String.Empty : FF9TextTool.cmdTitleText[id];
+            return DisplayBatch.cmdTitleText.TryGetValue(id, out String result) ? result : String.Empty;
         }
 
         public static String WorldLocationText(Int32 id)
         {
-            return (id >= FF9TextTool.worldLocationText.Length) ? String.Empty : FF9TextTool.worldLocationText[id];
+            return DisplayBatch.worldLocationText.TryGetValue(id, out String result) ? result : String.Empty;
         }
 
         public static String RemoveOpCode(String str)
@@ -517,199 +544,186 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static String[] GetTableText(UInt32 index)
         {
-            if (FF9TextTool.tableText.TryGetValue(index, out String[] table))
+            if (DisplayBatch.tableText.TryGetValue(index, out String[] table))
                 return table;
-            if (!FF9TextTool.fieldText.TryGetValue((Int32)index, out String rawText))
+            if (!DisplayBatch.fieldText.TryGetValue((Int32)index, out String rawText))
                 return null;
             table = DialogBoxSymbols.ParseTextSplitTags(rawText).ToArray();
-            FF9TextTool.tableText[index] = table;
+            DisplayBatch.tableText[index] = table;
             return table;
         }
 
         public static String GetDialogCaptionText(Dialog.CaptionType captionType)
         {
-            String result = String.Empty;
             switch (captionType)
             {
                 case Dialog.CaptionType.Mognet:
                 case Dialog.CaptionType.ActiveTimeEvent:
                 case Dialog.CaptionType.Chocobo:
                 case Dialog.CaptionType.Notice:
-                    result = Localization.Get(captionType.ToString());
-                    break;
+                    return Localization.Get(captionType.ToString());
             }
-            return result;
+            return String.Empty;
         }
 
         public static event Action<Int32> FieldTextUpdated;
 
         private static Int32 fieldZoneId = -1;
         private static Int32 battleZoneId = -1;
-        public static Dictionary<Int32, String> fieldText = new Dictionary<Int32, String>();
-        public static Dictionary<Int32, String> battleText = new Dictionary<Int32, String>();
+        private static Boolean loadSecondaryZone = false;
 
-        public static Dictionary<RegularItem, String> itemName = new Dictionary<RegularItem, String>();
-        public static Dictionary<RegularItem, String> itemBattleDesc = new Dictionary<RegularItem, String>();
-        public static Dictionary<RegularItem, String> itemHelpDesc = new Dictionary<RegularItem, String>();
+        public static TextBatch MainBatch = new TextBatch();
+        public static TextBatch SecondaryBatch = new TextBatch();
+        public static TextBatch DisplayBatch => Localization.UseSecondaryLanguage ? SecondaryBatch : MainBatch;
+        public static TextBatch LoadingZoneBatch => loadSecondaryZone ? SecondaryBatch : MainBatch;
 
-        public static Dictionary<Int32, String> importantSkinDesc = new Dictionary<Int32, String>();
-        public static Dictionary<Int32, String> importantItemHelpDesc = new Dictionary<Int32, String>();
-        public static Dictionary<Int32, String> importantItemName = new Dictionary<Int32, String>();
-
-        public static Dictionary<SupportAbility, String> supportAbilityHelpDesc = new Dictionary<SupportAbility, String>();
-        public static Dictionary<SupportAbility, String> supportAbilityName = new Dictionary<SupportAbility, String>();
-
-        public static Dictionary<BattleAbilityId, String> actionAbilityName = new Dictionary<BattleAbilityId, String>();
-        public static Dictionary<BattleAbilityId, String> actionAbilityHelpDesc = new Dictionary<BattleAbilityId, String>();
-
-        public static Dictionary<CharacterId, String> characterNames;
-
-        public static Dictionary<BattleCommandId, String> commandName = new Dictionary<BattleCommandId, String>();
-        public static Dictionary<BattleCommandId, String> commandHelpDesc = new Dictionary<BattleCommandId, String>();
-
-        public static Dictionary<TetraMasterCardId, String> cardName = new Dictionary<TetraMasterCardId, String>();
-        public static String[] chocoUIText;
-        public static String[] cardLvName;
-        public static String[] followText;
-        public static String[] cmdTitleText;
-        public static String[] libraText;
-        public static String[] worldLocationText;
-
-        private static Dictionary<UInt32, String[]> tableText = new Dictionary<UInt32, String[]>();
-
-        public static Dictionary<Int32, String> locationName = new Dictionary<Int32, String>();
+        public static Dictionary<CharacterId, String> characterNames = null;
 
         public static Boolean IsLoading = false;
         public static Byte ChocographNameStartIndex = 10;
         public static Byte ChocographDetailStartIndex = 58;
         public static Byte ChocographHelpStartIndex = 34;
 
+        public static void LoadSecondaryLanguage(String symbol)
+        {
+            EmbadedTextResources.CurrentSymbol = symbol;
+            loadSecondaryZone = true;
+            UpdateTextLocalizationNow();
+            if (battleZoneId != -1)
+                FF9TextTool.BattleImporter.LoadSync();
+            if (fieldZoneId != -1)
+                FF9TextTool.FieldImporter.LoadSync();
+            loadSecondaryZone = false;
+            EmbadedTextResources.CurrentSymbol = null;
+        }
+
         public static void SetSupportAbilityName(SupportAbility id, String value)
         {
-            supportAbilityName[id] = TextPatcher.PatchDatabaseString(value, typeof(SupportAbility).Name, (Int32)id, true, false);
+            DisplayBatch.supportAbilityName[id] = TextPatcher.PatchDatabaseString(value, typeof(SupportAbility).Name, (Int32)id, true, false);
         }
 
         public static void SetSupportAbilityHelpDesc(SupportAbility id, String value)
         {
-            supportAbilityHelpDesc[id] = TextPatcher.PatchDatabaseString(value, typeof(SupportAbility).Name, (Int32)id, false, true);
+            DisplayBatch.supportAbilityHelpDesc[id] = TextPatcher.PatchDatabaseString(value, typeof(SupportAbility).Name, (Int32)id, false, true);
         }
 
         public static void SetFieldText(String[] value)
         {
-            fieldText.Clear();
+            LoadingZoneBatch.fieldText.Clear();
             FF9TextTool.ImportArrayToDictionary<Int32>(value, FF9TextTool.SetFieldText);
         }
 
         public static void SetFieldText(Int32 id, String value)
         {
-            fieldText[id] = value;
+            LoadingZoneBatch.fieldText[id] = value;
             FieldTextUpdated?.Invoke(id);
         }
 
         public static void ClearTableText()
         {
-            tableText.Clear();
+            MainBatch.tableText.Clear();
+            SecondaryBatch.tableText.Clear();
         }
 
         public static void SetBattleText(String[] value)
         {
-            battleText.Clear();
+            LoadingZoneBatch.battleText.Clear();
             FF9TextTool.ImportArrayToDictionary<Int32>(value, FF9TextTool.SetBattleText);
         }
 
         public static void SetBattleText(Int32 id, String value)
         {
-            battleText[id] = value;
+            LoadingZoneBatch.battleText[id] = value;
         }
 
         public static void SetCommandName(BattleCommandId id, String value)
         {
-            commandName[id] = TextPatcher.PatchDatabaseString(value, typeof(BattleCommandId).Name, (Int32)id, true, false);
+            DisplayBatch.commandName[id] = TextPatcher.PatchDatabaseString(value, typeof(BattleCommandId).Name, (Int32)id, true, false);
         }
 
         public static void SetCommandHelpDesc(BattleCommandId id, String value)
         {
-            commandHelpDesc[id] = TextPatcher.PatchDatabaseString(value, typeof(BattleCommandId).Name, (Int32)id, false, true);
+            DisplayBatch.commandHelpDesc[id] = TextPatcher.PatchDatabaseString(value, typeof(BattleCommandId).Name, (Int32)id, false, true);
         }
 
-        public static void SetCmdTitleText(String[] value)
+        public static void SetCmdTitleText(Int32 id, String value)
         {
-            cmdTitleText = value;
+            DisplayBatch.cmdTitleText[id] = value;
         }
 
-        public static void SetFollowText(String[] value)
+        public static void SetFollowText(Int32 id, String value)
         {
-            followText = value;
+            DisplayBatch.followText[id] = value;
         }
 
-        public static void SetCardLvName(String[] value)
+        public static void SetCardLvName(Int32 id, String value)
         {
-            cardLvName = value;
+            DisplayBatch.cardLvName[id] = value;
         }
 
-        public static void SetCardName(String[] value)
+        public static void SetCardName(Int32 id, String value)
         {
-            FF9TextTool.ImportArrayToDictionary<TetraMasterCardId>(value, FF9TextTool.SetCardName);
+            DisplayBatch.cardName[id] = TextPatcher.PatchDatabaseString(value, typeof(TetraMasterCardId).Name, id, true, false);
         }
 
         public static void SetCardName(TetraMasterCardId id, String value)
         {
-            cardName[id] = TextPatcher.PatchDatabaseString(value, typeof(TetraMasterCardId).Name, (Int32)id, true, false);
+            SetCardName((Int32)id, value);
         }
 
-        public static void SetChocoUiText(String[] value)
+        public static void SetChocoUiText(Int32 id, String value)
         {
-            chocoUIText = value;
+            DisplayBatch.chocoUIText[id] = value;
         }
 
-        public static void SetLibraText(String[] value)
+        public static void SetLibraText(Int32 id, String value)
         {
-            libraText = value;
+            DisplayBatch.libraText[id] = value;
         }
 
-        public static void SetWorldLocationText(String[] value)
+        public static void SetWorldLocationText(Int32 id, String value)
         {
-            worldLocationText = value;
+            DisplayBatch.worldLocationText[id] = value;
         }
 
         public static void SetItemName(RegularItem id, String value)
         {
-            itemName[id] = TextPatcher.PatchDatabaseString(value, typeof(RegularItem).Name, (Int32)id, true, false);
+            DisplayBatch.itemName[id] = TextPatcher.PatchDatabaseString(value, typeof(RegularItem).Name, (Int32)id, true, false);
         }
 
         public static void SetItemHelpDesc(RegularItem id, String value)
         {
-            itemHelpDesc[id] = TextPatcher.PatchDatabaseString(value, typeof(RegularItem).Name, (Int32)id, false, true);
+            DisplayBatch.itemHelpDesc[id] = TextPatcher.PatchDatabaseString(value, typeof(RegularItem).Name, (Int32)id, false, true);
         }
 
         public static void SetItemBattleDesc(RegularItem id, String value)
         {
-            itemBattleDesc[id] = TextPatcher.PatchDatabaseString(value, typeof(RegularItem).Name, (Int32)id, false, true);
+            DisplayBatch.itemBattleDesc[id] = TextPatcher.PatchDatabaseString(value, typeof(RegularItem).Name, (Int32)id, false, true);
         }
 
         public static void SetImportantItemName(Int32 id, String value)
         {
-            importantItemName[id] = TextPatcher.PatchDatabaseString(value, "KeyItem", id, true, false);
+            DisplayBatch.importantItemName[id] = TextPatcher.PatchDatabaseString(value, "KeyItem", id, true, false);
         }
 
         public static void SetImportantItemHelpDesc(Int32 id, String value)
         {
-            importantItemHelpDesc[id] = TextPatcher.PatchDatabaseString(value, "KeyItem", id, false, true);
+            DisplayBatch.importantItemHelpDesc[id] = TextPatcher.PatchDatabaseString(value, "KeyItem", id, false, true);
         }
 
         public static void SetImportantSkinDesc(Int32 id, String value)
         {
-            importantSkinDesc[id] = TextPatcher.PatchDatabaseString(value, "KeyItem", id, false, false);
+            DisplayBatch.importantSkinDesc[id] = TextPatcher.PatchDatabaseString(value, "KeyItem", id, false, false);
         }
 
         public static void SetActionAbilityName(BattleAbilityId id, String value)
         {
-            actionAbilityName[id] = TextPatcher.PatchDatabaseString(value, typeof(BattleAbilityId).Name, (Int32)id, true, false);
+            DisplayBatch.actionAbilityName[id] = TextPatcher.PatchDatabaseString(value, typeof(BattleAbilityId).Name, (Int32)id, true, false);
         }
 
         public static void SetActionAbilityHelpDesc(BattleAbilityId id, String value)
         {
-            actionAbilityHelpDesc[id] = TextPatcher.PatchDatabaseString(value, typeof(BattleAbilityId).Name, (Int32)id, false, true);
+            DisplayBatch.actionAbilityHelpDesc[id] = TextPatcher.PatchDatabaseString(value, typeof(BattleAbilityId).Name, (Int32)id, false, true);
         }
 
         public static void SetCharacterNames(Dictionary<CharacterId, String> value)
@@ -719,8 +733,6 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static void ChangeCharacterName(CharacterId charId, String value)
         {
-            if (FF9StateSystem.Settings.CurrentLanguage == null)
-                FF9StateSystem.Settings.CurrentLanguage = FF9StateSystem.Settings.GetSystemLanguage();
             if (characterNames == null)
                 characterNames = CharacterNamesFormatter.CharacterDefaultNames();
             characterNames[charId] = value;
@@ -738,5 +750,41 @@ namespace Assets.Sources.Scripts.UI.Common
 
         private static String[] DELIM_TEXTID = ["[TXID="];
         private static String[] DELIM_STRT = ["[STRT="];
+
+        public struct TextBatch
+        {
+            public TextBatch() { }
+
+            public Dictionary<Int32, String> fieldText = new Dictionary<Int32, String>();
+            public Dictionary<Int32, String> battleText = new Dictionary<Int32, String>();
+
+            public Dictionary<RegularItem, String> itemName = new Dictionary<RegularItem, String>();
+            public Dictionary<RegularItem, String> itemBattleDesc = new Dictionary<RegularItem, String>();
+            public Dictionary<RegularItem, String> itemHelpDesc = new Dictionary<RegularItem, String>();
+
+            public Dictionary<Int32, String> importantSkinDesc = new Dictionary<Int32, String>();
+            public Dictionary<Int32, String> importantItemHelpDesc = new Dictionary<Int32, String>();
+            public Dictionary<Int32, String> importantItemName = new Dictionary<Int32, String>();
+
+            public Dictionary<SupportAbility, String> supportAbilityHelpDesc = new Dictionary<SupportAbility, String>();
+            public Dictionary<SupportAbility, String> supportAbilityName = new Dictionary<SupportAbility, String>();
+
+            public Dictionary<BattleAbilityId, String> actionAbilityName = new Dictionary<BattleAbilityId, String>();
+            public Dictionary<BattleAbilityId, String> actionAbilityHelpDesc = new Dictionary<BattleAbilityId, String>();
+
+            public Dictionary<BattleCommandId, String> commandName = new Dictionary<BattleCommandId, String>();
+            public Dictionary<BattleCommandId, String> commandHelpDesc = new Dictionary<BattleCommandId, String>();
+
+            public Dictionary<Int32, String> cardName = new Dictionary<Int32, String>();
+            public Dictionary<Int32, String> chocoUIText = new Dictionary<Int32, String>();
+            public Dictionary<Int32, String> cardLvName = new Dictionary<Int32, String>();
+            public Dictionary<Int32, String> followText = new Dictionary<Int32, String>();
+            public Dictionary<Int32, String> cmdTitleText = new Dictionary<Int32, String>();
+            public Dictionary<Int32, String> libraText = new Dictionary<Int32, String>();
+            public Dictionary<Int32, String> worldLocationText = new Dictionary<Int32, String>();
+
+            public Dictionary<UInt32, String[]> tableText = new Dictionary<UInt32, String[]>();
+            public Dictionary<Int32, String> locationName = new Dictionary<Int32, String>();
+        }
     }
 }

@@ -122,9 +122,6 @@ public class DialogManager : Singleton<DialogManager>
             else if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Field || PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.World)
             {
                 dialogFromPool.Phrase = TextPatcher.PatchDialogString(FF9TextTool.FieldText(textId), dialogFromPool);
-
-                // Subscribe
-                // TODO: https://github.com/Albeoris/Memoria/issues/515
                 Action<Int32> onFieldTextUpdated = (id) =>
                 {
                     if (id == textId)
@@ -134,7 +131,6 @@ public class DialogManager : Singleton<DialogManager>
                     }
                 };
                 FF9TextTool.FieldTextUpdated += onFieldTextUpdated;
-
                 // Unsubscribe
                 Dialog.DialogIntDelegate unsubscribe = (c) => FF9TextTool.FieldTextUpdated -= onFieldTextUpdated;
                 listener = listener != null ? unsubscribe + listener : unsubscribe;

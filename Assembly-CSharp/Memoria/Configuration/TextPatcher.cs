@@ -238,7 +238,7 @@ namespace Memoria
 
         private Boolean ApplyPatch(ref String str, ExpressionInitializer ncalcInitializer)
         {
-            if (Languages.Count > 0 && !Languages.Contains(Localization.GetSymbol()))
+            if (Languages.Count > 0 && !Languages.Contains(Localization.CurrentDisplaySymbol))
                 return false;
             if (!String.IsNullOrEmpty(Condition))
             {
@@ -251,7 +251,7 @@ namespace Memoria
             }
             foreach (Modifier modifier in Modifiers)
             {
-                if (modifier.Languages.Count > 0 && !modifier.Languages.Contains(Localization.GetSymbol()))
+                if (modifier.Languages.Count > 0 && !modifier.Languages.Contains(Localization.CurrentDisplaySymbol))
                     continue;
                 if (!String.IsNullOrEmpty(modifier.Condition))
                 {

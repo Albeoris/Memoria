@@ -122,6 +122,41 @@ public class EquipUI : UIScene
         ButtonGroupState.RemoveCursorMemorize(EquipUI.EquipmentGroupButton);
     }
 
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        if (this.equipmentListCaption.isActiveAndEnabled)
+        {
+            switch (this.currentEquipPart)
+            {
+                case 0:
+                    this.equipmentListCaption.rawText = Localization.Get("WeaponCaption");
+                    break;
+                case 1:
+                    this.equipmentListCaption.rawText = Localization.Get("HeadCaption");
+                    break;
+                case 2:
+                    this.equipmentListCaption.rawText = Localization.Get("WristCaption");
+                    break;
+                case 3:
+                    this.equipmentListCaption.rawText = Localization.Get("ArmorCaption");
+                    break;
+                case 4:
+                    this.equipmentListCaption.rawText = Localization.Get("AccessoryCaption");
+                    break;
+                default:
+                    this.equipmentListCaption.rawText = Localization.Get("WeaponCaption");
+                    break;
+            }
+        }
+        if (this.equipSelectScrollList.isActiveAndEnabled)
+            this.equipSelectScrollList.UpdateTableViewImp();
+        this.DisplayEquipment();
+        this.DisplayEquiptmentInfo();
+        this.DisplayHelp();
+    }
+
     public override Boolean OnKeyConfirm(GameObject go)
     {
         if (!base.OnKeyConfirm(go))

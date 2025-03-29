@@ -287,45 +287,10 @@ public class BoosterSlider : MonoBehaviour
             && (PersistenSingleton<UIManager>.Instance.IsPlayerControlEnable || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Config)
             && EventHUD.CurrentHUD == MinigameHUD.None)
         {
-            this.needComfirmType = type;
-            String text = String.Empty;
-            switch (type)
-            {
-                case BoosterType.MasterSkill:
-                    text += Localization.Get("BoosterWarningMaster");
-                    break;
-                case BoosterType.LvMax:
-                    text += Localization.Get("BoosterWarningLvMax");
-                    break;
-                case BoosterType.GilMax:
-                    text += Localization.Get("BoosterWarningGilMax");
-                    break;
-            }
-            text += Localization.Get(FF9StateSystem.aaaaPlatform ? "BoosterWarningaaaa" : "BoosterWarningNotaaaa");
-            text += Localization.Get("BoosterWarningCommonChoice");
-            // Add a "Get all items" cheat option to GilMax
-            // That cheat may be implemented differently in the future
-            if (type == BoosterType.GilMax)
-            {
-                String optionText = "Get all items"; // As the option implementation may change, hard-code its label instead of using 'Localization.GetWithDefault'
-                switch (Localization.GetSymbol())
-                {
-                    case "JP": optionText = "すべてのアイテムを取得"; break;
-                    case "GR": optionText = "Alle Items bringen"; break;
-                    case "FR": optionText = "Obtenir tous les objets"; break;
-                    case "IT": optionText = "Ottieni tutti gli oggetti"; break;
-                    case "ES": optionText = "Obtener todos los objetos"; break;
-                }
-                Int32 doubleLine = text.LastIndexOf("\n\n");
-                if (doubleLine >= 0)
-                    text = text.Remove(doubleLine, 1);
-                if (text.EndsWith("[ENDN]"))
-                    text = text.Remove(text.Length - "[ENDN]".Length);
-                text += "\n[MOVE=140,0]" + optionText;
-            }
             ETb.sChoose = 1;
-            Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(text, 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(0f, 0f), Dialog.CaptionType.None);
-            dialog.AfterDialogHidden = this.OnConfirmDialogHidden;
+            this.needComfirmType = type;
+            this.warningDialog = Singleton<DialogManager>.Instance.AttachDialog(this.GetWarningDialogText(type), 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(0f, 0f), Dialog.CaptionType.None);
+            this.warningDialog.AfterDialogHidden = this.OnConfirmDialogHidden;
             this.warningCallback = callback;
             if (PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.Config)
             {
@@ -343,8 +308,57 @@ public class BoosterSlider : MonoBehaviour
         }
     }
 
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        if (this.needComfirmType != BoosterType.None && this.warningDialog != null)
+            this.warningDialog.ChangePhraseSoft(this.GetWarningDialogText(this.needComfirmType));
+    }
+
+    private String GetWarningDialogText(BoosterType type)
+    {
+        String text = String.Empty;
+        switch (type)
+        {
+            case BoosterType.MasterSkill:
+                text += Localization.Get("BoosterWarningMaster");
+                break;
+            case BoosterType.LvMax:
+                text += Localization.Get("BoosterWarningLvMax");
+                break;
+            case BoosterType.GilMax:
+                text += Localization.Get("BoosterWarningGilMax");
+                break;
+        }
+        text += Localization.Get(FF9StateSystem.aaaaPlatform ? "BoosterWarningaaaa" : "BoosterWarningNotaaaa");
+        text += Localization.Get("BoosterWarningCommonChoice");
+        // Add a "Get all items" cheat option to GilMax
+        // That cheat may be implemented differently in the future
+        if (type == BoosterType.GilMax)
+        {
+            String optionText = "Get all items"; // As the option implementation may change, hard-code its label instead of using 'Localization.GetWithDefault'
+            switch (Localization.CurrentDisplaySymbol)
+            {
+                case "JP": optionText = "すべてのアイテムを取得"; break;
+                case "GR": optionText = "Alle Items bringen"; break;
+                case "FR": optionText = "Obtenir tous les objets"; break;
+                case "IT": optionText = "Ottieni tutti gli oggetti"; break;
+                case "ES": optionText = "Obtener todos los objetos"; break;
+            }
+            Int32 doubleLine = text.LastIndexOf("\n\n");
+            if (doubleLine >= 0)
+                text = text.Remove(doubleLine, 1);
+            if (text.EndsWith("[ENDN]"))
+                text = text.Remove(text.Length - "[ENDN]".Length);
+            text += "\n[MOVE=140,0]" + optionText;
+        }
+        return text;
+    }
+
     public void OnConfirmDialogHidden(Int32 choice)
     {
+        this.warningDialog = null;
         ButtonGroupState.SetPointerOffsetToGroup(Dialog.DefaultOffset, Dialog.DialogGroupButton);
         if (choice == 0)
         {
@@ -449,6 +463,9 @@ public class BoosterSlider : MonoBehaviour
     private Boolean mStart;
 
     private Action warningCallback;
+
+    [NonSerialized]
+    private Dialog warningDialog;
 
     public enum BoosterIcon
     {

@@ -232,7 +232,7 @@ public partial class BattleHUD : UIScene
                     BattleEnemy enemy = unit.Enemy;
                     foreach (RegularItem itemId in enemy.StealableItems)
                         if (itemId != RegularItem.NoItem)
-                            messages.Add(Localization.GetSymbol() != "JP" ? FF9TextTool.BattleLibraText(8) + "[FFCC00]" + FF9TextTool.ItemName(itemId) + "[FFFFFF]" : "[FFCC00]" + FF9TextTool.ItemName(itemId) + "[FFFFFF]" + FF9TextTool.BattleLibraText(8));
+                            messages.Add(Localization.CurrentDisplaySymbol != "JP" ? FF9TextTool.BattleLibraText(8) + "[FFCC00]" + FF9TextTool.ItemName(itemId) + "[FFFFFF]" : "[FFCC00]" + FF9TextTool.ItemName(itemId) + "[FFFFFF]" + FF9TextTool.BattleLibraText(8));
                 }
                 return messages;
             case LibraInformation.BlueLearn:
@@ -396,7 +396,7 @@ public partial class BattleHUD : UIScene
             id = _peepingEnmData.StealableItems[_currentPeepingReverseOrder ? _peepingEnmData.StealableItems.Length - stealIndex : stealIndex - 1];
         } while (id == RegularItem.NoItem);
 
-        SetBattleMessage(Localization.GetSymbol() != "JP" ? FF9TextTool.BattleLibraText(8) + FF9TextTool.ItemName(id) : FF9TextTool.ItemName(id) + FF9TextTool.BattleLibraText(8), 3);
+        SetBattleMessage(Localization.CurrentDisplaySymbol != "JP" ? FF9TextTool.BattleLibraText(8) + FF9TextTool.ItemName(id) : FF9TextTool.ItemName(id) + FF9TextTool.BattleLibraText(8), 3);
         return true;
     }
 
@@ -1008,7 +1008,7 @@ public partial class BattleHUD : UIScene
                 GameObject labelObj = enemyHUD.GameObject;
                 UILabel nameLabel = enemyHUD.Name.Label;
                 labelObj.SetActive(true);
-                nameLabel.rawText = unit.Enemy.Name;
+                nameLabel.rawText = GetEnemyDisplayName(unit.Enemy);
                 if (_currentEnemyDieState[enemyIndex])
                 {
                     if (_cursorType == CursorGroup.Individual)
@@ -1070,6 +1070,26 @@ public partial class BattleHUD : UIScene
             ButtonGroupState.ActiveButton = currentTargetLabel;
         else
             DisplayTargetPointer();
+    }
+
+    private String GetEnemyDisplayName(BattleEnemy enemy)
+    {
+        if (!Localization.UseSecondaryLanguage)
+            return enemy.Name;
+        for (Int32 i = 0; i < FF9StateSystem.Battle.FF9Battle.enemy.Length; i++)
+            if (FF9StateSystem.Battle.FF9Battle.enemy[i] == enemy.Data)
+                return FF9TextTool.BattleText(i);
+        return enemy.Name;
+    }
+
+    private String GetEnemyCommandDisplayName(AA_DATA enemyAbility)
+    {
+        if (!Localization.UseSecondaryLanguage)
+            return enemyAbility.Name;
+        for (Int32 i = 0; i < FF9StateSystem.Battle.FF9Battle.enemy_attack.Count; i++)
+            if (FF9StateSystem.Battle.FF9Battle.enemy_attack[i] == enemyAbility)
+                return FF9TextTool.BattleText(FF9StateSystem.Battle.FF9Battle.btl_scene.header.TypCount + i);
+        return enemyAbility.Name;
     }
 
     private void DisplayCharacterParameter(UI.PanelParty.Character playerHud, BattleUnit bd, DamageAnimationInfo hp, DamageAnimationInfo mp)
@@ -2305,7 +2325,7 @@ public partial class BattleHUD : UIScene
             else
             {
                 GONavigationButton targetHud = _targetPanel.Enemies[enemyIndex];
-                String targetName = displayName ? unit.Enemy.Name : String.Empty;
+                String targetName = displayName ? GetEnemyDisplayName(unit.Enemy) : String.Empty;
                 targetHud.ButtonGroup.Help.Enable = true;
                 targetHud.ButtonGroup.Help.Text = cursorHelp + "\n" + targetName;
                 ++enemyIndex;

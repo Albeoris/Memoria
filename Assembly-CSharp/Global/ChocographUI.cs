@@ -85,6 +85,22 @@ public class ChocographUI : UIScene
         ButtonGroupState.RemoveCursorMemorize(ChocographUI.ItemGroupButton);
     }
 
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        for (Int32 i = 0; i < this.chocographItemList.Count; i++)
+        {
+            ChocographUI.ChocographItem chocographItem = this.chocographItemList[i];
+            if (this.hasMap[i])
+                chocographItem.ItemName.rawText = FF9TextTool.ChocoboUIText(i + FF9TextTool.ChocographNameStartIndex);
+        }
+        if (ButtonGroupState.ActiveGroup == ChocographUI.ItemGroupButton && this.currentSelectItemIndex >= 0 && this.hasMap[this.currentSelectItemIndex])
+            this.HintText.rawText = FF9TextTool.ChocoboUIText(this.currentSelectItemIndex + FF9TextTool.ChocographDetailStartIndex);
+        if (this.hasSelectedItem && ChocographUI.CurrentSelectedChocograph >= 0)
+            this.SelectedItemLabel.rawText = this.chocographItemList[ChocographUI.CurrentSelectedChocograph].ItemName.rawText;
+    }
+
     public override Boolean OnKeyConfirm(GameObject go)
     {
         if (base.OnKeyConfirm(go))
@@ -315,12 +331,12 @@ public class ChocographUI : UIScene
     private void DisplayHint(Int32 currentOnSelectItemIndex)
     {
         this.HintAbilityRequired.ClearAbility();
-        this.HintMap.spriteName = "chocograph_map_" + currentOnSelectItemIndex.ToString("D" + 2);
-        this.HintText.rawText = FF9TextTool.ChocoboUIText(currentOnSelectItemIndex + (Int32)FF9TextTool.ChocographDetailStartIndex);
+        this.HintMap.spriteName = "chocograph_map_" + currentOnSelectItemIndex.ToString("D2");
+        this.HintText.rawText = FF9TextTool.ChocoboUIText(currentOnSelectItemIndex + FF9TextTool.ChocographDetailStartIndex);
         Int32 iconType = this.GetIconType(currentOnSelectItemIndex);
         for (Int32 i = 0; i <= iconType; i++)
         {
-            String abilitySprite = this.GetAbilitySprite((Int32)((this.ability <= i) ? 5 : i));
+            String abilitySprite = this.GetAbilitySprite(this.ability <= i ? 5 : i);
             this.HintAbilityRequired.AbilitySpriteList[i].spriteName = abilitySprite;
         }
     }
@@ -406,6 +422,8 @@ public class ChocographUI : UIScene
     }
 
     private const Int32 HintMapMax = 24;
+    private const String SubMenuGroupButton = "Chocograph.SubMenu";
+    private const String ItemGroupButton = "Chocograph.Item";
 
     public static Int32 CurrentSelectedChocograph = -1;
 
@@ -433,9 +451,6 @@ public class ChocographUI : UIScene
     private ChocographUI.SubMenu currentMenu;
 
     private Int32 currentSelectItemIndex;
-
-    private static String SubMenuGroupButton = "Chocograph.SubMenu";
-    private static String ItemGroupButton = "Chocograph.Item";
 
     private ChocographUI.ChocoboAbility ChocoboAbilityInfo;
     private ChocographUI.ChocoboAbility HintAbilityRequired;

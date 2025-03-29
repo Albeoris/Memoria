@@ -1,13 +1,11 @@
-﻿using Assets.Scripts.Common;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Assets;
-using Memoria.Prime;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Object = System.Object;
 
 public class WorldHUD : UIScene
 {
@@ -26,12 +24,11 @@ public class WorldHUD : UIScene
 
     public override void Show(UIScene.SceneVoidDelegate afterFinished = null)
     {
-        UIScene.SceneVoidDelegate sceneVoidDelegate = delegate
+        UIScene.SceneVoidDelegate afterShowAction = delegate
         {
             this.currentCharacterStateIndex = -1;
             ButtonGroupState.HelpEnabled = false;
             this.PauseButtonGameObject.SetActive(PersistenSingleton<UIManager>.Instance.IsPauseControlEnable && FF9StateSystem.MobilePlatform);
-            this.locationName = FF9TextTool.GetTableText(0u);
             if (this.currentState == WorldHUD.State.FullMap)
             {
                 if (PersistenSingleton<UIManager>.Instance.PreviousState == UIManager.UIState.FieldHUD)
@@ -65,8 +62,8 @@ public class WorldHUD : UIScene
                 base.StartCoroutine(this.DisableEventInputForAWhile());
         };
         if (afterFinished != null)
-            sceneVoidDelegate += afterFinished;
-        base.Show(sceneVoidDelegate);
+            afterShowAction += afterFinished;
+        base.Show(afterShowAction);
         PersistenSingleton<UIManager>.Instance.SetEventEnable(true);
         PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(ff9.GetUserControl());
         PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(ff9.GetUserControl(), null);
@@ -85,17 +82,39 @@ public class WorldHUD : UIScene
 
     public override void Hide(UIScene.SceneVoidDelegate afterFinished = null)
     {
-        UIScene.SceneVoidDelegate sceneVoidDelegate = delegate
+        UIScene.SceneVoidDelegate afterHideAction = delegate
         {
             if (!base.NextSceneIsModal)
                 PersistenSingleton<UIManager>.Instance.SetGameCameraEnable(false);
         };
         if (afterFinished != null)
-            sceneVoidDelegate += afterFinished;
-        base.Hide(sceneVoidDelegate);
+            afterHideAction += afterFinished;
+        base.Hide(afterHideAction);
         this.PauseButtonGameObject.SetActive(false);
         PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(false, null);
         PersistenSingleton<UIManager>.Instance.SetEventEnable(false);
+    }
+
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        if (this.navigateDialog != null && this.navigateLocationIndex >= 0)
+        {
+            Int32 locId = this.navigateLocationIndex;
+            if (locId == 63)
+                locId = 49;
+            this.navigateDialog.ChangePhraseSoft($"[STRT=0,3][CENT=0]{Localization.Get("NavigateDialog").Replace("{0}", FF9TextTool.GetTableText(0u)[locId + 1])}");
+        }
+        if (this.currentLocationIndex >= 0)
+        {
+            Int32 locId = this.locationPointerList[this.currentLocationIndex].locationId;
+            if (locId == 63)
+                locId = 49; // Chocobo's Paradise
+            this.mapLocationLabel.rawText = NGUIText.FF9WhiteColor + FF9TextTool.GetTableText(0u)[locId + 1];
+            this.mapLocationBody.UpdateAnchors();
+            this.mapLocationBorder.UpdateAnchors();
+        }
     }
 
     public void OnMouseMove(Vector2 delta)
@@ -399,6 +418,7 @@ public class WorldHUD : UIScene
 
     private void OnConfirmNavi(Int32 choice)
     {
+        this.navigateDialog = null;
         if (choice == 0)
         {
             ff9.w_frameAutoid = (Byte)this.navigateLocationIndex;
@@ -448,23 +468,6 @@ public class WorldHUD : UIScene
         this.DisplayLocationName(isActive ? this.currentLocationIndex : -1);
     }
 
-    private Int32 GetConfirmDialogStartSize()
-    {
-        String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-        switch (currentLanguage)
-        {
-            case "Japanese":
-                return 70;
-            case "English(UK)":
-            case "English(US)":
-            case "Italian":
-                return 53;
-            case "Spanish":
-                return 85;
-        }
-        return 77;
-    }
-
     private void FindNextLocation(Boolean isPressedLeftBumper)
     {
         if (this.locationPointerList.Count == 1)
@@ -506,11 +509,11 @@ public class WorldHUD : UIScene
         Int32 locId = this.locationPointerList[this.currentLocationIndex].locationId;
         this.navigateLocationIndex = locId;
         if (locId == 63)
-            locId = 49; // Chocobo's Paradise (I think)
+            locId = 49; // Chocobo's Paradise
         this.ShowMapPointer(false);
-        String message = Localization.Get("NavigateDialog").Replace("{0}", this.locationName[locId + 1]);
-        Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog($"[STRT=0,3][CENT=0]{message}", 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.None);
-        dialog.AfterDialogHidden = this.OnConfirmNavi;
+        String message = Localization.Get("NavigateDialog").Replace("{0}", FF9TextTool.GetTableText(0u)[locId + 1]);
+        this.navigateDialog = Singleton<DialogManager>.Instance.AttachDialog($"[STRT=0,3][CENT=0]{message}", 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.None);
+        this.navigateDialog.AfterDialogHidden = this.OnConfirmNavi;
         EventInput.IsProcessingInput = false;
     }
 
@@ -816,26 +819,19 @@ public class WorldHUD : UIScene
     {
         if (indexId != -1)
         {
-            Int32 num = this.locationPointerList[indexId].locationId;
+            Int32 locId = this.locationPointerList[indexId].locationId;
             Vector3 position = this.locationPointerList[indexId].gameobject.transform.position;
-            if (num == 63)
-            {
-                num = 49;
-            }
-            this.mapLocationLabel.rawText = NGUIText.FF9WhiteColor + this.locationName[num + 1];
+            if (locId == 63)
+                locId = 49; // Chocobo's Paradise
+            this.mapLocationLabel.rawText = NGUIText.FF9WhiteColor + FF9TextTool.GetTableText(0u)[locId + 1];
             this.mapLocationPanel.SetActive(true);
             this.mapLocationBody.UpdateAnchors();
             this.mapLocationBorder.UpdateAnchors();
             if (this.CheckUsingAirShip())
             {
                 if (!Singleton<BubbleUI>.Instance.gameObject.activeSelf)
-                {
                     Singleton<BubbleUI>.Instance.SetGameObjectActive(true);
-                }
-                Singleton<BubbleUI>.Instance.Show(position, new BubbleUI.Flag[]
-                {
-                    BubbleUI.Flag.QUESTION
-                }, null);
+                Singleton<BubbleUI>.Instance.Show(position, [BubbleUI.Flag.QUESTION], null);
                 Singleton<BubbleUI>.Instance.transform.position = position;
                 Singleton<BubbleUI>.Instance.transform.localPosition += WorldHUD.navBubbleOffset;
             }
@@ -844,9 +840,7 @@ public class WorldHUD : UIScene
         {
             this.mapLocationPanel.SetActive(false);
             if (this.CheckUsingAirShip())
-            {
                 Singleton<BubbleUI>.Instance.Hide();
-            }
         }
     }
 
@@ -1259,33 +1253,19 @@ public class WorldHUD : UIScene
     }
 
     public GameObject LocationPointerPrefab;
-
     public GameObject MenuButtonGameObject;
-
     public GameObject SpecialButtonGameObject;
-
     public GameObject RotationLockButtonGameObject;
-
     public GameObject PerspectiveButtonGameObject;
-
     public GameObject MapButtonGameObject;
-
     public GameObject PauseButtonGameObject;
-
     public GameObject ChocographLocationPanel;
-
     public GameObject CommonButtonPanel;
-
     public GameObject ChocoboButtonPanel;
-
     public GameObject PlaneButtonPanel;
-
     public GameObject MiniMapPanel;
-
     public GameObject FullMapPanel;
-
     public GameObject ScreenFadeGameObject;
-
     public GameObject ContinentTitlePanel;
 
     private Vector4 FullMapBorder = new Vector4(10f, 1190f, 20f, 1020f);
@@ -1293,73 +1273,45 @@ public class WorldHUD : UIScene
     private GameObject menuButtonLabelGameObject;
 
     private UISprite specialButtonSprite;
-
     private OnScreenButton specialButton;
-
     private UISprite rotationLockButtonSprite;
-
     private UISprite perspectiveButtonSprite;
 
     private UISprite miniMapSprite;
-
     private UIButton miniMapButton;
-
     private UIWidget miniMapWidget;
-
     private UISprite miniMapPlayerPointer;
-
     private UISprite miniMapPlayerVision;
-
     private UISprite miniMapChocoboPointer;
-
     private UISprite miniMapPlanePointer;
 
     private UI2DSprite mapSprite;
-
     private UIButton mapButton;
-
     private UIWidget mapWidget;
-
     private GameObject mapContent;
-
     private UIWidget mapPointerWidget;
-
     private GameObject mapLocationPanel;
-
     private UILabel mapLocationLabel;
-
     private UISprite mapLocationBody;
-
     private UISprite mapLocationBorder;
 
     private UISprite mapPlayerPointer;
-
     private UISprite mapPlayerVision;
-
     private UISprite mapChocoboPointer;
-
     private UISprite mapPlanePointer;
 
     private GameObject mapLocationPointerPanel;
-
     private GameObject mapBackButtonGameObject;
-
     private GameObject mapHelpButtonGameObject;
-
     private GameObject mapRightBumperGameObject;
-
     private GameObject mapLeftBumperGameObject;
 
     private HonoFading continentTitleTextFader;
-
     private HonoFading continentTitleShadowFader;
-
     private UI2DSprite continentTitleText;
-
     private UI2DSprite continentTitleShadow;
 
     private GameObject moveLeftGameObject;
-
     private GameObject moveRightGameObject;
 
     private UISprite chocographLocationSprite;
@@ -1369,7 +1321,6 @@ public class WorldHUD : UIScene
     private Boolean controlPointEnable;
 
     private Int32 currentLocationIndex = -1;
-
     private Int32 navigateLocationIndex = -1;
 
     private WorldHUD.State currentState = WorldHUD.State.HUD;
@@ -1378,18 +1329,14 @@ public class WorldHUD : UIScene
 
     private List<WorldHUD.LocationPostionHudData> locationPointerList = new List<WorldHUD.LocationPostionHudData>();
 
-    private String[] locationName;
+    private String[] locationName; // Dummied, use "FF9TextTool.GetTableText(0u)" directly instead
 
     private Single pointerSpeed = 434.782623f;
-
     private Vector3 pointerPosition = Vector3.zero;
-
     private Vector3 referencePosition;
-
     private Vector3 pointerOffset = new Vector3(8f, 14f, 0f);
 
     private Single snapRadius = 15f;
-
     private Single directionAnalogThreshold = 0.2f;
 
     private Boolean ignorePointerProcess;
@@ -1401,6 +1348,9 @@ public class WorldHUD : UIScene
     private Vector3 inputAxis;
 
     private Boolean isTitleShowing;
+
+    [NonSerialized]
+    private Dialog navigateDialog;
 
     public class LocationPostionHudData
     {
@@ -1418,11 +1368,8 @@ public class WorldHUD : UIScene
         }
 
         public GameObject gameobject;
-
         public Transform transform;
-
         public Bounds bounds;
-
         public Int32 locationId;
     }
 

@@ -6,7 +6,7 @@ public class SlideshowUI : MonoBehaviour
 {
     public void SetupEndingText()
     {
-        String languageSymbol = Localization.GetSymbol().ToLower();
+        String languageSymbol = Localization.CurrentDisplaySymbol.ToLower();
         if (languageSymbol == "uk")
             languageSymbol = "us";
         GameObject endingText = AssetManager.LoadInArchive<GameObject>(languageSymbol == "us" || languageSymbol == "jp" || languageSymbol == "gr" ? ATLAS_PATH_US_JP_GR : ATLAS_PATH_FR_IT_ES, false);

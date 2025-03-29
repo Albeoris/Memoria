@@ -25,7 +25,13 @@ using UnityEngine;
 
 public class AbilityUI : UIScene
 {
-    public const Int32 FF9FABIL_EVENT_NOMAGIC = 227;
+    private const Int32 FF9FABIL_EVENT_NOMAGIC = 227;
+    private const Single TargetPositionXOffset = 338f;
+    private const String SubMenuGroupButton = "Ability.SubMenu";
+    private const String ActionAbilityGroupButton = "Ability.ActionAbility";
+    private const String SupportAbilityGroupButton = "Ability.SupportAbility";
+    private const String TargetGroupButton = "Ability.Target";
+
     public GameObject TransitionGroup;
     public GameObject UseSubMenu;
     public GameObject EquipSubMenu;
@@ -40,11 +46,6 @@ public class AbilityUI : UIScene
     public GameObject CharacterDetailPanel;
     public GameObject AbilityDetailPanel;
     public GameObject ScreenFadeGameObject;
-    private static Single TargetPositionXOffset;
-    private static String SubMenuGroupButton;
-    private static String ActionAbilityGroupButton;
-    private static String SupportAbilityGroupButton;
-    private static String TargetGroupButton;
     private UILabel useSubMenuLabel;
     private UILabel equipSubMenuLabel;
     private UIPanel targetListPanelComponent;
@@ -93,15 +94,6 @@ public class AbilityUI : UIScene
     public Int32 CurrentPartyIndex
     {
         set => this.currentPartyIndex = value;
-    }
-
-    static AbilityUI()
-    {
-        TargetPositionXOffset = 338f;
-        SubMenuGroupButton = "Ability.SubMenu";
-        ActionAbilityGroupButton = "Ability.ActionAbility";
-        SupportAbilityGroupButton = "Ability.SupportAbility";
-        TargetGroupButton = "Ability.Target";
     }
 
     public AbilityUI()
@@ -301,6 +293,19 @@ public class AbilityUI : UIScene
         ButtonGroupState.RemoveCursorMemorize(SubMenuGroupButton);
         ButtonGroupState.RemoveCursorMemorize(ActionAbilityGroupButton);
         ButtonGroupState.RemoveCursorMemorize(SupportAbilityGroupButton);
+    }
+
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        if (ButtonGroupState.ActiveGroup == ActionAbilityGroupButton)
+            this.DisplayCommandName();
+        if (this.activeAbilityScrollList.isActiveAndEnabled)
+            this.activeAbilityScrollList.UpdateTableViewImp();
+        if (this.supportAbilityScrollList.isActiveAndEnabled)
+            this.supportAbilityScrollList.UpdateTableViewImp();
+        this.DisplayHelp();
     }
 
     public override Boolean OnKeyConfirm(GameObject go)

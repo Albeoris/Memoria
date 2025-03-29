@@ -257,15 +257,21 @@ namespace Memoria.Assets
 
         public Boolean AdvanceProgress(Single progress, Boolean markChange = true)
         {
+            if (AppearProgressMax == 0f)
+                Parse(ParseStep.Render);
             if (AppearProgress >= AppearProgressMax)
                 return true;
+            List<FFIXTextTag> appearTags = new List<FFIXTextTag>();
             Single nextStep = AppearProgress + progress;
             foreach (TextAnimatedTag animTag in AnimatedTags)
                 if (animTag.Tag.AppearStep >= AppearProgress && animTag.Tag.AppearStep <= nextStep)
                     animTag.AppearTime = RealTime.time;
             foreach (FFIXTextTag tag in ParsedTagList)
-                if (tag.AppearStep >= AppearProgress && tag.AppearStep <= nextStep)
-                    DialogBoxSymbols.OnAppearTag(tag, LabelContainer.DialogWindow, LabelContainer);
+                if ((tag.AppearStep <= 0f && AppearProgress <= 0f) || (tag.AppearStep > AppearProgress && tag.AppearStep <= nextStep))
+                    appearTags.Add(tag);
+            appearTags.Sort((a, b) => a.AppearStep.CompareTo(b.AppearStep));
+            foreach (FFIXTextTag tag in appearTags)
+                DialogBoxSymbols.OnAppearTag(tag, LabelContainer.DialogWindow, LabelContainer);
             AppearProgress = nextStep;
             if (markChange)
                 LabelContainer.MarkAsChanged();

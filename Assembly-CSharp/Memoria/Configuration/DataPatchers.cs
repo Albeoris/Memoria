@@ -444,7 +444,7 @@ namespace Memoria
                         nameDict = new Dictionary<CharacterId, String>();
                     nameDict[(CharacterId)ID] = String.Join(" ", entry, 3, entry.Length - 3);
                     CharacterNamesFormatter.DefaultNamesByLang[entry[2]] = nameDict;
-                    if (Localization.GetSymbol() == entry[2] && FF9StateSystem.Common?.FF9?.player != null && FF9StateSystem.Common.FF9.player.ContainsKey((CharacterId)ID))
+                    if (Localization.CurrentSymbol == entry[2] && FF9StateSystem.Common?.FF9?.player != null && FF9StateSystem.Common.FF9.player.ContainsKey((CharacterId)ID))
                     {
                         FF9StateSystem.Common.FF9.GetPlayer((CharacterId)ID).Name = nameDict[(CharacterId)ID];
                         FF9TextTool.ChangeCharacterName((CharacterId)ID, nameDict[(CharacterId)ID]);

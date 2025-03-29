@@ -534,7 +534,7 @@ public class ButtonGroupState : MonoBehaviour
             Boolean invertPointer = NGUIText.readingDirection == UnicodeBIDI.LanguageReadingDirection.RightToLeft;
             Vector3 helpPos = UIRoot.list[0].transform.InverseTransformPoint(button.widget.worldCenter);
             helpPos.x += invertPointer ? button.widget.width / 2f + 3f * UIPointer.PointerSize.x / 4f : -button.widget.width / 2f;
-            Singleton<HelpDialog>.Instance.Phrase = String.IsNullOrEmpty(button.Help.TextKey) ? button.Help.Text : Localization.Get(button.Help.TextKey);
+            Singleton<HelpDialog>.Instance.Phrase = String.IsNullOrEmpty(button.Help.TextKey) ? button.Help.Text : Localization.GetWithDefault(button.Help.TextKey);
             Singleton<HelpDialog>.Instance.PointerOffset = ButtonGroupState.GetPointerOffsetOfGroup(button.GroupName);
             Singleton<HelpDialog>.Instance.PointerLimitRect = ButtonGroupState.pointerLimitRectList.TryGetValue(button.GroupName, out Vector4 limits) ? limits : UIManager.UIScreenCoOrdinate;
             Singleton<HelpDialog>.Instance.Position = helpPos;

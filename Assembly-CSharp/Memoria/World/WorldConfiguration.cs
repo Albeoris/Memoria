@@ -322,10 +322,10 @@ namespace Memoria
         {
             // Custom usage setting
             foreach (TitleModifier modifier in _customTitleModifier)
-                if ((modifier._titleNo == -1 || modifier._titleNo == titleId) && (String.Equals(modifier._language, "Any") || String.Equals(modifier._language, Localization.GetSymbol())))
+                if ((modifier._titleNo == -1 || modifier._titleNo == titleId) && (String.Equals(modifier._language, "Any") || String.Equals(modifier._language, Localization.CurrentDisplaySymbol)))
                     return modifier._rect;
             // Default usage setting
-            if (Localization.GetSymbol() == "JP")
+            if (Localization.CurrentDisplaySymbol == "JP")
                 return new Rect(0f, 144f, 512f, 256f);
             return new Rect(0f, 144f, 1024f, 128f);
         }
@@ -334,7 +334,7 @@ namespace Memoria
         {
             // Custom usage setting
             foreach (TitleModifier modifier in _customTitleModifier)
-                if ((modifier._titleNo == -1 || modifier._titleNo == titleId) && (String.Equals(modifier._language, "Any") || String.Equals(modifier._language, Localization.GetSymbol())))
+                if ((modifier._titleNo == -1 || modifier._titleNo == titleId) && (String.Equals(modifier._language, "Any") || String.Equals(modifier._language, Localization.CurrentDisplaySymbol)))
                     return [modifier._fadein, modifier._duration, modifier._fadeout];
             // Default usage setting
             return [119u, 1u, 59u];
