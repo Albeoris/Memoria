@@ -183,7 +183,7 @@ public static class btl2d
 
     public static BTL2D_ENT Btl2dReqSymbolMessage(BTL_DATA pBtl, String messageColor, Dictionary<String, String> multiLangMessage, HUDMessage.MessageStyle style, Byte pDelay)
     {
-        if (!multiLangMessage.TryGetValue(Localization.GetSymbol(), out String msg))
+        if (!multiLangMessage.TryGetValue(Localization.CurrentDisplaySymbol, out String msg))
             multiLangMessage.TryGetValue(Localization.GetFallbackSymbol(), out msg);
         return Btl2dReqSymbolMessage(pBtl, messageColor, msg, style, pDelay);
     }

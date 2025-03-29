@@ -150,6 +150,8 @@ public class UIKeyTrigger : MonoBehaviour
                 UICamera.list[0].useMouse = false;
             if (!UnityXInput.Input.anyKey && !isLockLazyInput)
                 ResetKeyCode();
+            if (Configuration.Lang.DualLanguageMode == 1)
+                Localization.UseSecondaryLanguage = IsKeyLocked(LockKey.Caps);
             AccelerateKeyNavigation();
             if (HandleMenuControlKeyPressCustomInput())
                 return;
@@ -915,6 +917,21 @@ public class UIKeyTrigger : MonoBehaviour
         UICamera.onNavigate = (UICamera.KeyCodeDelegate)Delegate.Combine(UICamera.onNavigate, (UICamera.KeyCodeDelegate)OnKeyNavigate);
         GameLoopManager.RaiseStartEvent();
         //DebugRectAroundObjectFactory.Run();
+    }
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true, CallingConvention = CallingConvention.Winapi)]
+    private static extern Int16 GetKeyState(Int32 keyCode);
+
+    public static Boolean IsKeyLocked(LockKey keyCode)
+    {
+        return (GetKeyState((Int32)keyCode) & 0xFFFF) != 0;
+    }
+
+    public enum LockKey
+    {
+        Caps = 0x14,
+        Num = 0x90,
+        Scroll = 0x91
     }
 }
 

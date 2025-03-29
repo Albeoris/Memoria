@@ -112,7 +112,7 @@ public class ActiveTimeEvent : MonoBehaviour
                 this.ButtonSprite.spriteName = "joystick_select";
                 if (this.buttonLabel != (UnityEngine.Object)null)
                 {
-                    this.buttonLabel.text = String.Empty;
+                    this.buttonLabel.rawText = String.Empty;
                 }
             }
             else
@@ -120,7 +120,7 @@ public class ActiveTimeEvent : MonoBehaviour
                 this.ButtonSprite.spriteName = "keyboard_button";
                 if (this.buttonLabel != (UnityEngine.Object)null)
                 {
-                    this.buttonLabel.text = FF9UIDataTool.KeyboardIconLabel[HonoInputManager.MemoriaKeyBindings[5]]; // Alpha1
+                    this.buttonLabel.rawText = FF9UIDataTool.KeyboardIconLabel[HonoInputManager.MemoriaKeyBindings[5]]; // Alpha1
                 }
             }
             this.ButtonSprite.MakePixelPerfect();
@@ -205,48 +205,42 @@ public class ActiveTimeEvent : MonoBehaviour
 
     private String GetText1SpriteName()
     {
-        String language = Localization.CurrentLanguage;
-        String text = language;
-        switch (text)
+        switch (Localization.CurrentDisplaySymbol)
         {
-            case "English(US)":
+            case "US":
+            case "UK":
                 return "ate_selective_text00_01_us_uk";
-            case "Japanese":
+            case "JP":
                 return String.Empty;
-            case "German":
+            case "GR":
                 return "ate_selective_text00_01_gr";
-            case "Spanish":
+            case "ES":
                 return "ate_selective_text00_01_es";
-            case "Italian":
+            case "IT":
                 return "ate_selective_text00_01_it";
-            case "French":
+            case "FR":
                 return "ate_selective_text00_01_fr";
-            case "English(UK)":
-                return "ate_selective_text00_01_us_uk";
         }
         return String.Empty;
     }
 
     private String GetText2SpriteName()
     {
-        String language = Localization.CurrentLanguage;
-        String text = language;
-        switch (text)
+        switch (Localization.CurrentDisplaySymbol)
         {
-            case "English(US)":
+            case "US":
+            case "UK":
                 return "ate_selective_text00_02_us_uk";
-            case "Japanese":
+            case "JP":
                 return "ate_selective_text00_02_jp";
-            case "German":
+            case "GR":
                 return "ate_selective_text00_02_gr";
-            case "Spanish":
+            case "ES":
                 return "ate_selective_text00_02_es";
-            case "Italian":
+            case "IT":
                 return String.Empty;
-            case "French":
+            case "FR":
                 return String.Empty;
-            case "English(UK)":
-                return "ate_selective_text00_02_us_uk";
         }
         return String.Empty;
     }

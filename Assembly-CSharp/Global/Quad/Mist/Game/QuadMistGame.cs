@@ -1,13 +1,12 @@
-﻿using Assets.Scripts.Common;
-using Assets.Sources.Scripts.UI.Common;
-using Memoria;
-using Memoria.Assets;
-using Memoria.Data;
-using Memoria.Prime;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Assets.Sources.Scripts.UI.Common;
+using Assets.Scripts.Common;
+using Memoria;
+using Memoria.Assets;
+using Memoria.Data;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
@@ -20,12 +19,13 @@ public class QuadMistGame : MonoBehaviour
     private readonly Vector3 _selectedCardDeltaPos = new Vector3(0.12f, 0.0f, -1.5f);
     private QuadMistCard[] _adjacentTargets = new QuadMistCard[0];
 
+    private const Int32 QuitFrame = 30;
     public const Int32 MINIGAME_MAP_TORENO_0 = 124;
     public const Int32 MINIGAME_MAP_TORENO_1 = 125;
     public const Int32 MINIGAME_MAP_TORENO_2 = 126;
     public const Int32 MINIGAME_MAP_TORENO_3 = 127;
     public const Int32 MINIINT_SONG_DEFAULT = 66;
-    private const Int32 QuitFrame = 30;
+    public static Boolean AllowGameCancel => FF9StateSystem.Common.FF9.miniGameArg != 124 && FF9StateSystem.Common.FF9.miniGameArg != 125 && FF9StateSystem.Common.FF9.miniGameArg != 126 && FF9StateSystem.Common.FF9.miniGameArg != 127;
 
     public TextMesh winScore;
     public TextMesh loseScore;
@@ -74,6 +74,11 @@ public class QuadMistGame : MonoBehaviour
     private Boolean hasShowTutorial03;
     private QuadMistCard _t_selectedCard;
 
+    [NonSerialized]
+    private Dialog interfaceDialog;
+    [NonSerialized]
+    private String interfaceDialogKey;
+
     public PreBoard preBoard => preGame.preBoard;
     public Board board => playGame.board;
     public Coin coin => playGame.coin;
@@ -85,7 +90,7 @@ public class QuadMistGame : MonoBehaviour
 
     public Int32 PlayerScore
     {
-        get { return playerScore; }
+        get => playerScore;
         set
         {
             score.PlayerScore = value;
@@ -97,13 +102,26 @@ public class QuadMistGame : MonoBehaviour
 
     public Int32 EnemyScore
     {
-        get { return enemyScore; }
+        get => enemyScore;
         set
         {
             score.EnemyScore = value;
             enemyScore = value;
             if (Board.USE_SMALL_BOARD)
                 score.enemy.transform.localPosition = new Vector3(0.3f, -2f, -8f);
+        }
+    }
+
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        if (interfaceDialog != null)
+            interfaceDialog.ChangePhraseSoft(Localization.Get(interfaceDialogKey));
+        if (matchResult != null && QuadMistGetCardDialog.Dialog != null)
+        {
+            QuadMistGetCardDialog.Dialog.ChangePhraseSoft(GetCardGiveawayMessage(matchResult));
+            QuadMistGetCardDialog.Dialog.transform.localPosition = new Vector3(0f, -220f);
         }
     }
 
@@ -577,7 +595,7 @@ public class QuadMistGame : MonoBehaviour
                     if (_t_selectedCard != null && _t_selectedCard == inputResult.selectedCard)
                     {
                         enemyHand.HideCardCursor();
-                        AnimCoroutine(ChangeCardToCenter(matchResult));
+                        AnimCoroutine(ChangeCardToCenter(matchResult, true));
                         QuadMistDatabase.Add(inputResult.selectedCard);
                         QuadMistStockDialog.Hide();
                         _t_selectedCard = null;
@@ -589,21 +607,23 @@ public class QuadMistGame : MonoBehaviour
                     Int32 cardCount = QuadMistDatabase.GetCardCount(matchResult.selectedCard);
                     Vector3 position = cardUi.transform.position;
                     QuadMistStockDialog.Show(new Vector3(position.x + 0.9482538f, position.y - 0.2696013f, 0.0f), Localization.Get("QuadMistStock").Replace("[NUMBER]", cardCount.ToString()));
-                    break;
                 }
-                enemyInput.HandlePostSelection(playerHand, matchResult.selectable, ref inputResult);
-                matchResult.selectedCard = inputResult.selectedCard;
-                AnimCoroutine(ChangeCardToCenter(matchResult));
-                PostState = POSTGAME_STATE.CONFIRM;
-                QuadMistDatabase.Remove(matchResult.selectedCard);
-                QuadMistCard lostCard = matchResult.selectedCard;
-                StackCardInfo.id = lostCard.id;
-                StackCardInfo.atk = lostCard.atk;
-                StackCardInfo.arrow = lostCard.arrow;
-                StackCardInfo.type = lostCard.type;
-                StackCardInfo.pdef = lostCard.pdef;
-                StackCardInfo.mdef = lostCard.mdef;
-                StackCardCount = 1;
+                else
+                {
+                    enemyInput.HandlePostSelection(playerHand, matchResult.selectable, ref inputResult);
+                    matchResult.selectedCard = inputResult.selectedCard;
+                    AnimCoroutine(ChangeCardToCenter(matchResult, true));
+                    PostState = POSTGAME_STATE.CONFIRM;
+                    QuadMistDatabase.Remove(matchResult.selectedCard);
+                    QuadMistCard lostCard = matchResult.selectedCard;
+                    StackCardInfo.id = lostCard.id;
+                    StackCardInfo.atk = lostCard.atk;
+                    StackCardInfo.arrow = lostCard.arrow;
+                    StackCardInfo.type = lostCard.type;
+                    StackCardInfo.pdef = lostCard.pdef;
+                    StackCardInfo.mdef = lostCard.mdef;
+                    StackCardCount = 1;
+                }
                 break;
             case POSTGAME_STATE.PERFECT_SELECT_CARD:
                 if (matchResult.type == MatchResult.Type.WIN)
@@ -611,7 +631,7 @@ public class QuadMistGame : MonoBehaviour
                     if (enemyHand.Count != 0)
                     {
                         matchResult.selectedCard = enemyHand[0];
-                        AnimCoroutine(ChangeCardToCenter2(matchResult));
+                        AnimCoroutine(ChangeCardToCenter(matchResult, false));
                         QuadMistDatabase.Add(matchResult.selectedCard);
                         CheckAndClearStackCard();
                         PostState = POSTGAME_STATE.CONFIRM;
@@ -623,7 +643,7 @@ public class QuadMistGame : MonoBehaviour
                 if (playerHand.Count != 0)
                 {
                     matchResult.selectedCard = playerHand[0];
-                    AnimCoroutine(ChangeCardToCenter2(matchResult));
+                    AnimCoroutine(ChangeCardToCenter(matchResult, false));
                     PostState = POSTGAME_STATE.CONFIRM;
                     QuadMistDatabase.Remove(matchResult.selectedCard);
                     QuadMistCard lostCardLoop = matchResult.selectedCard;
@@ -669,10 +689,9 @@ public class QuadMistGame : MonoBehaviour
 
     private void onRematchDialogHidden(Int32 choice)
     {
+        interfaceDialog = null;
         PostState = POSTGAME_STATE.REMATCH_CONFIRM;
-        ButtonGroupState.SetPointerOffsetToGroup(Dialog.DefaultOffset, Dialog.DialogGroupButton);
-        Boolean isTournamentMatch = FF9StateSystem.Common.FF9.miniGameArg == 124 || FF9StateSystem.Common.FF9.miniGameArg == 125 || FF9StateSystem.Common.FF9.miniGameArg == 126 || FF9StateSystem.Common.FF9.miniGameArg == 127;
-        if (!isTournamentMatch && choice == 0 || isTournamentMatch && choice == -1)
+        if ((QuadMistGame.AllowGameCancel && choice == 0) || (!QuadMistGame.AllowGameCancel && choice == -1))
         {
             board.BoardCursor.ForceHide();
             RestoreCollection();
@@ -710,6 +729,7 @@ public class QuadMistGame : MonoBehaviour
 
     private void OnDontHave5CardsDialog(Int32 choice)
     {
+        interfaceDialog = null;
         PostState = POSTGAME_STATE.REMATCH_CONFIRM;
         if (matchResult.type == MatchResult.Type.DRAW)
             SaveReservedCardToDatabase();
@@ -727,14 +747,14 @@ public class QuadMistGame : MonoBehaviour
 
     private void Rematch()
     {
-        if (matchResult.type == MatchResult.Type.DRAW && (FF9StateSystem.Common.FF9.miniGameArg == 124 || FF9StateSystem.Common.FF9.miniGameArg == 125 || (FF9StateSystem.Common.FF9.miniGameArg == 126 || FF9StateSystem.Common.FF9.miniGameArg == SByte.MaxValue)))
+        if (matchResult.type == MatchResult.Type.DRAW && !QuadMistGame.AllowGameCancel)
         {
             if (PersistenSingleton<UIManager>.Instance.Dialogs.CheckDialogShowing(1))
                 return;
-            Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get("QuadMistTournamentDraw"), 110, 3, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(0.0f, 0.0f), Dialog.CaptionType.None);
-            ButtonGroupState.SetPointerOffsetToGroup(new Vector2(265f, 0.0f), Dialog.DialogGroupButton);
-            dialog.AfterDialogHidden = onRematchDialogHidden;
-            dialog.Id = 1;
+            interfaceDialogKey = "QuadMistTournamentDraw";
+            interfaceDialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(interfaceDialogKey), 110, 3, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(0.0f, 0.0f), Dialog.CaptionType.None);
+            interfaceDialog.AfterDialogHidden = onRematchDialogHidden;
+            interfaceDialog.Id = 1;
         }
         else if (QuadMistDatabase.MiniGame_GetAllCardCount() > Configuration.TetraMaster.MaxCardCount)
         {
@@ -748,21 +768,24 @@ public class QuadMistGame : MonoBehaviour
         {
             if (PersistenSingleton<UIManager>.Instance.Dialogs.CheckDialogShowing(1))
                 return;
-            if (FF9StateSystem.Common.FF9.miniGameArg == 124 || FF9StateSystem.Common.FF9.miniGameArg == 125 || (FF9StateSystem.Common.FF9.miniGameArg == 126 || FF9StateSystem.Common.FF9.miniGameArg == SByte.MaxValue))
+            if (!QuadMistGame.AllowGameCancel)
+            {
                 onRematchDialogHidden(1);
+            }
             else if ((matchResult.type != MatchResult.Type.DRAW ? playerHand.GetQuadMistCards().Count + QuadMistUI.allCardList.Count : reservedCardList.Count) < 5)
             {
-                Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get("QuadMistYouDontHave5Cards"), 124, 2, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(0.0f, 0.0f), Dialog.CaptionType.None);
-                dialog.AfterDialogHidden = OnDontHave5CardsDialog;
-                dialog.Id = 1;
+                interfaceDialogKey = "QuadMistYouDontHave5Cards";
+                interfaceDialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(interfaceDialogKey), 124, 2, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(0.0f, 0.0f), Dialog.CaptionType.None);
+                interfaceDialog.AfterDialogHidden = OnDontHave5CardsDialog;
+                interfaceDialog.Id = 1;
                 SoundEffect.Play(QuadMistSoundID.MINI_SE_WARNING);
             }
             else
             {
-                Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get("QuadMistRematch"), 110, 3, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(0.0f, 0.0f), Dialog.CaptionType.None);
-                ButtonGroupState.SetPointerOffsetToGroup(new Vector2(265f, 0.0f), Dialog.DialogGroupButton);
-                dialog.AfterDialogHidden = onRematchDialogHidden;
-                dialog.Id = 1;
+                interfaceDialogKey = "QuadMistRematch";
+                interfaceDialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(interfaceDialogKey), 110, 3, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(0.0f, 0.0f), Dialog.CaptionType.None);
+                interfaceDialog.AfterDialogHidden = onRematchDialogHidden;
+                interfaceDialog.Id = 1;
             }
         }
     }
@@ -1184,18 +1207,10 @@ public class QuadMistGame : MonoBehaviour
     }
 
     [DebuggerHidden]
-    private IEnumerator ChangeCardToCenter(MatchResult result)
+    private IEnumerator ChangeCardToCenter(MatchResult result, Boolean resetSelection)
     {
         QuadMistCard selected = result.selectedCard;
-        QuadMistCardUI cardUi = null;
-        if (result.type == MatchResult.Type.WIN)
-        {
-            cardUi = enemyHand.GetCardUI(selected);
-        }
-        else if (result.type == MatchResult.Type.LOSE)
-        {
-            cardUi = playerHand.GetCardUI(selected);
-        }
+        QuadMistCardUI cardUi = result.type == MatchResult.Type.WIN ? enemyHand.GetCardUI(selected) : playerHand.GetCardUI(selected);
         movedCard.Data = cardUi.Data;
         movedCard.transform.position = cardUi.transform.position + new Vector3(0f, 0f, -4f);
         movedCard.gameObject.SetActive(true);
@@ -1203,102 +1218,39 @@ public class QuadMistGame : MonoBehaviour
         {
             enemyHand.Remove(selected);
             SoundEffect.Play(QuadMistSoundID.MINI_SE_CARD_GET);
-            enemyHand.Select = -1;
+            if (resetSelection)
+                enemyHand.Select = -1;
         }
         else if (result.type == MatchResult.Type.LOSE)
         {
             playerHand.Remove(selected);
             SoundEffect.Play(QuadMistSoundID.MINI_SE_WINDOW);
-            playerHand.Select = -1;
+            if (resetSelection)
+                playerHand.Select = -1;
         }
         StartCoroutine(RestoreCards(result));
 
         yield return StartCoroutine(Anim.MoveLerp(movedCard.transform, transform.TransformPoint(new Vector3(1.6f - movedCard.Size.x / 2f, -1.12f + movedCard.Size.y / 2f, -1f)), Anim.TickToTime(20), false));
 
         if (collection.GetCardsWithID(movedCard.Data.id).Count == 0)
-        {
-            if (result.type == MatchResult.Type.WIN)
-            {
-                SetGetCardMessage(0, true);
-            }
-            else if (result.type == MatchResult.Type.LOSE)
-            {
-                SetGetCardMessage(1, true);
-            }
-        }
-        String resultTypeText = String.Empty;
-        if (result.type == MatchResult.Type.WIN)
-        {
-            resultTypeText = Localization.Get("QuadMistReceived");
-        }
-        else if (result.type == MatchResult.Type.LOSE)
-        {
-            resultTypeText = Localization.Get("QuadMistLost");
-        }
-        if (resultTypeText != String.Empty)
-        {
-            String monsterName = FF9TextTool.CardName(result.selectedCard.id);
-            resultTypeText = resultTypeText.Replace("[CARD]", monsterName);
-        }
-        QuadMistGetCardDialog.Show(new Vector3(0f, -0.6f, 0f), resultTypeText);
+            SetGetCardMessage(result.type == MatchResult.Type.WIN ? 0 : 1, true);
+
+        QuadMistGetCardDialog.Show(new Vector3(0f, -0.6f, 0f), GetCardGiveawayMessage(result));
     }
 
-    [DebuggerHidden]
-    private IEnumerator ChangeCardToCenter2(MatchResult result)
+    private String GetCardGiveawayMessage(MatchResult result)
     {
-        QuadMistCard selected = result.selectedCard;
-        QuadMistCardUI cardUi = null;
-        if (result.type == MatchResult.Type.WIN)
-        {
-            cardUi = enemyHand.GetCardUI(selected);
-        }
-        else if (result.type == MatchResult.Type.LOSE)
-        {
-            cardUi = playerHand.GetCardUI(selected);
-        }
-        movedCard.Data = cardUi.Data;
-        movedCard.transform.position = cardUi.transform.position + new Vector3(0f, 0f, -4f);
-        movedCard.gameObject.SetActive(true);
-        if (result.type == MatchResult.Type.WIN)
-        {
-            enemyHand.Remove(selected);
-            SoundEffect.Play(QuadMistSoundID.MINI_SE_CARD_GET);
-        }
-        else if (result.type == MatchResult.Type.LOSE)
-        {
-            playerHand.Remove(selected);
-            SoundEffect.Play(QuadMistSoundID.MINI_SE_WINDOW);
-        }
-
-        yield return StartCoroutine(Anim.MoveLerp(movedCard.transform, transform.TransformPoint(new Vector3(1.6f - movedCard.Size.x / 2f, -1.12f + movedCard.Size.y / 2f, -1f)), Anim.TickToTime(20), false));
-
-        if (collection.GetCardsWithID(movedCard.Data.id).Count == 0)
-        {
-            if (result.type == MatchResult.Type.WIN)
-            {
-                SetGetCardMessage(0, true);
-            }
-            else if (result.type == MatchResult.Type.LOSE)
-            {
-                SetGetCardMessage(1, true);
-            }
-        }
-
         String resultTypeText = String.Empty;
         if (result.type == MatchResult.Type.WIN)
-        {
             resultTypeText = Localization.Get("QuadMistReceived");
-        }
         else if (result.type == MatchResult.Type.LOSE)
-        {
             resultTypeText = Localization.Get("QuadMistLost");
-        }
         if (resultTypeText != String.Empty)
         {
             String monsterName = FF9TextTool.CardName(result.selectedCard.id);
             resultTypeText = resultTypeText.Replace("[CARD]", monsterName);
         }
-        QuadMistGetCardDialog.Show(new Vector3(0f, -0.6f, 0f), resultTypeText);
+        return resultTypeText;
     }
 
     [DebuggerHidden]
@@ -1381,15 +1333,9 @@ public class QuadMistGame : MonoBehaviour
 
         for (Int32 tick = 0; tick < 32; tick++)
         {
-            brightness = tick * 8 / 255f;
-            if (brightness > 1f)
-            {
-                brightness = 1f;
-            }
+            brightness = Math.Min(1f, tick * 8 / 255f);
             if (tick == 31)
-            {
                 SoundEffect.Play(sound);
-            }
             resultText.Alpha = brightness;
             yield return StartCoroutine(Anim.Tick());
         }

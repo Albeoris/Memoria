@@ -340,7 +340,7 @@ public class BattleActionThread
                         Int32 btlId;
                         if (Configuration.VoiceActing.Enabled && FF9BattleDB.SceneData.TryGetValue(scene.nameIdentifier, out btlId))
                         {
-                            String vaPath = String.Format("Voices/{0}/battle/{2}/va_{1}", Localization.GetSymbol(), messExactId, btlId);
+                            String vaPath = String.Format("Voices/{0}/battle/{2}/va_{1}", Localization.CurrentSymbol, messExactId, btlId);
                             if (AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false))
                                 mainThread.code.AddLast(new BattleActionCode("PlaySound", "SoundType", "Voice", "Sound", btlId + ":" + messExactId));
                             else

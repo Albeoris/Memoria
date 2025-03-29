@@ -26,6 +26,7 @@ namespace Memoria
     {
         public const String MemoriaDictionaryPatcherPath = "DictionaryPatch.txt";
         public const String MemoriaBattlePatcherPath = "BattlePatch.txt";
+        public const String MemoriaTextPatcherPath = "TextPatch.txt";
 
         public static Char[] SpaceSeparators = [' ', '\t'];
 
@@ -41,17 +42,14 @@ namespace Memoria
                     if (String.IsNullOrEmpty(folder.FolderPath))
                         continue;
                     if (folder.TryFindAssetInModOnDisc(DataPatchers.MemoriaDictionaryPatcherPath, out String dictionaryPath))
-                    {
-                        String[] patch = File.ReadAllLines(dictionaryPath);
-                        DataPatchers.PatchDictionaries(patch);
-                    }
+                        DataPatchers.PatchDictionaries(File.ReadAllLines(dictionaryPath));
                     if (folder.TryFindAssetInModOnDisc(DataPatchers.MemoriaBattlePatcherPath, out String battlePath))
-                    {
-                        String[] patch = File.ReadAllLines(battlePath);
-                        DataPatchers.PatchBattles(patch);
-                    }
+                        DataPatchers.PatchBattles(File.ReadAllLines(battlePath));
+                    if (folder.TryFindAssetInModOnDisc(DataPatchers.MemoriaTextPatcherPath, out String textPath))
+                        TextPatcher.PatchTexts(File.ReadAllLines(textPath));
                 }
                 _isInitialized = true;
+                Log.Message($"[DataPatchers] Initialized");
             }
             catch (Exception err)
             {
@@ -436,17 +434,17 @@ namespace Memoria
                     // eg.: CharacterDefaultName 0 US Zinedine
                     // REMARK: Character default names can also be changed with the option "[Import] Text = 1" although it would monopolise the whole machinery of text importing
                     // "[Import] Text = 1" has the priority over DictionaryPatch
-                    if (CharacterNamesFormatter._characterNames == null)
+                    if (CharacterNamesFormatter.DefaultNamesByLang == null)
                         continue;
                     Int32 ID;
                     if (!Int32.TryParse(entry[1], out ID))
                         continue;
                     Dictionary<CharacterId, String> nameDict;
-                    if (!CharacterNamesFormatter._characterNames.TryGetValue(entry[2], out nameDict))
+                    if (!CharacterNamesFormatter.DefaultNamesByLang.TryGetValue(entry[2], out nameDict))
                         nameDict = new Dictionary<CharacterId, String>();
                     nameDict[(CharacterId)ID] = String.Join(" ", entry, 3, entry.Length - 3);
-                    CharacterNamesFormatter._characterNames[entry[2]] = nameDict;
-                    if (Localization.GetSymbol() == entry[2] && FF9StateSystem.Common?.FF9?.player != null && FF9StateSystem.Common.FF9.player.ContainsKey((CharacterId)ID))
+                    CharacterNamesFormatter.DefaultNamesByLang[entry[2]] = nameDict;
+                    if (Localization.CurrentSymbol == entry[2] && FF9StateSystem.Common?.FF9?.player != null && FF9StateSystem.Common.FF9.player.ContainsKey((CharacterId)ID))
                     {
                         FF9StateSystem.Common.FF9.GetPlayer((CharacterId)ID).Name = nameDict[(CharacterId)ID];
                         FF9TextTool.ChangeCharacterName((CharacterId)ID, nameDict[(CharacterId)ID]);

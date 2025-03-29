@@ -1,3 +1,6 @@
+using System;
+using System.Linq;
+using System.Collections.Generic;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Assets;
@@ -5,9 +8,6 @@ using Memoria.Data;
 using Memoria.Database;
 using Memoria.Prime;
 using Memoria.Prime.Text;
-using System;
-using System.Linq;
-using System.Collections.Generic;
 using UnityEngine;
 using Object = System.Object;
 
@@ -245,6 +245,7 @@ namespace Memoria
         public BattleEnemy Enemy => new BattleEnemy(btl_util.getEnemyPtr(Data));
         public ENEMY_TYPE EnemyType => btl_util.getEnemyTypePtr(Data);
         public String Name => IsPlayer ? Player.Name : Enemy.Name;
+        public String NameTag => IsPlayer ? Player.NameTag : Enemy.Name;
 
         public BattleStatus CurrentStatus
         {

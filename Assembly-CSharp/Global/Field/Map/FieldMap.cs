@@ -1,13 +1,13 @@
-﻿using Assets.Scripts.Common;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using Assets.Scripts.Common;
 using FF9;
 using Memoria;
 using Memoria.Prime;
+using Memoria.Assets;
 using Memoria.Scripts;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Object = System.Object;
 
 [Flags]
 public enum FieldMapFlags : uint
@@ -56,38 +56,16 @@ public class FieldMap : HonoBehavior
         return FieldMap.fieldMapNameWithAreaTitle.Contains(mapName);
     }
 
-    private static String GetLocalizeNameSubfix(String language)
-    {
-        switch (language)
-        {
-            case "English(UK)":
-                return "_uk";
-            case "English(US)":
-                return "_us";
-            case "German":
-                return "_gr";
-            case "Spanish":
-                return "_es";
-            case "French":
-                return "_fr";
-            case "Italian":
-                return "_it";
-            case "Japanese":
-                return "_jp";
-        }
-        return "_us";
-    }
-
     public static void SetFieldMapAtlasName(String mapName, out String atlasName, out String atlasAlphaName)
     {
         atlasName = "atlas";
         atlasAlphaName = "atlas_a";
         if (FieldMap.HasAreaTitle(mapName))
         {
-            String text = FF9StateSystem.Settings.CurrentLanguage;
-            if (text == "English(UK)" && !mapName.Equals("FBG_N16_STGT_MAP330_SG_RND_0")) // South Gate/Bohden Gate, guarded entrance
-                text = "English(US)";
-            String localizeNameSubfix = FieldMap.GetLocalizeNameSubfix(text);
+            String lang = Localization.CurrentSymbol;
+            if (lang == "UK" && !mapName.Equals("FBG_N16_STGT_MAP330_SG_RND_0")) // South Gate/Bohden Gate, guarded entrance
+                lang = "US";
+            String localizeNameSubfix = "_" + lang.ToLower();
             atlasName += localizeNameSubfix;
             atlasAlphaName += localizeNameSubfix;
         }
@@ -206,11 +184,8 @@ public class FieldMap : HonoBehavior
         this.mapName = name;
         this.camIdx = 0;
         this.curCamIdx = -1;
-        foreach (Object obj in base.transform)
-        {
-            Transform transform = (Transform)obj;
+        foreach (Transform transform in base.transform)
             UnityEngine.Object.Destroy(transform.gameObject);
-        }
         this.LoadFieldMap(this.mapName);
         this.ActivateCamera();
     }
@@ -632,7 +607,7 @@ public class FieldMap : HonoBehavior
         NormalSolver.SmoothCharacterMesh(renderers);
         if (needRestore && FF9StateSystem.Common.FF9.fldMapNo == 1706) // Mdn. Sari/Kitchen
         {
-            if (fieldMapActor.actor.uid == 4 && FF9StateSystem.Settings.CurrentLanguage == "Japanese")
+            if (fieldMapActor.actor.uid == 4 && Localization.CurrentSymbol == "JP")
                 this.SetCharScale(fieldMapActor.actor, 40, 40, 40);
             else if (fieldMapActor.actor.uid == 3 || fieldMapActor.actor.uid == 5)
                 this.SetCharScale(fieldMapActor.actor, 80, 80, 80);

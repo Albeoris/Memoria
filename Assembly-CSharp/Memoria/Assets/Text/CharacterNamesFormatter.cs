@@ -9,20 +9,25 @@ namespace Memoria.Assets
         public static Dictionary<CharacterId, String> CharacterDefaultNames()
         {
             Dictionary<CharacterId, String> nameDict;
-            if (_characterNames.TryGetValue(EmbadedTextResources.CurrentSymbol ?? Localization.GetSymbol(), out nameDict))
+            if (DefaultNamesByLang.TryGetValue(Localization.CurrentSymbol, out nameDict))
                 return nameDict;
             return new Dictionary<CharacterId, String>();
         }
 
         public static Dictionary<CharacterId, String> CharacterScriptNames()
         {
-            Dictionary<CharacterId, String> nameDict;
-            if (_characterNames.TryGetValue("US", out nameDict))
-                return nameDict;
-            return new Dictionary<CharacterId, String>();
+            Boolean hasScript = _scriptNames.TryGetValue("US", out Dictionary<CharacterId, String> script);
+            if (hasScript && DefaultNamesByLang.TryGetValue("US", out Dictionary<CharacterId, String> patched) && script.Count != patched.Count)
+            {
+                // Update script names with DataPatchers names, but only for non-vanilla characters
+                foreach (var kvp in patched)
+                    if (!script.ContainsKey(kvp.Key))
+                        script.Add(kvp.Key, kvp.Value);
+            }
+            return hasScript ? script : new Dictionary<CharacterId, String>();
         }
 
-        public static Dictionary<String, Dictionary<CharacterId, String>> _characterNames = new Dictionary<String, Dictionary<CharacterId, String>>()
+        public static Dictionary<String, Dictionary<CharacterId, String>> DefaultNamesByLang = new Dictionary<String, Dictionary<CharacterId, String>>()
         {
             { "US", new Dictionary<CharacterId, String>
             {
@@ -130,6 +135,8 @@ namespace Memoria.Assets
                 { CharacterId.Beatrix, "Beatrix" }
             } }
         };
+
+        private static Dictionary<String, Dictionary<CharacterId, String>> _scriptNames = new Dictionary<String, Dictionary<CharacterId, String>>(DefaultNamesByLang);
 
         public static TxtEntry[] Build(String prefix, Dictionary<CharacterId, String> characterNames)
         {

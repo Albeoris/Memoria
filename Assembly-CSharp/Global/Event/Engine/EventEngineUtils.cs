@@ -1850,9 +1850,9 @@ internal class EventEngineUtils
             return null;
         }
 
-        String symbol = Localization.GetSymbol();
+        String symbol = Localization.CurrentSymbol;
         String str = symbol + "/";
-        if (FF9StateSystem.Common.FF9.fldMapNo == 1060 && symbol != "US" && symbol != "JP")
+        if (FF9StateSystem.Common.FF9.fldMapNo == 1060 && symbol != "US" && symbol != "JP") // Cleyra/Cathedral: dancing scene is forced to use the US or JP binary events
             str = "US/";
 
         ebFileName = ebFilePath + ebSubFolder + str + ebFileName + ebFileExt;
@@ -1866,7 +1866,7 @@ internal class EventEngineUtils
 
     public static EventEngineUtils.BinaryScript loadEventAsScript(String ebFileName, String ebSubFolder)
     {
-        ebFileName = ebFilePath + ebSubFolder + Localization.GetSymbol() + "/" + ebFileName + ebFileExt;
+        ebFileName = ebFilePath + ebSubFolder + Localization.CurrentSymbol + "/" + ebFileName + ebFileExt;
         Byte[] binAsset = AssetManager.LoadBytes(ebFileName);
         if (binAsset != null)
             return new BinaryScript(binAsset);

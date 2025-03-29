@@ -20,19 +20,25 @@ public class EquipUI : UIScene
 
     public void Update()
     {
-        if (UIKeyTrigger.IsShiftKeyPressed)
+        if (UIKeyTrigger.IsShiftKeyPressed ^ _equipForAbilityLearning)
+            ChangeBestItemsButtonBehaviour(UIKeyTrigger.IsShiftKeyPressed);
+        if (this.currentAbilityPage >= 0 && (ButtonGroupState.ActiveGroup == EquipUI.EquipmentGroupButton || ButtonGroupState.ActiveGroup == EquipUI.InventoryGroupButton) && !PersistenSingleton<UIManager>.Instance.IsPause)
         {
-            if (_equipForAbilityLearning)
-                return;
-
-            ChangeBestItemsButtonBehaviour(true);
-        }
-        else
-        {
-            if (!_equipForAbilityLearning)
-                return;
-
-            ChangeBestItemsButtonBehaviour(false);
+            this.currentAbilityPageCounter -= RealTime.deltaTime;
+            if (this.currentAbilityPageCounter <= 0f)
+            {
+                PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
+                FF9ITEM_DATA itemData;
+                if (ButtonGroupState.ActiveGroup == EquipUI.EquipmentGroupButton)
+                    itemData = ff9item._FF9Item_Data[player.equip[this.currentEquipPart]];
+                else
+                    itemData = ff9item._FF9Item_Data[this.itemIdList[this.currentEquipPart][this.currentItemIndex].id];
+                Int32 abilPageCount = (itemData.ability.Sum(abilId => abilId != 0 ? 1 : 0) + 2) / 3;
+                this.currentAbilityPage++;
+                if (this.currentAbilityPage >= abilPageCount)
+                    this.currentAbilityPage = 0;
+                this.UpdateAbilityPage(player, itemData);
+            }
         }
     }
 
@@ -40,10 +46,8 @@ public class EquipUI : UIScene
     {
         GameObject label = this.OptimizeSubMenu.GetChild(1);
         GOLocalizableLabel localizableLable = new GOLocalizableLabel(label);
-        localizableLable.Label.width = 220;
         localizableLable.Localize.key = equipForAbilityLearning ? "Ability" : "Optimize";
         localizableLable.Localize.OnLocalize();
-
         _equipForAbilityLearning = equipForAbilityLearning;
     }
 
@@ -116,6 +120,41 @@ public class EquipUI : UIScene
     {
         ButtonGroupState.RemoveCursorMemorize(EquipUI.SubMenuGroupButton);
         ButtonGroupState.RemoveCursorMemorize(EquipUI.EquipmentGroupButton);
+    }
+
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        if (this.equipmentListCaption.isActiveAndEnabled)
+        {
+            switch (this.currentEquipPart)
+            {
+                case 0:
+                    this.equipmentListCaption.rawText = Localization.Get("WeaponCaption");
+                    break;
+                case 1:
+                    this.equipmentListCaption.rawText = Localization.Get("HeadCaption");
+                    break;
+                case 2:
+                    this.equipmentListCaption.rawText = Localization.Get("WristCaption");
+                    break;
+                case 3:
+                    this.equipmentListCaption.rawText = Localization.Get("ArmorCaption");
+                    break;
+                case 4:
+                    this.equipmentListCaption.rawText = Localization.Get("AccessoryCaption");
+                    break;
+                default:
+                    this.equipmentListCaption.rawText = Localization.Get("WeaponCaption");
+                    break;
+            }
+        }
+        if (this.equipSelectScrollList.isActiveAndEnabled)
+            this.equipSelectScrollList.UpdateTableViewImp();
+        this.DisplayEquipment();
+        this.DisplayEquiptmentInfo();
+        this.DisplayHelp();
     }
 
     public override Boolean OnKeyConfirm(GameObject go)
@@ -543,14 +582,14 @@ public class EquipUI : UIScene
                     previewStats[i] = currentStats[i];
                 }
             }
-            this.characterHud.HPMaxLabel.text = previewMaxHp.ToString();
-            this.characterHud.MPMaxLabel.text = previewMaxMp.ToString();
+            this.characterHud.HPMaxLabel.rawText = previewMaxHp.ToString();
+            this.characterHud.MPMaxLabel.rawText = previewMaxMp.ToString();
             this.characterHud.HPMaxLabel.color = currentMaxHp < previewMaxHp ? FF9TextTool.Green : (currentMaxHp > previewMaxHp ? FF9TextTool.Red : FF9TextTool.White);
             this.characterHud.MPMaxLabel.color = currentMaxMp < previewMaxMp ? FF9TextTool.Green : (currentMaxMp > previewMaxMp ? FF9TextTool.Red : FF9TextTool.White);
             for (Int32 i = 0; i < 9; i++)
             {
-                this.parameterHud.ParameterLabel[i].text = currentStats[i].ToString();
-                this.parameterHud.NewParameterLabel[i].text = previewStats[i].ToString();
+                this.parameterHud.ParameterLabel[i].rawText = currentStats[i].ToString();
+                this.parameterHud.NewParameterLabel[i].rawText = previewStats[i].ToString();
                 if (currentStats[i] < previewStats[i])
                 {
                     this.parameterHud.ArrowTween[i].enabled = true;
@@ -572,7 +611,7 @@ public class EquipUI : UIScene
         else
         {
             for (Int32 i = 0; i < 9; i++)
-                this.parameterHud.ParameterLabel[i].text = player.GetPlayerStat(i).ToString();
+                this.parameterHud.ParameterLabel[i].rawText = player.GetPlayerStat(i).ToString();
             this.ClearChangeParameter();
         }
     }
@@ -602,6 +641,7 @@ public class EquipUI : UIScene
 
     private void DisplayEquiptmentInfo()
     {
+        this.currentAbilityPage = -1;
         if (ButtonGroupState.ActiveGroup == EquipUI.EquipmentGroupButton || ButtonGroupState.ActiveGroup == EquipUI.InventoryGroupButton)
         {
             PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
@@ -628,114 +668,102 @@ public class EquipUI : UIScene
             {
                 if (this.currentItemIndex == -1)
                     return;
-
                 itemId = this.itemIdList[this.currentEquipPart][this.currentItemIndex].id;
                 itemData = ff9item._FF9Item_Data[itemId];
             }
 
-            FF9UIDataTool.DisplayItem(itemId, this.equipmentSelectHud.Equipment.IconSprite, this.equipmentSelectHud.Equipment.NameLabel, true);
+            FF9UIDataTool.DisplayItem(itemId, this.equipmentSelectHud.IconSprite, this.equipmentSelectHud.NameLabel, true);
             this.equipmentAbilitySelectHudList[0].Self.SetActive(false);
             this.equipmentAbilitySelectHudList[1].Self.SetActive(false);
             this.equipmentAbilitySelectHudList[2].Self.SetActive(false);
-            // Todo: can only display at most 3 abilities for now; they are sorted to try to display most pertinent abilities first but maybe it could be improved
-            List<Int32> sortedAbilities;
-            if (itemData.ability.Length <= 3 || !ff9abil.FF9Abil_HasAp(player))
+            Int32 abilPageCount = (itemData.ability.Sum(abilId => abilId != 0 ? 1 : 0) + 2) / 3;
+            if (abilPageCount <= 1)
             {
-                sortedAbilities = new List<Int32>(itemData.ability);
-            }
-            else
-            {
-                Boolean hasPertinentAfter3 = false;
-                for (Int32 i = 3; i < itemData.ability.Length && !hasPertinentAfter3; i++)
-                    if (itemData.ability[i] != 0 && ff9abil.FF9Abil_GetIndex(player, itemData.ability[i]) >= 0)
-                        hasPertinentAfter3 = true;
-
-                Int32 pertinentAbilityCount = 0;
+                Int32 abilHudSlot = 0;
                 foreach (Int32 abilityId in itemData.ability)
-                    if (abilityId != 0 && ff9abil.FF9Abil_GetIndex(player, abilityId) >= 0)
-                        pertinentAbilityCount++;
-
-                HashSet<Int32> processedAbilities = new HashSet<Int32>();
-                Int32 priorityStage = !hasPertinentAfter3 ? 0 :
-                                      pertinentAbilityCount <= 3 ? 1 : 2;
-                sortedAbilities = new List<Int32>();
-                while (priorityStage >= 0)
                 {
-                    foreach (Int32 abilityId in itemData.ability)
-                    {
-                        if (abilityId == 0 || processedAbilities.Contains(abilityId))
-                            continue;
-                        Boolean shouldAdd;
-                        if (priorityStage == 0)
-                            shouldAdd = true;
-                        else if (priorityStage == 1)
-                            shouldAdd = ff9abil.FF9Abil_GetIndex(player, abilityId) >= 0;
-                        else
-                            shouldAdd = ff9abil.FF9Abil_GetIndex(player, abilityId) >= 0 && ff9abil.FF9Abil_GetAp(player, abilityId) < ff9abil.FF9Abil_GetMax(player, abilityId);
-                        if (shouldAdd)
-                        {
-                            sortedAbilities.Add(abilityId);
-                            processedAbilities.Add(abilityId);
-                        }
-                    }
-                    priorityStage--;
-                }
-            }
-            Int32 abilHudSlot = 0;
-            foreach (Int32 abilityId in sortedAbilities)
-            {
-                if (abilHudSlot >= 3)
-                    break;
-
-                if (abilityId != 0)
-                {
-                    String abilityName = ff9abil.IsAbilityActive(abilityId) ? FF9TextTool.ActionAbilityName(ff9abil.GetActiveAbilityFromAbilityId(abilityId)) : FF9TextTool.SupportAbilityName(ff9abil.GetSupportAbilityFromAbilityId(abilityId));
-
-                    this.equipmentAbilitySelectHudList[abilHudSlot].Self.SetActive(true);
-                    if (ff9abil.FF9Abil_HasAp(player))
-                    {
-                        Boolean hasAbil = ff9abil.FF9Abil_GetIndex(player, abilityId) >= 0;
-                        String stoneSprite;
-                        if (hasAbil)
-                        {
-                            if (ff9abil.IsAbilityActive(abilityId))
-                                stoneSprite = "ability_stone";
-                            else
-                                stoneSprite = ff9abil.FF9Abil_IsEnableSA(player.saExtended, ff9abil.GetSupportAbilityFromAbilityId(abilityId)) ? "skill_stone_on" : "skill_stone_off";
-                        }
-                        else
-                        {
-                            stoneSprite = ff9abil.IsAbilityActive(abilityId) ? "ability_stone_null" : "skill_stone_null";
-                        }
-
-                        if (hasAbil)
-                        {
-                            Boolean isShowText = ff9abil.IsAbilitySupport(abilityId) || (ff9abil.GetActionAbility(abilityId).Type & 2) == 0;
-                            this.equipmentAbilitySelectHudList[abilHudSlot].APBar.Self.SetActive(true);
-                            FF9UIDataTool.DisplayAPBar(player, abilityId, isShowText, this.equipmentAbilitySelectHudList[abilHudSlot].APBar);
-                        }
-                        else
-                        {
-                            this.equipmentAbilitySelectHudList[abilHudSlot].APBar.Self.SetActive(false);
-                        }
-
-                        this.equipmentAbilitySelectHudList[abilHudSlot].NameLabel.text = abilityName;
-                        this.equipmentAbilitySelectHudList[abilHudSlot].IconSprite.spriteName = stoneSprite;
-                        this.equipmentAbilitySelectHudList[abilHudSlot].NameLabel.color = hasAbil ? FF9TextTool.White : FF9TextTool.Gray;
-                    }
-                    else
-                    {
-                        String stoneSprite = ff9abil.IsAbilityActive(abilityId) ? "ability_stone_null" : "skill_stone_null";
-
-                        this.equipmentAbilitySelectHudList[abilHudSlot].NameLabel.text = abilityName;
-                        this.equipmentAbilitySelectHudList[abilHudSlot].IconSprite.spriteName = stoneSprite;
-                        this.equipmentAbilitySelectHudList[abilHudSlot].NameLabel.color = FF9TextTool.Gray;
-                        this.equipmentAbilitySelectHudList[abilHudSlot].APBar.Self.SetActive(false);
-                    }
-
+                    if (abilityId == 0)
+                        continue;
+                    DisplayAbilityState(this.equipmentAbilitySelectHudList[abilHudSlot], player, abilityId, false);
                     abilHudSlot++;
                 }
             }
+            else
+            {
+                this.currentAbilityPage = 0;
+                this.UpdateAbilityPage(player, itemData);
+            }
+        }
+    }
+
+    private void UpdateAbilityPage(PLAYER player, FF9ITEM_DATA itemData)
+    {
+        Int32 abilIndex = 0;
+        Int32 abilHudSlot = 0;
+        foreach (Int32 abilityId in itemData.ability)
+        {
+            if (abilityId == 0)
+                continue;
+            abilIndex++;
+            if (abilIndex <= this.currentAbilityPage * 3)
+                continue;
+            DisplayAbilityState(this.equipmentAbilitySelectHudList[abilHudSlot], player, abilityId, true);
+            abilHudSlot++;
+            if (abilHudSlot >= 3)
+                break;
+        }
+        while (abilHudSlot < 3)
+            DisplayAbilityState(this.equipmentAbilitySelectHudList[abilHudSlot++], player, 0, false);
+        this.currentAbilityPageCounter = 3f;
+    }
+
+    private static void DisplayAbilityState(AbilityItemHUD hud, PLAYER player, Int32 abilityId, Boolean fadingName)
+    {
+        if (abilityId == 0)
+        {
+            hud.Self.SetActive(false);
+            return;
+        }
+        hud.Self.SetActive(true);
+        String abilityName = ff9abil.IsAbilityActive(abilityId) ? FF9TextTool.ActionAbilityName(ff9abil.GetActiveAbilityFromAbilityId(abilityId)) : FF9TextTool.SupportAbilityName(ff9abil.GetSupportAbilityFromAbilityId(abilityId));
+        if (fadingName)
+            abilityName = "[ANIM=TextRGBA,Sinus,1,Constant,2,Sinus,3,0,1,1,0]" + abilityName;
+        if (ff9abil.FF9Abil_HasAp(player))
+        {
+            Boolean hasAbil = ff9abil.FF9Abil_GetIndex(player, abilityId) >= 0;
+            String stoneSprite;
+            if (hasAbil)
+            {
+                if (ff9abil.IsAbilityActive(abilityId))
+                    stoneSprite = "ability_stone";
+                else
+                    stoneSprite = ff9abil.FF9Abil_IsEnableSA(player.saExtended, ff9abil.GetSupportAbilityFromAbilityId(abilityId)) ? "skill_stone_on" : "skill_stone_off";
+            }
+            else
+            {
+                stoneSprite = ff9abil.IsAbilityActive(abilityId) ? "ability_stone_null" : "skill_stone_null";
+            }
+            if (hasAbil)
+            {
+                Boolean isShowText = ff9abil.IsAbilitySupport(abilityId) || (ff9abil.GetActionAbility(abilityId).Type & 2) == 0;
+                hud.APBar.Self.SetActive(true);
+                FF9UIDataTool.DisplayAPBar(player, abilityId, isShowText, hud.APBar);
+            }
+            else
+            {
+                hud.APBar.Self.SetActive(false);
+            }
+            hud.NameLabel.SetText(abilityName);
+            hud.IconSprite.spriteName = stoneSprite;
+            hud.NameLabel.color = hasAbil ? FF9TextTool.White : FF9TextTool.Gray;
+        }
+        else
+        {
+            String stoneSprite = ff9abil.IsAbilityActive(abilityId) ? "ability_stone_null" : "skill_stone_null";
+            hud.NameLabel.SetText(abilityName);
+            hud.IconSprite.spriteName = stoneSprite;
+            hud.NameLabel.color = FF9TextTool.Gray;
+            hud.APBar.Self.SetActive(false);
         }
     }
 
@@ -747,22 +775,22 @@ public class EquipUI : UIScene
         switch (this.currentEquipPart)
         {
             case 0:
-                this.equipmentListCaption.text = Localization.Get("WeaponCaption");
+                this.equipmentListCaption.rawText = Localization.Get("WeaponCaption");
                 break;
             case 1:
-                this.equipmentListCaption.text = Localization.Get("HeadCaption");
+                this.equipmentListCaption.rawText = Localization.Get("HeadCaption");
                 break;
             case 2:
-                this.equipmentListCaption.text = Localization.Get("WristCaption");
+                this.equipmentListCaption.rawText = Localization.Get("WristCaption");
                 break;
             case 3:
-                this.equipmentListCaption.text = Localization.Get("ArmorCaption");
+                this.equipmentListCaption.rawText = Localization.Get("ArmorCaption");
                 break;
             case 4:
-                this.equipmentListCaption.text = Localization.Get("AccessoryCaption");
+                this.equipmentListCaption.rawText = Localization.Get("AccessoryCaption");
                 break;
             default:
-                this.equipmentListCaption.text = Localization.Get("WeaponCaption");
+                this.equipmentListCaption.rawText = Localization.Get("WeaponCaption");
                 break;
         }
 
@@ -855,7 +883,7 @@ public class EquipUI : UIScene
             itemListDetailWithIconHUD.NameLabel.gameObject.SetActive(true);
             itemListDetailWithIconHUD.NumberLabel.gameObject.SetActive(true);
             FF9UIDataTool.DisplayItem(equipInventoryListData.ItemData.id, itemListDetailWithIconHUD.IconSprite, itemListDetailWithIconHUD.NameLabel, true);
-            itemListDetailWithIconHUD.NumberLabel.text = equipInventoryListData.ItemData.count.ToString();
+            itemListDetailWithIconHUD.NumberLabel.rawText = equipInventoryListData.ItemData.count.ToString();
             itemListDetailWithIconHUD.Button.Help.Enable = true;
             itemListDetailWithIconHUD.Button.Help.TextKey = String.Empty;
             itemListDetailWithIconHUD.Button.Help.Text = FF9TextTool.ItemHelpDescription(equipInventoryListData.ItemData.id);
@@ -883,8 +911,8 @@ public class EquipUI : UIScene
     private void ClearChangeParameter()
     {
         PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
-        this.characterHud.HPMaxLabel.text = player.max.hp.ToString();
-        this.characterHud.MPMaxLabel.text = player.max.mp.ToString();
+        this.characterHud.HPMaxLabel.rawText = player.max.hp.ToString();
+        this.characterHud.MPMaxLabel.rawText = player.max.mp.ToString();
         this.characterHud.HPMaxLabel.color = FF9TextTool.White;
         this.characterHud.MPMaxLabel.color = FF9TextTool.White;
         for (Int32 i = 0; i < 9; i++)
@@ -1274,8 +1302,6 @@ public class EquipUI : UIScene
 
         this.selectedCaption = this.EquipmentInventoryListPanel.GetChild(2).GetChild(4).GetChild(0).GetComponent<UILocalize>();
 
-        ChangeEquipButtonWidth();
-
         if (FF9StateSystem.MobilePlatform)
         {
             this.EquipSubMenu.GetComponent<ButtonGroupState>().Help.TextKey = "EquipDetailHelpForMobile";
@@ -1284,13 +1310,23 @@ public class EquipUI : UIScene
         }
 
         this._background = new GOMenuBackground(this.transform.GetChild(6).gameObject, "equip_bg");
-    }
 
-    private void ChangeEquipButtonWidth()
-    {
-        GameObject label = this.EquipSubMenu.GetChild(1);
-        GOLocalizableLabel localizableLable = new GOLocalizableLabel(label);
-        localizableLable.Label.width = 220;
+        this.equipmentHud.Weapon.NameLabel.rightAnchor.Set(this.EquipmentPartListPanel.transform, 1f, -34);
+        this.equipmentHud.Head.NameLabel.rightAnchor.Set(this.EquipmentPartListPanel.transform, 1f, -34);
+        this.equipmentHud.Wrist.NameLabel.rightAnchor.Set(this.EquipmentPartListPanel.transform, 1f, -34);
+        this.equipmentHud.Body.NameLabel.rightAnchor.Set(this.EquipmentPartListPanel.transform, 1f, -34);
+        this.equipmentHud.Accessory.NameLabel.rightAnchor.Set(this.EquipmentPartListPanel.transform, 1f, -34);
+        this.equipmentPartCaption.GetComponent<UILabel>().rightAnchor.Set(1f, -40);
+        this._equipSelectPanel.Background.Panel.Name.Label.fixedAlignment = true;
+        this.EquipSubMenu.GetChild(1).GetComponent<UILabel>().leftAnchor.Set(0f, 0);
+        this.EquipSubMenu.GetChild(1).GetComponent<UILabel>().rightAnchor.Set(1f, 0);
+        this.EquipSubMenu.GetChild(1).GetComponent<UILabel>().overflowMethod = UILabel.Overflow.ShrinkContent;
+        this.OptimizeSubMenu.GetChild(1).GetComponent<UILabel>().leftAnchor.Set(0f, 0);
+        this.OptimizeSubMenu.GetChild(1).GetComponent<UILabel>().rightAnchor.Set(1f, 0);
+        this.OptimizeSubMenu.GetChild(1).GetComponent<UILabel>().overflowMethod = UILabel.Overflow.ShrinkContent;
+        this.OffSubMenu.GetChild(1).GetComponent<UILabel>().leftAnchor.Set(0f, 0);
+        this.OffSubMenu.GetChild(1).GetComponent<UILabel>().rightAnchor.Set(1f, 0);
+        this.OffSubMenu.GetChild(1).GetComponent<UILabel>().overflowMethod = UILabel.Overflow.ShrinkContent;
     }
 
     public GameObject EquipSubMenu;
@@ -1334,6 +1370,10 @@ public class EquipUI : UIScene
     private Int32 currentItemIndex = -1;
     private Boolean fastSwitch;
     private UILocalize selectedCaption;
+    [NonSerialized]
+    private Int32 currentAbilityPage;
+    [NonSerialized]
+    private Single currentAbilityPageCounter;
 
     private ItemType[] partMask = { ItemType.Weapon, ItemType.Helmet, ItemType.Armlet, ItemType.Armor, ItemType.Accessory };
 
@@ -1341,64 +1381,29 @@ public class EquipUI : UIScene
 
     public class ParameterDetailCompareHUD
     {
-        public ParameterDetailCompareHUD(GameObject go)
-        {
-            this.Self = go;
-            Int32 i = 0;
-            Int32 num = 0;
-            while (i < 10)
-            {
-                if (i != 4)
-                {
-                    this.ParameterLabel[num] = go.GetChild(i).GetChild(1).GetComponent<UILabel>();
-                    this.NewParameterLabel[num] = go.GetChild(i).GetChild(3).GetComponent<UILabel>();
-                    this.ArrowSprite[num] = go.GetChild(i).GetChild(2).GetComponent<UISprite>();
-                    this.ArrowTween[num] = go.GetChild(i).GetChild(2).GetComponent<TweenAlpha>();
-                    num++;
-                }
-
-                i++;
-            }
-
-            // Spirit label fix: http://forums.qhimm.com/index.php?topic=14315.msg277655#msg277655
-            FixPositionX.Fix(NewParameterLabel[3].gameObject, NewParameterLabel[2].gameObject);
-        }
-
         public GameObject Self;
         public UILabel[] ParameterLabel = new UILabel[9];
         public UILabel[] NewParameterLabel = new UILabel[9];
         public UISprite[] ArrowSprite = new UISprite[9];
         public TweenAlpha[] ArrowTween = new TweenAlpha[9];
 
-        private class FixPositionX : MonoBehaviour
-        {
-            public static void Fix(GameObject spiritLabel, GameObject validLabel)
-            {
-                FixPositionX fix = spiritLabel.EnsureExactComponent<FixPositionX>();
-                fix.Reference = validLabel;
-            }
-
-            private GameObject Reference { get; set; }
-            private void Start() => Fix();
-            private void OnEnable() => Fix();
-            private void Fix() => transform.SetX(Reference.transform.localPosition.x);
-        }
-    }
-
-    public class EquipmentItemListHUD
-    {
-        public EquipmentItemListHUD(GameObject go)
+        public ParameterDetailCompareHUD(GameObject go)
         {
             this.Self = go;
-            this.PartIconSprite = go.GetChild(0).GetComponent<UISprite>();
-            this.Equipment = new ItemListDetailWithIconHUD();
-            this.Equipment.IconSprite = go.GetChild(2).GetComponent<UISprite>();
-            this.Equipment.NameLabel = go.GetChild(3).GetComponent<UILabel>();
+            Int32 statIndex = 0;
+            for (Int32 i = 0; i < 10; i++)
+            {
+                if (i == 4)
+                    continue;
+                this.ParameterLabel[statIndex] = go.GetChild(i).GetChild(1).GetComponent<UILabel>();
+                this.NewParameterLabel[statIndex] = go.GetChild(i).GetChild(3).GetComponent<UILabel>();
+                this.ArrowSprite[statIndex] = go.GetChild(i).GetChild(2).GetComponent<UISprite>();
+                this.ArrowTween[statIndex] = go.GetChild(i).GetChild(2).GetComponent<TweenAlpha>();
+                statIndex++;
+            }
+            // Spirit label fix: https://forums.qhimm.com/index.php?topic=14315.msg273804#msg273804
+            NewParameterLabel[3].rightAnchor.absolute = 98;
         }
-
-        public GameObject Self;
-        public UISprite PartIconSprite;
-        public ItemListDetailWithIconHUD Equipment;
     }
 
     public enum SubMenu

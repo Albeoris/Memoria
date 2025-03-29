@@ -1,11 +1,12 @@
-﻿using Memoria.Assets;
-using Memoria.Prime;
-using SimpleJSON;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Assets.Sources.Scripts.UI.Common;
+using Memoria.Assets;
+using Memoria.Prime;
+using SimpleJSON;
 using UnityEngine;
 
 public class SharedDataBytesStorage : ISharedDataStorage
@@ -48,7 +49,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
         String[] saveDataFiles = Directory.GetFiles(MetaData.DirPath, "SavedData_??.dat");
         if (saveDataFiles.Length == 0)
         {
-            if (Localization.CurrentLanguage == "Japanese")
+            if (Localization.CurrentSymbol == "JP")
                 fileName = "SavedData_jp.dat";
             else
                 fileName = "SavedData_ww.dat";
@@ -482,16 +483,16 @@ public class SharedDataBytesStorage : ISharedDataStorage
         sharedDataPreviewSlot.win_type = FF9StateSystem.Settings.cfg.win_type;
         for (Int32 i = 0; i < 4; i++)
         {
-            SharedDataPreviewCharacterInfo sharedDataPreviewCharacterInfo = null;
+            SharedDataPreviewCharacterInfo previewInfo = null;
             PLAYER player = FF9StateSystem.Common.FF9.party.member[i];
             if (player != null)
             {
-                sharedDataPreviewCharacterInfo = new SharedDataPreviewCharacterInfo();
-                sharedDataPreviewCharacterInfo.SerialID = (Int32)player.info.serial_no;
-                sharedDataPreviewCharacterInfo.Name = player.Name;
-                sharedDataPreviewCharacterInfo.Level = player.level;
+                previewInfo = new SharedDataPreviewCharacterInfo();
+                previewInfo.SerialID = (Int32)player.info.serial_no;
+                previewInfo.Name = FF9TextTool.RemoveOpCode(player.Name);
+                previewInfo.Level = player.level;
             }
-            sharedDataPreviewSlot.CharacterInfoList.Add(sharedDataPreviewCharacterInfo);
+            sharedDataPreviewSlot.CharacterInfoList.Add(previewInfo);
         }
         try
         {

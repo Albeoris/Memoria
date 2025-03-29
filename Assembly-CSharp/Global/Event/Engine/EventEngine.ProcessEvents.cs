@@ -10,6 +10,7 @@ public partial class EventEngine
 {
     public Int32 ProcessEvents()
     {
+        EventEngine.LastProcessTime = RealTime.time;
         VoicePlayer.scriptRequestedButtonPress = false;
         if (FF9StateSystem.Settings.IsNoEncounter)
         {

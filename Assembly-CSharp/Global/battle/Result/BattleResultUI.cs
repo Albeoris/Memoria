@@ -64,6 +64,14 @@ public class BattleResultUI : UIScene
         this.screenFadePanel.depth = 5;
     }
 
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        if (this.currentState >= BattleResultUI.ResultState.StartGilAndItem)
+            this.DisplayGilAndItemInfo();
+    }
+
     public override Boolean OnKeyConfirm(GameObject go)
     {
         if (base.OnKeyConfirm(go))
@@ -101,7 +109,7 @@ public class BattleResultUI : UIScene
                 case BattleResultUI.ResultState.StartGilAndItem:
                     if (!this.UpdateItem())
                     {
-                        this.ItemOverflowPanelTween.TweenIn((Action)null);
+                        this.ItemOverflowPanelTween.TweenIn(null);
                         this.currentState = BattleResultUI.ResultState.ItemFullDialog;
                     }
                     else if (this.gilValue.value == 0u)
@@ -137,7 +145,7 @@ public class BattleResultUI : UIScene
                     break;
                 case BattleResultUI.ResultState.End:
                     this.currentState = BattleResultUI.ResultState.Hide;
-                    this.Hide((UIScene.SceneVoidDelegate)null);
+                    this.Hide(null);
                     break;
             }
         }
@@ -147,17 +155,15 @@ public class BattleResultUI : UIScene
     public override void OnKeyQuit()
     {
         if (this.currentState != BattleResultUI.ResultState.Hide && !base.Loading)
-        {
             base.OnKeyQuit();
-        }
     }
 
     private void DisplayEXPAndAPInfo()
     {
         this.EXPAndAPPhrasePanel.SetActive(true);
         this.GilAndItemPhrasePanel.SetActive(false);
-        this.expReceiveLabel.text = this.defaultExp.ToString();
-        this.apReceiveLabel.text = this.defaultAp.ToString();
+        this.expReceiveLabel.rawText = this.defaultExp.ToString();
+        this.apReceiveLabel.rawText = this.defaultAp.ToString();
         FF9UIDataTool.DisplayTextLocalize(this.infoLabelGameObject, "BattleResultInfoEXPAP");
     }
 
@@ -165,21 +171,19 @@ public class BattleResultUI : UIScene
     {
         this.EXPAndAPPhrasePanel.SetActive(false);
         this.GilAndItemPhrasePanel.SetActive(true);
-        this.receiveGilLabel.text = Localization.GetWithDefault("GilSymbol").Replace("%", (this.gilValue.value - this.gilValue.current).ToString());
-        this.currentGilLabel.text = Localization.GetWithDefault("GilSymbol").Replace("%", Mathf.Min(FF9StateSystem.Common.FF9.party.gil, 9999999f).ToString());
+        this.receiveGilLabel.rawText = Localization.GetWithDefault("GilSymbol").Replace("%", (this.gilValue.value - this.gilValue.current).ToString());
+        this.currentGilLabel.rawText = Localization.GetWithDefault("GilSymbol").Replace("%", Mathf.Min(FF9StateSystem.Common.FF9.party.gil, 9999999f).ToString());
         FF9UIDataTool.DisplayTextLocalize(this.infoLabelGameObject, "BattleResultInfoGilItem");
         if (this.itemList.Count > 0)
         {
             this.ItemDetailPanel.SetActive(true);
             this.noItemLabel.SetActive(false);
-            Int32 num = 0;
-            foreach (FF9ITEM ff9ITEM in this.itemList)
+            for (Int32 i = 0; i < this.itemList.Count; i++)
             {
-                ItemListDetailWithIconHUD itemListDetailWithIconHUD = this.itemHudList[num];
+                ItemListDetailWithIconHUD itemListDetailWithIconHUD = this.itemHudList[i];
                 itemListDetailWithIconHUD.Self.SetActive(true);
-                FF9UIDataTool.DisplayItem(ff9ITEM.id, itemListDetailWithIconHUD.IconSprite, itemListDetailWithIconHUD.NameLabel, true);
-                itemListDetailWithIconHUD.NumberLabel.text = ff9ITEM.count.ToString();
-                num++;
+                FF9UIDataTool.DisplayItem(this.itemList[i].id, itemListDetailWithIconHUD.IconSprite, itemListDetailWithIconHUD.NameLabel, true);
+                itemListDetailWithIconHUD.NumberLabel.rawText = this.itemList[i].count.ToString();
             }
         }
         else
@@ -191,7 +195,7 @@ public class BattleResultUI : UIScene
         {
             this.ItemDetailPanel.SetActive(true);
             this.cardHud.Self.SetActive(true);
-            this.cardHud.NameLabel.text = FF9TextTool.CardName(this.defaultCard);
+            this.cardHud.NameLabel.rawText = FF9TextTool.CardName(this.defaultCard);
         }
     }
 
@@ -205,10 +209,10 @@ public class BattleResultUI : UIScene
                 UInt64 nextLvl = (player.level >= ff9level.LEVEL_COUNT) ? player.exp : ff9level.CharacterLevelUps[player.level].ExperienceToLevel;
                 BattleResultUI.CharacterBattleResultInfoHUD infoHUD = this.characterBRInfoHudList[i];
                 infoHUD.Content.SetActive(true);
-                infoHUD.NameLabel.text = player.Name;
-                infoHUD.LevelLabel.text = player.level.ToString();
-                infoHUD.ExpLabel.text = player.exp.ToString();
-                infoHUD.NextLvLabel.text = (nextLvl - player.exp).ToString();
+                infoHUD.NameLabel.SetText(player.NameTag);
+                infoHUD.LevelLabel.rawText = player.level.ToString();
+                infoHUD.ExpLabel.rawText = player.exp.ToString();
+                infoHUD.NextLvLabel.rawText = (nextLvl - player.exp).ToString();
                 FF9UIDataTool.DisplayCharacterAvatar(player, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), infoHUD.AvatarSprite, false);
                 UISprite[] statusesSpriteList = infoHUD.StatusesSpriteList;
                 foreach (UISprite statusSprite in statusesSpriteList)
@@ -228,13 +232,13 @@ public class BattleResultUI : UIScene
                 if (!this.IsEnableDraw(player, i))
                 {
                     this.isRecieveExpList.Add(false);
-                    infoHUD.DimPanel.SetActive(true);
+                    infoHUD.DimSprite.gameObject.SetActive(true);
                     infoHUD.AvatarSprite.alpha = 0.5f;
                 }
                 else
                 {
                     this.isRecieveExpList.Add(true);
-                    infoHUD.DimPanel.SetActive(false);
+                    infoHUD.DimSprite.gameObject.SetActive(false);
                     infoHUD.AvatarSprite.alpha = 1f;
                 }
             }
@@ -256,7 +260,7 @@ public class BattleResultUI : UIScene
         if (!this.isLevelUpSoundPlayed)
             FF9Sfx.FF9SFX_Play(683);
         this.isLevelUpSoundPlayed = true;
-        this.levelUpSpriteTween[index].TweenIn(new Byte[1], delegate
+        this.levelUpSpriteTween[index].TweenIn([0], delegate
         {
             this.levelUpSpriteTween[index].dialogList[0].SetActive(false);
             this.StartCoroutine(this.WaitAndPlayNextAnimation(index));
@@ -277,10 +281,8 @@ public class BattleResultUI : UIScene
             characterBattleResultInfoHUD.Content.SetActive(false);
         foreach (ItemListDetailWithIconHUD itemListDetailWithIconHUD in this.itemHudList)
             itemListDetailWithIconHUD.Self.SetActive(false);
-        HonoTweenPosition[] array = this.levelUpSpriteTween;
         foreach (HonoTweenPosition honoTweenPosition in this.levelUpSpriteTween)
             honoTweenPosition.dialogList[0].SetActive(false);
-        HonoTweenClipping[] array2 = this.abilityLearnedPanelTween;
         foreach (HonoTweenClipping honoTweenClipping in this.abilityLearnedPanelTween)
             honoTweenClipping.ClipGameObject.SetActive(false);
         this.cardHud.Self.SetActive(false);
@@ -345,27 +347,17 @@ public class BattleResultUI : UIScene
         this.ClearUI();
         this.DisplayEXPAndAPInfo();
         this.DisplayCharacterInfo();
-        this.infoPanelTween.TweenIn(new Byte[1], (UIScene.SceneVoidDelegate)null);
-        this.helpPanelTween.TweenIn(new Byte[1], (UIScene.SceneVoidDelegate)null);
-        this.expLeftSideTween.TweenIn(new Byte[]
-        {
-            0,
-            1,
-            2
-        }, null);
-        this.expRightSideTween.TweenIn(new Byte[]
-        {
-            0,
-            1,
-            2
-        }, null);
+        this.infoPanelTween.TweenIn([0], null);
+        this.helpPanelTween.TweenIn([0], null);
+        this.expLeftSideTween.TweenIn([0, 1, 2], null);
+        this.expRightSideTween.TweenIn([0, 1, 2], null);
         this.totalLevelUp = new Int32[4];
         this.finishedLevelUpAnimation = new Int32[4];
         this.abilityLearned[0] = new List<Int32>();
         this.abilityLearned[1] = new List<Int32>();
         this.abilityLearned[2] = new List<Int32>();
         this.abilityLearned[3] = new List<Int32>();
-        this.isReadyToShowNextAbil = new Boolean[] { true, true, true, true };
+        this.isReadyToShowNextAbil = [true, true, true, true];
         Boolean skipEXPAndAP = true;
         for (Int32 i = 0; i < this.expValue.Length && skipEXPAndAP; i++)
             if (this.expValue[i].value != 0u)
@@ -680,7 +672,7 @@ public class BattleResultUI : UIScene
             spriteName = ff9abil.FF9Abil_IsEnableSA(FF9StateSystem.Common.FF9.party.member[id], saIndex) ? "skill_stone_on" : "skill_stone_off";
         }
         this.characterBRInfoHudList[id].AbiltySprite.spriteName = spriteName;
-        this.characterBRInfoHudList[id].AbilityLabel.text = abilName;
+        this.characterBRInfoHudList[id].AbilityLabel.rawText = abilName;
         this.abilityLearnedPanelTween[id].TweenIn(null);
         yield return new WaitForSeconds(1f);
         this.abilityLearnedPanelTween[id].TweenOut(delegate
@@ -748,20 +740,10 @@ public class BattleResultUI : UIScene
 
     private void ApplyTweenAndFade()
     {
-        this.expLeftSideTween.TweenOut(new Byte[]
-        {
-            0,
-            1,
-            2
-        }, null);
-        this.expRightSideTween.TweenOut(new Byte[]
-        {
-            0,
-            1,
-            2
-        }, null);
+        this.expLeftSideTween.TweenOut([0, 1, 2], null);
+        this.expRightSideTween.TweenOut([0, 1, 2], null);
         base.Loading = true;
-        base.FadingComponent.FadePingPong(new UIScene.SceneVoidDelegate(this.AfterShowGilAndItem), delegate
+        base.FadingComponent.FadePingPong(this.AfterShowGilAndItem, delegate
         {
             base.Loading = false;
         });
@@ -818,23 +800,38 @@ public class BattleResultUI : UIScene
         this.helpPanelTween = this.TransitionPanel.GetChild(3).GetComponent<HonoTweenPosition>();
         this.ItemOverflowPanelTween = this.TransitionPanel.GetChild(4).GetComponent<HonoTweenClipping>();
         this.ItemPanelTween = this.TransitionPanel.GetChild(5).GetComponent<HonoTweenClipping>();
-        this.levelUpSpriteTween = new HonoTweenPosition[4];
-        this.levelUpSpriteTween[0] = this.TransitionPanel.GetChild(6).GetComponent<HonoTweenPosition>();
-        this.levelUpSpriteTween[1] = this.TransitionPanel.GetChild(7).GetComponent<HonoTweenPosition>();
-        this.levelUpSpriteTween[2] = this.TransitionPanel.GetChild(8).GetComponent<HonoTweenPosition>();
-        this.levelUpSpriteTween[3] = this.TransitionPanel.GetChild(9).GetComponent<HonoTweenPosition>();
-        this.abilityLearnedPanelTween = new HonoTweenClipping[4];
-        this.abilityLearnedPanelTween[0] = this.TransitionPanel.GetChild(10).GetComponent<HonoTweenClipping>();
-        this.abilityLearnedPanelTween[1] = this.TransitionPanel.GetChild(11).GetComponent<HonoTweenClipping>();
-        this.abilityLearnedPanelTween[2] = this.TransitionPanel.GetChild(12).GetComponent<HonoTweenClipping>();
-        this.abilityLearnedPanelTween[3] = this.TransitionPanel.GetChild(13).GetComponent<HonoTweenClipping>();
+        this.levelUpSpriteTween =
+        [
+            this.TransitionPanel.GetChild(6).GetComponent<HonoTweenPosition>(),
+            this.TransitionPanel.GetChild(7).GetComponent<HonoTweenPosition>(),
+            this.TransitionPanel.GetChild(8).GetComponent<HonoTweenPosition>(),
+            this.TransitionPanel.GetChild(9).GetComponent<HonoTweenPosition>()
+        ];
+        this.abilityLearnedPanelTween =
+        [
+            this.TransitionPanel.GetChild(10).GetComponent<HonoTweenClipping>(),
+            this.TransitionPanel.GetChild(11).GetComponent<HonoTweenClipping>(),
+            this.TransitionPanel.GetChild(12).GetComponent<HonoTweenClipping>(),
+            this.TransitionPanel.GetChild(13).GetComponent<HonoTweenClipping>()
+        ];
         if (FF9StateSystem.MobilePlatform)
             this.AllPanel.GetChild(3).GetChild(0).GetComponent<UILocalize>().key = "TouchToConfirm";
-        GameObject child2 = this.GilAndItemPhrasePanel.GetChild(0);
-        GameObject child3 = this.GilAndItemPhrasePanel.GetChild(0).GetChild(0);
-        child2.GetComponent<UIPanel>().depth = 2;
-        child3.GetComponent<UIPanel>().depth = 3;
-        this.background = new GOMenuBackground(this.AllPanel.transform.GetChild(4).gameObject, "battle_result_bg");
+        this.GilAndItemPhrasePanel.GetChild(0).GetComponent<UIPanel>().depth = 2;
+        this.GilAndItemPhrasePanel.GetChild(0).GetChild(0).GetComponent<UIPanel>().depth = 3;
+        this.background = new GOMenuBackground(this.AllPanel.GetChild(4).gameObject, "battle_result_bg");
+        this.InfoPanel.GetChild(1).GetChild(3).GetComponent<UILabel>().rightAnchor.Set(1f, -40);
+        this.EXPPanel.GetChild(0).GetComponent<UILabel>().fixedAlignment = true;
+        this.APPanel.GetChild(0).GetComponent<UILabel>().fixedAlignment = true;
+        foreach (CharacterBattleResultInfoHUD characterHUD in this.characterBRInfoHudList)
+        {
+            characterHUD.NameLabel.fixedAlignment = true;
+            characterHUD.ExpCaptionLabel.fixedAlignment = true;
+            characterHUD.NextLvCaptionLabel.Label.fixedAlignment = true;
+        }
+        this.GilAndItemPhrasePanel.GetChild(0).GetChild(1).GetChild(0).GetComponent<UILabel>().rightAnchor.Set(1f, -32);
+        this.ReceiveGilPanel.GetChild(0).GetComponent<UILabel>().fixedAlignment = true;
+        this.CurrentGilPanel.GetChild(0).GetComponent<UILabel>().fixedAlignment = true;
+        this.AllPanel.GetChild(3).GetChild(1).GetChild(3).GetComponent<UILabel>().rightAnchor.Set(1f, -40);
     }
 
     public GameObject AllPanel;
@@ -907,7 +904,7 @@ public class BattleResultUI : UIScene
     private Int32[] finishedLevelUpAnimation = new Int32[4];
     private List<Int32>[] abilityLearned = new List<Int32>[4];
 
-    private Boolean[] isReadyToShowNextAbil = new Boolean[] { true, true, true, true };
+    private Boolean[] isReadyToShowNextAbil = [true, true, true, true];
 
     private Boolean expEndTick;
     private Boolean apEndTick;
@@ -925,12 +922,10 @@ public class BattleResultUI : UIScene
         {
             this.Self = go;
             this.Content = go.GetChild(0);
-            this.DimPanel = this.Content.GetChild(5);
             this.AvatarSprite = this.Content.GetChild(0).GetComponent<UISprite>();
             this.NameLabel = this.Content.GetChild(1).GetChild(0).GetComponent<UILabel>();
+            this.LevelIcon = new GOLocalizableSprite(this.Content.GetChild(1).GetChild(1));
             this.LevelLabel = this.Content.GetChild(1).GetChild(2).GetComponent<UILabel>();
-            this.ExpLabel = this.Content.GetChild(3).GetChild(1).GetComponent<UILabel>();
-            this.NextLvLabel = this.Content.GetChild(4).GetChild(2).GetComponent<UILabel>();
             this.StatusesSpriteList = new UISprite[]
             {
                 this.Content.GetChild(2).GetChild(0).GetChild(0).GetComponent<UISprite>(),
@@ -941,22 +936,37 @@ public class BattleResultUI : UIScene
                 this.Content.GetChild(2).GetChild(0).GetChild(5).GetComponent<UISprite>(),
                 this.Content.GetChild(2).GetChild(0).GetChild(6).GetComponent<UISprite>()
             };
+            this.ExpCaptionLabel = this.Content.GetChild(3).GetChild(0).GetComponent<UILabel>();
+            this.ExpLabel = this.Content.GetChild(3).GetChild(1).GetComponent<UILabel>();
+            this.NextLvCaptionLabel = new GOLocalizableLabel(this.Content.GetChild(4).GetChild(0));
+            this.NextLvLabel = this.Content.GetChild(4).GetChild(2).GetComponent<UILabel>();
+            this.DimSprite = this.Content.GetChild(5).GetComponent<UISprite>();
+            this.LevelUpSprite = new GOLocalizableSprite(this.Content.GetChild(6));
             this.AbiltySprite = this.Content.GetChild(7).GetChild(0).GetChild(0).GetComponent<UISprite>();
             this.AbilityLabel = this.Content.GetChild(7).GetChild(0).GetChild(1).GetComponent<UILabel>();
+            this.AbilityBackground = new GOFrameBackground(this.Content.GetChild(7).GetChild(1));
         }
 
         public GameObject Self;
         public GameObject Content;
-        public GameObject DimPanel;
 
-        public UILabel NameLabel;
-        public UILabel LevelLabel;
-        public UILabel ExpLabel;
-        public UILabel NextLvLabel;
         public UISprite AvatarSprite;
+        public UILabel NameLabel;
+        public GOLocalizableSprite LevelIcon;
+        public UILabel LevelLabel;
         public UISprite[] StatusesSpriteList;
+        public UILabel ExpCaptionLabel;
+        public UILabel ExpLabel;
+        public GOLocalizableLabel NextLvCaptionLabel;
+        public UILabel NextLvLabel;
+        public UISprite DimSprite;
+        public GOLocalizableSprite LevelUpSprite;
         public UISprite AbiltySprite;
         public UILabel AbilityLabel;
+        public GOFrameBackground AbilityBackground;
+        // There's also a GOThinSpriteBackground with Shadow (go.GetChild(1))
+        // And Highlight sprite (go.GetChild(2))
+        // And Overlay sprite (go.GetChild(3))
     }
 
     private class BattleEndValue

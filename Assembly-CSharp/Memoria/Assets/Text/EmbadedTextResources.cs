@@ -50,7 +50,7 @@ namespace Memoria.Assets
 
         public static String GetCurrentPath(String relativePath)
         {
-            return "EmbeddedAsset/Text/" + (CurrentSymbol ?? Localization.GetSymbol()) + relativePath;
+            return "EmbeddedAsset/Text/" + (CurrentSymbol ?? Localization.CurrentSymbol) + relativePath;
         }
     }
 }

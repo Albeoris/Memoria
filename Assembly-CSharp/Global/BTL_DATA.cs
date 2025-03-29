@@ -289,6 +289,7 @@ public partial class BTL_DATA
     public List<DelayedModifier> delayedModifierList = new List<DelayedModifier>();
 
     public BTL_DATA killer_track;
+    public Boolean bonus_given;
 
     public List<WEAPON_MODEL> weaponModels = new List<WEAPON_MODEL>();
 

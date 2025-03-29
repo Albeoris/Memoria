@@ -9,36 +9,27 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Object = System.Object;
 
 public class SaveLoadUI : UIScene
 {
     public SaveLoadUI.SerializeType Type
     {
-        get
-        {
-            return this.type;
-        }
-        set
-        {
-            this.type = value;
-        }
+        get => this.type;
+        set => this.type = value;
     }
 
     private void LoadDataStartDelgate(DataSerializerErrorCode errNo, Int32 slotID, Int32 saveID)
     {
         global::Debug.Log("LoadDataStartDelgate()");
-        PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(false, (Action)null);
+        PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(false, null);
     }
 
     private void LoadDataFinishDelegate(DataSerializerErrorCode errNo, Int32 slotID, Int32 saveID, Boolean isSuccess)
     {
         global::Debug.Log("LoadDataFinishDelegate()");
-        PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(true, (Action)null);
+        PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(true, null);
         if (!PersistenSingleton<EventEngine>.Instance.GetUserControl())
-        {
             PersistenSingleton<UIManager>.Instance.IsPlayerControlEnable = false;
-        }
         EventEngine instance = PersistenSingleton<EventEngine>.Instance;
         instance.ReplaceFieldMap();
         PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.FieldHUD);
@@ -47,17 +38,15 @@ public class SaveLoadUI : UIScene
     private void SaveDataStartDelegate(DataSerializerErrorCode errNo, Int32 slotID, Int32 saveID)
     {
         global::Debug.Log("SaveDataStartDelegate()");
-        PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(false, (Action)null);
+        PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(false, null);
     }
 
     private void SaveDataFinishDelegate(DataSerializerErrorCode errNo, Int32 slotID, Int32 saveID, Boolean isSuccess, SharedDataPreviewSlot preview)
     {
         global::Debug.Log("SaveDataFinishDelegate()");
-        PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(true, (Action)null);
+        PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(true, null);
         if (!PersistenSingleton<EventEngine>.Instance.GetUserControl())
-        {
             PersistenSingleton<UIManager>.Instance.IsPlayerControlEnable = false;
-        }
     }
 
     public override void Show(UIScene.SceneVoidDelegate afterFinished = null)
@@ -65,63 +54,76 @@ public class SaveLoadUI : UIScene
         if (FF9StateSystem.aaaaPlatform)
         {
             if (this.type == SaveLoadUI.SerializeType.Load)
-            {
                 FF9StateSystem.Serializer.Load(0, 0, new ISharedDataSerializer.OnSaveLoadStart(this.LoadDataStartDelgate), new ISharedDataSerializer.OnLoadFinish(this.LoadDataFinishDelegate));
-            }
             else
-            {
                 FF9StateSystem.Serializer.Save(0, 0, new ISharedDataSerializer.OnSaveLoadStart(this.SaveDataStartDelegate), new ISharedDataSerializer.OnSaveFinish(this.SaveDataFinishDelegate));
-            }
         }
         else
         {
-            UIScene.SceneVoidDelegate sceneVoidDelegate = delegate
+            UIScene.SceneVoidDelegate afterShowDelegate = delegate
             {
                 ButtonGroupState.SetPointerDepthToGroup(11, SaveLoadUI.FileGroupButton);
                 ButtonGroupState.SetPointerOffsetToGroup(new Vector2(48f, 0f), SaveLoadUI.SlotGroupButton);
                 ButtonGroupState.SetPointerOffsetToGroup(new Vector2(48f, 0f), SaveLoadUI.FileGroupButton);
-                ButtonGroupState.SetPointerOffsetToGroup(new Vector2(180f, 10f), SaveLoadUI.ConfirmDialogGroupButton);
-                ButtonGroupState.SetPointerLimitRectToGroup(this.FileListPanel.GetComponent<UIWidget>(), (Single)this.fileScrollList.ItemHeight, SaveLoadUI.FileGroupButton);
+                ButtonGroupState.SetPointerOffsetToGroup(new Vector2(-30f, 10f), SaveLoadUI.ConfirmDialogGroupButton);
+                ButtonGroupState.SetPointerLimitRectToGroup(this.FileListPanel.GetComponent<UIWidget>(), this.fileScrollList.ItemHeight, SaveLoadUI.FileGroupButton);
                 ButtonGroupState.SetScrollButtonToGroup(this.FileListPanel.GetChild(0).GetComponent<ScrollButton>(), SaveLoadUI.FileGroupButton);
-                Int32 index = (Int32)((FF9StateSystem.Settings.LatestSlot <= -1) ? 0 : FF9StateSystem.Settings.LatestSlot);
+                Int32 index = FF9StateSystem.Settings.LatestSlot < 0 ? 0 : FF9StateSystem.Settings.LatestSlot;
                 ButtonGroupState.SetCursorStartSelect(this.slotNameButtonList[index].gameObject, SaveLoadUI.SlotGroupButton);
                 ButtonGroupState.ActiveGroup = SaveLoadUI.SlotGroupButton;
             };
             if (afterFinished != null)
-            {
-                sceneVoidDelegate = (UIScene.SceneVoidDelegate)Delegate.Combine(sceneVoidDelegate, afterFinished);
-            }
+                afterShowDelegate += afterFinished;
             SceneDirector.FadeEventSetColor(FadeMode.Sub, Color.black);
-            base.Show(sceneVoidDelegate);
+            base.Show(afterShowDelegate);
             this.currentSlot = -1;
             this.currentFile = -1;
-            this.setSerialzeType(this.Type);
+            this.setSerializeType(this.Type);
             this.screenFadePanel.depth = 7;
-            this.DisplaySlot();
-            this.DisplayHelp();
+            this.DisplaySlot(true);
+            this.DisplayHelp(true);
         }
     }
 
     public override void Hide(UIScene.SceneVoidDelegate afterFinished = null)
     {
-        UIScene.SceneVoidDelegate sceneVoidDelegate = delegate
+        UIScene.SceneVoidDelegate afterHideDelegate = delegate
         {
-            FF9StateSystem.Common.FF9.attr &= 4294967293u;
+            FF9StateSystem.Common.FF9.attr &= 0xFFFFFFFDu;
             if (this.type == SaveLoadUI.SerializeType.Save)
-            {
                 SceneDirector.FF9Wipe_FadeInEx(24);
-            }
         };
         if (PersistenSingleton<UIManager>.Instance.PreviousState == UIManager.UIState.WorldHUD && ButtonGroupState.HelpEnabled)
-        {
             ButtonGroupState.ToggleHelp(false);
-        }
         if (afterFinished != null)
-        {
-            sceneVoidDelegate = (UIScene.SceneVoidDelegate)Delegate.Combine(sceneVoidDelegate, afterFinished);
-        }
-        base.Hide(sceneVoidDelegate);
+            afterHideDelegate += afterFinished;
+        base.Hide(afterHideDelegate);
         this.screenFadePanel.depth = 10;
+    }
+
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        if (this.currentSlot >= 0)
+            this.helpSlotLabel.rawText = String.Format(Localization.Get("SlotNo"), this.currentSlot + 1);
+        if (this.dataInfos != null && this.FileListPanel.activeInHierarchy)
+        {
+            Int32 saveID = 0;
+            foreach (SharedDataPreviewSlot dataInfo in this.dataInfos)
+            {
+                SaveLoadUI.FileInfoHUD fileInfoHUD = this.fileInfoHudList[saveID];
+                fileInfoHUD.FileNoLabel.rawText = String.Format(Localization.Get("FileNo"), (saveID + 1).ToString("0#"));
+                fileInfoHUD.GilLabel.rawText = Localization.GetWithDefault("GilSymbol").Replace("%", dataInfo.Gil.ToString());
+                if (fileInfoHUD.Button.Help.TextKey == "CorruptFile")
+                    fileInfoHUD.EmptySlotTextLabel.rawText = Localization.Get("CorruptFile");
+                else if (fileInfoHUD.Button.Help.TextKey == "NoSaveHelp")
+                    fileInfoHUD.EmptySlotTextLabel.rawText = Localization.Get("EmptyFile");
+                saveID++;
+            }
+        }
+        DisplaySlot(false);
+        DisplayHelp(false);
     }
 
     public override Boolean OnKeyConfirm(GameObject go)
@@ -160,7 +162,7 @@ public class SaveLoadUI : UIScene
                         this.timeCounter = Time.time;
                         base.Loading = true;
                         FF9StateSystem.Settings.UpdateTickTime();
-                        FF9StateSystem.Serializer.Save(this.currentSlot, this.currentFile, (ISharedDataSerializer.OnSaveLoadStart)null, new ISharedDataSerializer.OnSaveFinish(this.OnFinishedSaveFile));
+                        FF9StateSystem.Serializer.Save(this.currentSlot, this.currentFile, null, new ISharedDataSerializer.OnSaveFinish(this.OnFinishedSaveFile));
                     }
                 }
                 else if (this.isFileExistList[this.currentFile])
@@ -174,7 +176,7 @@ public class SaveLoadUI : UIScene
                     this.timeCounter = Time.time;
                     base.Loading = true;
                     SoundLib.AllSoundDispatchPlayer.StopAllSounds();
-                    FF9StateSystem.Serializer.Load(this.currentSlot, this.currentFile, (ISharedDataSerializer.OnSaveLoadStart)null, new ISharedDataSerializer.OnLoadFinish(this.OnFinishedLoadFile));
+                    FF9StateSystem.Serializer.Load(this.currentSlot, this.currentFile, null, new ISharedDataSerializer.OnLoadFinish(this.OnFinishedLoadFile));
                 }
                 else
                 {
@@ -195,7 +197,7 @@ public class SaveLoadUI : UIScene
                     this.timeCounter = Time.time;
                     base.Loading = true;
                     FF9StateSystem.Settings.UpdateTickTime();
-                    FF9StateSystem.Serializer.Save(this.currentSlot, this.currentFile, (ISharedDataSerializer.OnSaveLoadStart)null, new ISharedDataSerializer.OnSaveFinish(this.OnFinishedSaveFile));
+                    FF9StateSystem.Serializer.Save(this.currentSlot, this.currentFile, null, new ISharedDataSerializer.OnSaveFinish(this.OnFinishedSaveFile));
                 }
                 else
                 {
@@ -253,7 +255,7 @@ public class SaveLoadUI : UIScene
                 if (this.currentSlot != go.transform.GetSiblingIndex())
                 {
                     this.currentSlot = go.transform.GetSiblingIndex();
-                    this.helpSlotLabel.text = String.Format(Localization.Get("SlotNo"), this.currentSlot + 1);
+                    this.helpSlotLabel.rawText = String.Format(Localization.Get("SlotNo"), this.currentSlot + 1);
                 }
             }
             else if (ButtonGroupState.ActiveGroup == SaveLoadUI.FileGroupButton)
@@ -264,52 +266,42 @@ public class SaveLoadUI : UIScene
         return true;
     }
 
-    private void DisplayHelp()
+    private void DisplayHelp(Boolean updateActive)
     {
-        Int32 num = 0;
+        Int32 saveID = 0;
         foreach (ButtonGroupState buttonGroupState in this.slotNameButtonList)
         {
             if (this.type == SaveLoadUI.SerializeType.Save)
-            {
-                buttonGroupState.Help.Text = String.Format(Localization.Get("SaveSlotHelp"), num + 1);
-            }
+                buttonGroupState.Help.Text = String.Format(Localization.Get("SaveSlotHelp"), saveID + 1);
             else
-            {
-                buttonGroupState.Help.Text = String.Format(Localization.Get("LoadSlotHelp"), num + 1);
-            }
-            num++;
+                buttonGroupState.Help.Text = String.Format(Localization.Get("LoadSlotHelp"), saveID + 1);
+            saveID++;
         }
-        if (FF9StateSystem.PCPlatform)
-        {
-            this.HelpDespLabelGameObject.SetActive(true);
-        }
-        else
-        {
-            this.HelpDespLabelGameObject.SetActive(false);
-        }
+        if (updateActive)
+            this.HelpDespLabelGameObject.SetActive(FF9StateSystem.PCPlatform);
     }
 
     private void DisplayFile(List<SharedDataPreviewSlot> data)
     {
-        ScrollButton component = this.FileListPanel.GetChild(0).GetComponent<ScrollButton>();
-        UIPanel component2 = this.FileListPanel.GetChild(1).GetComponent<UIPanel>();
-        Int32 num = 0;
-        Double num2 = 0.0;
+        ScrollButton scrollBtn = this.FileListPanel.GetChild(0).GetComponent<ScrollButton>();
+        //UIPanel slotPanel = this.FileListPanel.GetChild(1).GetComponent<UIPanel>();
+        Int32 saveID = 0;
+        Double latestSlotTime = 0.0;
         this.currentFile = 0;
         this.isFileExistList.Clear();
         this.isFileCorrupt.Clear();
         foreach (SharedDataPreviewSlot sharedDataPreviewSlot in data)
         {
-            if (sharedDataPreviewSlot != null && sharedDataPreviewSlot.Timestamp > num2)
+            if (sharedDataPreviewSlot != null && sharedDataPreviewSlot.Timestamp > latestSlotTime)
             {
-                num2 = sharedDataPreviewSlot.Timestamp;
-                this.currentFile = num;
+                latestSlotTime = sharedDataPreviewSlot.Timestamp;
+                this.currentFile = saveID;
             }
-            this.isFileExistList.Add(sharedDataPreviewSlot != (SharedDataPreviewSlot)null);
+            this.isFileExistList.Add(sharedDataPreviewSlot != null);
             this.isFileCorrupt.Add(false);
-            this.DisplayFileInfo(num++, sharedDataPreviewSlot);
+            this.DisplayFileInfo(saveID++, sharedDataPreviewSlot);
         }
-        component.CheckScrollPosition();
+        scrollBtn.CheckScrollPosition();
         ButtonGroupState.SetCursorStartSelect(this.fileInfoHudList[this.currentFile].Self, SaveLoadUI.FileGroupButton);
         ButtonGroupState.RemoveCursorMemorize(SaveLoadUI.FileGroupButton);
         ButtonGroupState.ActiveGroup = SaveLoadUI.FileGroupButton;
@@ -320,51 +312,41 @@ public class SaveLoadUI : UIScene
     {
         SaveLoadUI.FileInfoHUD fileInfoHUD = this.fileInfoHudList[index];
         fileInfoHUD.Self.SetActive(true);
-        fileInfoHUD.FileNoLabel.text = String.Format(Localization.Get("FileNo"), (index + 1).ToString("0#"));
+        fileInfoHUD.FileNoLabel.rawText = String.Format(Localization.Get("FileNo"), (index + 1).ToString("0#"));
         if (file != null && !this.isFileCorrupt[index] && !file.IsPreviewCorrupted)
         {
             fileInfoHUD.Container.SetActive(true);
             fileInfoHUD.EmptySlotTextGameObject.SetActive(false);
-            Int32 num = 1;
-            String text = String.Empty;
-            String text2 = String.Empty;
-            Boolean flag = false;
-            Int32 num2 = 0;
+            Int32 leaderLevel = 1;
+            String leaderName = String.Empty;
+            String helpStr = String.Empty;
+            Boolean leaderSelected = false;
+            Int32 characterIndex = 0;
             foreach (SharedDataPreviewCharacterInfo sharedDataPreviewCharacterInfo in file.CharacterInfoList)
             {
-                fileInfoHUD.CharacterAvatarList[num2].alpha = 0f;
-                fileInfoHUD.CharacterAvatarList[num2].spriteName = String.Empty;
+                fileInfoHUD.CharacterAvatarList[characterIndex].alpha = 0f;
+                fileInfoHUD.CharacterAvatarList[characterIndex].spriteName = String.Empty;
                 if (sharedDataPreviewCharacterInfo != null)
                 {
-                    if (!flag)
+                    if (!leaderSelected)
                     {
-                        num = sharedDataPreviewCharacterInfo.Level;
-                        text = sharedDataPreviewCharacterInfo.Name;
-                        flag = true;
+                        leaderLevel = sharedDataPreviewCharacterInfo.Level;
+                        leaderName = sharedDataPreviewCharacterInfo.Name;
+                        leaderSelected = true;
                     }
-                    fileInfoHUD.CharacterAvatarList[num2].alpha = 1f;
-                    FF9UIDataTool.DisplayCharacterAvatar((CharacterSerialNumber)sharedDataPreviewCharacterInfo.SerialID, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), fileInfoHUD.CharacterAvatarList[num2], false);
-                    String text3 = text2;
-                    text2 = String.Concat(new String[]
-                    {
-                        text3,
-                        sharedDataPreviewCharacterInfo.Name,
-                        "[XTAB=80][YADD=4]",
-                        Localization.Get("LvDialogIcon"),
-                        "[YSUB=2][FEED=1] ",
-                        sharedDataPreviewCharacterInfo.Level.ToString(),
-                        "\n"
-                    });
+                    fileInfoHUD.CharacterAvatarList[characterIndex].alpha = 1f;
+                    FF9UIDataTool.DisplayCharacterAvatar((CharacterSerialNumber)sharedDataPreviewCharacterInfo.SerialID, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), fileInfoHUD.CharacterAvatarList[characterIndex], false);
+                    helpStr += $"{sharedDataPreviewCharacterInfo.Name}[XTAB=80][YADD=4]{Localization.Get("LvDialogIcon")}[YSUB=2][FEED=1] {sharedDataPreviewCharacterInfo.Level}\n";
                 }
-                num2++;
+                characterIndex++;
             }
-            fileInfoHUD.LeaderNameLabel.text = text;
-            fileInfoHUD.LeaderLvLabel.text = num.ToString();
-            fileInfoHUD.GilLabel.text = Localization.GetWithDefault("GilSymbol").Replace("%", file.Gil.ToString());
-            fileInfoHUD.LocationNameLabel.text = file.Location;
+            fileInfoHUD.LeaderNameLabel.rawText = leaderName;
+            fileInfoHUD.LeaderLvLabel.rawText = leaderLevel.ToString();
+            fileInfoHUD.GilLabel.rawText = Localization.GetWithDefault("GilSymbol").Replace("%", file.Gil.ToString());
+            fileInfoHUD.LocationNameLabel.rawText = file.Location;
             Color color = FF9TextTool.White;
-            Double num3 = (Double)(file.PlayDuration % 360000f);
-            switch ((Int32)(file.PlayDuration / 360000f))
+            Double displayTime = file.PlayDuration % 360000;
+            switch (file.PlayDuration / 360000)
             {
                 case 0:
                     color = FF9TextTool.White;
@@ -385,25 +367,18 @@ public class SaveLoadUI : UIScene
                     color = FF9TextTool.Green;
                     break;
                 default:
-                    num3 = 359999.0;
+                    displayTime = 359999.0;
                     color = FF9TextTool.Green;
                     break;
             }
-            String text4 = ((Int32)(num3 / 3600.0)).ToString("0#");
-            String text5 = ((Int32)(num3 / 60.0) % 60).ToString("0#");
-            String text6 = ((Int32)num3 % 60).ToString("0#");
+            String hourLabel = ((Int32)(displayTime / 3600.0)).ToString("0#");
+            String minuteLabel = ((Int32)(displayTime / 60.0) % 60).ToString("0#");
+            String secondLabel = ((Int32)displayTime % 60).ToString("0#");
             fileInfoHUD.TimeLabel.color = color;
-            fileInfoHUD.TimeLabel.text = String.Concat(new String[]
-            {
-                text4,
-                " : ",
-                text5,
-                " : ",
-                text6
-            });
-            this.DisplayWindowBackground(fileInfoHUD.Self, (file.win_type != 0UL) ? FF9UIDataTool.BlueAtlas : FF9UIDataTool.GrayAtlas);
+            fileInfoHUD.TimeLabel.rawText = $"{hourLabel} : {minuteLabel} : {secondLabel}";
+            this.DisplayWindowBackground(fileInfoHUD.Self, file.win_type != 0 ? FF9UIDataTool.BlueAtlas : FF9UIDataTool.GrayAtlas);
             fileInfoHUD.Button.Help.TextKey = String.Empty;
-            fileInfoHUD.Button.Help.Text = text2.Remove(text2.Length - 1);
+            fileInfoHUD.Button.Help.Text = helpStr.Remove(helpStr.Length - 1);
         }
         else if (file == null)
         {
@@ -412,25 +387,25 @@ public class SaveLoadUI : UIScene
             if (this.isFileCorrupt[index])
             {
                 fileInfoHUD.Button.Help.TextKey = "CorruptFile";
-                fileInfoHUD.EmptySlotTextLabel.text = Localization.Get("CorruptFile");
+                fileInfoHUD.EmptySlotTextLabel.rawText = Localization.Get("CorruptFile");
                 fileInfoHUD.EmptySlotTextLabel.color = FF9TextTool.Red;
             }
             else
             {
                 fileInfoHUD.Button.Help.TextKey = "NoSaveHelp";
-                fileInfoHUD.EmptySlotTextLabel.text = Localization.Get("EmptyFile");
+                fileInfoHUD.EmptySlotTextLabel.rawText = Localization.Get("EmptyFile");
                 fileInfoHUD.EmptySlotTextLabel.color = FF9TextTool.White;
             }
-            this.DisplayWindowBackground(fileInfoHUD.Self, (UIAtlas)null);
+            this.DisplayWindowBackground(fileInfoHUD.Self, null);
         }
         else if (file.IsPreviewCorrupted)
         {
             fileInfoHUD.Container.SetActive(false);
             fileInfoHUD.EmptySlotTextGameObject.SetActive(true);
             fileInfoHUD.Button.Help.TextKey = "CorruptFile";
-            fileInfoHUD.EmptySlotTextLabel.text = Localization.Get("CorruptFile");
+            fileInfoHUD.EmptySlotTextLabel.rawText = Localization.Get("CorruptFile");
             fileInfoHUD.EmptySlotTextLabel.color = FF9TextTool.Red;
-            this.DisplayWindowBackground(fileInfoHUD.Self, (UIAtlas)null);
+            this.DisplayWindowBackground(fileInfoHUD.Self, null);
         }
     }
 
@@ -512,19 +487,22 @@ public class SaveLoadUI : UIScene
         yield break;
     }
 
-    private void DisplaySlot()
+    private void DisplaySlot(Boolean updateActive)
     {
-        Int32 num = 0;
+        Int32 slotID = 0;
         foreach (UILabel uilabel in this.slotNameLabelList)
         {
-            uilabel.text = String.Format(Localization.Get("SlotNo"), num + 1);
+            uilabel.rawText = String.Format(Localization.Get("SlotNo"), slotID + 1);
             uilabel.color = FF9TextTool.White;
-            num++;
+            slotID++;
         }
-        this.currentSlot = FF9StateSystem.Settings.LatestSlot;
-        this.helpSlotLabel.text = String.Format(Localization.Get("SlotNo"), this.currentSlot + 1);
-        this.SlotListPanel.SetActive(true);
-        this.FileListPanel.SetActive(false);
+        this.helpSlotLabel.rawText = String.Format(Localization.Get("SlotNo"), this.currentSlot + 1);
+        if (updateActive)
+        {
+            this.currentSlot = FF9StateSystem.Settings.LatestSlot;
+            this.SlotListPanel.SetActive(true);
+            this.FileListPanel.SetActive(false);
+        }
         FF9UIDataTool.DisplayTextLocalize(this.HelpTitleLabel, "SaveHelpSlot");
     }
 
@@ -548,6 +526,7 @@ public class SaveLoadUI : UIScene
             if (this.type == SaveLoadUI.SerializeType.Load)
             {
                 Boolean isNodata = true;
+                this.dataInfos = data;
                 foreach (SharedDataPreviewSlot slot in data)
                 {
                     if (slot != null)
@@ -567,11 +546,10 @@ public class SaveLoadUI : UIScene
             {
                 data = new List<SharedDataPreviewSlot>();
                 for (Int32 index = 0; index < 15; index++)
-                {
-                    data.Add((SharedDataPreviewSlot)null);
-                }
+                    data.Add(null);
             }
             ButtonGroupState.MuteActiveSound = true;
+            this.dataInfos = data;
             base.Loading = true;
             base.FadingComponent.FadePingPong(delegate
             {
@@ -629,7 +607,7 @@ public class SaveLoadUI : UIScene
             global::Debug.LogError("Cannot load file");
             this.DisplayCorruptAccessDialog(SaveLoadUI.FileGroupButton, SaveLoadUI.SerializeType.Load, errNo);
             this.isFileCorrupt[saveID] = true;
-            this.DisplayFileInfo(this.currentFile, (SharedDataPreviewSlot)null);
+            this.DisplayFileInfo(this.currentFile, null);
         }
         yield break;
     }
@@ -688,7 +666,7 @@ public class SaveLoadUI : UIScene
         yield break;
     }
 
-    private void setSerialzeType(SaveLoadUI.SerializeType serailizeType)
+    private void setSerializeType(SaveLoadUI.SerializeType serailizeType)
     {
         if (serailizeType == SaveLoadUI.SerializeType.Load)
             FF9UIDataTool.DisplayTextLocalize(this.SerailizeTitleLabel, "Load");
@@ -706,8 +684,8 @@ public class SaveLoadUI : UIScene
         this.loadingAccessText = this.LoadingAccessPanel.GetChild(1);
         foreach (Transform slotTransform in this.SlotListPanel.transform)
         {
-            Int32 siblingIndex = slotTransform.GetSiblingIndex();
-            if (siblingIndex != 10)
+            Int32 slotID = slotTransform.GetSiblingIndex();
+            if (slotID != 10)
             {
                 this.slotNameLabelList.Add(slotTransform.gameObject.GetChild(0).GetComponent<UILabel>());
                 this.slotNameButtonList.Add(slotTransform.gameObject.GetComponent<ButtonGroupState>());
@@ -720,14 +698,17 @@ public class SaveLoadUI : UIScene
             UIEventListener.Get(fileTransform.gameObject).onClick += this.onClick;
         }
         this.screenFadePanel = this.ScreenFadeGameObject.GetParent().GetComponent<UIPanel>();
-        UIEventListener.Get(this.OverWriteDialog.GetChild(1)).onClick += this.onClick;
-        UIEventListener.Get(this.OverWriteDialog.GetChild(2)).onClick += this.onClick;
+        UIScene.SetupYesNoLabels(this.OverWriteDialog.transform, this.OverWriteDialog.GetChild(1), this.OverWriteDialog.GetChild(2), this.onClick);
         this.background = new GOMenuBackground(this.transform.GetChild(8).gameObject, "save_load_bg");
+        this.FileListPanel.GetChild(2).GetChild(4).GetChild(0).GetComponent<UILabel>().rightAnchor.Set(1f, -68);
+        this.OverWriteDialog.GetChild(3).GetChild(0).GetComponent<UILabel>().rightAnchor.Set(1f, -32);
+        this.gameObject.GetChild(5).GetChild(2).GetChild(0).GetComponent<UILabel>().rightAnchor.Set(1f, -32);
+        this.LoadingAccessPanel.GetChild(3).GetChild(0).GetComponent<UILabel>().rightAnchor.Set(1f, -32);
     }
 
-    private static String SlotGroupButton = "Save.Slot";
-    private static String FileGroupButton = "Save.File";
-    private static String ConfirmDialogGroupButton = "Save.Choice";
+    private const String SlotGroupButton = "Save.Slot";
+    private const String FileGroupButton = "Save.File";
+    private const String ConfirmDialogGroupButton = "Save.Choice";
 
     public GameObject SerailizeTitleLabel;
     public GameObject HelpTitleLabel;
@@ -752,6 +733,9 @@ public class SaveLoadUI : UIScene
     private List<SaveLoadUI.FileInfoHUD> fileInfoHudList = new List<SaveLoadUI.FileInfoHUD>();
     private List<UILabel> slotNameLabelList = new List<UILabel>();
     private List<ButtonGroupState> slotNameButtonList = new List<ButtonGroupState>();
+
+    [NonSerialized]
+    private List<SharedDataPreviewSlot> dataInfos;
 
     private UIPanel screenFadePanel;
 
@@ -786,6 +770,8 @@ public class SaveLoadUI : UIScene
                 go.GetChild(0).GetChild(7).GetChild(2).GetComponent<UISprite>(),
                 go.GetChild(0).GetChild(7).GetChild(3).GetComponent<UISprite>()
             };
+            this.LeaderNameLabel.fixedAlignment = true;
+            this.FileNoLabel.SetAnchor(go, 0f, 1f, 1f, 1f, 28, -54, -84, -14);
         }
 
         public GameObject Self;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 
 public class DialogAnimator : MonoBehaviour
@@ -9,47 +10,23 @@ public class DialogAnimator : MonoBehaviour
         get
         {
             if (HonoBehaviorSystem.Instance.IsFastForwardModeActive())
-            {
-                return 0.15f / (Single)HonoBehaviorSystem.Instance.GetFastForwardFactor();
-            }
-            return 0.15f;
+                return DialogAnimator.DEFAULT_ANIMATION_TIME / HonoBehaviorSystem.Instance.GetFastForwardFactor();
+            return DialogAnimator.DEFAULT_ANIMATION_TIME;
         }
     }
 
-    public static Single HideAnimationTime
-    {
-        get
-        {
-            return DialogAnimator.ShowAnimationTime;
-        }
-    }
+    public static Single HideAnimationTime => DialogAnimator.ShowAnimationTime;
 
-    public TypewriterEffect PhraseTextEffect
-    {
-        get
-        {
-            return this.phraseTextEffect;
-        }
-    }
-
+    /// <summary>This is about the dialog frame growing in 0.15 seconds</summary>
     public Boolean ShowWithoutAnimation
     {
-        get
-        {
-            return this.showWithoutAnimation;
-        }
-        set
-        {
-            this.showWithoutAnimation = value;
-        }
+        get => this.showWithoutAnimation;
+        set => this.showWithoutAnimation = value;
     }
 
     public Boolean Pause
     {
-        set
-        {
-            this.pauseAnimation = value;
-        }
+        set => this.pauseAnimation = value;
     }
 
     private void Awake()
@@ -61,51 +38,28 @@ public class DialogAnimator : MonoBehaviour
         this.phraseLabel = this.dialog.PhraseGameObject.GetComponent<UILabel>();
         this.phraseTextEffect = this.dialog.PhraseGameObject.GetComponent<TypewriterEffect>();
         this.tailSprite = this.dialog.TailGameObject.GetComponent<UISprite>();
-        this.phraseTextEffect.onCharacterFinished = new TypewriterEffect.IntDelegate(this.dialog.OnCharacterShown);
-        EventDelegate.Add(this.phraseTextEffect.onFinished, new EventDelegate.Callback(this.onTextFinished));
-    }
-
-    private void onTextFinished()
-    {
-        if (this.progress >= 1f && this.dialog.CurrentState == Dialog.State.TextAnimation)
-        {
-            this.dialog.AfterSentenseShown();
-        }
     }
 
     public void ShowDialog()
     {
         this.progress = 0.3f;
-        base.StartCoroutine("StartShowDialog");
+        base.StartCoroutine(StartShowDialog());
     }
 
     public void HideDialog()
     {
         this.progress = 0f;
         if (base.gameObject.activeInHierarchy)
-        {
-            base.StartCoroutine("StartHideDialog");
-        }
+            base.StartCoroutine(StartHideDialog());
     }
 
     public void ShowNewPage()
     {
-        base.StartCoroutine("StartShowNewPage");
+        base.StartCoroutine(StartShowNewPage());
     }
 
     private IEnumerator StartShowDialog()
     {
-        if (this.dialog.TypeEffect)
-        {
-            this.phraseTextEffect.enabled = true;
-            this.phraseTextEffect.Pause();
-            this.phraseTextEffect.DynamicCharsPerSecond = this.dialog.MessageSpeedDict;
-            this.phraseTextEffect.WaitList = this.dialog.MessageWaitDict;
-        }
-        else
-        {
-            this.phraseTextEffect.enabled = false;
-        }
         Boolean isTransparentDialog = this.dialog.Style == Dialog.WindowStyle.WindowStyleTransparent;
         if (this.showWithoutAnimation)
         {
@@ -119,10 +73,8 @@ public class DialogAnimator : MonoBehaviour
         while (this.progress < 1f)
         {
             while (this.pauseAnimation)
-            {
                 yield return new WaitForEndOfFrame();
-            }
-            while ((FF9StateSystem.Field.FF9Field.attr & 1u) != 0u && this.dialog.Id != 9 && (MBG.IsNull || !MBG.Instance.isFMV055A))
+            while ((FF9StateSystem.Field.FF9Field.attr & 1u) != 0u && this.dialog.Id != DialogManager.UIDialogId && (MBG.IsNull || !MBG.Instance.isFMV055A))
             {
                 this.borderSprite.alpha = 0f;
                 this.tailSprite.alpha = 0f;
@@ -147,9 +99,7 @@ public class DialogAnimator : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
         while (this.pauseAnimation)
-        {
             yield return new WaitForEndOfFrame();
-        }
         if (this.showWithoutAnimation)
         {
             this.progress = 0.99f;
@@ -158,20 +108,17 @@ public class DialogAnimator : MonoBehaviour
                 this.borderSprite.alpha = 1f;
                 this.bodySprite.alpha = 1f;
                 if (this.dialog.Style == Dialog.WindowStyle.WindowStyleAuto)
-                {
                     this.tailSprite.alpha = 1f;
-                }
             }
         }
         this.bodySprite.width = (Int32)this.dialog.Size.x;
         this.bodySprite.height = (Int32)this.dialog.Size.y;
         this.clipPanel.baseClipRegion = new Vector4(this.clipPanel.baseClipRegion.x, this.getCenterValue(this.dialog.Tail, 1f), this.dialog.ClipSize.x, this.dialog.ClipSize.y);
-        this.phraseLabel.text = this.dialog.Phrase;
-        if (this.dialog.TypeEffect)
-        {
-            this.phraseTextEffect.Resume();
-        }
         this.dialog.CurrentState = Dialog.State.TextAnimation;
+        if (this.dialog.TypeEffect)
+            this.phraseTextEffect.SetActive(true, true);
+        else
+            this.dialog.CurrentParser.AdvanceProgressToMax();
         yield return new WaitForEndOfFrame();
         this.pauseAnimation = false;
         this.dialog.AfterShown();
@@ -181,17 +128,15 @@ public class DialogAnimator : MonoBehaviour
     private IEnumerator StartShowNewPage()
     {
         yield return new WaitForEndOfFrame();
-        this.phraseLabel.text = this.dialog.Phrase;
         if (this.dialog.TypeEffect)
         {
-            this.phraseTextEffect.ResetToBeginning();
-            this.phraseTextEffect.enabled = true;
             this.dialog.CurrentState = Dialog.State.TextAnimation;
+            this.phraseTextEffect.SetActive(true, true);
         }
         else
         {
+            this.phraseLabel.Parser.AdvanceProgressToMax();
             this.dialog.CurrentState = Dialog.State.CompleteAnimation;
-            this.dialog.ShowAllIcon();
         }
         yield break;
     }
@@ -202,9 +147,7 @@ public class DialogAnimator : MonoBehaviour
         while (this.progress < 0.6f)
         {
             while (this.pauseAnimation)
-            {
                 yield return new WaitForEndOfFrame();
-            }
             Single scaleValue = 1f - this.progress;
             Single centerYValue = this.getCenterValue(this.dialog.Tail, scaleValue);
             Vector2 bodySizeValue = new Vector2(scaleValue * this.dialog.Size.x, scaleValue * this.dialog.Size.y);
@@ -222,11 +165,8 @@ public class DialogAnimator : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
         while (this.pauseAnimation)
-        {
             yield return new WaitForEndOfFrame();
-        }
-        this.phraseLabel.text = String.Empty;
-        this.phraseTextEffect.Restart();
+        this.phraseLabel.rawText = String.Empty;
         this.pauseAnimation = false;
         this.dialog.AfterHidden();
         yield break;
@@ -270,7 +210,7 @@ public class DialogAnimator : MonoBehaviour
         return new Vector2(this.dialog.Size.x / 2f * ratio, this.dialog.Size.y / 2f * ratio);
     }
 
-    public const Single defaultAnimationTime = 0.15f;
+    public const Single DEFAULT_ANIMATION_TIME = 0.15f;
 
     [SerializeField]
     private Single progress;
@@ -278,15 +218,11 @@ public class DialogAnimator : MonoBehaviour
     private Boolean showWithoutAnimation;
 
     private Dialog dialog;
-
     private UIPanel clipPanel;
 
     private UISprite bodySprite;
-
     private UISprite borderSprite;
-
     private UILabel phraseLabel;
-
     private UISprite tailSprite;
 
     private TypewriterEffect phraseTextEffect;

@@ -11,7 +11,7 @@ namespace Memoria.Assets
 
         protected override TxtEntry[] PrepareEntries()
         {
-            String symbol = EmbadedTextResources.CurrentSymbol ?? Localization.GetSymbol();
+            String symbol = EmbadedTextResources.CurrentSymbol ?? Localization.CurrentSymbol;
 
             SortedList<String, String> dic = Localization.Provider.ProvideDictionary(symbol);
             IList<String> keys = dic.Keys;

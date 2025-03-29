@@ -1,9 +1,10 @@
-﻿using Memoria.Assets;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Memoria.Assets;
+using Memoria.Scenes;
 
 public class TutorialUI : UIScene
 {
@@ -40,6 +41,7 @@ public class TutorialUI : UIScene
 
     public override void Hide(UIScene.SceneVoidDelegate afterFinished = null)
     {
+        this.tutorialDialog = null;
         UIScene.SceneVoidDelegate sceneVoidDelegate = delegate
         {
             if (!this.isFromPause)
@@ -87,6 +89,30 @@ public class TutorialUI : UIScene
         base.Hide(sceneVoidDelegate);
     }
 
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        if (this.DisplayMode == TutorialUI.Mode.Battle)
+        {
+            String platformUpper = FF9StateSystem.MobilePlatform ? "Mobile" : "PC";
+            this.battleTutorialDialogImage2.spriteName = Localization.Get($"TutorialTapOnCharacterIcon{platformUpper}");
+            this.battleLeftLabel.rawText = Localization.Get($"TutorialLeftParagraph{platformUpper}");
+            this.battleRightLabel.rawText = Localization.Get($"TutorialRightParagraph{platformUpper}");
+        }
+        else if (this.DisplayMode == TutorialUI.Mode.BasicControl)
+        {
+            String key = this.GetBasicControlTutorialKey();
+            if (this.tutorialDialog != null && !String.IsNullOrEmpty(key))
+                this.tutorialDialog.ChangePhraseSoft(Localization.Get(key));
+        }
+        else if (this.DisplayMode == TutorialUI.Mode.QuadMist)
+        {
+            if (this.tutorialDialog != null && this.QuadmistTutorialID <= 3)
+                this.tutorialDialog.ChangePhraseSoft(Localization.Get(TutorialUI.QuadMistLocalizeKey + this.QuadmistTutorialID));
+        }
+    }
+
     public override Boolean OnKeyConfirm(GameObject go)
     {
         if (base.OnKeyConfirm(go))
@@ -131,6 +157,7 @@ public class TutorialUI : UIScene
         this.battleTutorialImage2Pointer = this.ContentPanel.GetChild(1).GetChild(2).GetComponent<UISprite>();
         this.battleBottomLocalize = this.ContentPanel.GetChild(3).GetComponent<UILocalize>();
         this.battleOkButton = this.ContentPanel.GetChild(4).GetComponent<UIButton>();
+        this.OkButton = new GOIsolatedButton(this.ContentPanel.GetChild(4));
     }
 
     private void HideTutorial()
@@ -147,14 +174,14 @@ public class TutorialUI : UIScene
     private void AnimatePanel(Vector3 scale)
     {
         this.ContentPanel.GetParent().SetActive(true);
-        EventDelegate.Add(TweenScale.Begin(this.ContentPanel, this.duration, scale).onFinished, new EventDelegate.Callback(this.AfterShowBattleTutorial));
+        EventDelegate.Add(TweenScale.Begin(this.ContentPanel, this.duration, scale).onFinished, this.AfterShowBattleTutorial);
     }
 
     public void OnOKButtonClick()
     {
         if (this.DisplayMode == TutorialUI.Mode.Libra && ++this.libraPage < this.libraMessages.Count)
         {
-            this.battleBottomLabel.text = this.libraMessages[this.libraPage];
+            this.battleBottomLabel.rawText = this.libraMessages[this.libraPage];
         }
         else
         {
@@ -176,12 +203,14 @@ public class TutorialUI : UIScene
 
     private void AfterShowBattleTutorial()
     {
+        this.OkButton.Label.Label.Parser.ResetBeforeVariableTags();
+        this.battleBottomLabel.Parser.ResetBeforeVariableTags();
         base.Loading = false;
     }
 
     private void DisplayBattleTutorial()
     {
-        String suffix = Localization.CurrentLanguage == "Japanese" ? "_jp" : String.Empty;
+        String suffix = Localization.CurrentDisplaySymbol == "JP" ? "_jp" : String.Empty;
         String platform = FF9StateSystem.MobilePlatform ? "mobile" : "pc";
         String platformUpper = FF9StateSystem.MobilePlatform ? "Mobile" : "PC";
         this.headerLocalize.enabled = true;
@@ -195,8 +224,8 @@ public class TutorialUI : UIScene
         this.battleTutorialDialogImage2.spriteName = Localization.Get($"TutorialTapOnCharacterIcon{platformUpper}");
         this.battleTutorialImage2Dialog.spriteName = "tutorial_help_02";
         this.battleTutorialImage2Pointer.spriteName = "tutorial_help_cursor";
-        this.battleLeftLabel.text = Localization.Get($"TutorialLeftParagraph{platformUpper}");
-        this.battleRightLabel.text = Localization.Get($"TutorialRightParagraph{platformUpper}");
+        this.battleLeftLabel.rawText = Localization.Get($"TutorialLeftParagraph{platformUpper}");
+        this.battleRightLabel.rawText = Localization.Get($"TutorialRightParagraph{platformUpper}");
         this.headerLabel.fontSize = 36;
         this.battleBottomLabel.SetAnchor(target: this.ContentPanel.transform, relTop: 0.33f);
         this.battleBottomLabel.fontSize = 24;
@@ -213,13 +242,13 @@ public class TutorialUI : UIScene
             return;
         base.Loading = true;
         String key = TutorialUI.QuadMistLocalizeKey + this.QuadmistTutorialID;
-        Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(key), 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.None);
-        dialog.AfterDialogShown = delegate (Int32 choice)
+        this.tutorialDialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(key), 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.None);
+        this.tutorialDialog.AfterDialogShown = delegate (Int32 choice)
         {
             base.Loading = false;
         };
-        dialog.AfterDialogHidden = new Dialog.DialogIntDelegate(this.AfterHideQuadmistTutorial);
-        TweenPosition tweenPos = dialog.GetComponent<TweenPosition>();
+        this.tutorialDialog.AfterDialogHidden = this.AfterHideQuadmistTutorial;
+        TweenPosition tweenPos = this.tutorialDialog.GetComponent<TweenPosition>();
         if (tweenPos != null)
             tweenPos.enabled = false;
     }
@@ -235,6 +264,19 @@ public class TutorialUI : UIScene
     private void DisplayBasicControlTutorial()
     {
         base.Loading = true;
+        String key = this.GetBasicControlTutorialKey();
+        if (String.IsNullOrEmpty(key))
+            return;
+        this.tutorialDialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(key), 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.None);
+        this.tutorialDialog.AfterDialogShown = delegate (Int32 choice)
+        {
+            base.Loading = false;
+        };
+        this.tutorialDialog.AfterDialogHidden = this.AfterHideBasicControlTutorial;
+    }
+
+    private String GetBasicControlTutorialKey()
+    {
         String prefix;
         if (FF9StateSystem.MobilePlatform)
         {
@@ -254,15 +296,9 @@ public class TutorialUI : UIScene
             prefix = "PC";
             this.lastPage = 2;
         }
-        if (this.BasicControlTutorialID > this.lastPage)
-            return;
-        String key = prefix + TutorialUI.BasicControlLocalizeKey + this.BasicControlTutorialID;
-        Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(key), 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.None);
-        dialog.AfterDialogShown = delegate (Int32 choice)
-        {
-            base.Loading = false;
-        };
-        dialog.AfterDialogHidden = new Dialog.DialogIntDelegate(this.AfterHideBasicControlTutorial);
+        if (this.BasicControlTutorialID <= this.lastPage)
+            return prefix + TutorialUI.BasicControlLocalizeKey + this.BasicControlTutorialID;
+        return null;
     }
 
     private void AfterHideBasicControlTutorial(Int32 choice)
@@ -274,10 +310,7 @@ public class TutorialUI : UIScene
         }
         else
         {
-            this.Hide(delegate
-            {
-                this.HideTutorial();
-            });
+            this.Hide(this.HideTutorial);
         }
     }
 
@@ -297,7 +330,7 @@ public class TutorialUI : UIScene
         photoSprite.height = this.libraPhoto.height;
         photoSprite.texture = this.libraPhoto;
         this.headerLocalize.enabled = false;
-        this.headerLabel.text = this.libraTitle;
+        this.headerLabel.rawText = this.libraTitle;
         this.headerLabel.fontSize = 44;
         this.battleTutorialImage1.spriteName = String.Empty;
         this.battleTutorialImage1.spriteName = "libra_photo";
@@ -310,14 +343,14 @@ public class TutorialUI : UIScene
         this.battleTutorialDialogImage2.spriteName = String.Empty;
         this.battleTutorialImage2Dialog.spriteName = String.Empty;
         this.battleTutorialImage2Pointer.spriteName = String.Empty;
-        this.battleLeftLabel.text = String.Empty;
-        this.battleRightLabel.text = String.Empty;
+        this.battleLeftLabel.rawText = String.Empty;
+        this.battleRightLabel.rawText = String.Empty;
         this.battleBottomLocalize.enabled = false;
         this.battleBottomLabel.SetAnchor(target: this.ContentPanel.transform, left: 100f + photoSprite.width);
-        this.battleBottomLabel.text = this.libraMessages[0];
+        this.battleBottomLabel.rawText = this.libraMessages[0];
         this.battleBottomLabel.fontSize = 42;
         this.battleBottomLabel.overflowMethod = UILabel.Overflow.ResizeFreely;
-        this.battleBottomLabel.PrintIconAfterProcessedText = true;
+        this.battleBottomLabel.gameObject.SetActive(true);
         this.libraPage = 0;
         base.Loading = true;
         this.AnimatePanel(new Vector3(1f, 1f, 1f));
@@ -371,6 +404,8 @@ public class TutorialUI : UIScene
     private UILocalize battleBottomLocalize;
     [NonSerialized]
     private UIButton battleOkButton;
+    [NonSerialized]
+    private GOIsolatedButton OkButton;
 
     [NonSerialized]
     public String libraTitle;
@@ -380,6 +415,29 @@ public class TutorialUI : UIScene
     public Texture2D libraPhoto;
     [NonSerialized]
     public Int32 libraPage;
+
+    [NonSerialized]
+    private Dialog tutorialDialog;
+
+    private class GOIsolatedButton : GOWidget
+    {
+        public readonly UIButton Button;
+        public readonly BoxCollider BoxCollider;
+        public readonly OnScreenButton OnScreenButton;
+        public readonly UISprite Highlight;
+        public readonly GOLocalizableLabel Label;
+        public readonly GOThinBackground Background;
+
+        public GOIsolatedButton(GameObject go) : base(go)
+        {
+            Button = go.GetComponent<UIButton>();
+            BoxCollider = go.GetComponent<BoxCollider>();
+            OnScreenButton = go.GetComponent<OnScreenButton>();
+            Highlight = go.GetChild(0).GetComponent<UISprite>();
+            Label = new GOLocalizableLabel(go.GetChild(1));
+            Background = new GOThinBackground(go.GetChild(2));
+        }
+    }
 
     public enum Mode
     {

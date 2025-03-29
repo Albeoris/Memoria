@@ -48,6 +48,9 @@ namespace Assets.Sources.Scripts.UI.Common
                     this.MagicStoneLabel = this.Content.GetChild(4).GetChild(1).GetComponent<UILabel>();
                     this.magicStoneSlashLabel = this.Content.GetChild(4).GetChild(2).GetComponent<UILabel>();
                     this.MagicStoneMaxLabel = this.Content.GetChild(4).GetChild(3).GetComponent<UILabel>();
+                    this.MagicStoneMaxLabel.fixedAlignment = true;
+                    this.MagicStoneLabel.overflowMethod = UILabel.Overflow.ResizeFreely;
+                    this.MagicStoneMaxLabel.overflowMethod = UILabel.Overflow.ResizeFreely;
                 }
                 if (this.Content.GetChild(5).name == "Empty")
                 {
@@ -73,6 +76,9 @@ namespace Assets.Sources.Scripts.UI.Common
             this.HPMaxLabel.overflowMethod = UILabel.Overflow.ResizeFreely;
             this.MPLabel.overflowMethod = UILabel.Overflow.ResizeFreely;
             this.MPMaxLabel.overflowMethod = UILabel.Overflow.ResizeFreely;
+            this.NameLabel.fixedAlignment = true;
+            this.HPMaxLabel.fixedAlignment = true;
+            this.MPMaxLabel.fixedAlignment = true;
         }
 
         public Color HPTextColor

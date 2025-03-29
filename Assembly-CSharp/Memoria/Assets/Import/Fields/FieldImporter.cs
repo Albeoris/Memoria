@@ -27,6 +27,7 @@ namespace Memoria.Assets
         private volatile AutoResetEvent _watcherEvent;
         private volatile Task _watcherTask;
         private Int32 _fieldZoneId;
+        private String _fieldLanguage;
         private String _fieldFileName;
         private String[] _original;
         private TxtEntry[] _external;
@@ -379,22 +380,20 @@ namespace Memoria.Assets
         protected override Boolean LoadInternal()
         {
             Int32 fieldZoneId = FF9TextTool.FieldZoneId;
-            if (fieldZoneId == _fieldZoneId)
+            String fieldLanguage = EmbadedTextResources.CurrentSymbol ?? Localization.CurrentSymbol;
+            if (fieldZoneId == _fieldZoneId && fieldLanguage == _fieldLanguage)
                 return true;
 
-            FF9TextTool.fieldText.Clear();
+            FF9TextTool.LoadingZoneBatch.fieldText.Clear();
             String path = EmbadedTextResources.GetCurrentPath("/Field/" + FF9TextTool.GetFieldTextFileName(fieldZoneId) + ".mes");
-            FF9TextTool.ImportStrtWithCumulativeModFiles<Int32>(path, FF9TextTool.fieldText);
+            FF9TextTool.ImportStrtWithCumulativeModFiles<Int32>(path, FF9TextTool.LoadingZoneBatch.fieldText);
 
-            // TODO: Handle (some of) these modifiers better, like adding a sprite animation instead of ReplaceMogIconText
-            foreach (Int32 key in FF9TextTool.fieldText.Keys.ToList())
-                FF9TextTool.fieldText[key] = TextOpCodeModifier.Modify(FF9TextTool.fieldText[key]);
+            FF9TextTool.ClearTableText();
 
-            FF9TextTool.SetTableText(FF9TextTool.ExtractTableText(FF9TextTool.fieldText.Values));
-
-            if (FF9TextTool.fieldText.Count == 0)
+            if (FF9TextTool.LoadingZoneBatch.fieldText.Count == 0)
                 return false;
             _fieldZoneId = fieldZoneId;
+            _fieldLanguage = Localization.CurrentSymbol;
             return true;
         }
 
@@ -405,7 +404,6 @@ namespace Memoria.Assets
 
             if (raw != null)
             {
-                raw = TextOpCodeModifier.Modify(raw);
                 text = FF9TextTool.ExtractSentense(new Dictionary<Int32, String>(), raw).Values.ToArray();
                 return true;
             }
@@ -447,7 +445,7 @@ namespace Memoria.Assets
                     }
 
                     FF9TextTool.SetFieldText(result);
-                    FF9TextTool.SetTableText(FF9TextTool.ExtractTableText(result));
+                    FF9TextTool.ClearTableText();
                 }
 
                 return true;

@@ -71,6 +71,28 @@ public partial class BattleHUD : UIScene
             RemoveCursorMemorize();
     }
 
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        if (_subMenuType == SubMenuType.Ability && AbilityPanel.activeSelf)
+            _abilityScrollList.UpdateTableViewImp();
+        if ((_subMenuType == SubMenuType.Item || _subMenuType == SubMenuType.Throw) && ItemPanel.activeSelf)
+            _itemScrollList.UpdateTableViewImp();
+        if (CommandPanel.activeSelf)
+            DisplayCommand();
+        if (TargetPanel.activeSelf)
+        {
+            Int32 enemyIndex = 0;
+            foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+            {
+                if (unit.Id == 0 || !unit.IsTargetable || unit.IsPlayer)
+                    continue;
+                _targetPanel.Enemies[enemyIndex++].Name.Label.rawText = GetEnemyDisplayName(unit.Enemy);
+            }
+        }
+    }
+
     public void UpdateSlidingButtonState()
     {
         if (!Configuration.Interface.PSXBattleMenu || ButtonGroupState.ActiveGroup != CommandGroupButton)

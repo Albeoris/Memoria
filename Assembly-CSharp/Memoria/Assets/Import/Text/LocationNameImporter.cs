@@ -24,7 +24,7 @@ namespace Memoria.Assets
 
                 Log.Message($"[{TypeName}] Importing from [{importDirectory}]...");
 
-                Dictionary<Int32, String> locationNames = FF9TextTool.LocationNames;
+                Dictionary<Int32, String> locationNames = FF9TextTool.DisplayBatch.locationName;
                 foreach (String filePath in Directory.GetFiles(importDirectory, "Names of *", SearchOption.TopDirectoryOnly))
                 {
                     TextResourcePath existingFile = TextResourcePath.ForImportExistingFile(filePath);
@@ -46,17 +46,17 @@ namespace Memoria.Assets
         {
             String text = EmbadedSentenseLoader.LoadText(EmbadedTextResources.LocationNames);
 
-            Dictionary<Int32, String> locationNames = FF9TextTool.LocationNames;
-            String[] array = text.Split('\r');
-            for (Int32 i = 0; i < array.Length; i++)
+            Dictionary<Int32, String> locationNames = FF9TextTool.DisplayBatch.locationName;
+            String[] entries = text.Split('\r');
+            for (Int32 i = 0; i < entries.Length; i++)
             {
-                String str = array[i];
-                str = str.Replace("\n", String.Empty);
-                if (!String.IsNullOrEmpty(str))
+                String line = entries[i];
+                line = line.Replace("\n", String.Empty);
+                if (!String.IsNullOrEmpty(line))
                 {
-                    String key = str.Split(':')[0];
-                    String value = str.Split(':')[1];
-                    locationNames[Int32.Parse(key)] = FF9TextTool.RemoveOpCode(value);
+                    String[] keyValue = line.Split(':');
+                    if (keyValue.Length >= 2)
+                        locationNames[Int32.Parse(keyValue[0])] = FF9TextTool.RemoveOpCode(keyValue[1]);
                 }
             }
             return true;

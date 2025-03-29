@@ -1,7 +1,6 @@
-﻿using Assets.Sources.Scripts.UI.Common;
-using System;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System;
+using Assets.Sources.Scripts.UI.Common;
+using Memoria.Assets;
 
 public class EventHUD
 {
@@ -15,361 +14,273 @@ public class EventHUD
         {
             EventHUD.currentHUD = value;
             if (value == MinigameHUD.None)
-            {
                 FF9StateSystem.Settings.SetFastForward(FF9StateSystem.Settings.IsFastForward);
-            }
             else if (value == MinigameHUD.Auction || value == MinigameHUD.PandoniumElevator)
-            {
                 HonoBehaviorSystem.Instance.StopFastForwardMode();
-            }
         }
     }
 
     public static void CheckSpecialHUDFromMesId(Int32 mesId, Boolean open)
     {
         EventEngine instance = PersistenSingleton<EventEngine>.Instance;
-        if (instance == (UnityEngine.Object)null)
-        {
+        if (instance == null)
             return;
-        }
         if (instance.gMode == 1)
         {
-            Boolean flag = false;
+            Boolean isSpecialHUD = false;
             MinigameHUD hudtype = MinigameHUD.None;
-            if (FF9TextTool.FieldZoneId == 2)
+            if (FF9TextTool.FieldZoneId == 2) // Prima Vista
             {
-                flag = (mesId == 35);
-                if (flag && !open)
+                isSpecialHUD = mesId == 35; // "Guess nobody's here yet..."
+                if (isSpecialHUD && !open)
                 {
                     EventService.OpenBasicControlTutorial();
                     return;
                 }
             }
-            else if (FF9TextTool.FieldZoneId == 7)
+            else if (FF9TextTool.FieldZoneId == 7) // Cleyra Trunk
             {
-                flag = (mesId == 113);
-                if (flag)
-                {
+                isSpecialHUD = mesId == 113; // "It’s pulling me in! Mash the X button!"
+                if (isSpecialHUD)
                     hudtype = MinigameHUD.JumpingRope;
-                }
             }
-            else if (FF9TextTool.FieldZoneId == 22)
+            else if (FF9TextTool.FieldZoneId == 22) // Lindblum Castle (1)
             {
-                String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-                switch (currentLanguage)
+                switch (Localization.CurrentSymbol)
                 {
-                    case "Japanese":
-                    case "Italian":
-                        flag = (mesId == 402);
+                    case "JP":
+                    case "IT":
+                        isSpecialHUD = mesId == 402;
                         break;
-                    case "English(US)":
-                    case "English(UK)":
-                        flag = (mesId == 401);
+                    case "US":
+                    case "UK":
+                        isSpecialHUD = mesId == 401; // "Use PAD to move the telescope."
                         break;
-                    case "French":
-                    case "German":
-                        flag = (mesId == 400);
+                    case "FR":
+                    case "GR":
+                        isSpecialHUD = mesId == 400;
                         break;
-                    case "Spanish":
-                        flag = (mesId == 395);
+                    case "ES":
+                        isSpecialHUD = mesId == 395;
                         break;
                 }
-                if (flag)
-                {
+                if (isSpecialHUD)
                     hudtype = MinigameHUD.Telescope;
-                }
             }
-            else if (FF9TextTool.FieldZoneId == 23)
+            else if (FF9TextTool.FieldZoneId == 23) // Mist Gates
             {
-                String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-                switch (currentLanguage)
+                switch (Localization.CurrentSymbol)
                 {
-                    case "Japanese":
-                    case "French":
-                        flag = (mesId == 153);
-                        goto IL_21A;
-                    case "Italian":
-                        flag = (mesId == 148);
-                        goto IL_21A;
+                    case "JP":
+                    case "FR":
+                        isSpecialHUD = mesId == 153;
+                        break;
+                    case "IT":
+                        isSpecialHUD = mesId == 148;
+                        break;
+                    default:
+                        isSpecialHUD = mesId == 133; // "How many Potions (50 Gil each) do you want? [...]"
+                        break;
                 }
-
-                flag = (mesId == 133);
-            IL_21A:
-                if (flag)
-                {
+                if (isSpecialHUD)
                     hudtype = MinigameHUD.Auction;
-                }
             }
-            else if (FF9TextTool.FieldZoneId == 33)
+            else if (FF9TextTool.FieldZoneId == 33) // Alexandria (1)
             {
-                flag = (mesId == 233);
-                if (!flag)
+                isSpecialHUD = mesId == 233 || mesId == 246;
+                if (isSpecialHUD)
                 {
-                    flag = (mesId == 246);
-                }
-                if (flag)
-                {
-                    if (mesId == 233 && !open)
-                    {
+                    if (mesId == 233 && !open) // "You wanna try?"
                         open = true;
-                    }
-                    else if (mesId == 246 && open)
-                    {
+                    else if (mesId == 246 && open) // "Come play with us again!"
                         open = false;
-                    }
                 }
-                if (flag)
-                {
+                if (isSpecialHUD)
                     hudtype = MinigameHUD.JumpingRope;
-                }
             }
-            else if (FF9TextTool.FieldZoneId == 70 || FF9TextTool.FieldZoneId == 741)
+            else if (FF9TextTool.FieldZoneId == 70 || FF9TextTool.FieldZoneId == 741) // Treno (1) and Treno (2)
             {
-                String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-                switch (currentLanguage)
+                switch (Localization.CurrentSymbol)
                 {
-                    case "English(US)":
-                    case "English(UK)":
-                        flag = (mesId == 203);
-                        goto IL_324;
+                    case "US":
+                    case "UK":
+                        isSpecialHUD = mesId == 203; // Bidding dialog "Bid: 0000 Gil [...]"
+                        break;
+                    default:
+                        isSpecialHUD = mesId == 204;
+                        break;
                 }
-
-                flag = (mesId == 204);
-            IL_324:
-                if (flag)
-                {
+                if (isSpecialHUD)
                     hudtype = MinigameHUD.Auction;
-                }
             }
-            else if (FF9TextTool.FieldZoneId == 71)
+            else if (FF9TextTool.FieldZoneId == 71) // Qu's Marsh
             {
-                String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-                switch (currentLanguage)
+                switch (Localization.CurrentSymbol)
                 {
-                    case "English(US)":
-                    case "English(UK)":
-                        flag = (mesId == 216);
-                        goto IL_3BB;
+                    case "US":
+                    case "UK":
+                        isSpecialHUD = mesId == 216; // "Press O to cancel."
+                        break;
+                    default:
+                        isSpecialHUD = mesId == 217;
+                        break;
                 }
-
-                flag = (mesId == 217);
-            IL_3BB:
-                if (flag)
-                {
+                if (isSpecialHUD)
                     hudtype = MinigameHUD.MogTutorial;
-                }
             }
-            else if (FF9TextTool.FieldZoneId == 90)
+            else if (FF9TextTool.FieldZoneId == 90) // Alexandria (2)
             {
                 if (open)
-                {
-                    flag = (mesId == 147 || mesId == 148);
-                }
+                    isSpecialHUD = mesId == 147 || mesId == 148; // Hippolady "Okay, let's start!"
                 else
-                {
-                    flag = (mesId == 148);
-                }
-                if (flag)
-                {
+                    isSpecialHUD = mesId == 148; // "Press Square and Circle alternately!"
+                if (isSpecialHUD)
                     hudtype = MinigameHUD.RacingHippaul;
-                }
             }
-            else if (FF9TextTool.FieldZoneId == 166)
+            else if (FF9TextTool.FieldZoneId == 166) // Daguerreo
             {
-                flag = (mesId == 105);
-                if (flag)
-                {
+                isSpecialHUD = mesId == 105; // "Place how many Ore? [...]"
+                if (isSpecialHUD)
                     hudtype = MinigameHUD.Auction;
-                }
             }
-            else if (FF9TextTool.FieldZoneId == 358)
+            else if (FF9TextTool.FieldZoneId == 358) // Madain Sari (1)
             {
-                String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-                switch (currentLanguage)
+                switch (Localization.CurrentSymbol)
                 {
-                    case "Japanese":
-                    case "French":
-                        flag = (mesId == 873);
-                        goto IL_51C;
-                    case "Spanish":
-                        flag = (mesId == 858);
-                        goto IL_51C;
-                    case "German":
-                        flag = (mesId == 874);
-                        goto IL_51C;
-                    case "Italian":
-                        flag = (mesId == 888);
-                        goto IL_51C;
+                    case "JP":
+                    case "FR":
+                        isSpecialHUD = mesId == 873;
+                        break;
+                    case "ES":
+                        isSpecialHUD = mesId == 858;
+                        break;
+                    case "GR":
+                        isSpecialHUD = mesId == 874;
+                        break;
+                    case "IT":
+                        isSpecialHUD = mesId == 888;
+                        break;
+                    default:
+                        isSpecialHUD = mesId == 860; // "Um... How many people do I need to account for, kupo? [...]"
+                        break;
                 }
-                flag = (mesId == 860);
-            IL_51C:
-                if (flag)
-                {
+                if (isSpecialHUD)
                     hudtype = MinigameHUD.Auction;
-                }
             }
-            else if (FF9TextTool.FieldZoneId == 740)
+            else if (FF9TextTool.FieldZoneId == 740) // Desert Palace
             {
-                flag = (mesId == 249);
-                if (!flag)
+                isSpecialHUD = mesId == 249 || mesId == 250;
+                if (isSpecialHUD)
                 {
-                    flag = (mesId == 250);
-                }
-                if (flag)
-                {
-                    if (mesId == 249 && !open)
-                    {
+                    if (mesId == 249 && !open) // "Get the key! Press the O button to go forward."
                         open = true;
-                    }
-                    else if (mesId == 250 && open)
-                    {
+                    else if (mesId == 250 && open) // "You receive the Hourglass Key!"
                         open = false;
-                    }
                 }
-                if (flag)
-                {
+                if (isSpecialHUD)
                     hudtype = MinigameHUD.GetTheKey;
-                }
             }
-            else if (FF9TextTool.FieldZoneId == 945)
+            else if (FF9TextTool.FieldZoneId == 945) // Chocobo Places
             {
-                flag = (mesId == 34);
-                if (!flag)
-                {
-                    flag = (mesId == 35);
-                }
-                if (flag)
+                isSpecialHUD = mesId == 34 || mesId == 35; // "-How to play Chocobo Hot & Cold- [...]" and "-Choco’s Cries- [...]"
+                if (isSpecialHUD)
                 {
                     hudtype = MinigameHUD.ChocoHotInstruction;
-                    if (!open)
-                    {
-                        open = true;
-                    }
+                    open = true;
                 }
                 else
                 {
-                    String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-                    if (currentLanguage == "Japanese")
-                    {
-                        flag = (mesId == 250);
-                        goto IL_639;
-                    }
-
-                    flag = (mesId == 251);
-                IL_639:
-                    if (flag)
-                    {
+                    if (Localization.CurrentSymbol == "JP")
+                        isSpecialHUD = mesId == 250;
+                    else
+                        isSpecialHUD = mesId == 251; // "I'll give you one for 50 Gil (Stock: 0) [...]"
+                    if (isSpecialHUD)
                         hudtype = MinigameHUD.Auction;
-                    }
                 }
             }
-            else if (FF9TextTool.FieldZoneId == 946)
+            else if (FF9TextTool.FieldZoneId == 946) // Alexandria (Ruin)
             {
-                String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-                switch (currentLanguage)
+                switch (Localization.CurrentSymbol)
                 {
-                    case "English(US)":
-                    case "English(UK)":
-                        flag = (mesId == 250 || mesId == 251);
-                        if (!flag)
+                    case "US":
+                    case "UK":
+                        isSpecialHUD = mesId == 250 || mesId == 251 || mesId == 264;
+                        if (isSpecialHUD)
                         {
-                            flag = (mesId == 264);
-                        }
-                        if (flag)
-                        {
-                            if ((mesId == 250 || mesId == 251) && !open)
-                            {
+                            if ((mesId == 250 || mesId == 251) && !open) // "Sure, Vivi can play!" or "Sure, Eiko can play!"
                                 open = true;
-                            }
-                            else if (mesId == 264 && open)
-                            {
+                            else if (mesId == 264 && open) // "Come play with us again!"
                                 open = false;
-                            }
                         }
-                        goto IL_789;
+                        break;
+                    default:
+                        isSpecialHUD = mesId == 257 || mesId == 258 || mesId == 271;
+                        if (isSpecialHUD)
+                        {
+                            if ((mesId == 257 || mesId == 258) && !open)
+                                open = true;
+                            else if (mesId == 271 && open)
+                                open = false;
+                        }
+                        break;
                 }
-
-                flag = (mesId == 257 || mesId == 258);
-                if (!flag)
-                {
-                    flag = (mesId == 271);
-                }
-                if (flag)
-                {
-                    if ((mesId == 257 || mesId == 258) && !open)
-                    {
-                        open = true;
-                    }
-                    else if (mesId == 271 && open)
-                    {
-                        open = false;
-                    }
-                }
-            IL_789:
-                if (flag)
-                {
+                if (isSpecialHUD)
                     hudtype = MinigameHUD.JumpingRope;
-                }
             }
-            if (flag)
+            if (isSpecialHUD)
             {
                 if (open)
-                {
                     EventHUD.OpenSpecialHUD(hudtype);
-                }
                 else
-                {
                     EventHUD.CloseSpecialHUD(hudtype);
-                }
             }
         }
     }
 
     public static void OpenSpecialHUD(MinigameHUD HUDType)
     {
-        Boolean flag = false;
+        Boolean startHUD = false;
         switch (HUDType)
         {
             case MinigameHUD.Chanbara:
-                flag = !UIManager.Field.IsDisplayChanbaraHUD();
+                startHUD = !UIManager.Field.IsDisplayChanbaraHUD();
                 break;
             case MinigameHUD.Auction:
-                flag = !UIManager.Field.IsDisplayAuctionHUD();
+                startHUD = !UIManager.Field.IsDisplayAuctionHUD();
                 break;
             case MinigameHUD.MogTutorial:
-                flag = !UIManager.Field.IsDisplayTutorialHUD();
+                startHUD = !UIManager.Field.IsDisplayTutorialHUD();
                 break;
             case MinigameHUD.JumpingRope:
-                flag = !UIManager.Field.IsDisplayJumpRopeHUD();
+                startHUD = !UIManager.Field.IsDisplayJumpRopeHUD();
                 break;
             case MinigameHUD.Telescope:
-                flag = !UIManager.Field.IsDisplayTelescopeHUD();
+                startHUD = !UIManager.Field.IsDisplayTelescopeHUD();
                 break;
             case MinigameHUD.RacingHippaul:
-                flag = !UIManager.Field.IsDisplayRacingHippaulHUD();
+                startHUD = !UIManager.Field.IsDisplayRacingHippaulHUD();
                 break;
             case MinigameHUD.SwingACage:
-                flag = !UIManager.Field.IsDisplaySwingACageHUD();
+                startHUD = !UIManager.Field.IsDisplaySwingACageHUD();
                 break;
             case MinigameHUD.GetTheKey:
-                flag = !UIManager.Field.IsDisplayGetTheKeyHUD();
+                startHUD = !UIManager.Field.IsDisplayGetTheKeyHUD();
                 break;
             case MinigameHUD.ChocoHot:
-                flag = !UIManager.Field.IsDisplayChocoHot();
+                startHUD = !UIManager.Field.IsDisplayChocoHot();
                 break;
             case MinigameHUD.ChocoHotInstruction:
-                flag = !UIManager.Field.IsDisplayChocoHotInstruction();
+                startHUD = !UIManager.Field.IsDisplayChocoHotInstruction();
                 break;
             case MinigameHUD.PandoniumElevator:
-                flag = !UIManager.Field.IsDisplayPandoniumElevator();
+                startHUD = !UIManager.Field.IsDisplayPandoniumElevator();
                 break;
         }
-        Boolean isEnable = HUDType == MinigameHUD.Telescope || HUDType == MinigameHUD.ChocoHot || PersistenSingleton<EventEngine>.Instance.GetUserControl();
-        if (flag)
+        if (startHUD)
         {
             EventHUD.CurrentHUD = HUDType;
             UIManager.Field.DisplaySpecialHUD(HUDType);
-            PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(isEnable, (Action)null);
+            PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(HUDType == MinigameHUD.Telescope || HUDType == MinigameHUD.ChocoHot || PersistenSingleton<EventEngine>.Instance.GetUserControl(), null);
         }
         else if (!FF9StateSystem.MobilePlatform)
         {
@@ -379,49 +290,48 @@ public class EventHUD
 
     public static void CloseSpecialHUD(MinigameHUD HUDType)
     {
-        Boolean flag = false;
+        Boolean closeHUD = false;
         switch (HUDType)
         {
             case MinigameHUD.Chanbara:
-                flag = UIManager.Field.IsDisplayChanbaraHUD();
+                closeHUD = UIManager.Field.IsDisplayChanbaraHUD();
                 break;
             case MinigameHUD.Auction:
-                flag = UIManager.Field.IsDisplayAuctionHUD();
+                closeHUD = UIManager.Field.IsDisplayAuctionHUD();
                 break;
             case MinigameHUD.MogTutorial:
-                flag = UIManager.Field.IsDisplayTutorialHUD();
+                closeHUD = UIManager.Field.IsDisplayTutorialHUD();
                 break;
             case MinigameHUD.JumpingRope:
-                flag = UIManager.Field.IsDisplayJumpRopeHUD();
+                closeHUD = UIManager.Field.IsDisplayJumpRopeHUD();
                 break;
             case MinigameHUD.Telescope:
-                flag = UIManager.Field.IsDisplayTelescopeHUD();
+                closeHUD = UIManager.Field.IsDisplayTelescopeHUD();
                 break;
             case MinigameHUD.RacingHippaul:
-                flag = UIManager.Field.IsDisplayRacingHippaulHUD();
+                closeHUD = UIManager.Field.IsDisplayRacingHippaulHUD();
                 break;
             case MinigameHUD.SwingACage:
-                flag = UIManager.Field.IsDisplaySwingACageHUD();
+                closeHUD = UIManager.Field.IsDisplaySwingACageHUD();
                 break;
             case MinigameHUD.GetTheKey:
-                flag = UIManager.Field.IsDisplayGetTheKeyHUD();
+                closeHUD = UIManager.Field.IsDisplayGetTheKeyHUD();
                 break;
             case MinigameHUD.ChocoHot:
-                flag = UIManager.Field.IsDisplayChocoHot();
+                closeHUD = UIManager.Field.IsDisplayChocoHot();
                 break;
             case MinigameHUD.ChocoHotInstruction:
-                flag = UIManager.Field.IsDisplayChocoHotInstruction();
+                closeHUD = UIManager.Field.IsDisplayChocoHotInstruction();
                 break;
             case MinigameHUD.PandoniumElevator:
-                flag = UIManager.Field.IsDisplayPandoniumElevator();
+                closeHUD = UIManager.Field.IsDisplayPandoniumElevator();
                 break;
         }
-        Boolean isEnable = HUDType != MinigameHUD.Telescope && HUDType != MinigameHUD.ChocoHot && PersistenSingleton<EventEngine>.Instance.GetUserControl();
-        if (flag)
+        if (closeHUD)
         {
             EventHUD.CurrentHUD = MinigameHUD.None;
             UIManager.Field.DestroySpecialHUD();
-            PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(isEnable, (Action)null);
+            PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(HUDType != MinigameHUD.Telescope && HUDType != MinigameHUD.ChocoHot && PersistenSingleton<EventEngine>.Instance.GetUserControl(), null);
         }
         else if (!FF9StateSystem.MobilePlatform)
         {
@@ -431,63 +341,47 @@ public class EventHUD
 
     public static void CheckUIMiniGameForMobile()
     {
-        Int32 varManually = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(6357);
-        Int32 varManually2 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(728);
-        Int32 fldMapNo = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
+        Int32 globDialogProgression = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(6357);
+        Int32 genFieldEntrance = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(728);
+        Int32 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
         if (PersistenSingleton<EventEngine>.Instance.gMode == 1)
         {
-            if (fldMapNo == 64)
+            if (fldMapNo == 64) // A. Castle/Public Seats
             {
-                if (varManually2 != 327 && varManually2 != 315 && varManually2 != 316)
+                if (genFieldEntrance != 327 && genFieldEntrance != 315 && genFieldEntrance != 316)
                 {
-                    if (varManually == 3)
-                    {
+                    if (globDialogProgression == 3)
                         EventHUD.OpenSpecialHUD(MinigameHUD.Chanbara);
-                    }
                     else
-                    {
                         EventHUD.CloseSpecialHUD(MinigameHUD.Chanbara);
-                    }
                 }
             }
-            else if (fldMapNo == 1208)
+            else if (fldMapNo == 1208) // A. Castle/Dungeon
             {
-                if (varManually2 != 0)
+                if (genFieldEntrance != 0)
                 {
-                    if (varManually == 13)
-                    {
+                    if (globDialogProgression == 13)
                         EventHUD.OpenSpecialHUD(MinigameHUD.SwingACage);
-                    }
                     else
-                    {
                         EventHUD.CloseSpecialHUD(MinigameHUD.SwingACage);
-                    }
                 }
             }
-            else if (fldMapNo == 1704)
+            else if (fldMapNo == 1704) // Mdn. Sari/Eidolon Wall
             {
                 if (!PersistenSingleton<EventEngine>.Instance.GetUserControl() && FF9StateSystem.MobilePlatform)
-                {
-                    Boolean isEnable = !Singleton<DialogManager>.Instance.Visible;
-                    PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(isEnable, (Action)null);
-                }
+                    PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(!Singleton<DialogManager>.Instance.Visible, null);
             }
-            else if (fldMapNo == 2204)
+            else if (fldMapNo == 2204) // Palace/Odyssey
             {
                 if (TimerUI.Time == 0f)
-                {
                     EventHUD.CloseSpecialHUD(MinigameHUD.GetTheKey);
-                }
             }
-            else if (fldMapNo == 2921)
+            else if (fldMapNo == 2921) // Memoria/To the Origin
             {
                 if (!PersistenSingleton<EventEngine>.Instance.GetUserControl() && FF9StateSystem.MobilePlatform)
-                {
-                    Boolean isEnable2 = !Singleton<DialogManager>.Instance.Visible;
-                    PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(isEnable2, (Action)null);
-                }
+                    PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(!Singleton<DialogManager>.Instance.Visible, null);
             }
-            else if (fldMapNo == 2950 || fldMapNo == 2951 || fldMapNo == 2952)
+            else if (fldMapNo == 2950 || fldMapNo == 2951 || fldMapNo == 2952) // Chocobo's Forest / Lagoon / Air Garden
             {
                 if (TimerUI.Play && TimerUI.Time > 0f)
                 {
@@ -499,22 +393,13 @@ public class EventHUD
                     EventHUD.CloseSpecialHUD(MinigameHUD.ChocoHot);
                 }
             }
-            else if (fldMapNo == 2711)
+            else if (fldMapNo == 2711) // Pand./Control Room
             {
                 Dialog dialogByWindowID = Singleton<DialogManager>.Instance.GetDialogByWindowID(Convert.ToInt32(Dialog.WindowID.ID7));
-                Boolean flag = false;
-                if (dialogByWindowID != (UnityEngine.Object)null)
-                {
-                    flag = (dialogByWindowID.TextId == 324);
-                }
-                if (flag)
-                {
+                if (dialogByWindowID != null && dialogByWindowID.TextId == 324) // Elevator control: "Current Altitude: X / Current Heading: Y / Standard Heading: [...]"
                     EventHUD.OpenSpecialHUD(MinigameHUD.PandoniumElevator);
-                }
                 else
-                {
                     EventHUD.CloseSpecialHUD(MinigameHUD.PandoniumElevator);
-                }
             }
         }
     }

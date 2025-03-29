@@ -40,7 +40,7 @@ public class EndGameResourceManager : MonoBehaviour
 
     private static String GetQuadMistTextAtlasPath()
     {
-        return "EmbeddedAsset/QuadMist/Atlas/quadmist_text_" + Localization.GetSymbol().ToLower();
+        return "EmbeddedAsset/QuadMist/Atlas/quadmist_text_" + Localization.CurrentDisplaySymbol.ToLower();
     }
 
     private Sprite winSprite;

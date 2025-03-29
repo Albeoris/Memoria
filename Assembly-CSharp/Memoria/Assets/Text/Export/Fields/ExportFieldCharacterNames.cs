@@ -9,7 +9,7 @@ namespace Memoria.Assets
     {
         public static ExportFieldCharacterNames GetCurrent()
         {
-            String localizationSymbol = Localization.GetSymbol();
+            String localizationSymbol = Localization.CurrentSymbol;
             ExportFieldCharacterNames result = Create(localizationSymbol);
             result.Initialize();
             return result;

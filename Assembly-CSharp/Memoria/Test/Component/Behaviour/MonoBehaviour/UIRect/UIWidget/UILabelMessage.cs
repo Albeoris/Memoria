@@ -14,7 +14,7 @@ namespace Memoria.Test
         public UILabelMessage(UILabel uiLabel)
             : base(uiLabel)
         {
-            Text = uiLabel.text;
+            Text = uiLabel.rawText;
         }
 
         public override void Serialize(BinaryWriter bw)

@@ -412,48 +412,49 @@ public partial class EventEngine
                 Int32 uiFlags = this.getv1(); // arg2: UI flag list. 3: disable bubble tail 4: mognet format 5: hide window 7: ATE window 8: dialog window
                 this.SetFollow(this.gCur, this.gCur.winnum, uiFlags);
                 Int32 textID = this.getv2(); // arg3: text to display
-                if (mapNo == 1757 && scCounter == 6740 && mapIndex == 30)
+                if (mapNo == 1757 && scCounter == 6740 && mapIndex == 30) // Iifa Tree/Outer Seal
                 {
                     this.stay();
                     return 1;
                 }
-                if (mapNo == 1060)
+                if (mapNo == 1060) // Cleyra/Cathedral
                 {
-                    String symbol = Localization.GetSymbol();
-                    Dictionary<Int32, Int32> dictionary = (Dictionary<Int32, Int32>)null;
-                    if (symbol == "JP")
+                    String lang = Localization.CurrentSymbol;
+                    if (lang == "JP")
                     {
-                        if (textID == 271)
+                        if (textID == 271) // Start of the dancing scene
                         {
                             HonoBehaviorSystem.FrameSkipEnabled = true;
                             HonoBehaviorSystem.TargetFrameTime = 0.03333334f;
                         }
-                        else if (textID == 272)
+                        else if (textID == 272) // End of the dancing scene
                             HonoBehaviorSystem.FrameSkipEnabled = false;
                     }
-                    else if (textID == 262)
+                    else if (textID == 262) // Start of the dancing scene
                     {
                         HonoBehaviorSystem.TargetFrameTime = 0.03333334f;
                         HonoBehaviorSystem.FrameSkipEnabled = true;
                     }
-                    else if (textID == 264)
+                    else if (textID == 264) // End of the dancing scene
                         HonoBehaviorSystem.FrameSkipEnabled = false;
-                    if (symbol == "ES" || symbol == "FR")
-                        dictionary = this._mesIdES_FR;
-                    else if (symbol == "GR")
-                        dictionary = this._mesIdGR;
-                    else if (symbol == "IT")
-                        dictionary = this._mesIdIT;
-                    if (dictionary != null && dictionary.ContainsKey(textID))
-                        textID = dictionary[textID];
+                    Dictionary<Int32, Int32> remapDictionary = null;
+                    if (lang == "ES" || lang == "FR")
+                        remapDictionary = this._mesIdES_FR;
+                    else if (lang == "GR")
+                        remapDictionary = this._mesIdGR;
+                    else if (lang == "IT")
+                        remapDictionary = this._mesIdIT;
+                    if (remapDictionary != null && remapDictionary.ContainsKey(textID))
+                        textID = remapDictionary[textID];
                 }
-                if (mapNo == 2172 && scCounter < 9100 && Localization.GetSymbol() == "JP" && textID == 91 && this.gCur.sid == 1 && this.gCur.ip == 145 && EIcon.AIconMode == 0)
+                if (mapNo == 2172 && scCounter < 9100 && Localization.CurrentSymbol == "JP" && textID == 91 && this.gCur.sid == 1 && this.gCur.ip == 145 && EIcon.AIconMode == 0)
                 {
+                    // L. Castle/Telescope
                     DialogManager.SelectChoice = 15;
                     return 0;
                 }
-                ETb.NewMesWin(textID, this.gCur.winnum, uiFlags, !this.isPosObj(this.gCur) ? (PosObj)null : (PosObj)this.gCur);
-                this.gCur.wait = (Byte)254;
+                ETb.NewMesWin(textID, this.gCur.winnum, uiFlags, this.isPosObj(this.gCur) ? (PosObj)this.gCur : null);
+                this.gCur.wait = 254;
                 return 1;
             }
             case EBin.event_code_binary.MESN: // 0x20, "WindowAsync", "Display a window with text inside and continue the execution of the script without waiting"
@@ -462,43 +463,43 @@ public partial class EventEngine
                 Int32 uiFlags = this.getv1(); // arg2: UI flag list: 3: disable bubble tail 4: mognet format 5: hide window 7: ATE window 8: dialog window
                 this.SetFollow(this.gCur, this.gCur.winnum, uiFlags);
                 Int32 textID = this.getv2(); // arg3: text to display
-                if (mapNo == 1060)
+                if (mapNo == 1060) // Cleyra/Cathedral
                 {
-                    String symbol = Localization.GetSymbol();
-                    Dictionary<Int32, Int32> dictionary = (Dictionary<Int32, Int32>)null;
+                    String symbol = Localization.CurrentSymbol;
                     if (symbol == "JP")
                     {
-                        if (textID == 271)
+                        if (textID == 271) // Start of the dancing scene
                         {
                             HonoBehaviorSystem.TargetFrameTime = 0.03333334f;
                             HonoBehaviorSystem.FrameSkipEnabled = true;
                         }
-                        else if (textID == 272)
+                        else if (textID == 272) // End of the dancing scene
                             HonoBehaviorSystem.FrameSkipEnabled = false;
                     }
-                    else if (textID == 262)
+                    else if (textID == 262) // Start of the dancing scene
                     {
                         HonoBehaviorSystem.TargetFrameTime = 0.03333334f;
                         HonoBehaviorSystem.FrameSkipEnabled = true;
                     }
-                    else if (textID == 264)
+                    else if (textID == 264) // End of the dancing scene
                         HonoBehaviorSystem.FrameSkipEnabled = false;
+                    Dictionary<Int32, Int32> remapDictionary = null;
                     if (symbol == "ES" || symbol == "FR")
-                        dictionary = this._mesIdES_FR;
+                        remapDictionary = this._mesIdES_FR;
                     else if (symbol == "GR")
-                        dictionary = this._mesIdGR;
+                        remapDictionary = this._mesIdGR;
                     else if (symbol == "IT")
-                        dictionary = this._mesIdIT;
-                    if (dictionary != null && dictionary.ContainsKey(textID))
-                        textID = dictionary[textID];
+                        remapDictionary = this._mesIdIT;
+                    if (remapDictionary != null && remapDictionary.ContainsKey(textID))
+                        textID = remapDictionary[textID];
                 }
-                if (mapNo == 1757 && scCounter == 6740 && mapIndex == 30)
+                if (mapNo == 1757 && scCounter == 6740 && mapIndex == 30) // Iifa Tree/Outer Seal
                 {
                     this.stay();
                     return 1;
                 }
                 PersistenSingleton<CheatingManager>.Instance.CheatJumpingRobe();
-                ETb.NewMesWin(textID, this.gCur.winnum, uiFlags, !this.isPosObj(this.gCur) ? (PosObj)null : (PosObj)this.gCur);
+                ETb.NewMesWin(textID, this.gCur.winnum, uiFlags, this.isPosObj(this.gCur) ? (PosObj)this.gCur : null);
                 return 0;
             }
             case EBin.event_code_binary.MESA:// 0x95, "WindowSyncEx", "Display a window with text inside and wait until it closes"
@@ -549,8 +550,9 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.WAITMES: // 0x54, "WaitWindow", "Wait until the window is closed"
             {
-                if (mapNo == 1650 && FF9StateSystem.Settings.CurrentLanguage == "Japanese" && ((Int32)this.gCur.sid == 19 && this.gCur.ip == 1849))
+                if (mapNo == 1650 && Localization.CurrentSymbol == "JP" && this.gCur.sid == 19 && this.gCur.ip == 1849)
                 {
+                    // Iifa Tree/Outer Seal, Zidane, binary position of a line, maybe the one before Zidane's dialog "Alright. Let’s go!"
                     this.getv1();
                     return 0;
                 }
@@ -884,31 +886,29 @@ public partial class EventEngine
             case EBin.event_code_binary.MSPEED: // 0x26, "SetWalkSpeed", "Change the walk speed"
             {
                 Byte walkSpeed = (Byte)this.getv1(); // arg1: speed (surely in unit/frame)
-                if (mapNo == 3010)
+                if (mapNo == 3010) // Ending/TH
                 {
-                    String symbol = Localization.GetSymbol();
-                    if (!(symbol != "US") || !(symbol != "JP"))
+                    String symbol = Localization.CurrentSymbol;
+                    if (symbol == "US" || symbol == "JP")
                     {
-                        if (symbol == "US" && (Int32)actor.sid == 17)
+                        if (symbol == "US" && actor.sid == 17)
                         {
-                            if ((Int32)walkSpeed == 15)
-                                walkSpeed = (Byte)20;
-                            else if ((Int32)walkSpeed == 23)
-                                walkSpeed = (Byte)25;
+                            if (walkSpeed == 15)
+                                walkSpeed = 20;
+                            else if (walkSpeed == 23)
+                                walkSpeed = 25;
                         }
-                        if (symbol == "JP" && (Int32)actor.sid == 16)
+                        else if (symbol == "JP" && actor.sid == 16)
                         {
-                            if ((Int32)walkSpeed == 15)
-                                walkSpeed = (Byte)20;
-                            else if ((Int32)walkSpeed == 23)
-                                walkSpeed = (Byte)25;
+                            if (walkSpeed == 15)
+                                walkSpeed = 20;
+                            else if (walkSpeed == 23)
+                                walkSpeed = 25;
                         }
                     }
                 }
-                if (mapNo == 658 && actor.sid == 18 && walkSpeed == 30 && actor.ip == 323)
-                {
+                if (mapNo == 658 && actor.sid == 18 && walkSpeed == 30 && actor.ip == 323) // Marsh/Pond, Quina's speed, surely the binary position of function Quina_19
                     walkSpeed = 25;
-                }
                 actor.speed = walkSpeed;
                 return 0;
             }
@@ -2249,7 +2249,7 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.MENUON: // 0xAA, "EnableMenu", "Enable menu access by the player."
             {
-                if (mapNo == 2172 && scCounter < 9100 && Localization.GetSymbol() == "JP" && this.gCur.sid == 1 && this.gCur.ip == 2964 && EIcon.AIconMode == 0)
+                if (mapNo == 2172 && scCounter < 9100 && Localization.CurrentSymbol == "JP" && this.gCur.sid == 1 && this.gCur.ip == 2964 && EIcon.AIconMode == 0)
                     return 0; // L. Castle/Telescope
                 EventInput.PSXCntlClearPadMask(0, EventInput.MenuControl);
                 PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(true);
@@ -2257,7 +2257,7 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.MENUOFF: // 0xAB, "DisableMenu", "Disable menu access by the player."
             {
-                if (mapNo == 2172 && scCounter < 9100 && Localization.GetSymbol() == "JP" && this.gCur.sid == 1 && this.gCur.ip == 119 && EIcon.AIconMode == 0)
+                if (mapNo == 2172 && scCounter < 9100 && Localization.CurrentSymbol == "JP" && this.gCur.sid == 1 && this.gCur.ip == 119 && EIcon.AIconMode == 0)
                     return 0; // L. Castle/Telescope
                 EventInput.PSXCntlSetPadMask(0, EventInput.MenuControl);
                 PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(false);

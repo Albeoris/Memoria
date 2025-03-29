@@ -537,7 +537,7 @@ public class btl_scrp
                 btl.bi.def_idle = (Byte)val;
                 break;
             case 71u:
-                btl_sys.SetBonus(btl_util.getEnemyPtr(btl));
+                btl_sys.SetBonus(btl);
                 break;
             case 72u:
                 btl.elem.str = (Byte)val;

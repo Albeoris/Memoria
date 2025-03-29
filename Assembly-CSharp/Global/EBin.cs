@@ -1303,35 +1303,27 @@ public class EBin
         _v0 = getv1i(ref s5);
         if (FF9StateSystem.Common.FF9.fldMapNo == 3011) // Ending/TH
         {
-            String symbol = Localization.GetSymbol();
-            if (symbol != "US" && symbol != "JP")
+            String lang = Localization.CurrentSymbol;
+            if (lang != "US" && lang != "JP")
             {
                 if (_v0 == 82)
-                {
                     _v0 = 102;
-                }
                 else if (_v0 == 50)
-                {
                     _v0 = 90;
-                }
             }
         }
         else if (FF9StateSystem.Common.FF9.fldMapNo == 3009) // Ending/TH
         {
-            String symbol2 = Localization.GetSymbol();
-            if (symbol2 != "US" && symbol2 != "JP" && s1.uid == 17 && _v0 == 15)
-            {
+            String lang = Localization.CurrentSymbol;
+            if (lang != "US" && lang != "JP" && s1.uid == 17 && _v0 == 15)
                 _v0 = 20;
-            }
         }
         Int32 a0 = _v0 - 254;
         if (_v0 != 0)
         {
             _v0--;
             if (a0 > 0)
-            {
                 _v0 = 253;
-            }
             s1.wait = (Byte)_v0;
             _s2 = 1;
         }
