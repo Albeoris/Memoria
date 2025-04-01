@@ -648,9 +648,11 @@ namespace Memoria.Launcher
                 String downloadFormatExtLower = "." + (downloadingMod.DownloadFormat ?? "zip").ToLower();
                 if (String.IsNullOrEmpty(downloadingMod.DownloadFormat) || supportedArchives.Contains(downloadFormatExtLower))
                 {
-                    Directory.CreateDirectory(path);
                     try
                     {
+                        if (Directory.Exists(path)) Directory.Delete(path, true);
+                        Directory.CreateDirectory(path);
+
                         Boolean proceedNext = false;
                         Boolean moveDesc = false;
                         String sourcePath = "";
