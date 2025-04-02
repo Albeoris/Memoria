@@ -413,14 +413,32 @@ namespace Memoria.Assets
                     while (currentModel == null)
                         ChangeModel(--prevIndex);
                 }
-                if (shift && Input.GetKeyDown(KeyCode.B))
+                if (Input.GetKeyDown(KeyCode.B))
                 {
-                    displayBoneConnections = !displayBoneConnections;
-                }
-                else if (Input.GetKeyDown(KeyCode.B))
-                {
-                    displayBones = !displayBones;
-                    displayBoneNames = !displayBoneNames;
+                    if (shift)
+                        displayBoneConnections = !displayBoneConnections;
+                    else if (ctrl)
+                    {
+                        Transform builtInBone = currentModel.transform.GetChildByName("bone" + currentBoneIndex.ToString("D3"));
+                        if (!currentHiddenBonesID.Contains(currentBoneIndex))
+                        {
+                            currentHiddenBonesID.Add(currentBoneIndex);
+                        }
+                        else
+                        {
+                            currentHiddenBonesID.Remove(currentBoneIndex);
+                            if (builtInBone != null)
+                                builtInBone.localScale = Vector3.one;
+                            if (currentWeaponModel != null)
+                                currentWeaponModel.transform.localScale = Vector3.one;
+                        }
+                        currentHiddenBonesID.Sort();
+                    }
+                    else
+                    {
+                        displayBones = !displayBones;
+                        displayBoneNames = !displayBoneNames;
+                    }
                 }
                 if (Input.GetKeyDown(KeyCode.I))
                 {
@@ -692,12 +710,14 @@ namespace Memoria.Assets
                         WeaponTargetRot = currentWeaponModel.transform.localRotation.eulerAngles.ToString("F9");
                     }
                     string BoneSelectedPos = BoneSelected.localPosition.ToString("F9");
-                    string BoneSelectedRot = BoneSelected.localRotation.eulerAngles.ToString("F9");
+                    string BoneSelectedRot = BoneSelected.localRotation.ToString("F9");
+                    string BoneSelectedRotEuler = BoneSelected.localRotation.eulerAngles.ToString("F9");
+                    string BoneSelectedScale = BoneSelected.localScale.ToString("F9");
                     Log.Message("####### KEYPAD 5 PRESSED ! #######");
                     Log.Message("[MODEL] => " + geoList[currentGeoIndex].Name + ".offset = " + ModelTargetPos.Remove(ModelTargetPos.Length - 1) + ", " + ModelTargetRot.Remove(0, 1));
                     if (currentWeaponModel != null)
                         Log.Message("[WEAPON] => " + weapongeoList[currentWeaponGeoIndex].Name + ".offset = " + WeaponTargetPos.Remove(WeaponTargetPos.Length - 1) + ", " + WeaponTargetRot.Remove(0, 1));
-                    Log.Message("[BONE] => BoneID n°" + currentBoneIndex + " / Position = " + BoneSelectedPos + " ; Rotation = " + BoneSelectedRot);
+                    Log.Message("[BONE] => BoneID n°" + currentBoneIndex + " / Position = " + BoneSelectedPos + " ; Rotation(Quat) = " + BoneSelectedRot + " ; Rotation(Euler) = " + BoneSelectedRotEuler + " ; Scale = " + BoneSelectedScale);
                     Log.Message("##################################");
                     DontSpamMessage = true;
                 }
@@ -741,7 +761,11 @@ namespace Memoria.Assets
                 }
                 if (Input.GetKeyDown(KeyCode.R)) // Reset position/rotation
                 {
-                    if (partcontrolled == PartControlled.WEAPON)
+                    if (shift)
+                    {
+                        ChangeModel(currentGeoIndex);
+                    }
+                    else if (partcontrolled == PartControlled.WEAPON)
                     {
                         weaponmodel_Position = Vector3.zero;
                         weaponmodel_Rotation = Quaternion.identity;
@@ -768,23 +792,6 @@ namespace Memoria.Assets
 
                         if (partcontrolled > PartControlled.BONE)
                             partcontrolled = PartControlled.MODEL;
-                    }
-                    else if (ctrl && currentWeaponModel != null)
-                    {
-                        Transform builtInBone = currentModel.transform.GetChildByName("bone" + currentBoneIndex.ToString("D3"));
-                        if (!currentHiddenBonesID.Contains(currentBoneIndex))
-                        {
-                            currentHiddenBonesID.Add(currentBoneIndex);
-                        }
-                        else
-                        {
-                            currentHiddenBonesID.Remove(currentBoneIndex);
-                            if (builtInBone != null)
-                                builtInBone.localScale = Vector3.one;
-                            if (currentWeaponModel != null)
-                                currentWeaponModel.transform.localScale = Vector3.one;
-                        }
-                        currentHiddenBonesID.Sort();
                     }
                     else
                     {
@@ -1184,7 +1191,7 @@ namespace Memoria.Assets
                 else if (partcontrolled == PartControlled.BONE)
                     label += $"[FFFF00][⇧P][FFFFFF] Selected: [FF007F]Bone\n";
 
-                label += $"[FFFF00][^P][FFFFFF] BoneHidden: ";
+                label += $"[FFFF00][^B][FFFFFF] BoneHidden: ";
                 if (currentHiddenBonesID.Count > 0)
                 {
                     for (Int32 i = 0; i < currentHiddenBonesID.Count; i++)
@@ -1232,7 +1239,7 @@ namespace Memoria.Assets
                     Transform BoneSelected = currentModel.transform.GetChildByName("bone" + currentBoneIndex.ToString("D3"));
                     extraInfo += "[BONE] ¤ ";
                     extraInfo += UseModdedTextures ? "text_mod" : "text_orig";
-                    extraInfo += $"Pos: [x]{BoneSelected.localPosition.x} [y]{BoneSelected.localPosition.y} [z]{BoneSelected.localPosition.z}";
+                    extraInfo += $"Pos: [x]{BoneSelected.localPosition.x.ToString("F5")} [y]{BoneSelected.localPosition.y.ToString("F5")} [z]{BoneSelected.localPosition.z.ToString("F5")}";
                     extraInfo += $" Rot(Quat): [x]{Math.Round(BoneSelected.localRotation.x, 2)} [y]{Math.Round(BoneSelected.localRotation.y, 2)} [z]{Math.Round(BoneSelected.localRotation.z, 2)} [w]{Math.Round(BoneSelected.localRotation.w, 2)}";
                     extraInfo += $" Rot(Eul): {Math.Round(BoneSelected.localRotation.eulerAngles.x, 0)}/{Math.Round(BoneSelected.localRotation.eulerAngles.y, 0)}/{Math.Round(BoneSelected.localRotation.eulerAngles.z, 0)}";
                     extraInfo += $" Scale: {Math.Round(BoneSelected.localScale.x, 2)}";
