@@ -28,6 +28,7 @@ namespace Memoria.Assets
         private static Boolean KeepCoordinates = true;
         private static Boolean UseModdedTextures = true;
         private static Boolean IsMouseOverWindow = true;
+        private static Boolean LoadingWeaponConfig = true;
         private static List<ModelObject> geoList;
         private static List<ModelObject> weapongeoList;
         private static List<KeyValuePair<Int32, String>> animList;
@@ -40,14 +41,17 @@ namespace Memoria.Assets
         private static List<Int32> currentHiddenBonesID;
         private static String currentAnimName;
         private static GameObject currentModel;
-        private static GameObject currentModelWrapper; // parent transform for vertical rotation and position
-        private static GameObject currentWeaponModel;
+        private static GameObject currentModelWrapper; // [Model] parent transform for vertical rotation and position
+        private static Vector3 model_Position = new Vector3(0f, 0f, 0f);
         private static float model_Horizontal_Rotation = 0f;
         private static float model_Vertical_Rotation = 0f;
-        private static Vector3 model_Position = new Vector3(0f, 0f, 0f);
+        private static Vector3 scaleFactor;
+        private static Vector3 weaponmodel_Position = new Vector3(0f, 0f, 0f);
+        private static Quaternion weaponmodel_Rotation = Quaternion.identity;
+        private static Vector3 weaponmodel_scaleFactor = Vector3.one;
+        private static GameObject currentWeaponModel;
         private static CommonSPSSystem spsUtility;
         private static SPSEffect spsEffect;
-        private static Vector3 scaleFactor;
         private static Single speedFactor;
         private static String savedAnimationPath;
         private static Boolean isLoadingModel;
@@ -128,7 +132,7 @@ namespace Memoria.Assets
             extraInfoPanel = new ControlPanel(PersistenSingleton<UIManager>.Instance.transform, "");
             extraInfoLabel = extraInfoPanel.AddSimpleLabel("", NGUIText.Alignment.Center, 1);
             extraInfoPanel.EndInitialization(UIWidget.Pivot.BottomRight);
-            extraInfoPanel.BasePanel.SetRect(-50f, 0f, 1000f, 580f);
+            extraInfoPanel.BasePanel.SetRect(-50f, 0f, 1250f, 580f);
 
             InsertTextGUI = UnityEngine.Object.Instantiate(PersistenSingleton<UIManager>.Instance.NameSettingScene.NameInputField.gameObject);
             input = InsertTextGUI.GetComponent<UIInput>();
@@ -311,8 +315,10 @@ namespace Memoria.Assets
                 if (postRefresh > 0 && currentModel != null)
                 {
                     UpdateModelCoordinates();
+                    UpdateWeaponModelCoordinates();
                     postRefresh--;
                 }
+
                 if (isLoadingModel || isLoadingWeaponModel)
                     return;
 
@@ -514,14 +520,6 @@ namespace Memoria.Assets
                 {
                     ChangeModel(currentGeoIndex);
                 }
-                if (Input.GetKeyDown(KeyCode.R)) // Reset position/rotation
-                {
-                    model_Horizontal_Rotation = 0f;
-                    model_Vertical_Rotation = (geoList[currentGeoIndex].Kind == MODEL_KIND_BBG || geoList[currentGeoIndex].Kind == MODEL_KIND_BBG_OBJ) ? 200f : 20f;
-                    model_Position = new Vector3(0f, 60f, 0f);
-                    scaleFactor = new Vector3(0.3f, 0.3f, 0.3f);
-                    UpdateModelCoordinates();
-                }
                 if (Input.GetKeyDown(KeyCode.W))
                 {
                     UseModdedTextures = !UseModdedTextures;
@@ -530,35 +528,120 @@ namespace Memoria.Assets
                 GameObject targetModel = ControlWeapon ? currentWeaponModel : currentModel;
                 if (ctrl)
                 {
-                    if (Input.GetKey(KeyCode.Keypad6))
-                        targetModel.transform.localRotation *= Quaternion.Euler(0f, 1f, 0f);
-                    if (Input.GetKey(KeyCode.Keypad4))
-                        targetModel.transform.localRotation *= Quaternion.Euler(0f, -1f, 0f);
-                    if (Input.GetKey(KeyCode.Keypad8))
-                        targetModel.transform.localRotation *= Quaternion.Euler(-1f, 0f, 0f);
-                    if (Input.GetKey(KeyCode.Keypad2))
-                        targetModel.transform.localRotation *= Quaternion.Euler(1f, 0f, 0f);
-                    if (Input.GetKey(KeyCode.Keypad7) || Input.GetKey(KeyCode.Keypad9))
-                        targetModel.transform.localRotation *= Quaternion.Euler(0f, 0f, 1f);
-                    if (Input.GetKey(KeyCode.Keypad1) || Input.GetKey(KeyCode.Keypad3))
-                        targetModel.transform.localRotation *= Quaternion.Euler(0f, 0f, -1f);
+                    Vector3 KeyPadDelta = Vector3.zero;
+                    //if (Input.GetKey(KeyCode.Keypad7) || Input.GetKey(KeyCode.Keypad9))
+                    // targetModel.transform.localRotation *= Quaternion.Euler(0f, 0f, 1f);
+                    //if (Input.GetKey(KeyCode.Keypad1) || Input.GetKey(KeyCode.Keypad3))
+                    //targetModel.transform.localRotation *= Quaternion.Euler(0f, 0f, -1f);
+
+                    if (targetModel == currentModel)
+                    {
+                        if (Input.GetKey(KeyCode.Keypad8))
+                            KeyPadDelta += new Vector3(0f, 1f, 0f);
+                        if (Input.GetKey(KeyCode.Keypad2))
+                            KeyPadDelta += new Vector3(0f, -1f, 0f);
+                        if (Input.GetKey(KeyCode.Keypad4))
+                            KeyPadDelta += new Vector3(-1f, 0f, 0f);
+                        if (Input.GetKey(KeyCode.Keypad6))
+                            KeyPadDelta += new Vector3(1f, 0f, 0f);
+
+                        model_Horizontal_Rotation = Mathf.Repeat(model_Horizontal_Rotation + KeyPadDelta.x, 360f);
+                        currentModel.transform.localRotation = Quaternion.Euler(0f, model_Horizontal_Rotation, 0f);
+
+                        if (currentModelWrapper == null)
+                            currentModelWrapper = new GameObject("CurrentModelWrapper");
+                        currentModel.transform.SetParent(currentModelWrapper.transform);
+                        model_Vertical_Rotation = Mathf.Repeat(model_Vertical_Rotation - KeyPadDelta.y, 360f);
+
+                        if (model_Vertical_Rotation > 90f && model_Vertical_Rotation <= 180f)
+                            model_Vertical_Rotation = 90f;
+                        else if (model_Vertical_Rotation > 180f && model_Vertical_Rotation < 270f)
+                            model_Vertical_Rotation = 270f;
+
+                        currentModelWrapper.transform.localRotation = Quaternion.Euler(model_Vertical_Rotation, 0f, 0f);
+                    }
+                    else
+                    {
+                        if (Input.GetKey(KeyCode.Keypad6))
+                            weaponmodel_Rotation *= Quaternion.Euler(0f, 1f, 0f);
+                        if (Input.GetKey(KeyCode.Keypad4))
+                            weaponmodel_Rotation *= Quaternion.Euler(0f, -1f, 0f);
+                        if (Input.GetKey(KeyCode.Keypad8))
+                            weaponmodel_Rotation *= Quaternion.Euler(-1f, 0f, 0f);
+                        if (Input.GetKey(KeyCode.Keypad2))
+                            weaponmodel_Rotation *= Quaternion.Euler(1f, 0f, 0f);
+                        if (Input.GetKey(KeyCode.Keypad7) || Input.GetKey(KeyCode.Keypad9))
+                            weaponmodel_Rotation *= Quaternion.Euler(0f, 0f, 1f);
+                        if (Input.GetKey(KeyCode.Keypad1) || Input.GetKey(KeyCode.Keypad3))
+                            weaponmodel_Rotation *= Quaternion.Euler(0f, 0f, -1f);
+
+                        currentWeaponModel.transform.localRotation = weaponmodel_Rotation;
+                    }
                 }
                 else
                 {
                     Single moveSpeed = 0.5f;
-                    if (Input.GetKey(KeyCode.Keypad6))
-                        targetModel.transform.localPosition += moveSpeed * Vector3.left;
-                    if (Input.GetKey(KeyCode.Keypad4))
-                        targetModel.transform.localPosition += moveSpeed * Vector3.right;
-                    if (Input.GetKey(KeyCode.Keypad8))
-                        targetModel.transform.localPosition += moveSpeed * Vector3.down;
-                    if (Input.GetKey(KeyCode.Keypad2))
-                        targetModel.transform.localPosition += moveSpeed * Vector3.up;
-                    if (Input.GetKey(KeyCode.Keypad7) || Input.GetKey(KeyCode.Keypad9))
-                        targetModel.transform.localPosition += moveSpeed * Vector3.back;
-                    if (Input.GetKey(KeyCode.Keypad1) || Input.GetKey(KeyCode.Keypad3))
-                        targetModel.transform.localPosition += moveSpeed * Vector3.forward;
+                    if (targetModel == currentModel)
+                    {
+                        if (Input.GetKey(KeyCode.Keypad6))
+                            model_Position += moveSpeed * Vector3.left;
+                        if (Input.GetKey(KeyCode.Keypad4))
+                            model_Position += moveSpeed * Vector3.right;
+                        if (Input.GetKey(KeyCode.Keypad8))
+                            model_Position += moveSpeed * Vector3.down;
+                        if (Input.GetKey(KeyCode.Keypad2))
+                            model_Position += moveSpeed * Vector3.up;
+                        if (Input.GetKey(KeyCode.Keypad7) || Input.GetKey(KeyCode.Keypad9))
+                            model_Position += moveSpeed * Vector3.back;
+                        if (Input.GetKey(KeyCode.Keypad1) || Input.GetKey(KeyCode.Keypad3))
+                            model_Position += moveSpeed * Vector3.forward;
+                        currentModelWrapper.transform.localPosition = model_Position;
+                    }
+                    else
+                    {
+                        if (Input.GetKey(KeyCode.Keypad6))
+                            weaponmodel_Position += moveSpeed * Vector3.left;
+                        if (Input.GetKey(KeyCode.Keypad4))
+                            weaponmodel_Position += moveSpeed * Vector3.right;
+                        if (Input.GetKey(KeyCode.Keypad8))
+                            weaponmodel_Position += moveSpeed * Vector3.down;
+                        if (Input.GetKey(KeyCode.Keypad2))
+                            weaponmodel_Position += moveSpeed * Vector3.up;
+                        if (Input.GetKey(KeyCode.Keypad7) || Input.GetKey(KeyCode.Keypad9))
+                            weaponmodel_Position += moveSpeed * Vector3.back;
+                        if (Input.GetKey(KeyCode.Keypad1) || Input.GetKey(KeyCode.Keypad3))
+                            weaponmodel_Position += moveSpeed * Vector3.forward;
+
+                        currentWeaponModel.transform.localPosition = weaponmodel_Position;
+                    }
                 }
+                if (Input.GetKey(KeyCode.KeypadPlus)) // Zoom in ; Increase Size
+                {
+                    if (targetModel == currentModel && scaleFactor.x < 2.1f)
+                    {
+                        scaleFactor += new Vector3(0.01f, 0.01f, 0.01f);
+                        targetModel.transform.localScale = scaleFactor;
+                    }
+                    else if (targetModel == currentWeaponModel)
+                    {
+                        weaponmodel_scaleFactor += new Vector3(0.1f, 0.1f, 0.1f);
+                        targetModel.transform.localScale = weaponmodel_scaleFactor;
+                    }
+                }
+                else if (Input.GetKey(KeyCode.KeypadMinus)) // Zoom out ; Reduce Size
+                {
+                    if (targetModel == currentModel && scaleFactor.x > 0.1f)
+                    {
+                        scaleFactor -= new Vector3(0.01f, 0.01f, 0.01f);
+                        targetModel.transform.localScale = scaleFactor;
+                    }
+                    else if (targetModel == currentWeaponModel)
+                    {
+                        weaponmodel_scaleFactor -= new Vector3(0.1f, 0.1f, 0.1f);
+                        targetModel.transform.localScale = weaponmodel_scaleFactor;
+                    }
+                }
+
                 if (Input.GetKey(KeyCode.Keypad5) && !DontSpamMessage)
                 {
                     string ModelTargetPos = currentModel.transform.localPosition.ToString("F9");
@@ -607,6 +690,24 @@ namespace Memoria.Assets
                 {
                     ChangeModel(GetFirstModelOfCategory(8));
                 }
+                if (Input.GetKeyDown(KeyCode.R)) // Reset position/rotation
+                {
+                    if (targetModel == currentModel)
+                    {
+                        model_Horizontal_Rotation = 0f;
+                        model_Vertical_Rotation = (geoList[currentGeoIndex].Kind == MODEL_KIND_BBG || geoList[currentGeoIndex].Kind == MODEL_KIND_BBG_OBJ) ? 200f : 20f;
+                        model_Position = new Vector3(0f, 60f, 0f);
+                        scaleFactor = new Vector3(0.3f, 0.3f, 0.3f);
+                        UpdateModelCoordinates();
+                    }
+                    else
+                    {
+                        weaponmodel_Position = Vector3.zero;
+                        weaponmodel_Rotation = Quaternion.identity;
+                        weaponmodel_scaleFactor = Vector3.one;
+                        UpdateWeaponModelCoordinates();
+                    }
+                }
                 if (Input.GetKeyDown(KeyCode.P) && currentBonesID.Count > 0)
                 {
                     ChangeWeaponTexture = !ChangeWeaponTexture;
@@ -648,46 +749,26 @@ namespace Memoria.Assets
                     displayCurrentModel = !displayCurrentModel;
                     targetModel.gameObject.SetActive(displayCurrentModel);
                 }
-                if (Input.mouseScrollDelta.y != 0f && IsMouseOverWindow) // Scroll wheel on mouse (ScalePosition)
+                if (Input.GetMouseButton(1)) // Right Click (Position)
                 {
-                    if (currentWeaponModel && (shift || ctrl))
+                    if (mouseRightWasPressed)
                     {
-                        if (shift)
+                        Vector3 mouseDelta = Input.mousePosition - mousePreviousPosition;
+                        Single mouseSensibility = 0.7f; // was 0.5f
+                        if (targetModel == currentModel)
                         {
-                            currentWeaponBoneIndex += Input.mouseScrollDelta.y < 0f ? -1 : 1;
-                            if (currentWeaponBoneIndex < 0)
-                                currentWeaponBoneIndex = currentBonesID.Count - 1;
-                            else if (currentWeaponBoneIndex > currentBonesID.Count)
-                                currentWeaponBoneIndex = 0;
-                            if (currentWeaponModel != null && currentModel != null)
-                                WeaponAttach(currentWeaponModel, currentModel, currentBonesID[currentWeaponBoneIndex]);
+                            model_Position -= mouseSensibility * new Vector3(mouseDelta.x, mouseDelta.y, mouseDelta.z);
+                            currentModelWrapper.transform.localPosition = model_Position;
                         }
-                        else if (ctrl)
-                        {
-                            Int32 nextIndex = currentWeaponGeoIndex;
-                            nextIndex += Input.mouseScrollDelta.y < 0f ? -1 : 1;
-                            if (nextIndex < 0)
-                                nextIndex = (weapongeoList.Count - 1);
-                            else if (nextIndex > weapongeoList.Count)
-                                nextIndex = 0;
-                            if (nextIndex == weapongeoList.Count)
-                                nextIndex -= weapongeoList.Count;
-                            ChangeWeaponModel(nextIndex);
-                        }
-                    }
-                    else
-                    {
-                        Single scrollSpeed = 0.1f; // was 0.05 before
-                        Single scrollMin = 0.02f;
-                        Single scrollMax = 2.1f;
-                        if (Input.mouseScrollDelta.y > 0f)
-                            scaleFactor *= 1f + scrollSpeed * Input.mouseScrollDelta.y;
                         else
-                            scaleFactor /= 1f - scrollSpeed * Input.mouseScrollDelta.y;
-                        scaleFactor.x = Mathf.Clamp(scaleFactor.x, scrollMin, scrollMax);
-                        scaleFactor.y = scaleFactor.z = scaleFactor.x;
-                        currentModel.transform.localScale = scaleFactor;
+                        {
+                            weaponmodel_Position -= mouseSensibility * new Vector3(mouseDelta.x, mouseDelta.y, mouseDelta.z);
+                            currentWeaponModel.transform.localPosition = weaponmodel_Position;
+                        }
+                        if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS)
+                            spsEffect.pos = currentModel.transform.localPosition;
                     }
+                    mouseRightPressed = true;
                 }
                 if (Input.GetMouseButton(0) && geoList[currentGeoIndex].Kind < MODEL_KIND_SPS) // Left Click (Rotation)
                 {
@@ -750,25 +831,68 @@ namespace Memoria.Assets
                     }
                     mouseLeftPressed = true;
                 }
-                if (Input.GetMouseButton(1)) // Right Click (Position)
+                if (Input.mouseScrollDelta.y != 0f && IsMouseOverWindow) // Scroll wheel on mouse (ScalePosition)
                 {
-                    if (mouseRightWasPressed)
+                    if (currentWeaponModel && (shift || ctrl))
                     {
-                        Vector3 mouseDelta = Input.mousePosition - mousePreviousPosition;
-                        Single mouseSensibility = 0.7f; // was 0.5f
-                        if (targetModel == currentModel)
+                        if (shift)
                         {
-                            model_Position -= mouseSensibility * new Vector3(mouseDelta.x, mouseDelta.y, mouseDelta.z);
-                            currentModelWrapper.transform.localPosition = model_Position;
+                            currentWeaponBoneIndex += Input.mouseScrollDelta.y < 0f ? -1 : 1;
+                            if (currentWeaponBoneIndex < 0)
+                                currentWeaponBoneIndex = currentBonesID.Count - 1;
+                            else if (currentWeaponBoneIndex > currentBonesID.Count)
+                                currentWeaponBoneIndex = 0;
+                            if (currentWeaponModel != null && currentModel != null)
+                            {
+                                weaponmodel_Position = Vector3.zero;
+                                weaponmodel_Rotation = Quaternion.identity;
+                                weaponmodel_scaleFactor = Vector3.one;
+                                UpdateWeaponModelCoordinates();
+                                WeaponAttach(currentWeaponModel, currentModel, currentBonesID[currentWeaponBoneIndex]);
+                            }
+                        }
+                        else if (ctrl)
+                        {
+                            Int32 nextIndex = currentWeaponGeoIndex;
+                            nextIndex += Input.mouseScrollDelta.y < 0f ? -1 : 1;
+                            if (nextIndex < 0)
+                                nextIndex = (weapongeoList.Count - 1);
+                            else if (nextIndex > weapongeoList.Count)
+                                nextIndex = 0;
+                            if (nextIndex == weapongeoList.Count)
+                                nextIndex -= weapongeoList.Count;
+                            ChangeWeaponModel(nextIndex);
+                            currentWeaponModel.transform.localScale = weaponmodel_scaleFactor;
+                        }
+                    }
+                    else
+                    {
+                        Single scrollSpeed = 0.1f; // was 0.05 before
+                        Single scrollMin = 0.02f;
+
+                        if (targetModel == currentWeaponModel)
+                        {
+                            Single scrollMax = 50f;
+                            if (Input.mouseScrollDelta.y > 0f)
+                                weaponmodel_scaleFactor *= 1f + scrollSpeed * Input.mouseScrollDelta.y;
+                            else
+                                weaponmodel_scaleFactor /= 1f - scrollSpeed * Input.mouseScrollDelta.y;
+                            weaponmodel_scaleFactor.x = Mathf.Clamp(weaponmodel_scaleFactor.x, scrollMin, scrollMax);
+                            weaponmodel_scaleFactor.y = weaponmodel_scaleFactor.z = weaponmodel_scaleFactor.x;
+                            currentWeaponModel.transform.localScale = weaponmodel_scaleFactor;
                         }
                         else
                         {
-                            targetModel.transform.localPosition -= mouseSensibility * new Vector3(mouseDelta.x, mouseDelta.y, mouseDelta.z);
+                            Single scrollMax = 2.1f;
+                            if (Input.mouseScrollDelta.y > 0f)
+                                scaleFactor *= 1f + scrollSpeed * Input.mouseScrollDelta.y;
+                            else
+                                scaleFactor /= 1f - scrollSpeed * Input.mouseScrollDelta.y;
+                            scaleFactor.x = Mathf.Clamp(scaleFactor.x, scrollMin, scrollMax);
+                            scaleFactor.y = scaleFactor.z = scaleFactor.x;
+                            currentModel.transform.localScale = scaleFactor;
                         }
-                        if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS)
-                            spsEffect.pos = currentModel.transform.localPosition;
                     }
-                    mouseRightPressed = true;
                 }
                 if (Input.GetKeyDown(KeyCode.E))
                 {
@@ -842,9 +966,13 @@ namespace Memoria.Assets
                 {
                     animation.Stop();
                 }
-
                 UpdateRender();
                 ProcessBuiltInWeapon();
+                if (LoadingWeaponConfig)
+                {
+                    LoadWeaponConfig();
+                    LoadingWeaponConfig = false;
+                }
                 SaveModelViewerConfigFile();
                 mousePreviousPosition = Input.mousePosition;
             }
@@ -1002,19 +1130,20 @@ namespace Memoria.Assets
                 String extraInfo = "";
                 if (targetModel != null && targetModel == currentWeaponModel)
                 {
-                    Transform transform = targetModel.transform;
+                    extraInfo += "[WEAPON] ¤ ";
                     extraInfo += UseModdedTextures ? "text_mod | " : "text_orig | ";
-                    extraInfo += $"Pos: [x]{transform.localPosition.x} [y]{transform.localPosition.y}";
-                    extraInfo += $" Rot(Quat): [x]{Math.Round(transform.localRotation.x, 2)} [y]{Math.Round(transform.localRotation.y, 2)} [z]{Math.Round(transform.localRotation.z, 2)} [w]{Math.Round(transform.localRotation.w, 2)}";
-                    extraInfo += $" Rot(Eul): {Math.Round(transform.localRotation.eulerAngles.x, 0)}/{Math.Round(transform.localRotation.eulerAngles.y, 0)}/{Math.Round(transform.localRotation.eulerAngles.z, 0)}";
+                    extraInfo += $"Pos: [x]{currentWeaponModel.transform.localPosition.x} [y]{currentWeaponModel.transform.localPosition.y}";
+                    extraInfo += $" Rot(Quat): [x]{Math.Round(currentWeaponModel.transform.localRotation.x, 2)} [y]{Math.Round(currentWeaponModel.transform.localRotation.y, 2)} [z]{Math.Round(currentWeaponModel.transform.localRotation.z, 2)} [w]{Math.Round(currentWeaponModel.transform.localRotation.w, 2)}";
+                    extraInfo += $" Rot(Eul): {Math.Round(currentWeaponModel.transform.localRotation.eulerAngles.x, 0)}/{Math.Round(currentWeaponModel.transform.localRotation.eulerAngles.y, 0)}/{Math.Round(currentWeaponModel.transform.localRotation.eulerAngles.z, 0)}";
                 }
                 else if (targetModel != null && targetModel == currentModel)
                 {
                     if (currentModelWrapper == null)
                         currentModelWrapper = new GameObject("CurrentModelWrapper");
                     currentModel.transform.SetParent(currentModelWrapper.transform);
+                    extraInfo += "[MODEL] ¤ ";
                     extraInfo += UseModdedTextures ? "text_mod" : "text_orig";
-                    extraInfo += $" / x {Math.Round(currentModelWrapper.transform.localPosition.x, 2)} y {Math.Round(currentModelWrapper.transform.localPosition.y, 2)}";
+                    extraInfo += $" / x : {Math.Round(currentModelWrapper.transform.localPosition.x, 2)} y : {Math.Round(currentModelWrapper.transform.localPosition.y, 2)}";
                     extraInfo += $" / ↔ {Math.Round(model_Horizontal_Rotation, 0)} ↕ {Math.Round(model_Vertical_Rotation, 0)}";
                     extraInfo += $" / ▣ {Math.Round(scaleFactor.x, 2)}";
                     //extraInfo += $" | Rot(Eul): {Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.x,0)}/{Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.y, 0)}/{Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.z, 0)}";
@@ -1335,6 +1464,7 @@ namespace Memoria.Assets
                     currentWeaponModel = ModelFactory.CreateModel(weapongeoList[index].Name, false, true, Configuration.Graphics.ElementsSmoothTexture);
                     WeaponAttach(currentWeaponModel, currentModel, currentBonesID[currentWeaponBoneIndex]);
                     isLoadingWeaponModel = false;
+                    postRefresh = 6;
                 }
             }
         }
@@ -1726,14 +1856,63 @@ namespace Memoria.Assets
                 scaleFactor.y = scaleFactor.z = scaleFactor.x;
             }
         }
+
+        public static void LoadWeaponConfig()
+        {
+            // WEAPON
+            ReadModelViewerConfigFile(ParamIni.WEAPON_MODEL, out string WeaponModel);
+            if (!String.IsNullOrEmpty(WeaponModel))
+            {
+                ReadModelViewerConfigFile(ParamIni.WEAPON_GEOINDEX, out string WeaponGeoIndex);
+                if (!String.IsNullOrEmpty(WeaponGeoIndex))
+                {
+                    Int32.TryParse(WeaponGeoIndex, out currentWeaponGeoIndex);
+                    ChangeWeaponModel(currentWeaponGeoIndex);
+                }
+                ReadModelViewerConfigFile(ParamIni.WEAPON_BONEINDEX, out string WeaponBoneIndex);
+                if (!String.IsNullOrEmpty(WeaponBoneIndex))
+                {
+                    Int32.TryParse(WeaponBoneIndex, out currentWeaponBoneIndex);
+                    WeaponAttach(currentWeaponModel, currentModel, currentWeaponBoneIndex);
+                }
+                ReadModelViewerConfigFile(ParamIni.WEAPON_POSITION, out string WeaponModelPosition);
+                if (!String.IsNullOrEmpty(WeaponModelPosition))
+                {
+                    string[] VectorWeaponModelPosition = WeaponModelPosition.Split(',');
+                    if (VectorWeaponModelPosition.Length == 3)
+                    {
+                        Single.TryParse(VectorWeaponModelPosition[0], out weaponmodel_Position.x);
+                        Single.TryParse(VectorWeaponModelPosition[1], out weaponmodel_Position.y);
+                        Single.TryParse(VectorWeaponModelPosition[2], out weaponmodel_Position.z);
+                    }
+                }
+                ReadModelViewerConfigFile(ParamIni.WEAPON_ROTATION, out string WeaponModelRotation);
+                if (!String.IsNullOrEmpty(WeaponModelRotation))
+                {
+                    string[] VectorWeaponModelRotation = WeaponModelRotation.Split(',');
+                    if (VectorWeaponModelRotation.Length >= 3)
+                    {
+                        Single.TryParse(VectorWeaponModelRotation[0], out weaponmodel_Rotation.x);
+                        Single.TryParse(VectorWeaponModelRotation[1], out weaponmodel_Rotation.y);
+                        Single.TryParse(VectorWeaponModelRotation[2], out weaponmodel_Rotation.z);
+                    }
+                }
+                ReadModelViewerConfigFile(ParamIni.WEAPON_SCALE, out string WeaponModelScale);
+                if (!String.IsNullOrEmpty(WeaponModelScale))
+                {
+                    Single.TryParse(WeaponModelScale, out weaponmodel_scaleFactor.x);
+                    weaponmodel_scaleFactor.y = weaponmodel_scaleFactor.z = weaponmodel_scaleFactor.x;
+                }
+            }
+        }
+
         public static void UpdateModelCoordinates()
         {
             if (currentModel != null)
             {
                 if (currentModelWrapper == null)
-                {
                     currentModelWrapper = new GameObject("CurrentModelWrapper");
-                }
+
                 currentModel.transform.SetParent(currentModelWrapper.transform);
                 currentModelWrapper.transform.localPosition = model_Position;
                 currentModel.transform.localPosition = Vector3.zero;
@@ -1741,6 +1920,16 @@ namespace Memoria.Assets
                 currentModelWrapper.transform.localRotation = Quaternion.Euler(model_Vertical_Rotation, 0f, 0f);
                 currentModel.transform.localScale = scaleFactor;
                 currentModelWrapper.transform.localScale = Vector3.one;
+            }
+        }
+
+        public static void UpdateWeaponModelCoordinates()
+        {
+            if (currentWeaponModel != null)
+            {
+                currentWeaponModel.transform.localPosition = weaponmodel_Position;
+                currentWeaponModel.transform.localRotation = weaponmodel_Rotation;
+                currentWeaponModel.transform.localScale = weaponmodel_scaleFactor;
             }
         }
 
@@ -1759,6 +1948,16 @@ namespace Memoria.Assets
             config += $"Model_Scale = {scaleFactor.x}\n";
             config += $"infoPanel_Position = {InfoPanelPosX}\n";
             config += $"controlPanel_Position = {ControlPanelPosX}\n";
+            if (currentWeaponModel != null)
+            {
+                config += $"\n;=== WEAPON ===;\n";
+                config += $"Weapon_Model = {weapongeoList[currentWeaponGeoIndex].Name}\n";
+                config += $"Weapon_GeoIndex = {currentWeaponGeoIndex}\n";
+                config += $"Weapon_BoneIndex = {currentWeaponBoneIndex}\n";
+                config += $"Weapon_Position = {weaponmodel_Position}\n";
+                config += $"Weapon_Rotation = {weaponmodel_Rotation}\n";
+                config += $"Weapon_Scale = {weaponmodel_scaleFactor.x}\n";
+            }
 
             File.WriteAllText(ModelViewerConfigPath, config);
         }
@@ -1839,6 +2038,52 @@ namespace Memoria.Assets
                             return;
                         }
                         break;
+                    case ParamIni.WEAPON_MODEL:
+                        if (Line.Contains("Weapon_Model"))
+                        {
+                            Line = Line.Substring(Line.IndexOf('=') + 2);
+                            return;
+                        }
+                        break;
+                    case ParamIni.WEAPON_GEOINDEX:
+                        if (Line.Contains("Weapon_GeoIndex"))
+                        {
+                            Line = Line.Substring(Line.IndexOf('=') + 2);
+                            return;
+                        }
+                        break;
+                    case ParamIni.WEAPON_BONEINDEX:
+                        if (Line.Contains("Weapon_BoneIndex"))
+                        {
+                            Line = Line.Substring(Line.IndexOf('=') + 2);
+                            return;
+                        }
+                        break;
+                    case ParamIni.WEAPON_POSITION:
+                        if (Line.Contains("Weapon_Position"))
+                        {
+                            Line = Line.Substring(Line.IndexOf('=') + 2);
+                            Line = Line.Substring(1);
+                            Line = Line.Remove(Line.Length - 1);
+                            return;
+                        }
+                        break;
+                    case ParamIni.WEAPON_ROTATION:
+                        if (Line.Contains("Weapon_Rotation"))
+                        {
+                            Line = Line.Substring(Line.IndexOf('=') + 2);
+                            Line = Line.Substring(1);
+                            Line = Line.Remove(Line.Length - 1);
+                            return;
+                        }
+                        break;
+                    case ParamIni.WEAPON_SCALE:
+                        if (Line.Contains("Weapon_Scale"))
+                        {
+                            Line = Line.Substring(Line.IndexOf('=') + 2);
+                            return;
+                        }
+                        break;
                 }
             }
             Line = "";
@@ -1898,7 +2143,13 @@ namespace Memoria.Assets
             MODEL_VER_ROTATION,
             MODEL_SCALE,
             INFOPANEL_POSITION,
-            CONTROLPANEL_POSITION
+            CONTROLPANEL_POSITION,
+            WEAPON_MODEL,
+            WEAPON_GEOINDEX,
+            WEAPON_BONEINDEX,
+            WEAPON_POSITION,
+            WEAPON_ROTATION,
+            WEAPON_SCALE
         }
 
         private const Int32 MODEL_KIND_NORMAL = 0;
