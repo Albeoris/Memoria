@@ -546,7 +546,7 @@ namespace Memoria.Assets
                     UseModdedTextures = !UseModdedTextures;
                     ChangeModel(currentGeoIndex);
                 }
-
+          
                 Transform BoneSelected = currentModel.transform.GetChildByName("bone" + currentBoneIndex.ToString("D3"));
 
                 if (ctrl)
@@ -1167,7 +1167,7 @@ namespace Memoria.Assets
                     label += $"[FFFF00][␣][FFFFFF] {currentAnimName}";
                     label += "\n";
                     label += $"[FFFF00][S][FFFFFF] Shader: {spsEffect.materials[Math.Min((Int32)spsEffect.abr, 4)].shader.name} [FFFF00][^↓↑][FFFFFF] Fade: {spsEffect.fade}";
-                    label += "\n";
+                    label += "\n\n\n\n\n\n";
                 }
                 else if (animList.Count > 0)
                 {
@@ -1175,31 +1175,32 @@ namespace Memoria.Assets
                     label += "\n";
                     label += $"[CCCCCC]  - Anim name: {currentAnimName} ({animList[currentAnimIndex].Key})[FFFFFF]";
                     label += "\n";
+                    if (currentWeaponModel)
+                        label += $"[FFFF00][^Scroll][FFFFFF] Weapon: {weapongeoList[currentWeaponGeoIndex].Name} ({geoList[currentWeaponGeoIndex].Id})\n";
+
+                    label += $"[FFFF00][⇧Scroll][FFFFFF] Bone: {currentBoneIndex}\n";
+                    if (partcontrolled == PartControlled.MODEL)
+                        label += $"[FFFF00][⇧P][FFFFFF] Selected: [00FF00]Model\n";
+                    else if (partcontrolled == PartControlled.WEAPON)
+                        label += $"[FFFF00][⇧P][FFFFFF] Selected: [2BFAFA]Weapon\n";
+                    else if (partcontrolled == PartControlled.BONE)
+                        label += $"[FFFF00][⇧P][FFFFFF] Selected: [FF007F]Bone\n";
+
+                    label += $"[FFFF00][^B][FFFFFF] BoneHidden: ";
+                    if (currentHiddenBonesID.Count > 0)
+                    {
+                        for (Int32 i = 0; i < currentHiddenBonesID.Count; i++)
+                            label += $"{currentHiddenBonesID[i]} ";
+                        label += $"\n";
+                    }
+                    else
+                        label += "\n\n\n";
                 }
                 else
                 {
-                    label += "\n\n";
+                    label += "\n\n\n\n\n\n\n";
                 }
-                if (currentWeaponModel)
-                    label += $"[FFFF00][^Scroll][FFFFFF] Weapon: {weapongeoList[currentWeaponGeoIndex].Name} ({geoList[currentWeaponGeoIndex].Id})\n";
 
-                label += $"[FFFF00][⇧Scroll][FFFFFF] Bone: {currentBoneIndex}\n";
-                if (partcontrolled == PartControlled.MODEL)
-                    label += $"[FFFF00][⇧P][FFFFFF] Selected: [00FF00]Model\n";
-                else if (partcontrolled == PartControlled.WEAPON)
-                    label += $"[FFFF00][⇧P][FFFFFF] Selected: [2BFAFA]Weapon\n";
-                else if (partcontrolled == PartControlled.BONE)
-                    label += $"[FFFF00][⇧P][FFFFFF] Selected: [FF007F]Bone\n";
-
-                label += $"[FFFF00][^B][FFFFFF] BoneHidden: ";
-                if (currentHiddenBonesID.Count > 0)
-                {
-                    for (Int32 i = 0; i < currentHiddenBonesID.Count; i++)
-                        label += $"{currentHiddenBonesID[i]} ";
-                    label += $"\n";
-                }
-                else
-                    label += "\n\n\n";
                 if (!String.Equals(infoLabel.text, label))
                     infoLabel.text = label;
                 if (!infoPanel.Show)
@@ -1484,6 +1485,8 @@ namespace Memoria.Assets
                 currentAnimIndex = 0;
                 currentAnimName = animList.Count > 0 ? animList[0].Value : "";
                 currentModelBones = BoneHierarchyNode.CreateFromModel(currentModel);
+                if (geoList[index].Name.StartsWith("GEO_WEP"))
+                    partcontrolled = PartControlled.MODEL;
                 //replaceOnce = 4;
                 postRefresh = 6;
                 // Disable fog effect for World Map models
@@ -1494,6 +1497,7 @@ namespace Memoria.Assets
             }
             else if (geoList[index].Kind == MODEL_KIND_BBG)
             {
+                partcontrolled = PartControlled.MODEL;
                 currentModel.transform.position = Vector3.zero;
                 currentModel.transform.localScale = scaleFactor;
                 currentModel.transform.localRotation = Quaternion.Euler(20f, 0f, 0f);
@@ -1505,6 +1509,7 @@ namespace Memoria.Assets
             }
             else if (geoList[index].Kind == MODEL_KIND_BBG_OBJ)
             {
+                partcontrolled = PartControlled.MODEL;
                 currentModel.transform.position = Vector3.zero;
                 currentModel.transform.localScale = scaleFactor;
                 currentModel.transform.localRotation = Quaternion.Euler(20f, 0f, 0f);
@@ -1514,6 +1519,7 @@ namespace Memoria.Assets
             }
             else
             {
+                partcontrolled = PartControlled.MODEL;
                 currentAnimIndex = 0;
                 currentAnimName = $"Frame: {(spsEffect.curFrame >> 4) + 1}/{spsEffect.frameCount >> 4}";
                 currentModelBones = null;
