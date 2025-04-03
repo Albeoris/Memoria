@@ -2666,6 +2666,7 @@ public partial class EventEngine
                         player.info.menu_type = charPreset;
                     ff9play.FF9Play_Change(player, enableLeveling != 0, eqp_id);
                     player.info.sub_replaced = true;
+                    ff9feqp.FF9FEqp_UpdateSA(player); // Make sure equipped abilities are still valid
                 }
                 else
                 {

@@ -648,9 +648,11 @@ namespace Memoria.Launcher
                 String downloadFormatExtLower = "." + (downloadingMod.DownloadFormat ?? "zip").ToLower();
                 if (String.IsNullOrEmpty(downloadingMod.DownloadFormat) || supportedArchives.Contains(downloadFormatExtLower))
                 {
-                    Directory.CreateDirectory(path);
                     try
                     {
+                        if (Directory.Exists(path)) Directory.Delete(path, true);
+                        Directory.CreateDirectory(path);
+
                         Boolean proceedNext = false;
                         Boolean moveDesc = false;
                         String sourcePath = "";
@@ -926,39 +928,72 @@ namespace Memoria.Launcher
                 UpdateModSettings();
         }
 
-        private static String currentColor;
+        private static Color currentColor;
         private static String currentImage;
 
         public void UpdateLauncherTheme()
         {
-            String color = DefaultAccentColor;
+            Color color = DefaultAccentColor;
             String image = DefaultBackgroundImage;
             foreach (var mod in modListInstalled)
             {
                 if (!mod.IsActive) continue;
 
-                if (mod.LauncherBackground != null)
-                {
-                    String newImage = $"{Directory.GetCurrentDirectory()}\\{mod.FullInstallationPath}\\{mod.LauncherBackground}";
-                    if (!File.Exists(newImage))
-                        continue;
-                    image = newImage;
+                if (FindTheme(mod, ref image, ref color)) break;
 
-                    if (mod.LauncherColor != null)
-                        color = $"#CC{mod.LauncherColor.Replace("#", "")}";
-                    break;
+                Boolean found = false;
+                foreach (Mod submod in mod.SubMod)
+                {
+                    if (!submod.IsActive) continue;
+                    if (FindTheme(submod, ref image, ref color))
+                    {
+                        found = true;
+                        break;
+                    }
                 }
+                if (found) break;
             }
             if (color != currentColor)
             {
-                SetAccentColor((Color)ColorConverter.ConvertFromString(color));
+                SetAccentColor(color);
                 currentColor = color;
             }
             if (image != currentImage)
             {
-                Launcher.Source = new BitmapImage(new Uri(image, UriKind.Absolute));
+                BitmapImage bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.UriSource = new Uri(image, UriKind.Absolute);
+                bitmap.EndInit();
+                Launcher.Source = bitmap;
                 currentImage = image;
             }
+        }
+
+        private bool FindTheme(Mod mod, ref String image, ref Color color)
+        {
+            Boolean found = false;
+            if (mod.LauncherBackground != null)
+            {
+                String newImage = $"{Directory.GetCurrentDirectory()}\\{(mod.ParentMod != null ? mod.ParentMod.InstallationPath : mod.FullInstallationPath)}\\{mod.LauncherBackground}";
+                if (File.Exists(newImage))
+                {
+                    image = newImage;
+                    found = true;
+                }
+            }
+
+            if (mod.LauncherColor != null)
+            {
+                String newcolor = $"#CC{mod.LauncherColor.Replace("#", "")}";
+                try
+                {
+                    color = (Color)ColorConverter.ConvertFromString(newcolor);
+                    found = true;
+                }
+                catch { }
+            }
+            return found;
         }
 
         private Boolean GenerateAutomaticDescriptionFile(String folderName)
@@ -976,32 +1011,6 @@ namespace Memoria.Launcher
             String author = "";
             String category = "";
             String description = "";
-
-            /*
-            if (folderName == "MoguriFiles")
-            {
-                name = "Moguri Mod";
-                author = "ZePilot / Snouz";
-                category = "Visual";
-                description = "";
-            }
-
-            if (folderName == "MoguriSoundtrack")
-            {
-                name = "Moguri Soundtrack";
-                author = "Pontus Hultgren / ZePilot";
-                category = "Music";
-                description = "";
-            }
-
-            if (folderName == "MoguriVideo")
-            {
-                name = "Moguri Video";
-                author = "Snouz / Lykon";
-                category = "Visual";
-                description = "";
-            }
-            */
 
             File.WriteAllText(folderName + "/" + Mod.DESCRIPTION_FILE,
                 "<Mod>\n" +
@@ -1235,6 +1244,7 @@ namespace Memoria.Launcher
             }
 
             RefreshModOptions();
+            UpdateLauncherTheme();
             // Save
             UpdateModSettings();
         }
@@ -1275,6 +1285,7 @@ namespace Memoria.Launcher
             for (Int32 i = 0; i < modListInstalled.Count; i++)
                 modListInstalled[i].Priority = i + 1;
             lstMods.Items.Refresh();
+            UpdateModSettings();
         }
 
         private void SortCatalog(MethodInfo sortGetter, Boolean ascending)
@@ -1305,18 +1316,20 @@ namespace Memoria.Launcher
             {
                 IniFile iniFile = IniFile.MemoriaIni;
 
+                // FolderNames
                 String str = iniFile.GetSetting("Mod", "FolderNames");
-                if (String.IsNullOrEmpty(str))
-                    str = "";
                 str = str.Trim().Trim('"');
                 String[] iniModActiveList = Regex.Split(str, @""",\s*""");
+                // Priorities
                 str = iniFile.GetSetting("Mod", "Priorities");
                 str = str.Trim().Trim('"');
                 String[] iniModPriorityList = Regex.Split(str, @""",\s*""");
-                String[][] listCouple = new String[][] { iniModPriorityList, iniModActiveList };
-                List<String> activeSubMods = new List<String>();
-                foreach (String submod in iniFile.GetSetting("Mod", "ActiveSubMods").Split(','))
-                    activeSubMods.Add(submod.Trim());
+                // ActiveSubMods
+                str = iniFile.GetSetting("Mod", "ActiveSubMods");
+                str = str.Trim().Trim('"');
+                String[] activeSubModList = Regex.Split(str, @""",\s*""");
+
+                String[][] listCouple = [iniModPriorityList, iniModActiveList];
                 List<String> subModList = new List<String>();
                 for (Int32 listI = 0; listI < 2; ++listI)
                 {
@@ -1352,7 +1365,7 @@ namespace Memoria.Launcher
 
                 foreach (Mod mod in modListInstalled)
                     foreach (Mod sub in mod.SubMod)
-                        if (activeSubMods.Contains($"{mod.InstallationPath}/{sub.InstallationPath}"))
+                        if (activeSubModList.Contains($"{mod.InstallationPath}/{sub.InstallationPath}"))
                             sub.IsActive = true;
 
                 foreach (String path in subModList)
@@ -1381,8 +1394,9 @@ namespace Memoria.Launcher
 
                 foreach (Mod mod in modListInstalled)
                 {
-                    if (!mod.IsActive) continue;
-                    
+                    // Saving the priority
+                    iniModPriorityList.Add(mod.InstallationPath);
+
                     AutoActivateSubMods(mod);
                     foreach (Mod submod in mod.SubMod)
                     {
@@ -1407,14 +1421,20 @@ namespace Memoria.Launcher
                         if (submod.IsActive && submod.ActivateWithMod == null && submod.ActivateWithoutMod == null)
                             iniModActiveSubList.Add($"{mod.InstallationPath}/{submod.InstallationPath}");
 
-                    iniModActiveList.AddRange(mod.EnumerateModAndSubModFoldersOrdered(true));
-                    iniModPriorityList.Add(mod.InstallationPath);
+                    // Save active mods
+                    if (!mod.IsActive) continue;
+                    foreach (String path in mod.EnumerateModAndSubModFoldersOrdered(true))
+                    {
+                        // Only add existing paths
+                        if (Directory.Exists(path))
+                            iniModActiveList.Add(path);
+                    }
                 }
 
                 IniFile iniFile = IniFile.MemoriaIni;
                 iniFile.SetSetting("Mod", "FolderNames", iniModActiveList.Count > 0 ? "\"" + String.Join("\", \"", iniModActiveList) + "\"" : "");
                 iniFile.SetSetting("Mod", "Priorities", iniModPriorityList.Count > 0 ? "\"" + String.Join("\", \"", iniModPriorityList) + "\"" : "");
-                iniFile.SetSetting("Mod", "ActiveSubMods", String.Join(", ", iniModActiveSubList));
+                iniFile.SetSetting("Mod", "ActiveSubMods", iniModActiveSubList.Count > 0 ? "\"" + String.Join("\", \"", iniModActiveSubList) + "\"" : "");
                 iniFile.Save();
             }
             catch (Exception ex) { UiHelper.ShowError(Application.Current.MainWindow, ex); }

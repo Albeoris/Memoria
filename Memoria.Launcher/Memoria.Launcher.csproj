@@ -219,6 +219,7 @@
     <EmbeddedResource Include="Languages\ru.xml" />
     <EmbeddedResource Include="Languages\tr.xml" />
     <EmbeddedResource Include="Languages\zh-CN.xml" />
+    <EmbeddedResource Include="Languages\zh-TW.xml" />
     <Resource Include="images\btnCancelimg.png" />
     <Resource Include="images\btnCheckCompatibilityimg.png" />
     <Resource Include="images\btnDownloadimg.png" />
