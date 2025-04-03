@@ -141,41 +141,42 @@ namespace Memoria.Launcher
                 }
 
                 String arguments = $"-runbylauncher -single-instance -monitor {activeMonitor.ToString(CultureInfo.InvariantCulture)} -screen-width {screenWidth.ToString(CultureInfo.InvariantCulture)} -screen-height {screenHeight.ToString(CultureInfo.InvariantCulture)} -screen-fullscreen {((GameSettingsDisplay.WindowMode == 0 ^ GameSettingsDisplay.WindowMode == 2) ? "0" : "1")} {(GameSettingsDisplay.WindowMode == 2 ? "-popupwindow" : "")}";
-                await Task.Factory.StartNew(
+                // Why was this a task?
+                /*await Task.Factory.StartNew(
                     () =>
+                    {*/
+                ProcessStartInfo gameStartInfo = new ProcessStartInfo(executablePath, arguments) { UseShellExecute = false };
+                if (GameSettings.IsDebugMode)
+                    gameStartInfo.EnvironmentVariables["UNITY_GIVE_CHANCE_TO_ATTACH_DEBUGGER"] = "1";
+
+                Process gameProcess = new Process { StartInfo = gameStartInfo };
+                gameProcess.Start();
+
+                if (GameSettings.IsDebugMode)
+                {
+                    Process debuggerProcess = Process.GetProcesses().FirstOrDefault(p => p.ProcessName.StartsWith("Memoria.Debugger"));
+                    if (debuggerProcess == null)
                     {
-                        ProcessStartInfo gameStartInfo = new ProcessStartInfo(executablePath, arguments) { UseShellExecute = false };
-                        if (GameSettings.IsDebugMode)
-                            gameStartInfo.EnvironmentVariables["UNITY_GIVE_CHANCE_TO_ATTACH_DEBUGGER"] = "1";
-
-                        Process gameProcess = new Process { StartInfo = gameStartInfo };
-                        gameProcess.Start();
-
-                        if (GameSettings.IsDebugMode)
+                        try
                         {
-                            Process debuggerProcess = Process.GetProcesses().FirstOrDefault(p => p.ProcessName.StartsWith("Memoria.Debugger"));
-                            if (debuggerProcess == null)
+                            String debuggerDirectory = Path.Combine(Path.GetFullPath("Debugger"), (GameSettings.IsX64 ? "x64" : "x86"));
+                            String debuggerPath = Path.Combine(debuggerDirectory, "Memoria.Debugger.exe");
+                            String debuggerArgs = "10000"; // Timeout: 10 seconds
+                            if (Directory.Exists(debuggerDirectory) && File.Exists(debuggerPath))
                             {
-                                try
-                                {
-                                    String debuggerDirectory = Path.Combine(Path.GetFullPath("Debugger"), (GameSettings.IsX64 ? "x64" : "x86"));
-                                    String debuggerPath = Path.Combine(debuggerDirectory, "Memoria.Debugger.exe");
-                                    String debuggerArgs = "10000"; // Timeout: 10 seconds
-                                    if (Directory.Exists(debuggerDirectory) && File.Exists(debuggerPath))
-                                    {
-                                        ProcessStartInfo debuggerStartInfo = new ProcessStartInfo(debuggerPath, debuggerArgs) { WorkingDirectory = debuggerDirectory };
-                                        debuggerProcess = new Process { StartInfo = debuggerStartInfo };
-                                        debuggerProcess.Start();
-                                    }
-                                }
-                                catch (Exception)
-                                {
-                                }
-
+                                ProcessStartInfo debuggerStartInfo = new ProcessStartInfo(debuggerPath, debuggerArgs) { WorkingDirectory = debuggerDirectory };
+                                debuggerProcess = new Process { StartInfo = debuggerStartInfo };
+                                debuggerProcess.Start();
                             }
                         }
+                        catch (Exception)
+                        {
+                        }
+
                     }
-                );
+                }
+                /*}
+            );*/
                 Application.Current.Shutdown();
             }
             finally
