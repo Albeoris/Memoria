@@ -1,8 +1,10 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Assets;
+using Memoria.Prime;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -15,6 +17,19 @@ public class VoicePlayer : SoundPlayer
     private static ushort specialCount = 0;
     private static Dictionary<ushort, ushort> huntTakenCounter;
     private static Dictionary<ushort, ushort> huntHeldCounter;
+
+    public const String SpecialVoicePath = "SpecialVoicePath.txt";
+    private static FileSystemWatcher _specialWatcher;
+    private struct SpecialLine
+    {
+        public Int32 fieldId;
+        public Int32 messageId;
+        public Int32 objectId;
+        public String regex;
+        public String voicePath;
+    }
+    private static List<SpecialLine> _specialLines = new List<SpecialLine>();
+
     public VoicePlayer()
     {
         this.playerPitch = 1f;
@@ -32,6 +47,16 @@ public class VoicePlayer : SoundPlayer
         this.stateTransition.Add(new SdLibSoundProfileStateGraph.TransitionDelegate(base.StopSound), SoundProfileState.Paused, SoundProfileState.Stopped);
         this.stateTransition.Add(new SdLibSoundProfileStateGraph.TransitionDelegate(base.StopSound), SoundProfileState.Played, SoundProfileState.Stopped);
         this.stateTransition.Add(new SdLibSoundProfileStateGraph.TransitionDelegate(base.StopSound), SoundProfileState.CrossfadeIn, SoundProfileState.Stopped);
+
+        if (_specialWatcher is null)
+        {
+            _specialWatcher = new FileSystemWatcher("./", $"*{SpecialVoicePath}");
+            _specialWatcher.IncludeSubdirectories = true;
+            _specialWatcher.NotifyFilter = NotifyFilters.LastWrite;
+            _specialWatcher.Changed += (sender, e) => ParseSpecialLines();
+            _specialWatcher.EnableRaisingEvents = true;
+            ParseSpecialLines();
+        }
     }
 
     public static Boolean HasDialogVoice(Dialog dialog)
@@ -98,6 +123,21 @@ public class VoicePlayer : SoundPlayer
 
         // Compile the list of candidate paths for the file name
         List<String> candidates = new List<string>();
+
+        // Try to find one of the special voice lines
+        foreach (SpecialLine line in _specialLines)
+        {
+            if (line.fieldId >= 0 && FieldZoneId != line.fieldId) continue;
+            if (line.messageId >= 0 && messageNumber != line.messageId) continue;
+            if (line.objectId >= 0 && dialog.Po?.uid != line.objectId) continue;
+
+            Match m = Regex.Match(dialog.Phrase, line.regex);
+            if (m.Success)
+            {
+                candidates.Add(line.voicePath);
+            }
+        }
+
         String lang = Localization.GetSymbol();
         String pageIndex = dialog.SubPage.Count > 1 ? $"_{Math.Max(0, dialog.CurrentPage - 1)}" : "";
 
@@ -444,6 +484,88 @@ public class VoicePlayer : SoundPlayer
     {
         soundProfile.Pitch = pitch;
         ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);
+    }
+
+    private void ParseSpecialLines()
+    {
+        _specialLines.Clear();
+        foreach (AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
+        {
+            if (folder.TryFindAssetInModOnDisc(SpecialVoicePath, out String fullPath))
+            {
+                SoundLib.VALog($"Parsing: '{fullPath}'");
+                ParseFile(File.ReadAllText(fullPath));
+            }
+        }
+    }
+
+    private void ParseFile(String text)
+    {
+        MatchCollection codeMatches = new Regex(@"^(>DialogBoxLine)\b", RegexOptions.Multiline).Matches(text);
+        for (Int32 i = 0; i < codeMatches.Count; i++)
+        {
+            String bvCode = codeMatches[i].Groups[1].Value;
+            Int32 endPos, startPos = codeMatches[i].Groups[1].Captures[0].Index + codeMatches[i].Groups[1].Value.Length + 1;
+            if (i + 1 == codeMatches.Count)
+                endPos = text.Length;
+            else
+                endPos = codeMatches[i + 1].Groups[1].Captures[0].Index;
+            Int32 eolPos = text.IndexOf('\n', startPos);
+            if (eolPos < 0)
+                continue;
+            String charArgFull = text.Substring(startPos, eolPos - startPos);
+            startPos += charArgFull.Length + 1;
+            String bvArgs = text.Substring(startPos, endPos - startPos);
+
+            Int32 field = -1;
+            Match fieldMatch = new Regex(@"\bFieldId:(\d+)").Match(bvArgs);
+            if (fieldMatch.Success)
+                Int32.TryParse(fieldMatch.Groups[1].Value, out field);
+
+            Int32 textId = -1;
+            Match textIdMatch = new Regex(@"\bMessageId:(\d+)").Match(bvArgs);
+            if (textIdMatch.Success)
+                Int32.TryParse(textIdMatch.Groups[1].Value, out textId);
+
+            Int32 objectId = -1;
+            Match objectIdMatch = new Regex(@"\bObjectId:(\d+)").Match(bvArgs);
+            if (objectIdMatch.Success)
+                Int32.TryParse(textIdMatch.Groups[1].Value, out objectId);
+
+            String regex = null;
+            Match regexsMatch = new Regex(@"\bRegex:(.*)\b").Match(bvArgs);
+            if (regexsMatch.Success)
+            {
+                regex = regexsMatch.Groups[1].Value.Trim();
+            }
+            if (regex == null)
+            {
+                Log.Warning($"[{nameof(VoicePlayer)}] Expected Regex for the special line {bvCode}");
+                continue;
+            }
+
+            String path = null;
+            Match pathsMatch = new Regex(@"\bVoicePath:(.*)\b").Match(bvArgs);
+            if (pathsMatch.Success)
+            {
+                path = pathsMatch.Groups[1].Value.Trim();
+            }
+            if (path == null)
+            {
+                Log.Warning($"[{nameof(VoicePlayer)}] Expected VoicePath for the special line {bvCode}");
+                continue;
+            }
+
+            _specialLines.Add(new SpecialLine
+            {
+                fieldId = field,
+                messageId = textId,
+                objectId = objectId,
+                regex = regex,
+                voicePath = path
+            });
+            //Log.Message($"[DEBUG] Special line: {field} {textId} {regex} {path}");
+        }
     }
 
     public override void Update()
