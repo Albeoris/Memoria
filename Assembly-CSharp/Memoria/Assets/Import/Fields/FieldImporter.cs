@@ -27,7 +27,6 @@ namespace Memoria.Assets
         private volatile AutoResetEvent _watcherEvent;
         private volatile Task _watcherTask;
         private Int32 _fieldZoneId;
-        private String _fieldLanguage;
         private String _fieldFileName;
         private String[] _original;
         private TxtEntry[] _external;
@@ -381,7 +380,7 @@ namespace Memoria.Assets
         {
             Int32 fieldZoneId = FF9TextTool.FieldZoneId;
             String fieldLanguage = EmbadedTextResources.CurrentSymbol ?? Localization.CurrentSymbol;
-            if (fieldZoneId == _fieldZoneId && fieldLanguage == _fieldLanguage)
+            if (fieldZoneId == FF9TextTool.LoadingZoneBatch.fieldZoneId && fieldLanguage == FF9TextTool.LoadingZoneBatch.fieldLangSymbol)
                 return true;
 
             FF9TextTool.LoadingZoneBatch.fieldText.Clear();
@@ -392,8 +391,7 @@ namespace Memoria.Assets
 
             if (FF9TextTool.LoadingZoneBatch.fieldText.Count == 0)
                 return false;
-            _fieldZoneId = fieldZoneId;
-            _fieldLanguage = Localization.CurrentSymbol;
+            FF9TextTool.LoadingZoneBatch.UpdateFieldZone(fieldZoneId, fieldLanguage);
             return true;
         }
 

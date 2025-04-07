@@ -126,6 +126,8 @@ namespace Memoria.Assets
                 return;
             ParsedText = VariableText;
             ParsedTagList = FFIXTextTag.DeepListCopy(VariableTagList);
+            foreach (TextAnimatedTag animTag in AnimatedTags)
+                animTag.UpdateTagAfterCopy(ParsedTagList);
             VariableMessageValues.Clear();
             Bidi = null;
             LineInfo.Clear();
@@ -180,11 +182,11 @@ namespace Memoria.Assets
             ParsedText = ParsedText.Remove(pos, length);
             for (Int32 i = 0; i < ParsedTagList.Count; i++)
             {
-                if (ParsedTagList[i].TextOffset >= pos)
+                if (ParsedTagList[i].TextOffset > pos) // Tags sometimes apply logically to the left part of the text, such as closing tags ([SPED=-1], [/b], [C8C8C8][HSHD], ...)
                 {
-                    if (ParsedTagList[i].TextOffset < pos + length)
+                    if (ParsedTagList[i].TextOffset < pos + length) // ... and sometimes to the right part of the text ([SPED=2], [b], [C8B040][HSHD], ...)
                     {
-                        ParsedTagList.RemoveAt(i);
+                        ParsedTagList.RemoveAt(i); // So only tags that are strictly inside the removed part are filtered out
                         i--;
                     }
                     else
@@ -403,7 +405,7 @@ namespace Memoria.Assets
             }
         }
 
-        // Currently, BIDI is used only if the base language is not left-to-right for speed performance
+        /// <summary>Currently, BIDI is used only if the base language is not left-to-right for speed performance</summary>
         private Boolean ShouldUseBIDI => NGUIText.readingDirection != UnicodeBIDI.LanguageReadingDirection.LeftToRight;
 
         public class Line

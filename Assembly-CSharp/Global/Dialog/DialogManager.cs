@@ -3,6 +3,8 @@ using System.Linq;
 using System.Collections.Generic;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria;
+using Memoria.Assets;
+using Memoria.Prime.Text;
 using UnityEngine;
 
 public class DialogManager : Singleton<DialogManager>
@@ -121,7 +123,20 @@ public class DialogManager : Singleton<DialogManager>
             }
             else if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Field || PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.World)
             {
-                dialogFromPool.Phrase = TextPatcher.PatchDialogString(FF9TextTool.FieldText(textId), dialogFromPool);
+                String phrase = TextPatcher.PatchDialogString(FF9TextTool.FieldText(textId), dialogFromPool);
+                if (Configuration.Lang.DualLanguageMode == 2 && po != null)
+                {
+                    Localization.UseSecondaryLanguage = true;
+                    String translation = TextPatcher.PatchDialogString(FF9TextTool.FieldText(textId), dialogFromPool);
+                    Localization.UseSecondaryLanguage = false;
+                    if (phrase.EndsWith("[ENDN]"))
+                        phrase = phrase.Substring(0, phrase.Length - "[ENDN]".Length);
+                    if (phrase.OccurenceCount("\n") < 8)
+                        phrase += "\n{ResetTags}[WAIT=-1000]" + translation;
+                    else
+                        phrase += "[PAGE]" + translation;
+                }
+                dialogFromPool.Phrase = phrase;
                 Action<Int32> onFieldTextUpdated = (id) =>
                 {
                     if (id == textId)

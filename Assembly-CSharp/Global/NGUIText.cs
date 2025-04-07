@@ -1010,7 +1010,8 @@ public static class NGUIText
         List<Vector3> verts = new List<Vector3>();
         List<Vector2> uvs = new List<Vector2>();
         List<Color32> cols = new List<Color32>();
-        NGUIText.mTextModifiers.colors.Add(Color.white);
+        NGUIText.mTextModifiers.colors.Add(parser.LabelContainer.DefaultTextColor);
+        NGUIText.mTextModifiers.UpdateSettingsAfterTag(ref currentX, ref currentY, ref afterImage, ref parser.SpecialImages, ref textColor, ref gradientColorBottom, ref gradientColorTop, defaultAlignment, printedLine, typicalCharacterHeight, bidiCurrentBlock);
         Int32 textIndexAdvance = 1;
         for (Int32 texti = 0; texti <= textLength; texti += textIndexAdvance)
         {

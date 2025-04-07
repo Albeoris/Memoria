@@ -94,7 +94,7 @@ public static class ETb
             return;
         ETb.DisposWindowByID(winID, true);
         ETb.FlagsToStyles(flags, out Dialog.WindowStyle windowStyle, out Dialog.CaptionType captionType);
-        if (windowStyle != Dialog.WindowStyle.WindowStyleAuto)
+        if ((flags & ETb.WindowChatStyle) == 0)
             targetPo = null;
         if ((flags & ETb.ResetChooseMask) <= 0)
         {

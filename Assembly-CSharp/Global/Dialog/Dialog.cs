@@ -27,6 +27,9 @@ public class Dialog : MonoBehaviour
         set => this.startChoiceRow = value;
     }
 
+    /// <summary>May be higher than the actual number of text lines displayed, because of DisableIndexes</summary>
+    public Int32 EndChoiceRow { get; set; }
+
     public Int32 ChoiceNumber
     {
         get => this.choiceNumber;
@@ -100,7 +103,7 @@ public class Dialog : MonoBehaviour
             yield return new WaitForEndOfFrame();
         PersistenSingleton<UIManager>.Instance.Dialogs.ShowChoiceHud();
         Single startYPos = this.phraseLabel.transform.localPosition.y;
-        Int32 totalLine = this.CurrentParser.LineInfo.Count + this.disableIndexes.Count();
+        Int32 totalLine = this.EndChoiceRow;
         Int32 lineControl = this.startChoiceRow;
         Single choiceWidth = IsETbDialog ? this.phraseLabel.printedSize.x : 0f;
         List<Single> choiceYPos = new List<Single>();
@@ -160,6 +163,7 @@ public class Dialog : MonoBehaviour
         foreach (GameObject obj in this.maskChoiceList)
             UnityEngine.Object.DestroyObject(obj);
         this.StartChoiceRow = -1;
+        this.EndChoiceRow = -1;
         this.choiceNumber = 0;
         this.defaultChoice = 0;
         this.cancelChoice = 0;
@@ -269,7 +273,7 @@ public class Dialog : MonoBehaviour
             this.subPage = DialogBoxSymbols.ParseTextSplitTags(value);
             for (Int32 i = 0; i < this.subPage.Count; i++)
             {
-                this.subPage[i] = NGUIText.FF9WhiteColor + this.subPage[i];
+                this.subPage[i] = this.subPage[i];
                 this.PageParsers.Add(new TextParser(this.phraseLabel, this.subPage[i]));
             }
             this.PrepareNextPage();
@@ -558,6 +562,7 @@ public class Dialog : MonoBehaviour
         this.tailSprite = this.TailGameObject.GetComponent<UISprite>();
         this.dialogAnimator = base.gameObject.GetComponent<DialogAnimator>();
         this.phraseWidgetDefault = this.phraseWidget.pivot;
+        this.phraseLabel.DefaultTextColor = FF9TextTool.White;
     }
 
     public void Show()
@@ -675,7 +680,7 @@ public class Dialog : MonoBehaviour
         this.currentPage = 0;
         this.Phrase = newPhrase;
         this.AutomaticSize();
-        this.InitializeDialogTransition(); // [DBG] Choco beak depth figure no Y-aligned at all + pointer/label of card win selection are off?
+        this.InitializeDialogTransition();
         this.Panel.depth = previousDepth;
         this.phrasePanel.depth = previousDepth + 1;
         if (this.choiceNumber > 0)

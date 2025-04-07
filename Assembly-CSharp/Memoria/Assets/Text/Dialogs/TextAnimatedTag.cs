@@ -19,6 +19,7 @@ namespace Memoria.Assets
         public TextAnimatedTag(FFIXTextTag animTag, FFIXTextTag animatedTag)
         {
             Tag = animatedTag;
+            Tag.LinkedAnimation = this;
             Int32 paramIndex = 1;
             if (animTag.StringParam(paramIndex) == "Loop")
             {
@@ -58,6 +59,16 @@ namespace Memoria.Assets
                 Frames[i].ParamEnd = param;
             }
             ApplyTimeUnshifted(0f);
+        }
+
+        public void UpdateTagAfterCopy(List<FFIXTextTag> newList)
+        {
+            FFIXTextTag newTag = newList.Find(candidate => candidate.LinkedAnimation == this);
+            if (newTag != null)
+            {
+                newTag.Param = Tag.Param;
+                Tag = newTag;
+            }
         }
 
         public void Reset()

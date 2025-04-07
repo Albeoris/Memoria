@@ -154,6 +154,7 @@ public partial class BattleHUD : UIScene
                 _buttonSliding.Highlight.Sprite.ResetAndUpdateAnchors();
                 _buttonSliding.Background.Widget.ResetAndUpdateAnchors();
                 _buttonSliding.Background.Border.Sprite.ResetAndUpdateAnchors();
+                _buttonSliding.Name.Label.Parser.ResetBeforeVariableTags();
             }
             else
             {

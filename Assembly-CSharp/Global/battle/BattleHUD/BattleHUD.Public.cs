@@ -386,7 +386,7 @@ public partial class BattleHUD : UIScene
 
     public void UpdateUserInterface(Boolean forceUpdate = false)
     {
-        // [DBG] bugs appeared (label font size, detail header initialisation, bad status button)
+        // [DBG] bugs appeared (detail header initialisation, bad status button)
         Int32 partyCount = FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits().Count(unit => unit.IsPlayer);
         if (partyCount == _playerDetailCount && !forceUpdate)
             return;

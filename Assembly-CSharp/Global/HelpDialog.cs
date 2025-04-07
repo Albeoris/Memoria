@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Assets;
 using UnityEngine;
@@ -18,7 +19,7 @@ public class HelpDialog : Singleton<HelpDialog>
 
     public String Phrase
     {
-        set => this.phrase = NGUIText.FF9DarkBlueColor + value;
+        set => this.phrase = value;
     }
 
     public Vector2 Position
@@ -262,6 +263,7 @@ public class HelpDialog : Singleton<HelpDialog>
         this.tailSprite = base.gameObject.GetChild(4).GetComponent<UISprite>();
         this.captionWidget = base.gameObject.GetChild(2).GetComponent<UIWidget>();
         this.clipRect = HelpDialog.DefaultClipRect;
+        this.phraseLabel.DefaultTextColor = FF9TextTool.DarkBlue;
     }
 
     public static Int32 FF9HELP_X_SPACE = (Int32)(UIManager.ResourceXMultipier * 12f);

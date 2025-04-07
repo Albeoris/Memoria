@@ -93,7 +93,11 @@ public class ChocographUI : UIScene
         {
             ChocographUI.ChocographItem chocographItem = this.chocographItemList[i];
             if (this.hasMap[i])
+            {
+                Boolean canReach = this.ability > this.GetIconType(i);
                 chocographItem.ItemName.rawText = FF9TextTool.ChocoboUIText(i + FF9TextTool.ChocographNameStartIndex);
+                chocographItem.Button.Help.TextKey = canReach ? FF9TextTool.ChocoboUIText(i + FF9TextTool.ChocographHelpStartIndex) : FF9TextTool.ChocoboUIText(5);
+            }
         }
         if (ButtonGroupState.ActiveGroup == ChocographUI.ItemGroupButton && this.currentSelectItemIndex >= 0 && this.hasMap[this.currentSelectItemIndex])
             this.HintText.rawText = FF9TextTool.ChocoboUIText(this.currentSelectItemIndex + FF9TextTool.ChocographDetailStartIndex);

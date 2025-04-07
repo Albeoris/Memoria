@@ -240,5 +240,7 @@ namespace Memoria.Assets
         Offset,
         /// <summary>[TBLE=?,?,?...]</summary>
         Table,
+        /// <summary>Reset the FFIXTextModifiers</summary>
+        ResetTags,
     }
 }

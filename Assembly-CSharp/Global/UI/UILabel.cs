@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using UnityEngine;
+using Memoria;
 using Memoria.Assets;
 using Memoria.Prime;
+using UnityEngine;
 
 [AddComponentMenu("NGUI/UI/NGUI Label")]
 [ExecuteInEditMode]
@@ -12,6 +13,7 @@ public class UILabel : UIWidget
     public Dialog DialogWindow => this.transform?.parent?.parent?.GetComponent<Dialog>();
     public HelpDialog HelpDialogWindow => this.transform?.parent?.GetComponent<HelpDialog>();
     public UIInput InputField => this.transform?.parent?.GetComponent<UIInput>();
+    public UIButton ButtonContainer => this.transform?.parent?.GetComponent<UIButton>();
 
     public void PrintIcon(DialogImage dialogImage, Single alpha = 1f)
     {
@@ -68,6 +70,7 @@ public class UILabel : UIWidget
 
     public Int32 finalFontSize => Mathf.RoundToInt(this.mScale * this.mFinalFontSize);
 
+    private Int32 ReprocessCounter { get; set; }
     private Boolean shouldBeProcessed
     {
         get => this.mShouldBeProcessed;
@@ -173,6 +176,7 @@ public class UILabel : UIWidget
                 value = String.Empty;
             this.mParser = new TextParser(this, value);
             this.mText = this.mParser.InitialText;
+            this.ReprocessCounter = 1;
             this.ReleaseAllIcons();
             this.MarkAsChanged();
             if (this.autoResizeBoxCollider)
@@ -189,6 +193,7 @@ public class UILabel : UIWidget
                 if (this.mText == null)
                     this.mText = String.Empty;
                 this.mParser = new TextParser(this, this.mText);
+                this.ReprocessCounter = 1;
                 this.ReleaseAllIcons();
                 this.MarkAsChanged();
                 if (this.autoResizeBoxCollider)
@@ -204,6 +209,7 @@ public class UILabel : UIWidget
                 value = new TextParser(this, String.Empty);
             this.mParser = value;
             this.mText = value.InitialText;
+            this.ReprocessCounter = 1;
             this.ReleaseAllIcons();
             this.MarkAsChanged();
             if (this.autoResizeBoxCollider)
@@ -270,6 +276,9 @@ public class UILabel : UIWidget
             }
         }
     }
+
+    /// <summary>Doesn't apply a global color filter like base.color but rather setup the initial color</summary>
+    public Color DefaultTextColor { get; set; } = Color.white;
 
     public Color gradientTop
     {
@@ -780,7 +789,16 @@ public class UILabel : UIWidget
         {
             if (!this.isValid)
                 return;
-            this.mParser.ResetRender(); // In theory, it would be enough there to only update mParser.UVs, but that optimisation would require storing logical UV datas in an extra list
+            if (this.ReprocessCounter > 0)
+            {
+                // Computing wrapping at least twice fixes some (relatively rare) issues with texts not being properly rescaled to fit within their frame
+                this.mParser.ResetBeforeVariableTags();
+                this.ReprocessCounter--;
+            }
+            else
+            {
+                this.mParser.ResetRender(); // In theory, it would be enough there to only update mParser.UVs, but that optimisation would require storing logical UV datas in an extra list
+            }
             this.mParser.Parse(TextParser.ParseStep.Render);
             Dialog dialog = this.DialogWindow;
             if (dialog != null && (dialog.StartChoiceRow >= 0 || dialog.IsOverlayDialog))

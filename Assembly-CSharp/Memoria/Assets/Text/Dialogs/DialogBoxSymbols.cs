@@ -190,8 +190,15 @@ namespace Memoria.Assets
             Int32 choicePos = parser.ParsedTagList[choiceIndex].TextOffset;
             FFIXTextTag preChoice = parser.ParsedTagList.FirstOrDefault(tag => tag.Code == FFIXTextTagCode.PreChoose); // can be null
             FFIXTextTag preChoiceMask = parser.ParsedTagList.FirstOrDefault(tag => tag.Code == FFIXTextTagCode.PreChooseMask); // can be null
-            Int32 choiceCount = parser.ParsedText.Substring(choicePos).Count(c => c == '\n') + 1;
+            FFIXTextTag stopChoice = parser.ParsedTagList.FirstOrDefault(tag => tag.Code == FFIXTextTagCode.ResetTags && tag.TextOffset > choicePos); // can be null
+            if (choicePos > 0 && parser.ParsedText[choicePos - 1] == '\n' && (choiceIndex == 0 || parser.ParsedTagList[choiceIndex - 1].TextOffset < choicePos))
+                parser.ParsedTagList[choiceIndex].TextOffset--; // This prevents [CHOO] to be removed in case the first choice line is disabled
             dialog.StartChoiceRow = parser.ParsedText.Substring(0, choicePos).Count(c => c == '\n');
+            if (stopChoice != null)
+                dialog.EndChoiceRow = parser.ParsedText.Substring(0, stopChoice.TextOffset).Count(c => c == '\n');
+            else
+                dialog.EndChoiceRow = dialog.StartChoiceRow + parser.ParsedText.Substring(choicePos).Count(c => c == '\n') + 1;
+            Int32 choiceCount = dialog.EndChoiceRow - dialog.StartChoiceRow;
             SetupChoose(preChoice, preChoiceMask, dialog, choiceCount);
             if (dialog.DisableIndexes.Count > 0)
             {
@@ -338,6 +345,11 @@ namespace Memoria.Assets
                     return true;
                 case FFIXTextTagCode.IgnoreColor:
                     modifiers.ignoreColor = tag.StringParam(0) != "Off";
+                    return true;
+                case FFIXTextTagCode.ResetTags:
+                    modifiers.Reset();
+                    if (label != null)
+                        modifiers.colors.Add(label.DefaultTextColor);
                     return true;
             }
             return ParseImageTag(tag, ref modifiers.insertImage);

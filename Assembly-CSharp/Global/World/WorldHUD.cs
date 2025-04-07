@@ -111,7 +111,7 @@ public class WorldHUD : UIScene
             Int32 locId = this.locationPointerList[this.currentLocationIndex].locationId;
             if (locId == 63)
                 locId = 49; // Chocobo's Paradise
-            this.mapLocationLabel.rawText = NGUIText.FF9WhiteColor + FF9TextTool.GetTableText(0u)[locId + 1];
+            this.mapLocationLabel.rawText = FF9TextTool.GetTableText(0u)[locId + 1];
             this.mapLocationBody.UpdateAnchors();
             this.mapLocationBorder.UpdateAnchors();
         }
@@ -823,7 +823,7 @@ public class WorldHUD : UIScene
             Vector3 position = this.locationPointerList[indexId].gameobject.transform.position;
             if (locId == 63)
                 locId = 49; // Chocobo's Paradise
-            this.mapLocationLabel.rawText = NGUIText.FF9WhiteColor + FF9TextTool.GetTableText(0u)[locId + 1];
+            this.mapLocationLabel.rawText = FF9TextTool.GetTableText(0u)[locId + 1];
             this.mapLocationPanel.SetActive(true);
             this.mapLocationBody.UpdateAnchors();
             this.mapLocationBorder.UpdateAnchors();
@@ -1193,7 +1193,7 @@ public class WorldHUD : UIScene
     private void Awake()
     {
         if (HonoInputManager.MouseEnabled)
-            UICamera.onMouseMove = (UICamera.MoveDelegate)Delegate.Combine(UICamera.onMouseMove, new UICamera.MoveDelegate(this.OnMouseMove));
+            UICamera.onMouseMove += this.OnMouseMove;
         base.FadingComponent = this.ScreenFadeGameObject.GetComponent<HonoFading>();
         this.chocographLocationSprite = this.ChocographLocationPanel.GetChild(0).GetComponent<UISprite>();
         this.menuButtonLabelGameObject = this.MenuButtonGameObject.GetChild(2);
@@ -1203,10 +1203,8 @@ public class WorldHUD : UIScene
         this.rotationLockButtonSprite = this.RotationLockButtonGameObject.GetChild(0).GetComponent<UISprite>();
         this.moveLeftGameObject = this.CommonButtonPanel.GetChild(0);
         this.moveRightGameObject = this.CommonButtonPanel.GetChild(1);
-        UIEventListener uieventListener = UIEventListener.Get(this.moveLeftGameObject);
-        uieventListener.onPress = (UIEventListener.BoolDelegate)Delegate.Combine(uieventListener.onPress, new UIEventListener.BoolDelegate(this.OnPressButton));
-        UIEventListener uieventListener2 = UIEventListener.Get(this.moveRightGameObject);
-        uieventListener2.onPress = (UIEventListener.BoolDelegate)Delegate.Combine(uieventListener2.onPress, new UIEventListener.BoolDelegate(this.OnPressButton));
+        UIEventListener.Get(this.moveLeftGameObject).onPress += this.OnPressButton;
+        UIEventListener.Get(this.moveRightGameObject).onPress += this.OnPressButton;
         this.miniMapButton = this.MiniMapPanel.GetComponent<UIButton>();
         this.miniMapSprite = this.MiniMapPanel.GetChild(4).GetComponent<UISprite>();
         this.miniMapWidget = this.MiniMapPanel.GetChild(4).GetComponent<UIWidget>();
@@ -1236,14 +1234,11 @@ public class WorldHUD : UIScene
         this.continentTitleShadow = this.ContinentTitlePanel.GetChild(1).GetComponent<UI2DSprite>();
         this.continentTitleTextFader = this.continentTitleText.GetComponent<HonoFading>();
         this.continentTitleShadowFader = this.continentTitleShadow.GetComponent<HonoFading>();
-        UIEventListener uieventListener3 = UIEventListener.Get(this.mapWidget.gameObject);
-        uieventListener3.onHover = (UIEventListener.BoolDelegate)Delegate.Combine(uieventListener3.onHover, new UIEventListener.BoolDelegate(this.OnFullMapHover));
-        UIEventListener uieventListener4 = UIEventListener.Get(this.mapWidget.gameObject);
-        uieventListener4.onNavigate = (UIEventListener.KeyCodeDelegate)Delegate.Combine(uieventListener4.onNavigate, new UIEventListener.KeyCodeDelegate(this.OnFullMapNavigator));
-        UIEventListener uieventListener5 = UIEventListener.Get(this.mapWidget.gameObject);
-        uieventListener5.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener5.onClick, new UIEventListener.VoidDelegate(this.onClick));
-        UIEventListener uieventListener6 = UIEventListener.Get(this.MiniMapPanel);
-        uieventListener6.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener6.onClick, new UIEventListener.VoidDelegate(this.onClick));
+        UIEventListener.Get(this.mapWidget.gameObject).onHover += this.OnFullMapHover;
+        UIEventListener.Get(this.mapWidget.gameObject).onNavigate += this.OnFullMapNavigator;
+        UIEventListener.Get(this.mapWidget.gameObject).onClick += this.onClick;
+        UIEventListener.Get(this.MiniMapPanel).onClick += this.onClick;
+        this.mapLocationLabel.DefaultTextColor = FF9TextTool.White;
         this.PlaneButtonPanel.GetChild(0).GetComponent<OnScreenButton>().SetHighlightKeyCommand(Control.Down);
         this.PlaneButtonPanel.GetChild(1).GetComponent<OnScreenButton>().SetHighlightKeyCommand(Control.Up);
         this.ChocographLocationPanel.transform.localPosition += new Vector3(158f, -708f, 0f);

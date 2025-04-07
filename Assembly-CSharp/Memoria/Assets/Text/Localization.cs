@@ -48,7 +48,7 @@ namespace Memoria.Assets
             get => useSecondaryLanguage;
             set
             {
-                if (String.IsNullOrEmpty(Configuration.Lang.DualLanguage) || Configuration.Lang.DualLanguage == CurrentSymbol || Configuration.Export.Enabled || PersistenSingleton<UIManager>.Instance.TitleScene?.IsJustLaunch == true)
+                if (Configuration.Export.Enabled || PersistenSingleton<UIManager>.Instance.TitleScene?.IsJustLaunch == true)
                     value = false;
                 if (useSecondaryLanguage == value)
                     return;
@@ -57,9 +57,9 @@ namespace Memoria.Assets
                 {
                     String symbol = Configuration.Lang.DualLanguage;
                     String lang = Provider.SymbolToLanguage(symbol);
+                    loadedSecondarySymbol = symbol;
                     Provider.SelectSecondaryLanguage(lang);
                     FF9TextTool.LoadSecondaryLanguage(symbol);
-                    loadedSecondarySymbol = symbol;
                 }
                 if (Configuration.Lang.DualLanguageMode == 1)
                     UIRoot.Broadcast("OnLocalize");

@@ -19,6 +19,8 @@ namespace Memoria.Assets
         public Int32 TextOffset = 0;
         public Single AppearStep = 0f;
 
+        public TextAnimatedTag LinkedAnimation = null;
+
         public Int32 ParamCount => Param?.Length ?? 0;
 
         public FFIXTextTag(FFIXTextTagCode code, String[] param = null, Int32 textOff = 0)
@@ -28,11 +30,20 @@ namespace Memoria.Assets
             TextOffset = textOff;
         }
 
+        public FFIXTextTag(FFIXTextTag copy)
+        {
+            Code = copy.Code;
+            Param = copy.Param;
+            TextOffset = copy.TextOffset;
+            AppearStep = copy.AppearStep;
+            LinkedAnimation = copy.LinkedAnimation;
+        }
+
         public static List<FFIXTextTag> DeepListCopy(List<FFIXTextTag> from)
         {
             List<FFIXTextTag> copy = new List<FFIXTextTag>(from.Count);
             foreach (FFIXTextTag tag in from)
-                copy.Add(new FFIXTextTag(tag.Code, tag.Param, tag.TextOffset));
+                copy.Add(new FFIXTextTag(tag));
             return copy;
         }
 

@@ -22,6 +22,7 @@ namespace Assets.Sources.Scripts.UI.Common
         public static Color Yellow => new Color(0.784313738f, 0.6901961f, 0.2509804f);
         public static Color DarkYellow => new Color(0.588f, 0.584f, 0.267f);
         public static Color Magenta => new Color(0.721568644f, 0.5019608f, 0.8784314f);
+        public static Color DarkBlue => new Color(0.219607843f, 0.219607843f, 0.2509804f);
 
         public static Int32 FieldZoneId => fieldZoneId;
         public static Int32 BattleZoneId => battleZoneId;
@@ -414,7 +415,11 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static String ItemName(RegularItem id)
         {
-            return DisplayBatch.itemName.TryGetValue(id, out String result) ? result : String.Empty;
+            if (!DisplayBatch.itemName.TryGetValue(id, out String result))
+                result = String.Empty;
+            else if (Configuration.Lang.DualLanguageMode == 2 && SecondaryBatch.itemName.TryGetValue(id, out String translation) && !String.IsNullOrEmpty(translation))
+                result += " - " + translation;
+            return result;
         }
 
         public static String ItemHelpDescription(RegularItem id)
@@ -429,7 +434,11 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static String ImportantItemName(Int32 id)
         {
-            return DisplayBatch.importantItemName.TryGetValue(id, out String result) ? result : String.Empty;
+            if (!DisplayBatch.importantItemName.TryGetValue(id, out String result))
+                result = String.Empty;
+            else if (Configuration.Lang.DualLanguageMode == 2 && SecondaryBatch.importantItemName.TryGetValue(id, out String translation) && !String.IsNullOrEmpty(translation))
+                result += " - " + translation;
+            return result;
         }
 
         public static String ImportantItemHelpDescription(Int32 id)
@@ -444,7 +453,11 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static String ActionAbilityName(BattleAbilityId id)
         {
-            return DisplayBatch.actionAbilityName.TryGetValue(id, out String result) ? result : String.Empty;
+            if (!DisplayBatch.actionAbilityName.TryGetValue(id, out String result))
+                result = String.Empty;
+            else if (Configuration.Lang.DualLanguageMode == 2 && SecondaryBatch.actionAbilityName.TryGetValue(id, out String translation) && !String.IsNullOrEmpty(translation))
+                result += " - " + translation;
+            return result;
         }
 
         public static String ActionAbilityHelpDescription(BattleAbilityId id)
@@ -454,7 +467,11 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static String SupportAbilityName(SupportAbility id)
         {
-            return DisplayBatch.supportAbilityName.TryGetValue(id, out String result) ? result : String.Empty;
+            if (!DisplayBatch.supportAbilityName.TryGetValue(id, out String result))
+                result = String.Empty;
+            else if (Configuration.Lang.DualLanguageMode == 2 && SecondaryBatch.supportAbilityName.TryGetValue(id, out String translation) && !String.IsNullOrEmpty(translation))
+                result += " - " + translation;
+            return result;
         }
 
         public static String SupportAbilityHelpDescription(SupportAbility id)
@@ -464,11 +481,26 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static String CommandName(BattleCommandId id)
         {
-            Boolean isValid = DisplayBatch.commandName.TryGetValue(id, out String name);
-            if (id == BattleCommandId.AccessMenu && isValid)
-                if (name == "None" || name == "みてい")
-                    return Localization.Get("Menu");
-            return isValid ? name : String.Empty;
+            if (!DisplayBatch.commandName.TryGetValue(id, out String result))
+            {
+                result = String.Empty;
+            }
+            else
+            {
+                if (id == BattleCommandId.AccessMenu && (result == "None" || result == "みてい"))
+                    result = Localization.Get("Menu");
+                if (Configuration.Lang.DualLanguageMode == 2 && SecondaryBatch.commandName.TryGetValue(id, out String translation) && !String.IsNullOrEmpty(translation))
+                {
+                    if (id == BattleCommandId.AccessMenu && (translation == "None" || translation == "みてい"))
+                    {
+                        Localization.UseSecondaryLanguage = true;
+                        translation = Localization.Get("Menu");
+                        Localization.UseSecondaryLanguage = false;
+                    }
+                    result += " - " + translation;
+                }
+            }
+            return result;
         }
 
         public static String CommandHelpDescription(BattleCommandId id)
@@ -481,6 +513,8 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static String FieldText(Int32 textId)
         {
+            if (Localization.UseSecondaryLanguage)
+                textId = UniversalTextId.GetMatchingTextId(Localization.CurrentSymbol, Localization.CurrentDisplaySymbol, FF9TextTool.fieldZoneId, textId);
             return DisplayBatch.fieldText.TryGetValue(textId, out String result) ? TextOpCodeModifier.Modify(result, textId) : String.Empty;
         }
 
@@ -491,7 +525,11 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static String LocationName(Int32 id)
         {
-            return DisplayBatch.locationName.TryGetValue(id, out String result) ? result : String.Empty;
+            if (!DisplayBatch.locationName.TryGetValue(id, out String result))
+                result = String.Empty;
+            else if (Configuration.Lang.DualLanguageMode == 2 && SecondaryBatch.locationName.TryGetValue(id, out String translation) && !String.IsNullOrEmpty(translation))
+                result += " - " + translation;
+            return result;
         }
 
         public static Boolean IsBattleTextLoaded => MainBatch.battleText != null;
@@ -503,7 +541,11 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static String CardName(TetraMasterCardId id)
         {
-            return DisplayBatch.cardName.TryGetValue((Int32)id, out String result) ? result : String.Empty;
+            if (!DisplayBatch.cardName.TryGetValue((Int32)id, out String result))
+                result = String.Empty;
+            else if (Configuration.Lang.DualLanguageMode == 2 && SecondaryBatch.cardName.TryGetValue((Int32)id, out String translation) && !String.IsNullOrEmpty(translation))
+                result += " - " + translation;
+            return result;
         }
 
         public static String ChocoboUIText(Int32 id)
@@ -533,7 +575,11 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static String WorldLocationText(Int32 id)
         {
-            return DisplayBatch.worldLocationText.TryGetValue(id, out String result) ? result : String.Empty;
+            if (!DisplayBatch.worldLocationText.TryGetValue(id, out String result))
+                result = String.Empty;
+            else if (Configuration.Lang.DualLanguageMode == 2 && SecondaryBatch.worldLocationText.TryGetValue(id, out String translation) && !String.IsNullOrEmpty(translation))
+                result += " - " + translation;
+            return result;
         }
 
         public static String RemoveOpCode(String str)
@@ -755,6 +801,14 @@ namespace Assets.Sources.Scripts.UI.Common
         {
             public TextBatch() { }
 
+            public void UpdateFieldZone(Int32 zoneId, String symbol)
+            {
+                fieldZoneId = zoneId;
+                fieldLangSymbol = symbol;
+            }
+
+            public Int32 fieldZoneId = -1;
+            public String fieldLangSymbol = String.Empty;
             public Dictionary<Int32, String> fieldText = new Dictionary<Int32, String>();
             public Dictionary<Int32, String> battleText = new Dictionary<Int32, String>();
 

@@ -8,6 +8,8 @@ public class TypewriterEffect : MonoBehaviour
 {
     public void SetActive(Boolean active, Boolean fromStart)
     {
+        if (PersistenSingleton<UIManager>.Instance.IsPause)
+            active = false;
         this.mActive = active;
         this.enabled = active;
         if (this.mActive)

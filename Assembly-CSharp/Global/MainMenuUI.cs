@@ -691,17 +691,17 @@ public class MainMenuUI : UIScene
             this.PartySubMenu.GetComponent<UIKeyNavigation>().onDown = this.ConfigSubMenu;
             this.ConfigSubMenu.GetComponent<UIKeyNavigation>().onUp = this.PartySubMenu;
             this.PartySubMenu.GetComponent<UIKeyNavigation>().onUp = this.CardSubMenu;
-            Vector3 buttonScale = new Vector3(1f, 7f / 8f, 1f);
-            this.ItemSubMenu.transform.localScale = buttonScale;
-            this.AbilitySubMenu.transform.localScale = buttonScale;
-            this.EquipSubMenu.transform.localScale = buttonScale;
-            this.StatusSubMenu.transform.localScale = buttonScale;
-            this.OrderSubMenu.transform.localScale = buttonScale;
-            this.CardSubMenu.transform.localScale = buttonScale;
-            this.PartySubMenu.transform.localScale = buttonScale;
-            this.ConfigSubMenu.transform.localScale = buttonScale;
-            this.PartySubMenu.active = true;
-            table.repositionNow = true;
+            this.PartySubMenu.transform.localScale = Vector3.one;
+            Int32 y = -39;
+            Int32 h = 79;
+            foreach (GameObject go in new GameObject[] { this.ItemSubMenu, this.AbilitySubMenu, this.EquipSubMenu, this.StatusSubMenu, this.OrderSubMenu, this.CardSubMenu, this.PartySubMenu, this.ConfigSubMenu })
+            {
+                go.GetComponent<UIWidget>().SetRawRect(201, y, 402, h);
+                go.GetComponent<BoxCollider>().size = new Vector3(402, h);
+                y -= h + 8;
+                h = h == 79 ? 78 : 79;
+            }
+            table.enabled = false;
         }
 
         UIEventListener.Get(this.ItemSubMenu).Click += onClick;
