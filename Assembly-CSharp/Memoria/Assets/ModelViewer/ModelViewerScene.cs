@@ -728,7 +728,7 @@ namespace Memoria.Assets
                             OffsetBonesScale.Add(currentBoneIndex, Vector3.zero);
 
                         BoneSelected.localScale += new Vector3(0.01f, 0.01f, 0.01f);
-                        OffsetBonesRot[currentBoneIndex] += new Vector3(0.01f, 0.01f, 0.01f);
+                        OffsetBonesScale[currentBoneIndex] = BoneSelected.localScale;
                     }
                 }
                 else if (Input.GetKey(KeyCode.KeypadMinus)) // Zoom out ; Reduce Size
@@ -749,7 +749,7 @@ namespace Memoria.Assets
                             OffsetBonesScale.Add(currentBoneIndex, Vector3.zero);
 
                         BoneSelected.localScale -= new Vector3(0.01f, 0.01f, 0.01f);
-                        OffsetBonesRot[currentBoneIndex] -= new Vector3(0.01f, 0.01f, 0.01f);
+                        OffsetBonesScale[currentBoneIndex] = BoneSelected.localScale;
                     }
                 }
 
@@ -772,8 +772,25 @@ namespace Memoria.Assets
                     Log.Message("[MODEL] => " + geoList[currentGeoIndex].Name + ".offset = " + ModelTargetPos.Remove(ModelTargetPos.Length - 1) + ", " + ModelTargetRot.Remove(0, 1));
                     if (currentWeaponModel != null)
                         Log.Message("[WEAPON] => " + weapongeoList[currentWeaponGeoIndex].Name + ".offset = " + WeaponTargetPos.Remove(WeaponTargetPos.Length - 1) + ", " + WeaponTargetRot.Remove(0, 1));
-                    Log.Message("[BONE] => BoneID n°" + currentBoneIndex + " / Position = " + BoneSelectedPos + " ; Rotation(Quat) = " + BoneSelectedRot + " ; Rotation(Euler) = " + BoneSelectedRotEuler + " ; Scale = " + BoneSelectedScale);
-                    Log.Message("##################################");
+                    if (OffsetBonesPos.Count > 0 || OffsetBonesRot.Count > 0 || OffsetBonesScale.Count > 0)
+                    {
+                        Log.Message("[BONES] ");
+                        if (OffsetBonesPos.Count > 0)
+                            foreach (int BoneID in OffsetBonesPos.Keys)
+                            {
+                                Log.Message("   └> Bone n°"+ BoneID +" / Position / " + OffsetBonesPos[BoneID]);
+                            }
+                        if (OffsetBonesRot.Count > 0)
+                            foreach (int BoneID in OffsetBonesRot.Keys)
+                            {
+                                Log.Message("   └> Bone n°" + BoneID + " / Rotation (Euler) / " + OffsetBonesRot[BoneID]);
+                            }
+                        if (OffsetBonesScale.Count > 0)
+                            foreach (int BoneID in OffsetBonesScale.Keys)
+                            {
+                                Log.Message("   └> Bone n°" + BoneID + " / Scale / " + OffsetBonesScale[BoneID]);
+                            }
+                    }
                     DontSpamMessage = true;
                 }
                 if (Input.GetKeyUp(KeyCode.Keypad5))
@@ -879,6 +896,10 @@ namespace Memoria.Assets
                         else if (partcontrolled == PartControlled.BONE)
                         {
                             BoneSelected.localPosition -= mouseSensibility * new Vector3(mouseDelta.x, mouseDelta.y, mouseDelta.z);
+                            if (OffsetBonesPos.ContainsKey(currentBoneIndex))
+                                OffsetBonesPos[currentBoneIndex] -= mouseSensibility * new Vector3(mouseDelta.x, mouseDelta.y, mouseDelta.z);
+                            else
+                                OffsetBonesPos.Add(currentBoneIndex, mouseSensibility * new Vector3(mouseDelta.x, mouseDelta.y, mouseDelta.z));
                         }
                         if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS)
                             spsEffect.pos = currentModel.transform.localPosition;
@@ -943,6 +964,11 @@ namespace Memoria.Assets
                         }
                         else if (partcontrolled == PartControlled.BONE)
                         {
+                            if (!OffsetBonesRot.ContainsKey(currentBoneIndex))
+                                OffsetBonesRot.Add(currentBoneIndex, Vector3.zero);
+
+                            Vector3 PreviousRot = BoneSelected.localRotation.eulerAngles;
+
                             if (Math.Abs(mouseDelta.x) >= Math.Abs(mouseDelta.y))
                             {
                                 BoneSelected.localRotation *= Quaternion.Euler(0f, mouseDelta.x, 0f);
@@ -958,6 +984,8 @@ namespace Memoria.Assets
                                 if (horizontalFactor > 0.5f)
                                     BoneSelected.localRotation *= performedRot;
                             }
+
+                            OffsetBonesRot[currentBoneIndex] += (BoneSelected.localRotation.eulerAngles - PreviousRot);
                         }
                     }
                     mouseLeftPressed = true;
@@ -1022,7 +1050,11 @@ namespace Memoria.Assets
                         }
                         else if (partcontrolled == PartControlled.BONE)
                         {
+                            if (!OffsetBonesScale.ContainsKey(currentBoneIndex))
+                                OffsetBonesScale.Add(currentBoneIndex, Vector3.zero);
+
                             Single scrollMax = 10f;
+                            Vector3 PreviousValue = boneselected_scaleFactor;
                             if (Input.mouseScrollDelta.y > 0f)
                                 boneselected_scaleFactor *= 1f + scrollSpeed * Input.mouseScrollDelta.y;
                             else
@@ -1030,6 +1062,7 @@ namespace Memoria.Assets
                             boneselected_scaleFactor.x = Mathf.Clamp(boneselected_scaleFactor.x, scrollMin, scrollMax);
                             boneselected_scaleFactor.y = boneselected_scaleFactor.z = boneselected_scaleFactor.x;
                             BoneSelected.localScale = boneselected_scaleFactor;
+                            OffsetBonesScale[currentBoneIndex] = boneselected_scaleFactor;
                         }
                     }
                 }
