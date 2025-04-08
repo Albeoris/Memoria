@@ -155,7 +155,7 @@
 ##    EffectCasterFlags, CasterHPDamage, CasterMPDamage, EffectTargetFlags, HPDamage, MPDamage,
 ##    FigureInfo, Power, AbilityStatus, AbilityElement, AbilityElementForBonus, IsShortRanged,
 ##    AbilityCategory, AbilityFlags, Attack, AttackPower, DefencePower, StatusRate, HitRate,
-##    Evade, EffectFlags, DamageModifierCount, TranceIncrease, ItemSteal, Gil, IsDrain,
+##    Evade, EffectFlags, DamageModifierCount, TranceIncrease, ItemSteal, Gil, IsDrain, EatResult
 ##    BattleBonusAP,
 ##    Counter (formula defines the Ability ID of the counter),
 ##    ReturnMagic (formula should return 0),
@@ -184,6 +184,7 @@
 ##    GetRandomBit(number)             -> Return a random bit of the number seen as a binary number
 ##    GetAbilityUsageCount(ability ID) -> Return the number of times the player used an ability
 ##    GetItemCount(item ID)            -> Return the number of items owned by the player (works also on cards and key items)
+##    HasKeyItem(item ID)              -> Return if the player has a specific key item
 ##    CheckAnyStatus(list, condition)  -> Check if any status of the conditions is in the list (same as "(list & condition) != 0")
 ##    CheckAllStatus(list, condition)  -> Check if all the statuses of the conditions are in the list (same as "(list & condition) == condition")
 ##    CombineStatuses(list, addition)  -> Add all the additional statuses to the list (same as "list | addition")
@@ -198,10 +199,20 @@
 ##                                   "status filter" must be a list of filtering out statuses (eg. BattleStatus_Death will filter out dead units)
 ##    GetPartyMemberLevel(number)      -> Return the level of the n-th party member, with n being between 0 and 3 inclusively
 ##    GetPartyMemberIndex(number)      -> Return the Character Index of the n-th party member (see the different "CharacterId" below)
+##    GetUnitProperty(CharacterIndex, 'Formula')
+##									   └> Retrieve properties of neither the caster nor the target.
+##										Works also with CustomStatus to read specific variables.
+##										Eg : GetUnitProperty(CharacterId_Steiner, 'StatusProperty CustomStatus21 Duelist')
+##	  IsCharacterInParty(CharacterIndex) -> Check if the character is present in the current party.
 ##    GetCategoryKillCount(category)   -> Return the number of enemies of the specified category that were defeated by the player
 ##                                   0 for Humanoids, 1 for Beasts, 2 for Devils,     3 for Dragons,
 ##                                   4 for Undeads,   5 for Stones, 6 for Souls/Bugs, 7 for Flying/Birds
 ##    GetModelKillCount(model ID)      -> Return the number of enemies with a specific model that were defeated by the player
+##    GetEventGlobalByte(ID)		   -> Return the value from a global variable (eg. GetEventGlobalByte(1500) to read VARL_GenUInt8_1500)
+##    GetMemoriaVector(ID, index)      -> Return the value from a vector (from the MemoriaDictionary HW function)
+##    GetMemoriaDictionary(ID, index)  -> Return the value from a dictionary (from the MemoriaDictionary HW function)
+##    HasKilledCharacter(killerID, CharacterIndexkilled)			   
+##									   └> Check if the unit (based on BattleUunit.Id) has K.Oed a player in battle.
 ##    Gil                              -> The number of gil owned by the player
 ##    FrogCount                        -> The number of frogs catched
 ##    StealCount                       -> The number of successful steals
@@ -225,11 +236,14 @@
 ##    IsGarnetDepressed                -> Whether Garnet is in a depression state
 ##    BattleBonusAP                    -> The AP given by the current battle
 ##    UseSFXRework                     -> Whether the SFX Rework system is activated or not
+##    MemoriaLog(formula)              -> To debug your expression, in the Memoria.Log file.
 ##  
 ##  Permanent:
 ##    HP, MP, Level, Exp, CharacterIndex, SerialNumber, WeaponId, HeadId, WristId, ArmorId, AccessoryId
 ##    HasSA(support ability ID),
 ##    CanUseAbility(ability ID),
+##    HasLearntAbility(ability ID),
+##    HasLearntSupport(support ability ID),
 ##    (+ modifiable properties)
 ##  
 ##  BattleStart: only the common informations
@@ -244,7 +258,9 @@
 ##    IsMagicDefenceModified, IsMagicEvadeModified, CriticalRateBonus, CriticalRateWeakening,
 ##    IsAlternateStand,
 ##    HasSA(support ability ID),
-##    CanUseAbility(ability ID)
+##    CanUseAbility(ability ID),
+##    HasLearntAbility(ability ID),
+##    HasLearntSupport(support ability ID)
 ##  
 ##  Ability:
 ##    All those of "StatusInit" for both the caster and the target (eg. CasterMaxHP or TargetMaxHP),
@@ -271,6 +287,8 @@
 ##    AccessoryId, IsFlee, IsFleeByLuck,
 ##    HasSA(support ability ID),
 ##    CanUseAbility(ability ID),
+##    HasLearntAbility(ability ID),
+##    HasLearntSupport(support ability ID),
 ##    (+ modifiable properties)
 ##  
 #####################################################################################################
@@ -495,6 +513,8 @@
 ##    CasterMaxDamageLimit, CasterMaxMPDamageLimit,
 ##    CasterHasSA(support ability ID),
 ##    CasterCanUseAbility(ability ID),
+##    CasterHasLearntAbility(ability ID),
+##    CasterHasLearntSupport(support ability ID)
 ##    CommandId, AbilityId, ScriptId, Power, AbilityStatus, AbilityElement, AbilityElementForBonus,
 ##    ItemUseId, WeaponThrowShape, SpecialEffectId, TargetType, IsATBCommand, IsAbilityMultiTarget, IsShortSummon,
 ##    IsSpellReflected, IsCovered, IsDodged, IsShortRanged, IsReflectNull, IsMeteorMiss, AbilityCategory, MPCost,
