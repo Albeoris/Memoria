@@ -200,7 +200,7 @@
 ##    GetPartyMemberLevel(number)      -> Return the level of the n-th party member, with n being between 0 and 3 inclusively
 ##    GetPartyMemberIndex(number)      -> Return the Character Index of the n-th party member (see the different "CharacterId" below)
 ##    GetUnitProperty(CharacterIndex, 'Formula')
-##									   └> Retrieve properties of neither the caster nor the target.
+##                                     └> Retrieve properties of neither the caster nor the target.
 ##										Works also with CustomStatus to read specific variables.
 ##										Eg : GetUnitProperty(CharacterId_Steiner, 'StatusProperty CustomStatus21 Duelist')
 ##	  IsCharacterInParty(CharacterIndex) -> Check if the character is present in the current party.
@@ -212,7 +212,7 @@
 ##    GetMemoriaVector(ID, index)      -> Return the value from a vector (from the MemoriaDictionary HW function)
 ##    GetMemoriaDictionary(ID, index)  -> Return the value from a dictionary (from the MemoriaDictionary HW function)
 ##    HasKilledCharacter(killerID, CharacterIndexkilled)			   
-##									   └> Check if the unit (based on BattleUunit.Id) has K.Oed a player in battle.
+##                                     └> Check if the unit (based on BattleUunit.Id) has K.Oed a player in battle.
 ##    Gil                              -> The number of gil owned by the player
 ##    FrogCount                        -> The number of frogs catched
 ##    StealCount                       -> The number of successful steals
