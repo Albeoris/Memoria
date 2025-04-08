@@ -48,11 +48,14 @@ namespace Memoria.Assets
         private static float model_Horizontal_Rotation = 0f;
         private static float model_Vertical_Rotation = 0f;
         private static Vector3 scaleFactor;
+        private static GameObject currentWeaponModel;
         private static Vector3 weaponmodel_Position = new Vector3(0f, 0f, 0f);
         private static Quaternion weaponmodel_Rotation = Quaternion.identity;
         private static Vector3 weaponmodel_scaleFactor = Vector3.one;
         private static Vector3 boneselected_scaleFactor = Vector3.one;
-        private static GameObject currentWeaponModel;
+        public static Dictionary<Int32, Vector3> OffsetBonesPos = new Dictionary<Int32, Vector3>();
+        public static Dictionary<Int32, Vector3> OffsetBonesRot = new Dictionary<Int32, Vector3>();
+        public static Dictionary<Int32, Vector3> OffsetBonesScale = new Dictionary<Int32, Vector3>();
         private static CommonSPSSystem spsUtility;
         private static SPSEffect spsEffect;
         private static Single speedFactor;
@@ -597,6 +600,11 @@ namespace Memoria.Assets
                     }
                     else if (partcontrolled == PartControlled.BONE)
                     {
+                        if (!OffsetBonesRot.ContainsKey(currentBoneIndex))
+                            OffsetBonesRot.Add(currentBoneIndex, Vector3.zero);
+
+                        Vector3 PreviousRot = BoneSelected.localRotation.eulerAngles;
+
                         if (Input.GetKey(KeyCode.Keypad6))
                             BoneSelected.localRotation *= Quaternion.Euler(0f, 1f, 0f);
                         if (Input.GetKey(KeyCode.Keypad4))
@@ -609,6 +617,8 @@ namespace Memoria.Assets
                             BoneSelected.localRotation *= Quaternion.Euler(0f, 0f, 1f);
                         if (Input.GetKey(KeyCode.Keypad1) || Input.GetKey(KeyCode.Keypad3))
                             BoneSelected.localRotation *= Quaternion.Euler(0f, 0f, -1f);
+
+                        OffsetBonesRot[currentBoneIndex] += (BoneSelected.localRotation.eulerAngles - PreviousRot);
                     }
                 }
                 else
@@ -650,17 +660,54 @@ namespace Memoria.Assets
                     else if (partcontrolled == PartControlled.BONE)
                     {
                         if (Input.GetKey(KeyCode.Keypad6))
+                        {
                             BoneSelected.localPosition += moveSpeed * Vector3.left;
+                            if (OffsetBonesPos.ContainsKey(currentBoneIndex))
+                                OffsetBonesPos[currentBoneIndex] += moveSpeed * Vector3.left;
+                            else
+                                OffsetBonesPos.Add(currentBoneIndex, moveSpeed * Vector3.left);
+                        }
                         if (Input.GetKey(KeyCode.Keypad4))
+                        {
                             BoneSelected.localPosition += moveSpeed * Vector3.right;
+                            if (OffsetBonesPos.ContainsKey(currentBoneIndex))
+                                OffsetBonesPos[currentBoneIndex] += moveSpeed * Vector3.right;
+                            else
+                                OffsetBonesPos.Add(currentBoneIndex, moveSpeed * Vector3.right);
+                        }
                         if (Input.GetKey(KeyCode.Keypad8))
+                        {
                             BoneSelected.localPosition += moveSpeed * Vector3.down;
+                            if (OffsetBonesPos.ContainsKey(currentBoneIndex))
+                                OffsetBonesPos[currentBoneIndex] += moveSpeed * Vector3.down;
+                            else
+                                OffsetBonesPos.Add(currentBoneIndex, moveSpeed * Vector3.down);
+                        }
                         if (Input.GetKey(KeyCode.Keypad2))
+                        {
                             BoneSelected.localPosition += moveSpeed * Vector3.up;
+                            if (OffsetBonesPos.ContainsKey(currentBoneIndex))
+                                OffsetBonesPos[currentBoneIndex] += moveSpeed * Vector3.up;
+                            else
+                                OffsetBonesPos.Add(currentBoneIndex, moveSpeed * Vector3.up);
+                        }
+
                         if (Input.GetKey(KeyCode.Keypad7) || Input.GetKey(KeyCode.Keypad9))
+                        {
                             BoneSelected.localPosition += moveSpeed * Vector3.back;
+                            if (OffsetBonesPos.ContainsKey(currentBoneIndex))
+                                OffsetBonesPos[currentBoneIndex] += moveSpeed * Vector3.back;
+                            else
+                                OffsetBonesPos.Add(currentBoneIndex, moveSpeed * Vector3.back);
+                        }
                         if (Input.GetKey(KeyCode.Keypad1) || Input.GetKey(KeyCode.Keypad3))
+                        {
                             BoneSelected.localPosition += moveSpeed * Vector3.forward;
+                            if (OffsetBonesPos.ContainsKey(currentBoneIndex))
+                                OffsetBonesPos[currentBoneIndex] += moveSpeed * Vector3.forward;
+                            else
+                                OffsetBonesPos.Add(currentBoneIndex, moveSpeed * Vector3.forward);
+                        }
                     }
                 }
                 if (Input.GetKey(KeyCode.KeypadPlus)) // Zoom in ; Increase Size
@@ -677,7 +724,11 @@ namespace Memoria.Assets
                     }
                     else if (partcontrolled == PartControlled.BONE)
                     {
+                        if (!OffsetBonesScale.ContainsKey(currentBoneIndex))
+                            OffsetBonesScale.Add(currentBoneIndex, Vector3.zero);
+
                         BoneSelected.localScale += new Vector3(0.01f, 0.01f, 0.01f);
+                        OffsetBonesRot[currentBoneIndex] += new Vector3(0.01f, 0.01f, 0.01f);
                     }
                 }
                 else if (Input.GetKey(KeyCode.KeypadMinus)) // Zoom out ; Reduce Size
@@ -694,7 +745,11 @@ namespace Memoria.Assets
                     }
                     else if (partcontrolled == PartControlled.BONE)
                     {
+                        if (!OffsetBonesScale.ContainsKey(currentBoneIndex))
+                            OffsetBonesScale.Add(currentBoneIndex, Vector3.zero);
+
                         BoneSelected.localScale -= new Vector3(0.01f, 0.01f, 0.01f);
+                        OffsetBonesRot[currentBoneIndex] -= new Vector3(0.01f, 0.01f, 0.01f);
                     }
                 }
 
@@ -761,7 +816,7 @@ namespace Memoria.Assets
                 }
                 if (Input.GetKeyDown(KeyCode.R)) // Reset position/rotation
                 {
-                    if (shift)
+                    if (shift) // Reset Model
                     {
                         ChangeModel(currentGeoIndex);
                     }
@@ -1451,6 +1506,9 @@ namespace Memoria.Assets
             currentModelBones = null;
             currentBonesID.Clear();
             currentHiddenBonesID.Clear();
+            OffsetBonesPos.Clear();
+            OffsetBonesRot.Clear();
+            OffsetBonesScale.Clear();
             currentBoneIndex = 0;
             if (currentModel == null)
             {
