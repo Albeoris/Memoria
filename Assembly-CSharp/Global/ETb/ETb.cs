@@ -57,25 +57,26 @@ public static class ETb
 
     public static UInt32 GetInputs(Boolean swapJapaneseLayout = false)
     {
-        if (swapJapaneseLayout && EventInput.isJapaneseLayout)
+        if (swapJapaneseLayout)
             return ETb.ProcessJapaneseLayout(FPSManager.DelayedInputs & 0x3FFFFFFu);
         return FPSManager.DelayedInputs & 0x3FFFFFFu;
     }
 
     public static UInt32 KeyOn(Boolean swapJapaneseLayout = false)
     {
-        if (swapJapaneseLayout && EventInput.isJapaneseLayout)
+        if (swapJapaneseLayout)
             return ETb.ProcessJapaneseLayout(ETb.sKeyOn & 0x3FFFFFFu);
         return ETb.sKeyOn & 0x3FFFFFFu;
     }
 
     public static UInt32 KeyOff(Boolean swapJapaneseLayout = false)
     {
-        if (swapJapaneseLayout && EventInput.isJapaneseLayout)
+        if (swapJapaneseLayout)
             return ETb.ProcessJapaneseLayout(ETb.sKeyOff & 0x3FFFFFFu);
         return ETb.sKeyOff & 0x3FFFFFFu;
     }
 
+    /// <summary>Take into account that Japanese event scripts use Control.Cancel in place of Confirm and vice versa (eg. "IsButton(589824L)" to close a dialog by script)</summary>
     private static UInt32 ProcessJapaneseLayout(UInt32 inputs)
     {
         Boolean hasConfirm = (inputs & EventInput.Confirm) != 0;

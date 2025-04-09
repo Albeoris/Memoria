@@ -82,7 +82,10 @@ public partial class BattleHUD : UIScene
         }
 
         VoicePlayer.PlayBattleVoice(pMesNo + 7, fmtMessage, true);
-        SetBattleMessage(parsedMessage, priority, msgCmd);
+        if (msgCmd != null)
+            SetBattleTitle(msgCmd, parsedMessage, priority);
+        else
+            SetBattleMessage(parsedMessage, priority);
     }
 
     public void SetBattleFollowMessage(Byte priority, String formatMessage, params Object[] args)
@@ -283,6 +286,7 @@ public partial class BattleHUD : UIScene
 
     public void SetBattleTitle(CMD_DATA cmd, String str, Byte strPriority)
     {
+        str = TextPatcher.PatchBattleDialogString(str, true, strPriority, cmd);
         Message asMessage = new Message()
         {
             message = str,
@@ -301,15 +305,16 @@ public partial class BattleHUD : UIScene
         DisplayBattleMessage(asMessage);
     }
 
-    public void SetBattleMessage(String str, Byte strPriority, CMD_DATA cmd = null)
+    public void SetBattleMessage(String str, Byte strPriority)
     {
+        str = TextPatcher.PatchBattleDialogString(str, false, strPriority, null);
         Message asMessage = new Message()
         {
             message = str,
             priority = strPriority,
             counter = 0f,
             isRect = false,
-            titleCmd = cmd
+            titleCmd = null
         };
         _messageQueue[str] = asMessage;
 
@@ -386,7 +391,6 @@ public partial class BattleHUD : UIScene
 
     public void UpdateUserInterface(Boolean forceUpdate = false)
     {
-        // [DBG] bugs appeared (detail header initialisation, bad status button)
         Int32 partyCount = FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits().Count(unit => unit.IsPlayer);
         if (partyCount == _playerDetailCount && !forceUpdate)
             return;

@@ -488,7 +488,7 @@ public class CloudUI : UIScene
             {
                 if (errNo == DataSerializerErrorCode.Success)
                 {
-                    Localization.SetCurrentLanguage(LanguageCode.ConvertToLanguageName(selectedLanguage), this, delegate
+                    Localization.SetCurrentLanguage(LanguageName.ConvertToLanguageName(selectedLanguage), this, delegate
                     {
                         this.Loading = false;
                         this.SuccessfulAccessPanel.SetActive(false);

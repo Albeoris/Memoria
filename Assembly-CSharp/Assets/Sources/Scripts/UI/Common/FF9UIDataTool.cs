@@ -391,16 +391,7 @@ namespace Assets.Sources.Scripts.UI.Common
                     {
                         Int32 keyIndex = (Int32)key;
                         if (!checkFromConfig)
-                        {
-                            if (EventInput.isJapaneseLayout)
-                            {
-                                if (keyIndex == 0)
-                                    keyIndex = 1;
-                                else if (keyIndex == 1)
-                                    keyIndex = 0;
-                            }
                             keyIndex = (Int32)PersistenSingleton<HonoInputManager>.Instance.PhysicalButtonToLogicalControl(keyIndex);
-                        }
                         return FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, PersistenSingleton<HonoInputManager>.Instance.InputKeysPrimary[keyIndex]);
                     }
                     case Control.Pause:
@@ -725,7 +716,15 @@ namespace Assets.Sources.Scripts.UI.Common
                     case Control.LeftTrigger:
                     case Control.RightTrigger:
                     {
-                        String primaryKey = checkFromConfig ? inputManager.JoystickKeysPrimary[(Int32)key] : inputManager.DefaultJoystickInputKeys[(Int32)key];
+                        Int32 keyIndex = (Int32)key;
+                        if (!checkFromConfig && EventInput.isJapaneseLayout)
+                        {
+                            if (keyIndex == 0)
+                                keyIndex = 1;
+                            else if (keyIndex == 1)
+                                keyIndex = 0;
+                        }
+                        String primaryKey = checkFromConfig ? inputManager.JoystickKeysPrimary[keyIndex] : inputManager.DefaultJoystickInputKeys[keyIndex];
                         if (!buttonSpriteDictionary.TryGetValue(primaryKey, out result))
                             result = String.Empty;
                         break;

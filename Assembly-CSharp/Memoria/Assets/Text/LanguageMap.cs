@@ -271,19 +271,19 @@ namespace Memoria.Assets
             foreach (var kvp in _languages)
                 if (kvp.Value.TryGetValue(SymbolKey, out String langSymbol) && symbol == langSymbol)
                     return kvp.Key;
-            return "English(US)";
+            return LanguageName.EnglishUS;
         }
 
         public String LanguageToSymbol(String lang)
         {
             if (_languages.TryGetValue(lang, out SortedList<String, String> dict) && dict.TryGetValue(SymbolKey, out String symbol))
                 return symbol;
-            return "US";
+            return LanguageName.SymbolEnglishUS;
         }
 
         private static class LanguagePrefs
         {
-            private const String DefaultLanguage = "English(US)";
+            private const String DefaultLanguage = LanguageName.EnglishUS;
 
             public static String Key
             {

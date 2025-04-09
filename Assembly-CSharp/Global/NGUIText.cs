@@ -163,10 +163,10 @@ public static class NGUIText
                 control = Control.Right;
                 break;
             case "CIRCLE":
-                control = EventInput.IsJapaneseLayout ? Control.Confirm : Control.Cancel;
+                control = NGUIText.ShouldSwapButtonName(checkConfig) ? Control.Confirm : Control.Cancel;
                 break;
             case "CROSS":
-                control = EventInput.IsJapaneseLayout ? Control.Cancel : Control.Confirm;
+                control = NGUIText.ShouldSwapButtonName(checkConfig) ? Control.Cancel : Control.Confirm;
                 break;
             case "TRIANGLE":
                 control = Control.Menu;
@@ -204,6 +204,12 @@ public static class NGUIText
         dialogImage.tag = tag;
         dialogImage.checkFromConfig = checkConfig;
         return dialogImage;
+    }
+
+    // Take into account that Japanese texts use CIRCLE in place of Control.Confirm and CROSS in place of Control.Cancel
+    private static Boolean ShouldSwapButtonName(Boolean checkConfig)
+    {
+        return checkConfig && Localization.CurrentDisplaySymbol == "JP";
     }
 
     public static DialogImage CreateIconImage(Int32 iconId)

@@ -70,7 +70,8 @@ public class UILabel : UIWidget
 
     public Int32 finalFontSize => Mathf.RoundToInt(this.mScale * this.mFinalFontSize);
 
-    private Int32 ReprocessCounter { get; set; }
+    public Int32 ReprocessCounter { get; set; }
+
     private Boolean shouldBeProcessed
     {
         get => this.mShouldBeProcessed;
@@ -603,9 +604,9 @@ public class UILabel : UIWidget
         return base.GetSides(relativeTo);
     }
 
+    // It looks like this method is never called (there are no UILabel that natively have "width == 100 && height == 100 && transform.localScale.magnitude > 8f")
     protected override void UpgradeFrom265()
     {
-        System.IO.File.AppendAllText("aaaaadebuglabel.txt", $"[DBG] UpgradeFrom265 of {this.gameObject}: {this.mText.Replace('\n', '+')}");
         this.ProcessText();
         if (this.mShrinkToFit)
         {

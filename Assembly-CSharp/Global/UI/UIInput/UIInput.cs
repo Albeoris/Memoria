@@ -276,19 +276,31 @@ public class UIInput : MonoBehaviour
             this.UpdateLabel();
             this.ExecuteOnChange();
         }
-        if (this.mCaretStartTag != null && this.mCaretEndTag != null && this.mNextBlink < RealTime.time)
+        if (this.mSelectionStartTag != null && this.mSelectionEndTag != null && !this.label.Parser.ParsedTagList.Contains(this.mSelectionStartTag))
         {
-            this.mNextBlink = RealTime.time + 0.5f;
-            if (this.label.Parser.ParsedTagList.Contains(mCaretStartTag))
+            this.label.Parser.InsertTag(this.mSelectionStartTag, this.mSelectionStartTag.TextOffset);
+            this.label.Parser.InsertTag(this.mSelectionEndTag, this.mSelectionEndTag.TextOffset);
+            this.label.MarkAsChanged();
+        }
+        if (this.mCaretStartTag != null && this.mCaretEndTag != null)
+        {
+            if (this.mNextBlink < RealTime.time)
             {
-                this.Cleanup();
+                this.mNextBlink = RealTime.time + 0.5f;
+                this.mBlinkSwitch = !this.mBlinkSwitch;
             }
-            else
+            if (this.mBlinkSwitch && !this.label.Parser.ParsedTagList.Contains(this.mCaretStartTag))
             {
                 this.label.Parser.InsertTag(this.mCaretStartTag, this.mCaretStartTag.TextOffset);
                 this.label.Parser.InsertTag(this.mCaretEndTag, this.mCaretEndTag.TextOffset);
+                this.label.MarkAsChanged();
             }
-            this.label.MarkAsChanged();
+            else if (!this.mBlinkSwitch && this.label.Parser.ParsedTagList.Contains(this.mCaretStartTag))
+            {
+                this.label.Parser.ParsedTagList.Remove(this.mCaretStartTag);
+                this.label.Parser.ParsedTagList.Remove(this.mCaretEndTag);
+                this.label.MarkAsChanged();
+            }
         }
         if (this.isSelected && this.mLastAlpha != this.label.finalAlpha)
             this.UpdateLabel();
@@ -607,16 +619,9 @@ public class UIInput : MonoBehaviour
 
     private void OnDisable()
     {
-        this.Cleanup();
-    }
-
-    protected virtual void Cleanup()
-    {
-        if (mCaretStartTag != null && mCaretEndTag != null)
-        {
-            this.label.Parser.ParsedTagList.Remove(mCaretStartTag);
-            this.label.Parser.ParsedTagList.Remove(mCaretEndTag);
-        }
+        if (this.mCaretStartTag != null && this.mCaretEndTag != null)
+            if (this.label.Parser.ParsedTagList.Remove(this.mCaretStartTag) | this.label.Parser.ParsedTagList.Remove(this.mCaretEndTag))
+                this.label.MarkAsChanged();
     }
 
     public void Submit()
@@ -710,9 +715,13 @@ public class UIInput : MonoBehaviour
                 labelText = " ";
             TextParser textParser = new TextParser(this.label, labelText);
             this.label.Parser = textParser;
+            this.label.ReprocessCounter = 0;
             textParser.Parse(TextParser.ParseStep.Wrapped);
-            mCaretStartTag = null;
-            mCaretEndTag = null;
+            this.mSelectionStartTag = null;
+            this.mSelectionEndTag = null;
+            this.mCaretStartTag = null;
+            this.mCaretEndTag = null;
+            this.mBlinkSwitch = true;
             if (isSelected)
             {
                 Int32 shiftedSelStart = Mathf.Clamp(this.mSelectionRangeStart - UIInput.mDrawStart, 0, labelText.Length);
@@ -725,29 +734,27 @@ public class UIInput : MonoBehaviour
                 }
                 if (shiftedSelStart != shiftedSelEnd)
                 {
-                    textParser.InsertTag(new FFIXTextTag(FFIXTextTagCode.BackgroundRGBA, [this.selectionColor.r.ToString(), this.selectionColor.g.ToString(), this.selectionColor.b.ToString(), this.selectionColor.a.ToString(), "0", "0", "1", "1", "0", "0", "2", "0"]), shiftedSelStart);
-                    textParser.InsertTag(new FFIXTextTag(FFIXTextTagCode.BackgroundRGBA, ["Off"]), shiftedSelEnd);
+                    this.mSelectionStartTag = new FFIXTextTag(FFIXTextTagCode.BackgroundRGBA, [this.selectionColor.r.ToString(), this.selectionColor.g.ToString(), this.selectionColor.b.ToString(), this.selectionColor.a.ToString(), "0", "0", "1", "1", "0", "0", "2", "0"]);
+                    this.mSelectionEndTag = new FFIXTextTag(FFIXTextTagCode.BackgroundRGBA, ["Off"]);
+                    textParser.InsertTag(mSelectionStartTag, shiftedSelStart);
+                    textParser.InsertTag(mSelectionEndTag, shiftedSelEnd);
                 }
                 if (caretPos < labelText.Length)
                 {
-                    mCaretStartTag = new FFIXTextTag(FFIXTextTagCode.BackgroundRGBA, [this.caretColor.r.ToString(), this.caretColor.g.ToString(), this.caretColor.b.ToString(), this.caretColor.a.ToString(), "0", "0", "0", "1", "-1", "-6", "1", "6"]);
-                    mCaretEndTag = new FFIXTextTag(FFIXTextTagCode.BackgroundRGBA, ["Off"]);
+                    this.mCaretStartTag = new FFIXTextTag(FFIXTextTagCode.BackgroundRGBA, [this.caretColor.r.ToString(), this.caretColor.g.ToString(), this.caretColor.b.ToString(), this.caretColor.a.ToString(), "0", "0", "0", "1", "-1", "-6", "1", "6"]);
+                    this.mCaretEndTag = new FFIXTextTag(FFIXTextTagCode.BackgroundRGBA, ["Off"]);
                     textParser.InsertTag(mCaretStartTag, caretPos);
                     textParser.InsertTag(mCaretEndTag, caretPos + 1);
                 }
                 else if (caretPos > 0)
                 {
-                    mCaretStartTag = new FFIXTextTag(FFIXTextTagCode.BackgroundRGBA, [this.caretColor.r.ToString(), this.caretColor.g.ToString(), this.caretColor.b.ToString(), this.caretColor.a.ToString(), "1", "0", "1", "1", "-1", "-6", "1", "6"]);
-                    mCaretEndTag = new FFIXTextTag(FFIXTextTagCode.BackgroundRGBA, ["Off"]);
+                    this.mCaretStartTag = new FFIXTextTag(FFIXTextTagCode.BackgroundRGBA, [this.caretColor.r.ToString(), this.caretColor.g.ToString(), this.caretColor.b.ToString(), this.caretColor.a.ToString(), "1", "0", "1", "1", "-1", "-6", "1", "6"]);
+                    this.mCaretEndTag = new FFIXTextTag(FFIXTextTagCode.BackgroundRGBA, ["Off"]);
                     textParser.InsertTag(mCaretStartTag, caretPos - 1);
                     textParser.InsertTag(mCaretEndTag, caretPos);
                 }
                 this.mNextBlink = RealTime.time + 0.5f;
                 this.mLastAlpha = this.label.finalAlpha;
-            }
-            else
-            {
-                this.Cleanup();
             }
         }
     }
@@ -938,9 +945,15 @@ public class UIInput : MonoBehaviour
     protected Int32 mSelectionCaret;
 
     [NonSerialized]
+    protected Boolean mBlinkSwitch;
+    [NonSerialized]
     protected FFIXTextTag mCaretStartTag;
     [NonSerialized]
     protected FFIXTextTag mCaretEndTag;
+    [NonSerialized]
+    protected FFIXTextTag mSelectionStartTag;
+    [NonSerialized]
+    protected FFIXTextTag mSelectionEndTag;
 
     [NonSerialized]
     protected Single mNextBlink;

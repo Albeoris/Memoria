@@ -454,38 +454,9 @@ public class TitleUI : UIScene
                     this.OnKeyCancel(go);
                     return true;
                 }
-                MenuLanguage menuLanguageFromGameObject = this.GetMenuLanguageFromGameObject(go);
-                if (menuLanguageFromGameObject != MenuLanguage.None)
+                String language = this.GetMenuLanguageFromGameObject(go);
+                if (!String.IsNullOrEmpty(language))
                 {
-                    String language;
-                    switch (menuLanguageFromGameObject)
-                    {
-                        case MenuLanguage.EnglishUS:
-                            language = "English(US)";
-                            break;
-                        case MenuLanguage.Japanese:
-                            language = "Japanese";
-                            break;
-                        case MenuLanguage.German:
-                            language = "German";
-                            break;
-                        case MenuLanguage.Spanish:
-                            language = "Spanish";
-                            break;
-                        case MenuLanguage.Italian:
-                            language = "Italian";
-                            break;
-                        case MenuLanguage.French:
-                            language = "French";
-                            break;
-                        case MenuLanguage.EnglishUK:
-                            language = "English(UK)";
-                            break;
-                        default:
-                            language = String.Empty;
-                            break;
-                    }
-                    EventInput.ChangeInputLayout(language);
                     this.SetLanguage(language);
                     this.MenuLanguageButton.GetChild(0).GetComponent<UILabel>().rawText = this.GetLanguageButtonLabel();
                 }
@@ -1165,23 +1136,23 @@ public class TitleUI : UIScene
         }
     }
 
-    private MenuLanguage GetMenuLanguageFromGameObject(GameObject go)
+    private String GetMenuLanguageFromGameObject(GameObject go)
     {
         if (go == this.englishUSButton)
-            return MenuLanguage.EnglishUS;
+            return LanguageName.EnglishUS;
         if (go == this.japaneseButton)
-            return MenuLanguage.Japanese;
+            return LanguageName.Japanese;
         if (go == this.germanButton)
-            return MenuLanguage.German;
+            return LanguageName.German;
         if (go == this.spanishButton)
-            return MenuLanguage.Spanish;
+            return LanguageName.Spanish;
         if (go == this.italianButton)
-            return MenuLanguage.Italian;
+            return LanguageName.Italian;
         if (go == this.frenchButton)
-            return MenuLanguage.French;
+            return LanguageName.French;
         if (go == this.englishUKButton)
-            return MenuLanguage.EnglishUK;
-        return MenuLanguage.None;
+            return LanguageName.EnglishUK;
+        return String.Empty;
     }
 
     private GameObject GetGameObjectFromCurrentLanguage()
@@ -2041,17 +2012,5 @@ public class TitleUI : UIScene
                 }
             }
         }
-    }
-
-    private enum MenuLanguage
-    {
-        EnglishUS,
-        Japanese,
-        German,
-        Spanish,
-        Italian,
-        French,
-        EnglishUK,
-        None,
     }
 }

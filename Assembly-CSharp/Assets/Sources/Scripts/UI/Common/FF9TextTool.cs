@@ -489,16 +489,17 @@ namespace Assets.Sources.Scripts.UI.Common
             {
                 if (id == BattleCommandId.AccessMenu && (result == "None" || result == "みてい"))
                     result = Localization.Get("Menu");
-                if (Configuration.Lang.DualLanguageMode == 2 && SecondaryBatch.commandName.TryGetValue(id, out String translation) && !String.IsNullOrEmpty(translation))
-                {
-                    if (id == BattleCommandId.AccessMenu && (translation == "None" || translation == "みてい"))
-                    {
-                        Localization.UseSecondaryLanguage = true;
-                        translation = Localization.Get("Menu");
-                        Localization.UseSecondaryLanguage = false;
-                    }
-                    result += " - " + translation;
-                }
+                // Disable that behaviour for commands, as the displays are terrible
+                //if (Configuration.Lang.DualLanguageMode == 2 && SecondaryBatch.commandName.TryGetValue(id, out String translation) && !String.IsNullOrEmpty(translation))
+                //{
+                //    if (id == BattleCommandId.AccessMenu && (translation == "None" || translation == "みてい"))
+                //    {
+                //        Localization.UseSecondaryLanguage = true;
+                //        translation = Localization.Get("Menu");
+                //        Localization.UseSecondaryLanguage = false;
+                //    }
+                //    result += " - " + translation;
+                //}
             }
             return result;
         }

@@ -401,7 +401,7 @@ public partial class EventEngine
                 Int16 maxY = (Int16)this.getv2();
 
                 if (mapNo == 2220 && minX == 154 && FieldMap.ActualPsxScreenWidth > 390) // Desert Palace fix to widescreen cam seeing hidden path too soon
-                    minX = (Int16)544;
+                    minX = 544;
 
                 this.fieldmap.EBG_cameraSetViewport(camId, minX, maxX, minY, maxY);
                 return 0;
@@ -534,7 +534,16 @@ public partial class EventEngine
                 //    goto case EBin.event_code_binary.WAITMES;
                 //}
 
-                var windowID = this.getv1(); // arg1: window ID determined at its creation
+                Int32 windowID = this.getv1(); // arg1: window ID determined at its creation
+                if (Configuration.VoiceActing.Enabled && VoicePlayer.HasDialogVoice(Singleton<DialogManager>.Instance.GetDialogByWindowID(windowID)))
+                {
+                    // Timed windows closed by script (usually have a [TIME=-1] tag in the text and the following kind of script:
+                    //   WindowAsync( winId, uiFlags, textId )
+                    //   Wait( 30 )
+                    //   CloseWindow( winId )
+                    this.stay();
+                    return 1;
+                }
                 ETb.DisposWindowByID(windowID, true);
                 return 0;
             }
@@ -557,7 +566,7 @@ public partial class EventEngine
                     return 0;
                 }
                 this.gCur.winnum = (Byte)this.getv1(); // arg1: window ID determined at its creation
-                this.gCur.wait = (Byte)254;
+                this.gCur.wait = 254;
                 return 1;
             }
             case EBin.event_code_binary.TIMERSET: // 0x69, "ChangeTimerTime", "Change the remaining time of the timer window"

@@ -799,10 +799,8 @@
     <Compile Include="Global\ISoundLoader.cs" />
     <Compile Include="Global\ItemUI.cs" />
     <Compile Include="Global\JsonParser.cs" />
-    <Compile Include="Global\Language\LanguageCode.cs" />
     <Compile Include="Global\Language\LanguageName.cs" />
     <Compile Include="Global\Language\LanguageSelection.cs" />
-    <Compile Include="Global\Language\LanguageSymbol.cs" />
     <Compile Include="Global\List\ListDataTypeBase.cs" />
     <Compile Include="Global\List\ListExtension.cs" />
     <Compile Include="Global\LoadingScene.cs" />
@@ -818,7 +816,6 @@
     <Compile Include="Global\MBG_CAM_DEF.cs" />
     <Compile Include="Global\MBG_DEF.cs" />
     <Compile Include="Global\MBG_PARMS_DEF.cs" />
-    <Compile Include="Global\MenuLanguage.cs" />
     <Compile Include="Global\MinHeap.cs" />
     <Compile Include="Global\MinigameHUD.cs" />
     <Compile Include="Global\MiniGameState.cs" />

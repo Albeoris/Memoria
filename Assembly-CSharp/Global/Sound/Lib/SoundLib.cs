@@ -229,6 +229,97 @@ public class SoundLib : MonoBehaviour
         }
     }
 
+    public static SoundProfile PlaySoundEffect(String path, Action onFinished = null, Single soundVolume = 1f, Single panning = 0f, Single pitch = 1f)
+    {
+        return LoadSoundEffect(path,
+                (soundProfile, db) =>
+                {
+                    if (soundProfile != null)
+                    {
+                        SoundLib.VoicePlayer.CreateSound(soundProfile);
+                        SoundLib.VoicePlayer.StartSound(soundProfile, onFinished);
+                        if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
+                            db.Update(soundProfile);
+                        else
+                            db.Create(soundProfile);
+                    }
+                }, soundVolume, panning, pitch);
+    }
+
+    public static void PlaySoundEffectsConsecutively(List<String> paths, Action onFinished = null, Single soundVolume = 1f, Single panning = 0f, Single pitch = 1f)
+    {
+        if (paths.Count == 0)
+            return;
+        if (paths.Count == 1)
+        {
+            PlaySoundEffect(paths[0], onFinished, soundVolume, panning, pitch);
+            return;
+        }
+        List<SoundProfile> profiles = new List<SoundProfile>();
+        for (Int32 i = 0; i < paths.Count - 1; i++)
+        {
+            LoadSoundEffect(paths[i],
+                (soundProfile, db) =>
+                {
+                    if (soundProfile != null)
+                    {
+                        profiles.Add(soundProfile);
+                        if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
+                            db.Update(soundProfile);
+                        else
+                            db.Create(soundProfile);
+                    }
+                }, soundVolume, panning, pitch);
+        }
+        LoadSoundEffect(paths[paths.Count - 1],
+            (soundProfile, db) =>
+            {
+                if (soundProfile != null)
+                {
+                    profiles.Add(soundProfile);
+                    if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
+                        db.Update(soundProfile);
+                    else
+                        db.Create(soundProfile);
+                }
+                if (profiles.Count == 0)
+                    return;
+                SoundLib.VoicePlayer.CreateSound(profiles[0]);
+                SoundLib.VoicePlayer.StartSound(profiles[0], () => PlaySoundEffectsConsecutively_Callback(profiles, 1, onFinished));
+            }, soundVolume, panning, pitch);
+    }
+
+    private static void PlaySoundEffectsConsecutively_Callback(List<SoundProfile> profiles, Int32 index, Action onFinished)
+    {
+        if (index < profiles.Count)
+        {
+            SoundLib.VoicePlayer.CreateSound(profiles[index]);
+            SoundLib.VoicePlayer.StartSound(profiles[index], () => PlaySoundEffectsConsecutively_Callback(profiles, index + 1, onFinished));
+        }
+        else if (onFinished != null)
+        {
+            onFinished();
+        }
+    }
+
+    public static SoundProfile LoadSoundEffect(String path, ISoundLoader.ResultCallback onLoaded, Single soundVolume = 1f, Single panning = 0f, Single pitch = 1f)
+    {
+        Int32 soundIndex = path.GetHashCode();
+        SoundProfile soundProfile = new SoundProfile
+        {
+            Code = soundIndex.ToString(),
+            Name = path,
+            SoundIndex = soundIndex,
+            ResourceID = path,
+            SoundProfileType = SoundProfileType.Voice,
+            SoundVolume = soundVolume,
+            Panning = panning,
+            Pitch = Configuration.Audio.Backend == 0 ? 0.5f * pitch : pitch // SdLib needs 0.5f for some reason
+        };
+        SoundLoaderProxy.Instance.Load(soundProfile, onLoaded, ETb.voiceDatabase);
+        return soundProfile;
+    }
+
     public static Int32 GetResidentSfxSoundCount()
     {
         return SoundMetaData.ResidentSfxSoundIndex[0].Count;

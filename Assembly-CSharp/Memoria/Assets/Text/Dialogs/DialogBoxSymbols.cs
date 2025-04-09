@@ -854,10 +854,12 @@ namespace Memoria.Assets
 
         private static void OnSound(FFIXTextTag tag)
         {
-            // TODO: allow sound parameter to be given as an asset path
             Single volume = tag.ParamCount > 1 ? tag.SingleParam(1) : 1f;
             Single pitch = tag.ParamCount > 3 ? tag.SingleParam(3) : 1f;
-            SoundLib.PlaySoundEffect(tag.IntParam(0), volume, tag.SingleParam(2), pitch);
+            if (Int32.TryParse(tag.StringParam(0), out Int32 soundId))
+                SoundLib.PlaySoundEffect(tag.IntParam(0), volume, tag.SingleParam(2), pitch);
+            else
+                SoundLib.PlaySoundEffectsConsecutively(tag.StringParam(0).Split(':').ToList(), null, volume, tag.SingleParam(2), pitch);
         }
 
         private static void OnTailPosition(Dialog dialog, Dialog.TailPosition tailPos)

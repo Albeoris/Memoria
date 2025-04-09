@@ -1498,8 +1498,9 @@ public class Dialog : MonoBehaviour
         if (!this.CanAutoResize())
         {
             // Use the size specified by STRT tags
-            this.phraseLabel.ProcessText();
+            this.CurrentParser.Parse(TextParser.ParseStep.ConstantReplaceTags);
             this.ApplyDialogTextPatch(this.CurrentParser);
+            this.phraseLabel.ProcessText();
             this.Width = this.WidthHint;
             this.LineNumber = this.LineNumberHint;
             return;

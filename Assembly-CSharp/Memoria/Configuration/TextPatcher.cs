@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Assets.Sources.Scripts.UI.Common;
 using Assets.Scripts.Common;
+using FF9;
 using Memoria.Assets;
+using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Prime.Text;
 using NCalc;
@@ -103,6 +105,8 @@ namespace Memoria
         {
             if (line.StartsWith(">DIALOG"))
                 return DialogPatchers;
+            if (line.StartsWith(">BATTLE"))
+                return BattleDialogPatchers;
             if (line.StartsWith(">INTERFACE"))
                 return InterfacePatchers;
             if (line.StartsWith(">DATABASE"))
@@ -141,9 +145,62 @@ namespace Memoria
                             String spriteName = NCalcUtility.EvaluateNCalcString(args.Parameters[1].Evaluate());
                             args.Result = FF9UIDataTool.GetSpriteSize(atlasName, spriteName) != Vector2.zero;
                         }
+                        else if (name == "GetTextVariable" && args.Parameters.Length == 1)
+                        {
+                            Int32 scriptId = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), -1);
+                            args.Result = scriptId >= 0 && scriptId < ETb.gMesValue.Length ? ETb.gMesValue[scriptId] : 0;
+                        }
                     };
                 };
                 foreach (TextPatcher patcher in DialogPatchers)
+                    if (patcher.ApplyPatch(ref str, ncalcInit))
+                        lineCount = str.OccurenceCount("\n") + 1;
+            }
+            catch (Exception err)
+            {
+                Log.Error(err);
+            }
+            return str;
+        }
+
+        public static String PatchBattleDialogString(String str, Boolean isTitle, Int32 priority, CMD_DATA cmd)
+        {
+            try
+            {
+                if (BattleDialogPatchers.Count == 0)
+                    return str;
+                Int32 lineCount = str.OccurenceCount("\n") + 1;
+                ExpressionInitializer ncalcInit = delegate (ref Expression expr)
+                {
+                    expr.Parameters["RawText"] = str;
+                    expr.Parameters["IsCommandTitle"] = isTitle;
+                    expr.Parameters["MessagePriority"] = priority;
+                    expr.Parameters["CommandId"] = (Int32)(cmd?.cmd_no ?? BattleCommandId.None);
+                    expr.Parameters["AbilityId"] = (Int32)(cmd != null ? btl_util.GetCommandMainActionIndex(cmd) : BattleAbilityId.Void);
+                    expr.Parameters["ScriptId"] = cmd?.ScriptId ?? 0;
+                    expr.Parameters["LineCount"] = lineCount;
+                    expr.EvaluateFunction += delegate (String name, FunctionArgs args)
+                    {
+                        if (name == "SearchCount" && args.Parameters.Length >= 1)
+                        {
+                            String search = NCalcUtility.EvaluateNCalcString(args.Parameters[0].Evaluate());
+                            String from = args.Parameters.Length >= 2 ? NCalcUtility.EvaluateNCalcString(args.Parameters[1].Evaluate()) : str;
+                            args.Result = String.IsNullOrEmpty(search) ? 0 : from.OccurenceCount(search);
+                        }
+                        else if (name == "SpriteExists" && args.Parameters.Length == 2)
+                        {
+                            String atlasName = NCalcUtility.EvaluateNCalcString(args.Parameters[0].Evaluate());
+                            String spriteName = NCalcUtility.EvaluateNCalcString(args.Parameters[1].Evaluate());
+                            args.Result = FF9UIDataTool.GetSpriteSize(atlasName, spriteName) != Vector2.zero;
+                        }
+                        else if (name == "GetTextVariable" && args.Parameters.Length == 1)
+                        {
+                            Int32 scriptId = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), -1);
+                            args.Result = scriptId >= 0 && scriptId < ETb.gMesValue.Length ? ETb.gMesValue[scriptId] : 0;
+                        }
+                    };
+                };
+                foreach (TextPatcher patcher in BattleDialogPatchers)
                     if (patcher.ApplyPatch(ref str, ncalcInit))
                         lineCount = str.OccurenceCount("\n") + 1;
             }
@@ -299,6 +356,7 @@ namespace Memoria
         private delegate void ExpressionInitializer(ref Expression expr);
 
         private static List<TextPatcher> DialogPatchers = new List<TextPatcher>();
+        private static List<TextPatcher> BattleDialogPatchers = new List<TextPatcher>();
         private static List<TextPatcher> InterfacePatchers = new List<TextPatcher>();
         private static List<TextPatcher> DatabasePatchers = new List<TextPatcher>();
 
