@@ -1681,7 +1681,7 @@ public class EBin
 
     private Int32 GetMemoriaCustomVariable(memoria_variable varCode)
     {
-        switch (varCode)
+        switch (varCode) // Custom variables for HW (ScriptAPI.txt)
         {
             case memoria_variable.TETRA_MASTER_WIN:
                 return FF9StateSystem.MiniGame.SavedData.sWin;
@@ -1697,6 +1697,15 @@ public class EBin
                 return FF9StateSystem.EventState.GetTreasureHunterPoints();
             case memoria_variable.BATTLE_RUNAWAY:
                 return FF9StateSystem.Battle.FF9Battle.btl_scene.Info.Runaway ? 1 : 0;
+            case memoria_variable.BATTLE_NOGAMEOVER:
+                return FF9StateSystem.Battle.FF9Battle.btl_scene.Info.NoGameOver ? 1 : 0;
+            case memoria_variable.BATTLE_WINPOSE:
+                return FF9StateSystem.Battle.FF9Battle.btl_scene.Info.WinPose ? 1 : 0;
+            case memoria_variable.BATTLE_IPSENCURSE:
+                return FF9StateSystem.Battle.FF9Battle.btl_scene.Info.ReverseAttack ? 1 : 0;
+            case memoria_variable.BATTLE_AFTEREVENT:
+                return FF9StateSystem.Battle.FF9Battle.btl_scene.Info.AfterEvent ? 1 : 0;
+
         }
         return 0;
     }
@@ -1716,6 +1725,18 @@ public class EBin
                 break;
             case memoria_variable.BATTLE_RUNAWAY:
                 FF9StateSystem.Battle.FF9Battle.btl_scene.Info.Runaway = val != 0;
+                break;
+            case memoria_variable.BATTLE_NOGAMEOVER:
+                FF9StateSystem.Battle.FF9Battle.btl_scene.Info.NoGameOver = val != 0;
+                break;
+            case memoria_variable.BATTLE_WINPOSE:
+                FF9StateSystem.Battle.FF9Battle.btl_scene.Info.WinPose = val != 0;
+                break;
+            case memoria_variable.BATTLE_IPSENCURSE:
+                FF9StateSystem.Battle.FF9Battle.btl_scene.Info.ReverseAttack = val != 0;
+                break;
+            case memoria_variable.BATTLE_AFTEREVENT:
+                FF9StateSystem.Battle.FF9Battle.btl_scene.Info.AfterEvent = val != 0;
                 break;
         }
     }
@@ -2395,6 +2416,10 @@ public class EBin
         TETRA_MASTER_RANK,
         TREASURE_HUNTER_POINTS,
         BATTLE_RUNAWAY,
+        BATTLE_NOGAMEOVER,
+        BATTLE_WINPOSE,
+        BATTLE_IPSENCURSE,
+        BATTLE_AFTEREVENT
     }
 
     public enum op_binary
