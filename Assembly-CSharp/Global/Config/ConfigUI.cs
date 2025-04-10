@@ -1534,10 +1534,7 @@ public class ConfigUI : UIScene
             Configurator id = (Configurator)configTopObj.GetComponent<ScrollItemKeyNavigation>().ID;
 
             // Remove unused settings from menu
-            if ((id == Configurator.Vibration && !FF9StateSystem.IsPlatformVibration)
-                || id == Configurator.Sound
-                || id == Configurator.SoundEffect
-                || (id == Configurator.FieldMessage && Configuration.VoiceActing.ForceMessageSpeed >= 0))
+            if (id == Configurator.Sound || id == Configurator.SoundEffect || (id == Configurator.FieldMessage && Configuration.VoiceActing.ForceMessageSpeed >= 0))
             {
                 if (configTopObj.transform.GetSiblingIndex() < fieldMessageConfigIndex)
                     fieldMessageConfigIndex--;

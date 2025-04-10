@@ -1,15 +1,14 @@
 using Microsoft.Win32.SafeHandles;
+using SharpCompress.Archives;
+using SharpCompress.Common;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Linq;
-using SharpCompress.Archives;
-using SharpCompress.Common;
 using System.Threading;
-using System.Net;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
@@ -413,11 +412,129 @@ namespace Memoria.Launcher
     }
     #endregion
 
+    #region DisplayInfo
+    public static class DisplayInfo
+    {
+        private static Dictionary<String, String> FriendlyNames = ScreenInterrogatory.GetAllMonitorFriendlyNamesWithID();
+        public static List<Display> Displays { get; private set; } = GetDisplays();
+        public struct Display
+        {
+            public String device;
+            public String name;
+            public Boolean isPrimary;
+            public RECT monitorArea;
+            public RECT workArea;
+
+        }
+        [DllImport("user32.dll")]
+        public static extern bool EnumDisplayDevices(string lpDevice, uint iDevNum, ref DISPLAY_DEVICE lpDisplayDevice, uint dwFlags);
+
+        [Flags()]
+        public enum DisplayDeviceStateFlags : int
+        {
+            /// <summary>The device is part of the desktop.</summary>
+            AttachedToDesktop = 0x1,
+            MultiDriver = 0x2,
+            /// <summary>The device is part of the desktop.</summary>
+            PrimaryDevice = 0x4,
+            /// <summary>Represents a pseudo device used to mirror application drawing for remoting or other purposes.</summary>
+            MirroringDriver = 0x8,
+            /// <summary>The device is VGA compatible.</summary>
+            VGACompatible = 0x16,
+            /// <summary>The device is removable; it cannot be the primary display.</summary>
+            Removable = 0x20,
+            /// <summary>The device has more display modes than its output devices support.</summary>
+            ModesPruned = 0x8000000,
+            Remote = 0x4000000,
+            Disconnect = 0x2000000
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+        public struct DISPLAY_DEVICE
+        {
+            [MarshalAs(UnmanagedType.U4)]
+            public int cb;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+            public string DeviceName;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+            public string DeviceString;
+            [MarshalAs(UnmanagedType.U4)]
+            public DisplayDeviceStateFlags StateFlags;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+            public string DeviceID;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+            public string DeviceKey;
+        }
+        [DllImport("user32.dll")]
+        private static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumDelegate lpfnEnum, IntPtr dwData);
+        delegate bool MonitorEnumDelegate(IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData);
+
+        [DllImport("User32.dll", CharSet = CharSet.Auto)]
+        private static extern bool GetMonitorInfo(IntPtr hmonitor, [In, Out] MONITORINFOEX info);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RECT
+        {
+            public int left;
+            public int top;
+            public int right;
+            public int bottom;
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto, Pack = 4)]
+        public class MONITORINFOEX
+        {
+            public int cbSize = Marshal.SizeOf(typeof(MONITORINFOEX));
+            public RECT rcMonitor = new RECT();
+            public RECT rcWork = new RECT();
+            public int dwFlags = 0;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public char[] szDevice = new char[32];
+        }
+        private static List<Display> GetDisplays()
+        {
+            List<Display> displays = new List<Display>();
+
+            EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero,
+                delegate (IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData)
+                {
+
+                    MONITORINFOEX mi = new MONITORINFOEX();
+                    mi.cbSize = Marshal.SizeOf(mi);
+                    if (GetMonitorInfo(hMonitor, mi))
+                    {
+                        String deviceName = new String(mi.szDevice);
+
+                        var device = new DISPLAY_DEVICE();
+                        device.cb = Marshal.SizeOf(device);
+                        EnumDisplayDevices(deviceName, 0, ref device, 0);
+
+                        String[] split = device.DeviceID.Split('\\');
+
+                        Display display = new Display
+                        {
+                            device = split.Length > 1 ? split[1] : "",
+                            name = device.DeviceString,
+                            isPrimary = mi.dwFlags != 0,
+                            monitorArea = mi.rcMonitor,
+                            workArea = mi.rcWork
+                        };
+                        if (FriendlyNames.ContainsKey(display.device))
+                            display.name = FriendlyNames[display.device];
+                        displays.Add(display);
+                    }
+                    return true;
+                }, IntPtr.Zero);
+
+            return displays;
+        }
+    }
+    #endregion
+
     #region ScreenInterro
     public static class ScreenInterrogatory
     {
         public const int ERROR_SUCCESS = 0;
-
 
         public enum QUERY_DEVICE_CONFIG_FLAGS : uint
         {
@@ -655,26 +772,10 @@ namespace Memoria.Launcher
         [DllImport("user32.dll")]
         public static extern int DisplayConfigGetDeviceInfo(ref DISPLAYCONFIG_TARGET_DEVICE_NAME deviceName);
 
-        private static string MonitorFriendlyName(LUID adapterId, uint targetId)
+        public static Dictionary<String, String> GetAllMonitorFriendlyNamesWithID()
         {
-            var deviceName = new DISPLAYCONFIG_TARGET_DEVICE_NAME
-            {
-                header =
-                {
-                    size = (uint)Marshal.SizeOf(typeof(DISPLAYCONFIG_TARGET_DEVICE_NAME)),
-                    adapterId = adapterId,
-                    id = targetId,
-                    type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME
-                }
-            };
-            var error = DisplayConfigGetDeviceInfo(ref deviceName);
-            if (error != ERROR_SUCCESS)
-                throw new Win32Exception(error);
-            return deviceName.monitorFriendlyDeviceName;
-        }
+            Dictionary<String, String> monitors = new Dictionary<String, String>();
 
-        private static IEnumerable<String> GetAllMonitorsFriendlyNames()
-        {
             uint pathCount, modeCount;
             var error = GetDisplayConfigBufferSizes(QUERY_DEVICE_CONFIG_FLAGS.QDC_ONLY_ACTIVE_PATHS, out pathCount, out modeCount);
             if (error != ERROR_SUCCESS)
@@ -688,20 +789,29 @@ namespace Memoria.Launcher
                 throw new Win32Exception(error);
 
             for (var i = 0; i < modeCount; i++)
+            {
                 if (displayModes[i].infoType == DISPLAYCONFIG_MODE_INFO_TYPE.DISPLAYCONFIG_MODE_INFO_TYPE_TARGET)
-                    yield return MonitorFriendlyName(displayModes[i].adapterId, displayModes[i].id);
-        }
+                {
+                    var deviceName = new DISPLAYCONFIG_TARGET_DEVICE_NAME
+                    {
+                        header =
+                        {
+                            size = (uint)Marshal.SizeOf(typeof(DISPLAYCONFIG_TARGET_DEVICE_NAME)),
+                            adapterId = displayModes[i].adapterId,
+                            id = displayModes[i].id,
+                            type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME
+                        }
+                    };
+                    error = DisplayConfigGetDeviceInfo(ref deviceName);
+                    if (error != ERROR_SUCCESS)
+                        throw new Win32Exception(error);
+                    String[] split = deviceName.monitorDevicePath.Split('#');
+                    if (split.Length > 1)
+                        monitors[split[1]] = deviceName.monitorFriendlyDeviceName;
+                }
+            }
 
-        public static Dictionary<Int32, String> GetAllMonitorFriendlyNamesSafe()
-        {
-            try
-            {
-                return GetAllMonitorsFriendlyNames().Select((name, index) => new { index, name }).ToDictionary(p => p.index, p => p.name);
-            }
-            catch
-            {
-                return new Dictionary<int, string>();
-            }
+            return monitors;
         }
     }
     #endregion
