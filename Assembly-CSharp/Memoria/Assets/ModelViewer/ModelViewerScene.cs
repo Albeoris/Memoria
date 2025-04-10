@@ -335,8 +335,8 @@ namespace Memoria.Assets
                     {
                         InsertTextGUI.SetActive(true);
                         backgroundGo.SetActive(true);
-                        input.selected = true;
-                        input.text = ""; // Reset text input.
+                        input.isSelected = true;
+                        input.value = ""; // Reset text input.
                         CreateInsertText = false;
                     }
 
@@ -1287,8 +1287,8 @@ namespace Memoria.Assets
                     label += "\n\n\n\n\n\n\n";
                 }
 
-                if (!String.Equals(infoLabel.text, label))
-                    infoLabel.text = label;
+                if (!String.Equals(infoLabel.Parser.InitialText, label))
+                    infoLabel.rawText = label;
                 if (!infoPanel.Show)
                     infoPanel.Show = true;
                 infoLabel.fontSize = 22;
@@ -1296,7 +1296,7 @@ namespace Memoria.Assets
                 String controlist = "Hide UI [FFFF00][I][FFFFFF]\r\n";
                 foreach (KeyValuePair<String, String> entry in ControlsKeys)
                     controlist += $"{entry.Value} [FFFF00][{entry.Key}][FFFFFF]\r\n";
-                controlLabel.text = controlist;
+                controlLabel.rawText = controlist;
 
                 String extraInfo = "";
                 if (partcontrolled == PartControlled.MODEL && currentModel != null)
@@ -1332,7 +1332,7 @@ namespace Memoria.Assets
                     extraInfo += $" Scale: {Math.Round(BoneSelected.localScale.x, 2)}";
                     extraInfoLabel.color = new Color(0.85865f, 0.00327f, 0.48478f, 1f);
                 }
-                extraInfoLabel.text = extraInfo;
+                extraInfoLabel.rawText = extraInfo;
                 extraInfoLabel.fontSize = 16;
                 extraInfoLabel.effectDistance = new Vector2(2f, 2f);
                 extraInfoLabel.alignment = NGUIText.Alignment.Right;

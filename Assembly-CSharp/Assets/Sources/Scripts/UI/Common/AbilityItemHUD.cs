@@ -11,6 +11,7 @@ namespace Assets.Sources.Scripts.UI.Common
             this.IconSprite = go.GetChild(0).GetComponent<UISprite>();
             this.NameLabel = go.GetChild(1).GetComponent<UILabel>();
             this.APBar = new APBarHUD(go.GetChild(2));
+            this.NameLabel.fixedAlignment = true;
         }
 
         public GameObject Self;

@@ -4,7 +4,6 @@ using Memoria.Assets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using UnityEngine;
 
@@ -98,7 +97,7 @@ public class VoicePlayer : SoundPlayer
 
         // Compile the list of candidate paths for the file name
         List<String> candidates = new List<string>();
-        String lang = Localization.GetSymbol();
+        String lang = Localization.CurrentSymbol;
         String pageIndex = dialog.SubPage.Count > 1 ? $"_{Math.Max(0, dialog.CurrentPage - 1)}" : "";
 
         // Path for the hunt/hot and cold
@@ -129,8 +128,8 @@ public class VoicePlayer : SoundPlayer
             candidates.Add($"Voices/{lang}/{FieldZoneId}/va_{messageNumber}_{dialog.Po.uid}{pageIndex}");
 
         // Path using the character name at the top of the box
-        String[] msgStrings = dialog.Phrase.Split(["[CHOO]"], StringSplitOptions.None);
-        String msgString = msgStrings.Length > 0 ? messageOpcodeRegex.Replace(msgStrings[0], (match) => { return ""; }) : "";
+        String[] msgStrings = dialog.ChoicePhrases;
+        String msgString = msgStrings[0];
         if (msgString.Length > 0 && (
             // Languages have various ways of presenting the name
             msgString.Contains("\n“") || // English
@@ -139,7 +138,7 @@ public class VoicePlayer : SoundPlayer
             msgString.Contains("\n─") // Italian, Spanish
             ))
         {
-            string name = msgString.Split('\n')[0].Replace(":", "").Trim();
+            String name = msgString.Split('\n')[0].Replace(":", "").Trim();
             candidates.Add($"Voices/{lang}/{FieldZoneId}/va_{messageNumber}_{name}{pageIndex}");
         }
 
@@ -217,9 +216,8 @@ public class VoicePlayer : SoundPlayer
                     return;
 
                 String vaOptionPath = candidates.Last() + "_" + optionIndex;
-                String[] options = msgStrings.Length >= 2 ? msgStrings[1].Split('\n') : [];
                 Int32 selectedVisibleOption = dialog.ActiveIndexes.Count > 0 ? Math.Max(0, dialog.ActiveIndexes.FindIndex(index => index == optionIndex)) : optionIndex;
-                String optString = selectedVisibleOption < options.Length ? messageOpcodeRegex.Replace(options[selectedVisibleOption].Trim(), (match) => { return ""; }) : "[Invalid option index]";
+                String optString = selectedVisibleOption + 1 < msgStrings.Length ? msgStrings[selectedVisibleOption + 1].Trim() : "[Invalid option index]";
 
                 if (!AssetManager.HasAssetOnDisc($"Sounds/{vaOptionPath}.akb", true, true) && !AssetManager.HasAssetOnDisc($"Sounds/{vaOptionPath}.ogg", true, false))
                 {
@@ -240,13 +238,13 @@ public class VoicePlayer : SoundPlayer
     private static Dictionary<String, Int32[]> specialMessageIds = new Dictionary<String, Int32[]>()
     {
         // Hunt, H&C start, H&C points
-        {"English(US)"  , [540, 228, 301]},
-        {"English(UK)"  , [540, 228, 301]},
-        {"Japanese"     , [560, 227, 306]},
-        {"German"       , [560, 228, 307]},
-        {"French"       , [550, 228, 307]},
-        {"Italian"      , [560, 228, 307]},
-        {"Spanish"      , [552, 228, 307]}
+        {"US", [540, 228, 301]},
+        {"UK", [540, 228, 301]},
+        {"JP", [560, 227, 306]},
+        {"GR", [560, 228, 307]},
+        {"FR", [550, 228, 307]},
+        {"IT", [560, 228, 307]},
+        {"ES", [552, 228, 307]}
     };
     private static String GetSpecialAppend(Int32 FieldZoneId, Int32 messageNumber)
     {
@@ -265,9 +263,8 @@ public class VoicePlayer : SoundPlayer
             case 276:
             {
                 // Festival of the hunt
-                if (FF9StateSystem.EventState.ScenarioCounter > 3170 && FF9StateSystem.EventState.ScenarioCounter < 3180)
+                if (FF9StateSystem.EventState.ScenarioCounter > 3170 && FF9StateSystem.EventState.ScenarioCounter < 3180 && specialMessageIds.TryGetValue(Localization.CurrentSymbol, out Int32[] numbers))
                 {
-                    Int32[] numbers = specialMessageIds.ContainsKey(Localization.CurrentLanguage) ? specialMessageIds[Localization.CurrentLanguage] : specialMessageIds["English(US)"];
                     // Points message for one of the 8 participants?
                     if (messageNumber >= numbers[0] && messageNumber <= numbers[0] + 7)
                     {
@@ -299,17 +296,17 @@ public class VoicePlayer : SoundPlayer
             // hot and cold
             case 945:
             {
-                Int32[] numbers = specialMessageIds.ContainsKey(Localization.CurrentLanguage) ? specialMessageIds[Localization.CurrentLanguage] : specialMessageIds["English(US)"];
-                if (messageNumber >= numbers[1] && messageNumber <= numbers[1] + 3) // Game start
+                if (specialMessageIds.TryGetValue(Localization.CurrentSymbol, out Int32[] numbers))
                 {
-                    specialCount = 0;
-                }
-                // count up for each time you find something.
-                // 
-                if (messageNumber == numbers[2]) // gained points
-                {
-                    specialAppend = "_" + specialCount;
-                    specialCount += 1;
+                    if (messageNumber >= numbers[1] && messageNumber <= numbers[1] + 3) // Game start
+                        specialCount = 0;
+                    // count up for each time you find something.
+                    // 
+                    if (messageNumber == numbers[2]) // gained points
+                    {
+                        specialAppend = "_" + specialCount;
+                        specialCount += 1;
+                    }
                 }
                 break;
             }
@@ -386,7 +383,7 @@ public class VoicePlayer : SoundPlayer
             battleId = FF9StateSystem.Battle.battleMapIndex;
         String btlFolder = asSharedMessage ? "general" : battleId.ToString();
 
-        String vaPath = String.Format("Voices/{0}/battle/{2}/va_{1}", Localization.GetSymbol(), va_id, btlFolder).ToLower();
+        String vaPath = String.Format("Voices/{0}/battle/{2}/va_{1}", Localization.CurrentSymbol, va_id, btlFolder).ToLower();
         if (!AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) && !AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false))
         {
             SoundLib.VALog(String.Format("field:battle/{0}, msg:{1}, text:{2} path:{3} (not found)", btlFolder, va_id, text, vaPath));
@@ -467,8 +464,6 @@ public class VoicePlayer : SoundPlayer
             }
         }
     }
-
-    private static readonly Regex messageOpcodeRegex = new Regex(@"\[[A-Za-z0-9=]*\]");
 
     public static Dictionary<Dialog, SoundProfile> soundOfDialog = new Dictionary<Dialog, SoundProfile>();
 

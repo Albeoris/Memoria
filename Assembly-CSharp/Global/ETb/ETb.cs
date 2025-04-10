@@ -1,7 +1,8 @@
-﻿using Assets.Sources.Scripts.UI.Common;
+﻿using System;
+using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Data;
-using System;
+using Memoria.Assets;
 using UnityEngine;
 
 public static class ETb
@@ -21,7 +22,7 @@ public static class ETb
     {
         ETb.sChoose = 0;
         DialogManager.SelectChoice = ETb.sChoose;
-        ETb.sChooseMaskInit = -1;
+        ETb.sChooseMask = -1;
         ETb.sChooseInit = 0;
         ETb.gMesCount = 0;
         EventInput.IsNeedAddStartSignal = false;
@@ -56,25 +57,26 @@ public static class ETb
 
     public static UInt32 GetInputs(Boolean swapJapaneseLayout = false)
     {
-        if (swapJapaneseLayout && EventInput.isJapaneseLayout)
+        if (swapJapaneseLayout)
             return ETb.ProcessJapaneseLayout(FPSManager.DelayedInputs & 0x3FFFFFFu);
         return FPSManager.DelayedInputs & 0x3FFFFFFu;
     }
 
     public static UInt32 KeyOn(Boolean swapJapaneseLayout = false)
     {
-        if (swapJapaneseLayout && EventInput.isJapaneseLayout)
+        if (swapJapaneseLayout)
             return ETb.ProcessJapaneseLayout(ETb.sKeyOn & 0x3FFFFFFu);
         return ETb.sKeyOn & 0x3FFFFFFu;
     }
 
     public static UInt32 KeyOff(Boolean swapJapaneseLayout = false)
     {
-        if (swapJapaneseLayout && EventInput.isJapaneseLayout)
+        if (swapJapaneseLayout)
             return ETb.ProcessJapaneseLayout(ETb.sKeyOff & 0x3FFFFFFu);
         return ETb.sKeyOff & 0x3FFFFFFu;
     }
 
+    /// <summary>Take into account that Japanese event scripts use Control.Cancel in place of Confirm and vice versa (eg. "IsButton(589824L)" to close a dialog by script)</summary>
     private static UInt32 ProcessJapaneseLayout(UInt32 inputs)
     {
         Boolean hasConfirm = (inputs & EventInput.Confirm) != 0;
@@ -92,26 +94,9 @@ public static class ETb
         if (ETb.IsSkipped(instance, mes, winID, flags, targetPo))
             return;
         ETb.DisposWindowByID(winID, true);
-        Dialog.CaptionType captionType = Dialog.CaptionType.None;
-        Dialog.WindowStyle windowStyle;
-        if ((flags & ETb.WindowChatStyle) > 0)
-        {
-            windowStyle = Dialog.WindowStyle.WindowStyleAuto;
-        }
-        else
-        {
-            windowStyle = Dialog.WindowStyle.WindowStylePlain;
-            if ((flags & ETb.winMOG) > 0)
-                captionType = Dialog.CaptionType.Mognet;
-            else if ((flags & ETb.winATE) > 0)
-                captionType = Dialog.CaptionType.ActiveTimeEvent;
-        }
-        if (windowStyle == Dialog.WindowStyle.WindowStylePlain)
+        ETb.FlagsToStyles(flags, out Dialog.WindowStyle windowStyle, out Dialog.CaptionType captionType);
+        if ((flags & ETb.WindowChatStyle) == 0)
             targetPo = null;
-        if ((flags & ETb.WindowTransparentStyle) > 0)
-            windowStyle = Dialog.WindowStyle.WindowStyleTransparent;
-        else if ((flags & ETb.WindowChatStyleWithoutTail) > 0)
-            windowStyle = Dialog.WindowStyle.WindowStyleNoTail;
         if ((flags & ETb.ResetChooseMask) <= 0)
         {
             ETb.sChoose = ETb.sChooseInit;
@@ -137,19 +122,19 @@ public static class ETb
 
         if (FF9StateSystem.Common.FF9.fldMapNo == 1657) // Iifa Tree/Tree Roots
         {
-            switch (FF9StateSystem.Settings.CurrentLanguage)
+            switch (Localization.CurrentSymbol)
             {
-                case "English(US)":
-                case "English(UK)":
-                case "Spanish":
-                case "German":
-                case "Italian":
+                case "US":
+                case "UK":
+                case "ES":
+                case "GR":
+                case "IT":
                     dialog.FocusToActor = mes != 183 && mes != 166; // "H-Hey!" or "Whoa!" when Amarant passes next to Vivi/Garnet/Eiko on the narrow root
                     break;
-                case "Japanese":
+                case "JP":
                     dialog.FocusToActor = mes != 187 && mes != 170;
                     break;
-                case "French":
+                case "FR":
                     dialog.FocusToActor = mes != 185 && mes != 168;
                     break;
             }
@@ -166,7 +151,7 @@ public static class ETb
 
         ETb.gMesCount++;
         EIcon.SetHereIcon(0);
-        String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
+        String currentLanguage = Localization.CurrentSymbol;
         EMinigame.EidolonMuralAchievement(currentLanguage, mes);
         EMinigame.ExcellentLuckColorFortuneTellingAchievement(currentLanguage, mes);
         EMinigame.ProvokeMogAchievement(currentLanguage, mes);
@@ -177,6 +162,43 @@ public static class ETb
         EMinigame.AtleteQueenAchievement_Debug(currentLanguage, mes);
         EMinigame.TreasureHunterSAchievement(currentLanguage, mes);
         ETb.FixChocoAccidenlyFly(dialog);
+    }
+
+    public static void FlagsToStyles(Int32 flags, out Dialog.WindowStyle winStyle, out Dialog.CaptionType captionType)
+    {
+        captionType = Dialog.CaptionType.None;
+        if ((flags & ETb.WindowChatStyle) > 0)
+        {
+            winStyle = Dialog.WindowStyle.WindowStyleAuto;
+        }
+        else
+        {
+            winStyle = Dialog.WindowStyle.WindowStylePlain;
+            if ((flags & ETb.winMOG) > 0)
+                captionType = Dialog.CaptionType.Mognet;
+            else if ((flags & ETb.winATE) > 0)
+                captionType = Dialog.CaptionType.ActiveTimeEvent;
+        }
+        if ((flags & ETb.WindowTransparentStyle) > 0)
+            winStyle = Dialog.WindowStyle.WindowStyleTransparent;
+        else if ((flags & ETb.WindowChatStyleWithoutTail) > 0)
+            winStyle = Dialog.WindowStyle.WindowStyleNoTail;
+    }
+
+    public static Int32 StylesToFlag(Dialog.WindowStyle winStyle, Dialog.CaptionType captionType)
+    {
+        Int32 flags = 0;
+        if (winStyle == Dialog.WindowStyle.WindowStyleAuto)
+            flags |= ETb.WindowChatStyle;
+        else if (winStyle == Dialog.WindowStyle.WindowStyleTransparent)
+            flags |= ETb.WindowTransparentStyle;
+        else if (winStyle == Dialog.WindowStyle.WindowStyleNoTail)
+            flags |= ETb.WindowChatStyleWithoutTail;
+        if (captionType == Dialog.CaptionType.Mognet)
+            flags |= ETb.winMOG;
+        else if (captionType == Dialog.CaptionType.ActiveTimeEvent)
+            flags |= ETb.winATE;
+        return flags;
     }
 
     public static Boolean MesWinActive(Int32 num)
@@ -225,7 +247,7 @@ public static class ETb
 
     public static void SetChooseParam(Int32 availMask, Int32 initAbsoluteOptionIndex)
     {
-        ETb.sChooseMaskInit = availMask;
+        ETb.sChooseMask = availMask;
         Int32 initAvailOptionIndex = -1;
         while (initAbsoluteOptionIndex >= 0 && availMask > 0)
         {
@@ -247,18 +269,17 @@ public static class ETb
 
     public static String GetStringFromTable(UInt32 bank, UInt32 index)
     {
-        String result = String.Empty;
-        if (bank < 4u && index < 8u)
+        if (index < 8u)
         {
             String[] tableText = FF9TextTool.GetTableText(bank);
             if (tableText != null)
             {
                 Int32 tableIndex = ETb.gMesValue[index];
                 if (tableIndex < tableText.Length)
-                    result = tableText[tableIndex];
+                    return tableText[tableIndex];
             }
         }
-        return result;
+        return String.Empty;
     }
 
     private static Boolean IsSkipped(EventEngine eventEngine, Int32 mes, Int32 winID, Int32 flags, PosObj targetPo)
@@ -268,12 +289,11 @@ public static class ETb
             Int32 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
             if (fldMapNo == 1652) // Iifa Tree/Roots
             {
-                String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-                switch (currentLanguage)
+                switch (Localization.CurrentSymbol)
                 {
-                    case "Japanese":
+                    case "JP":
                         return mes == 146;
-                    case "French":
+                    case "FR":
                         return mes == 144;
                 }
                 return mes == 142; // Zidane: "How far is it gonna go...?"
@@ -481,9 +501,8 @@ public static class ETb
 
     public static Int32 gMesSignal;
     public static Int32 sChoose;
-    public static Int32 sChooseMaskInit = -1;
-    public static Int32 sChooseInit;
     public static Int32 sChooseMask = -1;
+    public static Int32 sChooseInit;
 
     private static Single lastPlaySound;
     private static Int32 LastATEDialogID = -1;

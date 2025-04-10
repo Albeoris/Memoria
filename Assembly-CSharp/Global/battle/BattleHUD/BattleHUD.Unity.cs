@@ -9,9 +9,6 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
-// ReSharper disable InconsistentNaming
-// ReSharper disable NotAccessedField.Global
-
 public partial class BattleHUD : UIScene
 {
     public ModelButtonManager modelButtonManager;
@@ -95,7 +92,6 @@ public partial class BattleHUD : UIScene
 
         _battleDialogWidget = BattleDialogGameObject.GetComponent<UIWidget>();
         _battleDialogLabel = BattleDialogGameObject.GetChild(1).GetComponent<UILabel>();
-        _battleDialogLabel.PrintIconAfterProcessedText = true;
 
         _targetPanel.Buttons.Player.EventListener.Click += OnAllTargetClick;
         _targetPanel.Buttons.Player.EventListener.Hover += OnAllTargetHover;
@@ -111,6 +107,9 @@ public partial class BattleHUD : UIScene
         if (Configuration.Control.WrapSomeMenus)
             foreach (GONavigationButton button in _targetPanel.AllTargets)
                 button.KeyNavigation.wrapUpDown = true;
+
+        _abilityPanel.Background.Panel.Name.Label.fixedAlignment = true;
+        _itemPanel.Background.Panel.Name.Label.fixedAlignment = true;
     }
 
     private void UpdateSprites()

@@ -8,11 +8,11 @@ public class CheatingUIManager : MonoBehaviour
     {
         if (PersistenSingleton<CheatingManager>.Instance.IsCheatingMode)
         {
-            this.resultText.text = "Cheating mode is on for now.";
+            this.resultText.rawText = "Cheating mode is on for now.";
         }
         else
         {
-            this.resultText.text = "Please press on button.";
+            this.resultText.rawText = "Please press on button.";
         }
     }
 
@@ -47,7 +47,7 @@ public class CheatingUIManager : MonoBehaviour
         this.UpdateUsingAbility(level);
         this.UpdateTurnToTrance(level);
         PersistenSingleton<CheatingManager>.Instance.IsCheatingMode = true;
-        this.resultText.text = "Enabled cheat mode level " + level + ".";
+        this.resultText.rawText = "Enabled cheat mode level " + level + ".";
     }
 
     private void UpdateDefeatEnemy(Int32 level)

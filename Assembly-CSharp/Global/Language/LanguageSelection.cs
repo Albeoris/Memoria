@@ -17,7 +17,7 @@ public class LanguageSelection : MonoBehaviour
     {
         EventDelegate.Add(this.mList.onChange, delegate
         {
-            Localization.CurrentLanguage = UIPopupList.current.value;
+            Localization.SetCurrentLanguage(UIPopupList.current.value);
         });
     }
 

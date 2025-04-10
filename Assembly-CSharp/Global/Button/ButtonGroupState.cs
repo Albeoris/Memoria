@@ -177,7 +177,7 @@ public class ButtonGroupState : MonoBehaviour
 
     public static Boolean ContainButtonInGroup(GameObject go, String group)
     {
-        return ButtonGroupState.ButtonGroupList.ContainsKey(group) && ButtonGroupState.ButtonGroupList[group].Contains(go);
+        return ButtonGroupState.ButtonGroupList.TryGetValue(group, out List<GameObject> buttonGroup) && buttonGroup.Contains(go);
     }
 
     public static Boolean ContainButtonInSecondaryGroup(GameObject go)
@@ -205,16 +205,16 @@ public class ButtonGroupState : MonoBehaviour
 
     public static void SetPointerLimitRectToGroup(UIWidget widget, Single itemHeight, String group)
     {
-        Vector4 value = default(Vector4);
+        Vector4 limits = default(Vector4);
         Single x = widget.transform.localPosition.x;
         Single y = widget.transform.localPosition.y;
-        Single num = (Single)widget.width;
-        Single num2 = (Single)widget.height;
-        value.x = x - num / 2f;
-        value.y = y - num2 / 2f - 14f + itemHeight / 2f;
-        value.z = x + num / 2f;
-        value.w = y + num2 / 2f - 20f - itemHeight / 2f;
-        ButtonGroupState.SetPointerLimitRectToGroup(value, group);
+        Single targetWidth = widget.width;
+        Single targetHeight = widget.height;
+        limits.x = x - targetWidth / 2f;
+        limits.y = y - targetHeight / 2f - 14f + itemHeight / 2f;
+        limits.z = x + targetWidth / 2f;
+        limits.w = y + targetHeight / 2f - 20f - itemHeight / 2f;
+        ButtonGroupState.SetPointerLimitRectToGroup(limits, group);
     }
 
     public static void SetPointerDepthToGroup(Int32 value, String group)
@@ -230,39 +230,29 @@ public class ButtonGroupState : MonoBehaviour
     public static void SetOutsideLimitRectBehavior(PointerManager.LimitRectBehavior behavior, String group)
     {
         ButtonGroupState.pointerLimitBehavior[group] = behavior;
-        if (ButtonGroupState.activeButtonList.ContainsKey(group))
-        {
-            Singleton<PointerManager>.Instance.SetPointerLimitRectBehavior(ButtonGroupState.activeButtonList[group], ButtonGroupState.pointerLimitBehavior[group]);
-        }
+        if (ButtonGroupState.activeButtonList.TryGetValue(group, out GameObject go))
+            Singleton<PointerManager>.Instance.SetPointerLimitRectBehavior(go, behavior);
     }
 
     public static void SetSecondaryOnGroup(String group)
     {
-        if (ButtonGroupState.ButtonGroupList.ContainsKey(group))
-        {
-            foreach (GameObject gameObject in ButtonGroupState.ButtonGroupList[group])
-            {
-                gameObject.GetComponent<BoxCollider>().enabled = true;
-            }
-        }
+        if (ButtonGroupState.ButtonGroupList.TryGetValue(group, out List<GameObject> buttonGroup))
+            foreach (GameObject buttonGo in buttonGroup)
+                buttonGo.GetComponent<BoxCollider>().enabled = true;
         if (!ButtonGroupState.secondaryGroup.Contains(group))
-        {
             ButtonGroupState.secondaryGroup.Add(group);
-        }
     }
 
     public static void HoldActiveStateOnGroup(String oldGroup)
     {
-        if (ButtonGroupState.activeButtonList.ContainsKey(oldGroup) && oldGroup != ButtonGroupState.ActiveGroup)
+        if (ButtonGroupState.activeButtonList.TryGetValue(oldGroup, out GameObject go) && oldGroup != ButtonGroupState.ActiveGroup)
         {
             ButtonGroupState.UpdatePointerPropertyForGroup(oldGroup);
-            UIButton component = ButtonGroupState.activeButtonList[oldGroup].GetComponent<UIButton>();
-            if (component.state != UIButtonColor.State.Hover)
-            {
-                component.SetState(UIButtonColor.State.Hover, true);
-            }
-            Singleton<PointerManager>.Instance.AttachPointerToGameObject(ButtonGroupState.activeButtonList[oldGroup]);
-            Singleton<PointerManager>.Instance.SetPointerBlinkAt(ButtonGroupState.activeButtonList[oldGroup], true);
+            UIButton uiButton = go.GetComponent<UIButton>();
+            if (uiButton.state != UIButtonColor.State.Hover)
+                uiButton.SetState(UIButtonColor.State.Hover, true);
+            Singleton<PointerManager>.Instance.AttachPointerToGameObject(go);
+            Singleton<PointerManager>.Instance.SetPointerBlinkAt(go, true);
             ButtonGroupState.UpdatePointerPropertyForGroup(ButtonGroupState.activeGroup);
         }
     }
@@ -280,24 +270,22 @@ public class ButtonGroupState : MonoBehaviour
     {
         if (ButtonGroupState.activeButtonList.ContainsKey(oldGroup) && oldGroup != ButtonGroupState.ActiveGroup)
         {
-            UIButton component = go.GetComponent<UIButton>();
-            if (component.state != UIButtonColor.State.Normal)
-            {
-                component.SetState(UIButtonColor.State.Normal, true);
-            }
+            UIButton uiButton = go.GetComponent<UIButton>();
+            if (uiButton.state != UIButtonColor.State.Normal)
+                uiButton.SetState(UIButtonColor.State.Normal, true);
             Singleton<PointerManager>.Instance.RemovePointerFromGameObject(go);
         }
     }
 
     public static void DisableAllGroup(Boolean needtoHidePointer = true)
     {
-        foreach (KeyValuePair<String, List<GameObject>> keyValuePair in ButtonGroupState.ButtonGroupList)
+        foreach (List<GameObject> buttonGroup in ButtonGroupState.ButtonGroupList.Values)
         {
-            foreach (GameObject gameObject in keyValuePair.Value)
+            foreach (GameObject buttonGo in buttonGroup)
             {
-                gameObject.GetComponent<BoxCollider>().enabled = false;
-                gameObject.GetComponent<UIButton>().enabled = false;
-                gameObject.GetComponent<UIKeyNavigation>().enabled = false;
+                buttonGo.GetComponent<BoxCollider>().enabled = false;
+                buttonGo.GetComponent<UIButton>().enabled = false;
+                buttonGo.GetComponent<UIKeyNavigation>().enabled = false;
             }
         }
         ButtonGroupState.activeGroup = String.Empty;
@@ -310,40 +298,32 @@ public class ButtonGroupState : MonoBehaviour
 
     public static void SetPointerVisibilityToGroup(Boolean isVisible, String group)
     {
-        if (ButtonGroupState.ButtonGroupList.ContainsKey(group))
-        {
-            foreach (GameObject go in ButtonGroupState.ButtonGroupList[group])
-            {
-                Singleton<PointerManager>.Instance.SetPointerVisibility(go, isVisible);
-            }
-        }
+        if (ButtonGroupState.ButtonGroupList.TryGetValue(group, out List<GameObject> buttonGroup))
+            foreach (GameObject buttonGo in buttonGroup)
+                Singleton<PointerManager>.Instance.SetPointerVisibility(buttonGo, isVisible);
     }
 
     public static void SetIgnorePreventTouch(Boolean isEnable, String group)
     {
-        if (isEnable && !ButtonGroupState.ignorePrevendTouchList.Contains(group))
-        {
-            ButtonGroupState.ignorePrevendTouchList.Add(group);
-        }
-        else if (!isEnable && ButtonGroupState.ignorePrevendTouchList.Contains(group))
-        {
+        if (!isEnable)
             ButtonGroupState.ignorePrevendTouchList.Remove(group);
-        }
+        else if (!ButtonGroupState.ignorePrevendTouchList.Contains(group))
+            ButtonGroupState.ignorePrevendTouchList.Add(group);
     }
 
     public static void SetButtonAnimation(GameObject go, Boolean isAnimate)
     {
-        UIButtonColor component = go.GetComponent<UIButtonColor>();
+        UIButtonColor buttonColor = go.GetComponent<UIButtonColor>();
         if (isAnimate)
         {
-            component.hover = new Color(1f, 1f, 1f, 0.5882353f);
-            component.pressed = new Color(1f, 1f, 1f, 1f);
+            buttonColor.hover = new Color(1f, 1f, 1f, 0.5882353f);
+            buttonColor.pressed = new Color(1f, 1f, 1f, 1f);
         }
         else
         {
-            component.SetState(UIButtonColor.State.Normal, true);
-            component.hover = new Color(1f, 1f, 1f, 0f);
-            component.pressed = new Color(1f, 1f, 1f, 0f);
+            buttonColor.SetState(UIButtonColor.State.Normal, true);
+            buttonColor.hover = new Color(1f, 1f, 1f, 0f);
+            buttonColor.pressed = new Color(1f, 1f, 1f, 0f);
         }
     }
 
@@ -358,22 +338,18 @@ public class ButtonGroupState : MonoBehaviour
 
     public static void SetActiveGroupEnable(Boolean isEnable)
     {
-        if (!ButtonGroupState.ButtonGroupList.ContainsKey(ButtonGroupState.activeGroup))
-        {
+        if (!ButtonGroupState.ButtonGroupList.TryGetValue(ButtonGroupState.activeGroup, out List<GameObject> buttonGroup))
             return;
-        }
-        foreach (GameObject gameObject in ButtonGroupState.ButtonGroupList[ButtonGroupState.activeGroup])
+        foreach (GameObject buttonGo in buttonGroup)
         {
-            gameObject.GetComponent<BoxCollider>().enabled = isEnable;
-            gameObject.GetComponent<UIButton>().enabled = isEnable;
-            gameObject.GetComponent<UIKeyNavigation>().isPreventAutoStartSelect = true;
-            gameObject.GetComponent<UIKeyNavigation>().enabled = isEnable;
-            gameObject.GetComponent<UIKeyNavigation>().isPreventAutoStartSelect = false;
+            buttonGo.GetComponent<BoxCollider>().enabled = isEnable;
+            buttonGo.GetComponent<UIButton>().enabled = isEnable;
+            buttonGo.GetComponent<UIKeyNavigation>().isPreventAutoStartSelect = true;
+            buttonGo.GetComponent<UIKeyNavigation>().enabled = isEnable;
+            buttonGo.GetComponent<UIKeyNavigation>().isPreventAutoStartSelect = false;
         }
-        if (ButtonGroupState.activeButtonList.ContainsKey(ButtonGroupState.activeGroup) && ButtonGroupState.activeButtonList[ButtonGroupState.activeGroup])
-        {
-            ButtonGroupState.activeButtonList[ButtonGroupState.activeGroup].GetComponent<ButtonGroupState>().SetHover(false);
-        }
+        if (ButtonGroupState.activeButtonList.TryGetValue(ButtonGroupState.activeGroup, out GameObject go) && go != null)
+            go.GetComponent<ButtonGroupState>().SetHover(false);
     }
 
     public static void SetAllTarget(Boolean isEnable)
@@ -383,29 +359,27 @@ public class ButtonGroupState : MonoBehaviour
             ButtonGroupState.allTarget = isEnable;
             if (isEnable)
             {
-                foreach (GameObject gameObject in ButtonGroupState.ButtonGroupList[ButtonGroupState.activeGroup])
+                foreach (GameObject buttonGo in ButtonGroupState.ButtonGroupList[ButtonGroupState.activeGroup])
                 {
-                    Singleton<PointerManager>.Instance.AttachPointerToGameObject(gameObject);
-                    Singleton<PointerManager>.Instance.SetPointerBlinkAt(gameObject, true);
-                    gameObject.GetComponent<BoxCollider>().enabled = false;
-                    gameObject.GetComponent<UIButton>().enabled = false;
-                    gameObject.GetComponent<UIKeyNavigation>().enabled = false;
+                    Singleton<PointerManager>.Instance.AttachPointerToGameObject(buttonGo);
+                    Singleton<PointerManager>.Instance.SetPointerBlinkAt(buttonGo, true);
+                    buttonGo.GetComponent<BoxCollider>().enabled = false;
+                    buttonGo.GetComponent<UIButton>().enabled = false;
+                    buttonGo.GetComponent<UIKeyNavigation>().enabled = false;
                 }
             }
             else
             {
-                foreach (GameObject gameObject2 in ButtonGroupState.ButtonGroupList[ButtonGroupState.activeGroup])
+                foreach (GameObject buttonGo in ButtonGroupState.ButtonGroupList[ButtonGroupState.activeGroup])
                 {
-                    gameObject2.GetComponent<BoxCollider>().enabled = true;
-                    gameObject2.GetComponent<UIButton>().enabled = true;
-                    gameObject2.GetComponent<UIKeyNavigation>().enabled = true;
-                    Singleton<PointerManager>.Instance.SetPointerBlinkAt(gameObject2, false);
-                    Singleton<PointerManager>.Instance.RemovePointerFromGameObject(gameObject2);
+                    buttonGo.GetComponent<BoxCollider>().enabled = true;
+                    buttonGo.GetComponent<UIButton>().enabled = true;
+                    buttonGo.GetComponent<UIKeyNavigation>().enabled = true;
+                    Singleton<PointerManager>.Instance.SetPointerBlinkAt(buttonGo, false);
+                    Singleton<PointerManager>.Instance.RemovePointerFromGameObject(buttonGo);
                 }
                 if (ButtonGroupState.ButtonGroupList[ButtonGroupState.activeGroup].Contains(ButtonGroupState.ActiveButton))
-                {
                     ButtonGroupState.ActiveButton = ButtonGroupState.ActiveButton;
-                }
             }
         }
     }
@@ -420,30 +394,28 @@ public class ButtonGroupState : MonoBehaviour
                 Singleton<PointerManager>.Instance.AttachPointerToGameObject(go);
                 Singleton<PointerManager>.Instance.SetPointerBlinkAt(go, true);
             }
-            foreach (GameObject gameObject in ButtonGroupState.ButtonGroupList[ButtonGroupState.activeGroup])
+            foreach (GameObject buttonGo in ButtonGroupState.ButtonGroupList[ButtonGroupState.activeGroup])
             {
-                gameObject.GetComponent<BoxCollider>().enabled = false;
-                gameObject.GetComponent<UIButton>().enabled = false;
-                gameObject.GetComponent<UIKeyNavigation>().enabled = false;
+                buttonGo.GetComponent<BoxCollider>().enabled = false;
+                buttonGo.GetComponent<UIButton>().enabled = false;
+                buttonGo.GetComponent<UIKeyNavigation>().enabled = false;
             }
         }
         else
         {
-            foreach (GameObject gameObject2 in ButtonGroupState.ButtonGroupList[ButtonGroupState.activeGroup])
+            foreach (GameObject buttonGo in ButtonGroupState.ButtonGroupList[ButtonGroupState.activeGroup])
             {
-                gameObject2.GetComponent<BoxCollider>().enabled = true;
-                gameObject2.GetComponent<UIButton>().enabled = true;
-                gameObject2.GetComponent<UIKeyNavigation>().enabled = true;
+                buttonGo.GetComponent<BoxCollider>().enabled = true;
+                buttonGo.GetComponent<UIButton>().enabled = true;
+                buttonGo.GetComponent<UIKeyNavigation>().enabled = true;
             }
-            foreach (GameObject go2 in goList)
+            foreach (GameObject go in goList)
             {
-                Singleton<PointerManager>.Instance.SetPointerBlinkAt(go2, false);
-                Singleton<PointerManager>.Instance.RemovePointerFromGameObject(go2);
+                Singleton<PointerManager>.Instance.SetPointerBlinkAt(go, false);
+                Singleton<PointerManager>.Instance.RemovePointerFromGameObject(go);
             }
             if (goList.Contains(ButtonGroupState.ActiveButton))
-            {
                 ButtonGroupState.ActiveButton = ButtonGroupState.ActiveButton;
-            }
         }
     }
 
@@ -466,43 +438,33 @@ public class ButtonGroupState : MonoBehaviour
         if (ButtonGroupState.DisablePointerCursor.Contains(this.GroupName))
             return;
         Singleton<PointerManager>.Instance.AttachPointerToGameObject(this.button.gameObject);
-        if (ButtonGroupState.pointerLimitBehavior.ContainsKey(ButtonGroupState.activeGroup))
-            Singleton<PointerManager>.Instance.SetPointerLimitRectBehavior(base.gameObject, ButtonGroupState.pointerLimitBehavior[ButtonGroupState.activeGroup]);
+        if (ButtonGroupState.pointerLimitBehavior.TryGetValue(ButtonGroupState.activeGroup, out PointerManager.LimitRectBehavior limitBehaviour))
+            Singleton<PointerManager>.Instance.SetPointerLimitRectBehavior(base.gameObject, limitBehaviour);
         else
             Singleton<PointerManager>.Instance.SetPointerLimitRectBehavior(base.gameObject, PointerManager.LimitRectBehavior.Limit);
     }
 
     public static Boolean HaveCursorMemorize(String group)
     {
-        return ButtonGroupState.activeButtonList.ContainsKey(group) && ButtonGroupState.activeButtonList[group] != (UnityEngine.Object)null;
+        return ButtonGroupState.activeButtonList.TryGetValue(group, out GameObject go) && go != null;
     }
 
     public static void SetCursorMemorize(GameObject go, String group)
     {
-        if (go != (UnityEngine.Object)null)
-        {
+        if (go != null)
             ButtonGroupState.activeButtonList[group] = go;
-        }
     }
 
     public static void RemoveCursorMemorize(String group)
     {
-        if (ButtonGroupState.activeButtonList.ContainsKey(group))
-        {
-            ButtonGroupState.activeButtonList.Remove(group);
-        }
+        ButtonGroupState.activeButtonList.Remove(group);
     }
 
     public static void SetCursorStartSelect(GameObject go, String group)
     {
-        if (go != (UnityEngine.Object)null && ButtonGroupState.ButtonGroupList.ContainsKey(group))
-        {
-            foreach (GameObject gameObject in ButtonGroupState.ButtonGroupList[group])
-            {
-                UIKeyNavigation component = gameObject.GetComponent<UIKeyNavigation>();
-                component.startsSelected = (gameObject == go);
-            }
-        }
+        if (go != null && ButtonGroupState.ButtonGroupList.ContainsKey(group))
+            foreach (GameObject buttonGo in ButtonGroupState.ButtonGroupList[group])
+                buttonGo.GetComponent<UIKeyNavigation>().startsSelected = buttonGo == go;
     }
 
     public static GameObject GetCursorStartSelect(String group)
@@ -519,16 +481,12 @@ public class ButtonGroupState : MonoBehaviour
             ButtonGroupState.helpEnabled = !ButtonGroupState.helpEnabled;
             ButtonGroupState component = ButtonGroupState.activeButtonList[ButtonGroupState.activeGroup].GetComponent<ButtonGroupState>();
             if (component.Help.Enable)
-            {
                 Singleton<PointerManager>.Instance.SetPointerHelpAt(ButtonGroupState.activeButtonList[ButtonGroupState.activeGroup], ButtonGroupState.helpEnabled, false);
-            }
             if (!ButtonGroupState.helpEnabled)
             {
                 Singleton<HelpDialog>.Instance.HideDialog();
                 if (playSFX)
-                {
                     FF9Sfx.FF9SFX_Play(101);
-                }
             }
             else if (playSFX)
             {
@@ -539,83 +497,59 @@ public class ButtonGroupState : MonoBehaviour
 
     public static void UpdateActiveButton()
     {
-        if (ButtonGroupState.activeButtonList.ContainsKey(ButtonGroupState.activeGroup))
+        if (ButtonGroupState.activeButtonList.TryGetValue(ButtonGroupState.activeGroup, out GameObject go) && go != null)
         {
-            if (ButtonGroupState.activeButtonList[ButtonGroupState.activeGroup] == (UnityEngine.Object)null)
+            ButtonGroupState button = go.GetComponent<ButtonGroupState>();
+            if (button != null)
+                button.SetHover(false);
+            if (button.Help.Enable)
             {
-                return;
-            }
-            ButtonGroupState component = ButtonGroupState.activeButtonList[ButtonGroupState.activeGroup].GetComponent<ButtonGroupState>();
-            if (component != (UnityEngine.Object)null)
-            {
-                component.SetHover(false);
-            }
-            if (component.Help.Enable)
-            {
-                Singleton<PointerManager>.Instance.SetPointerHelpAt(ButtonGroupState.activeButtonList[ButtonGroupState.activeGroup], ButtonGroupState.helpEnabled, true);
+                Singleton<PointerManager>.Instance.SetPointerHelpAt(go, ButtonGroupState.helpEnabled, true);
                 if (ButtonGroupState.helpEnabled)
-                {
-                    ButtonGroupState.ShowHelpDialog(ButtonGroupState.activeButtonList[ButtonGroupState.activeGroup]);
-                }
+                    ButtonGroupState.ShowHelpDialog(go);
             }
             else
             {
-                Singleton<PointerManager>.Instance.SetPointerHelpAt(ButtonGroupState.activeButtonList[ButtonGroupState.activeGroup], false, true);
+                Singleton<PointerManager>.Instance.SetPointerHelpAt(go, false, true);
                 Singleton<HelpDialog>.Instance.HideDialog();
             }
-            if (ButtonGroupState.pointerNumberList.ContainsKey(ButtonGroupState.activeGroup) && ButtonGroupState.pointerNumberList[ButtonGroupState.activeGroup] != 0)
-            {
-                Singleton<PointerManager>.Instance.SetPointerNumberAt(ButtonGroupState.activeButtonList[ButtonGroupState.activeGroup], ButtonGroupState.pointerNumberList[ButtonGroupState.activeGroup]);
-            }
+            if (ButtonGroupState.pointerNumberList.TryGetValue(ButtonGroupState.activeGroup, out Int32 number) && number >= 0)
+                Singleton<PointerManager>.Instance.SetPointerNumberAt(go, number);
         }
     }
 
     public static void RefreshHelpDialog()
     {
-        if (!ButtonGroupState.activeButtonList.ContainsKey(ButtonGroupState.activeGroup))
-        {
-            return;
-        }
-        if (ButtonGroupState.helpEnabled)
-        {
-            ButtonGroupState.ShowHelpDialog(ButtonGroupState.activeButtonList[ButtonGroupState.activeGroup]);
-        }
+        if (ButtonGroupState.helpEnabled && ButtonGroupState.activeButtonList.TryGetValue(ButtonGroupState.activeGroup, out GameObject go))
+            ButtonGroupState.ShowHelpDialog(go);
     }
 
     public static void ShowHelpDialog(GameObject go)
     {
         if (PersistenSingleton<UIManager>.Instance.IsLoading)
-        {
             return;
-        }
-        ButtonGroupState component = go.GetComponent<ButtonGroupState>();
-        if (component.Help.Enable)
+        ButtonGroupState button = go.GetComponent<ButtonGroupState>();
+        if (button.Help.Enable)
         {
-            Vector3 v = UIRoot.list[0].LocalToUIRootPoint(component.transform);
-            v.x -= (Single)component.widget.width / 2f;
-            if (component.Help.TextKey != String.Empty)
-            {
-                Singleton<HelpDialog>.Instance.Phrase = Localization.Get(component.Help.TextKey);
-            }
-            else
-            {
-                Singleton<HelpDialog>.Instance.Phrase = component.Help.Text;
-            }
-            Singleton<HelpDialog>.Instance.PointerOffset = ((!ButtonGroupState.pointerOffsetList.ContainsKey(component.GroupName)) ? new Vector2(0f, 0f) : ButtonGroupState.pointerOffsetList[component.GroupName]);
-            Singleton<HelpDialog>.Instance.PointerLimitRect = ((!ButtonGroupState.pointerLimitRectList.ContainsKey(component.GroupName)) ? UIManager.UIScreenCoOrdinate : ButtonGroupState.pointerLimitRectList[component.GroupName]);
-            Singleton<HelpDialog>.Instance.Position = v;
-            Singleton<HelpDialog>.Instance.Tail = component.Help.Tail;
-            Singleton<HelpDialog>.Instance.Depth = (Int32)((!ButtonGroupState.pointerDepthList.ContainsKey(ButtonGroupState.activeGroup)) ? 4 : (ButtonGroupState.pointerDepthList[ButtonGroupState.activeGroup] - 1));
+            Boolean invertPointer = NGUIText.readingDirection == UnicodeBIDI.LanguageReadingDirection.RightToLeft;
+            Vector3 helpPos = UIRoot.list[0].transform.InverseTransformPoint(button.widget.worldCenter);
+            helpPos.x += invertPointer ? button.widget.width / 2f + 3f * UIPointer.PointerSize.x / 4f : -button.widget.width / 2f;
+            Singleton<HelpDialog>.Instance.Phrase = String.IsNullOrEmpty(button.Help.TextKey) ? button.Help.Text : Localization.GetWithDefault(button.Help.TextKey);
+            Singleton<HelpDialog>.Instance.PointerOffset = ButtonGroupState.GetPointerOffsetOfGroup(button.GroupName);
+            Singleton<HelpDialog>.Instance.PointerLimitRect = ButtonGroupState.pointerLimitRectList.TryGetValue(button.GroupName, out Vector4 limits) ? limits : UIManager.UIScreenCoOrdinate;
+            Singleton<HelpDialog>.Instance.Position = helpPos;
+            Singleton<HelpDialog>.Instance.Tail = button.Help.Tail;
+            Singleton<HelpDialog>.Instance.Depth = ButtonGroupState.pointerDepthList.TryGetValue(ButtonGroupState.activeGroup, out Int32 depth) ? depth - 1 : 4;
             Singleton<HelpDialog>.Instance.ShowDialog();
         }
     }
 
     private static void ActiveButtonChanged(GameObject go, Boolean setSelect)
     {
-        ButtonGroupState.PrevActiveButton = ((!ButtonGroupState.activeButtonList.ContainsKey(ButtonGroupState.activeGroup) || !(ButtonGroupState.activeButtonList[ButtonGroupState.activeGroup] != (UnityEngine.Object)null)) ? PersistenSingleton<UIManager>.Instance.gameObject : ButtonGroupState.activeButtonList[ButtonGroupState.activeGroup]);
+        ButtonGroupState.PrevActiveButton = ButtonGroupState.activeButtonList.TryGetValue(ButtonGroupState.activeGroup, out GameObject prevGo) && prevGo != null ? prevGo : PersistenSingleton<UIManager>.Instance.gameObject;
         ButtonGroupState.activeButtonList[ButtonGroupState.activeGroup] = go;
         if (setSelect)
-            UICamera.selectedObject = ButtonGroupState.activeButtonList[ButtonGroupState.activeGroup];
+            UICamera.selectedObject = go;
         if (go == null)
             return;
         ButtonGroupState.UpdateActiveButton();
@@ -710,62 +644,54 @@ public class ButtonGroupState : MonoBehaviour
 
     public static void UpdatePointerPropertyForGroup(String group)
     {
-        Singleton<PointerManager>.Instance.PointerOffset = ((!ButtonGroupState.pointerOffsetList.ContainsKey(group)) ? new Vector2(0f, 0f) : ButtonGroupState.pointerOffsetList[group]);
-        Singleton<PointerManager>.Instance.PointerLimitRect = ((!ButtonGroupState.pointerLimitRectList.ContainsKey(group)) ? UIManager.UIScreenCoOrdinate : ButtonGroupState.pointerLimitRectList[group]);
-        Singleton<PointerManager>.Instance.PointerDepth = (Int32)((!ButtonGroupState.pointerDepthList.ContainsKey(group)) ? 5 : ButtonGroupState.pointerDepthList[group]);
+        Singleton<PointerManager>.Instance.PointerOffset = ButtonGroupState.GetPointerOffsetOfGroup(group);
+        Singleton<PointerManager>.Instance.PointerLimitRect = ButtonGroupState.pointerLimitRectList.TryGetValue(group, out Vector4 limits) ? limits : UIManager.UIScreenCoOrdinate;
+        Singleton<PointerManager>.Instance.PointerDepth = ButtonGroupState.pointerDepthList.TryGetValue(group, out Int32 depth) ? depth : 5;
+    }
+
+    private static Vector2 GetPointerOffsetOfGroup(String group)
+    {
+        if (ButtonGroupState.pointerOffsetList.TryGetValue(group, out Vector2 offset))
+        {
+            if (NGUIText.readingDirection == UnicodeBIDI.LanguageReadingDirection.RightToLeft)
+                offset.x *= -1;
+            return offset;
+        }
+        return Vector2.zero;
     }
 
     public static Dictionary<String, List<GameObject>> ButtonGroupList = new Dictionary<String, List<GameObject>>();
-
     public static HashSet<String> DisablePointerCursor = new HashSet<String>();
 
     private static Dictionary<String, Vector2> pointerOffsetList = new Dictionary<String, Vector2>();
-
     private static Dictionary<String, Vector4> pointerLimitRectList = new Dictionary<String, Vector4>();
-
     private static Dictionary<String, Int32> pointerDepthList = new Dictionary<String, Int32>();
-
     private static Dictionary<String, Int32> pointerNumberList = new Dictionary<String, Int32>();
-
     private static Dictionary<String, PointerManager.LimitRectBehavior> pointerLimitBehavior = new Dictionary<String, PointerManager.LimitRectBehavior>();
-
     private static Dictionary<String, GameObject> activeButtonList = new Dictionary<String, GameObject>();
-
     private static Dictionary<String, ScrollButton> scrollButtonList = new Dictionary<String, ScrollButton>();
-
     private static List<String> ignorePrevendTouchList = new List<String>();
-
     private static List<String> secondaryGroup = new List<String>();
 
     private static GameObject prevActiveButton;
-
     private static String prevActiveGroup = String.Empty;
-
     private static String activeGroup = String.Empty;
-
     private static Boolean muteActiveSound = false;
-
     private static Boolean allTarget = false;
-
     private static Boolean helpEnabled = false;
 
     public String GroupName = String.Empty;
-
     public ButtonGroupState.HelpDetail Help;
 
     private UIButton button;
-
     private UIWidget widget;
 
     [Serializable]
     public class HelpDetail
     {
         public Boolean Enable = true;
-
         public String TextKey;
-
         public String Text;
-
         public Boolean Tail = true;
     }
 }

@@ -251,8 +251,7 @@ public class UIEventListener : MonoBehaviour
 
     public static UIEventListener Get(GameObject go)
     {
-        UIEventListener uiEventListener = go.GetComponent<UIEventListener>() ?? go.AddComponent<UIEventListener>();
-        return uiEventListener;
+        return go.GetComponent<UIEventListener>() ?? go.AddComponent<UIEventListener>();
     }
 
     public delegate void VoidDelegate(GameObject go);

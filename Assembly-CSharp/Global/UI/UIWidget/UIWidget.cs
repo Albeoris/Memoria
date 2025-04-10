@@ -998,16 +998,14 @@ public class UIWidget : UIRect
 
     public Boolean UpdateGeometry(Int32 frame)
     {
-        Single num = this.CalculateFinalAlpha(frame);
-        if (this.mIsVisibleByAlpha && this.mLastAlpha != num)
-        {
+        Single updatedFinalAlpha = this.CalculateFinalAlpha(frame);
+        if (this.mIsVisibleByAlpha && this.mLastAlpha != updatedFinalAlpha)
             this.mChanged = true;
-        }
-        this.mLastAlpha = num;
+        this.mLastAlpha = updatedFinalAlpha;
         if (this.mChanged)
         {
             this.mChanged = false;
-            if (this.mIsVisibleByAlpha && num > 0.001f && this.shader != (UnityEngine.Object)null)
+            if (this.mIsVisibleByAlpha && updatedFinalAlpha > 0.001f && this.shader != null)
             {
                 Boolean hasVertices = this.geometry.hasVertices;
                 if (this.fillGeometry)
@@ -1031,9 +1029,7 @@ public class UIWidget : UIRect
             else if (this.geometry.hasVertices)
             {
                 if (this.fillGeometry)
-                {
                     this.geometry.Clear();
-                }
                 this.mMoved = false;
                 return true;
             }

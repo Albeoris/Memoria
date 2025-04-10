@@ -991,6 +991,14 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
         return this.logicalToButton[(Int32)control];
     }
 
+    public Control PhysicalButtonToLogicalControl(Int32 button)
+    {
+        for (Int32 control = 0; control < this.logicalToButton.Length; control++)
+            if (this.logicalToButton[control] == button)
+                return (Control)control;
+        return (Control)button;
+    }
+
     public void SetControlFlag()
     {
         RuntimePlatform platform = Application.platform;

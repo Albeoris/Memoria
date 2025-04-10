@@ -6,43 +6,35 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Object = System.Object;
 
 public class QuadMistUI : UIScene
 {
     public QuadMistUI.CardState State
     {
-        set
-        {
-            currentState = value;
-        }
+        set => currentState = value;
     }
 
     public override void Show(UIScene.SceneVoidDelegate afterFinished = null)
     {
-        UIScene.SceneVoidDelegate sceneVoidDelegate = delegate
+        UIScene.SceneVoidDelegate afterFinishedDelegate = delegate
         {
             if (currentState == QuadMistUI.CardState.CardSelection)
             {
                 if (PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.Tutorial)
-                {
                     ButtonGroupState.ActiveGroup = QuadMistUI.CardGroupButton;
-                }
             }
             else
             {
-                String phrase = Localization.Get("QuadMistDiscardNotice");
-                Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(phrase, 100, 3, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(105f, 90f), Dialog.CaptionType.None);
-                dialog.AfterDialogHidden = new Dialog.DialogIntDelegate(onDiscardNoticeHidden);
+                dialogMessageKey = "QuadMistDiscardNotice";
+                dialogMessage = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(dialogMessageKey), 100, 3, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(105f, 90f), Dialog.CaptionType.None);
+                dialogMessage.AfterDialogHidden = onDiscardNoticeHidden;
                 isDialogShowing = true;
             }
         };
         if (afterFinished != null)
-        {
-            sceneVoidDelegate = (UIScene.SceneVoidDelegate)Delegate.Combine(sceneVoidDelegate, afterFinished);
-        }
+            afterFinishedDelegate += afterFinished;
         base.NextSceneIsModal = !isNeedToBuildCard;
-        base.Show(sceneVoidDelegate);
+        base.Show(afterFinishedDelegate);
         if (isNeedToBuildCard)
         {
             currentCardId = 0;
@@ -51,7 +43,7 @@ public class QuadMistUI : UIScene
             BuildCard();
             UpdateAmountLabel();
         }
-        textAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/QuadMist/Atlas/QuadMist Text " + Localization.GetSymbol() + " Atlas", false);
+        UpdateAtlas();
         PersistenSingleton<UIManager>.Instance.SetUIPauseEnable(false);
         DisplayInfo();
         DisplayCardList();
@@ -59,52 +51,55 @@ public class QuadMistUI : UIScene
         {
             DisplayCardDetail();
             DiscardTitle.SetActive(false);
-            TitleSprite.atlas = textAtlas;
             TitleSprite.gameObject.SetActive(true);
             CardSelectedPanel.SetActive(true);
-            Boolean flag = false;
-            if (FF9StateSystem.Common.FF9.miniGameArg == 124 || FF9StateSystem.Common.FF9.miniGameArg == 125 || FF9StateSystem.Common.FF9.miniGameArg == 126 || FF9StateSystem.Common.FF9.miniGameArg == 127)
-            {
-                flag = true;
-            }
-            BackButton.SetActive(!flag);
+            BackButton.SetActive(QuadMistGame.AllowGameCancel);
         }
         else
         {
             TitleSprite.gameObject.SetActive(false);
             DiscardTitle.SetActive(true);
+            CardSelectedPanel.SetActive(false);
+            BackButton.SetActive(false);
+        }
+    }
+
+    private void UpdateAtlas()
+    {
+        textAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/QuadMist/Atlas/QuadMist Text " + Localization.CurrentDisplaySymbol + " Atlas", false);
+        if (currentState == QuadMistUI.CardState.CardSelection)
+        {
+            TitleSprite.atlas = textAtlas;
+        }
+        else
+        {
             discardTitleSprite.atlas = textAtlas;
-            UISprite[] array = discardTitleBulletSprite;
-            for (Int32 i = 0; i < (Int32)array.Length; i++)
+            foreach (UISprite sprite in discardTitleBulletSprite)
+                sprite.atlas = textAtlas;
+            switch (Localization.CurrentDisplaySymbol)
             {
-                UISprite uisprite = array[i];
-                uisprite.atlas = textAtlas;
-            }
-            String language = Localization.CurrentLanguage;
-            switch (language)
-            {
-                case "English(US)":
-                case "English(UK)":
+                case "US":
+                case "UK":
                     discardTitleBulletWidget[0].leftAnchor.absolute = 128;
                     discardTitleBulletWidget[0].rightAnchor.absolute = 186;
                     discardTitleBulletWidget[1].leftAnchor.absolute = -186;
                     discardTitleBulletWidget[1].rightAnchor.absolute = -128;
                     break;
-                case "Japanese":
+                case "JP":
                     discardTitleBulletWidget[0].leftAnchor.absolute = 0;
                     discardTitleBulletWidget[0].rightAnchor.absolute = 58;
                     discardTitleBulletWidget[1].leftAnchor.absolute = -58;
                     discardTitleBulletWidget[1].rightAnchor.absolute = 0;
                     break;
-                case "Spanish":
-                case "German":
-                case "Italian":
+                case "ES":
+                case "GR":
+                case "IT":
                     discardTitleBulletWidget[0].leftAnchor.absolute = -58;
                     discardTitleBulletWidget[0].rightAnchor.absolute = 0;
                     discardTitleBulletWidget[1].leftAnchor.absolute = 0;
                     discardTitleBulletWidget[1].rightAnchor.absolute = 58;
                     break;
-                case "French":
+                case "FR":
                     discardTitleBulletWidget[0].leftAnchor.absolute = -28;
                     discardTitleBulletWidget[0].rightAnchor.absolute = 30;
                     discardTitleBulletWidget[1].leftAnchor.absolute = -30;
@@ -113,23 +108,19 @@ public class QuadMistUI : UIScene
             }
             discardTitleBulletWidget[0].UpdateAnchors();
             discardTitleBulletWidget[1].UpdateAnchors();
-            CardSelectedPanel.SetActive(false);
-            BackButton.SetActive(false);
         }
     }
 
     public override void Hide(UIScene.SceneVoidDelegate afterFinished = null)
     {
-        UIScene.SceneVoidDelegate sceneVoidDelegate = delegate
+        UIScene.SceneVoidDelegate afterHideAction = delegate
         {
             PersistenSingleton<UIManager>.Instance.State = UIManager.UIState.QuadMistBattle;
         };
         if (afterFinished != null)
-        {
-            sceneVoidDelegate = (UIScene.SceneVoidDelegate)Delegate.Combine(sceneVoidDelegate, afterFinished);
-        }
+            afterHideAction += afterFinished;
         base.NextSceneIsModal = false;
-        base.Hide(sceneVoidDelegate);
+        base.Hide(afterHideAction);
         RemoveCursorMemorize();
         cardInfoContentGameObject.SetActive(false);
     }
@@ -137,6 +128,21 @@ public class QuadMistUI : UIScene
     private void RemoveCursorMemorize()
     {
         ButtonGroupState.RemoveCursorMemorize(QuadMistUI.CardGroupButton);
+    }
+
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        if (cardInfoContentGameObject.activeInHierarchy && currentCardId >= 0 && count[currentCardId] > 0)
+        {
+            FF9UIDataTool.DisplayCard(GetCardInfo(currentCardId, currentCardOffset), cardDetailHudList[0], false);
+            cardNameLabel.rawText = FF9TextTool.CardName((TetraMasterCardId)currentCardId);
+        }
+        // TODO: for some reason, the dialog doesn't like when the number of lines changes there
+        //if (dialogMessage != null)
+        //    dialogMessage.ChangePhraseSoft(Localization.Get(dialogMessageKey));
+        UpdateAtlas();
     }
 
     public override Boolean OnKeyConfirm(GameObject go)
@@ -155,10 +161,9 @@ public class QuadMistUI : UIScene
                     if (selectedCardList.Count > 4)
                     {
                         cardInfoContentGameObject.SetActive(false);
-                        String phrase = Localization.Get("QuadMistConfirmSelection");
-                        Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(phrase, 100, 3, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(105f, 90f), Dialog.CaptionType.None);
-                        ButtonGroupState.SetPointerOffsetToGroup(new Vector2(140f, 0f), Dialog.DialogGroupButton);
-                        dialog.AfterDialogHidden = new Dialog.DialogIntDelegate(onConfirmDialogHidden);
+                        dialogMessageKey = "QuadMistConfirmSelection";
+                        dialogMessage = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(dialogMessageKey), 100, 3, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(105f, 90f), Dialog.CaptionType.None);
+                        dialogMessage.AfterDialogHidden = onConfirmDialogHidden;
                     }
                 }
             }
@@ -166,10 +171,9 @@ public class QuadMistUI : UIScene
             {
                 deleteCardId = currentCardId;
                 ETb.sChoose = 1;
-                String phrase2 = Localization.Get("QuadMistDiscardConfirm");
-                Dialog dialog2 = Singleton<DialogManager>.Instance.AttachDialog(phrase2, 100, 3, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(194f, 38f), Dialog.CaptionType.None);
-                ButtonGroupState.SetPointerOffsetToGroup(new Vector2(100f, 0f), Dialog.DialogGroupButton);
-                dialog2.AfterDialogHidden = new Dialog.DialogIntDelegate(onDiscardConfirmHidden);
+                dialogMessageKey = "QuadMistDiscardConfirm";
+                dialogMessage = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(dialogMessageKey), 100, 3, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(194f, 38f), Dialog.CaptionType.None);
+                dialogMessage.AfterDialogHidden = onDiscardConfirmHidden;
             }
         }
         return true;
@@ -186,21 +190,12 @@ public class QuadMistUI : UIScene
                 DisplayCardList();
                 DisplayCardDetail();
             }
-            else
+            else if (QuadMistGame.AllowGameCancel)
             {
-                Boolean flag = false;
-                if (FF9StateSystem.Common.FF9.miniGameArg == 124 || FF9StateSystem.Common.FF9.miniGameArg == 125 || FF9StateSystem.Common.FF9.miniGameArg == 126 || FF9StateSystem.Common.FF9.miniGameArg == 127)
-                {
-                    flag = true;
-                }
-                if (!flag)
-                {
-                    ETb.sChoose = 1;
-                    String phrase = Localization.Get("QuadMistEndCardGame");
-                    Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(phrase, 100, 3, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(105f, 90f), Dialog.CaptionType.None);
-                    ButtonGroupState.SetPointerOffsetToGroup(new Vector2(230f, 0f), Dialog.DialogGroupButton);
-                    dialog.AfterDialogHidden = new Dialog.DialogIntDelegate(onQuitDialogHidden);
-                }
+                ETb.sChoose = 1;
+                dialogMessageKey = "QuadMistEndCardGame";
+                dialogMessage = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(dialogMessageKey), 100, 3, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(105f, 90f), Dialog.CaptionType.None);
+                dialogMessage.AfterDialogHidden = onQuitDialogHidden;
             }
         }
         return true;
@@ -249,16 +244,16 @@ public class QuadMistUI : UIScene
     {
         if (base.OnKeyLeftBumper(go) && ButtonGroupState.ActiveGroup == QuadMistUI.CardGroupButton)
         {
-            Byte b = count[currentCardId];
-            if (b > 1)
+            Byte ccount = count[currentCardId];
+            if (ccount > 1)
             {
                 FF9Sfx.FF9SFX_Play(1047);
-                currentCardOffset = (currentCardOffset + (Int32)b - 1) % (Int32)b;
-                Byte[] dialogIndexes = (from i in Enumerable.Range(0, Mathf.Min((Int32)(b - 1), 4))
-                                        select (Byte)i).ToArray<Byte>();
+                currentCardOffset = (currentCardOffset + ccount - 1) % ccount;
+                Byte[] dialogIndexes = (from i in Enumerable.Range(0, Mathf.Min(ccount - 1, 4))
+                                        select (Byte)i).ToArray();
                 base.ShowPointerWhenLoading = true;
                 base.Loading = true;
-                cardDetailTransition.TweenPingPong(dialogIndexes, (UIScene.SceneVoidDelegate)null, delegate
+                cardDetailTransition.TweenPingPong(dialogIndexes, null, delegate
                 {
                     base.Loading = false;
                     base.ShowPointerWhenLoading = false;
@@ -273,16 +268,16 @@ public class QuadMistUI : UIScene
     {
         if (base.OnKeyRightBumper(go) && ButtonGroupState.ActiveGroup == QuadMistUI.CardGroupButton)
         {
-            Byte b = count[currentCardId];
-            if (b > 1)
+            Byte ccount = count[currentCardId];
+            if (ccount > 1)
             {
                 FF9Sfx.FF9SFX_Play(1047);
-                currentCardOffset = (currentCardOffset + (Int32)b + 1) % (Int32)b;
-                Byte[] dialogIndexes = (from i in Enumerable.Range(0, Mathf.Min((Int32)(b - 1), 4))
-                                        select (Byte)i).ToArray<Byte>();
+                currentCardOffset = (currentCardOffset + ccount + 1) % ccount;
+                Byte[] dialogIndexes = (from i in Enumerable.Range(0, Mathf.Min(ccount - 1, 4))
+                                        select (Byte)i).ToArray();
                 base.ShowPointerWhenLoading = true;
                 base.Loading = true;
-                cardDetailTransition.TweenPingPong(dialogIndexes, (UIScene.SceneVoidDelegate)null, delegate
+                cardDetailTransition.TweenPingPong(dialogIndexes, null, delegate
                 {
                     base.Loading = false;
                     base.ShowPointerWhenLoading = false;
@@ -310,7 +305,7 @@ public class QuadMistUI : UIScene
 
     private void onConfirmDialogHidden(Int32 choice)
     {
-        ButtonGroupState.SetPointerOffsetToGroup(Dialog.DefaultOffset, Dialog.DialogGroupButton);
+        dialogMessage = null;
         if (choice == 0)
         {
             Hide(delegate
@@ -332,7 +327,7 @@ public class QuadMistUI : UIScene
 
     private void onQuitDialogHidden(Int32 choice)
     {
-        ButtonGroupState.SetPointerOffsetToGroup(Dialog.DefaultOffset, Dialog.DialogGroupButton);
+        dialogMessage = null;
         if (choice == 0)
         {
             isNeedToBuildCard = true;
@@ -347,6 +342,7 @@ public class QuadMistUI : UIScene
 
     private void onDiscardNoticeHidden(Int32 choice)
     {
+        dialogMessage = null;
         isDialogShowing = false;
         DisplayCardDetail();
         ButtonGroupState.ActiveGroup = QuadMistUI.CardGroupButton;
@@ -354,7 +350,7 @@ public class QuadMistUI : UIScene
 
     private void onDiscardConfirmHidden(Int32 choice)
     {
-        ButtonGroupState.SetPointerOffsetToGroup(Dialog.DefaultOffset, Dialog.DialogGroupButton);
+        dialogMessage = null;
         if (choice == 0)
         {
             QuadMistDatabase.MiniGame_AwayCard((TetraMasterCardId)deleteCardId, currentCardOffset);
@@ -385,11 +381,10 @@ public class QuadMistUI : UIScene
 
     private void DisplayCardList()
     {
-        Int32 id;
-        for (id = 0; id < CardPool.TOTAL_CARDS; id++)
+        for (Int32 id = 0; id < CardPool.TOTAL_CARDS; id++)
         {
             Byte kindCount = count[id];
-            QuadMistUI.CardListHUD cardListHUD = cardHudList.First((QuadMistUI.CardListHUD hud) => hud.Id == id);
+            QuadMistUI.CardListHUD cardListHUD = cardHudList.First(hud => hud.Id == id);
             if (kindCount > 0)
             {
                 CardIcon.Attribute attribute = QuadMistDatabase.MiniGame_GetCardAttribute(id);
@@ -398,7 +393,7 @@ public class QuadMistUI : UIScene
                 if (kindCount > 1)
                 {
                     cardListHUD.CardAmountLabel.gameObject.SetActive(true);
-                    cardListHUD.CardAmountLabel.text = kindCount.ToString();
+                    cardListHUD.CardAmountLabel.rawText = kindCount.ToString();
                 }
                 else
                 {
@@ -415,20 +410,20 @@ public class QuadMistUI : UIScene
 
     private void DisplayCardDetail()
     {
-        Int32 num = count[currentCardId];
-        if (num > 0)
+        Int32 ccount = count[currentCardId];
+        if (ccount > 0)
         {
             cardInfoContentGameObject.SetActive(true);
-            ShowCardDetailHudAmount(num);
-            cardIdLabel.text = "No" + (currentCardId + 1).ToString("0#");
+            ShowCardDetailHudAmount(ccount);
+            cardIdLabel.rawText = $"No{currentCardId + 1:0#}";
             FF9UIDataTool.DisplayCard(GetCardInfo(currentCardId, currentCardOffset), cardDetailHudList[0], false);
-            cardNameLabel.text = FF9TextTool.CardName((TetraMasterCardId)currentCardId);
-            if (num > 1)
+            cardNameLabel.rawText = FF9TextTool.CardName((TetraMasterCardId)currentCardId);
+            if (ccount > 1)
             {
                 cardNumberGameObject.SetActive(true);
-                currentCardNumberLabel.text = (currentCardOffset + 1).ToString();
-                totalCardNumberLabel.text = num.ToString();
-                for (Int32 i = 1; i < Math.Min(num, 5); i++)
+                currentCardNumberLabel.rawText = (currentCardOffset + 1).ToString();
+                totalCardNumberLabel.rawText = ccount.ToString();
+                for (Int32 i = 1; i < Math.Min(ccount, 5); i++)
                     FF9UIDataTool.DisplayCard(GetCardInfo(currentCardId, 0), cardDetailHudList[i], true);
             }
             else
@@ -447,12 +442,9 @@ public class QuadMistUI : UIScene
         if (currentState == QuadMistUI.CardState.CardSelection)
         {
             PlayerInfoPanel.SetActive(true);
-            Int32 num = Mathf.Min(99999, QuadMistDatabase.MiniGame_GetWinCount());
-            Int32 num2 = Mathf.Min(99999, QuadMistDatabase.MiniGame_GetLoseCount());
-            Int32 num3 = Mathf.Min(99999, QuadMistDatabase.MiniGame_GetDrawCount());
-            winCountLabel.text = num.ToString();
-            loseCountLabel.text = num2.ToString();
-            drawCountLabel.text = num3.ToString();
+            winCountLabel.rawText = Math.Min(99999, QuadMistDatabase.MiniGame_GetWinCount()).ToString();
+            loseCountLabel.rawText = Math.Min(99999, QuadMistDatabase.MiniGame_GetLoseCount()).ToString();
+            drawCountLabel.rawText = Math.Min(99999, QuadMistDatabase.MiniGame_GetDrawCount()).ToString();
         }
         else
         {
@@ -472,8 +464,8 @@ public class QuadMistUI : UIScene
                     fullList.Add(quadMistCard);
         QuadMistUI.allCardList = fullList;
         selectedCardList.Clear();
-        for (Int32 j = 0; j < CardPool.TOTAL_CARDS; j++)
-            count[j] = (Byte)QuadMistDatabase.MiniGame_GetCardCount((TetraMasterCardId)j);
+        for (Int32 i = 0; i < CardPool.TOTAL_CARDS; i++)
+            count[i] = (Byte)QuadMistDatabase.MiniGame_GetCardCount((TetraMasterCardId)i);
     }
 
     private QuadMistCard GetCardInfo(Int32 id, Int32 offset)
@@ -523,8 +515,8 @@ public class QuadMistUI : UIScene
 
     private void UpdateAmountLabel()
     {
-        stockCountLabel.text = QuadMistDatabase.MiniGame_GetAllCardCount().ToString();
-        typeCountLabel.text = QuadMistDatabase.MiniGame_GetCardKindCount().ToString();
+        stockCountLabel.rawText = QuadMistDatabase.MiniGame_GetAllCardCount().ToString();
+        typeCountLabel.rawText = QuadMistDatabase.MiniGame_GetCardKindCount().ToString();
     }
 
     private void Awake()
@@ -555,35 +547,28 @@ public class QuadMistUI : UIScene
             DiscardTitle.GetChild(1).GetComponent<UIWidget>()
         };
         Int32 tableIndex = 0;
-        foreach (Object obj in CardSelectionListPanel.transform.GetChild(0))
+        foreach (Transform transform in CardSelectionListPanel.transform.GetChild(0))
         {
-            Transform transform = (Transform)obj;
             Int32 invTableIndex = tableIndex % 10 * 10;
             invTableIndex += tableIndex / 10;
             tableIndex++;
             QuadMistUI.CardListHUD cardListHUD = new QuadMistUI.CardListHUD(transform.gameObject, invTableIndex);
             cardHudList.Add(cardListHUD);
-            UIEventListener uieventListener = UIEventListener.Get(cardListHUD.Self);
-            uieventListener.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener.onClick, new UIEventListener.VoidDelegate(onClick));
+            UIEventListener.Get(cardListHUD.Self).onClick += onClick;
         }
-        foreach (Object obj2 in CardInfoPanel.GetChild(0).GetChild(1).transform)
-        {
-            Transform transform2 = (Transform)obj2;
-            CardDetailHUD item = new CardDetailHUD(transform2.gameObject);
-            cardDetailHudList.Add(item);
-        }
-        foreach (Object obj3 in CardSelectedPanel.transform)
-        {
-            Transform transform3 = (Transform)obj3;
-            UIEventListener uieventListener2 = UIEventListener.Get(transform3.gameObject);
-            uieventListener2.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener2.onClick, new UIEventListener.VoidDelegate(OnClickSelectedCard));
-        }
+        foreach (Transform transform in CardInfoPanel.GetChild(0).GetChild(1).transform)
+            cardDetailHudList.Add(new CardDetailHUD(transform.gameObject));
+        foreach (Transform transform in CardSelectedPanel.transform)
+            UIEventListener.Get(transform.gameObject).onClick += OnClickSelectedCard;
         cardDetailTransition = TransitionPanel.GetChild(0).GetComponent<HonoTweenPosition>();
+        cardNameLabel.leftAnchor.Set(0f, 0);
+        cardNameLabel.rightAnchor.Set(1f, 0);
+        cardNameLabel.overflowMethod = UILabel.Overflow.ShrinkContent;
     }
 
-    private static String CardGroupButton = "QuadMist.Card";
-    private static Int32 FF9FCARD_ARROW_TYPE_MAX = 256;
-    private static Int32 FF9FCAZRD_LV_MAX = 32;
+    private const String CardGroupButton = "QuadMist.Card";
+    private const Int32 FF9FCARD_ARROW_TYPE_MAX = 256;
+    private const Int32 FF9FCAZRD_LV_MAX = 32;
 
     public GameObject CardSelectionListPanel;
     public GameObject CardSelectedPanel;
@@ -634,6 +619,10 @@ public class QuadMistUI : UIScene
     private Int32 currentCardOffset;
     private Int32 deleteCardId;
 
+    [NonSerialized]
+    private Dialog dialogMessage;
+    [NonSerialized]
+    private String dialogMessageKey;
     private Boolean isDialogShowing;
 
     private List<QuadMistCard> selectedCardList = new List<QuadMistCard>();
@@ -652,11 +641,8 @@ public class QuadMistUI : UIScene
         }
 
         public GameObject Self;
-
         public Int32 Id;
-
         public UISprite CardIconSprite;
-
         public UILabel CardAmountLabel;
     }
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Threading;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Data;
@@ -21,7 +21,7 @@ namespace Memoria.Assets
                     return;
                 }
 
-                String exportSymbol = Localization.GetSymbol();
+                String exportSymbol = Localization.CurrentSymbol;
                 String modFolder = $"ExportedTranslation{exportSymbol}/";
                 if (Directory.Exists(modFolder))
                 {
@@ -29,7 +29,6 @@ namespace Memoria.Assets
                     return;
                 }
 
-                DataPatchers.Initialize();
                 InitialiseStaticBatches();
 
                 ExportFieldTexts(exportSymbol, modFolder);
@@ -64,12 +63,12 @@ namespace Memoria.Assets
             Directory.CreateDirectory(exportDirectoryHW);
             foreach (Int32 zoneId in zones)
             {
-                if (!PersistenSingleton<FF9TextTool>.Instance.UpdateFieldTextNow(zoneId))
+                if (!FF9TextTool.UpdateFieldTextNow(zoneId))
                     continue;
                 String textAsMes = "";
                 String textAsHW = $"#HW filetype TEXT\n#HW language {symbol.ToLower()}\n#HW fileid {zoneId}\n\n";
                 Int32 idCounter = -1;
-                foreach (KeyValuePair<Int32, String> pair in FF9TextTool.fieldText)
+                foreach (KeyValuePair<Int32, String> pair in FF9TextTool.MainBatch.fieldText)
                 {
                     String sentence = pair.Value;
                     textAsMes += ProcessStringForStrtMes(ref idCounter, sentence, pair.Key);
@@ -93,7 +92,7 @@ namespace Memoria.Assets
             foreach (KeyValuePair<String, Int32> battlePair in FF9BattleDB.SceneData)
             {
                 Int32 battleId = battlePair.Value;
-                if (!PersistenSingleton<FF9TextTool>.Instance.UpdateBattleTextNow(battleId))
+                if (!FF9TextTool.UpdateBattleTextNow(battleId))
                     continue;
                 BTL_SCENE scene = new BTL_SCENE();
                 scene.ReadBattleScene(battlePair.Key.Substring(4));
@@ -104,7 +103,7 @@ namespace Memoria.Assets
                 String textAsMes = "";
                 String textAsHW = $"#HW filetype TEXT_BATTLE\n#HW language {symbol.ToLower()}\n#HW fileid {battleId}\n\n";
                 Int32 idCounter = -1;
-                foreach (KeyValuePair<Int32, String> pair in FF9TextTool.battleText)
+                foreach (KeyValuePair<Int32, String> pair in FF9TextTool.MainBatch.battleText)
                 {
                     String sentence = pair.Value;
                     Int32 strIndex = pair.Key;
@@ -131,15 +130,15 @@ namespace Memoria.Assets
             String helpAsMes = "";
             String textAsHW = $"#HW filetype TEXT_COMMAND\n#HW language {symbol.ToLower()}\n\n";
             Int32 idCounter = -1;
-            foreach (KeyValuePair<BattleCommandId, String> pair in FF9TextTool.commandName)
+            foreach (KeyValuePair<BattleCommandId, String> pair in FF9TextTool.MainBatch.commandName)
             {
                 nameAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, (Int32)pair.Key);
                 textAsHW += $"#HW name {(Int32)pair.Key}\n{pair.Value}\n\n";
-                if (FF9TextTool.commandHelpDesc.TryGetValue(pair.Key, out String help))
+                if (FF9TextTool.MainBatch.commandHelpDesc.TryGetValue(pair.Key, out String help))
                     textAsHW += $"#HW help {(Int32)pair.Key}\n{help}\n\n";
             }
             idCounter = -1;
-            foreach (KeyValuePair<BattleCommandId, String> pair in FF9TextTool.commandHelpDesc)
+            foreach (KeyValuePair<BattleCommandId, String> pair in FF9TextTool.MainBatch.commandHelpDesc)
                 helpAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, (Int32)pair.Key);
             String exportDirectoryMes = $"{modFolder}FF9_Data/EmbeddedAsset/Text/{symbol}/Command/";
             String exportDirectoryHW = $"{modFolder}HadesWorkshop/Databases/";
@@ -158,15 +157,15 @@ namespace Memoria.Assets
             String helpAsMes = "";
             String textAsHW = $"#HW filetype TEXT_ABILITY\n#HW language {symbol.ToLower()}\n\n";
             Int32 idCounter = -1;
-            foreach (KeyValuePair<BattleAbilityId, String> pair in FF9TextTool.actionAbilityName)
+            foreach (KeyValuePair<BattleAbilityId, String> pair in FF9TextTool.MainBatch.actionAbilityName)
             {
                 nameAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, (Int32)pair.Key);
                 textAsHW += $"#HW name {(Int32)pair.Key}\n{pair.Value}\n\n";
-                if (FF9TextTool.actionAbilityHelpDesc.TryGetValue(pair.Key, out String help))
+                if (FF9TextTool.MainBatch.actionAbilityHelpDesc.TryGetValue(pair.Key, out String help))
                     textAsHW += $"#HW help {(Int32)pair.Key}\n{help}\n\n";
             }
             idCounter = -1;
-            foreach (KeyValuePair<BattleAbilityId, String> pair in FF9TextTool.actionAbilityHelpDesc)
+            foreach (KeyValuePair<BattleAbilityId, String> pair in FF9TextTool.MainBatch.actionAbilityHelpDesc)
                 helpAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, (Int32)pair.Key);
             String exportDirectoryMes = $"{modFolder}FF9_Data/EmbeddedAsset/Text/{symbol}/Ability/";
             String exportDirectoryHW = $"{modFolder}HadesWorkshop/Databases/";
@@ -185,15 +184,15 @@ namespace Memoria.Assets
             String helpAsMes = "";
             String textAsHW = $"#HW filetype TEXT_SUPPORT\n#HW language {symbol.ToLower()}\n\n";
             Int32 idCounter = -1;
-            foreach (KeyValuePair<SupportAbility, String> pair in FF9TextTool.supportAbilityName)
+            foreach (KeyValuePair<SupportAbility, String> pair in FF9TextTool.MainBatch.supportAbilityName)
             {
                 nameAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, (Int32)pair.Key);
                 textAsHW += $"#HW name {(Int32)pair.Key}\n{pair.Value}\n\n";
-                if (FF9TextTool.supportAbilityHelpDesc.TryGetValue(pair.Key, out String help))
+                if (FF9TextTool.MainBatch.supportAbilityHelpDesc.TryGetValue(pair.Key, out String help))
                     textAsHW += $"#HW help {(Int32)pair.Key}\n{help}\n\n";
             }
             idCounter = -1;
-            foreach (KeyValuePair<SupportAbility, String> pair in FF9TextTool.supportAbilityHelpDesc)
+            foreach (KeyValuePair<SupportAbility, String> pair in FF9TextTool.MainBatch.supportAbilityHelpDesc)
                 helpAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, (Int32)pair.Key);
             String exportDirectoryMes = $"{modFolder}FF9_Data/EmbeddedAsset/Text/{symbol}/Ability/";
             String exportDirectoryHW = $"{modFolder}HadesWorkshop/Databases/";
@@ -213,20 +212,20 @@ namespace Memoria.Assets
             String btlHelpAsMes = "";
             String textAsHW = $"#HW filetype TEXT_ITEM\n#HW language {symbol.ToLower()}\n\n";
             Int32 idCounter = -1;
-            foreach (KeyValuePair<RegularItem, String> pair in FF9TextTool.itemName)
+            foreach (KeyValuePair<RegularItem, String> pair in FF9TextTool.MainBatch.itemName)
             {
                 nameAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, (Int32)pair.Key);
                 textAsHW += $"#HW name {(Int32)pair.Key}\n{pair.Value}\n\n";
-                if (FF9TextTool.itemHelpDesc.TryGetValue(pair.Key, out String help))
+                if (FF9TextTool.MainBatch.itemHelpDesc.TryGetValue(pair.Key, out String help))
                     textAsHW += $"#HW help {(Int32)pair.Key}\n{help}\n\n";
-                if (FF9TextTool.itemBattleDesc.TryGetValue(pair.Key, out help))
+                if (FF9TextTool.MainBatch.itemBattleDesc.TryGetValue(pair.Key, out help))
                     textAsHW += $"#HW battlehelp {(Int32)pair.Key}\n{help}\n\n";
             }
             idCounter = -1;
-            foreach (KeyValuePair<RegularItem, String> pair in FF9TextTool.itemHelpDesc)
+            foreach (KeyValuePair<RegularItem, String> pair in FF9TextTool.MainBatch.itemHelpDesc)
                 helpAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, (Int32)pair.Key);
             idCounter = -1;
-            foreach (KeyValuePair<RegularItem, String> pair in FF9TextTool.itemBattleDesc)
+            foreach (KeyValuePair<RegularItem, String> pair in FF9TextTool.MainBatch.itemBattleDesc)
                 btlHelpAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, (Int32)pair.Key);
             String exportDirectoryMes = $"{modFolder}FF9_Data/EmbeddedAsset/Text/{symbol}/Item/";
             String exportDirectoryHW = $"{modFolder}HadesWorkshop/Databases/";
@@ -247,20 +246,20 @@ namespace Memoria.Assets
             String descAsMes = "";
             String textAsHW = $"#HW filetype TEXT_KEY_ITEM\n#HW language {symbol.ToLower()}\n\n";
             Int32 idCounter = -1;
-            foreach (KeyValuePair<Int32, String> pair in FF9TextTool.importantItemName)
+            foreach (KeyValuePair<Int32, String> pair in FF9TextTool.MainBatch.importantItemName)
             {
                 nameAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, pair.Key);
                 textAsHW += $"#HW name {pair.Key}\n{pair.Value}\n\n";
-                if (FF9TextTool.importantItemHelpDesc.TryGetValue(pair.Key, out String help))
+                if (FF9TextTool.MainBatch.importantItemHelpDesc.TryGetValue(pair.Key, out String help))
                     textAsHW += $"#HW help {pair.Key}\n{help}\n\n";
-                if (FF9TextTool.importantSkinDesc.TryGetValue(pair.Key, out help))
+                if (FF9TextTool.MainBatch.importantSkinDesc.TryGetValue(pair.Key, out help))
                     textAsHW += $"#HW description {pair.Key}\n{help}\n\n";
             }
             idCounter = -1;
-            foreach (KeyValuePair<Int32, String> pair in FF9TextTool.importantItemHelpDesc)
+            foreach (KeyValuePair<Int32, String> pair in FF9TextTool.MainBatch.importantItemHelpDesc)
                 helpAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, pair.Key);
             idCounter = -1;
-            foreach (KeyValuePair<Int32, String> pair in FF9TextTool.importantSkinDesc)
+            foreach (KeyValuePair<Int32, String> pair in FF9TextTool.MainBatch.importantSkinDesc)
                 descAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, pair.Key);
             String exportDirectoryMes = $"{modFolder}FF9_Data/EmbeddedAsset/Text/{symbol}/KeyItem/";
             String exportDirectoryHW = $"{modFolder}HadesWorkshop/Databases/";
@@ -278,7 +277,7 @@ namespace Memoria.Assets
             Log.Message("[TranslationExporter] Exporting field location names...");
             String textAsMes = "";
             String textAsHW = $"#HW filetype TEXT_LOCATION\n#HW language {symbol.ToLower()}\n\n";
-            foreach (KeyValuePair<Int32, String> pair in FF9TextTool.LocationNames)
+            foreach (KeyValuePair<Int32, String> pair in FF9TextTool.MainBatch.locationName)
             {
                 textAsMes += $"{pair.Key}:{pair.Value}\r\n";
                 textAsHW += $"#HW fieldname {pair.Key}\n{pair.Value}\n\n";
@@ -313,25 +312,14 @@ namespace Memoria.Assets
             {
                 String textAsMes = "";
                 String textAsHW = $"#HW filetype TEXT_INTERFACE\n#HW language {symbol.ToLower()}\n#HW fileid {block.hwId}\n\n";
-                for (Int32 i = 0; i < block.texts.Length; i++)
+                Int32 idCounter = -1;
+                foreach (KeyValuePair<Int32, String> pair in block.texts)
                 {
-                    textAsMes += $"{block.texts[i]}[ENDN]";
-                    textAsHW += $"#HW text {i}\n{block.texts[i]}\n\n";
+                    textAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, pair.Key);
+                    textAsHW += $"#HW text {pair.Key}\n{pair.Value}\n\n";
                 }
                 File.WriteAllText($"{exportDirectoryMes}{block.fileName}.mes", textAsMes);
                 File.WriteAllText($"{exportDirectoryHW}{block.hwName}.txt", textAsHW);
-            }
-            {
-                String textAsMes = "";
-                String textAsHW = $"#HW filetype TEXT_INTERFACE\n#HW language {symbol.ToLower()}\n#HW fileid 6\n\n";
-                Int32 idCounter = -1;
-                foreach (KeyValuePair<TetraMasterCardId, String> pair in FF9TextTool.cardName)
-                {
-                    textAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, (Int32)pair.Key);
-                    textAsHW += $"#HW text {(Int32)pair.Key}\n{pair.Value}\n\n";
-                }
-                File.WriteAllText($"{exportDirectoryMes}Minista.mes", textAsMes);
-                File.WriteAllText($"{exportDirectoryHW}CardNames.txt", textAsHW);
             }
             Log.Message("[TranslationExporter] Done.");
         }
@@ -346,14 +334,14 @@ namespace Memoria.Assets
             Directory.CreateDirectory(exportDirectoryHW);
             String textAsLoc = "";
             String textAsHW = $"#HW filetype TEXT_LOCALIZATION\n#HW language {symbol.ToLower()}\n\n";
-            foreach (String header in new String[] { "KEY", "Symbol" })
+            foreach (String header in new String[] { LanguageMap.LanguageKey, LanguageMap.SymbolKey })
             {
                 textAsLoc += $"{header},{Localization.ProcessEntryForCSVWriting(allEntries[header])}\n";
                 textAsHW += $"#HW entry {header}\n{allEntries[header]}\n\n";
             }
             foreach (KeyValuePair<String, String> pair in allEntries)
             {
-                if (pair.Key == "KEY" || pair.Key == "Symbol")
+                if (pair.Key == LanguageMap.LanguageKey || pair.Key == LanguageMap.SymbolKey)
                     continue;
                 textAsLoc += $"{pair.Key},{Localization.ProcessEntryForCSVWriting(pair.Value)}\n";
                 textAsHW += $"#HW entry {pair.Key}\n{pair.Value}\n\n";
@@ -506,7 +494,7 @@ namespace Memoria.Assets
                 }
                 str = $"[STRT={width},{lineNo}]" + str;
             }
-            if (!str.EndsWith("]")) // ...and ends with either [ENDN] or [TIME=XXX]
+            if (new Regex(@"(\[ENDN\]|\[TIME=[\-0-9]+\]|\{TIME [\-0-9]+\})").Match(str).Success) // ...and ends with either [ENDN] or [TIME=XXX] or {Time XXX}
                 str += "[ENDN]";
             if (addCounterCode)
                 return $"[TXID={txtId}]" + str;
@@ -527,8 +515,8 @@ namespace Memoria.Assets
             public String fileName;
             public String hwName;
             public Int32 hwId;
-            public String[] texts;
-            public EtcTextBatch(String n, String hn, Int32 id, String[] t)
+            public Dictionary<Int32, String> texts;
+            public EtcTextBatch(String n, String hn, Int32 id, Dictionary<Int32, String> t)
             {
                 fileName = n;
                 hwName = hn;
@@ -566,13 +554,13 @@ namespace Memoria.Assets
             new CharacterNamesImporter().LoadSync();
             _etcBatches =
             [
-                new EtcTextBatch("WorldLoc", "WorldLocations", 0, FF9TextTool.worldLocationText),
-                new EtcTextBatch("Follow",   "BattleMessages", 1, FF9TextTool.followText),
-                new EtcTextBatch("Libra",    "ScanTexts",      2, FF9TextTool.libraText),
-                new EtcTextBatch("CmdTitle", "CommandTitles",  3, FF9TextTool.cmdTitleText),
-                new EtcTextBatch("FF9Choco", "Chocographs",    4, FF9TextTool.chocoUIText),
-                new EtcTextBatch("Card",     "CardRanks",      5, FF9TextTool.cardLvName),
-                //new EtcTextBatch("Minista","CardNames",      6, FF9TextTool.cardName),
+                new EtcTextBatch("WorldLoc", "WorldLocations", 0, FF9TextTool.MainBatch.worldLocationText),
+                new EtcTextBatch("Follow",   "BattleMessages", 1, FF9TextTool.MainBatch.followText),
+                new EtcTextBatch("Libra",    "ScanTexts",      2, FF9TextTool.MainBatch.libraText),
+                new EtcTextBatch("CmdTitle", "CommandTitles",  3, FF9TextTool.MainBatch.cmdTitleText),
+                new EtcTextBatch("FF9Choco", "Chocographs",    4, FF9TextTool.MainBatch.chocoUIText),
+                new EtcTextBatch("Card",     "CardRanks",      5, FF9TextTool.MainBatch.cardLvName),
+                new EtcTextBatch("Minista",  "CardNames",      6, FF9TextTool.MainBatch.cardName)
             ];
             _messageAtlases =
             [

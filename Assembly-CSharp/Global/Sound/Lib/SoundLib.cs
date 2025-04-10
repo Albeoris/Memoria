@@ -1,6 +1,7 @@
-﻿using Memoria;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Memoria;
+using Memoria.Assets;
 using UnityEngine;
 using MLog = Memoria.Prime.Log;
 using Object = System.Object;
@@ -9,31 +10,20 @@ public class SoundLib : MonoBehaviour
 {
     public static void PlayMovieMusic(String movieName, Int32 offsetTimeMSec = 0)
     {
-        if (SoundLib.instance == (UnityEngine.Object)null)
+        if (SoundLib.instance == null)
         {
             LogWarning("The instance is null.");
             return;
         }
         if (SoundLib.MusicIsMute)
-        {
             return;
-        }
         Int32 movieSoundIndex = SoundLib.GetMovieSoundIndex(movieName);
-        if (movieSoundIndex != -1)
-        {
-            if (movieName == "FMV000")
-            {
-                SoundLib.MusicPlayer.PlayMusic(movieSoundIndex, offsetTimeMSec, SoundProfileType.MovieAudio);
-            }
-            else
-            {
-                SoundLib.MovieAudioPlayer.PlayMusic(movieSoundIndex, offsetTimeMSec, SoundProfileType.MovieAudio);
-            }
-        }
-        else
-        {
+        if (movieSoundIndex < 0)
             SoundLib.LogError(movieName + " not found!");
-        }
+        else if (movieName == "FMV000")
+            SoundLib.MusicPlayer.PlayMusic(movieSoundIndex, offsetTimeMSec, SoundProfileType.MovieAudio);
+        else
+            SoundLib.MovieAudioPlayer.PlayMusic(movieSoundIndex, offsetTimeMSec, SoundProfileType.MovieAudio);
     }
 
     public static SoundProfile GetActiveMovieAudioSoundProfile()
@@ -43,123 +33,46 @@ public class SoundLib : MonoBehaviour
 
     public static Int32 GetMovieSoundIndex(String movieName)
     {
-        String soundName = String.Empty;
-        if (String.Equals(movieName, "FMV000"))
+        switch (movieName)
         {
-            soundName = "Sounds01/BGM_/music033";
-            //return SoundMetaData.GetSoundIndex(soundName, SoundProfileType.Music);
+            case "FMV000": return SoundMetaData.GetSoundIndex("Sounds01/BGM_/music033", SoundProfileType.MovieAudio); // as SoundProfileType.Music ?
+            case "FMV059": return SoundMetaData.GetSoundIndex("Sounds02/Movie_/FMV059A", SoundProfileType.MovieAudio);
+            case "FMV060": return SoundMetaData.GetSoundIndex("Sounds02/Movie_/" + (Localization.CurrentSymbol == "JP" ? "FMV059B" : "FMV059C"), SoundProfileType.MovieAudio);
+            case "mbg102": return SoundMetaData.GetSoundIndex("Sounds02/song_/song0504_0", SoundProfileType.MovieAudio);
+            case "mbg103": return SoundMetaData.GetSoundIndex("Sounds02/song_/song0505_0", SoundProfileType.MovieAudio);
+            case "mbg105": return SoundMetaData.GetSoundIndex("Sounds02/song_/song0503_0", SoundProfileType.MovieAudio);
+            case "mbg106": return SoundMetaData.GetSoundIndex("Sounds02/song_/song0507_0", SoundProfileType.MovieAudio);
+            case "mbg107": return SoundMetaData.GetSoundIndex("Sounds02/song_/song0506_0", SoundProfileType.MovieAudio);
+            case "mbg108": return SoundMetaData.GetSoundIndex("Sounds02/song_/song0501_0", SoundProfileType.MovieAudio);
+            case "mbg110": return SoundMetaData.GetSoundIndex("Sounds02/song_/song0502_0", SoundProfileType.MovieAudio);
+            case "mbg111": return SoundMetaData.GetSoundIndex("Sounds02/song_/song0509_0", SoundProfileType.MovieAudio);
+            case "mbg112": return SoundMetaData.GetSoundIndex("Sounds02/song_/song0510_0", SoundProfileType.MovieAudio);
+            case "mbg113": return SoundMetaData.GetSoundIndex("Sounds02/song_/song0508_0", SoundProfileType.MovieAudio);
+            case "mbg115": return SoundMetaData.GetSoundIndex("Sounds02/song_/song0511_0", SoundProfileType.MovieAudio);
+            case "mbg116": return SoundMetaData.GetSoundIndex("Sounds02/song_/song1040_0", SoundProfileType.MovieAudio);
+            case "mbg117": return SoundMetaData.GetSoundIndex("Sounds02/song_/song0512_0", SoundProfileType.MovieAudio);
+            case "mbg118": return SoundMetaData.GetSoundIndex("Sounds02/song_/song0513_0", SoundProfileType.MovieAudio);
         }
-        else if (String.Equals(movieName, "FMV059"))
-        {
-            soundName = "Sounds02/Movie_/FMV059A";
-        }
-        else if (String.Equals(movieName, "FMV060"))
-        {
-            String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-            String str = "FMV059C";
-            if (currentLanguage == "Japanese")
-            {
-                str = "FMV059B";
-            }
-            soundName = "Sounds02/Movie_/" + str;
-        }
-        else if (String.Equals(movieName, "mbg102"))
-        {
-            soundName = "Sounds02/song_/song0504_0";
-        }
-        else if (String.Equals(movieName, "mbg103"))
-        {
-            soundName = "Sounds02/song_/song0505_0";
-        }
-        else if (String.Equals(movieName, "mbg105"))
-        {
-            soundName = "Sounds02/song_/song0503_0";
-        }
-        else if (String.Equals(movieName, "mbg106"))
-        {
-            soundName = "Sounds02/song_/song0507_0";
-        }
-        else if (String.Equals(movieName, "mbg107"))
-        {
-            soundName = "Sounds02/song_/song0506_0";
-        }
-        else if (String.Equals(movieName, "mbg108"))
-        {
-            soundName = "Sounds02/song_/song0501_0";
-        }
-        else if (String.Equals(movieName, "mbg110"))
-        {
-            soundName = "Sounds02/song_/song0502_0";
-        }
-        else if (String.Equals(movieName, "mbg111"))
-        {
-            soundName = "Sounds02/song_/song0509_0";
-        }
-        else if (String.Equals(movieName, "mbg112"))
-        {
-            soundName = "Sounds02/song_/song0510_0";
-        }
-        else if (String.Equals(movieName, "mbg113"))
-        {
-            soundName = "Sounds02/song_/song0508_0";
-        }
-        else if (String.Equals(movieName, "mbg115"))
-        {
-            soundName = "Sounds02/song_/song0511_0";
-        }
-        else if (String.Equals(movieName, "mbg116"))
-        {
-            soundName = "Sounds02/song_/song1040_0";
-        }
-        else if (String.Equals(movieName, "mbg117"))
-        {
-            soundName = "Sounds02/song_/song0512_0";
-        }
-        else if (String.Equals(movieName, "mbg118"))
-        {
-            soundName = "Sounds02/song_/song0513_0";
-        }
-        else
-        {
-            soundName = "Sounds02/Movie_/" + movieName;
-        }
-        return SoundMetaData.GetSoundIndex(soundName, SoundProfileType.MovieAudio);
+        return SoundMetaData.GetSoundIndex("Sounds02/Movie_/" + movieName, SoundProfileType.MovieAudio);
     }
 
     public static void PauseMovieMusic(String movieName)
     {
-        if (SoundLib.instance == (UnityEngine.Object)null)
-        {
+        if (SoundLib.instance == null)
             return;
-        }
         SoundLib.MovieAudioPlayer.PauseMusic();
     }
 
     public static void StopMovieMusic(String movieName, Boolean isForceStop = false)
     {
-        if (SoundLib.instance == (UnityEngine.Object)null)
-        {
+        if (SoundLib.instance == null)
             return;
-        }
-        if (!isForceStop)
-        {
-            if (String.Equals(movieName, "FMV000"))
-            {
-                SoundLib.Log("Don't stop sound for " + movieName + " if it is NOT forced to stop.");
-            }
-            else
-            {
-                SoundLib.MovieAudioPlayer.StopMusic();
-            }
-        }
-        else if (String.Equals(movieName, "FMV000"))
-        {
-            SoundLib.MusicPlayer.StopMusic(AllSoundDispatchPlayer.MINIMUM_SONG_FADE_MS);
-        }
-        else
-        {
+        if (!String.Equals(movieName, "FMV000"))
             SoundLib.MovieAudioPlayer.StopMusic();
-        }
+        else if (isForceStop)
+            SoundLib.MusicPlayer.StopMusic(AllSoundDispatchPlayer.MINIMUM_SONG_FADE_MS);
+        else
+            SoundLib.Log("Don't stop sound for " + movieName + " if it is NOT forced to stop.");
     }
 
     public static void AddNewSound(String fileName, Int32 soundId, AudioSource source)
@@ -314,6 +227,97 @@ public class SoundLib : MonoBehaviour
         {
             SoundLib.LogError(message);
         }
+    }
+
+    public static SoundProfile PlaySoundEffect(String path, Action onFinished = null, Single soundVolume = 1f, Single panning = 0f, Single pitch = 1f)
+    {
+        return LoadSoundEffect(path,
+                (soundProfile, db) =>
+                {
+                    if (soundProfile != null)
+                    {
+                        SoundLib.VoicePlayer.CreateSound(soundProfile);
+                        SoundLib.VoicePlayer.StartSound(soundProfile, onFinished);
+                        if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
+                            db.Update(soundProfile);
+                        else
+                            db.Create(soundProfile);
+                    }
+                }, soundVolume, panning, pitch);
+    }
+
+    public static void PlaySoundEffectsConsecutively(List<String> paths, Action onFinished = null, Single soundVolume = 1f, Single panning = 0f, Single pitch = 1f)
+    {
+        if (paths.Count == 0)
+            return;
+        if (paths.Count == 1)
+        {
+            PlaySoundEffect(paths[0], onFinished, soundVolume, panning, pitch);
+            return;
+        }
+        List<SoundProfile> profiles = new List<SoundProfile>();
+        for (Int32 i = 0; i < paths.Count - 1; i++)
+        {
+            LoadSoundEffect(paths[i],
+                (soundProfile, db) =>
+                {
+                    if (soundProfile != null)
+                    {
+                        profiles.Add(soundProfile);
+                        if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
+                            db.Update(soundProfile);
+                        else
+                            db.Create(soundProfile);
+                    }
+                }, soundVolume, panning, pitch);
+        }
+        LoadSoundEffect(paths[paths.Count - 1],
+            (soundProfile, db) =>
+            {
+                if (soundProfile != null)
+                {
+                    profiles.Add(soundProfile);
+                    if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
+                        db.Update(soundProfile);
+                    else
+                        db.Create(soundProfile);
+                }
+                if (profiles.Count == 0)
+                    return;
+                SoundLib.VoicePlayer.CreateSound(profiles[0]);
+                SoundLib.VoicePlayer.StartSound(profiles[0], () => PlaySoundEffectsConsecutively_Callback(profiles, 1, onFinished));
+            }, soundVolume, panning, pitch);
+    }
+
+    private static void PlaySoundEffectsConsecutively_Callback(List<SoundProfile> profiles, Int32 index, Action onFinished)
+    {
+        if (index < profiles.Count)
+        {
+            SoundLib.VoicePlayer.CreateSound(profiles[index]);
+            SoundLib.VoicePlayer.StartSound(profiles[index], () => PlaySoundEffectsConsecutively_Callback(profiles, index + 1, onFinished));
+        }
+        else if (onFinished != null)
+        {
+            onFinished();
+        }
+    }
+
+    public static SoundProfile LoadSoundEffect(String path, ISoundLoader.ResultCallback onLoaded, Single soundVolume = 1f, Single panning = 0f, Single pitch = 1f)
+    {
+        Int32 soundIndex = path.GetHashCode();
+        SoundProfile soundProfile = new SoundProfile
+        {
+            Code = soundIndex.ToString(),
+            Name = path,
+            SoundIndex = soundIndex,
+            ResourceID = path,
+            SoundProfileType = SoundProfileType.Voice,
+            SoundVolume = soundVolume,
+            Panning = panning,
+            Pitch = Configuration.Audio.Backend == 0 ? 0.5f * pitch : pitch // SdLib needs 0.5f for some reason
+        };
+        SoundLoaderProxy.Instance.Load(soundProfile, onLoaded, ETb.voiceDatabase);
+        return soundProfile;
     }
 
     public static Int32 GetResidentSfxSoundCount()
