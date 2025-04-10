@@ -287,6 +287,15 @@ UseAbsoluteOrientation = "Использовать абсолютную орие
 UseAbsoluteOrientation_Tooltip = "При включении аналоговый джойстик будет использовать абсолютную ориентацию (как PSX) вместо следования предопределенной ориентации пути ходьбы на предварительно отрисованных фонах"
 AlwaysCaptureGamepad = "Всегда захватывать геймпад"
 AlwaysCaptureGamepad_Tooltip = "При включении геймпад останется активным, когда игра не сфокусирована"
+SwapConfirmCancel = "Поменять подтверждения/отмены"
+SwapConfirmCancel_Tooltip = "Используйте кнопку O для подтверждения и X для отмены (японская раскладка кнопок)"
+DualLanguageMode = "Режим Двухязычный"
+DualLanguageModeChoice0 = "Отключено"
+DualLanguageModeChoice1 = "Переключатель Caps Lock"
+DualLanguageModeChoice2 = "Одновременно"
+DualLanguageMode_Tooltip = "Вариант 1: переключение языков с помощью клавиши CAPS LOCK&#xA;Вариант 2: оба языка отображаются одновременно"
+DualLanguage = "Двухязычный"
+DualLanguage_Tooltip = "Выбор дополнительного языка"
 />
 
 <SteamOverlay

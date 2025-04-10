@@ -285,6 +285,15 @@ UseAbsoluteOrientation = "Utiliser l'orientation absolue"
 UseAbsoluteOrientation_Tooltip = "Lorsque cette option est activée, l'utilisation du stick analogique utilisera l'orientation absolue (comme sur PS1) au lieu de suivre l'orientation prédéterminé sur les arrière-plans pré-rendus"
 AlwaysCaptureGamepad = "Toujours capturer la manette de jeu"
 AlwaysCaptureGamepad_Tooltip = "Lorsque cette option est activée, la manette de jeu reste active lorsque le jeu n'a pas le focus"
+SwapConfirmCancel = "Échanger Valider/Annuler"
+SwapConfirmCancel_Tooltip = "Utiliser le bouton O pour valider et le bouton X pour annuler (disposition japonaise)"
+DualLanguageMode = "Mode Traduction"
+DualLanguageModeChoice0 = "Désactivé"
+DualLanguageModeChoice1 = "Alterner via Verr. Maj."
+DualLanguageModeChoice2 = "Simultanés"
+DualLanguageMode_Tooltip = "Option 1 : alterner entre deux langues en utilisant la touche Verr. Maj.&#xA;Option 2 : afficher deux langues simultanément"
+DualLanguage = "Langue de Traduction"
+DualLanguage_Tooltip = "Choix de la seconde langue"
 />
 
 <SteamOverlay

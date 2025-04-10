@@ -285,6 +285,15 @@ UseAbsoluteOrientation = "Absolute Orientierung verwenden"
 UseAbsoluteOrientation_Tooltip = "Wenn aktiviert, wird bei Verwendung des Analogsticks die absolute Orientierung verwendet (wie bei PSX), anstatt der vorab festgelegten Orientierung des Gehwegs auf vorgerenderten Hintergründen zu folgen"
 AlwaysCaptureGamepad = "Gamepad immer erfassen"
 AlwaysCaptureGamepad_Tooltip = "Wenn aktiviert, bleibt das Gamepad aktiv, wenn das Spiel nicht fokussiert ist"
+SwapConfirmCancel = "Bestätigen/Abbrechen-Tasten vertauschen"
+SwapConfirmCancel_Tooltip = "Standardmäßig wird die Taste O zum Bestätigen und die Taste X zum Abbrechen verwendet (japanisches Tastenlayout)"
+DualLanguageMode = "Zweisprachiger Modus"
+DualLanguageModeChoice0 = "Deaktiviert"
+DualLanguageModeChoice1 = "Feststelltaste umschalten"
+DualLanguageModeChoice2 = "Gleichzeitig"
+DualLanguageMode_Tooltip = "Option 1: Sprachenwechsel mit der Feststelltaste&#xA;Option 2: Beide Sprachen werden gleichzeitig angezeigt"
+DualLanguage = "Zweisprachiger"
+DualLanguage_Tooltip = "Auswahl der Zweitsprache"
 />
 
 <SteamOverlay

@@ -282,6 +282,15 @@ UseAbsoluteOrientation = "使用絕對方向"
 UseAbsoluteOrientation_Tooltip = "啟動後，使用模擬搖桿將使用絕對方向（如 PSX），而不是遵循預渲染背景上預定的行走路徑方向"
 AlwaysCaptureGamepad = "始終捕獲遊戲手把"
 AlwaysCaptureGamepad_Tooltip = "啟動後，當遊戲未聚焦時，遊戲手把將保持活動狀態"
+SwapConfirmCancel = "交換確認/取消"
+SwapConfirmCancel_Tooltip = "使用按鈕 O 確認，使用按鈕 X 取消（日文按鈕版面）"
+DualLanguageMode = "雙語模式"
+DualLanguageModeChoice0 = "已停用"
+DualLanguageModeChoice1 = "使用大寫鎖定切換"
+DualLanguageModeChoice2 = "同時"
+DualLanguageMode_Tooltip = "選項 1：使用 CAPS LOCK 鍵切換語言&#xA;選項 2：兩種語言同時顯示"
+DualLanguage = "雙語"
+DualLanguage_Tooltip = "第二語言的選擇"
 />
 
 <SteamOverlay
