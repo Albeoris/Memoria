@@ -1,6 +1,5 @@
 ﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
-using FF9;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Scenes;
@@ -1198,7 +1197,7 @@ namespace Memoria.Assets
                             {
                                 if ((BonePos - boneDialogs[i].transform.localPosition).sqrMagnitude < 1 && boneDialogs[i].Phrase.Length > 8)
                                 {
-                                    String IDBone = boneDialogs[i].Phrase.Remove(0, 17);
+                                    String IDBone = boneDialogs[i].Phrase.Remove(0, 15);
                                     ID += $",{IDBone}[ENDN]";
                                     boneDialogs[i].Phrase = "";
                                     boneDialogs[boneDialogCount].Phrase = "";
