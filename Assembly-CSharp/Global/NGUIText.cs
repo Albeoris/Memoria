@@ -1480,7 +1480,7 @@ public static class NGUIText
     public const Int32 FF9TIM_ID_DMG_CRITICAL_YELLOW = 179;
 
     public const String TextIdentifier = "TXID"; // Not actually text tags but rather can be placed before a string
-    public const String LoadMes = "LOADMES"; // Not actually text tags but rather can be placed at the start of a .mes file
+    public const String LoadMes = "LOADMES"; // Not actually text tags but rather can be placed before a string
 
     public const String StartSentense = "STRT";
     public const String Choose = "CHOO";

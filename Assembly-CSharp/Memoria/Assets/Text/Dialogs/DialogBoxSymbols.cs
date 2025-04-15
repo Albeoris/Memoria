@@ -187,12 +187,11 @@ namespace Memoria.Assets
             Int32 choiceIndex = parser.ParsedTagList.FindIndex(tag => tag.Code == FFIXTextTagCode.Choice);
             if (choiceIndex < 0)
                 return;
-            Int32 choicePos = parser.ParsedTagList[choiceIndex].TextOffset;
+            FFIXTextTag choiceTag = parser.ParsedTagList[choiceIndex];
+            Int32 choicePos = choiceTag.TextOffset;
             FFIXTextTag preChoice = parser.ParsedTagList.FirstOrDefault(tag => tag.Code == FFIXTextTagCode.PreChoose); // can be null
             FFIXTextTag preChoiceMask = parser.ParsedTagList.FirstOrDefault(tag => tag.Code == FFIXTextTagCode.PreChooseMask); // can be null
             FFIXTextTag stopChoice = parser.ParsedTagList.FirstOrDefault(tag => tag.Code == FFIXTextTagCode.ResetTags && tag.TextOffset > choicePos); // can be null
-            if (choicePos > 0 && parser.ParsedText[choicePos - 1] == '\n' && (choiceIndex == 0 || parser.ParsedTagList[choiceIndex - 1].TextOffset < choicePos))
-                parser.ParsedTagList[choiceIndex].TextOffset--; // This prevents [CHOO] to be removed in case the first choice line is disabled
             dialog.StartChoiceRow = parser.ParsedText.Substring(0, choicePos).Count(c => c == '\n');
             if (stopChoice != null)
                 dialog.EndChoiceRow = parser.ParsedText.Substring(0, stopChoice.TextOffset).Count(c => c == '\n');
@@ -203,8 +202,9 @@ namespace Memoria.Assets
             if (dialog.DisableIndexes.Count > 0)
             {
                 List<KeyValuePair<Int32, Int32>> linesToRemove = new List<KeyValuePair<Int32, Int32>>();
-                if (dialog.StartChoiceRow == 0)
-                    choicePos = 0;
+                Boolean removeEndingLine = dialog.StartChoiceRow == 0;
+                if (removeEndingLine)
+                    choicePos = -1;
                 else
                     choicePos = parser.ParsedText.Substring(0, choicePos).LastIndexOf('\n');
                 for (Int32 i = 0; i < dialog.ChoiceNumber; i++)
@@ -213,13 +213,27 @@ namespace Memoria.Assets
                     if (endChoicePos < 0)
                         endChoicePos = parser.ParsedText.Length;
                     if (dialog.DisableIndexes.Contains(i))
-                        linesToRemove.Add(new KeyValuePair<Int32, Int32>(choicePos, endChoicePos - choicePos));
+                    {
+                        if (removeEndingLine && endChoicePos == parser.ParsedText.Length)
+                            linesToRemove.Add(new KeyValuePair<Int32, Int32>(choicePos + 1, endChoicePos - choicePos - 1));
+                        else if (removeEndingLine)
+                            linesToRemove.Add(new KeyValuePair<Int32, Int32>(choicePos + 1, endChoicePos - choicePos));
+                        else
+                            linesToRemove.Add(new KeyValuePair<Int32, Int32>(choicePos, endChoicePos - choicePos));
+                    }
+                    else
+                    {
+                        removeEndingLine = false;
+                    }
                     choicePos = endChoicePos;
                     if (endChoicePos == parser.ParsedText.Length)
                         break;
                 }
                 for (Int32 i = linesToRemove.Count - 1; i >= 0; i--)
                     parser.RemovePart(linesToRemove[i].Key, linesToRemove[i].Value);
+                // Make sure that [CHOO] is kept in case the first choice line is disabled
+                if (!parser.ParsedTagList.Contains(choiceTag))
+                    parser.InsertTag(choiceTag, choicePos);
             }
         }
 
@@ -682,8 +696,7 @@ namespace Memoria.Assets
                         dialog.DefaultChoice = dialog.ActiveIndexes.Min();
                     if (dialog.DisableIndexes.Contains(dialog.CancelChoice) || !dialog.ActiveIndexes.Contains(dialog.CancelChoice))
                         dialog.CancelChoice = dialog.ActiveIndexes.Max();
-                    if (dialog.LineNumberHint > dialog.ChoiceNumber)
-                        dialog.LineNumberHint -= dialog.DisableIndexes.Count;
+                    dialog.LineNumberHint = Math.Max(1, dialog.LineNumberHint - dialog.DisableIndexes.Count);
                 }
                 else
                 {
@@ -875,7 +888,7 @@ namespace Memoria.Assets
                 if (width > 0f)
                     width += 3f;
                 dialog.WidthHint = width;
-                dialog.LineNumberHint = lineNumber;
+                dialog.LineNumberHint = Math.Max(1, lineNumber - dialog.DisableIndexes.Count);
             }
         }
 

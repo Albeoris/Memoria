@@ -343,10 +343,7 @@ namespace Memoria
                         expr.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                         add = NCalcUtility.EvaluateNCalcString(expr.Evaluate());
                     }
-                    if (appender.IsAppend)
-                        str += add;
-                    else
-                        str = add + str;
+                    appender.Apply(ref str, add);
                 }
                 return true;
             }
@@ -382,6 +379,31 @@ namespace Memoria
             public String Text = String.Empty;
             public Boolean AsExpression = false;
             public Boolean IsAppend = true;
+
+            public void Apply(ref String str, String add)
+            {
+                if (IsAppend)
+                {
+                    if (str.Length > 0 && str[str.Length - 1] == ']')
+                    {
+                        Int32 bStart = str.LastIndexOf('[');
+                        if (bStart >= 0)
+                        {
+                            String lastCode = str.Substring(bStart);
+                            if (lastCode == "[ENDN]" || lastCode.StartsWith("[TIME="))
+                            {
+                                str = str.Substring(0, bStart) + add + lastCode;
+                                return;
+                            }
+                        }
+                    }
+                    str += add;
+                }
+                else
+                {
+                    str = add + str;
+                }
+            }
         }
     }
 }

@@ -263,16 +263,15 @@ public class SoundEffectPlayer : SoundPlayer
     }
 
     private SoundDatabase gameSoundDatabase = new SoundDatabase();
-
     private SoundDatabase sceneSoundDatabase = new SoundDatabase();
-
     private SoundDatabase onTheFlySoundDatabase = new SoundDatabase();
 
     private HashSet<Int32> playedEffectSet = new HashSet<Int32>();
-
     private List<Int32> playedEffectRemoveList = new List<Int32>();
 
     private SoundProfile activeSoundEffect;
 
     public override Single Volume => Memoria.Configuration.Audio.SoundVolume / 100f;
+    public SoundDatabase VolatileDatabase => this.onTheFlySoundDatabase;
+    public SoundDatabase PermanentDatabase => this.gameSoundDatabase;
 }

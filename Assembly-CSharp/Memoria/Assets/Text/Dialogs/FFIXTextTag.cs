@@ -95,19 +95,24 @@ namespace Memoria.Assets
                 String[] parameters = null;
                 if (fullTag.Length >= 2)
                 {
+                    FFIXTextTag tag = null;
                     if (fullTag[0] == 'W' && Char.IsNumber(fullTag[1]))
                     {
                         parameters = fullTag.Substring(1).Split('H');
-                        if (parameters.Length != 2)
-                            return null;
-                        return new FFIXTextTag(FFIXTextTagCode.DialogSize, parameters);
+                        if (parameters.Length == 2)
+                            tag = new FFIXTextTag(FFIXTextTagCode.DialogSize, parameters);
                     }
                     if (fullTag[0] == 'y' && (fullTag[1] == '-' || Char.IsNumber(fullTag[1])))
-                        return new FFIXTextTag(FFIXTextTagCode.DialogY, [fullTag.Substring(1)]);
-                    if (fullTag[0] == 'x' && (fullTag[1] == '-' || Char.IsNumber(fullTag[1])))
-                        return new FFIXTextTag(FFIXTextTagCode.DialogX, [fullTag.Substring(1)]);
-                    if (fullTag[0] == 'f' && (fullTag[1] == '-' || Char.IsNumber(fullTag[1])))
-                        return new FFIXTextTag(FFIXTextTagCode.DialogF, [fullTag.Substring(1)]);
+                        tag = new FFIXTextTag(FFIXTextTagCode.DialogY, [fullTag.Substring(1)]);
+                    else if (fullTag[0] == 'x' && (fullTag[1] == '-' || Char.IsNumber(fullTag[1])))
+                        tag = new FFIXTextTag(FFIXTextTagCode.DialogX, [fullTag.Substring(1)]);
+                    else if (fullTag[0] == 'f' && (fullTag[1] == '-' || Char.IsNumber(fullTag[1])))
+                        tag = new FFIXTextTag(FFIXTextTagCode.DialogF, [fullTag.Substring(1)]);
+                    if (tag != null)
+                    {
+                        offset = endOffset + 1;
+                        return tag;
+                    }
                 }
                 Int32 spaceIndex = fullTag.IndexOf(' ');
                 if (spaceIndex >= 0)
@@ -404,6 +409,52 @@ namespace Memoria.Assets
         [
             FFIXTextTagCode.DialogX,
             FFIXTextTagCode.TextFrame
+        ];
+
+        public static readonly HashSet<FFIXTextTagCode> RemoveAtEndOfDeletionTags =
+        [
+            FFIXTextTagCode.Icon,
+            FFIXTextTagCode.IconEx,
+            FFIXTextTagCode.Signal,
+            FFIXTextTagCode.IncreaseSignal,
+            FFIXTextTagCode.IncreaseSignalEx,
+            FFIXTextTagCode.Mobile,
+            FFIXTextTagCode.Sound,
+            FFIXTextTagCode.Sprite,
+            FFIXTextTagCode.DefaultButton,
+            FFIXTextTagCode.CustomButton,
+            FFIXTextTagCode.KeyboardButton,
+            FFIXTextTagCode.JoyStickButton,
+            FFIXTextTagCode.Up,
+            FFIXTextTagCode.Down,
+            FFIXTextTagCode.Left,
+            FFIXTextTagCode.Right,
+            FFIXTextTagCode.Circle,
+            FFIXTextTagCode.Cross,
+            FFIXTextTagCode.Triangle,
+            FFIXTextTagCode.Square,
+            FFIXTextTagCode.R1,
+            FFIXTextTagCode.R2,
+            FFIXTextTagCode.L1,
+            FFIXTextTagCode.L2,
+            FFIXTextTagCode.Select,
+            FFIXTextTagCode.Start,
+            FFIXTextTagCode.Pad,
+            FFIXTextTagCode.UpEx,
+            FFIXTextTagCode.DownEx,
+            FFIXTextTagCode.LeftEx,
+            FFIXTextTagCode.RightEx,
+            FFIXTextTagCode.CircleEx,
+            FFIXTextTagCode.CrossEx,
+            FFIXTextTagCode.TriangleEx,
+            FFIXTextTagCode.SquareEx,
+            FFIXTextTagCode.R1Ex,
+            FFIXTextTagCode.R2Ex,
+            FFIXTextTagCode.L1Ex,
+            FFIXTextTagCode.L2Ex,
+            FFIXTextTagCode.SelectEx,
+            FFIXTextTagCode.StartEx,
+            FFIXTextTagCode.PadEx
         ];
 
         public static readonly TwoWayDictionary<String, CharacterId> CharacterNameTags = new TwoWayDictionary<String, CharacterId>();

@@ -272,10 +272,7 @@ public class Dialog : MonoBehaviour
             this.PageParsers.Clear();
             this.subPage = DialogBoxSymbols.ParseTextSplitTags(value);
             for (Int32 i = 0; i < this.subPage.Count; i++)
-            {
-                this.subPage[i] = this.subPage[i];
                 this.PageParsers.Add(new TextParser(this.phraseLabel, this.subPage[i]));
-            }
             this.PrepareNextPage();
         }
     }
@@ -286,7 +283,6 @@ public class Dialog : MonoBehaviour
         {
             if (this.startChoiceRow < 0)
                 return [this.CurrentParser.ParsedText];
-            List<String> phrases = new List<String>();
             Int32 newLinePos = 0;
             if (this.startChoiceRow > 0)
             {
@@ -294,11 +290,14 @@ public class Dialog : MonoBehaviour
                 for (Int32 i = 1; i < this.startChoiceRow && newLinePos >= 0; i++)
                     newLinePos = this.CurrentParser.ParsedText.IndexOf('\n', newLinePos + 1);
             }
+            if (newLinePos < 0)
+                return [this.CurrentParser.ParsedText];
+            List<String> phrases = new List<String>();
             phrases.Add(this.CurrentParser.ParsedText.Substring(0, newLinePos));
             Int32 nextNewLinePos = this.CurrentParser.ParsedText.IndexOf('\n', newLinePos + 1);
             while (nextNewLinePos >= 0)
             {
-                phrases.Add(this.CurrentParser.ParsedText.Substring(newLinePos + 1, nextNewLinePos));
+                phrases.Add(this.CurrentParser.ParsedText.Substring(newLinePos + 1, nextNewLinePos - (newLinePos + 1)));
                 newLinePos = nextNewLinePos;
                 nextNewLinePos = this.CurrentParser.ParsedText.IndexOf('\n', newLinePos + 1);
             }
@@ -316,8 +315,6 @@ public class Dialog : MonoBehaviour
             {
                 this.caption = value;
                 this.captionLabel.rawText = value;
-                this.captionLabel.ProcessText();
-                this.captionWidth = this.captionLabel.Parser.MaxWidth;
             }
         }
     }
@@ -328,7 +325,15 @@ public class Dialog : MonoBehaviour
         set => this.capType = value;
     }
 
-    public Single CaptionWidth => this.captionWidth;
+    public Single CaptionWidth
+    {
+        get
+        {
+            this.captionLabel.ProcessText();
+            this.captionWidth = this.captionLabel.Parser.MaxWidth;
+            return this.captionWidth;
+        }
+    }
 
     public Single WidthHint { get; set; }
     public Single LineNumberHint { get; set; }
@@ -563,6 +568,8 @@ public class Dialog : MonoBehaviour
         this.dialogAnimator = base.gameObject.GetComponent<DialogAnimator>();
         this.phraseWidgetDefault = this.phraseWidget.pivot;
         this.phraseLabel.DefaultTextColor = FF9TextTool.White;
+        this.captionLabel.preventWrapping = true;
+        this.captionLabel.overflowMethod = UILabel.Overflow.ClampContent;
     }
 
     public void Show()
@@ -704,6 +711,8 @@ public class Dialog : MonoBehaviour
                 this.ChangePhraseSoft(FF9TextTool.BattleText(textId));
             else if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Field || PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.World)
                 this.ChangePhraseSoft(TextPatcher.PatchDialogString(FF9TextTool.FieldText(textId), this));
+            if (this.CapType != CaptionType.None)
+                this.Caption = FF9TextTool.GetDialogCaptionText(this.CapType);
         }
     }
 
@@ -1125,7 +1134,7 @@ public class Dialog : MonoBehaviour
         this.caption = String.Empty;
         this.PageParsers.Clear();
         this.CurrentParser = new TextParser(this.phraseLabel, String.Empty);
-        this.captionLabel.rawText = this.caption;
+        this.captionLabel.rawText = String.Empty;
         this.captionWidth = 0f;
         this.WidthHint = 0f;
         this.LineNumberHint = 1f;
@@ -1522,7 +1531,9 @@ public class Dialog : MonoBehaviour
             if (tag.Code == FFIXTextTagCode.Icon && tag.IntParam(0) >= 27 && tag.IntParam(0) <= 29)
                 allPagesWidth += 8f;
         Single extraPadding = Dialog.DialogPhraseXPadding * 2f / UIManager.ResourceXMultipier;
-        this.Width = Math.Max(allPagesWidth, this.captionWidth + extraPadding) + 1f;
+        // TODO: we might want to extend if the caption is longer than the content, but the caption width isn't computed correctly yet at that point
+        // this.Width = Math.Max(allPagesWidth, this.CaptionWidth + extraPadding) + 1f;
+        this.Width = allPagesWidth + 1f;
         this.LineNumber = Mathf.CeilToInt(Math.Max(this.LineNumberHint, allPagesLineCount)); // LineNumberHint specified by STRT tags is used if it requests more lines than needed
     }
 

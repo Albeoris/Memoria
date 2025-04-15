@@ -224,7 +224,7 @@ namespace Memoria.Assets
                     if (lang == "GR")
                         return SetupDictionary(ref _dictLindblum2GR, 502, [161, 162, 172]);
                     if (lang == "FR")
-                        return SetupDictionary(ref _dictLindblum2FR, 502, [159, 160, 161, 162, 175, 176, 177, 178, 179, 180, 181, 182, 187, 188, 189, 190, 191, 192, 193, 201, 202, 205], null, Dict([[197, 177]]));
+                        return SetupDictionary(ref _dictLindblum2FR, 502, [159, 160, 161, 162, 175, 176, 177, 178, 179, 180, 181, 182, 187, 188, 189, 190, 191, 192, 193, 199, 200, 205], null, Dict([[197, 177]]));
                     if (lang == "ES")
                         return SetupDictionary(ref _dictLindblum2ES, 502, [130, 159, 160, 161, 162, 171, 172, 175, 176, 177, 178, 179, 180, 181, 182, 187, 188, 189, 190, 191, 192, 193, 195, 205], null, Dict([[197, 173]]));
                     break;
