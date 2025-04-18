@@ -540,8 +540,8 @@ public class ff9item
         {
             case "Price": return item.price;
             case "SellingPrice": return item.selling_price;
-            case "Shape": return (Int32)item.shape;
-            case "Color": return (Int32)item.color;
+            case "Shape": return item.shape;
+            case "Color": return item.color;
             case "EquipLevel": return item.eq_lv;
             case "SortOrder": return item.sort;
             case "Type": return (Int32)item.type;

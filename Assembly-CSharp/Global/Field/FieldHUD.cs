@@ -150,13 +150,13 @@ public class FieldHUD : UIScene
                 _currentMinigameHUDGameObject = NGUITools.AddChild(MinigameHUDContainer, _jumpingRopeHUDPrefab);
                 if (_currentMinigameHUD == MinigameHUD.ChocoHot)
                 {
-                    Transform child = _currentMinigameHUDGameObject.transform.GetChild(0);
-                    child.GetComponent<OnScreenButton>().KeyCommand = Control.Special;
-                    UISprite component1 = child.GetComponent<UISprite>();
-                    UIButton component2 = child.GetComponent<UIButton>();
-                    component1.spriteName = "button_chocobo_dig_idle";
-                    component2.normalSprite = component1.spriteName;
-                    component2.pressedSprite = "button_chocobo_dig_act";
+                    Transform digButtonTransf = _currentMinigameHUDGameObject.transform.GetChild(0);
+                    digButtonTransf.GetComponent<OnScreenButton>().KeyCommand = Control.Special;
+                    UISprite idleSprite = digButtonTransf.GetComponent<UISprite>();
+                    UIButton actButton = digButtonTransf.GetComponent<UIButton>();
+                    idleSprite.spriteName = "button_chocobo_dig_idle";
+                    actButton.normalSprite = idleSprite.spriteName;
+                    actButton.pressedSprite = "button_chocobo_dig_act";
                 }
                 break;
             case MinigameHUD.RacingHippaul:
@@ -178,18 +178,18 @@ public class FieldHUD : UIScene
                 _currentMinigameHUDGameObject.GetComponent<UIPanel>().depth = Dialog.DialogAdditionalRaiseDepth + Dialog.DialogMaximumDepth - Convert.ToInt32(Dialog.WindowID.ID0) * 2 + 2;
                 break;
         }
-        if (!(_currentMinigameHUDGameObject != null))
+        if (_currentMinigameHUDGameObject == null)
             return;
-        UIWidget component3 = _currentMinigameHUDGameObject.GetComponent<UIWidget>();
-        Int32 num = Singleton<DialogManager>.Instance.Widget.depth + 1;
-        if (component3 != null)
-            component3.depth = num++;
+        UIWidget hudWidget = _currentMinigameHUDGameObject.GetComponent<UIWidget>();
+        Int32 depth = Singleton<DialogManager>.Instance.Widget.depth + 1;
+        if (hudWidget != null)
+            hudWidget.depth = depth++;
 
-        foreach (Component component in _currentMinigameHUDGameObject.transform)
+        foreach (Component subComponent in _currentMinigameHUDGameObject.transform)
         {
-            UIWidget widget = component.GetComponent<UIWidget>();
-            if (widget != null)
-                widget.depth = num;
+            UIWidget subWidget = subComponent.GetComponent<UIWidget>();
+            if (subWidget != null)
+                subWidget.depth = depth;
         }
     }
 

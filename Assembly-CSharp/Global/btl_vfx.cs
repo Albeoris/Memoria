@@ -67,7 +67,7 @@ public static class btl_vfx
         }
         else if (cmdType == CharacterCommandType.Throw)
         {
-            Byte shape = ff9item._FF9Item_Data[btl_util.GetCommandItem(cmd)].shape;
+            Int32 shape = ff9item._FF9Item_Data[btl_util.GetCommandItem(cmd)].shape;
             if (shape == 1)
                 return SpecialEffect.Throw_Dagger;
             else if (shape == 2)

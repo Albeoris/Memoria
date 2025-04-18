@@ -127,10 +127,6 @@ public class MainMenuUI : UIScene
     {
         if (!isActiveAndEnabled)
             return;
-        if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Field)
-            FF9StateSystem.Common.FF9.mapNameStr = FF9TextTool.LocationName(FF9StateSystem.Common.FF9.fldMapNo);
-        else if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.World)
-            FF9StateSystem.Common.FF9.mapNameStr = FF9TextTool.WorldLocationText(PersistenSingleton<EventEngine>.Instance.GetSysvar(192));
         DisplayGeneralInfo();
         DisplayHelp(currentMenu);
     }
@@ -433,12 +429,12 @@ public class MainMenuUI : UIScene
                 {
                     for (Int32 i = 0; i < 5; i++)
                     {
-                        help += "[ICON=" + (625 + i).ToString() + "] [FEED=1]:[FEED=2]";
+                        help += $"[ICON={625 + i}] [FEED=1]:[FEED=2]";
                         RegularItem equipId = player.equip[i];
                         if (equipId != RegularItem.NoItem)
                         {
                             FF9ITEM_DATA itemData = ff9item._FF9Item_Data[equipId];
-                            String itemIconSpriteName = "item" + itemData.shape.ToString("0#") + "_" + itemData.color.ToString("0#");
+                            String itemIconSpriteName = $"item{itemData.shape:0#}_{itemData.color:0#}";
                             help += $"[SPRT={itemIconSpriteName},64,64]  [FEED=1]{FF9TextTool.ItemName(equipId)}";
                         }
                         if (i < 4)
@@ -497,7 +493,12 @@ public class MainMenuUI : UIScene
     private void DisplayGeneralInfo()
     {
         this.gilLabel.rawText = Localization.GetWithDefault("GilSymbol").Replace("%", FF9StateSystem.Common.FF9.party.gil.ToString());
-        this.locationNameLabel.rawText = FF9StateSystem.Common.FF9.mapNameStr;
+        if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Field)
+            this.locationNameLabel.rawText = FF9TextTool.LocationName(FF9StateSystem.Common.FF9.fldMapNo);
+        else if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.World)
+            this.locationNameLabel.rawText = FF9TextTool.WorldLocationText(PersistenSingleton<EventEngine>.Instance.GetSysvar(192));
+        else
+            this.locationNameLabel.rawText = FF9StateSystem.Common.FF9.mapNameStr;
     }
 
     private void DisplayTime(Boolean ForceUpdateColor)

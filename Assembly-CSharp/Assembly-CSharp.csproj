@@ -332,7 +332,6 @@
     <Compile Include="Global\Button\ButtonGroupState.cs" />
     <Compile Include="Global\Button\ButtonInputHandler.cs" />
     <Compile Include="Global\Byte\ByteEncryption.cs" />
-    <Compile Include="Global\Byte\ByteReader.cs" />
     <Compile Include="Global\CALC_VAR.cs" />
     <Compile Include="Global\CAMERA_NO.cs" />
     <Compile Include="Global\Card\CardArrow.cs" />
@@ -382,6 +381,7 @@
     <Compile Include="Memoria\Assets\Text\Dialogs\UniversalTextId.cs" />
     <Compile Include="Memoria\Assets\Text\Strings\TextDirectionBlock.cs" />
     <Compile Include="Memoria\Assets\Text\Strings\UnicodeBIDI.cs" />
+    <Compile Include="Memoria\Assets\Text\TextCSVReader.cs" />
     <Compile Include="Memoria\Assets\TIMUtils.cs" />
     <Compile Include="Memoria\Assets\Text\Strings\ITextReader.cs" />
     <Compile Include="Memoria\Assets\Text\Strings\ITextWriter.cs" />

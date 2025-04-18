@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,9 +54,43 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static void ImportStrtWithCumulativeModFiles<T>(String assetPath, Dictionary<Int32, String> dict)
         {
+            String pathDir = Path.GetDirectoryName(assetPath) + "/";
             foreach (String textFile in AssetManager.LoadStringMultiple(assetPath).Reverse())
                 if (!String.IsNullOrEmpty(textFile))
-                    FF9TextTool.ExtractSentense(dict, textFile);
+                    FF9TextTool.ExtractSentense(dict, ProcessLoadMessTags(textFile, pathDir));
+        }
+
+        private static String ProcessLoadMessTags(String mesFile, String pathDir)
+        {
+            Int32 loadMessPos = mesFile.IndexOf("[LOADMES=");
+            if (loadMessPos < 0)
+                return mesFile;
+            Int32 tagIntroLength = "[LOADMES=".Length;
+            String result = mesFile.Substring(0, loadMessPos);
+            Int32 tagEnd = 0;
+            while (loadMessPos >= 0)
+            {
+                tagEnd = mesFile.IndexOf(']', loadMessPos + tagIntroLength);
+                if (tagEnd < 0)
+                {
+                    tagEnd = mesFile.Length - 1;
+                    break;
+                }
+                String mesFileName = mesFile.Substring(loadMessPos + tagIntroLength, tagEnd - (loadMessPos + tagIntroLength));
+                String mesKey = mesFileName + (EmbadedTextResources.CurrentSymbol ?? Localization.CurrentSymbol);
+                if (!FF9TextTool.sharedTexts.TryGetValue(mesKey, out String mesContent))
+                {
+                    mesContent = AssetManager.LoadString(pathDir + mesFileName + ".mes");
+                    FF9TextTool.sharedTexts.Add(mesKey, mesContent);
+                }
+                if (!String.IsNullOrEmpty(mesContent))
+                    result += mesContent;
+                loadMessPos = mesFile.IndexOf("[LOADMES=", tagEnd + 1);
+                if (loadMessPos >= 0)
+                    result += mesFile.Substring(tagEnd + 1, loadMessPos - (tagEnd + 1));
+            }
+            result += mesFile.Substring(tagEnd + 1);
+            return result;
         }
 
         public static String[] GetBattleText(Int32 battleZoneId)
@@ -357,7 +392,6 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public IEnumerator UpdateTextLocalization(Action setMenuLanguageCallback)
         {
-            DisplayBatch.locationName.Clear();
             yield return base.StartCoroutine(FF9TextTool.InitializeItemText());
             yield return base.StartCoroutine(FF9TextTool.InitializeImportantItemText());
             yield return base.StartCoroutine(FF9TextTool.InitializeAbilityText());
@@ -373,7 +407,6 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static void UpdateTextLocalizationNow()
         {
-            DisplayBatch.locationName.Clear();
             new ItemImporter().LoadSync();
             new KeyItemImporter().LoadSync();
             new AbilityImporter().LoadSync();
@@ -618,6 +651,8 @@ namespace Assets.Sources.Scripts.UI.Common
         private static Int32 fieldZoneId = -1;
         private static Int32 battleZoneId = -1;
         private static Boolean loadSecondaryZone = false;
+
+        private static Dictionary<String, String> sharedTexts = new Dictionary<String, String>();
 
         public static TextBatch MainBatch = new TextBatch();
         public static TextBatch SecondaryBatch = new TextBatch();

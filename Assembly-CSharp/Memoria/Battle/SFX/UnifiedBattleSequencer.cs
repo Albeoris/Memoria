@@ -95,7 +95,6 @@ public static class UnifiedBattleSequencer
         public Dictionary<String, Int32> extraVar = new Dictionary<String, Int32>();
 
         public static List<SequenceBBGIntensity> bbgIntensity = new List<SequenceBBGIntensity>();
-        public static SoundProfile hackySoundProfile = null; // TODO: register sounds properly for stop/unload
 
         private UInt16 animatedChar;
         private UInt16 movingChar;
@@ -872,38 +871,36 @@ public static class UnifiedBattleSequencer
                         pitch = 1f;
                     switch (soundType)
                     {
-                        case SoundProfileType.Default: // TODO (properly)
-                            try
+                        case SoundProfileType.Default:
+                        {
+                            SoundProfile soundProfile = new SoundProfile
                             {
-                                if (hackySoundProfile != null)
+                                Code = soundAsName,
+                                Name = soundAsName,
+                                SoundIndex = 0,
+                                ResourceID = soundAsName,
+                                SoundProfileType = soundType,
+                                SoundVolume = tmpSingle,
+                                Panning = panning,
+                                Pitch = pitch
+                            };
+                            SoundLoaderProxy.Instance.Load(soundProfile,
+                                (pr, db) =>
                                 {
-                                    SoundPlayer.StaticUnregisterBank(hackySoundProfile);
-                                }
-                                hackySoundProfile = new SoundProfile
-                                {
-                                    Code = soundAsName,
-                                    Name = soundAsName,
-                                    SoundIndex = 0,
-                                    ResourceID = soundAsName,
-                                    SoundProfileType = soundType,
-                                    SoundVolume = tmpSingle,
-                                    Panning = panning,
-                                    Pitch = pitch
-                                };
-                                SoundLoaderProxy.Instance.Load(hackySoundProfile,
-                                    (pr, db) =>
+                                    if (pr == null)
                                     {
-                                        if (pr == null)
-                                            throw new NullReferenceException();
-                                        SoundPlayer.StaticCreateSound(pr);
-                                        SoundPlayer.StaticStartSound(pr, SoundLib.SoundEffectPlayer.Volume);
-                                    }, null);
-                            }
-                            catch (Exception err)
-                            {
-                                Log.Error(err, $"[{nameof(BattleAction)}] Failed to play custom sound {soundAsName}");
-                            }
+                                        Log.Error($"[{nameof(UnifiedBattleSequencer)}] Failed to play custom sound '{soundAsName}'");
+                                        return;
+                                    }
+                                    SoundPlayer.StaticCreateSound(pr);
+                                    SoundPlayer.StaticStartSound(pr, SoundLib.SoundEffectPlayer.Volume);
+                                    if (db.ReadAll().ContainsKey(pr.SoundIndex))
+                                        db.Update(pr);
+                                    else
+                                        db.Create(pr);
+                                }, SoundLib.SoundEffectPlayer.VolatileDatabase);
                             break;
+                        }
                         case SoundProfileType.Music:
                             SoundLib.PlayMusic(tmpInt);
                             break;
@@ -944,8 +941,9 @@ public static class UnifiedBattleSequencer
                     switch (soundType)
                     {
                         case SoundProfileType.Default:
-                            if (hackySoundProfile != null)
-                                SoundPlayer.StaticStopSound(hackySoundProfile);
+                            foreach (SoundProfile pr in SoundLib.SoundEffectPlayer.VolatileDatabase.ReadAll().Values)
+                                if (String.Equals(pr.Name, soundAsName))
+                                    SoundPlayer.StaticStopSound(pr);
                             break;
                         case SoundProfileType.Music:
                             code.TryGetArgInt32("FadeOut", out tmpInt);

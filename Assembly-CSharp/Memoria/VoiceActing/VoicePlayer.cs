@@ -10,10 +10,9 @@ using UnityEngine;
 public class VoicePlayer : SoundPlayer
 {
     private static Dialog specialDialog;
-    private static ushort specialLastPlayed;
-    private static ushort specialCount = 0;
-    private static Dictionary<ushort, ushort> huntTakenCounter;
-    private static Dictionary<ushort, ushort> huntHeldCounter;
+    private static Int32 specialLastPlayed;
+    private static Int32 specialCount = 0;
+
     public VoicePlayer()
     {
         this.playerPitch = 1f;
@@ -38,8 +37,7 @@ public class VoicePlayer : SoundPlayer
         if (!Configuration.VoiceActing.Enabled)
             return false;
 
-        SoundProfile attachedVoice;
-        if (soundOfDialog.TryGetValue(dialog, out attachedVoice))
+        if (soundOfDialog.TryGetValue(dialog, out SoundProfile attachedVoice))
             return ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(attachedVoice.SoundID) == 1;
         return false;
     }
@@ -93,35 +91,15 @@ public class VoicePlayer : SoundPlayer
         if (!Configuration.VoiceActing.Enabled)
             return;
 
-        String specialAppend = GetSpecialAppend(FieldZoneId, messageNumber);
-
         // Compile the list of candidate paths for the file name
-        List<String> candidates = new List<string>();
+        List<String> candidates = new List<String>();
         String lang = Localization.CurrentSymbol;
         String pageIndex = dialog.SubPage.Count > 1 ? $"_{Math.Max(0, dialog.CurrentPage - 1)}" : "";
 
         // Path for the hunt/hot and cold
+        String specialAppend = GetSpecialAppend(FieldZoneId, messageNumber);
         if (specialAppend.Length > 0)
-        {
-            String path = $"Voices/{lang}/{FieldZoneId}/va_{messageNumber}{specialAppend}";
-            if (!AssetManager.HasAssetOnDisc($"Sounds/{path}.akb", true, true) && !AssetManager.HasAssetOnDisc($"Sounds/{path}.ogg", true, false))
-            {
-                // Cycle back to 0
-                if (specialAppend.Contains("_held"))
-                {
-                    huntHeldCounter[Convert.ToUInt16(messageNumber)] = 1;
-                    specialAppend = "_held_0";
-                    path = $"Voices/{lang}/{FieldZoneId}/va_{messageNumber}{specialAppend}";
-                }
-                else if (specialAppend.Contains("_taken"))
-                {
-                    huntTakenCounter[Convert.ToUInt16(messageNumber)] = 1;
-                    specialAppend = "_taken_0";
-                    path = $"Voices/{lang}/{FieldZoneId}/va_{messageNumber}{specialAppend}";
-                }
-            }
-            candidates.Add(path);
-        }
+            candidates.Add($"Voices/{lang}/{FieldZoneId}/va_{messageNumber}{specialAppend}");
 
         // Path using the object id
         if (dialog.Po != null)
@@ -205,6 +183,7 @@ public class VoicePlayer : SoundPlayer
         {
             candidates.Reverse(); // Reverse for display
             SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, text:{msgString}, path(s):'{String.Join("', '", candidates.ToArray())}' (not found)");
+            candidates.Reverse();
             isMsgEmpty = true;
         }
 
@@ -215,19 +194,26 @@ public class VoicePlayer : SoundPlayer
                 if (dialog.CurrentState != Dialog.State.CompleteAnimation || !dialog.IsChoiceReady)
                     return;
 
-                String vaOptionPath = candidates.Last() + "_" + optionIndex;
+                String vaOptionPathMain = candidates.Last() + "_" + optionIndex; // Shorter (eg. "va_{messageNumber}_{optionIndex}")
+                String vaOptionPathSub = candidates.First() + "_" + optionIndex; // Longer  (eg. "va_{messageNumber}_{dialog.Po.uid}_{optionIndex}")
                 Int32 selectedVisibleOption = dialog.ActiveIndexes.Count > 0 ? Math.Max(0, dialog.ActiveIndexes.FindIndex(index => index == optionIndex)) : optionIndex;
                 String optString = selectedVisibleOption + 1 < msgStrings.Length ? msgStrings[selectedVisibleOption + 1].Trim() : "[Invalid option index]";
 
-                if (!AssetManager.HasAssetOnDisc($"Sounds/{vaOptionPath}.akb", true, true) && !AssetManager.HasAssetOnDisc($"Sounds/{vaOptionPath}.ogg", true, false))
+                if (AssetManager.HasAssetOnDisc($"Sounds/{vaOptionPathSub}.akb", true, true) || AssetManager.HasAssetOnDisc($"Sounds/{vaOptionPathSub}.ogg", true, false))
                 {
-                    SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, opt:{optionIndex}, text:{optString} path:{vaOptionPath} (not found)");
+                    FieldZoneReleaseVoice(dialog, true);
+                    SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, opt:{optionIndex}, text:{optString} path:{vaOptionPathSub}");
+                    soundOfDialog[dialog] = CreateLoadThenPlayVoice(vaOptionPathSub.GetHashCode(), vaOptionPathSub, nonDismissAction);
+                }
+                else if (AssetManager.HasAssetOnDisc($"Sounds/{vaOptionPathMain}.akb", true, true) || AssetManager.HasAssetOnDisc($"Sounds/{vaOptionPathMain}.ogg", true, false))
+                {
+                    FieldZoneReleaseVoice(dialog, true);
+                    SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, opt:{optionIndex}, text:{optString} path:{vaOptionPathMain}");
+                    soundOfDialog[dialog] = CreateLoadThenPlayVoice(vaOptionPathMain.GetHashCode(), vaOptionPathMain, nonDismissAction);
                 }
                 else
                 {
-                    FieldZoneReleaseVoice(dialog, true);
-                    SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, opt:{optionIndex}, text:{optString} path:{vaOptionPath}");
-                    soundOfDialog[dialog] = CreateLoadThenPlayVoice(vaOptionPath.GetHashCode(), vaOptionPath, nonDismissAction);
+                    SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, opt:{optionIndex}, text:{optString} path:{vaOptionPathMain} (not found)");
                 }
             };
 
@@ -252,42 +238,33 @@ public class VoicePlayer : SoundPlayer
         // (special) Festival of the Hunt has take the lead and holds the lead
         switch (FieldZoneId)
         {
-            case 22:
-                if (FF9StateSystem.EventState.ScenarioCounter == 3180 && huntTakenCounter != null)
-                {
-                    // clean up memory
-                    huntTakenCounter = null;
-                    huntHeldCounter = null;
-                }
-                break;
             case 276:
             {
                 // Festival of the hunt
                 if (FF9StateSystem.EventState.ScenarioCounter > 3170 && FF9StateSystem.EventState.ScenarioCounter < 3180 && specialMessageIds.TryGetValue(Localization.CurrentSymbol, out Int32[] numbers))
                 {
-                    // Points message for one of the 8 participants?
+                    // Points message for one of the 8 participants
                     if (messageNumber >= numbers[0] && messageNumber <= numbers[0] + 7)
                     {
-                        if (huntTakenCounter == null || huntHeldCounter == null)
-                        {
-                            huntTakenCounter = new Dictionary<ushort, ushort>();
-                            huntHeldCounter = new Dictionary<ushort, ushort>();
-                        }
-
-                        var idShort = Convert.ToUInt16(messageNumber);
-                        if (idShort == specialLastPlayed)
+                        if (messageNumber == specialLastPlayed)
                         {
                             if (specialDialog != null) return "";
-                            if (!huntHeldCounter.ContainsKey(idShort))
-                                huntHeldCounter.Add(idShort, 0);
-                            specialAppend = "_held_" + huntHeldCounter[idShort]++;
+                            // Use Var_GenUInt8_510 ... Var_GenUInt8_517
+                            Int32 varAddr = 510 + messageNumber - numbers[0];
+                            Byte varValue = FF9StateSystem.EventState.gEventGlobal[varAddr];
+                            specialAppend = "_held_" + varValue;
+                            if (varValue < Byte.MaxValue)
+                                FF9StateSystem.EventState.gEventGlobal[varAddr]++;
                         }
                         else
                         {
-                            if (!huntTakenCounter.ContainsKey(idShort))
-                                huntTakenCounter.Add(idShort, 0);
-                            specialAppend = "_taken_" + huntTakenCounter[idShort]++; ;
-                            specialLastPlayed = idShort;
+                            // Use Var_GenUInt8_518 ... Var_GenUInt8_525
+                            Int32 varAddr = 518 + messageNumber - numbers[0];
+                            Byte varValue = FF9StateSystem.EventState.gEventGlobal[varAddr];
+                            specialAppend = "_taken_" + varValue;
+                            if (varValue < Byte.MaxValue)
+                                FF9StateSystem.EventState.gEventGlobal[varAddr]++;
+                            specialLastPlayed = messageNumber;
                         }
                     }
                 }
@@ -301,12 +278,8 @@ public class VoicePlayer : SoundPlayer
                     if (messageNumber >= numbers[1] && messageNumber <= numbers[1] + 3) // Game start
                         specialCount = 0;
                     // count up for each time you find something.
-                    // 
                     if (messageNumber == numbers[2]) // gained points
-                    {
-                        specialAppend = "_" + specialCount;
-                        specialCount += 1;
-                    }
+                        specialAppend = "_" + specialCount++;
                 }
                 break;
             }
@@ -316,21 +289,17 @@ public class VoicePlayer : SoundPlayer
 
     public static void FieldZoneDialogClosed(Dialog dialog)
     {
-        if (huntHeldCounter == null && huntTakenCounter == null)
-        {
+        if (FF9StateSystem.EventState.ScenarioCounter != 3175) // 3175 = Festival of the Hunt
             FieldZoneReleaseVoice(dialog, Configuration.VoiceActing.StopVoiceWhenDialogDismissed && !dialog.IsClosedByScript);
-        }
     }
 
     private static void FieldZoneReleaseVoice(Dialog dialog, Boolean stopSound)
     {
-        SoundProfile attachedVoice;
-        if (soundOfDialog.TryGetValue(dialog, out attachedVoice))
+        if (soundOfDialog.TryGetValue(dialog, out SoundProfile attachedVoice))
         {
             if (stopSound && ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(attachedVoice.SoundID) == 1)
                 SoundLib.VoicePlayer.StopSound(attachedVoice);
-            Thread soundWatcher;
-            if (watcherOfSound.TryGetValue(attachedVoice, out soundWatcher))
+            if (watcherOfSound.TryGetValue(attachedVoice, out Thread soundWatcher))
             {
                 soundWatcher.Interrupt();
                 watcherOfSound.Remove(attachedVoice);

@@ -18,10 +18,10 @@ namespace Assets.Sources.Scripts.UI.Common
             if (itemId != RegularItem.NoItem)
             {
                 FF9ITEM_DATA item = ff9item._FF9Item_Data[itemId];
-                Byte colorIndex = isEnable ? item.color : (Byte)15;
+                Int32 colorIndex = isEnable ? item.color : 15;
                 if (itemIcon != null)
                 {
-                    itemIcon.spriteName = "item" + item.shape.ToString("0#") + "_" + colorIndex.ToString("0#");
+                    itemIcon.spriteName = $"item{item.shape:0#}_{colorIndex:0#}";
                     itemIcon.alpha = isEnable ? 1f : 0.5f;
                 }
                 if (itemName != null)

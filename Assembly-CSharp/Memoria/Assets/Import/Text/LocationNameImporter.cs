@@ -25,6 +25,7 @@ namespace Memoria.Assets
                 Log.Message($"[{TypeName}] Importing from [{importDirectory}]...");
 
                 Dictionary<Int32, String> locationNames = FF9TextTool.DisplayBatch.locationName;
+                locationNames.Clear();
                 foreach (String filePath in Directory.GetFiles(importDirectory, "Names of *", SearchOption.TopDirectoryOnly))
                 {
                     TextResourcePath existingFile = TextResourcePath.ForImportExistingFile(filePath);
@@ -47,11 +48,11 @@ namespace Memoria.Assets
             String text = EmbadedSentenseLoader.LoadText(EmbadedTextResources.LocationNames);
 
             Dictionary<Int32, String> locationNames = FF9TextTool.DisplayBatch.locationName;
-            String[] entries = text.Split('\r');
+            locationNames.Clear();
+            String[] entries = text.Split('\n');
             for (Int32 i = 0; i < entries.Length; i++)
             {
-                String line = entries[i];
-                line = line.Replace("\n", String.Empty);
+                String line = entries[i].Replace("\r", String.Empty);
                 if (!String.IsNullOrEmpty(line))
                 {
                     String[] keyValue = line.Split(':');

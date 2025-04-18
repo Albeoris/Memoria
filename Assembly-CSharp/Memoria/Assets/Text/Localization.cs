@@ -96,20 +96,7 @@ namespace Memoria.Assets
         {
             String value = Provider.Get(key, UseSecondaryLanguage);
             if (!String.Equals(value, key))
-            {
-                if (key == "OrderTargetHelp") // Fix: swap order help bugged because of commas
-                {
-                    if (value == "Elige la misma posición para\ncambiar entre [A85038]vanguardia y\nretaguardia[383838]")
-                        value += ", u otra para\nmover el personaje.";
-                    else if (value == " u otra para\nmover el personaje.")
-                        value = "Choisissez un personnage.\nSi c’est le même, [A85038]il change de\nposition[383838]. Si c’en est un autre,\n[A85038]ils échangent leur place[383838].";
-                    else if (value == "Choisissez un personnage.\nSi c’est le même")
-                        value = "Charakter wählen. Wiederholtes [CBTN=CROSS] \nverschiebt Charakter in [A85038]vordere[383838]\noder [A85038]hintere[383838] Reihe. Durch wählen\neines anderen Charakters werden\ndie [A85038]Positionen[383838] vertauscht.";
-                    else if (value == " [A85038]il change de\nposition[383838]. Si c’en est un autre")
-                        value = "Seleziona stessa posizione\nper cambiare fra [A85038]1a linea/2a\nlinea[383838] oppure un’altra posizione\nper [A85038]spostare il personaggio[383838].";
-                }
                 return value;
-            }
             if (_defaultDictionary.TryGetValue(key, out Dictionary<String, String> defaultValue))
             {
                 if (defaultValue.TryGetValue(CurrentDisplaySymbol, out value))

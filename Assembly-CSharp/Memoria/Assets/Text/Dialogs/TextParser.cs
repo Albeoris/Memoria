@@ -182,11 +182,14 @@ namespace Memoria.Assets
             ParsedText = ParsedText.Remove(pos, length);
             for (Int32 i = 0; i < ParsedTagList.Count; i++)
             {
-                if (ParsedTagList[i].TextOffset > pos) // Tags sometimes apply logically to the left part of the text, such as closing tags ([SPED=-1], [/b], [C8C8C8][HSHD], ...)
+                // NOTE: Tags sometimes apply logically to the left part of the text, such as closing tags ([SPED=-1], [/b], [C8C8C8][HSHD], ...)
+                // ... and sometimes to the right part of the text ([SPED=2], [b], [C8B040][HSHD], ...)
+                // TODO: Take opening tags into account and don't remove them when "ParsedTagList[i].TextOffset == pos + length"
+                if (ParsedTagList[i].TextOffset > pos)
                 {
-                    if (ParsedTagList[i].TextOffset < pos + length) // ... and sometimes to the right part of the text ([SPED=2], [b], [C8B040][HSHD], ...)
+                    if (ParsedTagList[i].TextOffset <= pos + length)
                     {
-                        ParsedTagList.RemoveAt(i); // So only tags that are strictly inside the removed part are filtered out
+                        ParsedTagList.RemoveAt(i);
                         i--;
                     }
                     else

@@ -535,14 +535,18 @@ public partial class EventEngine
                 //}
 
                 Int32 windowID = this.getv1(); // arg1: window ID determined at its creation
-                if (Configuration.VoiceActing.Enabled && VoicePlayer.HasDialogVoice(Singleton<DialogManager>.Instance.GetDialogByWindowID(windowID)))
+                if (Configuration.VoiceActing.Enabled)
                 {
-                    // Timed windows closed by script (usually have a [TIME=-1] tag in the text and the following kind of script:
-                    //   WindowAsync( winId, uiFlags, textId )
-                    //   Wait( 30 )
-                    //   CloseWindow( winId )
-                    this.stay();
-                    return 1;
+                    Dialog dialog = Singleton<DialogManager>.Instance.GetDialogByWindowID(windowID);
+                    if (dialog != null && VoicePlayer.HasDialogVoice(dialog))
+                    {
+                        // Timed windows closed by script (usually have a [TIME=-1] tag in the text and the following kind of script:
+                        //   WindowAsync( winId, uiFlags, textId )
+                        //   Wait( 30 )
+                        //   CloseWindow( winId )
+                        this.stay();
+                        return 1;
+                    }
                 }
                 ETb.DisposWindowByID(windowID, true);
                 return 0;
@@ -1274,7 +1278,7 @@ public partial class EventEngine
             {
                 if (eventCodeBinary == EBin.event_code_binary.DANIM)
                     actor = (Actor)this.GetObj1(); // arg1: object's entry
-                Int32 anim = this.getv2(); // arg1/2: animation ID
+                Int32 anim = (UInt16)this.getv2(); // arg1/2: animation ID
 
                 if (mapNo == 103 && po.model == 5492) // Jump rope from little girls at Alexandria (before Alexandria destruction)
                 {
@@ -1347,14 +1351,14 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.WAITANIM: // 0x41, "WaitAnimation", "Wait until the current object's animation has ended."
             {
-                if (((Int32)actor.animFlag & EventEngine.afExec) == 0)
+                if ((actor.animFlag & EventEngine.afExec) == 0)
                     return 0;
                 this.stay();
                 return 1;
             }
             case EBin.event_code_binary.DWAITANIM: // 0xBE, "WaitAnimationEx", "Wait until the object's animation has ended"
             {
-                if (((Int32)((Actor)this.GetObj1()).animFlag & EventEngine.afExec) == 0) // arg1: object's entry
+                if ((((Actor)this.GetObj1()).animFlag & EventEngine.afExec) == 0) // arg1: object's entry
                     return 0;
                 this.stay();
                 return 1;
@@ -1362,9 +1366,9 @@ public partial class EventEngine
             case EBin.event_code_binary.ENDANIM: // 0x42, "StopAnimation", "Stop the character's animation."
             {
                 this.AnimStop(actor);
-                if (mapNo == 1601 && scCounter == 6600 && po.sid == 17) // Zidane shadow on when standing up
+                if (mapNo == 1601 && scCounter == 6600 && po.sid == 17) // Zidane shadow on when standing up, Madain Sari, conversation with Eiko
                 {
-                    ff9shadow.FF9ShadowOnField((Int32)po.uid);
+                    ff9shadow.FF9ShadowOnField(po.uid);
                     po.isShadowOff = false;
                 }
                 return 0;
