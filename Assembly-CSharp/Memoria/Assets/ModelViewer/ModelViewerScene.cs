@@ -347,9 +347,23 @@ namespace Memoria.Assets
                         InsertText = false;
                         if (CustomTexture != null)
                         {
-                            if (ChangeWeaponTexture)
+                            if (ChangeWeaponTexture && currentWeaponModel != null)
                             {
                                 MeshRenderer[] componentsInChildren = currentWeaponModel.GetComponentsInChildren<MeshRenderer>();
+                                int weaponMeshCount = componentsInChildren.Length;
+                                Renderer[] weaponRenderer = new Renderer[weaponMeshCount];
+                                for (Int32 i = 0; i < weaponMeshCount; i++)
+                                {
+                                    weaponRenderer[i] = componentsInChildren[i].GetComponent<Renderer>();
+                                    if (CustomTexture.Length > i && !String.IsNullOrEmpty(CustomTexture[i]))
+                                    {
+                                        weaponRenderer[i].material.mainTexture = AssetManager.Load<Texture2D>(CustomTexture[i], false);
+                                    }
+                                }
+                            }
+                            else if (geoList[currentGeoIndex].Name.StartsWith("GEO_WEP"))
+                            {
+                                MeshRenderer[] componentsInChildren = currentModel.GetComponentsInChildren<MeshRenderer>();
                                 int weaponMeshCount = componentsInChildren.Length;
                                 Renderer[] weaponRenderer = new Renderer[weaponMeshCount];
                                 for (Int32 i = 0; i < weaponMeshCount; i++)
@@ -1018,7 +1032,7 @@ namespace Memoria.Assets
                         ChangeWeaponModel(nextIndex);
                         currentWeaponModel.transform.localScale = weaponmodel_scaleFactor;
                     }
-                    else // (ScalePosition)
+                    else if (!ctrl && !shift) // (ScalePosition)
                     {
                         Single scrollSpeed = 0.1f; // was 0.05 before
                         Single scrollMin = 0.02f;
