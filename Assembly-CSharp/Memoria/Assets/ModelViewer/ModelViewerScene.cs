@@ -721,7 +721,7 @@ namespace Memoria.Assets
                         }
                     }
                 }
-                if (Input.GetKey(KeyCode.KeypadPlus) && !ctrl && !shift) // Zoom in ; Increase Size
+                if (Input.GetKey(KeyCode.KeypadPlus)) // Zoom in ; Increase Size
                 {
                     if (partcontrolled == PartControlled.MODEL && scaleFactor.x < 2.1f)
                     {
@@ -1032,7 +1032,7 @@ namespace Memoria.Assets
                         ChangeWeaponModel(nextIndex);
                         currentWeaponModel.transform.localScale = weaponmodel_scaleFactor;
                     }
-                    else // (ScalePosition)
+                    else if (!ctrl && !shift) // (ScalePosition)
                     {
                         Single scrollSpeed = 0.1f; // was 0.05 before
                         Single scrollMin = 0.02f;
