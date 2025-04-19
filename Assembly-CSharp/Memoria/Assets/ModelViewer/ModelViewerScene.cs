@@ -2310,9 +2310,14 @@ namespace Memoria.Assets
                     case ParamIni.WEAPON_SCALE:
                         if (Line.Contains("Weapon_Scale"))
                         {
-                            Line = Line.Substring(Line.IndexOf('=') + 2);
-                            Line = Line.Substring(1);
-                            Line = Line.Remove(Line.Length - 1);
+                            if (Line.Length >= 30)
+                            {
+                                Line = Line.Substring(Line.IndexOf('=') + 2);
+                                Line = Line.Substring(1);
+                                Line = Line.Remove(Line.Length - 1);
+                            }
+                            else
+                                Line = "(1.0, 1.0, 1.0)";
                             return;
                         }
                         break;
