@@ -732,13 +732,13 @@ namespace Memoria.Assets
                     else if (partcontrolled == PartControlled.WEAPON)
                     {
                         if (ctrl)
-                            weaponmodel_scaleFactor += new Vector3(0.1f, 0.0f, 0.0f);
+                            weaponmodel_scaleFactor += new Vector3(0.01f, 0.0f, 0.0f);
                         else if (alt)
-                            weaponmodel_scaleFactor += new Vector3(0.0f, 0.1f, 0.0f);
+                            weaponmodel_scaleFactor += new Vector3(0.0f, 0.01f, 0.0f);
                         else if (shift)
-                            weaponmodel_scaleFactor += new Vector3(0.0f, 0.0f, 0.1f);
+                            weaponmodel_scaleFactor += new Vector3(0.0f, 0.0f, 0.01f);
                         else
-                            weaponmodel_scaleFactor += new Vector3(0.1f, 0.1f, 0.1f);
+                            weaponmodel_scaleFactor += new Vector3(0.01f, 0.01f, 0.01f);
 
                         currentWeaponModel.transform.localScale = weaponmodel_scaleFactor;
                     }
@@ -761,13 +761,13 @@ namespace Memoria.Assets
                     else if (partcontrolled == PartControlled.WEAPON)
                     {
                         if (ctrl)
-                            weaponmodel_scaleFactor -= new Vector3(0.1f, 0.0f, 0.0f);
+                            weaponmodel_scaleFactor -= new Vector3(0.01f, 0.0f, 0.0f);
                         else if (alt)
-                            weaponmodel_scaleFactor -= new Vector3(0.0f, 0.1f, 0.0f);
+                            weaponmodel_scaleFactor -= new Vector3(0.0f, 0.01f, 0.0f);
                         else if (shift)
-                            weaponmodel_scaleFactor -= new Vector3(0.0f, 0.0f, 0.1f);
+                            weaponmodel_scaleFactor -= new Vector3(0.0f, 0.0f, 0.01f);
                         else
-                            weaponmodel_scaleFactor -= new Vector3(0.1f, 0.1f, 0.1f);
+                            weaponmodel_scaleFactor -= new Vector3(0.01f, 0.01f, 0.01f);
                         currentWeaponModel.transform.localScale = weaponmodel_scaleFactor;
                     }
                     else if (partcontrolled == PartControlled.BONE)
