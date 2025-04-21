@@ -756,7 +756,15 @@ namespace Memoria.Assets
                         if (!OffsetBonesScale.ContainsKey(currentBoneIndex))
                             OffsetBonesScale.Add(currentBoneIndex, Vector3.zero);
 
-                        BoneSelected.localScale += new Vector3(0.01f, 0.01f, 0.01f);
+                        if (ctrl)
+                            BoneSelected.localScale += new Vector3(0.01f, 0.0f, 0.0f);
+                        else if (alt)
+                            BoneSelected.localScale += new Vector3(0.0f, 0.01f, 0.0f);
+                        else if (shift)
+                            BoneSelected.localScale += new Vector3(0.0f, 0.0f, 0.01f);
+                        else
+                            BoneSelected.localScale += new Vector3(0.01f, 0.01f, 0.01f);
+
                         OffsetBonesScale[currentBoneIndex] = BoneSelected.localScale;
                     }
                 }
@@ -784,7 +792,15 @@ namespace Memoria.Assets
                         if (!OffsetBonesScale.ContainsKey(currentBoneIndex))
                             OffsetBonesScale.Add(currentBoneIndex, Vector3.zero);
 
-                        BoneSelected.localScale -= new Vector3(0.01f, 0.01f, 0.01f);
+                        if (ctrl)
+                            BoneSelected.localScale -= new Vector3(0.01f, 0.0f, 0.0f);
+                        else if (alt)
+                            BoneSelected.localScale -= new Vector3(0.0f, 0.01f, 0.0f);
+                        else if (shift)
+                            BoneSelected.localScale -= new Vector3(0.0f, 0.0f, 0.01f);
+                        else
+                            BoneSelected.localScale -= new Vector3(0.01f, 0.01f, 0.01f);
+
                         OffsetBonesScale[currentBoneIndex] = BoneSelected.localScale;
                     }
                 }
@@ -1376,8 +1392,8 @@ namespace Memoria.Assets
                     extraInfo += $"Pos: [x]{BoneSelected.localPosition.x.ToString("F5")} [y]{BoneSelected.localPosition.y.ToString("F5")} [z]{BoneSelected.localPosition.z.ToString("F5")}";
                     extraInfo += $" Rot(Quat): [x]{Math.Round(BoneSelected.localRotation.x, 2)} [y]{Math.Round(BoneSelected.localRotation.y, 2)} [z]{Math.Round(BoneSelected.localRotation.z, 2)} [w]{Math.Round(BoneSelected.localRotation.w, 2)}";
                     extraInfo += $" Rot(Eul): {Math.Round(BoneSelected.localRotation.eulerAngles.x, 0)}/{Math.Round(BoneSelected.localRotation.eulerAngles.y, 0)}/{Math.Round(BoneSelected.localRotation.eulerAngles.z, 0)}";
-                    extraInfo += $" Scale: {Math.Round(BoneSelected.localScale.x, 2)}";
-                    extraInfoLabel.color = new Color(0.85865f, 0.00327f, 0.48478f, 1f);
+                    extraInfo += $" Scale: {Math.Round(BoneSelected.localScale.x, 2)}/{Math.Round(BoneSelected.localScale.y, 2)}/{Math.Round(BoneSelected.localScale.z, 2)}";
+                    extraInfoLabel.color = new Color(0.85865f, 0.00327f, 0.48478f, 1f); // Deep Red
                 }
                 extraInfoLabel.rawText = extraInfo;
                 extraInfoLabel.fontSize = 16;
