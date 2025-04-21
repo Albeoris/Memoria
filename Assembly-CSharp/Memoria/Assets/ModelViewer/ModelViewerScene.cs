@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using static ff9;
 
 namespace Memoria.Assets
 {
@@ -135,7 +136,7 @@ namespace Memoria.Assets
             extraInfoPanel = new ControlPanel(PersistenSingleton<UIManager>.Instance.transform, "");
             extraInfoLabel = extraInfoPanel.AddSimpleLabel("", NGUIText.Alignment.Center, 1);
             extraInfoPanel.EndInitialization(UIWidget.Pivot.BottomRight);
-            extraInfoPanel.BasePanel.SetRect(-50f, 0f, 1250f, 580f);
+            extraInfoPanel.BasePanel.SetRect(-50f, 0f, 1500f, 580f);
 
             InsertTextGUI = UnityEngine.Object.Instantiate(PersistenSingleton<UIManager>.Instance.NameSettingScene.NameInputField.gameObject);
             input = InsertTextGUI.GetComponent<UIInput>();
@@ -341,7 +342,15 @@ namespace Memoria.Assets
 
                     if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
                     {
-                        string[] CustomTexture = input.value.Split(';');
+                        string[] CustomTexture = null;
+                        if (input.value.Contains(".png"))
+                        {
+                            input.value = input.value.Replace(".png", ".png;");
+                            CustomTexture = input.value.Remove(input.value.Length - 1).Split(';');
+                        }
+                        else
+                            CustomTexture = input.value.Split(';');
+
                         InsertTextGUI.SetActive(false);
                         backgroundGo.SetActive(false);
                         InsertText = false;
@@ -785,12 +794,14 @@ namespace Memoria.Assets
                     string ModelTargetPos = currentModel.transform.localPosition.ToString("F9");
                     string ModelTargetRot = currentModel.transform.localRotation.eulerAngles.ToString("F9");
                     string WeaponTargetPos = "";
-                    string WeaponTargetRot = "";
+                    string WeaponTargetRotQuaternion = "";
+                    string WeaponTargetRotEuler = "";
                     string WeaponTargetScale = "";
                     if (currentWeaponModel != null)
                     {
                         WeaponTargetPos = currentWeaponModel.transform.localPosition.ToString("F9");
-                        WeaponTargetRot = currentWeaponModel.transform.localRotation.eulerAngles.ToString("F9");
+                        WeaponTargetRotQuaternion = currentWeaponModel.transform.localRotation.ToString("F9");
+                        WeaponTargetRotEuler = currentWeaponModel.transform.localRotation.eulerAngles.ToString("F9");
                         WeaponTargetScale = currentWeaponModel.transform.localScale.ToString("F9");
                     }
                     string BoneSelectedPos = BoneSelected.localPosition.ToString("F9");
@@ -800,9 +811,10 @@ namespace Memoria.Assets
                     Log.Message("####### KEYPAD 5 PRESSED ! #######");
                     Log.Message("[MODEL] => " + geoList[currentGeoIndex].Name + ".offset = " + ModelTargetPos.Remove(ModelTargetPos.Length - 1) + ", " + ModelTargetRot.Remove(0, 1));
                     if (currentWeaponModel != null)
-                        Log.Message("[WEAPON] => " + weapongeoList[currentWeaponGeoIndex].Name + ".offset = " + WeaponTargetScale.Trim(['(', ')']) + ";" + WeaponTargetPos.Trim(['(', ')']) + ";" + WeaponTargetRot.Trim(['(', ')']));
+                        Log.Message("[WEAPON] => " + weapongeoList[currentWeaponGeoIndex].Name + ".offset = " + WeaponTargetScale.Trim(['(', ')']) + ";" + WeaponTargetPos.Trim(['(', ')']) + ";" + WeaponTargetRotEuler.Trim(['(', ')']));
                         Log.Message("       └> => " + weapongeoList[currentWeaponGeoIndex].Name + ".pos = " + WeaponTargetPos);
-                        Log.Message("       └> => " + weapongeoList[currentWeaponGeoIndex].Name + ".rot = " + WeaponTargetRot);
+                        Log.Message("       └> => " + weapongeoList[currentWeaponGeoIndex].Name + ".rot(Quaternion) = " + WeaponTargetRotQuaternion);
+                        Log.Message("       └> => " + weapongeoList[currentWeaponGeoIndex].Name + ".rot(Euler) = " + WeaponTargetRotEuler);
                         Log.Message("       └> => " + weapongeoList[currentWeaponGeoIndex].Name + ".scale = " + WeaponTargetScale);
                     if (OffsetBonesPos.Count > 0 || OffsetBonesRot.Count > 0 || OffsetBonesScale.Count > 0)
                     {
@@ -865,7 +877,7 @@ namespace Memoria.Assets
                 }
                 if (Input.GetKeyDown(KeyCode.R)) // Reset position/rotation
                 {
-                    if (shift) // Reset Model
+                    if (shift) // Reset Model + Weapon + modified Bone(s)
                     {
                         ChangeModel(currentGeoIndex);
                     }
@@ -1576,6 +1588,9 @@ namespace Memoria.Assets
             OffsetBonesRot.Clear();
             OffsetBonesScale.Clear();
             currentBoneIndex = 0;
+            weaponmodel_Position = Vector3.zero;
+            weaponmodel_Rotation = Quaternion.identity;
+            weaponmodel_scaleFactor = Vector3.one;
             if (currentModel == null)
             {
                 currentAnimIndex = 0;
@@ -2114,13 +2129,15 @@ namespace Memoria.Assets
                 ReadModelViewerConfigFile(ParamIni.WEAPON_ROTATION, out string WeaponModelRotation);
                 if (!String.IsNullOrEmpty(WeaponModelRotation))
                 {
-                    string[] VectorWeaponModelRotation = WeaponModelRotation.Split(',');
-                    if (VectorWeaponModelRotation.Length >= 3)
+                    string[] VectorWeaponModelRotationEuler = WeaponModelRotation.Split(',');
+                    Vector3 weaponmodel_RotationEuler = Vector3.zero; // [DV] I don't know why but using Quaternion give not the exact angle when loading... ? Works fine with Euler.
+                    if (VectorWeaponModelRotationEuler.Length >= 3)
                     {
-                        Single.TryParse(VectorWeaponModelRotation[0], out weaponmodel_Rotation.x);
-                        Single.TryParse(VectorWeaponModelRotation[1], out weaponmodel_Rotation.y);
-                        Single.TryParse(VectorWeaponModelRotation[2], out weaponmodel_Rotation.z);
+                        Single.TryParse(VectorWeaponModelRotationEuler[0], out weaponmodel_RotationEuler.x);
+                        Single.TryParse(VectorWeaponModelRotationEuler[1], out weaponmodel_RotationEuler.y);
+                        Single.TryParse(VectorWeaponModelRotationEuler[2], out weaponmodel_RotationEuler.z);
                     }
+                    weaponmodel_Rotation.eulerAngles = weaponmodel_RotationEuler;
                 }
                 ReadModelViewerConfigFile(ParamIni.WEAPON_SCALE, out string WeaponModelScale);
                 if (!String.IsNullOrEmpty(WeaponModelScale))
@@ -2170,6 +2187,7 @@ namespace Memoria.Assets
 
             String config = "";
             config += $"[ModelViewer]\n";
+            config += $";=== MODEL ===;\n";
             config += $"Model_Index = {currentGeoIndex}\n";
             config += $"Model_Animation = {currentAnimIndex}\n";
             config += $"Model_Position = {model_Position}\n";
@@ -2185,7 +2203,8 @@ namespace Memoria.Assets
                 config += $"Weapon_GeoIndex = {currentWeaponGeoIndex}\n";
                 config += $"Weapon_BoneIndex = {currentBoneIndex}\n";
                 config += $"Weapon_Position = {weaponmodel_Position}\n";
-                config += $"Weapon_Rotation = {weaponmodel_Rotation}\n";
+                config += $"Weapon_Rotation_Quaternion = {weaponmodel_Rotation}\n";
+                config += $"Weapon_Rotation_Euler = {weaponmodel_Rotation.eulerAngles}\n";
                 config += $"Weapon_Scale = {weaponmodel_scaleFactor}\n";
             }
 
@@ -2227,9 +2246,14 @@ namespace Memoria.Assets
                     case ParamIni.MODEL_POSITION:
                         if (Line.Contains("Model_Position"))
                         {
-                            Line = Line.Substring(Line.IndexOf('=') + 2);
-                            Line = Line.Substring(1);
-                            Line = Line.Remove(Line.Length - 1);
+                            if (new Regex(".*\\(-?\\d{1,}.\\d{1,}, -?\\d{1,}.\\d{1,}, -?\\d{1,}.\\d{1,}\\)").Match(Line).Success)
+                            {
+                                Line = Line.Substring(Line.IndexOf('=') + 2);
+                                Line = Line.Substring(1);
+                                Line = Line.Remove(Line.Length - 1);
+                            }
+                            else
+                                Line = "(0.0, 0.0, 0.0)";
                             return;
                         }
                         break;
@@ -2292,25 +2316,35 @@ namespace Memoria.Assets
                     case ParamIni.WEAPON_POSITION:
                         if (Line.Contains("Weapon_Position"))
                         {
-                            Line = Line.Substring(Line.IndexOf('=') + 2);
-                            Line = Line.Substring(1);
-                            Line = Line.Remove(Line.Length - 1);
+                            if (new Regex(".*\\(-?\\d{1,}.\\d{1,}, -?\\d{1,}.\\d{1,}, -?\\d{1,}.\\d{1,}\\)").Match(Line).Success)
+                            {
+                                Line = Line.Substring(Line.IndexOf('=') + 2);
+                                Line = Line.Substring(1);
+                                Line = Line.Remove(Line.Length - 1);
+                            }
+                            else
+                                Line = "(0.0, 0.0, 0.0)";
                             return;
                         }
                         break;
                     case ParamIni.WEAPON_ROTATION:
-                        if (Line.Contains("Weapon_Rotation"))
+                        if (Line.Contains("Weapon_Rotation_Euler"))
                         {
-                            Line = Line.Substring(Line.IndexOf('=') + 2);
-                            Line = Line.Substring(1);
-                            Line = Line.Remove(Line.Length - 1);
+                            if (new Regex(".*\\(-?\\d{1,}.\\d{1,}, -?\\d{1,}.\\d{1,}, -?\\d{1,}.\\d{1,}\\)").Match(Line).Success)
+                            {
+                                Line = Line.Substring(Line.IndexOf('=') + 2);
+                                Line = Line.Substring(1);
+                                Line = Line.Remove(Line.Length - 1);
+                            }
+                            else
+                                Line = "(0.0, 0.0, 0.0, 1.0)";
                             return;
                         }
                         break;
                     case ParamIni.WEAPON_SCALE:
                         if (Line.Contains("Weapon_Scale"))
                         {
-                            if (Line.Length >= 30)
+                            if (new Regex(".*\\(-?\\d{1,}.\\d{1,}, -?\\d{1,}.\\d{1,}, -?\\d{1,}.\\d{1,}\\)").Match(Line).Success)
                             {
                                 Line = Line.Substring(Line.IndexOf('=') + 2);
                                 Line = Line.Substring(1);
