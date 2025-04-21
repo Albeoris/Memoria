@@ -364,7 +364,7 @@ namespace Memoria.Data
                         durationFactor[kvp.Key] = NCalcUtility.ConvertNCalcResult(e.Evaluate(), 1f);
                     }
                     if (StatusEffect[i].InitialATB >= 0)
-                        atb = (Int16)Math.Max(unit.MaximumAtb - 1, unit.MaximumAtb * StatusEffect[i].InitialATB / 100);
+                        atb = (Int16)Math.Min(unit.MaximumAtb - 1, unit.MaximumAtb * StatusEffect[i].InitialATB / 100);
                 }
             }
             catch (Exception err)
