@@ -4,6 +4,7 @@ using Memoria;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Scenes;
+using Memoria.Database;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -453,7 +454,7 @@ public partial class BattleHUD : UIScene
         else if ((_subMenuType == SubMenuType.Item || _subMenuType == SubMenuType.Throw) && ff9item.FF9Item_GetCount(_itemIdList[_currentSubMenuIndex]) == 0)
         {
             FF9Sfx.FF9SFX_Play(101);
-            DisplayItem(_subMenuType == SubMenuType.Throw);
+            DisplayItem(CharacterCommands.Commands[_currentCommandId]);
             SetTargetVisibility(false);
             ClearModelPointer();
             SetItemPanelVisibility(true, true);

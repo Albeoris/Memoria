@@ -47,7 +47,7 @@ namespace Memoria.Assets
                     if (continuedEntry == null)
                         return null;
                     continuedEntry = continuedEntry.Replace("\\n", "\n");
-                    fullField = fullField + "\n" + continuedEntry;
+                    fullField += "\n" + continuedEntry;
                 }
                 else
                 {

@@ -200,7 +200,7 @@ public partial class BattleHUD : UIScene
                 battleRow = btl.bi.row;
                 p.info.row = battleRow;
             }
-            battlePermanentStatus = 0;
+            playerPermanentStatus = 0;
         }
 
         public PLAYER original;
@@ -211,6 +211,6 @@ public partial class BattleHUD : UIScene
         public CharacterSerialNumber serialNo;
         public Byte row;
         public Byte battleRow;
-        public BattleStatus battlePermanentStatus;
+        public BattleStatus playerPermanentStatus;
     }
 }

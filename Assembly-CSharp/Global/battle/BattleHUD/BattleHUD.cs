@@ -665,13 +665,14 @@ public partial class BattleHUD : UIScene
             return;
 
         _needItemUpdate = false;
-        DisplayItem(CharacterCommands.Commands[_currentCommandId].Type == CharacterCommandType.Throw);
+        DisplayItem(CharacterCommands.Commands[_currentCommandId]);
     }
 
-    private void DisplayItem(Boolean isThrow)
+    private void DisplayItem(CharacterCommand ff9Command)
     {
         _itemIdList.Clear();
         List<ListDataTypeBase> inDataList = new List<ListDataTypeBase>();
+        Boolean isThrow = ff9Command.Type == CharacterCommandType.Throw;
         foreach (FF9ITEM ff9Item in FF9StateSystem.Common.FF9.item)
         {
             if (ff9Item.count <= 0)
@@ -682,15 +683,29 @@ public partial class BattleHUD : UIScene
                 canBeUsed = ff9item.CanThrowItem(itemData);
             else
                 canBeUsed = ff9item.HasItemEffect(ff9Item.id) && (itemData.type & ItemType.Item) != 0;
-            if (canBeUsed && CurrentPlayerIndex >= 0 && !String.IsNullOrEmpty(itemData.use_condition))
+            if (canBeUsed)
             {
-                Expression c = new Expression(itemData.use_condition);
-                NCalcUtility.InitializeExpressionUnit(ref c, FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex));
-                c.Parameters["CommandId"] = (Int32)_currentCommandId;
-                c.Parameters["CommandMenu"] = (Int32)_currentCommandIndex;
-                c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-                canBeUsed = NCalcUtility.EvaluateNCalcCondition(c.Evaluate());
+                if (CurrentPlayerIndex >= 0 && !String.IsNullOrEmpty(itemData.use_condition))
+                {
+                    if (ff9Command.OnlySpecificItem && !itemData.use_condition.Contains("CommandId"))
+                    {
+                        canBeUsed = false;
+                    }
+                    else
+                    {
+                        Expression c = new Expression(itemData.use_condition);
+                        NCalcUtility.InitializeExpressionUnit(ref c, FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex));
+                        c.Parameters["CommandId"] = (Int32)_currentCommandId;
+                        c.Parameters["CommandMenu"] = (Int32)_currentCommandIndex;
+                        c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                        c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                        canBeUsed = NCalcUtility.EvaluateNCalcCondition(c.Evaluate());
+                    }
+                }
+                else if (ff9Command.OnlySpecificItem)
+                {
+                    canBeUsed = false;
+                }
             }
             if (canBeUsed)
             {
@@ -1008,7 +1023,7 @@ public partial class BattleHUD : UIScene
                 GameObject labelObj = enemyHUD.GameObject;
                 UILabel nameLabel = enemyHUD.Name.Label;
                 labelObj.SetActive(true);
-                nameLabel.rawText = GetEnemyDisplayName(unit.Enemy);
+                nameLabel.rawText = GetEnemyDisplayName(unit);
                 if (_currentEnemyDieState[enemyIndex])
                 {
                     if (_cursorType == CursorGroup.Individual)
@@ -1072,14 +1087,11 @@ public partial class BattleHUD : UIScene
             DisplayTargetPointer();
     }
 
-    private String GetEnemyDisplayName(BattleEnemy enemy)
+    private String GetEnemyDisplayName(BattleUnit enemy)
     {
-        if (!Localization.UseSecondaryLanguage)
+        if (!Localization.UseSecondaryLanguage || enemy.Data.typeNo == Byte.MaxValue)
             return enemy.Name;
-        for (Int32 i = 0; i < FF9StateSystem.Battle.FF9Battle.enemy.Length; i++)
-            if (FF9StateSystem.Battle.FF9Battle.enemy[i] == enemy.Data)
-                return FF9TextTool.BattleText(i);
-        return enemy.Name;
+        return FF9TextTool.BattleText(enemy.Data.typeNo);
     }
 
     private String GetEnemyCommandDisplayName(AA_DATA enemyAbility)
@@ -1184,12 +1196,13 @@ public partial class BattleHUD : UIScene
 
         ++_doubleCastCount;
         _firstCommand = ProcessCommand(battleIndex, cursorGroup);
-        CharacterCommandType commandType = CharacterCommands.Commands[_firstCommand.CommandId].Type;
+        CharacterCommand ff9Command = CharacterCommands.Commands[_firstCommand.CommandId];
+        CharacterCommandType commandType = ff9Command.Type;
 
         if (commandType == CharacterCommandType.Item || commandType == CharacterCommandType.Throw)
         {
             _subMenuType = commandType == CharacterCommandType.Item ? SubMenuType.Item : SubMenuType.Throw;
-            DisplayItem(commandType == CharacterCommandType.Throw);
+            DisplayItem(ff9Command);
             SetTargetVisibility(false);
             SetItemPanelVisibility(true, true);
         }
@@ -1705,7 +1718,7 @@ public partial class BattleHUD : UIScene
                 {
                     _doubleCastCount = 1;
                     _subMenuType = SubMenuType.Throw;
-                    DisplayItem(true);
+                    DisplayItem(charCmd);
                     SetTargetVisibility(false);
                     SetItemPanelVisibility(true, false);
                 }
@@ -1713,7 +1726,7 @@ public partial class BattleHUD : UIScene
                 {
                     _doubleCastCount = 1;
                     _subMenuType = SubMenuType.Item;
-                    DisplayItem(false);
+                    DisplayItem(charCmd);
                     SetTargetVisibility(false);
                     SetItemPanelVisibility(true, false);
                 }
@@ -2325,7 +2338,7 @@ public partial class BattleHUD : UIScene
             else
             {
                 GONavigationButton targetHud = _targetPanel.Enemies[enemyIndex];
-                String targetName = displayName ? GetEnemyDisplayName(unit.Enemy) : String.Empty;
+                String targetName = displayName ? GetEnemyDisplayName(unit) : String.Empty;
                 targetHud.ButtonGroup.Help.Enable = true;
                 targetHud.ButtonGroup.Help.Text = cursorHelp + "\n" + targetName;
                 ++enemyIndex;
@@ -2626,13 +2639,13 @@ public partial class BattleHUD : UIScene
             if (!unit.IsPlayer)
                 continue;
             PLAYER player = unit.Player;
-            BattleStatus battlePermanent = unit.PermanentStatus & BattleStatusConst.OutOfBattle & ~player.permanent_status;
-            player.permanent_status |= battlePermanent;
+            BattleStatus playerPermanentStatus = player.permanent_status;
+            player.permanent_status |= unit.PermanentStatus & BattleStatusConst.OutOfBattle;
             player.trance = unit.Trance;
             btl_init.CopyPoints(player.cur, unit.Data.cur);
             btl_stat.SaveStatus(player, unit.Data);
             _mainMenuPlayerMemo[unit.Position] = new PlayerMemo(player, true);
-            _mainMenuPlayerMemo[unit.Position].battlePermanentStatus = battlePermanent;
+            _mainMenuPlayerMemo[unit.Position].playerPermanentStatus = playerPermanentStatus;
         }
         for (Int32 i = 0; i < 4; i++)
             if ((_mainMenuSinglePlayer != null && _mainMenuSinglePlayer != FF9StateSystem.Common.FF9.party.member[i]) || _mainMenuPlayerMemo[i].original == null)
@@ -2670,7 +2683,7 @@ public partial class BattleHUD : UIScene
                 BTL_DATA btl = unit.Data;
                 unit.Trance = player.trance;
                 btl_init.CopyPoints(btl.cur, player.cur);
-                player.permanent_status &= ~beforeMenu.battlePermanentStatus;
+                player.permanent_status = beforeMenu.playerPermanentStatus;
                 BattleStatus statusesToRemove = unit.CurrentStatus & BattleStatusConst.OutOfBattle & ~player.status;
                 btl_stat.RemoveStatuses(unit, statusesToRemove);
                 if (player.cur.hp > 0 && unit.IsUnderAnyStatus(BattleStatus.Death))
@@ -2796,6 +2809,6 @@ public partial class BattleHUD : UIScene
         if (AbilityPanel.activeSelf)
             DisplayAbility();
         if (ItemPanel.activeSelf)
-            DisplayItem(_subMenuType == SubMenuType.Throw);
+            DisplayItem(CharacterCommands.Commands[_currentCommandId]);
     }
 }

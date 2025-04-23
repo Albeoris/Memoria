@@ -507,7 +507,7 @@ namespace Memoria.Assets
                     OnSignal(label, tag.IntParam(0));
                     break;
                 case FFIXTextTagCode.Sound:
-                    OnSound(tag);
+                    OnSound(dialog, tag);
                     break;
             }
         }
@@ -865,14 +865,14 @@ namespace Memoria.Assets
             yield break;
         }
 
-        private static void OnSound(FFIXTextTag tag)
+        private static void OnSound(Dialog dialog, FFIXTextTag tag)
         {
             Single volume = tag.ParamCount > 1 ? tag.SingleParam(1) : 1f;
             Single pitch = tag.ParamCount > 3 ? tag.SingleParam(3) : 1f;
             if (Int32.TryParse(tag.StringParam(0), out Int32 soundId))
                 SoundLib.PlaySoundEffect(tag.IntParam(0), volume, tag.SingleParam(2), pitch);
             else
-                SoundLib.PlaySoundEffectsConsecutively(tag.StringParam(0).Split(':').ToList(), null, volume, tag.SingleParam(2), pitch);
+                SoundLib.PlaySoundEffectsConsecutively(tag.StringParam(0).Split(':').ToList(), null, volume, tag.SingleParam(2), pitch, dialog);
         }
 
         private static void OnTailPosition(Dialog dialog, Dialog.TailPosition tailPos)

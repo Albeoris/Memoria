@@ -46,6 +46,8 @@ namespace Memoria.Data
             throw new InvalidEnumArgumentException($"[CharacterCommand] A command has an invalid type {Type}", (Int32)Type, typeof(CharacterCommandType));
         }
 
+        public Boolean OnlySpecificItem => ListEntry.Length == 1 && ListEntry[0] == -1;
+
         public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
             Int32 index = 0;

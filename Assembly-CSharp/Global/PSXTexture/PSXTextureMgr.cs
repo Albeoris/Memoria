@@ -248,7 +248,7 @@ public static class PSXTextureMgr
         MeshRenderer[] btlChildren = FF9StateSystem.Battle.FF9Battle.map.btlBGPtr.GetComponentsInChildren<MeshRenderer>();
         MeshRenderer background = null;
         for (Int32 i = 0; i < btlChildren.Length; i++)
-            if (btlChildren[i].name == "Group_2")
+            if (battlebg.getBbgAttr(btlChildren[i].name) == battlebg.BBG_ATTR_GROUND)
             {
                 background = btlChildren[i];
                 break;

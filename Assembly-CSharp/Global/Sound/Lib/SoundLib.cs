@@ -229,6 +229,7 @@ public class SoundLib : MonoBehaviour
         }
     }
 
+    // TODO: maybe sort all these API correctly, so they use the correct Configuration.Volume, that kind of things...
     public static SoundProfile PlaySoundEffect(String path, Action onFinished = null, Single soundVolume = 1f, Single panning = 0f, Single pitch = 1f)
     {
         return LoadSoundEffect(path,
@@ -246,15 +247,14 @@ public class SoundLib : MonoBehaviour
                 }, soundVolume, panning, pitch);
     }
 
-    public static void PlaySoundEffectsConsecutively(List<String> paths, Action onFinished = null, Single soundVolume = 1f, Single panning = 0f, Single pitch = 1f)
+    public static void PlaySoundEffectsConsecutively(List<String> paths, Action onFinished = null, Single soundVolume = 1f, Single panning = 0f, Single pitch = 1f, Dialog vaDialog = null)
     {
         if (paths.Count == 0)
             return;
-        if (paths.Count == 1)
-        {
-            PlaySoundEffect(paths[0], onFinished, soundVolume, panning, pitch);
-            return;
-        }
+        if (!Configuration.VoiceActing.Enabled)
+            vaDialog = null;
+        Action onVAFinish = () => VoicePlayer.AfterSoundFinished(vaDialog);
+        Action onFinishSequence = vaDialog == null ? onFinished : (onFinished == null ? onVAFinish : onFinished + onVAFinish);
         List<SoundProfile> profiles = new List<SoundProfile>();
         for (Int32 i = 0; i < paths.Count - 1; i++)
         {
@@ -284,17 +284,21 @@ public class SoundLib : MonoBehaviour
                 }
                 if (profiles.Count == 0)
                     return;
+                if (!VoicePlayer.RegisterDialogVoice(vaDialog, profiles[0], false))
+                    vaDialog = null;
                 SoundLib.VoicePlayer.CreateSound(profiles[0]);
-                SoundLib.VoicePlayer.StartSound(profiles[0], () => PlaySoundEffectsConsecutively_Callback(profiles, 1, onFinished));
+                SoundLib.VoicePlayer.StartSound(profiles[0], () => PlaySoundEffectsConsecutively_Callback(profiles, 1, onFinishSequence, vaDialog));
             }, soundVolume, panning, pitch);
     }
 
-    private static void PlaySoundEffectsConsecutively_Callback(List<SoundProfile> profiles, Int32 index, Action onFinished)
+    private static void PlaySoundEffectsConsecutively_Callback(List<SoundProfile> profiles, Int32 index, Action onFinished, Dialog vaDialog = null)
     {
-        if (index < profiles.Count)
+        if (index < profiles.Count && (vaDialog == null || vaDialog.CurrentState == Dialog.State.TextAnimation || vaDialog.CurrentState == Dialog.State.CompleteAnimation))
         {
+            if (!VoicePlayer.RegisterDialogVoice(vaDialog, profiles[index], true))
+                vaDialog = null;
             SoundLib.VoicePlayer.CreateSound(profiles[index]);
-            SoundLib.VoicePlayer.StartSound(profiles[index], () => PlaySoundEffectsConsecutively_Callback(profiles, index + 1, onFinished));
+            SoundLib.VoicePlayer.StartSound(profiles[index], () => PlaySoundEffectsConsecutively_Callback(profiles, index + 1, onFinished, vaDialog));
         }
         else if (onFinished != null)
         {

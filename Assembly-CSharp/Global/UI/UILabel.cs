@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using Memoria;
 using Memoria.Assets;
 using Memoria.Prime;
 using UnityEngine;
@@ -713,7 +712,8 @@ public class UILabel : UIWidget
 
     public void ProcessText()
     {
-        this.Parser.Parse(TextParser.ParseStep.Wrapped);
+        if (!NGUIText.BusyProcessing)
+            this.Parser.Parse(TextParser.ParseStep.Wrapped);
     }
 
     public void GenerateWrapping()
@@ -793,16 +793,16 @@ public class UILabel : UIWidget
             if (this.ReprocessCounter > 0)
             {
                 // Computing wrapping at least twice fixes some (relatively rare) issues with texts not being properly rescaled to fit within their frame
-                this.mParser.ResetBeforeVariableTags();
+                this.Parser.ResetBeforeVariableTags();
                 this.ReprocessCounter--;
             }
             else
             {
-                this.mParser.ResetRender(); // In theory, it would be enough there to only update mParser.UVs, but that optimisation would require storing logical UV datas in an extra list
+                this.Parser.ResetRender(); // In theory, it would be enough there to only update mParser.UVs, but that optimisation would require storing logical UV datas in an extra list
             }
-            this.mParser.Parse(TextParser.ParseStep.Render);
+            this.Parser.Parse(TextParser.ParseStep.Render);
             Dialog dialog = this.DialogWindow;
-            if (dialog != null && (dialog.StartChoiceRow >= 0 || dialog.IsOverlayDialog))
+            if (dialog != null && (dialog.HasChoices || dialog.IsOverlayDialog))
                 UIKeyTrigger.preventTurboKey = true;
             if (this.DialogWindow == null)
                 this.mParser.AdvanceProgressToMax(false);

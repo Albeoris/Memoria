@@ -538,14 +538,18 @@ public partial class EventEngine
                 if (Configuration.VoiceActing.Enabled)
                 {
                     Dialog dialog = Singleton<DialogManager>.Instance.GetDialogByWindowID(windowID);
-                    if (dialog != null && VoicePlayer.HasDialogVoice(dialog))
+                    if (dialog != null && VoicePlayer.HasDialogVoice(dialog) && dialog.ChoiceNumber == 0)
                     {
                         // Timed windows closed by script (usually have a [TIME=-1] tag in the text and the following kind of script:
                         //   WindowAsync( winId, uiFlags, textId )
                         //   Wait( 30 )
                         //   CloseWindow( winId )
-                        this.stay();
-                        return 1;
+                        if (VoicePlayer.HoldDialogUntilSoundEnds(FF9TextTool.FieldZoneId, UniversalTextId.GetUniversalTextId(Localization.CurrentSymbol, FF9TextTool.FieldZoneId, dialog.TextId), mapNo))
+                        {
+                            // Block the script and wait for the voice acting sound to complete
+                            this.stay();
+                            return 1;
+                        }
                     }
                 }
                 ETb.DisposWindowByID(windowID, true);
@@ -2751,10 +2755,22 @@ public partial class EventEngine
                         PLAYER subPlayer = FF9StateSystem.Common.FF9.GetPlayer(charId + 3);
                         subPlayer.cur.hp = (UInt32)Math.Min(subPlayer.max.hp, newHp);
                     }
-                    if (charId == CharacterId.Beatrix && hpHealProp >= 0f)
-                        foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
-                            if (play.Index > CharacterId.Amarant && play.Index != CharacterId.Beatrix)
-                                play.cur.hp = (UInt32)Math.Min(play.max.hp, play.cur.hp + hpHealProp * play.max.hp);
+                    if (this.gMode == 1 || (this.gMode == 3 && newHp == Int32.MaxValue))
+                    {
+                        // Vanilla field heals (tent, inn, water sources...) and world map full heal (beaches) apply to the characters 0-8 (Beatrix included)
+                        if (charId == CharacterId.Beatrix && hpHealProp >= 0f)
+                            foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
+                                if (play.Index > CharacterId.Amarant && play.Index != CharacterId.Beatrix)
+                                    play.cur.hp = (UInt32)Math.Min(play.max.hp, play.cur.hp + hpHealProp * play.max.hp);
+                    }
+                    else if (this.gMode == 3)
+                    {
+                        // Vanilla world map heals (tent) apply to the characters 0-7 (Beatrix excluded)
+                        if (charId == CharacterId.Amarant && hpHealProp >= 0f)
+                            foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
+                                if (play.Index > CharacterId.Amarant)
+                                    play.cur.hp = (UInt32)Math.Min(play.max.hp, play.cur.hp + hpHealProp * play.max.hp);
+                    }
                 }
                 return 0;
             }
@@ -2778,10 +2794,22 @@ public partial class EventEngine
                         PLAYER subPlayer = FF9StateSystem.Common.FF9.GetPlayer(charId + 3);
                         subPlayer.cur.mp = (UInt32)Math.Min(subPlayer.max.mp, newMp);
                     }
-                    if (charId == CharacterId.Beatrix && mpHealProp >= 0f)
-                        foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
-                            if (play.Index > CharacterId.Amarant && play.Index != CharacterId.Beatrix)
-                                play.cur.mp = (UInt32)Math.Min(play.max.mp, play.cur.mp + mpHealProp * play.max.mp);
+                    if (this.gMode == 1 || (this.gMode == 3 && newMp == Int32.MaxValue))
+                    {
+                        // Vanilla field heals (tent, inn, water sources...) and world map full heal (beaches) apply to the characters 0-8 (Beatrix included)
+                        if (charId == CharacterId.Beatrix && mpHealProp >= 0f)
+                            foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
+                                if (play.Index > CharacterId.Amarant && play.Index != CharacterId.Beatrix)
+                                    play.cur.mp = (UInt32)Math.Min(play.max.mp, play.cur.mp + mpHealProp * play.max.mp);
+                    }
+                    else if (this.gMode == 3)
+                    {
+                        // Vanilla world map heals (tent) apply to the characters 0-7 (Beatrix excluded)
+                        if (charId == CharacterId.Amarant && mpHealProp >= 0f)
+                            foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
+                                if (play.Index > CharacterId.Amarant)
+                                    play.cur.mp = (UInt32)Math.Min(play.max.mp, play.cur.mp + mpHealProp * play.max.mp);
+                    }
                 }
                 return 0;
             }
@@ -2814,6 +2842,7 @@ public partial class EventEngine
                 // https://github.com/Albeoris/Memoria/issues/22
                 if (!player.info.sub_replaced)
                     FieldCalculator.RemoveStatuses(FF9StateSystem.Common.FF9.GetPlayer(charId + 3), statusList);
+                // Vanilla cures (inn, water sources...) apply to the characters 0-8 (Beatrix included)
                 if (charId == CharacterId.Beatrix)
                     foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
                         if (play.Index > CharacterId.Amarant && play.Index != CharacterId.Beatrix)

@@ -272,7 +272,7 @@ namespace Memoria.Assets
                 if (animTag.Tag.AppearStep >= AppearProgress && animTag.Tag.AppearStep <= nextStep)
                     animTag.AppearTime = RealTime.time;
             foreach (FFIXTextTag tag in ParsedTagList)
-                if ((tag.AppearStep <= 0f && AppearProgress <= 0f) || (tag.AppearStep > AppearProgress && tag.AppearStep <= nextStep))
+                if ((tag.AppearStep <= 0f && AppearProgress <= 0f && nextStep > 0f) || (tag.AppearStep > AppearProgress && tag.AppearStep <= nextStep))
                     appearTags.Add(tag);
             appearTags.Sort((a, b) => a.AppearStep.CompareTo(b.AppearStep));
             foreach (FFIXTextTag tag in appearTags)

@@ -117,7 +117,7 @@ public static class btl_vfx
                     if (sequenceText != null)
                         cmd.aa.Info.VfxAction = new UnifiedBattleSequencer.BattleAction(sequenceText);
                 }
-                if (cmd.aa.Info.SequenceFile == null && regist.bi.player == 0)
+                if (cmd.aa.Info.SequenceFile == null && regist != null && regist.bi.player == 0)
                 {
                     if (regist.dms_geo_id == 427 && cmd.aa.Info.VfxIndex == 457) // Thunder Slash with Beatrix (Boss version)
                         cmd.aa.Info.VfxAction = new UnifiedBattleSequencer.BattleAction(ThunderSlashBeatrixFix);

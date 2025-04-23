@@ -42,6 +42,14 @@ public class VoicePlayer : SoundPlayer
         return false;
     }
 
+    public static Boolean RegisterDialogVoice(Dialog dialog, SoundProfile soundProfile, Boolean update = false)
+    {
+        if (!Configuration.VoiceActing.Enabled || dialog == null || soundProfile == null || (!update && soundOfDialog.ContainsKey(dialog)))
+            return false;
+        soundOfDialog[dialog] = soundProfile;
+        return true;
+    }
+
     public void StartSound(SoundProfile soundProfile, Action onFinished = null)
     {
         if (onFinished != null)
@@ -123,43 +131,6 @@ public class VoicePlayer : SoundPlayer
         // Default path
         candidates.Add($"Voices/{lang}/{FieldZoneId}/va_{messageNumber}{pageIndex}");
 
-        Boolean hasChoices = dialog.ChoiceNumber > 0;
-        Boolean isMsgEmpty = msgString.Length == 0;
-        Boolean shouldDismiss = Configuration.VoiceActing.AutoDismissDialogAfterCompletion && !hasChoices;
-        Action nonDismissAction = () =>
-        {
-            if (dialog == specialDialog) specialDialog = null;
-            soundOfDialog.Remove(dialog);
-        };
-        Action dismissAction =
-            () =>
-            {
-                if (dialog == specialDialog) specialDialog = null;
-                soundOfDialog.Remove(dialog);
-                if (dialog.EndMode > 0 && FF9StateSystem.Common.FF9.fldMapNo != 3009 && FF9StateSystem.Common.FF9.fldMapNo != 3010)
-                    return; // Timed dialog: let the dialog's own timed automatic closure handle it
-                while (dialog.CurrentState == Dialog.State.OpenAnimation || dialog.CurrentState == Dialog.State.TextAnimation)
-                    Thread.Sleep(1000 / Configuration.Graphics.FieldTPS);
-                if (!dialog.gameObject.activeInHierarchy || dialog.CurrentState != Dialog.State.CompleteAnimation)
-                    return;
-                if (!dialog.FlagButtonInh) // This dialog can be closed normally
-                    dialog.ForceClose();
-                else if (VoicePlayer.scriptRequestedButtonPress) // It looks like this dialog is closed by the script on a key press
-                {
-                    ETb.sKey &= ~EventInput.GetKeyMaskFromControl(Control.Confirm);
-                    EventInput.ReceiveInput(EventInput.GetKeyMaskFromControl(Control.Confirm));
-                }
-            };
-        Action playSelectChoiceAction =
-            () =>
-            {
-                if (dialog == specialDialog) specialDialog = null;
-                soundOfDialog.Remove(dialog);
-                while (dialog.CurrentState == Dialog.State.OpenAnimation || dialog.CurrentState == Dialog.State.TextAnimation || !dialog.IsChoiceReady)
-                    Thread.Sleep(1000 / Configuration.Graphics.FieldTPS);
-                dialog.OnOptionChange?.Invoke(dialog.Id, dialog.SelectChoice); // Simulate a choice change so the default selected line plays
-            };
-
         // Try to find one of the candidates
         Boolean found = false;
         foreach (String path in candidates)
@@ -173,12 +144,15 @@ public class VoicePlayer : SoundPlayer
                     if (specialDialog != null) FieldZoneReleaseVoice(specialDialog, true);
                     specialDialog = dialog;
                 }
-                soundOfDialog[dialog] = CreateLoadThenPlayVoice(path.GetHashCode(), path, shouldDismiss ? dismissAction : (hasChoices ? playSelectChoiceAction : nonDismissAction));
+                soundOfDialog[dialog] = CreateLoadThenPlayVoice(path.GetHashCode(), path, () => AfterSoundFinished(dialog));
 
                 found = true;
                 break;
             }
         }
+
+        Boolean hasChoices = dialog.ChoiceNumber > 0;
+        Boolean isMsgEmpty = msgString.Length == 0;
         if (!found)
         {
             candidates.Reverse(); // Reverse for display
@@ -203,22 +177,69 @@ public class VoicePlayer : SoundPlayer
                 {
                     FieldZoneReleaseVoice(dialog, true);
                     SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, opt:{optionIndex}, text:{optString} path:{vaOptionPathSub}");
-                    soundOfDialog[dialog] = CreateLoadThenPlayVoice(vaOptionPathSub.GetHashCode(), vaOptionPathSub, nonDismissAction);
+                    soundOfDialog[dialog] = CreateLoadThenPlayVoice(vaOptionPathSub.GetHashCode(), vaOptionPathSub, () => AfterSoundFinished_Default(dialog));
                 }
                 else if (AssetManager.HasAssetOnDisc($"Sounds/{vaOptionPathMain}.akb", true, true) || AssetManager.HasAssetOnDisc($"Sounds/{vaOptionPathMain}.ogg", true, false))
                 {
                     FieldZoneReleaseVoice(dialog, true);
                     SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, opt:{optionIndex}, text:{optString} path:{vaOptionPathMain}");
-                    soundOfDialog[dialog] = CreateLoadThenPlayVoice(vaOptionPathMain.GetHashCode(), vaOptionPathMain, nonDismissAction);
+                    soundOfDialog[dialog] = CreateLoadThenPlayVoice(vaOptionPathMain.GetHashCode(), vaOptionPathMain, () => AfterSoundFinished_Default(dialog));
                 }
                 else
                 {
-                    SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, opt:{optionIndex}, text:{optString} path:{vaOptionPathMain} (not found)");
+                    if (candidates.Count > 1)
+                        SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, opt:{optionIndex}, text:{optString} paths:'{vaOptionPathMain}', '{vaOptionPathSub}' (not found)");
+                    else
+                        SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, opt:{optionIndex}, text:{optString} path:'{vaOptionPathMain}' (not found)");
                 }
             };
 
-            if (isMsgEmpty) new Thread(() => { playSelectChoiceAction(); }).Start();
+            if (isMsgEmpty) new Thread(() => AfterSoundFinished_SelectChoice(dialog)).Start();
         }
+    }
+
+    private static void AfterSoundFinished_SelectChoice(Dialog dialog)
+    {
+        if (dialog == specialDialog) specialDialog = null;
+        soundOfDialog.Remove(dialog);
+        while (dialog.CurrentState == Dialog.State.OpenAnimation || dialog.CurrentState == Dialog.State.TextAnimation || !dialog.IsChoiceReady)
+            Thread.Sleep(1000 / Configuration.Graphics.FieldTPS);
+        dialog.OnOptionChange?.Invoke(dialog.Id, dialog.SelectChoice); // Simulate a choice change so the default selected line plays
+    }
+
+    private static void AfterSoundFinished_Dismiss(Dialog dialog)
+    {
+        if (dialog == specialDialog) specialDialog = null;
+        soundOfDialog.Remove(dialog);
+        if (dialog.EndMode > 0 && FF9StateSystem.Common.FF9.fldMapNo != 3009 && FF9StateSystem.Common.FF9.fldMapNo != 3010)
+            return; // Timed dialog: let the dialog's own timed automatic closure handle it
+        while (dialog.CurrentState == Dialog.State.OpenAnimation || dialog.CurrentState == Dialog.State.TextAnimation)
+            Thread.Sleep(1000 / Configuration.Graphics.FieldTPS);
+        if (!dialog.gameObject.activeInHierarchy || dialog.CurrentState != Dialog.State.CompleteAnimation)
+            return;
+        if (!dialog.FlagButtonInh) // This dialog can be closed normally
+            dialog.ForceClose();
+        else if (VoicePlayer.scriptRequestedButtonPress) // It looks like this dialog is closed by the script on a key press
+        {
+            ETb.sKey &= ~EventInput.GetKeyMaskFromControl(Control.Confirm);
+            EventInput.ReceiveInput(EventInput.GetKeyMaskFromControl(Control.Confirm));
+        }
+    }
+
+    private static void AfterSoundFinished_Default(Dialog dialog)
+    {
+        if (dialog == specialDialog) specialDialog = null;
+        soundOfDialog.Remove(dialog);
+    }
+
+    public static void AfterSoundFinished(Dialog dialog)
+    {
+        if (dialog.ChoiceNumber > 0)
+            AfterSoundFinished_SelectChoice(dialog);
+        else if (Configuration.VoiceActing.AutoDismissDialogAfterCompletion || dialog.CloseAfterVoiceActing)
+            AfterSoundFinished_Dismiss(dialog);
+        else
+            AfterSoundFinished_Default(dialog);
     }
 
     private static Dictionary<String, Int32[]> specialMessageIds = new Dictionary<String, Int32[]>()
@@ -364,6 +385,21 @@ public class VoicePlayer : SoundPlayer
         CreateLoadThenPlayVoice(va_id, vaPath);
     }
 
+    public static Boolean HoldDialogUntilSoundEnds(Int32 zoneId, Int32 universalTextId, Int32 mapNo)
+    {
+        if (zoneId == 2 && mapNo >= 59 && mapNo <= 67) // 'I want to be your canary' stage (early game)
+            return true;
+        if (zoneId == 187) // Ending scene (Vivi monologue and stage afterwards)
+            return true;
+        if (zoneId == 189 && (universalTextId == 137 || universalTextId == 138)) // Cid and Baku come at the rescue against Silverdragons ("All ships, clear a path for the Invincible!" and "Can't let you guys steal the show by yourselves!")
+            return true;
+        if (zoneId == 89 && universalTextId >= 132 && universalTextId <= 135) // Alexander summoning chant ("O holy guardian, hear our prayers." etc)
+            return true;
+        if (zoneId == 484 && universalTextId == 165) // Mount Gulug: Kuja meets the party after Eiko defeated Zorn & Thorn ("How can that-")
+            return true;
+        return false;
+    }
+
     public void PauseAllSounds()
     {
         Dictionary<Int32, SoundProfile> database = ETb.voiceDatabase.ReadAll();
@@ -435,9 +471,7 @@ public class VoicePlayer : SoundPlayer
     }
 
     public static Dictionary<Dialog, SoundProfile> soundOfDialog = new Dictionary<Dialog, SoundProfile>();
-
     public static Dictionary<SoundProfile, Thread> watcherOfSound = new Dictionary<SoundProfile, Thread>();
-
     public static Boolean scriptRequestedButtonPress = false;
 
     public SoundDatabase soundDatabase = new SoundDatabase();
@@ -445,18 +479,13 @@ public class VoicePlayer : SoundPlayer
     private SdLibSoundProfileStateGraph stateTransition;
 
     protected SoundProfile activeSoundProfile;
-
     private SoundProfile upcomingSoundProfile;
 
     public override Single Volume => Configuration.VoiceActing.Volume / 100f;
 
     private Single playerPitch;
-
     private Single playerPanning;
-
     private Single fadeInDuration;
-
     private Single fadeOutDuration;
-
     private Single fadeInTimeRemain;
 }

@@ -767,6 +767,7 @@ public static class NGUIText
             }
             return false;
         }
+        NGUIText.BusyProcessing = true;
         List<FFIXTextTag> tabTags = new List<FFIXTextTag>();
         List<Int32> addedLines = new List<Int32>();
         String wrappedText = parser.ParsedText; // wrappedText and parser.ParsedText may differ only in spaces replaced by newlines
@@ -968,11 +969,13 @@ public static class NGUIText
             if (parser.Bidi != null)
                 parser.Bidi.RegisterWrappingNewLines(addedLines, NGUIText.readingDirection);
         }
+        NGUIText.BusyProcessing = false;
         return success;
     }
 
     public static void GenerateTextRender(TextParser parser)
     {
+        NGUIText.BusyProcessing = true;
         Dialog dialog = parser.LabelContainer.DialogWindow;
         NGUIText.SetupShadowEffect(parser);
         NGUIText.progressStep = 0f;
@@ -1348,6 +1351,7 @@ public static class NGUIText
             DrawBoundingFrames(parser, 2, Color.green);
         parser.ApplyOffset(parser.LabelContainer.GetApplyOffset());
         parser.ComputeAppearProgressMax();
+        NGUIText.BusyProcessing = false;
         return;
     }
 
@@ -1559,6 +1563,8 @@ public static class NGUIText
 
     public const Int32 MobileTouchToConfirmJP = 322;
     public const Int32 MobileTouchToConfirmUS = 323;
+
+    public static Boolean BusyProcessing = false;
 
     public static Single ChoiceIndent => 16f * UIManager.ResourceXMultipier;
 

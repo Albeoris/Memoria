@@ -27,6 +27,15 @@ public class Dialog : MonoBehaviour
         set => this.startChoiceRow = value;
     }
 
+    public Boolean HasChoices
+    {
+        get
+        {
+            this.CurrentParser.Parse(TextParser.ParseStep.ChoiceSetup);
+            return this.startChoiceRow >= 0;
+        }
+    }
+
     /// <summary>May be higher than the actual number of text lines displayed, because of DisableIndexes</summary>
     public Int32 EndChoiceRow { get; set; }
 
@@ -81,7 +90,7 @@ public class Dialog : MonoBehaviour
         set => this.isClosedByScript = value;
     }
 
-    private void InitializeChoice()
+    private void InitializeChoice(Boolean waitEndOfFrame)
     {
         if (this.isNeedResetChoice)
         {
@@ -92,13 +101,14 @@ public class Dialog : MonoBehaviour
         if (this.startChoiceRow >= 0)
         {
             this.isMuteSelectSound = true;
-            base.StartCoroutine(InitializeChoiceProcess());
+            base.StartCoroutine(InitializeChoiceProcess(waitEndOfFrame));
         }
     }
 
-    private IEnumerator InitializeChoiceProcess()
+    private IEnumerator InitializeChoiceProcess(Boolean waitEndOfFrame)
     {
-        yield return new WaitForEndOfFrame();
+        if (waitEndOfFrame)
+            yield return new WaitForEndOfFrame();
         while (PersistenSingleton<UIManager>.Instance.IsPause)
             yield return new WaitForEndOfFrame();
         PersistenSingleton<UIManager>.Instance.Dialogs.ShowChoiceHud();
@@ -281,7 +291,7 @@ public class Dialog : MonoBehaviour
     {
         get
         {
-            if (this.startChoiceRow < 0)
+            if (!this.HasChoices)
                 return [this.CurrentParser.ParsedText];
             Int32 newLinePos = 0;
             if (this.startChoiceRow > 0)
@@ -370,6 +380,8 @@ public class Dialog : MonoBehaviour
         }
     }
 
+    /// <summary>Close the window after the VA sound ends, even if the Configuration option for that is disabled</summary>
+    public Boolean CloseAfterVoiceActing { get; set; }
     public Int32 EndMode
     {
         get => this.endMode;
@@ -600,7 +612,7 @@ public class Dialog : MonoBehaviour
             return;
         }
         this.isActive = false;
-        if (this.startChoiceRow >= 0)
+        if (this.HasChoices)
         {
             ButtonGroupState.DisableAllGroup(true);
             PersistenSingleton<UIManager>.Instance.Dialogs.HideChoiceHud();
@@ -613,13 +625,13 @@ public class Dialog : MonoBehaviour
         }
         this.currentState = Dialog.State.CloseAnimation;
         this.dialogAnimator.HideDialog();
-        if (this.CapType == Dialog.CaptionType.Mognet && this.StartChoiceRow >= 0)
+        if (this.CapType == Dialog.CaptionType.Mognet && this.HasChoices)
             UIManager.Input.ResetTriggerEvent();
     }
 
     public void AfterShown()
     {
-        this.InitializeChoice();
+        this.InitializeChoice(false);
         if (!this.typeAnimationEffect)
         {
             this.CurrentParser.AdvanceProgressToMax();
@@ -667,7 +679,7 @@ public class Dialog : MonoBehaviour
         Singleton<DialogManager>.Instance.ReleaseDialogToPool(this);
         if (this.AfterDialogHidden != null)
         {
-            this.AfterDialogHidden(this.startChoiceRow >= 0 ? this.SelectChoice : -1);
+            this.AfterDialogHidden(this.HasChoices ? this.SelectChoice : -1);
             this.AfterDialogHidden = null;
         }
         this.Reset();
@@ -690,9 +702,9 @@ public class Dialog : MonoBehaviour
         this.InitializeDialogTransition();
         this.Panel.depth = previousDepth;
         this.phrasePanel.depth = previousDepth + 1;
-        if (this.choiceNumber > 0)
+        if (this.HasChoices)
         {
-            this.InitializeChoice();
+            this.InitializeChoice(true);
             this.defaultChoice = previousChoice;
             this.selectedChoice = previousChoice;
             DialogManager.SelectChoice = previousChoice;
@@ -736,12 +748,12 @@ public class Dialog : MonoBehaviour
         }
         if (this.currentState == Dialog.State.CompleteAnimation)
         {
-            if (this.startChoiceRow >= 0)
+            if (this.HasChoices)
                 this.SelectChoice = this.choiceList.IndexOf(ButtonGroupState.ActiveButton);
             if (!this.ignoreInputFlag && (this.startChoiceRow < 0 || this.isChoiceReady))
                 this.Hide();
         }
-        else if (this.startChoiceRow >= 0 && this.defaultChoice >= 0 && (this.currentState == Dialog.State.OpenAnimation || this.currentState == Dialog.State.TextAnimation))
+        else if (this.HasChoices && this.defaultChoice >= 0 && (this.currentState == Dialog.State.OpenAnimation || this.currentState == Dialog.State.TextAnimation))
         {
             // Fix fast player inputs not applying the correct cancel choice for windows that are closed by scripts (eg. Memoria save points or World Map mog dialogs)
             this.SelectChoice = this.defaultChoice;
@@ -755,7 +767,7 @@ public class Dialog : MonoBehaviour
 
     public void OnKeyCancel(GameObject go)
     {
-        if (this.startChoiceRow >= 0 && this.cancelChoice >= 0)
+        if (this.HasChoices && this.cancelChoice >= 0)
         {
             if (this.currentState == Dialog.State.CompleteAnimation)
             {
@@ -1142,6 +1154,7 @@ public class Dialog : MonoBehaviour
         this.UseSizeHint = false;
         this.id = -1;
         this.textId = -1;
+        this.CloseAfterVoiceActing = false;
         this.endMode = -1;
         base.transform.localPosition = Vector3.zero;
         this.tailPosition = Dialog.TailPosition.AutoPosition;
@@ -1509,7 +1522,6 @@ public class Dialog : MonoBehaviour
             // Use the size specified by STRT tags
             this.CurrentParser.Parse(TextParser.ParseStep.ConstantReplaceTags);
             this.ApplyDialogTextPatch(this.CurrentParser);
-            this.phraseLabel.ProcessText();
             this.Width = this.WidthHint;
             this.LineNumber = this.LineNumberHint;
             return;
@@ -1521,7 +1533,7 @@ public class Dialog : MonoBehaviour
         foreach (TextParser parser in this.PageParsers)
         {
             this.phraseLabel.Parser = parser;
-            parser.Parse(TextParser.ParseStep.Wrapped);
+            this.phraseLabel.ProcessText();
             this.ApplyDialogTextPatch(parser);
             allPagesWidth = Math.Max(allPagesWidth, (parser.MaxWidth + Dialog.DialogPhraseXPadding * 2f) / UIManager.ResourceXMultipier);
             allPagesLineCount = Math.Max(allPagesLineCount, parser.DialogLineCount);
@@ -1530,9 +1542,9 @@ public class Dialog : MonoBehaviour
         foreach (FFIXTextTag tag in this.CurrentParser.ParsedTagList)
             if (tag.Code == FFIXTextTagCode.Icon && tag.IntParam(0) >= 27 && tag.IntParam(0) <= 29)
                 allPagesWidth += 8f;
-        Single extraPadding = Dialog.DialogPhraseXPadding * 2f / UIManager.ResourceXMultipier;
         // TODO: we might want to extend if the caption is longer than the content, but the caption width isn't computed correctly yet at that point
-        // this.Width = Math.Max(allPagesWidth, this.CaptionWidth + extraPadding) + 1f;
+        //Single extraPadding = Dialog.DialogPhraseXPadding * 2f / UIManager.ResourceXMultipier;
+        //this.Width = Math.Max(allPagesWidth, this.CaptionWidth + extraPadding) + 1f;
         this.Width = allPagesWidth + 1f;
         this.LineNumber = Mathf.CeilToInt(Math.Max(this.LineNumberHint, allPagesLineCount)); // LineNumberHint specified by STRT tags is used if it requests more lines than needed
     }
@@ -1549,7 +1561,7 @@ public class Dialog : MonoBehaviour
                 // Fossil Roo (surely the lever dialogs and path displays)
                 if (this.windowStyle == Dialog.WindowStyle.WindowStyleTransparent)
                     return false;
-                if (this.windowStyle == Dialog.WindowStyle.WindowStylePlain && this.startChoiceRow < 0)
+                if (this.windowStyle == Dialog.WindowStyle.WindowStylePlain && !this.HasChoices)
                     return false;
             }
             if (EventHUD.CurrentHUD == MinigameHUD.Auction && this.windowStyle == Dialog.WindowStyle.WindowStyleTransparent)
@@ -1601,7 +1613,7 @@ public class Dialog : MonoBehaviour
         {
             if (FF9StateSystem.Common.FF9.fldMapNo == 2951) // Chocobo's Lagoon
             {
-                if (this.targetPos != null && this.targetPos.uid == 13 && this.startChoiceRow >= 0) // Moogle
+                if (this.targetPos != null && this.targetPos.uid == 13 && this.HasChoices) // Moogle
                 {
                     this.Po = null;
                     this.windowStyle = Dialog.WindowStyle.WindowStyleNoTail;
@@ -1722,7 +1734,7 @@ public class Dialog : MonoBehaviour
     public const Single DialogPhraseXPadding = 16f;
     public const Single DialogPhraseYPadding = 20f;
 
-    public const Int32 FF9TextSpeedRatio = 2;
+    public const Single FF9TextSpeedRatio = 3f;
 
     private Transform bodyTransform;
     private Transform tailTransform;

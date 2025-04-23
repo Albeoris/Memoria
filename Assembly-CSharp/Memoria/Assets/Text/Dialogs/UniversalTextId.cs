@@ -240,6 +240,14 @@ namespace Memoria.Assets
                     if (lang == "ES")
                         return SetupDictionary(ref _dictCargoShipES, 327, [77, 78, 165, 166, 167, 168, 170, 189, 190, 191, 207, 259]);
                     break;
+                case 70:
+                    if (lang == "US" || lang == "UK")
+                        return SetupDictionary(ref _dictTreno1USUK, 549, null, Dict([[139, 248]]));
+                    break;
+                case 741:
+                    if (lang == "US" || lang == "UK")
+                        return SetupDictionary(ref _dictTreno2USUK, 674, null, Dict([[139, 248]]));
+                    break;
                 case 71:
                     if (lang == "US" || lang == "UK")
                         return SetupDictionary(ref _dictQuMarshUSUK, 394, [365, 374, 390, 391], Dict([[212, 258]]));
@@ -451,6 +459,8 @@ namespace Memoria.Assets
         private static TwoWayDictionary<Int32, Int32> _dictCargoShipFR = null;
         private static TwoWayDictionary<Int32, Int32> _dictCargoShipIT = null;
         private static TwoWayDictionary<Int32, Int32> _dictCargoShipES = null;
+        private static TwoWayDictionary<Int32, Int32> _dictTreno1USUK = null;
+        private static TwoWayDictionary<Int32, Int32> _dictTreno2USUK = null;
         private static TwoWayDictionary<Int32, Int32> _dictQuMarshUSUK = null;
         private static TwoWayDictionary<Int32, Int32> _dictQuMarshJPGRFR = null;
         private static TwoWayDictionary<Int32, Int32> _dictQuMarshIT = null;

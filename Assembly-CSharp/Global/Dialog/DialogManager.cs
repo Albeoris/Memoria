@@ -414,7 +414,7 @@ public class DialogManager : Singleton<DialogManager>
     public Dialog GetChoiceDialog()
     {
         foreach (Dialog dialog in this.activeDialogList)
-            if (dialog.StartChoiceRow > -1)
+            if (dialog.HasChoices)
                 return dialog;
         return null;
     }
@@ -475,7 +475,7 @@ public class DialogManager : Singleton<DialogManager>
     public Dialog GetMognetDialog()
     {
         foreach (Dialog dialog in this.activeDialogList)
-            if (dialog.CapType == Dialog.CaptionType.Mognet && dialog.StartChoiceRow > -1)
+            if (dialog.CapType == Dialog.CaptionType.Mognet && dialog.HasChoices)
                 return dialog;
         return null;
     }

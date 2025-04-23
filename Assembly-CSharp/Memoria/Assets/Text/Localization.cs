@@ -91,6 +91,12 @@ namespace Memoria.Assets
             return "US";
         }
 
+        /// <summary>Deprecated: use "Localization.CurrentDisplaySymbol" or "Localization.CurrentSymbol" instead</summary>
+        public static String GetSymbol()
+        {
+            return CurrentDisplaySymbol;
+        }
+
         /// <summary>For keys not present in vanilla</summary>
         public static String GetWithDefault(String key)
         {

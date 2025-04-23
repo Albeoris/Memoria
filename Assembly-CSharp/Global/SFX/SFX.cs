@@ -1049,6 +1049,14 @@ public static class SFX
                 *(Int32*)((Byte*)p + 8) = (Int32)(next.gameObject.transform.localScale.z * 4096f);
                 break;
             case 6: // Set Size
+                if (SFX.FixScaleReset())
+                {
+                    // TODO: This fix doesn't seem to work everytime for some reason, it looks random
+                    // A bug makes some enemies (Nova Dragon, Jabberwocky, ...) disappear or be kept very small after the cast of Atomos in mode "SFXRework = 0"
+                    geo.geoScaleReset(next);
+                    next.gameObject.transform.localScale = Vector3.one;
+                    break;
+                }
                 if ((arg0 & 128) == 0)
                     geo.geoScaleReset(next);
                 else
@@ -1099,9 +1107,9 @@ public static class SFX
                         {
                             if (arg0 == (Byte)BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_TO_CHANT)
                                 btl_mot.setMotion(next, "ANH_MAIN_B0_011_110");
-                            if (arg0 == (Byte)BattlePlayerCharacter.PlayerMotionIndex.MP_CHANT)
+                            else if (arg0 == (Byte)BattlePlayerCharacter.PlayerMotionIndex.MP_CHANT)
                                 btl_mot.setMotion(next, "ANH_MAIN_B0_011_111");
-                            if (arg0 == (Byte)BattlePlayerCharacter.PlayerMotionIndex.MP_MAGIC)
+                            else if (arg0 == (Byte)BattlePlayerCharacter.PlayerMotionIndex.MP_MAGIC)
                                 btl_mot.setMotion(next, "ANH_MAIN_B0_011_112");
                             next.animFlag |= (UInt16)EventEngine.afLoop;
                             next.evt.animFrame = 0;
@@ -1114,7 +1122,8 @@ public static class SFX
                         break;
                     }
                     btl_mot.setMotion(next, (Byte)arg0);
-                    next.animFlag |= (UInt16)EventEngine.afLoop;
+                    if (SFX.currentEffectID != SpecialEffect.Tidal_Wave) // Fix #1029
+                        next.animFlag |= (UInt16)EventEngine.afLoop;
                     next.evt.animFrame = 0;
                 }
                 break;
@@ -1362,6 +1371,12 @@ public static class SFX
             }
         }
         return 0;
+    }
+
+    private static Boolean FixScaleReset()
+    {
+        return SFX.currentEffectID == SpecialEffect.Atomos__Full && SFX.frameIndex > 350 // Frame 368
+            || SFX.currentEffectID == SpecialEffect.Atomos__Short && SFX.frameIndex > 150; // Frame 188
     }
 
     public static void CreateEffectDebugData()
@@ -1921,24 +1936,27 @@ public static class SFX
 
     public static void Play(SpecialEffect effNum)
     {
+        if ((Int32)effNum >= SFX.playParam.Length)
+            effNum = SpecialEffect.Fire__Multi;
         SFX.currentEffectID = effNum;
         SFX.streamIndex = 0;
         SFX.soundFPS = 4;
         SFX.soundCallCount = 0;
         SFX.cameraOffset = 0f;
-        Int32 num = SFX.playParam[(Int32)effNum] & 3;
-        if (num == 0)
+        Int32 param = SFX.playParam[(Int32)effNum];
+        Int32 shaderSubOrder = param & 3;
+        if (shaderSubOrder == 0)
             SFX.subOrder = SFX.defaultSubOrder;
         else
-            SFX.subOrder = num - 1;
-        Int32 num2 = SFX.playParam[(Int32)effNum] >> 2 & 3;
-        if (num2 == 0)
+            SFX.subOrder = shaderSubOrder - 1;
+        Int32 colorStrength = param >> 2 & 3;
+        if (colorStrength == 0)
             SFX.colIntensity = SFX.defaultColIntensity;
         else
-            SFX.colIntensity = num2 - 1;
+            SFX.colIntensity = colorStrength - 1;
         SFX.pixelOffset = 0;
-        SFX.colThreshold = (SFX.playParam[(Int32)effNum] >> 29 & 1);
-        SFX.addOrder = (SFX.playParam[(Int32)effNum] >> 28 & 1);
+        SFX.colThreshold = param >> 29 & 1;
+        SFX.addOrder = param >> 28 & 1;
         SFX.SoundClear();
         SFX.isRunning = true;
         SFX.frameIndex = 0;
@@ -1947,26 +1965,25 @@ public static class SFX
             SFX.lastPlayedExeId = SFX.request.exe.btl_id;
         PSXTextureMgr.Reset();
         SFXMesh.DetectEyeFrameStart = -1;
-        Int32 num3 = Marshal.SizeOf(SFX.request);
-        Byte[] value = new Byte[num3];
-        GCHandle gCHandle = GCHandle.Alloc(value, GCHandleType.Pinned);
-        Marshal.StructureToPtr(SFX.request, gCHandle.AddrOfPinnedObject(), false);
+        Byte[] requestRaw = new Byte[Marshal.SizeOf(SFX.request)];
+        GCHandle requestHandle = GCHandle.Alloc(requestRaw, GCHandleType.Pinned);
+        Marshal.StructureToPtr(SFX.request, requestHandle.AddrOfPinnedObject(), false);
         SoundLib.LoadSfxSoundData((Int32)effNum);
         if (effNum == SpecialEffect.Special_Necron_Death)
             PSXTextureMgr.SpEff435();
-        String path = "SpecialEffects/ef" + ((Int32)effNum).ToString("D3");
+        String path = $"SpecialEffects/ef{(Int32)effNum:D3}";
         Byte[] binAsset = AssetManager.LoadBytes(path, true);
         if (binAsset != null)
         {
-            GCHandle gCHandle2 = GCHandle.Alloc(binAsset, GCHandleType.Pinned);
-            SFX.SFX_Play((Int32)effNum, gCHandle2.AddrOfPinnedObject(), binAsset.Length, gCHandle.AddrOfPinnedObject());
-            gCHandle2.Free();
+            GCHandle binHandle = GCHandle.Alloc(binAsset, GCHandleType.Pinned);
+            SFX.SFX_Play((Int32)effNum, binHandle.AddrOfPinnedObject(), binAsset.Length, requestHandle.AddrOfPinnedObject());
+            binHandle.Free();
         }
         else
         {
-            SFX.SFX_Play((Int32)effNum, (IntPtr)null, 0, gCHandle.AddrOfPinnedObject());
+            SFX.SFX_Play((Int32)effNum, (IntPtr)null, 0, requestHandle.AddrOfPinnedObject());
         }
-        gCHandle.Free();
+        requestHandle.Free();
     }
 
     public static void SetCameraTarget(Vector3 pos, BTL_DATA exe, BTL_DATA trg)

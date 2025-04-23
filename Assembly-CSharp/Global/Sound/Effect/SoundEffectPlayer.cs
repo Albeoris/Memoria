@@ -133,10 +133,8 @@ public class SoundEffectPlayer : SoundPlayer
         if (soundProfile == null)
         {
             soundProfile = this.sceneSoundDatabase.Read(soundIndex);
-        }
-        if (soundProfile == null)
-        {
-            soundProfile = this.onTheFlySoundDatabase.Read(soundIndex);
+            if (soundProfile == null)
+                soundProfile = this.onTheFlySoundDatabase.Read(soundIndex);
         }
         if (soundProfile != null)
         {
@@ -178,7 +176,7 @@ public class SoundEffectPlayer : SoundPlayer
                 SoundLib.Log("Unload on the fly sound database.");
                 base.UnloadResource(this.onTheFlySoundDatabase);
             }
-            base.LoadResource(soundProfile, this.onTheFlySoundDatabase, new SoundPlayer.LoadResourceCallback(this.LoadOnTheFlySoundResourceCallback));
+            base.LoadResource(soundProfile, this.onTheFlySoundDatabase, this.LoadOnTheFlySoundResourceCallback);
         }
     }
 
