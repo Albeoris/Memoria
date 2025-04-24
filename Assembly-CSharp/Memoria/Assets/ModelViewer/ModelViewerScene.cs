@@ -65,7 +65,6 @@ namespace Memoria.Assets
         private static Boolean mouseLeftPressed;
         private static Boolean mouseRightPressed;
         private static PartControlled partcontrolled = PartControlled.MODEL;
-        private static Boolean ChangeWeaponTexture = false;
         private static Boolean DontSpamMessage = false;
         private static Boolean InsertText = false;
         private static Boolean CreateInsertText = false;
@@ -343,7 +342,7 @@ namespace Memoria.Assets
                     if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
                     {
                         string[] CustomTexture = null;
-                        if (input.value.Contains(".png"))
+                        if (!input.value.Contains(".png;"))
                         {
                             input.value = input.value.Replace(".png", ".png;");
                             CustomTexture = input.value.Remove(input.value.Length - 1).Split(';');
@@ -352,25 +351,30 @@ namespace Memoria.Assets
                             CustomTexture = input.value.Split(';');
 
                         InsertTextGUI.SetActive(false);
-                        backgroundGo.SetActive(false);
+                        backgroundGo.SetActive(false);                       
                         InsertText = false;
                         if (CustomTexture != null)
                         {
-                            if (ChangeWeaponTexture && currentWeaponModel != null)
+                            if (currentWeaponModel != null && partcontrolled == PartControlled.WEAPON)
                             {
-                                MeshRenderer[] componentsInChildren = currentWeaponModel.GetComponentsInChildren<MeshRenderer>();
-                                int weaponMeshCount = componentsInChildren.Length;
-                                Renderer[] weaponRenderer = new Renderer[weaponMeshCount];
-                                for (Int32 i = 0; i < weaponMeshCount; i++)
+                                if (weapongeoList[currentWeaponGeoIndex].Name.StartsWith("GEO_WEP"))
                                 {
-                                    weaponRenderer[i] = componentsInChildren[i].GetComponent<Renderer>();
-                                    if (CustomTexture.Length > i && !String.IsNullOrEmpty(CustomTexture[i]))
+                                    MeshRenderer[] componentsInChildren = currentWeaponModel.GetComponentsInChildren<MeshRenderer>();
+                                    int weaponMeshCount = componentsInChildren.Length;
+                                    Renderer[] weaponRenderer = new Renderer[weaponMeshCount];
+                                    for (Int32 i = 0; i < weaponMeshCount; i++)
                                     {
-                                        weaponRenderer[i].material.mainTexture = AssetManager.Load<Texture2D>(CustomTexture[i], false);
+                                        weaponRenderer[i] = componentsInChildren[i].GetComponent<Renderer>();
+                                        if (CustomTexture.Length > i && !String.IsNullOrEmpty(CustomTexture[i]))
+                                        {
+                                            weaponRenderer[i].material.mainTexture = AssetManager.Load<Texture2D>(CustomTexture[i], false);
+                                        }
                                     }
                                 }
+                                else
+                                    ModelFactory.ChangeModelTexture(currentWeaponModel, CustomTexture);
                             }
-                            else if (geoList[currentGeoIndex].Name.StartsWith("GEO_WEP"))
+                            else if (geoList[currentGeoIndex].Name.StartsWith("GEO_WEP") && partcontrolled == PartControlled.MODEL)
                             {
                                 MeshRenderer[] componentsInChildren = currentModel.GetComponentsInChildren<MeshRenderer>();
                                 int weaponMeshCount = componentsInChildren.Length;
@@ -385,7 +389,9 @@ namespace Memoria.Assets
                                 }
                             }
                             else
+                            {
                                 ModelFactory.ChangeModelTexture(currentModel, CustomTexture);
+                            }
                         }
                     }
                     return;
@@ -915,7 +921,6 @@ namespace Memoria.Assets
                 }
                 if (Input.GetKeyDown(KeyCode.P) && currentBonesID.Count > 0)
                 {
-                    ChangeWeaponTexture = !ChangeWeaponTexture;
                     if (shift)
                     {
                         partcontrolled += 1;
@@ -1546,7 +1551,6 @@ namespace Memoria.Assets
             if (currentWeaponModel != null)
             {
                 partcontrolled = PartControlled.MODEL;
-                ChangeWeaponTexture = false;
                 UnityEngine.Object.Destroy(currentWeaponModel);
             }
             else if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS)
