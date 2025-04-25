@@ -1051,55 +1051,50 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
             {
                 binaryReader.ReadByte();
                 Byte count = binaryReader.ReadByte();
-                UInt16 num2 = 0;
-                Int32 num3;
-                for (num3 = count; num3 > 0; --num3)
+                for (Int32 i = 0; i < count; ++i)
                 {
                     UInt16 id = (UInt16)binaryReader.ReadInt16();
-                    num2 = (UInt16)binaryReader.ReadInt16();
+                    UInt16 offset = (UInt16)binaryReader.ReadInt16();
                     if (id == tagID)
-                        break;
+                        return 2 + offset;
                 }
-                if (num3 == 0)
-                    return this.nil;
-
-                return 2 + num2;
+                return this.nil;
             }
         }
     }
 
     public ObjList DisposeObj(Obj obj)
     {
-        ObjList objList1 = null;
-        ObjList objList2 = null;
-        ObjList objList3;
-        for (objList3 = this._context.activeObj; objList3 != null && objList3.obj != obj; objList3 = objList3.next)
-            objList2 = objList3;
+        ObjList nextObj = null;
+        ObjList prevObj = null;
+        ObjList objInActive;
+        for (objInActive = this._context.activeObj; objInActive != null && objInActive.obj != obj; objInActive = objInActive.next)
+            prevObj = objInActive;
         if (obj.cid == 4)
         {
-            FieldMapActorController mapActorController = ((Actor)obj).fieldMapActorController;
+            FieldMapActorController mapActorController = ((Actor)obj)?.fieldMapActorController;
             mapActorController?.UnregisterHonoBehavior(true);
-            FieldMapActor fieldMapActor = ((Actor)obj).fieldMapActor;
+            FieldMapActor fieldMapActor = ((Actor)obj)?.fieldMapActor;
             if (fieldMapActor != null)
             {
                 fieldMapActor.DestroySelfShadow();
                 fieldMapActor.UnregisterHonoBehavior(true);
             }
         }
-        if (objList3 != null)
+        if (objInActive != null)
         {
-            objList1 = objList3.next;
-            if (objList2 != null)
-                objList2.next = objList1;
-            if (this._context.activeObjTail == objList3)
-                this._context.activeObjTail = objList2;
-            objList3.next = this._context.freeObj;
-            this._context.freeObj = objList3;
+            nextObj = objInActive.next;
+            if (prevObj != null)
+                prevObj.next = nextObj;
+            if (this._context.activeObjTail == objInActive)
+                this._context.activeObjTail = prevObj;
+            objInActive.next = this._context.freeObj;
+            this._context.freeObj = objInActive;
             DeallocObj(obj);
-            if (this._context.controlUID == objList3.obj.uid)
+            if (this._context.controlUID == objInActive.obj.uid)
                 this._context.controlUID = 0;
         }
-        return objList1;
+        return nextObj;
     }
 
     private static void DeallocObj(Obj obj)
