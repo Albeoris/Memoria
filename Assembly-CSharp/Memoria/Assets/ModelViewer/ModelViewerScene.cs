@@ -342,56 +342,53 @@ namespace Memoria.Assets
                     if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
                     {
                         string[] CustomTexture = null;
-                        if (!input.value.Contains(".png;"))
+                        if (input.value.Contains(";"))
                         {
-                            input.value = input.value.Replace(".png", ".png;");
-                            CustomTexture = input.value.Remove(input.value.Length - 1).Split(';');
+                            CustomTexture = input.value.Split(';');
                         }
                         else
-                            CustomTexture = input.value.Split(';');
+                        {
+                            input.value = input.value.Replace(".png", ".png;");
+                            if (input.value.Length > 1)
+                                CustomTexture = input.value.Remove(input.value.Length - 1).Split(';');
+                        }
 
                         InsertTextGUI.SetActive(false);
                         backgroundGo.SetActive(false);                       
                         InsertText = false;
                         if (CustomTexture != null)
                         {
+                            GameObject modelselected = null;
                             if (currentWeaponModel != null && partcontrolled == PartControlled.WEAPON)
+                                modelselected = currentWeaponModel;
+                            else
+                                modelselected = currentModel;
+
+                            Log.Message("LOAD NEW TEXTURES on " + (modelselected == currentModel ? geoList[currentGeoIndex].Name : weapongeoList[currentWeaponGeoIndex].Name));                                                    
+                            for (Int32 t = 0; t < CustomTexture.Length; t++)
+                                Log.Message("                └> n°" + t + " = " + CustomTexture[t]);
+
+                            MeshRenderer[] weaponRenderers = modelselected.GetComponentsInChildren<MeshRenderer>();
+                            if (weaponRenderers.Length > 0)
+                                for (Int32 i = 0; i < weaponRenderers.Length && i < CustomTexture.Length; i++)
+                                    weaponRenderers[i].GetComponent<Renderer>().material.mainTexture = AssetManager.Load<Texture2D>(CustomTexture[i], false);
+                            else // Other kind of model have no btl.weaponMeshCount
                             {
-                                if (weapongeoList[currentWeaponGeoIndex].Name.StartsWith("GEO_WEP"))
+                                if (currentWeaponModel != null && partcontrolled == PartControlled.MODEL)
                                 {
-                                    MeshRenderer[] componentsInChildren = currentWeaponModel.GetComponentsInChildren<MeshRenderer>();
-                                    int weaponMeshCount = componentsInChildren.Length;
-                                    Renderer[] weaponRenderer = new Renderer[weaponMeshCount];
-                                    for (Int32 i = 0; i < weaponMeshCount; i++)
+                                    ChangeWeaponModel(currentWeaponGeoIndex);
+                                    ModelFactory.ChangeModelTexture(modelselected, CustomTexture);
+                                    while (postRefresh > 0 && currentModel != null)
                                     {
-                                        weaponRenderer[i] = componentsInChildren[i].GetComponent<Renderer>();
-                                        if (CustomTexture.Length > i && !String.IsNullOrEmpty(CustomTexture[i]))
-                                        {
-                                            weaponRenderer[i].material.mainTexture = AssetManager.Load<Texture2D>(CustomTexture[i], false);
-                                        }
+                                        UpdateModelCoordinates();
+                                        UpdateWeaponModelCoordinates();
+                                        postRefresh--;
                                     }
+                                    ChangeWeaponModel(currentWeaponGeoIndex);
                                 }
                                 else
-                                    ModelFactory.ChangeModelTexture(currentWeaponModel, CustomTexture);
-                            }
-                            else if (geoList[currentGeoIndex].Name.StartsWith("GEO_WEP") && partcontrolled == PartControlled.MODEL)
-                            {
-                                MeshRenderer[] componentsInChildren = currentModel.GetComponentsInChildren<MeshRenderer>();
-                                int weaponMeshCount = componentsInChildren.Length;
-                                Renderer[] weaponRenderer = new Renderer[weaponMeshCount];
-                                for (Int32 i = 0; i < weaponMeshCount; i++)
-                                {
-                                    weaponRenderer[i] = componentsInChildren[i].GetComponent<Renderer>();
-                                    if (CustomTexture.Length > i && !String.IsNullOrEmpty(CustomTexture[i]))
-                                    {
-                                        weaponRenderer[i].material.mainTexture = AssetManager.Load<Texture2D>(CustomTexture[i], false);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                ModelFactory.ChangeModelTexture(currentModel, CustomTexture);
-                            }
+                                    ModelFactory.ChangeModelTexture(modelselected, CustomTexture);
+                            }                     
                         }
                     }
                     return;
@@ -1383,7 +1380,7 @@ namespace Memoria.Assets
                 {
                     extraInfo += "[WEAPON] ¤ ";
                     extraInfo += UseModdedTextures ? "text_mod | " : "text_orig | ";
-                    extraInfo += $"Pos: [x]{currentWeaponModel.transform.localPosition.x} [y]{currentWeaponModel.transform.localPosition.y}";
+                    extraInfo += $"Pos: [x]{currentWeaponModel.transform.localPosition.x} [y]{currentWeaponModel.transform.localPosition.y} [z]{currentWeaponModel.transform.localPosition.z}";
                     extraInfo += $" Rot(Quat): [x]{Math.Round(currentWeaponModel.transform.localRotation.x, 2)} [y]{Math.Round(currentWeaponModel.transform.localRotation.y, 2)} [z]{Math.Round(currentWeaponModel.transform.localRotation.z, 2)} [w]{Math.Round(currentWeaponModel.transform.localRotation.w, 2)}";
                     extraInfo += $" Rot(Eul): {Math.Round(currentWeaponModel.transform.localRotation.eulerAngles.x, 0)}/{Math.Round(currentWeaponModel.transform.localRotation.eulerAngles.y, 0)}/{Math.Round(currentWeaponModel.transform.localRotation.eulerAngles.z, 0)}";
                     extraInfo += $" Scale: {Math.Round(currentWeaponModel.transform.localScale.x, 2)}/{Math.Round(currentWeaponModel.transform.localScale.y, 2)}/{Math.Round(currentWeaponModel.transform.localScale.z, 2)}";
@@ -1707,6 +1704,7 @@ namespace Memoria.Assets
             if (currentWeaponModel != null && index == currentWeaponGeoIndex)
             {
                 UnityEngine.Object.Destroy(currentWeaponModel);
+                currentWeaponModel = null;
             }
             else
             {
@@ -1724,9 +1722,10 @@ namespace Memoria.Assets
                     currentWeaponModel = ModelFactory.CreateModel(weapongeoList[index].Name, false, true, Configuration.Graphics.ElementsSmoothTexture);
                     WeaponAttach(currentWeaponModel, currentModel, currentBonesID[currentBoneIndex]);
                     isLoadingWeaponModel = false;
-                    postRefresh = 6;
                 }
             }
+            postRefresh = 6;
+
         }
 
         public static void WeaponAttach(GameObject sourceObject, GameObject targetObject, Int32 bone_index)
