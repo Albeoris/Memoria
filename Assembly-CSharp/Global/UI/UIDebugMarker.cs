@@ -42,7 +42,7 @@ public class UIDebugMarker
             gameObject.transform.parent = gameObject2.transform;
             gameObject.transform.localScale = Vector3.one;
             gameObject.transform.localPosition = screenPosition;
-            gameObject.GetComponent<UILabel>().text = markText;
+            gameObject.GetComponent<UILabel>().rawText = markText;
             UIDebugMarker.DebugLog(String.Concat(new Object[]
             {
                 "Mark ",

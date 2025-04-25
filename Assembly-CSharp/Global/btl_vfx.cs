@@ -67,7 +67,7 @@ public static class btl_vfx
         }
         else if (cmdType == CharacterCommandType.Throw)
         {
-            Byte shape = ff9item._FF9Item_Data[btl_util.GetCommandItem(cmd)].shape;
+            Int32 shape = ff9item._FF9Item_Data[btl_util.GetCommandItem(cmd)].shape;
             if (shape == 1)
                 return SpecialEffect.Throw_Dagger;
             else if (shape == 2)
@@ -117,7 +117,7 @@ public static class btl_vfx
                     if (sequenceText != null)
                         cmd.aa.Info.VfxAction = new UnifiedBattleSequencer.BattleAction(sequenceText);
                 }
-                if (cmd.aa.Info.SequenceFile == null && regist.bi.player == 0)
+                if (cmd.aa.Info.SequenceFile == null && regist != null && regist.bi.player == 0)
                 {
                     if (regist.dms_geo_id == 427 && cmd.aa.Info.VfxIndex == 457) // Thunder Slash with Beatrix (Boss version)
                         cmd.aa.Info.VfxAction = new UnifiedBattleSequencer.BattleAction(ThunderSlashBeatrixFix);

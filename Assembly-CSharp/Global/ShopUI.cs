@@ -38,7 +38,7 @@ public class ShopUI : UIScene
             ButtonGroupState.SetScrollButtonToGroup(this.shopItemScrollList.ScrollButton, ShopUI.ItemGroupButton);
             ButtonGroupState.SetScrollButtonToGroup(this.shopWeaponScrollList.ScrollButton, ShopUI.WeaponGroupButton);
             ButtonGroupState.SetScrollButtonToGroup(this.shopSellItemScrollList.ScrollButton, ShopUI.SellItemGroupButton);
-            ButtonGroupState.SetPointerDepthToGroup(4, ShopUI.SellItemGroupButton);
+            ButtonGroupState.SetPointerDepthToGroup(6, ShopUI.QuantityGroupButton);
             if (this.type == ShopUI.ShopType.Synthesis) // No Buy/Sell options: directly select items
                 ButtonGroupState.ActiveGroup = ShopUI.WeaponGroupButton;
             else
@@ -189,6 +189,52 @@ public class ShopUI : UIScene
         ButtonGroupState.RemoveCursorMemorize(ShopUI.ItemGroupButton);
         ButtonGroupState.RemoveCursorMemorize(ShopUI.WeaponGroupButton);
         ButtonGroupState.RemoveCursorMemorize(ShopUI.SellItemGroupButton);
+    }
+
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        if (this.shopItemScrollList.isActiveAndEnabled)
+            this.shopItemScrollList.UpdateTableViewImp();
+        if (this.shopWeaponScrollList.isActiveAndEnabled)
+            this.shopWeaponScrollList.UpdateTableViewImp();
+        if (this.shopSellItemScrollList.isActiveAndEnabled)
+            this.shopSellItemScrollList.UpdateTableViewImp();
+        if (this.type == ShopUI.ShopType.Item)
+            this.itemFundLabel.rawText = Localization.GetWithDefault("GilSymbol").Replace("%", FF9StateSystem.Common.FF9.party.gil.ToString());
+        else if (this.type == ShopUI.ShopType.Weapon)
+            this.weaponFundLabel.rawText = Localization.GetWithDefault("GilSymbol").Replace("%", FF9StateSystem.Common.FF9.party.gil.ToString());
+        else if (this.type == ShopUI.ShopType.Synthesis)
+            this.weaponFundLabel.rawText = Localization.GetWithDefault("GilSymbol").Replace("%", FF9StateSystem.Common.FF9.party.gil.ToString());
+        if (this.characterParamCaptionLabel.isActiveAndEnabled && this.currentItemIndex >= 0)
+        {
+            Int32 equipPart = ff9item.FF9Item_GetEquipPart(this.itemIdList[this.currentItemIndex]);
+            Boolean isArmor = equipPart > 0;
+            if (equipPart >= 0)
+                this.characterParamCaptionLabel.rawText = isArmor ? Localization.Get("DefenseCaption") : Localization.Get("AttackCaption");
+        }
+        if (this.type == ShopUI.ShopType.Synthesis && this.currentItemIndex >= this.mixStartIndex)
+            FF9UIDataTool.DisplayMultipleItems(this.requiredItemsLabel, this.mixItemList[this.currentItemIndex - this.mixStartIndex].IngredientsAsDictionary(), kvp => ff9item.FF9Item_GetCount(kvp.Key) >= kvp.Value, true);
+        if (this.ConfirmDialogHitPoint.activeInHierarchy)
+        {
+            if (this.type == ShopUI.ShopType.Item || this.type == ShopUI.ShopType.Weapon)
+            {
+                FF9UIDataTool.DisplayItem(this.itemIdList[this.currentItemIndex], this.confirmItemHud.IconSprite, this.confirmItemHud.NameLabel, true);
+                this.confirmPriceLabel.rawText = Localization.GetWithDefault("GilSymbol").Replace("%", (this.count * ff9item._FF9Item_Data[this.itemIdList[this.currentItemIndex]].price).ToString());
+            }
+            else if (this.type == ShopUI.ShopType.Synthesis)
+            {
+                FF9UIDataTool.DisplayItem(this.mixItemList[this.currentItemIndex - this.mixStartIndex].Result, this.confirmItemHud.IconSprite, this.confirmItemHud.NameLabel, true);
+                this.confirmPriceLabel.rawText = Localization.GetWithDefault("GilSymbol").Replace("%", (this.count * this.mixItemList[this.currentItemIndex - this.mixStartIndex].Price).ToString());
+            }
+            else if (this.type == ShopUI.ShopType.Sell)
+            {
+                RegularItem itemId = this.sellItemIdList[this.currentItemIndex];
+                FF9UIDataTool.DisplayItem(itemId, this.confirmItemHud.IconSprite, this.confirmItemHud.NameLabel, true);
+                this.confirmPriceLabel.rawText = Localization.GetWithDefault("GilSymbol").Replace("%", (this.count * ff9item._FF9Item_Data[itemId].selling_price).ToString());
+            }
+        }
     }
 
     private void InitializeData()
@@ -670,17 +716,16 @@ public class ShopUI : UIScene
         if (shopType == ShopUI.ShopType.Item)
         {
             RegularItem itemId = this.itemIdList[this.currentItemIndex];
-            this.itemFundLabel.text = Localization.GetWithDefault("GilSymbol").Replace("%", FF9StateSystem.Common.FF9.party.gil.ToString());
-            this.itemCountLabel.text = ff9item.FF9Item_GetCount(itemId).ToString();
-            this.requiredItem1Hud.Self.SetActive(false);
-            this.requiredItem2Hud.Self.SetActive(false);
+            this.itemFundLabel.rawText = Localization.GetWithDefault("GilSymbol").Replace("%", FF9StateSystem.Common.FF9.party.gil.ToString());
+            this.itemCountLabel.rawText = ff9item.FF9Item_GetCount(itemId).ToString();
+            this.requiredItemsLabel.gameObject.SetActive(false);
         }
         else if (shopType == ShopUI.ShopType.Weapon)
         {
             RegularItem itemId = this.itemIdList[this.currentItemIndex];
-            this.weaponFundLabel.text = Localization.GetWithDefault("GilSymbol").Replace("%", FF9StateSystem.Common.FF9.party.gil.ToString());
-            this.weaponCountLabel.text = ff9item.FF9Item_GetCount(this.itemIdList[this.currentItemIndex]).ToString();
-            this.weaponEquipLabel.text = ff9item.FF9Item_GetEquipCount(this.itemIdList[this.currentItemIndex]).ToString();
+            this.weaponFundLabel.rawText = Localization.GetWithDefault("GilSymbol").Replace("%", FF9StateSystem.Common.FF9.party.gil.ToString());
+            this.weaponCountLabel.rawText = ff9item.FF9Item_GetCount(this.itemIdList[this.currentItemIndex]).ToString();
+            this.weaponEquipLabel.rawText = ff9item.FF9Item_GetEquipCount(this.itemIdList[this.currentItemIndex]).ToString();
             if ((ff9item._FF9Item_Data[itemId].type & ItemType.AnyEquipment) != 0)
             {
                 this.weaponEquipLabel.color = FF9TextTool.White;
@@ -691,15 +736,14 @@ public class ShopUI : UIScene
                 this.weaponEquipLabel.color = FF9TextTool.Gray;
                 this.weaponEquipTextLabel.color = FF9TextTool.Gray;
             }
-            this.requiredItem1Hud.Self.SetActive(false);
-            this.requiredItem2Hud.Self.SetActive(false);
+            this.requiredItemsLabel.gameObject.SetActive(false);
         }
         else if (shopType == ShopUI.ShopType.Synthesis)
         {
             FF9MIX_DATA synth = this.mixItemList[this.currentItemIndex - this.mixStartIndex];
-            this.weaponFundLabel.text = Localization.GetWithDefault("GilSymbol").Replace("%", FF9StateSystem.Common.FF9.party.gil.ToString());
-            this.weaponCountLabel.text = ff9item.FF9Item_GetCount(synth.Result).ToString();
-            this.weaponEquipLabel.text = ff9item.FF9Item_GetEquipCount(synth.Result).ToString();
+            this.weaponFundLabel.rawText = Localization.GetWithDefault("GilSymbol").Replace("%", FF9StateSystem.Common.FF9.party.gil.ToString());
+            this.weaponCountLabel.rawText = ff9item.FF9Item_GetCount(synth.Result).ToString();
+            this.weaponEquipLabel.rawText = ff9item.FF9Item_GetEquipCount(synth.Result).ToString();
             if ((ff9item._FF9Item_Data[synth.Result].type & ItemType.AnyEquipment) != 0)
             {
                 this.weaponEquipLabel.color = FF9TextTool.White;
@@ -710,43 +754,8 @@ public class ShopUI : UIScene
                 this.weaponEquipLabel.color = FF9TextTool.Gray;
                 this.weaponEquipTextLabel.color = FF9TextTool.Gray;
             }
-            ItemListDetailWithIconHUD[] hud = new ItemListDetailWithIconHUD[] { this.requiredItem1Hud, this.requiredItem2Hud };
-            Dictionary<RegularItem, Int32> ingredients = synth.IngredientsAsDictionary();
-            if (synth.Ingredients.Length <= 2)
-            {
-                for (Int32 i = 1; i >= 0; i--)
-                {
-                    if (i < synth.Ingredients.Length && synth.Ingredients[i] != RegularItem.NoItem)
-                    {
-                        hud[i].Self.SetActive(true);
-                        FF9UIDataTool.DisplayItem(synth.Ingredients[i], hud[i].IconSprite, hud[i].NameLabel, ff9item.FF9Item_GetCount(synth.Ingredients[i]) >= ingredients[synth.Ingredients[i]], true);
-                        ingredients[synth.Ingredients[i]]--;
-                    }
-                    else
-                    {
-                        hud[i].Self.SetActive(false);
-                    }
-                }
-            }
-            else
-            {
-                Dictionary<RegularItem, Int32>[] ingrSplit = new Dictionary<RegularItem, Int32>[] { new Dictionary<RegularItem, Int32>(), new Dictionary<RegularItem, Int32>() };
-                Dictionary<RegularItem, Boolean>[] ingrEnabled = new Dictionary<RegularItem, Boolean>[] { new Dictionary<RegularItem, Boolean>(), new Dictionary<RegularItem, Boolean>() };
-                Int32 numInFirstLabel = (ingredients.Count + 1) / 2;
-                Int32 ingrNum = 0;
-                foreach (KeyValuePair<RegularItem, Int32> kvp in ingredients)
-                {
-                    Int32 splitIndex = ingrNum < numInFirstLabel ? 0 : 1;
-                    ingrSplit[splitIndex].Add(kvp.Key, kvp.Value);
-                    ingrEnabled[splitIndex].Add(kvp.Key, ff9item.FF9Item_GetCount(kvp.Key) >= kvp.Value);
-                    ingrNum++;
-                }
-                for (Int32 i = 0; i < 2; i++)
-                {
-                    hud[i].Self.SetActive(true);
-                    FF9UIDataTool.DisplayMultipleItems(ingrSplit[i], hud[i].IconSprite, hud[i].NameLabel, ingrEnabled[i], true);
-                }
-            }
+            this.requiredItemsLabel.gameObject.SetActive(true);
+            FF9UIDataTool.DisplayMultipleItems(this.requiredItemsLabel, synth.IngredientsAsDictionary(), kvp => ff9item.FF9Item_GetCount(kvp.Key) >= kvp.Value, true);
         }
     }
 
@@ -775,7 +784,7 @@ public class ShopUI : UIScene
         }
         if (this.shopItemScrollList.ItemsPool.Count == 0)
         {
-            this.shopItemScrollList.PopulateListItemWithData = new Action<Transform, ListDataTypeBase, Int32, Boolean>(this.DisplayItemDetail);
+            this.shopItemScrollList.PopulateListItemWithData = this.DisplayItemDetail;
             this.shopItemScrollList.OnRecycleListItemClick += this.OnListItemClick;
             this.shopItemScrollList.InitTableView(list, 0);
         }
@@ -792,7 +801,7 @@ public class ShopUI : UIScene
         if (isInit)
             this.DisplayWindowBackground(item.gameObject, null);
         FF9UIDataTool.DisplayItem(shopItemListData.Id, itemListDetailWithIconHUD.IconSprite, itemListDetailWithIconHUD.NameLabel, shopItemListData.Enable);
-        itemListDetailWithIconHUD.NumberLabel.text = shopItemListData.Price.ToString();
+        itemListDetailWithIconHUD.NumberLabel.rawText = shopItemListData.Price.ToString();
         if (shopItemListData.Enable)
         {
             itemListDetailWithIconHUD.NameLabel.color = FF9TextTool.White;
@@ -851,7 +860,7 @@ public class ShopUI : UIScene
         }
         if (this.shopWeaponScrollList.ItemsPool.Count == 0)
         {
-            this.shopWeaponScrollList.PopulateListItemWithData = new Action<Transform, ListDataTypeBase, Int32, Boolean>(this.DisplayWeaponDetail);
+            this.shopWeaponScrollList.PopulateListItemWithData = this.DisplayWeaponDetail;
             this.shopWeaponScrollList.OnRecycleListItemClick += this.OnListItemClick;
             this.shopWeaponScrollList.InitTableView(list, 0);
         }
@@ -868,7 +877,7 @@ public class ShopUI : UIScene
         if (isInit)
             this.DisplayWindowBackground(item.gameObject, null);
         FF9UIDataTool.DisplayItem(shopItemListData.Id, itemListDetailWithIconHUD.IconSprite, itemListDetailWithIconHUD.NameLabel, shopItemListData.Enable);
-        itemListDetailWithIconHUD.NumberLabel.text = shopItemListData.Price.ToString();
+        itemListDetailWithIconHUD.NumberLabel.rawText = shopItemListData.Price.ToString();
         if (shopItemListData.Enable)
         {
             itemListDetailWithIconHUD.NameLabel.color = FF9TextTool.White;
@@ -935,14 +944,14 @@ public class ShopUI : UIScene
         {
             Boolean canSell = ff9item._FF9Item_Data[shopSellItemListData.Id].selling_price >= 0;
             FF9UIDataTool.DisplayItem(shopSellItemListData.Id, itemListDetailWithIconHUD.IconSprite, itemListDetailWithIconHUD.NameLabel, canSell);
-            itemListDetailWithIconHUD.NumberLabel.text = shopSellItemListData.Count.ToString();
+            itemListDetailWithIconHUD.NumberLabel.rawText = shopSellItemListData.Count.ToString();
             itemListDetailWithIconHUD.NumberLabel.color = canSell ? FF9TextTool.White : FF9TextTool.Gray;
             ButtonGroupState.SetButtonAnimation(itemListDetailWithIconHUD.Self, true);
         }
         else
         {
             FF9UIDataTool.DisplayItem(shopSellItemListData.Id, itemListDetailWithIconHUD.IconSprite, itemListDetailWithIconHUD.NameLabel, false);
-            itemListDetailWithIconHUD.NumberLabel.text = shopSellItemListData.Count.ToString();
+            itemListDetailWithIconHUD.NumberLabel.rawText = shopSellItemListData.Count.ToString();
             itemListDetailWithIconHUD.NumberLabel.color = FF9TextTool.Gray;
             ButtonGroupState.SetButtonAnimation(itemListDetailWithIconHUD.Self, false);
         }
@@ -960,7 +969,7 @@ public class ShopUI : UIScene
         Boolean isArmor = equipPart > 0;
         if (equipPart < 0)
             return;
-        this.characterParamCaptionLabel.text = isArmor ? Localization.Get("DefenseCaption") : Localization.Get("AttackCaption");
+        this.characterParamCaptionLabel.rawText = isArmor ? Localization.Get("DefenseCaption") : Localization.Get("AttackCaption");
         Int32 hudIndex = 0;
         for (Int32 i = this.availableCharaStart; i < this.availableCharaList.Count; i++)
         {
@@ -994,12 +1003,12 @@ public class ShopUI : UIScene
                 characterWeaponInfoHUD.ParamValueLabel.gameObject.SetActive(true);
                 if (equipPart == 4)
                 {
-                    characterWeaponInfoHUD.ParamValueLabel.text = "???";
+                    characterWeaponInfoHUD.ParamValueLabel.rawText = "???";
                     characterWeaponInfoHUD.ChangeArrowSprite.gameObject.SetActive(false);
                 }
                 else
                 {
-                    characterWeaponInfoHUD.ParamValueLabel.text = newRating.ToString();
+                    characterWeaponInfoHUD.ParamValueLabel.rawText = newRating.ToString();
                     if (oldRating < newRating)
                     {
                         characterWeaponInfoHUD.ChangeArrowSprite.gameObject.SetActive(true);
@@ -1039,18 +1048,18 @@ public class ShopUI : UIScene
         {
             this.InputQuantityDialog.SetActive(true);
             this.InputQuantityDialog.transform.localPosition = new Vector3(0f, -16f, 0f);
-            this.confirmQuantityLabel.text = this.count.ToString();
+            this.confirmQuantityLabel.rawText = this.count.ToString();
             if (shopType == ShopUI.ShopType.Item || shopType == ShopUI.ShopType.Weapon)
             {
                 FF9UIDataTool.DisplayTextLocalize(this.HelpLabel, "BuyQtyHelp");
                 FF9UIDataTool.DisplayItem(this.itemIdList[this.currentItemIndex], this.confirmItemHud.IconSprite, this.confirmItemHud.NameLabel, true);
-                this.confirmPriceLabel.text = Localization.GetWithDefault("GilSymbol").Replace("%", (this.count * ff9item._FF9Item_Data[this.itemIdList[this.currentItemIndex]].price).ToString());
+                this.confirmPriceLabel.rawText = Localization.GetWithDefault("GilSymbol").Replace("%", (this.count * ff9item._FF9Item_Data[this.itemIdList[this.currentItemIndex]].price).ToString());
             }
             else
             {
                 FF9UIDataTool.DisplayTextLocalize(this.HelpLabel, "MixQtyHelp");
                 FF9UIDataTool.DisplayItem(this.mixItemList[this.currentItemIndex - this.mixStartIndex].Result, this.confirmItemHud.IconSprite, this.confirmItemHud.NameLabel, true);
-                this.confirmPriceLabel.text = Localization.GetWithDefault("GilSymbol").Replace("%", (this.count * this.mixItemList[this.currentItemIndex - this.mixStartIndex].Price).ToString());
+                this.confirmPriceLabel.rawText = Localization.GetWithDefault("GilSymbol").Replace("%", (this.count * this.mixItemList[this.currentItemIndex - this.mixStartIndex].Price).ToString());
             }
         }
         else
@@ -1062,22 +1071,22 @@ public class ShopUI : UIScene
             FF9UIDataTool.DisplayTextLocalize(this.HelpLabel, "SellQtyHelp");
             this.InfoDialog.SetActive(true);
             FF9UIDataTool.DisplayItem(itemId, this.confirmItemHud.IconSprite, this.confirmItemHud.NameLabel, true);
-            this.confirmQuantityLabel.text = this.count.ToString();
-            this.confirmPriceLabel.text = Localization.GetWithDefault("GilSymbol").Replace("%", (this.count * sellingPrice).ToString());
+            this.confirmQuantityLabel.rawText = this.count.ToString();
+            this.confirmPriceLabel.rawText = Localization.GetWithDefault("GilSymbol").Replace("%", (this.count * sellingPrice).ToString());
             Boolean isEquipment = (ff9item._FF9Item_Data[itemId].type & ItemType.AnyEquipment) != 0;
-            this.confirmFundLabel.text = Localization.GetWithDefault("GilSymbol").Replace("%", FF9StateSystem.Common.FF9.party.gil.ToString());
-            this.confirmCountLabel.text = ff9item.FF9Item_GetCount(itemId).ToString();
+            this.confirmFundLabel.rawText = Localization.GetWithDefault("GilSymbol").Replace("%", FF9StateSystem.Common.FF9.party.gil.ToString());
+            this.confirmCountLabel.rawText = ff9item.FF9Item_GetCount(itemId).ToString();
             if (isEquipment)
             {
                 this.confirmEquipLabel.color = FF9TextTool.White;
                 this.confirmEquipTextLabel.color = FF9TextTool.White;
-                this.confirmEquipLabel.text = ff9item.FF9Item_GetEquipCount(itemId).ToString();
+                this.confirmEquipLabel.rawText = ff9item.FF9Item_GetEquipCount(itemId).ToString();
             }
             else
             {
                 this.confirmEquipLabel.color = FF9TextTool.Gray;
                 this.confirmEquipTextLabel.color = FF9TextTool.Gray;
-                this.confirmEquipLabel.text = String.Empty;
+                this.confirmEquipLabel.rawText = String.Empty;
             }
         }
         this.ConfirmDialogHitPoint.SetActive(true);
@@ -1085,7 +1094,7 @@ public class ShopUI : UIScene
 
     private void ClearCharacterInfo()
     {
-        this.characterParamCaptionLabel.text = String.Empty;
+        this.characterParamCaptionLabel.rawText = String.Empty;
         foreach (ShopUI.CharacterWeaponInfoHUD characterWeaponInfoHUD in this.charInfoHud)
         {
             characterWeaponInfoHUD.AvatarSprite.gameObject.SetActive(false);
@@ -1106,16 +1115,16 @@ public class ShopUI : UIScene
     {
         if (shopType == ShopUI.ShopType.Item)
         {
-            this.itemFundLabel.text = Localization.GetWithDefault("GilSymbol").Replace("%", FF9StateSystem.Common.FF9.party.gil.ToString());
-            this.itemCountLabel.text = "0";
+            this.itemFundLabel.rawText = Localization.GetWithDefault("GilSymbol").Replace("%", FF9StateSystem.Common.FF9.party.gil.ToString());
+            this.itemCountLabel.rawText = "0";
         }
         else if (shopType == ShopUI.ShopType.Weapon)
         {
-            this.weaponFundLabel.text = Localization.GetWithDefault("GilSymbol").Replace("%", FF9StateSystem.Common.FF9.party.gil.ToString());
-            this.weaponCountLabel.text = "0";
+            this.weaponFundLabel.rawText = Localization.GetWithDefault("GilSymbol").Replace("%", FF9StateSystem.Common.FF9.party.gil.ToString());
+            this.weaponCountLabel.rawText = "0";
             this.weaponEquipTextLabel.color = FF9TextTool.Gray;
             this.weaponEquipLabel.color = FF9TextTool.Gray;
-            this.weaponEquipLabel.text = "0";
+            this.weaponEquipLabel.rawText = "0";
         }
     }
 
@@ -1257,7 +1266,7 @@ public class ShopUI : UIScene
             this.charInfoHud.Add(new ShopUI.CharacterWeaponInfoHUD(transform.gameObject));
         this.requiredItem1Hud = new ItemListDetailWithIconHUD(this.RequiredItemPanel.GetChild(1), false);
         this.requiredItem2Hud = new ItemListDetailWithIconHUD(this.RequiredItemPanel.GetChild(2), false);
-        this.confirmItemHud = new ItemListDetailWithIconHUD(this.InputQuantityDialog.GetChild(0), false);
+        this.confirmItemHud = new ItemListDetailWithIconHUD(this.InputQuantityDialog.GetChild(0), true);
         this.confirmQuantityLabel = this.InputQuantityDialog.GetChild(0).GetChild(2).GetComponent<UILabel>();
         this.confirmPriceLabel = this.InputQuantityDialog.GetChild(3).GetChild(1).GetComponent<UILabel>();
         this.confirmFundLabel = this.InfoDialog.GetChild(0).GetChild(1).GetComponent<UILabel>();
@@ -1279,9 +1288,31 @@ public class ShopUI : UIScene
         UIEventListener.Get(this.InputQuantityDialog.GetChild(2).GetChild(1)).onClick += this.onClickPlus;
         UIEventListener.Get(this.InputQuantityDialog.GetChild(2).GetChild(2)).onClick += this.onClickMinus;
         this.triggerCounter = ShopUI.TRIGGER_DURATION;
+        this.requiredItemsLabel = this.requiredItem1Hud.NameLabel;
+        this.requiredItem1Hud.IconSprite.gameObject.SetActive(false);
+        this.requiredItem2Hud.Self.SetActive(false);
+        this.requiredItemsLabel.overflowMethod = UILabel.Overflow.ClampContent;
+        this.requiredItemsLabel.preventWrapping = true;
+        this.requiredItemsLabel.multiLine = true;
+        this.requiredItemsLabel.color = Color.white;
+        this.requiredItemsLabel.pivot = UIWidget.Pivot.TopLeft;
+        this._background = new GOMenuBackground(this.transform.GetChild(7).gameObject, "shop_bg");
+        this.confirmItemHud.NameLabel.overflowMethod = UILabel.Overflow.ShrinkContent;
         this.confirmQuantityLabel.width = 60;
         this.confirmQuantityLabel.height = 64;
-        this._background = new GOMenuBackground(this.transform.GetChild(7).gameObject, "shop_bg");
+        this._shopItemPanel.Background.Panel.Name.Label.fixedAlignment = true;
+        this._shopWeaponPanel.Background.Panel.Name.Label.fixedAlignment = true;
+        this._shopSellItemPanel.Background.Panel.Name.Label.fixedAlignment = true;
+        this._shopSellItemPanel.Background.Panel.Name2.Label.fixedAlignment = true;
+        this.InputQuantityDialog.GetChild(6).GetChild(2).GetComponent<UILabel>().rightAnchor.Set(1f, -40);
+        this.InfoDialog.GetChild(3).GetChild(2).GetComponent<UILabel>().rightAnchor.Set(1f, -40);
+        this.confirmCountLabel.rightAnchor.Set(1f, 0);
+        this.weaponCountLabel.rightAnchor.Set(1f, 0);
+        this.requiredItemsLabel.leftAnchor.Set(this.ItemInfoPanel.transform, 0f, 25);
+        this.requiredItemsLabel.rightAnchor.Set(this.ItemInfoPanel.transform, 1f, -25);
+        this.requiredItemsLabel.topAnchor.Set(1f, 25);
+        this.requiredItemsLabel.bottomAnchor.Set(0f, -104);
+        this.InputQuantityDialog.GetParent().GetComponent<UIPanel>().depth += 1;
     }
 
     private void Update()
@@ -1440,9 +1471,11 @@ public class ShopUI : UIScene
     private UILabel weaponEquipTextLabel;
     private UILabel weaponEquipLabel;
 
-    private ItemListDetailWithIconHUD requiredItem1Hud;
+    private ItemListDetailWithIconHUD requiredItem1Hud; // Dummied: requiredItemLabel is used instead
     private ItemListDetailWithIconHUD requiredItem2Hud;
     private ItemListDetailWithIconHUD confirmItemHud;
+    [NonSerialized]
+    private UILabel requiredItemsLabel;
 
     private UILabel confirmQuantityLabel;
     private UILabel confirmPriceLabel;

@@ -270,6 +270,15 @@ UseAbsoluteOrientation = "Usar orientação absoluta"
 UseAbsoluteOrientation_Tooltip = "Quando ativado, usar o direcional analógico usará a orientação absoluta (como no PSX) em vez de seguir a orientação do caminho de caminhada pré-determinado nas telas de fundo pré-renderizadas"
 AlwaysCaptureGamepad = "Sempre capturar o gamepad"
 AlwaysCaptureGamepad_Tooltip = "Quando ativado o gamepad permanecerá ativo quando o jogo não estiver focado"
+SwapConfirmCancel = "Confirmar/Cancelar"
+SwapConfirmCancel_Tooltip = "Use o botão O para confirmar e o X para cancelar (layout de botões em japonês)"
+DualLanguageMode = "Modo de dois idiomas"
+DualLanguageModeChoice0 = "Desativado"
+DualLanguageModeChoice1 = "Alternar com Caps Lock"
+DualLanguageModeChoice2 = "Simultâneo"
+DualLanguageMode_Tooltip = "Opção 1: alternar idiomas com a tecla CAPS LOCK&#xA;Opção 2: ambos os idiomas exibidos simultaneamente"
+DualLanguage = "Dois idiomas"
+DualLanguage_Tooltip = "Escolha do idioma secundário"
 />
 
 <SteamOverlay

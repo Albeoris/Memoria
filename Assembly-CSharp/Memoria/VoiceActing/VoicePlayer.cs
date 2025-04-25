@@ -4,17 +4,15 @@ using Memoria.Assets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using UnityEngine;
 
 public class VoicePlayer : SoundPlayer
 {
     private static Dialog specialDialog;
-    private static ushort specialLastPlayed;
-    private static ushort specialCount = 0;
-    private static Dictionary<ushort, ushort> huntTakenCounter;
-    private static Dictionary<ushort, ushort> huntHeldCounter;
+    private static Int32 specialLastPlayed;
+    private static Int32 specialCount = 0;
+
     public VoicePlayer()
     {
         this.playerPitch = 1f;
@@ -39,10 +37,17 @@ public class VoicePlayer : SoundPlayer
         if (!Configuration.VoiceActing.Enabled)
             return false;
 
-        SoundProfile attachedVoice;
-        if (soundOfDialog.TryGetValue(dialog, out attachedVoice))
+        if (soundOfDialog.TryGetValue(dialog, out SoundProfile attachedVoice))
             return ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(attachedVoice.SoundID) == 1;
         return false;
+    }
+
+    public static Boolean RegisterDialogVoice(Dialog dialog, SoundProfile soundProfile, Boolean update = false)
+    {
+        if (!Configuration.VoiceActing.Enabled || dialog == null || soundProfile == null || (!update && soundOfDialog.ContainsKey(dialog)))
+            return false;
+        soundOfDialog[dialog] = soundProfile;
+        return true;
     }
 
     public void StartSound(SoundProfile soundProfile, Action onFinished = null)
@@ -94,43 +99,23 @@ public class VoicePlayer : SoundPlayer
         if (!Configuration.VoiceActing.Enabled)
             return;
 
-        String specialAppend = GetSpecialAppend(FieldZoneId, messageNumber);
-
         // Compile the list of candidate paths for the file name
-        List<String> candidates = new List<string>();
-        String lang = Localization.GetSymbol();
+        List<String> candidates = new List<String>();
+        String lang = Localization.CurrentSymbol;
         String pageIndex = dialog.SubPage.Count > 1 ? $"_{Math.Max(0, dialog.CurrentPage - 1)}" : "";
 
         // Path for the hunt/hot and cold
+        String specialAppend = GetSpecialAppend(FieldZoneId, messageNumber);
         if (specialAppend.Length > 0)
-        {
-            String path = $"Voices/{lang}/{FieldZoneId}/va_{messageNumber}{specialAppend}";
-            if (!AssetManager.HasAssetOnDisc($"Sounds/{path}.akb", true, true) && !AssetManager.HasAssetOnDisc($"Sounds/{path}.ogg", true, false))
-            {
-                // Cycle back to 0
-                if (specialAppend.Contains("_held"))
-                {
-                    huntHeldCounter[Convert.ToUInt16(messageNumber)] = 1;
-                    specialAppend = "_held_0";
-                    path = $"Voices/{lang}/{FieldZoneId}/va_{messageNumber}{specialAppend}";
-                }
-                else if (specialAppend.Contains("_taken"))
-                {
-                    huntTakenCounter[Convert.ToUInt16(messageNumber)] = 1;
-                    specialAppend = "_taken_0";
-                    path = $"Voices/{lang}/{FieldZoneId}/va_{messageNumber}{specialAppend}";
-                }
-            }
-            candidates.Add(path);
-        }
+            candidates.Add($"Voices/{lang}/{FieldZoneId}/va_{messageNumber}{specialAppend}");
 
         // Path using the object id
         if (dialog.Po != null)
             candidates.Add($"Voices/{lang}/{FieldZoneId}/va_{messageNumber}_{dialog.Po.uid}{pageIndex}");
 
         // Path using the character name at the top of the box
-        String[] msgStrings = dialog.Phrase.Split(["[CHOO]"], StringSplitOptions.None);
-        String msgString = msgStrings.Length > 0 ? messageOpcodeRegex.Replace(msgStrings[0], (match) => { return ""; }) : "";
+        String[] msgStrings = dialog.ChoicePhrases;
+        String msgString = msgStrings[0];
         if (msgString.Length > 0 && (
             // Languages have various ways of presenting the name
             msgString.Contains("\n“") || // English
@@ -139,49 +124,12 @@ public class VoicePlayer : SoundPlayer
             msgString.Contains("\n─") // Italian, Spanish
             ))
         {
-            string name = msgString.Split('\n')[0].Replace(":", "").Trim();
+            String name = msgString.Split('\n')[0].Replace(":", "").Trim();
             candidates.Add($"Voices/{lang}/{FieldZoneId}/va_{messageNumber}_{name}{pageIndex}");
         }
 
         // Default path
         candidates.Add($"Voices/{lang}/{FieldZoneId}/va_{messageNumber}{pageIndex}");
-
-        Boolean hasChoices = dialog.ChoiceNumber > 0;
-        Boolean isMsgEmpty = msgString.Length == 0;
-        Boolean shouldDismiss = Configuration.VoiceActing.AutoDismissDialogAfterCompletion && !hasChoices;
-        Action nonDismissAction = () =>
-        {
-            if (dialog == specialDialog) specialDialog = null;
-            soundOfDialog.Remove(dialog);
-        };
-        Action dismissAction =
-            () =>
-            {
-                if (dialog == specialDialog) specialDialog = null;
-                soundOfDialog.Remove(dialog);
-                if (dialog.EndMode > 0 && FF9StateSystem.Common.FF9.fldMapNo != 3009 && FF9StateSystem.Common.FF9.fldMapNo != 3010)
-                    return; // Timed dialog: let the dialog's own timed automatic closure handle it
-                while (dialog.CurrentState == Dialog.State.OpenAnimation || dialog.CurrentState == Dialog.State.TextAnimation)
-                    Thread.Sleep(1000 / Configuration.Graphics.FieldTPS);
-                if (!dialog.gameObject.activeInHierarchy || dialog.CurrentState != Dialog.State.CompleteAnimation)
-                    return;
-                if (!dialog.FlagButtonInh) // This dialog can be closed normally
-                    dialog.ForceClose();
-                else if (VoicePlayer.scriptRequestedButtonPress) // It looks like this dialog is closed by the script on a key press
-                {
-                    ETb.sKey &= ~EventInput.GetKeyMaskFromControl(Control.Confirm);
-                    EventInput.ReceiveInput(EventInput.GetKeyMaskFromControl(Control.Confirm));
-                }
-            };
-        Action playSelectChoiceAction =
-            () =>
-            {
-                if (dialog == specialDialog) specialDialog = null;
-                soundOfDialog.Remove(dialog);
-                while (dialog.CurrentState == Dialog.State.OpenAnimation || dialog.CurrentState == Dialog.State.TextAnimation || !dialog.IsChoiceReady)
-                    Thread.Sleep(1000 / Configuration.Graphics.FieldTPS);
-                dialog.OnOptionChange?.Invoke(dialog.Id, dialog.SelectChoice); // Simulate a choice change so the default selected line plays
-            };
 
         // Try to find one of the candidates
         Boolean found = false;
@@ -196,16 +144,20 @@ public class VoicePlayer : SoundPlayer
                     if (specialDialog != null) FieldZoneReleaseVoice(specialDialog, true);
                     specialDialog = dialog;
                 }
-                soundOfDialog[dialog] = CreateLoadThenPlayVoice(path.GetHashCode(), path, shouldDismiss ? dismissAction : (hasChoices ? playSelectChoiceAction : nonDismissAction));
+                soundOfDialog[dialog] = CreateLoadThenPlayVoice(path.GetHashCode(), path, () => AfterSoundFinished(dialog));
 
                 found = true;
                 break;
             }
         }
+
+        Boolean hasChoices = dialog.ChoiceNumber > 0;
+        Boolean isMsgEmpty = msgString.Length == 0;
         if (!found)
         {
             candidates.Reverse(); // Reverse for display
             SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, text:{msgString}, path(s):'{String.Join("', '", candidates.ToArray())}' (not found)");
+            candidates.Reverse();
             isMsgEmpty = true;
         }
 
@@ -216,37 +168,90 @@ public class VoicePlayer : SoundPlayer
                 if (dialog.CurrentState != Dialog.State.CompleteAnimation || !dialog.IsChoiceReady)
                     return;
 
-                String vaOptionPath = candidates.Last() + "_" + optionIndex;
-                String[] options = msgStrings.Length >= 2 ? msgStrings[1].Split('\n') : [];
+                String vaOptionPathMain = candidates.Last() + "_" + optionIndex; // Shorter (eg. "va_{messageNumber}_{optionIndex}")
+                String vaOptionPathSub = candidates.First() + "_" + optionIndex; // Longer  (eg. "va_{messageNumber}_{dialog.Po.uid}_{optionIndex}")
                 Int32 selectedVisibleOption = dialog.ActiveIndexes.Count > 0 ? Math.Max(0, dialog.ActiveIndexes.FindIndex(index => index == optionIndex)) : optionIndex;
-                String optString = selectedVisibleOption < options.Length ? messageOpcodeRegex.Replace(options[selectedVisibleOption].Trim(), (match) => { return ""; }) : "[Invalid option index]";
+                String optString = selectedVisibleOption + 1 < msgStrings.Length ? msgStrings[selectedVisibleOption + 1].Trim() : "[Invalid option index]";
 
-                if (!AssetManager.HasAssetOnDisc($"Sounds/{vaOptionPath}.akb", true, true) && !AssetManager.HasAssetOnDisc($"Sounds/{vaOptionPath}.ogg", true, false))
+                if (AssetManager.HasAssetOnDisc($"Sounds/{vaOptionPathSub}.akb", true, true) || AssetManager.HasAssetOnDisc($"Sounds/{vaOptionPathSub}.ogg", true, false))
                 {
-                    SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, opt:{optionIndex}, text:{optString} path:{vaOptionPath} (not found)");
+                    FieldZoneReleaseVoice(dialog, true);
+                    SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, opt:{optionIndex}, text:{optString} path:{vaOptionPathSub}");
+                    soundOfDialog[dialog] = CreateLoadThenPlayVoice(vaOptionPathSub.GetHashCode(), vaOptionPathSub, () => AfterSoundFinished_Default(dialog));
+                }
+                else if (AssetManager.HasAssetOnDisc($"Sounds/{vaOptionPathMain}.akb", true, true) || AssetManager.HasAssetOnDisc($"Sounds/{vaOptionPathMain}.ogg", true, false))
+                {
+                    FieldZoneReleaseVoice(dialog, true);
+                    SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, opt:{optionIndex}, text:{optString} path:{vaOptionPathMain}");
+                    soundOfDialog[dialog] = CreateLoadThenPlayVoice(vaOptionPathMain.GetHashCode(), vaOptionPathMain, () => AfterSoundFinished_Default(dialog));
                 }
                 else
                 {
-                    FieldZoneReleaseVoice(dialog, true);
-                    SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, opt:{optionIndex}, text:{optString} path:{vaOptionPath}");
-                    soundOfDialog[dialog] = CreateLoadThenPlayVoice(vaOptionPath.GetHashCode(), vaOptionPath, nonDismissAction);
+                    if (candidates.Count > 1)
+                        SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, opt:{optionIndex}, text:{optString} paths:'{vaOptionPathMain}', '{vaOptionPathSub}' (not found)");
+                    else
+                        SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, opt:{optionIndex}, text:{optString} path:'{vaOptionPathMain}' (not found)");
                 }
             };
 
-            if (isMsgEmpty) new Thread(() => { playSelectChoiceAction(); }).Start();
+            if (isMsgEmpty) new Thread(() => AfterSoundFinished_SelectChoice(dialog)).Start();
         }
+    }
+
+    private static void AfterSoundFinished_SelectChoice(Dialog dialog)
+    {
+        if (dialog == specialDialog) specialDialog = null;
+        soundOfDialog.Remove(dialog);
+        while (dialog.CurrentState == Dialog.State.OpenAnimation || dialog.CurrentState == Dialog.State.TextAnimation || !dialog.IsChoiceReady)
+            Thread.Sleep(1000 / Configuration.Graphics.FieldTPS);
+        dialog.OnOptionChange?.Invoke(dialog.Id, dialog.SelectChoice); // Simulate a choice change so the default selected line plays
+    }
+
+    private static void AfterSoundFinished_Dismiss(Dialog dialog)
+    {
+        if (dialog == specialDialog) specialDialog = null;
+        soundOfDialog.Remove(dialog);
+        if (dialog.EndMode > 0 && FF9StateSystem.Common.FF9.fldMapNo != 3009 && FF9StateSystem.Common.FF9.fldMapNo != 3010)
+            return; // Timed dialog: let the dialog's own timed automatic closure handle it
+        while (dialog.CurrentState == Dialog.State.OpenAnimation || dialog.CurrentState == Dialog.State.TextAnimation)
+            Thread.Sleep(1000 / Configuration.Graphics.FieldTPS);
+        if (!dialog.gameObject.activeInHierarchy || dialog.CurrentState != Dialog.State.CompleteAnimation)
+            return;
+        if (!dialog.FlagButtonInh) // This dialog can be closed normally
+            dialog.ForceClose();
+        else if (VoicePlayer.scriptRequestedButtonPress) // It looks like this dialog is closed by the script on a key press
+        {
+            ETb.sKey &= ~EventInput.GetKeyMaskFromControl(Control.Confirm);
+            EventInput.ReceiveInput(EventInput.GetKeyMaskFromControl(Control.Confirm));
+        }
+    }
+
+    private static void AfterSoundFinished_Default(Dialog dialog)
+    {
+        if (dialog == specialDialog) specialDialog = null;
+        soundOfDialog.Remove(dialog);
+    }
+
+    public static void AfterSoundFinished(Dialog dialog)
+    {
+        if (dialog.ChoiceNumber > 0)
+            AfterSoundFinished_SelectChoice(dialog);
+        else if (Configuration.VoiceActing.AutoDismissDialogAfterCompletion || dialog.CloseAfterVoiceActing)
+            AfterSoundFinished_Dismiss(dialog);
+        else
+            AfterSoundFinished_Default(dialog);
     }
 
     private static Dictionary<String, Int32[]> specialMessageIds = new Dictionary<String, Int32[]>()
     {
         // Hunt, H&C start, H&C points
-        {"English(US)"  , [540, 228, 301]},
-        {"English(UK)"  , [540, 228, 301]},
-        {"Japanese"     , [560, 227, 306]},
-        {"German"       , [560, 228, 307]},
-        {"French"       , [550, 228, 307]},
-        {"Italian"      , [560, 228, 307]},
-        {"Spanish"      , [552, 228, 307]}
+        {"US", [540, 228, 301]},
+        {"UK", [540, 228, 301]},
+        {"JP", [560, 227, 306]},
+        {"GR", [560, 228, 307]},
+        {"FR", [550, 228, 307]},
+        {"IT", [560, 228, 307]},
+        {"ES", [552, 228, 307]}
     };
     private static String GetSpecialAppend(Int32 FieldZoneId, Int32 messageNumber)
     {
@@ -254,43 +259,33 @@ public class VoicePlayer : SoundPlayer
         // (special) Festival of the Hunt has take the lead and holds the lead
         switch (FieldZoneId)
         {
-            case 22:
-                if (FF9StateSystem.EventState.ScenarioCounter == 3180 && huntTakenCounter != null)
-                {
-                    // clean up memory
-                    huntTakenCounter = null;
-                    huntHeldCounter = null;
-                }
-                break;
             case 276:
             {
                 // Festival of the hunt
-                if (FF9StateSystem.EventState.ScenarioCounter > 3170 && FF9StateSystem.EventState.ScenarioCounter < 3180)
+                if (FF9StateSystem.EventState.ScenarioCounter > 3170 && FF9StateSystem.EventState.ScenarioCounter < 3180 && specialMessageIds.TryGetValue(Localization.CurrentSymbol, out Int32[] numbers))
                 {
-                    Int32[] numbers = specialMessageIds.ContainsKey(Localization.CurrentLanguage) ? specialMessageIds[Localization.CurrentLanguage] : specialMessageIds["English(US)"];
-                    // Points message for one of the 8 participants?
+                    // Points message for one of the 8 participants
                     if (messageNumber >= numbers[0] && messageNumber <= numbers[0] + 7)
                     {
-                        if (huntTakenCounter == null || huntHeldCounter == null)
-                        {
-                            huntTakenCounter = new Dictionary<ushort, ushort>();
-                            huntHeldCounter = new Dictionary<ushort, ushort>();
-                        }
-
-                        var idShort = Convert.ToUInt16(messageNumber);
-                        if (idShort == specialLastPlayed)
+                        if (messageNumber == specialLastPlayed)
                         {
                             if (specialDialog != null) return "";
-                            if (!huntHeldCounter.ContainsKey(idShort))
-                                huntHeldCounter.Add(idShort, 0);
-                            specialAppend = "_held_" + huntHeldCounter[idShort]++;
+                            // Use Var_GenUInt8_510 ... Var_GenUInt8_517
+                            Int32 varAddr = 510 + messageNumber - numbers[0];
+                            Byte varValue = FF9StateSystem.EventState.gEventGlobal[varAddr];
+                            specialAppend = "_held_" + varValue;
+                            if (varValue < Byte.MaxValue)
+                                FF9StateSystem.EventState.gEventGlobal[varAddr]++;
                         }
                         else
                         {
-                            if (!huntTakenCounter.ContainsKey(idShort))
-                                huntTakenCounter.Add(idShort, 0);
-                            specialAppend = "_taken_" + huntTakenCounter[idShort]++; ;
-                            specialLastPlayed = idShort;
+                            // Use Var_GenUInt8_518 ... Var_GenUInt8_525
+                            Int32 varAddr = 518 + messageNumber - numbers[0];
+                            Byte varValue = FF9StateSystem.EventState.gEventGlobal[varAddr];
+                            specialAppend = "_taken_" + varValue;
+                            if (varValue < Byte.MaxValue)
+                                FF9StateSystem.EventState.gEventGlobal[varAddr]++;
+                            specialLastPlayed = messageNumber;
                         }
                     }
                 }
@@ -299,17 +294,13 @@ public class VoicePlayer : SoundPlayer
             // hot and cold
             case 945:
             {
-                Int32[] numbers = specialMessageIds.ContainsKey(Localization.CurrentLanguage) ? specialMessageIds[Localization.CurrentLanguage] : specialMessageIds["English(US)"];
-                if (messageNumber >= numbers[1] && messageNumber <= numbers[1] + 3) // Game start
+                if (specialMessageIds.TryGetValue(Localization.CurrentSymbol, out Int32[] numbers))
                 {
-                    specialCount = 0;
-                }
-                // count up for each time you find something.
-                // 
-                if (messageNumber == numbers[2]) // gained points
-                {
-                    specialAppend = "_" + specialCount;
-                    specialCount += 1;
+                    if (messageNumber >= numbers[1] && messageNumber <= numbers[1] + 3) // Game start
+                        specialCount = 0;
+                    // count up for each time you find something.
+                    if (messageNumber == numbers[2]) // gained points
+                        specialAppend = "_" + specialCount++;
                 }
                 break;
             }
@@ -319,21 +310,17 @@ public class VoicePlayer : SoundPlayer
 
     public static void FieldZoneDialogClosed(Dialog dialog)
     {
-        if (huntHeldCounter == null && huntTakenCounter == null)
-        {
+        if (FF9StateSystem.EventState.ScenarioCounter != 3175) // 3175 = Festival of the Hunt
             FieldZoneReleaseVoice(dialog, Configuration.VoiceActing.StopVoiceWhenDialogDismissed && !dialog.IsClosedByScript);
-        }
     }
 
     private static void FieldZoneReleaseVoice(Dialog dialog, Boolean stopSound)
     {
-        SoundProfile attachedVoice;
-        if (soundOfDialog.TryGetValue(dialog, out attachedVoice))
+        if (soundOfDialog.TryGetValue(dialog, out SoundProfile attachedVoice))
         {
             if (stopSound && ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(attachedVoice.SoundID) == 1)
                 SoundLib.VoicePlayer.StopSound(attachedVoice);
-            Thread soundWatcher;
-            if (watcherOfSound.TryGetValue(attachedVoice, out soundWatcher))
+            if (watcherOfSound.TryGetValue(attachedVoice, out Thread soundWatcher))
             {
                 soundWatcher.Interrupt();
                 watcherOfSound.Remove(attachedVoice);
@@ -386,7 +373,7 @@ public class VoicePlayer : SoundPlayer
             battleId = FF9StateSystem.Battle.battleMapIndex;
         String btlFolder = asSharedMessage ? "general" : battleId.ToString();
 
-        String vaPath = String.Format("Voices/{0}/battle/{2}/va_{1}", Localization.GetSymbol(), va_id, btlFolder).ToLower();
+        String vaPath = String.Format("Voices/{0}/battle/{2}/va_{1}", Localization.CurrentSymbol, va_id, btlFolder).ToLower();
         if (!AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) && !AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false))
         {
             SoundLib.VALog(String.Format("field:battle/{0}, msg:{1}, text:{2} path:{3} (not found)", btlFolder, va_id, text, vaPath));
@@ -396,6 +383,21 @@ public class VoicePlayer : SoundPlayer
         SoundLib.VALog(String.Format("field:battle/{0}, msg:{1}, text:{2} path:{3}", btlFolder, va_id, text, vaPath));
 
         CreateLoadThenPlayVoice(va_id, vaPath);
+    }
+
+    public static Boolean HoldDialogUntilSoundEnds(Int32 zoneId, Int32 universalTextId, Int32 mapNo)
+    {
+        if (zoneId == 2 && mapNo >= 59 && mapNo <= 67) // 'I want to be your canary' stage (early game)
+            return true;
+        if (zoneId == 187) // Ending scene (Vivi monologue and stage afterwards)
+            return true;
+        if (zoneId == 189 && (universalTextId == 137 || universalTextId == 138)) // Cid and Baku come at the rescue against Silverdragons ("All ships, clear a path for the Invincible!" and "Can't let you guys steal the show by yourselves!")
+            return true;
+        if (zoneId == 89 && universalTextId >= 132 && universalTextId <= 135) // Alexander summoning chant ("O holy guardian, hear our prayers." etc)
+            return true;
+        if (zoneId == 484 && universalTextId == 165) // Mount Gulug: Kuja meets the party after Eiko defeated Zorn & Thorn ("How can that-")
+            return true;
+        return false;
     }
 
     public void PauseAllSounds()
@@ -468,12 +470,8 @@ public class VoicePlayer : SoundPlayer
         }
     }
 
-    private static readonly Regex messageOpcodeRegex = new Regex(@"\[[A-Za-z0-9=]*\]");
-
     public static Dictionary<Dialog, SoundProfile> soundOfDialog = new Dictionary<Dialog, SoundProfile>();
-
     public static Dictionary<SoundProfile, Thread> watcherOfSound = new Dictionary<SoundProfile, Thread>();
-
     public static Boolean scriptRequestedButtonPress = false;
 
     public SoundDatabase soundDatabase = new SoundDatabase();
@@ -481,18 +479,13 @@ public class VoicePlayer : SoundPlayer
     private SdLibSoundProfileStateGraph stateTransition;
 
     protected SoundProfile activeSoundProfile;
-
     private SoundProfile upcomingSoundProfile;
 
     public override Single Volume => Configuration.VoiceActing.Volume / 100f;
 
     private Single playerPitch;
-
     private Single playerPanning;
-
     private Single fadeInDuration;
-
     private Single fadeOutDuration;
-
     private Single fadeInTimeRemain;
 }

@@ -1,12 +1,12 @@
-﻿using Assets.Scripts.Common;
+﻿using System;
+using System.Collections;
+using System.Diagnostics;
+using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria;
-using Memoria.Assets;
 using Memoria.Scenes;
 using Memoria.Scripts;
 using Memoria.Prime;
-using System;
-using System.Collections;
 using UnityEngine;
 
 public class UIManager : PersistenSingleton<UIManager>
@@ -200,7 +200,6 @@ public class UIManager : PersistenSingleton<UIManager>
 
     public void OnLevelWasLoaded(Int32 sceneNo)
     {
-        Localization.CurrentLanguage = FF9StateSystem.Settings.CurrentLanguage;
         this.WorldHUDScene.gameObject.SetActive(false);
         this.FieldHUDScene.gameObject.SetActive(false);
         this.BattleHUDScene.gameObject.SetActive(false);
@@ -800,7 +799,7 @@ public class UIManager : PersistenSingleton<UIManager>
                     if (c is UISprite sprite)
                         res += $", SpriteName: {sprite.spriteName}, Atlas: {sprite.atlas?.name ?? "[No Atlas]"}";
                     if (c is UILabel label)
-                        res += $", Label: {label.text.Replace("\n", "\\n")}";
+                        res += $", Label: {label.rawText.Replace("\n", "\\n")}";
                 }
                 if (c is UILocalize localize)
                     res += $" - Localize: {localize.key}";
@@ -817,5 +816,23 @@ public class UIManager : PersistenSingleton<UIManager>
         }
         for (Int32 i = 0; i < startGo.transform.childCount; i++)
             DebugLogComponents(startGo.GetChild(i), logger, indent + " ");
+    }
+
+    public static void DebugLogStackTrace()
+    {
+        StackTrace trace = new StackTrace();
+        String log = "'";
+        for (Int32 i = 1; i < trace.FrameCount; i++)
+        {
+            if (i > 1)
+                log += "' -> '";
+            var method = trace.GetFrame(i).GetMethod();
+            if (method.DeclaringType != null)
+                log += method.DeclaringType.Name + "." + method.Name;
+            else
+                log += method.Name;
+        }
+        log += "'";
+        Log.Message($"[UIManager] Stack Trace: {log}");
     }
 }

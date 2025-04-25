@@ -189,7 +189,7 @@ namespace Memoria.Data
             }
             voiceEffect.lastPlayed = audioIndex;
 
-            String soundPath = $"Voices/{Localization.GetSymbol()}/{voiceEffect.AudioPaths[audioIndex]}";
+            String soundPath = $"Voices/{Localization.CurrentSymbol}/{voiceEffect.AudioPaths[audioIndex]}";
             Boolean soundExists = AssetManager.HasAssetOnDisc("Sounds/" + soundPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + soundPath + ".ogg", true, false);
             SoundLib.VALog($"battlevoice:{voiceEffect.GetType()} character:{(speakerBtlList.Count > 0 ? new BattleUnit(speakerBtlList[0]).Name : "no speaker")} path:{soundPath}" + (soundExists ? "" : " (not found)"));
             if (!soundExists) return;

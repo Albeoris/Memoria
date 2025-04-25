@@ -584,6 +584,7 @@ public static class btl_init
         btl.critical_rate_receive_resistance = 0;
         btl.is_monster_transform = false;
         btl.killer_track = null;
+        btl.bonus_given = false;
         btl.enable_trance_glow = false;
     }
 

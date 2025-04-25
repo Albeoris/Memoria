@@ -343,7 +343,7 @@ namespace FF9
                                 if (btl.dms_geo_id >= 0)
                                     ff.modelKillCount[btl.dms_geo_id]++;
                                 if (ff.btl_result != FF9StateGlobal.BTL_RESULT_ESCAPE)
-                                    btl_sys.SetBonus(enemyPtr);
+                                    btl_sys.SetBonus(btl);
                                 btl.die_seq++;
                                 if (ff9Battle.btl_phase != FF9StateBattleSystem.PHASE_MENU_OFF || (ff9Battle.btl_seq != FF9StateBattleSystem.SEQ_MENU_OFF_ESCAPE && ff9Battle.btl_seq != FF9StateBattleSystem.SEQ_MENU_OFF_EVENT))
                                     btl_sys.CheckBattlePhase(btl);

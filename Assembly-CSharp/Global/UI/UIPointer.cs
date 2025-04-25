@@ -1,8 +1,11 @@
 ﻿using System;
 using UnityEngine;
+using Memoria.Assets;
 
 public class UIPointer : MonoBehaviour
 {
+    public static Vector2 PointerSize { get; private set; }
+
     public PointerManager.LimitRectBehavior Behavior
     {
         set
@@ -17,30 +20,19 @@ public class UIPointer : MonoBehaviour
 
     public Vector2 PointerOffset
     {
-        get
-        {
-            return this.pointerOffset;
-        }
-        set
-        {
-            this.pointerOffset = value;
-        }
+        get => this.pointerOffset;
+        set => this.pointerOffset = value;
     }
 
     public Vector4 PointerLimitRect
     {
-        get
-        {
-            return this.pointerLimitRect;
-        }
-        set
-        {
-            this.pointerLimitRect = value;
-        }
+        get => this.pointerLimitRect;
+        set => this.pointerLimitRect = value;
     }
 
     public void AttachToGameObject(Transform target, Boolean autoUpdatePos, Vector2 pointerOffset, Vector4 pointerLimitRect)
     {
+        UIPointer.PointerSize = new Vector2(this.GetComponent<UIWidget>().width, this.GetComponent<UIWidget>().height);
         this.target = target;
         this.referenceVector = Vector3.zero;
         this.autoUpdateReference = autoUpdatePos;
@@ -51,19 +43,24 @@ public class UIPointer : MonoBehaviour
 
     private void RefreshPosition()
     {
+        Boolean invertPointer = NGUIText.readingDirection == UnicodeBIDI.LanguageReadingDirection.RightToLeft;
         base.transform.position = this.target.position;
         if (autoUpdateReference)
         {
             UIWidget pointerWidget = this.GetComponent<UIWidget>();
             UIWidget targetWidget = this.target.GetComponent<UIWidget>();
+            if (targetWidget.pivot != UIWidget.Pivot.Center)
+                base.transform.position = targetWidget.worldCenter;
             this.referenceVector = new Vector3(-targetWidget.width / 2f + pointerWidget.width / 4f, -pointerWidget.height / 4f, 0f);
+            if (invertPointer)
+                this.referenceVector.x *= -1;
         }
-        Vector3 localPosition = base.transform.localPosition + this.referenceVector;
-        localPosition.x += this.pointerOffset.x;
-        localPosition.y += this.pointerOffset.y;
+        Vector3 targetPosition = base.transform.localPosition + this.referenceVector;
+        targetPosition.x += this.pointerOffset.x;
+        targetPosition.y += this.pointerOffset.y;
         if (this.behavior == PointerManager.LimitRectBehavior.Hide)
         {
-            if (Mathf.Floor(localPosition.x) + 2f < this.pointerLimitRect.x || Mathf.Floor(localPosition.x) - 2f > this.pointerLimitRect.z || Mathf.Floor(localPosition.y) + 2f < this.pointerLimitRect.y || Mathf.Floor(localPosition.y) - 2f > this.pointerLimitRect.w)
+            if (Mathf.Floor(targetPosition.x) + 2f < this.pointerLimitRect.x || Mathf.Floor(targetPosition.x) - 2f > this.pointerLimitRect.z || Mathf.Floor(targetPosition.y) + 2f < this.pointerLimitRect.y || Mathf.Floor(targetPosition.y) - 2f > this.pointerLimitRect.w)
             {
                 if (!this.isHidden)
                 {
@@ -82,17 +79,16 @@ public class UIPointer : MonoBehaviour
         }
         else if (this.behavior == PointerManager.LimitRectBehavior.Limit)
         {
-            localPosition.x = Mathf.Clamp(localPosition.x, this.pointerLimitRect.x, this.pointerLimitRect.z);
-            localPosition.y = Mathf.Clamp(localPosition.y, this.pointerLimitRect.y, this.pointerLimitRect.w);
+            targetPosition.x = Mathf.Clamp(targetPosition.x, this.pointerLimitRect.x, this.pointerLimitRect.z);
+            targetPosition.y = Mathf.Clamp(targetPosition.y, this.pointerLimitRect.y, this.pointerLimitRect.w);
         }
-        base.transform.localPosition = localPosition;
-        if (ButtonGroupState.HelpEnabled && ButtonGroupState.ActiveGroup != String.Empty && ButtonGroupState.ActiveButton != (UnityEngine.Object)null)
+        base.transform.localPosition = targetPosition;
+        base.transform.localScale = new Vector3(invertPointer ? -1f : 1f, 1f, 1f);
+        if (ButtonGroupState.HelpEnabled && ButtonGroupState.ActiveGroup != String.Empty && ButtonGroupState.ActiveButton != null)
         {
-            ButtonGroupState component = ButtonGroupState.ActiveButton.GetComponent<ButtonGroupState>();
-            if (component != (UnityEngine.Object)null && component.Help.Enable)
-            {
+            ButtonGroupState button = ButtonGroupState.ActiveButton.GetComponent<ButtonGroupState>();
+            if (button != null && button.Help.Enable)
                 ButtonGroupState.ShowHelpDialog(ButtonGroupState.ActiveButton);
-            }
         }
         this.lastPosition = this.target.position;
     }
@@ -109,6 +105,8 @@ public class UIPointer : MonoBehaviour
                 this.pointerTween.enabled = false;
             }
         }
+        if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Battle && !UIManager.IsUIStateMenu(PersistenSingleton<UIManager>.Instance.State))
+            this.SetMoggleAnimation(false);
     }
 
     public void SetBlinkActive(Boolean isActive)
@@ -125,15 +123,13 @@ public class UIPointer : MonoBehaviour
 
     public void SetHelpActive(Boolean isActive, Boolean isImmediate)
     {
-        if (PersistenSingleton<UIManager>.Instance.UnityScene != UIManager.Scene.Battle)
+        if (PersistenSingleton<UIManager>.Instance.UnityScene != UIManager.Scene.Battle || UIManager.IsUIStateMenu(PersistenSingleton<UIManager>.Instance.State))
         {
             if (isActive)
             {
                 this.mogSprite.gameObject.SetActive(true);
                 if (!isImmediate)
-                {
                     this.SetMoggleAnimation(isActive);
-                }
             }
             else
             {
@@ -144,30 +140,23 @@ public class UIPointer : MonoBehaviour
         {
             this.SetMoggleAnimation(false);
             if (isActive)
-            {
                 ButtonGroupState.ShowHelpDialog(ButtonGroupState.ActiveButton);
-            }
         }
     }
 
     public void SetNumberActive(Boolean isActive, Int32 number)
     {
-        UISprite sprite = this.numberSprite;
-        if (sprite == null)
+        GameObject numberGo = this.numberSprite?.gameObject;
+        if (numberGo == null)
             return;
-
-        GameObject gameObj = sprite.gameObject;
-        if (ReferenceEquals(gameObj, null))
-            return;
-
         if (isActive)
         {
-            gameObj.SetActive(true);
-            sprite.spriteName = (number != 1) ? "hand_battle_2" : "hand_battle_1";
+            numberGo.SetActive(true);
+            this.numberSprite.spriteName = $"hand_battle_{number}";
         }
         else
         {
-            gameObj.SetActive(false);
+            numberGo.SetActive(false);
         }
     }
 
@@ -203,15 +192,13 @@ public class UIPointer : MonoBehaviour
 
     private void Update()
     {
-        if (this.target == (UnityEngine.Object)null)
+        if (this.target == null)
         {
             Singleton<PointerManager>.Instance.ReleasePointerToPool(this);
             return;
         }
         if (this.target.position != this.lastPosition)
-        {
             this.RefreshPosition();
-        }
     }
 
     private void Awake()
@@ -225,13 +212,9 @@ public class UIPointer : MonoBehaviour
     }
 
     private TweenAlpha pointerTween;
-
     private UISprite pointerSprite;
-
     private TweenScale mogTween;
-
     private UISprite mogSprite;
-
     private UISprite numberSprite;
 
     private Vector3 referenceVector;
@@ -255,9 +238,7 @@ public class UIPointer : MonoBehaviour
     private Transform target;
 
     private Vector3 lastPosition;
-
     private Boolean lastBlinkStat;
-
     private Boolean isHidden;
 
     [NonSerialized]

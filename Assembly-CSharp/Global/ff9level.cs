@@ -3,7 +3,6 @@ using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
-using Memoria.Prime.CSV;
 using NCalc;
 using System;
 using System.Collections.Generic;
@@ -83,12 +82,7 @@ public static class ff9level
         if (!String.IsNullOrEmpty(Configuration.Battle.SpeedStatFormula))
         {
             Expression e = new Expression(Configuration.Battle.SpeedStatFormula);
-            NCalcUtility.InitializeExpressionPlayer(ref e, player);
-            e.Parameters["Level"] = (Int32)lv; // overrides "player.level"
-            e.Parameters["SpeedBonus"] = (Int32)bonus.dex; // As it is, SpeedBonus contains only bonuses from equipment, no bonus is gotten from level ups
-            e.Parameters["SpeedBase"] = (Int32)baseStats.Dexterity;
-            e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-            e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+            InitExpression(ref e, player, baseStats, bonus, lv);
             Int32 val = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
             if (val >= 0)
                 speed = Math.Min(val, Byte.MaxValue); // "player.basis.dex" is a Byte, so it's better to force a 255 limit there
@@ -110,12 +104,7 @@ public static class ff9level
         if (!String.IsNullOrEmpty(Configuration.Battle.StrengthStatFormula))
         {
             Expression e = new Expression(Configuration.Battle.StrengthStatFormula);
-            NCalcUtility.InitializeExpressionPlayer(ref e, player);
-            e.Parameters["Level"] = (Int32)lv; // overrides "player.level"
-            e.Parameters["StrengthBonus"] = (Int32)bonus.str; // As it is, StrengthBonus contains both bonuses from equipment and from level ups (x3)
-            e.Parameters["StrengthBase"] = (Int32)baseStats.Strength;
-            e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-            e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+            InitExpression(ref e, player, baseStats, bonus, lv);
             Int32 val = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
             if (val >= 0)
                 strength = Math.Min(val, Byte.MaxValue); // "player.basis.str" is a Byte, so it's better to force a 255 limit there
@@ -137,12 +126,7 @@ public static class ff9level
         if (!String.IsNullOrEmpty(Configuration.Battle.MagicStatFormula))
         {
             Expression e = new Expression(Configuration.Battle.MagicStatFormula);
-            NCalcUtility.InitializeExpressionPlayer(ref e, player);
-            e.Parameters["Level"] = (Int32)lv; // overrides "player.level"
-            e.Parameters["MagicBonus"] = (Int32)bonus.mgc; // As it is, MagicBonus contains both bonuses from equipment and from level ups (x3)
-            e.Parameters["MagicBase"] = (Int32)baseStats.Magic;
-            e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-            e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+            InitExpression(ref e, player, baseStats, bonus, lv);
             Int32 val = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
             if (val >= 0)
                 magic = Math.Min(val, Byte.MaxValue); // "player.basis.mgc" is a Byte, so it's better to force a 255 limit there
@@ -164,12 +148,7 @@ public static class ff9level
         if (!String.IsNullOrEmpty(Configuration.Battle.SpiritStatFormula))
         {
             Expression e = new Expression(Configuration.Battle.SpiritStatFormula);
-            NCalcUtility.InitializeExpressionPlayer(ref e, player);
-            e.Parameters["Level"] = (Int32)lv; // overrides "player.level"
-            e.Parameters["SpiritBonus"] = (Int32)bonus.wpr; // As it is, SpiritBonus contains both bonuses from equipment and from level ups (x1)
-            e.Parameters["SpiritBase"] = (Int32)baseStats.Will;
-            e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-            e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+            InitExpression(ref e, player, baseStats, bonus, lv);
             Int32 val = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
             if (val >= 0)
                 spirit = Math.Min(val, Byte.MaxValue); // "player.basis.wpr" is a Byte, so it's better to force a 255 limit there
@@ -195,12 +174,7 @@ public static class ff9level
         if (!String.IsNullOrEmpty(Configuration.Battle.MagicStoneStockFormula))
         {
             Expression e = new Expression(Configuration.Battle.MagicStoneStockFormula);
-            NCalcUtility.InitializeExpressionPlayer(ref e, player);
-            e.Parameters["Level"] = lv; // overrides "player.level"
-            e.Parameters["MagicStoneBonus"] = (Int32)bonus.cap; // MagicStoneBonus contains the bonus from level ups (x5)
-            e.Parameters["MagicStoneBase"] = (Int32)baseStats.Gems;
-            e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-            e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+            InitExpression(ref e, player, baseStats, bonus, lv);
             Int32 val = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
             if (val >= 0)
                 gemCount = (UInt32)val;
@@ -251,5 +225,23 @@ public static class ff9level
             }
         }
         return bonus;
+    }
+
+    private static void InitExpression(ref Expression expr, PLAYER player, CharacterBaseStats baseStats, FF9LEVEL_BONUS bonus, Int32 lv)
+    {
+        NCalcUtility.InitializeExpressionPlayer(ref expr, player);
+        expr.Parameters["Level"] = lv; // overrides "player.level"
+        expr.Parameters["SpeedBonus"] = (Int32)bonus.dex; // As it is, SpeedBonus contains only bonuses from equipment, no bonus is gotten from level ups
+        expr.Parameters["SpeedBase"] = (Int32)baseStats.Dexterity;
+        expr.Parameters["StrengthBonus"] = (Int32)bonus.str; // As it is, StrengthBonus contains both bonuses from equipment and from level ups (x3)
+        expr.Parameters["StrengthBase"] = (Int32)baseStats.Strength;
+        expr.Parameters["MagicBonus"] = (Int32)bonus.mgc; // As it is, MagicBonus contains both bonuses from equipment and from level ups (x3)
+        expr.Parameters["MagicBase"] = (Int32)baseStats.Magic;
+        expr.Parameters["SpiritBonus"] = (Int32)bonus.wpr; // As it is, SpiritBonus contains both bonuses from equipment and from level ups (x1)
+        expr.Parameters["SpiritBase"] = (Int32)baseStats.Will;
+        expr.Parameters["MagicStoneBonus"] = (Int32)bonus.cap; // MagicStoneBonus contains the bonus from level ups (x5)
+        expr.Parameters["MagicStoneBase"] = (Int32)baseStats.Gems;
+        expr.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+        expr.EvaluateParameter += NCalcUtility.commonNCalcParameters;
     }
 }

@@ -83,7 +83,7 @@ public static class btl_eqp
             if (secondWeapon.geo != null)
                 UnityEngine.Object.Destroy(secondWeapon.geo);
             String mode = charWeap.Mode;
-            if (!String.IsNullOrEmpty(charWeap.Mode) && String.Equals(charWeap.Mode, "FORMULA"))
+            if (!String.IsNullOrEmpty(mode) && String.Equals(mode, "FORMULA"))
             {
                 Expression expr = new Expression(charWeap.Formula);
                 NCalcUtility.InitializeExpressionPlayer(ref expr, p);

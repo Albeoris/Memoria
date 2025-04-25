@@ -82,7 +82,10 @@ public partial class BattleHUD : UIScene
         }
 
         VoicePlayer.PlayBattleVoice(pMesNo + 7, fmtMessage, true);
-        SetBattleMessage(parsedMessage, priority, msgCmd);
+        if (msgCmd != null)
+            SetBattleTitle(msgCmd, parsedMessage, priority);
+        else
+            SetBattleMessage(parsedMessage, priority);
     }
 
     public void SetBattleFollowMessage(Byte priority, String formatMessage, params Object[] args)
@@ -107,7 +110,7 @@ public partial class BattleHUD : UIScene
     public String GetBattleCommandTitle(CMD_DATA pCmd)
     {
         if (pCmd.regist != null && pCmd.regist.bi.player == 0)
-            return pCmd.aa.Name;
+            return GetEnemyCommandDisplayName(pCmd.aa);
         if (btl_util.IsCommandMonsterTransform(pCmd))
         {
             AA_DATA aaData = btl_util.GetCommandMonsterAttack(pCmd);
@@ -171,7 +174,6 @@ public partial class BattleHUD : UIScene
     {
         if (Configuration.Interface.ScanDisplay)
         {
-            Single additionalWidth = 0.0f;
             String libraBaseMessage = $"[{NGUIText.Center}]";
             if ((infos & LibraInformation.Name) != 0)
                 libraBaseMessage += GetLibraMessages(pBtl, LibraInformation.Name)[0];
@@ -237,7 +239,7 @@ public partial class BattleHUD : UIScene
             _currentButtonGroup = !_hidingHud ? ButtonGroupState.ActiveGroup : _currentButtonGroup;
             FF9BMenu_EnableMenu(false);
             TutorialUI tutorialUI = PersistenSingleton<UIManager>.Instance.TutorialScene;
-            tutorialUI.libraTitle = "[b][F0A0F0]" + Singleton<HelpDialog>.Instance.PhraseLabel.PhrasePreOpcodeSymbol(pBtl.Name, ref additionalWidth);
+            tutorialUI.libraTitle = "[b][F0A0F0]" + pBtl.NameTag;
             tutorialUI.libraMessages = libraMessages;
             tutorialUI.libraPhoto = photo;
             tutorialUI.DisplayMode = TutorialUI.Mode.Libra;
@@ -284,6 +286,7 @@ public partial class BattleHUD : UIScene
 
     public void SetBattleTitle(CMD_DATA cmd, String str, Byte strPriority)
     {
+        str = TextPatcher.PatchBattleDialogString(str, true, strPriority, cmd);
         Message asMessage = new Message()
         {
             message = str,
@@ -302,15 +305,16 @@ public partial class BattleHUD : UIScene
         DisplayBattleMessage(asMessage);
     }
 
-    public void SetBattleMessage(String str, Byte strPriority, CMD_DATA cmd = null)
+    public void SetBattleMessage(String str, Byte strPriority)
     {
+        str = TextPatcher.PatchBattleDialogString(str, false, strPriority, null);
         Message asMessage = new Message()
         {
             message = str,
             priority = strPriority,
             counter = 0f,
             isRect = false,
-            titleCmd = cmd
+            titleCmd = null
         };
         _messageQueue[str] = asMessage;
 
@@ -390,6 +394,19 @@ public partial class BattleHUD : UIScene
         Int32 partyCount = FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits().Count(unit => unit.IsPlayer);
         if (partyCount == _playerDetailCount && !forceUpdate)
             return;
+        foreach (GONavigationButton button in _targetPanel.AllTargets)
+        {
+            if (NGUIText.readingDirection == UnicodeBIDI.LanguageReadingDirection.RightToLeft)
+            {
+                button.Name.Label.leftAnchor.Set(0f, 0);
+                button.Name.Label.rightAnchor.Set(1f, -35);
+            }
+            else
+            {
+                button.Name.Label.leftAnchor.Set(0f, 35);
+                button.Name.Label.rightAnchor.Set(1f, 0);
+            }
+        }
         _playerDetailCount = partyCount;
         var hp = _statusPanel.HP;
         var mp = _statusPanel.MP;
@@ -554,7 +571,7 @@ public partial class BattleHUD : UIScene
         _targetPanel.Widget.SetRawRect(menuPos.x, menuPos.y, menuSize.x, menuSize.y);
         _targetPanel.Captions.Border.Sprite.SetAnchor(target: _targetPanel.Captions.Transform, left: -3f, bottom: -3f, right: 3f, top: 3f);
         _targetPanel.Captions.Caption1.Label.SetAnchor(target: _targetPanel.Captions.Transform, relLeft: 0.075f, relRight: 0.5f, relBottom: 1f, bottom: -26f, top: 14f);
-        _targetPanel.Captions.Caption2.Label.SetAnchor(target: _targetPanel.Captions.Transform, relLeft: 0.585f, relRight: 1f, relBottom: 1f, bottom: -26f, top: 14f);
+        _targetPanel.Captions.Caption2.Label.SetAnchor(target: _targetPanel.Captions.Transform, relLeft: 0.585f, relRight: 0.925f, relBottom: 1f, bottom: -26f, top: 14f);
         Transform targetPanelTransform = _targetPanel.Transform;
         for (Int32 entryIndex = 0; entryIndex < _targetPanel.Enemies.Count; entryIndex++)
         {

@@ -239,17 +239,11 @@ public class UIRoot : MonoBehaviour
 
     public static void Broadcast(String funcName)
     {
-        Int32 i = 0;
-        Int32 count = UIRoot.list.Count;
-        while (i < count)
-        {
-            UIRoot uiroot = UIRoot.list[i];
-            if (uiroot != (UnityEngine.Object)null)
-            {
+        foreach (UIRoot uiroot in UIRoot.list)
+            if (uiroot != null)
                 uiroot.BroadcastMessage(funcName, SendMessageOptions.DontRequireReceiver);
-            }
-            i++;
-        }
+        if (funcName == "OnLocalize" && QuadMistGame.main != null && PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.QuadMistBattle)
+            QuadMistGame.main.OnLocalize(); // QuadMistGame is not a child of UIRoot, so call it explicitly
     }
 
     public static void Broadcast(String funcName, Object param)
@@ -260,17 +254,9 @@ public class UIRoot : MonoBehaviour
         }
         else
         {
-            Int32 i = 0;
-            Int32 count = UIRoot.list.Count;
-            while (i < count)
-            {
-                UIRoot uiroot = UIRoot.list[i];
-                if (uiroot != (UnityEngine.Object)null)
-                {
+            foreach (UIRoot uiroot in UIRoot.list)
+                if (uiroot != null)
                     uiroot.BroadcastMessage(funcName, param, SendMessageOptions.DontRequireReceiver);
-                }
-                i++;
-            }
         }
     }
 
@@ -279,23 +265,16 @@ public class UIRoot : MonoBehaviour
     public UIRoot.Scaling scalingStyle;
 
     public Int32 manualWidth = 1280;
-
     public Int32 manualHeight = 720;
-
     public Int32 minimumHeight = 320;
-
     public Int32 maximumHeight = 1536;
 
     public Boolean fitWidth;
-
     public Boolean fitHeight = true;
-
     public Boolean adjustByDPI;
-
     public Boolean shrinkPortraitUI;
 
     private Transform mTrans;
-
     private UIPanel mPanel;
 
     public enum Scaling

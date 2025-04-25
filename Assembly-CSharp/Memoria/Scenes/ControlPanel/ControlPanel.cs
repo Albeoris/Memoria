@@ -121,7 +121,7 @@ namespace Memoria.Scenes
             UIWidget panel = GetPanel(panelIndex);
             UILabel label = CreateUIElementForPanel<UILabel>(panel);
             label.overflowMethod = UILabel.Overflow.ClampContent;
-            label.text = message;
+            label.rawText = message;
             label.alignment = alignment;
             if (lineCount < 0)
                 label.bottomAnchor.Set(panel.transform, 0f, 50);
@@ -142,7 +142,7 @@ namespace Memoria.Scenes
         {
             ControlToggle control = new ControlToggle(this, panelIndex, toggleAction);
             control.IsToggled = isToggled;
-            control.Label.text = description;
+            control.Label.rawText = description;
             return control;
         }
 
@@ -150,7 +150,7 @@ namespace Memoria.Scenes
         {
             ControlHitBox control = new ControlHitBox(this, panelIndex, hitAction);
             control.Label.alignment = NGUIText.Alignment.Center;
-            control.Label.text = description;
+            control.Label.rawText = description;
             return control;
         }
 
@@ -166,7 +166,7 @@ namespace Memoria.Scenes
         {
             ControlSlider control = new ControlSlider(this, panelIndex, GetPanelLastRow(GetPanel(panelIndex)).Count == 0, slideAction);
             control.SetupScale(valueToSlide, slideToValue, initial);
-            control.Label.text = description;
+            control.Label.rawText = description;
             return control;
         }
 
@@ -206,7 +206,7 @@ namespace Memoria.Scenes
             frameGo.transform.parent = panelGo.transform;
             panelGo.name = name;
             frameGo.GetComponentInChildren<UILocalize>().key = String.Empty;
-            frameGo.GetComponentInChildren<UILabel>().text = name;
+            frameGo.GetComponentInChildren<UILabel>().rawText = name;
             frame.leftAnchor.target = panel.transform;
             frame.rightAnchor.target = panel.transform;
             frame.topAnchor.target = panel.transform;

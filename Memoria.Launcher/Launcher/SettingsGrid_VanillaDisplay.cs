@@ -5,7 +5,6 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 using Application = System.Windows.Application;
 using ComboBox = System.Windows.Controls.ComboBox;
@@ -235,29 +234,18 @@ namespace Memoria.Launcher
 
         public String[] GetAvailableMonitors()
         {
-            Screen[] allScreens = Screen.AllScreens;
-            Dictionary<Int32, String> friendlyNames = ScreenInterrogatory.GetAllMonitorFriendlyNamesSafe();
-            String[] result = new String[allScreens.Length];
-            for (Int32 index = 0; index < allScreens.Length; index++)
+            var displays = DisplayInfo.Displays;
+            String[] result = new String[displays.Count];
+            for (Int32 i = 0; i < displays.Count; i++)
             {
-                Screen screen = allScreens[index];
-                StringBuilder sb = new StringBuilder();
-                sb.Append(index);
-                sb.Append(" - ");
-
-                String name;
-                if (!friendlyNames.TryGetValue(index, out name))
-                    name = screen.DeviceName;
-                sb.Append(name);
-
-                if (screen.Primary)
-                    sb.Append((String)Lang.Res["Settings.PrimaryMonitor"]);
-
-                result[index] = sb.ToString();
-
-                if (screen.Primary)
-                    _activeMonitor = result[index];
+                result[i] = $"{i} - {displays[i].name}";
+                if (displays[i].isPrimary)
+                {
+                    result[i] += (String)Lang.Res["Settings.PrimaryMonitor"];
+                    _activeMonitor = result[i];
+                }
             }
+
             return result;
         }
 

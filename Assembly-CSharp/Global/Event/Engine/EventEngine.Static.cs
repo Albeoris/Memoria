@@ -67,98 +67,62 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
     private const Int32 kTurnAngleLog = 10;
     private const Int32 kTurnAngle = 1024;
     private const Single kTurnAngleFloat = 90f;
-    public static Byte stateNew;
-    public static Byte stateRunning;
-    public static Byte stateInit;
-    public static Byte stateSuspend;
-    public static Int32 cEventLevelN;
-    public static Int32 actNeckT;
-    public static Int32 actNeckM;
-    public static Int32 actNeckTalk;
-    public static Int32 actJump;
-    public static Int32 actMove;
-    public static Int32 actLockDir;
-    public static Int32 actEye;
-    public static Int32 actAim;
-    public static Int32 actLook;
-    public static Int32 actLookTalker;
-    public static Int32 actLookedTalker;
-    public static Int32 kInitialDist;
-    public static Int32 afLower;
-    public static Int32 afFreeze;
-    public static Int32 afHold;
-    public static Int32 afLoop;
-    public static Int32 afPalindrome;
-    public static Int32 afDir;
-    public static Int32 afExec;
-    public static Int32 cSeqOfs;
-    public static Int32 kSItemOfs;
-    public static Int32 kCItemOfs;
-    private static Int32 kNeckRad;
-    private static Int32 kNeckNear2;
-    public static Int16 kNeckAngle;
-    public static Int16 kNeckAngle0;
+    public static Byte stateNew = 0;
+    public static Byte stateRunning = 1;
+    public static Byte stateInit = 2;
+    public static Byte stateSuspend = 3;
+    public static Int32 cEventLevelN = 8;
+    public static Int32 actNeckT = 1;
+    public static Int32 actNeckM = 2;
+    public static Int32 actNeckTalk = 4;
+    public static Int32 actJump = 8;
+    public static Int32 actMove = 16;
+    public static Int32 actLockDir = 32;
+    public static Int32 actEye = 64;
+    public static Int32 actAim = 128;
+    public static Int32 actLook = 256;
+    public static Int32 actLookTalker = 512;
+    public static Int32 actLookedTalker = 1024;
+    public static Int32 kInitialDist = Int32.MaxValue;
+    public static Int32 afLower = 2;
+    public static Int32 afFreeze = 4;
+    public static Int32 afHold = 8;
+    public static Int32 afLoop = 16;
+    public static Int32 afPalindrome = 32;
+    public static Int32 afDir = 64;
+    public static Int32 afExec = 128;
+    public static Int32 cSeqOfs = 64;
+    public static Int32 kSItemOfs = 256;
+    public static Int32 kCItemOfs = 512;
+    private static Int32 kNeckRad = 500;
+    private static Int32 kNeckNear2 = 1000;
+    public static Int16 kNeckAngle = 640;
+    public static Int16 kNeckAngle0 = (Int16)(EventEngine.kNeckAngle + 256);
     private static Int32 _btlCmdPrmCmd;
     private static Int32 _btlCmdPrmSub;
-    private static Int32 kLook;
-    private static Int32 kDefaultHeight;
-    public static Int32 resyncBGMSignal;
-    public static Int32 sizeOfObj;
-    public static Int32 sizeOfQuad;
-    public static Int32 sizeOfActor;
+    private static Int32 kLook = 100;
+    private static Int32 kDefaultHeight = 400;
+    public static Int32 resyncBGMSignal = 0;
+    public static Int32 sizeOfObj = 20;
+    public static Int32 sizeOfQuad = 56;
+    public static Int32 sizeOfActor = 160;
     public static Int32[] testEventIDs;
     private static Byte[,] d;
     private static PosObj sLastTalker;
     private static Int32 sTalkTimer;
     public static HashSet<Int16> moogleFldMap;
     public static HashSet<Int16> moogleFldSpecialMap;
+    public static Single LastProcessTime = 0f;
 
     static EventEngine()
     {
-        EventEngine.stateNew = (Byte)0;
-        EventEngine.stateRunning = (Byte)1;
-        EventEngine.stateInit = (Byte)2;
-        EventEngine.stateSuspend = (Byte)3;
-        EventEngine.cEventLevelN = 8;
-        EventEngine.actNeckT = 1;
-        EventEngine.actNeckM = 2;
-        EventEngine.actNeckTalk = 4;
-        EventEngine.actJump = 8;
-        EventEngine.actMove = 16;
-        EventEngine.actLockDir = 32;
-        EventEngine.actEye = 64;
-        EventEngine.actAim = 128;
-        EventEngine.actLook = 256;
-        EventEngine.actLookTalker = 512;
-        EventEngine.actLookedTalker = 1024;
-        EventEngine.kInitialDist = Int32.MaxValue;
-        EventEngine.afLower = 2;
-        EventEngine.afFreeze = 4;
-        EventEngine.afHold = 8;
-        EventEngine.afLoop = 16;
-        EventEngine.afPalindrome = 32;
-        EventEngine.afDir = 64;
-        EventEngine.afExec = 128;
-        EventEngine.cSeqOfs = 64;
-        EventEngine.kSItemOfs = 256;
-        EventEngine.kCItemOfs = 512;
-        EventEngine.kNeckRad = 500;
-        EventEngine.kNeckNear2 = 1000;
-        EventEngine.kNeckAngle = (Int16)640;
-        EventEngine.kNeckAngle0 = (Int16)((Int32)EventEngine.kNeckAngle + 256);
-        EventEngine.kLook = 100;
-        EventEngine.kDefaultHeight = 400;
-        EventEngine.resyncBGMSignal = 0;
-        EventEngine.sizeOfObj = 20;
-        EventEngine.sizeOfQuad = 56;
-        EventEngine.sizeOfActor = 160;
         EventEngine.testEventIDs = new Int32[31] { 602, 350, 107, 262, 655, 350, 50, 101, 107, 103, 100, 310, 251, 250, 62, 752, 300, 453, 100, 2930, 301, 310, 157, 764, 60, 115, 64, 350, 1906, 2952, 852 };
         EventEngine.d = new Byte[4, 4]
         {
-            {(Byte)96, (Byte)168, (Byte)224, Byte.MaxValue},
-            {(Byte)64, (Byte)128, (Byte)192, Byte.MaxValue},
-            {(Byte)90, (Byte)167, (Byte)244, Byte.MaxValue},
-            {(Byte)115, (Byte)217, (Byte)244, Byte.MaxValue}
+            {96, 168, 224, Byte.MaxValue},
+            {64, 128, 192, Byte.MaxValue},
+            {90, 167, 244, Byte.MaxValue},
+            {115, 217, 244, Byte.MaxValue}
         };
         EventEngine.moogleFldMap = new HashSet<Int16>
         {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Threading;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Data;
@@ -21,7 +21,7 @@ namespace Memoria.Assets
                     return;
                 }
 
-                String exportSymbol = Localization.GetSymbol();
+                String exportSymbol = Localization.CurrentSymbol;
                 String modFolder = $"ExportedTranslation{exportSymbol}/";
                 if (Directory.Exists(modFolder))
                 {
@@ -29,8 +29,7 @@ namespace Memoria.Assets
                     return;
                 }
 
-                DataPatchers.Initialize();
-                InitialiseStaticBatches();
+                InitialiseStaticBatches(exportSymbol);
 
                 ExportFieldTexts(exportSymbol, modFolder);
                 ExportBattleTexts(exportSymbol, modFolder);
@@ -64,18 +63,44 @@ namespace Memoria.Assets
             Directory.CreateDirectory(exportDirectoryHW);
             foreach (Int32 zoneId in zones)
             {
-                if (!PersistenSingleton<FF9TextTool>.Instance.UpdateFieldTextNow(zoneId))
+                if (!FF9TextTool.UpdateFieldTextNow(zoneId))
                     continue;
                 String textAsMes = "";
                 String textAsHW = $"#HW filetype TEXT\n#HW language {symbol.ToLower()}\n#HW fileid {zoneId}\n\n";
                 Int32 idCounter = -1;
-                foreach (KeyValuePair<Int32, String> pair in FF9TextTool.fieldText)
+                if (_sharedFieldTexts.TryGetValue(zoneId, out SharedFieldText[] sharedArray))
+                {
+                    foreach (SharedFieldText shared in sharedArray)
+                    {
+                        idCounter = shared.EntryIndex - 1;
+                        for (Int32 i = shared.EntryIndex; i < shared.EntryIndex + shared.EntryCount; i++)
+                        {
+                            if (!FF9TextTool.MainBatch.fieldText.TryGetValue(i, out String sentence))
+                                sentence = "";
+                            textAsMes += ProcessStringForStrtMes(ref idCounter, sentence, i);
+                        }
+                        File.WriteAllText($"{exportDirectoryMes}{shared.MesName}.mes", textAsMes);
+                        textAsMes = "";
+                    }
+                    idCounter = -1;
+                }
+                if (_fieldMesSetup.TryGetValue(zoneId, out SharedFieldText sharedPart))
+                {
+                    textAsMes += sharedPart.MesName;
+                    idCounter = sharedPart.EntryCount - 1;
+                }
+                else
+                {
+                    sharedPart = null;
+                }
+                foreach (KeyValuePair<Int32, String> pair in FF9TextTool.MainBatch.fieldText)
                 {
                     String sentence = pair.Value;
-                    textAsMes += ProcessStringForStrtMes(ref idCounter, sentence, pair.Key);
+                    if (sharedPart == null || pair.Key >= sharedPart.EntryCount)
+                        textAsMes += ProcessStringForStrtMes(ref idCounter, sentence, pair.Key);
                     if (sentence.EndsWith("[ENDN]"))
                         sentence = sentence.Substring(0, sentence.Length - 6);
-                    textAsHW += $"#HW newtext {pair.Key + 1}\n{sentence}\n\n"; // TODO: have HW handle non-shifted text ID
+                    textAsHW += $"#HW text {pair.Key}\n{sentence}\n\n";
                 }
                 File.WriteAllText($"{exportDirectoryMes}{zoneId}.mes", textAsMes);
                 File.WriteAllText($"{exportDirectoryHW}{FF9DBAll.MesDB[zoneId]}.txt", textAsHW);
@@ -93,7 +118,7 @@ namespace Memoria.Assets
             foreach (KeyValuePair<String, Int32> battlePair in FF9BattleDB.SceneData)
             {
                 Int32 battleId = battlePair.Value;
-                if (!PersistenSingleton<FF9TextTool>.Instance.UpdateBattleTextNow(battleId))
+                if (!FF9TextTool.UpdateBattleTextNow(battleId))
                     continue;
                 BTL_SCENE scene = new BTL_SCENE();
                 scene.ReadBattleScene(battlePair.Key.Substring(4));
@@ -104,7 +129,7 @@ namespace Memoria.Assets
                 String textAsMes = "";
                 String textAsHW = $"#HW filetype TEXT_BATTLE\n#HW language {symbol.ToLower()}\n#HW fileid {battleId}\n\n";
                 Int32 idCounter = -1;
-                foreach (KeyValuePair<Int32, String> pair in FF9TextTool.battleText)
+                foreach (KeyValuePair<Int32, String> pair in FF9TextTool.MainBatch.battleText)
                 {
                     String sentence = pair.Value;
                     Int32 strIndex = pair.Key;
@@ -131,15 +156,15 @@ namespace Memoria.Assets
             String helpAsMes = "";
             String textAsHW = $"#HW filetype TEXT_COMMAND\n#HW language {symbol.ToLower()}\n\n";
             Int32 idCounter = -1;
-            foreach (KeyValuePair<BattleCommandId, String> pair in FF9TextTool.commandName)
+            foreach (KeyValuePair<BattleCommandId, String> pair in FF9TextTool.MainBatch.commandName)
             {
                 nameAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, (Int32)pair.Key);
                 textAsHW += $"#HW name {(Int32)pair.Key}\n{pair.Value}\n\n";
-                if (FF9TextTool.commandHelpDesc.TryGetValue(pair.Key, out String help))
+                if (FF9TextTool.MainBatch.commandHelpDesc.TryGetValue(pair.Key, out String help))
                     textAsHW += $"#HW help {(Int32)pair.Key}\n{help}\n\n";
             }
             idCounter = -1;
-            foreach (KeyValuePair<BattleCommandId, String> pair in FF9TextTool.commandHelpDesc)
+            foreach (KeyValuePair<BattleCommandId, String> pair in FF9TextTool.MainBatch.commandHelpDesc)
                 helpAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, (Int32)pair.Key);
             String exportDirectoryMes = $"{modFolder}FF9_Data/EmbeddedAsset/Text/{symbol}/Command/";
             String exportDirectoryHW = $"{modFolder}HadesWorkshop/Databases/";
@@ -158,15 +183,15 @@ namespace Memoria.Assets
             String helpAsMes = "";
             String textAsHW = $"#HW filetype TEXT_ABILITY\n#HW language {symbol.ToLower()}\n\n";
             Int32 idCounter = -1;
-            foreach (KeyValuePair<BattleAbilityId, String> pair in FF9TextTool.actionAbilityName)
+            foreach (KeyValuePair<BattleAbilityId, String> pair in FF9TextTool.MainBatch.actionAbilityName)
             {
                 nameAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, (Int32)pair.Key);
                 textAsHW += $"#HW name {(Int32)pair.Key}\n{pair.Value}\n\n";
-                if (FF9TextTool.actionAbilityHelpDesc.TryGetValue(pair.Key, out String help))
+                if (FF9TextTool.MainBatch.actionAbilityHelpDesc.TryGetValue(pair.Key, out String help))
                     textAsHW += $"#HW help {(Int32)pair.Key}\n{help}\n\n";
             }
             idCounter = -1;
-            foreach (KeyValuePair<BattleAbilityId, String> pair in FF9TextTool.actionAbilityHelpDesc)
+            foreach (KeyValuePair<BattleAbilityId, String> pair in FF9TextTool.MainBatch.actionAbilityHelpDesc)
                 helpAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, (Int32)pair.Key);
             String exportDirectoryMes = $"{modFolder}FF9_Data/EmbeddedAsset/Text/{symbol}/Ability/";
             String exportDirectoryHW = $"{modFolder}HadesWorkshop/Databases/";
@@ -185,15 +210,15 @@ namespace Memoria.Assets
             String helpAsMes = "";
             String textAsHW = $"#HW filetype TEXT_SUPPORT\n#HW language {symbol.ToLower()}\n\n";
             Int32 idCounter = -1;
-            foreach (KeyValuePair<SupportAbility, String> pair in FF9TextTool.supportAbilityName)
+            foreach (KeyValuePair<SupportAbility, String> pair in FF9TextTool.MainBatch.supportAbilityName)
             {
                 nameAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, (Int32)pair.Key);
                 textAsHW += $"#HW name {(Int32)pair.Key}\n{pair.Value}\n\n";
-                if (FF9TextTool.supportAbilityHelpDesc.TryGetValue(pair.Key, out String help))
+                if (FF9TextTool.MainBatch.supportAbilityHelpDesc.TryGetValue(pair.Key, out String help))
                     textAsHW += $"#HW help {(Int32)pair.Key}\n{help}\n\n";
             }
             idCounter = -1;
-            foreach (KeyValuePair<SupportAbility, String> pair in FF9TextTool.supportAbilityHelpDesc)
+            foreach (KeyValuePair<SupportAbility, String> pair in FF9TextTool.MainBatch.supportAbilityHelpDesc)
                 helpAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, (Int32)pair.Key);
             String exportDirectoryMes = $"{modFolder}FF9_Data/EmbeddedAsset/Text/{symbol}/Ability/";
             String exportDirectoryHW = $"{modFolder}HadesWorkshop/Databases/";
@@ -213,20 +238,20 @@ namespace Memoria.Assets
             String btlHelpAsMes = "";
             String textAsHW = $"#HW filetype TEXT_ITEM\n#HW language {symbol.ToLower()}\n\n";
             Int32 idCounter = -1;
-            foreach (KeyValuePair<RegularItem, String> pair in FF9TextTool.itemName)
+            foreach (KeyValuePair<RegularItem, String> pair in FF9TextTool.MainBatch.itemName)
             {
                 nameAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, (Int32)pair.Key);
                 textAsHW += $"#HW name {(Int32)pair.Key}\n{pair.Value}\n\n";
-                if (FF9TextTool.itemHelpDesc.TryGetValue(pair.Key, out String help))
+                if (FF9TextTool.MainBatch.itemHelpDesc.TryGetValue(pair.Key, out String help))
                     textAsHW += $"#HW help {(Int32)pair.Key}\n{help}\n\n";
-                if (FF9TextTool.itemBattleDesc.TryGetValue(pair.Key, out help))
+                if (FF9TextTool.MainBatch.itemBattleDesc.TryGetValue(pair.Key, out help))
                     textAsHW += $"#HW battlehelp {(Int32)pair.Key}\n{help}\n\n";
             }
             idCounter = -1;
-            foreach (KeyValuePair<RegularItem, String> pair in FF9TextTool.itemHelpDesc)
+            foreach (KeyValuePair<RegularItem, String> pair in FF9TextTool.MainBatch.itemHelpDesc)
                 helpAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, (Int32)pair.Key);
             idCounter = -1;
-            foreach (KeyValuePair<RegularItem, String> pair in FF9TextTool.itemBattleDesc)
+            foreach (KeyValuePair<RegularItem, String> pair in FF9TextTool.MainBatch.itemBattleDesc)
                 btlHelpAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, (Int32)pair.Key);
             String exportDirectoryMes = $"{modFolder}FF9_Data/EmbeddedAsset/Text/{symbol}/Item/";
             String exportDirectoryHW = $"{modFolder}HadesWorkshop/Databases/";
@@ -247,20 +272,20 @@ namespace Memoria.Assets
             String descAsMes = "";
             String textAsHW = $"#HW filetype TEXT_KEY_ITEM\n#HW language {symbol.ToLower()}\n\n";
             Int32 idCounter = -1;
-            foreach (KeyValuePair<Int32, String> pair in FF9TextTool.importantItemName)
+            foreach (KeyValuePair<Int32, String> pair in FF9TextTool.MainBatch.importantItemName)
             {
                 nameAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, pair.Key);
                 textAsHW += $"#HW name {pair.Key}\n{pair.Value}\n\n";
-                if (FF9TextTool.importantItemHelpDesc.TryGetValue(pair.Key, out String help))
+                if (FF9TextTool.MainBatch.importantItemHelpDesc.TryGetValue(pair.Key, out String help))
                     textAsHW += $"#HW help {pair.Key}\n{help}\n\n";
-                if (FF9TextTool.importantSkinDesc.TryGetValue(pair.Key, out help))
+                if (FF9TextTool.MainBatch.importantSkinDesc.TryGetValue(pair.Key, out help))
                     textAsHW += $"#HW description {pair.Key}\n{help}\n\n";
             }
             idCounter = -1;
-            foreach (KeyValuePair<Int32, String> pair in FF9TextTool.importantItemHelpDesc)
+            foreach (KeyValuePair<Int32, String> pair in FF9TextTool.MainBatch.importantItemHelpDesc)
                 helpAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, pair.Key);
             idCounter = -1;
-            foreach (KeyValuePair<Int32, String> pair in FF9TextTool.importantSkinDesc)
+            foreach (KeyValuePair<Int32, String> pair in FF9TextTool.MainBatch.importantSkinDesc)
                 descAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, pair.Key);
             String exportDirectoryMes = $"{modFolder}FF9_Data/EmbeddedAsset/Text/{symbol}/KeyItem/";
             String exportDirectoryHW = $"{modFolder}HadesWorkshop/Databases/";
@@ -278,7 +303,7 @@ namespace Memoria.Assets
             Log.Message("[TranslationExporter] Exporting field location names...");
             String textAsMes = "";
             String textAsHW = $"#HW filetype TEXT_LOCATION\n#HW language {symbol.ToLower()}\n\n";
-            foreach (KeyValuePair<Int32, String> pair in FF9TextTool.LocationNames)
+            foreach (KeyValuePair<Int32, String> pair in FF9TextTool.MainBatch.locationName)
             {
                 textAsMes += $"{pair.Key}:{pair.Value}\r\n";
                 textAsHW += $"#HW fieldname {pair.Key}\n{pair.Value}\n\n";
@@ -313,25 +338,14 @@ namespace Memoria.Assets
             {
                 String textAsMes = "";
                 String textAsHW = $"#HW filetype TEXT_INTERFACE\n#HW language {symbol.ToLower()}\n#HW fileid {block.hwId}\n\n";
-                for (Int32 i = 0; i < block.texts.Length; i++)
+                Int32 idCounter = -1;
+                foreach (KeyValuePair<Int32, String> pair in block.texts)
                 {
-                    textAsMes += $"{block.texts[i]}[ENDN]";
-                    textAsHW += $"#HW text {i}\n{block.texts[i]}\n\n";
+                    textAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, pair.Key);
+                    textAsHW += $"#HW text {pair.Key}\n{pair.Value}\n\n";
                 }
                 File.WriteAllText($"{exportDirectoryMes}{block.fileName}.mes", textAsMes);
                 File.WriteAllText($"{exportDirectoryHW}{block.hwName}.txt", textAsHW);
-            }
-            {
-                String textAsMes = "";
-                String textAsHW = $"#HW filetype TEXT_INTERFACE\n#HW language {symbol.ToLower()}\n#HW fileid 6\n\n";
-                Int32 idCounter = -1;
-                foreach (KeyValuePair<TetraMasterCardId, String> pair in FF9TextTool.cardName)
-                {
-                    textAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, (Int32)pair.Key);
-                    textAsHW += $"#HW text {(Int32)pair.Key}\n{pair.Value}\n\n";
-                }
-                File.WriteAllText($"{exportDirectoryMes}Minista.mes", textAsMes);
-                File.WriteAllText($"{exportDirectoryHW}CardNames.txt", textAsHW);
             }
             Log.Message("[TranslationExporter] Done.");
         }
@@ -346,14 +360,14 @@ namespace Memoria.Assets
             Directory.CreateDirectory(exportDirectoryHW);
             String textAsLoc = "";
             String textAsHW = $"#HW filetype TEXT_LOCALIZATION\n#HW language {symbol.ToLower()}\n\n";
-            foreach (String header in new String[] { "KEY", "Symbol" })
+            foreach (String header in new String[] { LanguageMap.LanguageKey, LanguageMap.SymbolKey })
             {
                 textAsLoc += $"{header},{Localization.ProcessEntryForCSVWriting(allEntries[header])}\n";
                 textAsHW += $"#HW entry {header}\n{allEntries[header]}\n\n";
             }
             foreach (KeyValuePair<String, String> pair in allEntries)
             {
-                if (pair.Key == "KEY" || pair.Key == "Symbol")
+                if (pair.Key == LanguageMap.LanguageKey || pair.Key == LanguageMap.SymbolKey)
                     continue;
                 textAsLoc += $"{pair.Key},{Localization.ProcessEntryForCSVWriting(pair.Value)}\n";
                 textAsHW += $"#HW entry {pair.Key}\n{pair.Value}\n\n";
@@ -506,7 +520,7 @@ namespace Memoria.Assets
                 }
                 str = $"[STRT={width},{lineNo}]" + str;
             }
-            if (!str.EndsWith("]")) // ...and ends with either [ENDN] or [TIME=XXX]
+            if (!new Regex(@"(\[ENDN\]|\[TIME=[\-0-9]+\]|\{TIME [\-0-9]+\})").Match(str).Success) // ...and ends with either [ENDN] or [TIME=XXX] or {Time XXX}
                 str += "[ENDN]";
             if (addCounterCode)
                 return $"[TXID={txtId}]" + str;
@@ -527,8 +541,8 @@ namespace Memoria.Assets
             public String fileName;
             public String hwName;
             public Int32 hwId;
-            public String[] texts;
-            public EtcTextBatch(String n, String hn, Int32 id, String[] t)
+            public Dictionary<Int32, String> texts;
+            public EtcTextBatch(String n, String hn, Int32 id, Dictionary<Int32, String> t)
             {
                 fileName = n;
                 hwName = hn;
@@ -556,23 +570,38 @@ namespace Memoria.Assets
             }
         }
 
+        private class SharedFieldText
+        {
+            public String MesName;
+            public Int32 EntryIndex;
+            public Int32 EntryCount;
+            public SharedFieldText(String name, Int32 index, Int32 count)
+            {
+                MesName = name;
+                EntryIndex = index;
+                EntryCount = count;
+            }
+        }
+
         private static EtcTextBatch[] _etcBatches;
         private static AtlasWithMessage[] _messageAtlases;
+        private static Dictionary<Int32, SharedFieldText[]> _sharedFieldTexts;
+        private static Dictionary<Int32, SharedFieldText> _fieldMesSetup;
 
-        private static void InitialiseStaticBatches()
+        private static void InitialiseStaticBatches(String langSymbol)
         {
             foreach (EtcImporter importer in EtcImporter.EnumerateImporters())
                 importer.LoadSync();
             new CharacterNamesImporter().LoadSync();
             _etcBatches =
             [
-                new EtcTextBatch("WorldLoc", "WorldLocations", 0, FF9TextTool.worldLocationText),
-                new EtcTextBatch("Follow",   "BattleMessages", 1, FF9TextTool.followText),
-                new EtcTextBatch("Libra",    "ScanTexts",      2, FF9TextTool.libraText),
-                new EtcTextBatch("CmdTitle", "CommandTitles",  3, FF9TextTool.cmdTitleText),
-                new EtcTextBatch("FF9Choco", "Chocographs",    4, FF9TextTool.chocoUIText),
-                new EtcTextBatch("Card",     "CardRanks",      5, FF9TextTool.cardLvName),
-                //new EtcTextBatch("Minista","CardNames",      6, FF9TextTool.cardName),
+                new EtcTextBatch("WorldLoc", "WorldLocations", 0, FF9TextTool.MainBatch.worldLocationText),
+                new EtcTextBatch("Follow",   "BattleMessages", 1, FF9TextTool.MainBatch.followText),
+                new EtcTextBatch("Libra",    "ScanTexts",      2, FF9TextTool.MainBatch.libraText),
+                new EtcTextBatch("CmdTitle", "CommandTitles",  3, FF9TextTool.MainBatch.cmdTitleText),
+                new EtcTextBatch("FF9Choco", "Chocographs",    4, FF9TextTool.MainBatch.chocoUIText),
+                new EtcTextBatch("Card",     "CardRanks",      5, FF9TextTool.MainBatch.cardLvName),
+                new EtcTextBatch("Minista",  "CardNames",      6, FF9TextTool.MainBatch.cardName)
             ];
             _messageAtlases =
             [
@@ -588,6 +617,111 @@ namespace Memoria.Assets
                 new AtlasWithMessage("EmbeddedAsset/UI/Atlas/General Atlas",              new HashSet<String>{ "US", "UK", "JP", "GR", "FR", "IT", "ES" }),
                 new AtlasWithMessage("EmbeddedAsset/UI/Atlas/TutorialUI Atlas",           new HashSet<String>{ "US", "UK", "JP", "GR", "FR", "IT", "ES" }),
             ];
+            _sharedFieldTexts = new Dictionary<Int32, SharedFieldText[]>()
+            {
+                { 22,   [new SharedFieldText("MogNames", 0, 3),
+                         new SharedFieldText("MogDialogs", 3, 41),
+                         new SharedFieldText("Interface", 59, 32),
+                         new SharedFieldText("LindblumTransports", 91, 27),
+                         new SharedFieldText("LindblumCastleOrnements", 118, 7),
+                         new SharedFieldText("LindblumATE", 125, 6)] },
+                { 485,  [new SharedFieldText("LindblumOccupiedATE", 116, 3)] },
+                { 595,  [new SharedFieldText("LindblumFinalATE", 116, 11)] },
+                { 33,   [new SharedFieldText("JackTutorial", 97, 36),
+                         new SharedFieldText("Alexandria", 133, 10),
+                         new SharedFieldText("MognetKupo", 44, 21)] }, // The Most Important Thing in Life / Vanity / My Vagabond Life / Superslick
+                { 40,   [new SharedFieldText("EvilForestATE", 98, 6)] },
+                { 134,  [new SharedFieldText("RamuhTaleTable", 3, 1)] },
+                { 71,   [new SharedFieldText("FrogTable", 3, 1)] },
+                { 358,  [new SharedFieldText("MadainMogNames", 0, 1)] },
+                { 70,   [new SharedFieldText("Treno", 84, 166),
+                         new SharedFieldText("MognetMogrich", 44, 8)] }, // Vube Desert / New Champion
+                { 7,    [new SharedFieldText("MognetMonevMopliSerino", 44, 16)] }, // No More Pointy Hats! + Tantalus / I Have a Bad Feeling + In Danger
+                { 8,    [new SharedFieldText("MognetMois", 44, 6)] }, // Where Is That Item!?
+                { 31,   [new SharedFieldText("MognetSuzuna", 44, 10)] }, // null + Rally-Kupo!
+                { 47,   [new SharedFieldText("MognetGumo", 44, 4)] }, // Trapped In Ice!
+                { 50,   [new SharedFieldText("MognetNone", 44, 3)] }, // null
+                { 51,   [new SharedFieldText("MognetMogmiAtla", 44, 15)] }, // It Was So Exciting! + Map of the Entire World in His Bag? / Something Missing
+                { 52,   [new SharedFieldText("MognetMozmeNoggy", 44, 18)] }, // null + My First Mognet + It's That Thing
+                { 74,   [new SharedFieldText("MognetNazna", 44, 5)] }, // null + Mary's Unrequited Love
+                { 124,  [new SharedFieldText("MognetMooel", 44, 6), // null + Very Mad!  Kupo!
+                         new SharedFieldText("MognetMogsamKumool", 50, 14)] }, // null + Stiltzkin, On the Move + Where Is Mognet Central? / Rare Item
+                { 276,  [new SharedFieldText("MognetMoodon", 44, 13)] }, // Opening a Mini-Theater / Narcissus From Lindblum / Eidolon Odin's Power / Alexandria Destroyed
+                { 289,  [new SharedFieldText("MognetMosh", 44, 9)] }, // Jump-rope Champion Appears! / Rumor About Princess Garnet
+                { 361,  [new SharedFieldText("MognetMogkiMoonte", 44, 15), // Stiltzkin Visited Me! / Very Bored, Kupo! + Shelter From the Rain / Missing!  Kupo!
+                         new SharedFieldText("MognetMoscoMontyMochos", 59, langSymbol == "JP" ? 21 : 22)] }, // How Ya Doin'? + Prince on a White Horse / Stiltzkin on Ice / Escaping Evil Forest / This Might Be the End + Am I Right?
+                { 484,  [new SharedFieldText("MognetMogrikaMoolanMogtaka", 44, 12)] }, // Favor + Problem + Where Is Mognet Central?
+                { 944,  [new SharedFieldText("MognetMocchi", 44, 7)] }, // [VIVI]'s Eyes / Blessing or Curse?
+                { 1073, [new SharedFieldText("MognetMogryo", 44, 8)] }, // To Conde Petie / That Special Something
+            };
+
+            // This is a bit of a hacky way to implement the shared text batches in each exported MES
+            _fieldMesSetup = new Dictionary<Int32, SharedFieldText>()
+            {
+                { 121,  new SharedFieldText("[LOADMES=Interface]", 0, 32) },
+                { 187,  new SharedFieldText("[LOADMES=Interface]", 0, 32) },
+                { 2,    new SharedFieldText("[LOADMES=Interface]", 0, 32) },
+                { 223,  new SharedFieldText("[LOADMES=Interface]", 0, 32) },
+                { 42,   new SharedFieldText("[LOADMES=Interface]", 0, 32) },
+                { 945,  new SharedFieldText("[LOADMES=Interface]", 0, 32) },
+                { 358,  new SharedFieldText("[LOADMES=MadainMogNames][LOADMES=Interface]", 0, 33) },
+                { 186,  new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=Interface]", 0, 76) },
+                { 189,  new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=Interface]", 0, 76) },
+                { 30,   new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=Interface]", 0, 76) },
+                { 360,  new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=Interface]", 0, 76) },
+                { 38,   new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=Interface]", 0, 76) },
+                { 53,   new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=Interface]", 0, 76) },
+                { 63,   new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=Interface]", 0, 76) },
+                { 694,  new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=Interface]", 0, 76) },
+                { 754,  new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=Interface]", 0, 76) },
+                { 89,   new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=Interface]", 0, 76) },
+                { 91,   new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=Interface]", 0, 76) },
+                { 50,   new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetNone][LOADMES=Interface]", 0, 79) },
+                { 37,   new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMogryo][LOADMES=Interface]", 0, 84) },
+                { 1073, new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMogryo][LOADMES=Interface]", 0, 84) },
+                { 124,  new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMooel][LOADMES=MognetMogsamKumool][LOADMES=Interface]", 0, 96) },
+                { 739,  new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMooel][LOADMES=MognetMogsamKumool][LOADMES=Interface]", 0, 96) },
+                { 740,  new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMooel][LOADMES=MognetMogsamKumool][LOADMES=Interface][LOADMES=LindblumFinalATE]", 0, 107) },
+                { 276,  new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMoodon][LOADMES=Interface][LOADMES=LindblumTransports][LOADMES=LindblumATE]", 0, 122) },
+                { 485,  new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMoodon][LOADMES=Interface][LOADMES=LindblumTransports][LOADMES=LindblumOccupiedATE]", 0, 119) },
+                { 595,  new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMoodon][LOADMES=Interface][LOADMES=LindblumTransports][LOADMES=LindblumFinalATE]", 0, 127) },
+                { 525,  new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMogkiMoonte][LOADMES=Interface][LOADMES=LindblumTransports][LOADMES=LindblumOccupiedATE]", 0, 121) },
+                { 943,  new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMogkiMoonte][LOADMES=Interface][LOADMES=LindblumFinalATE][LOADMES=LindblumTransports]", 0, 129) },
+                { 22,   new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMogkiMoonte][LOADMES=Interface][LOADMES=LindblumTransports][LOADMES=LindblumCastleOrnements][LOADMES=LindblumATE]", 0, 131) },
+                { 361,  new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMogkiMoonte][LOADMES=MognetMoscoMontyMochos][LOADMES=Interface]", 0, langSymbol == "JP" ? 112 : 113) },
+                { 134,  new SharedFieldText("[LOADMES=MogNames][LOADMES=RamuhTaleTable][LOADMES=MogDialogs][LOADMES=MognetMoscoMontyMochos][LOADMES=Interface]", 0, langSymbol == "JP" ? 98 : 99) },
+                { 23,   new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMoscoMontyMochos][LOADMES=Interface][LOADMES=LindblumATE]", 0, langSymbol == "JP" ? 103 : 104) },
+                { 359,  new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMoscoMontyMochos][LOADMES=Interface]", 0, langSymbol == "JP" ? 97 : 98) },
+                { 4,    new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMoscoMontyMochos][LOADMES=Interface][LOADMES=EvilForestATE]", 0, langSymbol == "JP" ? 103 : 104) },
+                { 40,   new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMoscoMontyMochos][LOADMES=Interface][LOADMES=EvilForestATE]", 0, langSymbol == "JP" ? 103 : 104) },
+                { 738,  new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMocchi][LOADMES=Interface][LOADMES=LindblumOccupiedATE]", 0, 86) },
+                { 944,  new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMocchi][LOADMES=Interface]", 0, 83) },
+                { 344,  new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMozmeNoggy][LOADMES=Interface]", 0, 94) },
+                { 52,   new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMozmeNoggy][LOADMES=Interface]", 0, 94) },
+                { 166,  new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMozmeNoggy][LOADMES=Interface]", 0, 94) },
+                { 18,   new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMonevMopliSerino][LOADMES=Interface]", 0, 92) },
+                { 290,  new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMonevMopliSerino][LOADMES=Interface]", 0, 92) },
+                { 44,   new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMonevMopliSerino][LOADMES=Interface]", 0, 92) },
+                { 7,    new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMonevMopliSerino][LOADMES=Interface]", 0, 92) },
+                { 289,  new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMosh][LOADMES=Interface]", 0, 85) },
+                { 3,    new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMosh][LOADMES=Interface]", 0, 85) },
+                { 88,   new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMosh][LOADMES=Interface]", 0, 85) },
+                { 31,   new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetSuzuna][LOADMES=Interface]", 0, 86) },
+                { 32,   new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetSuzuna][LOADMES=Interface]", 0, 86) },
+                { 33,   new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetKupo][LOADMES=Interface][LOADMES=JackTutorial][LOADMES=Alexandria]", 0, 143) },
+                { 90,   new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetKupo][LOADMES=Interface][LOADMES=Alexandria]", 0, 107) },
+                { 946,  new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetKupo][LOADMES=Interface]", 0, 97) },
+                { 47,   new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetGumo][LOADMES=Interface]", 0, 80) },
+                { 484,  new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMogrikaMoolanMogtaka][LOADMES=Interface]", 0, 88) },
+                { 908,  new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMogrikaMoolanMogtaka][LOADMES=Interface]", 0, 88) },
+                { 74,   new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetNazna][LOADMES=Interface]", 0, 81) },
+                { 70,   new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMogrich][LOADMES=Interface][LOADMES=Treno]", 0, 250) },
+                { 741,  new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMogrich][LOADMES=Interface][LOADMES=Treno]", 0, 250) },
+                { 51,   new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMogmiAtla][LOADMES=Interface]", 0, 91) },
+                { 77,   new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMogmiAtla][LOADMES=Interface]", 0, 91) },
+                { 71,   new SharedFieldText("[LOADMES=MogNames][LOADMES=FrogTable][LOADMES=MogDialogs][LOADMES=MognetMois][LOADMES=Interface]", 0, 83) },
+                { 8,    new SharedFieldText("[LOADMES=MogNames][LOADMES=MogDialogs][LOADMES=MognetMois][LOADMES=Interface]", 0, 82) },
+            };
         }
     }
 }

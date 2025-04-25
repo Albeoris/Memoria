@@ -242,7 +242,7 @@ public class RecycleListPopulator : MonoBehaviour
         base.Invoke("RepositionList", 0f);
     }
 
-    private void UpdateTableViewImp(Boolean refreshSelection = true)
+    public void UpdateTableViewImp(Boolean refreshSelection = true)
     {
         foreach (KeyValuePair<Int32, Int32> kvp in this.dataTracker)
         {

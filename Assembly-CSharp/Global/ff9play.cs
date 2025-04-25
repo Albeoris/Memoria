@@ -66,7 +66,7 @@ public static class ff9play
 
         foreach (CharacterParameter param in CharacterParameterList.Values)
         {
-            NGUIText.RegisterCustomNameKeywork(param.NameKeyword, param.Id);
+            FFIXTextTag.RegisterCustomNameKeywork(param.NameKeyword, param.Id);
             FF9StateSystem.Common.FF9.player[param.Id] = new PLAYER();
         }
         FF9StateGlobal ff9StateGlobal = FF9StateSystem.Common.FF9;

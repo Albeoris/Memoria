@@ -472,12 +472,12 @@ namespace Memoria.Assets
                 //List<String> externalFields = FindExternalFields();
                 //controlLoadCustom.ObjectList = externalFields;
                 //controlLoadCustom.ListOpener.IsEnabled = !String.IsNullOrEmpty(externalFields[0]);
-                controlInformationLabel.text = $"Saved successfully\nPress ESCAPE";
+                controlInformationLabel.rawText = $"Saved successfully\nPress ESCAPE";
                 controlPanel.SetActivePanel(true, controlInformationPanel);
             }
             catch (Exception err)
             {
-                controlInformationLabel.text = $"Save failed:\n{err}";
+                controlInformationLabel.rawText = $"Save failed:\n{err}";
                 controlPanel.SetActivePanel(true, controlInformationPanel);
             }
         }

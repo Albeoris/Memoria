@@ -20,31 +20,8 @@ public class QuadMistResourceManager : MonoBehaviour
 
     private void InitAtlasPath()
     {
-        String textAtlas = String.Empty;
-        switch (Localization.CurrentLanguage)
-        {
-            case "English(US)":
-                textAtlas = "quadmist_text_us";
-                break;
-            case "Japanese":
-                textAtlas = "quadmist_text_jp";
-                break;
-            case "German":
-                textAtlas = "quadmist_text_gr";
-                break;
-            case "Spanish":
-                textAtlas = "quadmist_text_es";
-                break;
-            case "Italian":
-                textAtlas = "quadmist_text_it";
-                break;
-            case "French":
-                textAtlas = "quadmist_text_fr";
-                break;
-            case "English(UK)":
-                textAtlas = "quadmist_text_uk";
-                break;
-        }
+        // TODO: use the CurrentDisplaySymbol and localize for Dual Language
+        String textAtlas = "quadmist_text_" + Localization.CurrentSymbol.ToLower();
         atlasPathList[0] = "EmbeddedAsset/QuadMist/Atlas/quadmist_image0";
         atlasPathList[1] = "EmbeddedAsset/QuadMist/Atlas/quadmist_image1";
         atlasPathList[2] = "EmbeddedAsset/QuadMist/Atlas/" + textAtlas;
@@ -206,7 +183,7 @@ public class QuadMistResourceManager : MonoBehaviour
             { "Background", new List<QuadMistMapperData>()
                 {
                     new QuadMistResourceManager.QuadMistMapperData("card_bg.png"),
-                    new QuadMistResourceManager.QuadMistMapperData(Localization.CurrentLanguage == "Japanese" ? "card_mg_jp.png" : "card_mg.png")
+                    new QuadMistResourceManager.QuadMistMapperData(Localization.CurrentSymbol == "JP" ? "card_mg_jp.png" : "card_mg.png")
                 }
             }
         };
