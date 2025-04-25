@@ -11,7 +11,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
-using static ff9;
 
 namespace Memoria.Assets
 {

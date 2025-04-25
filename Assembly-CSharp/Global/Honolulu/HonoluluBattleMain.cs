@@ -3,13 +3,11 @@ using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria;
 using Memoria.Data;
-using Memoria.Database;
 using Memoria.Prime;
 using Memoria.Scripts;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -332,8 +330,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                             textureFiles.Add(file);
                     }
                     if (textureFiles.Count > 0)
-                    {
-                       
+                    {          
                         MeshRenderer[] weaponRenderers = btl[i].weaponModels[j].geo.GetComponentsInChildren<MeshRenderer>();
                         if (weaponRenderers.Length > 0)
                             for (Int32 k = 0; k < weaponRenderers.Length && k < textureFiles.Count; k++)
