@@ -580,6 +580,7 @@ namespace Memoria
             btl_sys.DelCharacter(Data);
             if (makeDisappear)
                 Data.SetDisappear(true, 5);
+            btl_sys.CheckBattlePhase(Data); // Prevent a softlock when there are no more players present in combat.
             // The two following lines have been switched for fixing an UI bug (ATB bar glowing, etc... when an ally is snorted)
             // It seems to fix the bug without introducing another one (the HP/MP figures update strangely but that's because of how the UI cells are managed)
             UIManager.Battle.RemovePlayerFromAction(Data.btl_id, true);
