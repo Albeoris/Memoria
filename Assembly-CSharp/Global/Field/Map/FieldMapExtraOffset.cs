@@ -71,7 +71,7 @@ public class FieldMapExtraOffset
                     overlayList[extraOffset.overlayIndex].orgZ = (UInt16)extraOffset.zOffset;
                     overlayList[extraOffset.overlayIndex].curZ = (UInt16)extraOffset.zOffset;
                 }
-                else if (!(Localization.CurrentLanguage == "Japanese") || !(name == "FBG_N18_GTRE_MAP360_GT_GRD_0") || extraOffset.overlayIndex != 12 || extraOffset.spriteIndex != 12)
+                else if (Localization.CurrentSymbol != "JP" || name != "FBG_N18_GTRE_MAP360_GT_GRD_0" || extraOffset.overlayIndex != 12 || extraOffset.spriteIndex != 12)
                 {
                     overlayList[extraOffset.overlayIndex].spriteList[extraOffset.spriteIndex].depth += extraOffset.zOffset;
                 }

@@ -13,7 +13,7 @@ Key bindings, auto resolution, better mod options...
     Auto resolution has been added
     Borderless Fullscreen mode will now always use the current resolution of the selected display
     Improved Mod options functionality and display
-    Updated brazilian portuguese translation by @Felipefpl
+    Updated brazilian portuguese translation by dkPsycho
     Fixed Excalibur II time limit tooltips @SimonAfek
 
 #Backend

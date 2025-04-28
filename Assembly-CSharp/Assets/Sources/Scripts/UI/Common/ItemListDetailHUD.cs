@@ -12,6 +12,7 @@ namespace Assets.Sources.Scripts.UI.Common
             Button = go.GetComponent<ButtonGroupState>();
             NameLabel = Content.GetChild(0).GetComponent<UILabel>();
             NumberLabel = Content.GetChild(1).GetComponent<UILabel>();
+            NameLabel.fixedAlignment = true;
         }
 
         public GameObject Self;

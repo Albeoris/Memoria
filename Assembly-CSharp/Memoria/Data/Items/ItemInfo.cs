@@ -9,8 +9,8 @@ namespace Memoria.Data
         public UInt32 Price;
         public Int32 SellingPrice;
         public ItemCharacter CharacterMask;
-        public Byte GraphicsId;
-        public Byte ColorId;
+        public Int32 GraphicsId;
+        public Int32 ColorId;
         public Single Quality;
         public Int32 BonusId;
         public Int32[] AbilityIds;
@@ -36,8 +36,8 @@ namespace Memoria.Data
                 SellingPrice = CsvParser.Int32(raw[index++]);
             else
                 SellingPrice = (Int32)(Price / 2);
-            GraphicsId = CsvParser.Byte(raw[index++]);
-            ColorId = CsvParser.Byte(raw[index++]);
+            GraphicsId = CsvParser.Int32(raw[index++]);
+            ColorId = CsvParser.Int32(raw[index++]);
             Quality = CsvParser.Single(raw[index++]);
             BonusId = CsvParser.Int32(raw[index++]);
             AbilityIds = CsvParser.AnyAbilityArray(raw[index++]);
@@ -85,8 +85,8 @@ namespace Memoria.Data
             writer.UInt32(Price);
             if (metadata.HasOption($"Include{nameof(SellingPrice)}"))
                 writer.Int32(SellingPrice);
-            writer.Byte(GraphicsId);
-            writer.Byte(ColorId);
+            writer.Int32(GraphicsId);
+            writer.Int32(ColorId);
             writer.Single(Quality);
             writer.Int32(BonusId);
             writer.AnyAbilityArray(AbilityIds);

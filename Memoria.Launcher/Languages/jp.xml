@@ -285,6 +285,15 @@ UseAbsoluteOrientation = "絶対方向を使用する"
 UseAbsoluteOrientation_Tooltip = "有効にすると、アナログスティックを使用すると、事前にレンダリングされた背景で事前に決定された歩行経路の方向に従うのではなく、絶対方向（PSX のように）が使用されます"
 AlwaysCaptureGamepad = "常にゲームパッドをキャプチャする"
 AlwaysCaptureGamepad_Tooltip = "有効にすると、ゲームにフォーカスが当たっていないときにゲームパッドがアクティブのままになります"
+SwapConfirmCancel = "確定/キャンセルボタンの切り替え"
+SwapConfirmCancel_Tooltip = "Oボタンで確定、Xボタンでキャンセル"
+DualLanguageMode = "デュアルランゲージモード"
+DualLanguageModeChoice0 = "無効"
+DualLanguageModeChoice1 = "Caps Lockスイッチ"
+DualLanguageModeChoice2 = "同時"
+DualLanguageMode_Tooltip = "オプション1：Caps Lockキーで言語を切り替える&#xA;オプション2：両方の言語を同時に表示する"
+DualLanguage = "デュアルランゲージ"
+DualLanguage_Tooltip = "セカンダリ言語の選択"
 />
 
 <SteamOverlay

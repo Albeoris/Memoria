@@ -13,24 +13,24 @@ public class CloudUI : UIScene
     {
         SiliconStudio.Social.InitializeSocialPlatform();
         SiliconStudio.Social.Authenticate(false);
-        UIScene.SceneVoidDelegate sceneVoidDelegate = delegate
+        UIScene.SceneVoidDelegate afterShowAction = delegate
         {
             base.Loading = true;
             this.timeCounter = Time.time;
             this.currentState = CloudUI.State.LoadPreview;
-            FF9StateSystem.Serializer.LoadCloudSyncPreview((ISharedDataSerializer.OnSyncCloudSlotStart)null, new ISharedDataSerializer.OnSyncCloudSlotFinish(this.OnFinishedLoadPreview));
+            FF9StateSystem.Serializer.LoadCloudSyncPreview(null, this.OnFinishedLoadPreview);
             this.LoadingPreviewDialog.SetActive(true);
-            this.helpTitleLabel.text = Localization.Get("ConnectingHelpInfo");
+            this.helpTitleLabel.rightAnchor.absolute = -15;
+            this.helpTitleLabel.UpdateAnchors();
+            this.helpTitleLabel.rawText = Localization.Get("ConnectingHelpInfo");
             ButtonGroupState.SetPointerOffsetToGroup(new Vector2(26f, 134f), CloudUI.LocalFileGroupButton);
             ButtonGroupState.SetPointerOffsetToGroup(new Vector2(26f, 134f), CloudUI.CloudFileGroupButton);
-            ButtonGroupState.SetPointerOffsetToGroup(new Vector2(220f, 10f), CloudUI.ConfirmDialogGroupButton);
+            ButtonGroupState.SetPointerOffsetToGroup(new Vector2(-30f, 10f), CloudUI.ConfirmDialogGroupButton);
         };
         if (afterFinished != null)
-        {
-            sceneVoidDelegate = (UIScene.SceneVoidDelegate)Delegate.Combine(sceneVoidDelegate, afterFinished);
-        }
+            afterShowAction += afterFinished;
         SceneDirector.FadeEventSetColor(FadeMode.Sub, Color.black);
-        base.Show(sceneVoidDelegate);
+        base.Show(afterShowAction);
         this.FileListPanel.SetActive(false);
         this.DisplayInfo();
     }
@@ -39,9 +39,25 @@ public class CloudUI : UIScene
     {
         base.Hide(afterFinished);
         if (this.isLocalFileExist)
-        {
             PersistenSingleton<UIManager>.Instance.TitleScene.ForceCheckingAutoSave = true;
+    }
+
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        this.helpTitleLabel.rawText = Localization.Get("ConnectingHelpInfo");
+        if (this.OverWriteDialog.activeInHierarchy)
+        {
+            if (this.syncState == CloudUI.Sync.Upload)
+                this.overWriteDialogDespLabel.rawText = Localization.Get("UploadOverwrite");
+            else if (this.syncState == CloudUI.Sync.Download)
+                this.overWriteDialogDespLabel.rawText = Localization.Get("DownloadOverwrite");
         }
+        if (this.InfoPanel.activeInHierarchy)
+            DisplayInfo();
+        else if (this.FileListPanel.activeInHierarchy)
+            DisplayFile();
     }
 
     public override Boolean OnKeyConfirm(GameObject go)
@@ -73,7 +89,7 @@ public class CloudUI : UIScene
                     FF9Sfx.FF9SFX_Play(103);
                     if (this.isCloudFileExist)
                     {
-                        this.overWriteDialogDespLabel.text = Localization.Get("UploadOverwrite");
+                        this.overWriteDialogDespLabel.rawText = Localization.Get("UploadOverwrite");
                         this.DisplayOverWriteDialog();
                         ButtonGroupState.ActiveGroup = CloudUI.ConfirmDialogGroupButton;
                         ButtonGroupState.HoldActiveStateOnGroup(CloudUI.CloudFileGroupButton);
@@ -95,7 +111,7 @@ public class CloudUI : UIScene
                     FF9Sfx.FF9SFX_Play(103);
                     if (this.isLocalFileExist)
                     {
-                        this.overWriteDialogDespLabel.text = Localization.Get("DownloadOverwrite");
+                        this.overWriteDialogDespLabel.rawText = Localization.Get("DownloadOverwrite");
                         this.DisplayOverWriteDialog();
                         ButtonGroupState.ActiveGroup = CloudUI.ConfirmDialogGroupButton;
                         ButtonGroupState.HoldActiveStateOnGroup(CloudUI.LocalFileGroupButton);
@@ -121,14 +137,7 @@ public class CloudUI : UIScene
                 else
                 {
                     FF9Sfx.FF9SFX_Play(101);
-                    if (this.syncState == CloudUI.Sync.Upload)
-                    {
-                        ButtonGroupState.ActiveGroup = CloudUI.CloudFileGroupButton;
-                    }
-                    else
-                    {
-                        ButtonGroupState.ActiveGroup = CloudUI.LocalFileGroupButton;
-                    }
+                    ButtonGroupState.ActiveGroup = this.syncState == CloudUI.Sync.Upload ? CloudUI.CloudFileGroupButton : CloudUI.LocalFileGroupButton;
                 }
             }
         }
@@ -157,14 +166,7 @@ public class CloudUI : UIScene
             {
                 FF9Sfx.FF9SFX_Play(101);
                 this.OverWriteDialog.SetActive(false);
-                if (this.syncState == CloudUI.Sync.Upload)
-                {
-                    ButtonGroupState.ActiveGroup = CloudUI.CloudFileGroupButton;
-                }
-                else
-                {
-                    ButtonGroupState.ActiveGroup = CloudUI.LocalFileGroupButton;
-                }
+                ButtonGroupState.ActiveGroup = this.syncState == CloudUI.Sync.Upload ? CloudUI.CloudFileGroupButton : CloudUI.LocalFileGroupButton;
             }
         }
         return true;
@@ -187,13 +189,9 @@ public class CloudUI : UIScene
             else
             {
                 if (go == this.UploadButton)
-                {
                     this.syncState = CloudUI.Sync.Upload;
-                }
                 else if (go == this.DownloadButton)
-                {
                     this.syncState = CloudUI.Sync.Download;
-                }
                 this.InfoPanel.SetActive(false);
                 this.DisplayFile();
             }
@@ -224,7 +222,9 @@ public class CloudUI : UIScene
     {
         this.InfoPanel.SetActive(true);
         this.slotGameObject.SetActive(false);
-        this.helpTitleLabel.text = Localization.Get("SelectSyncHelpInfo");
+        this.helpTitleLabel.rightAnchor.absolute = -15;
+        this.helpTitleLabel.UpdateAnchors();
+        this.helpTitleLabel.rawText = Localization.Get("SelectSyncHelpInfo");
         String text = String.Empty;
         if (FF9StateSystem.MobilePlatform)
         {
@@ -238,37 +238,31 @@ public class CloudUI : UIScene
             text += Localization.Get("PCNoticeConnectDesc");
             text += Localization.Get("PCCloudInfoPart2");
         }
-        this.infoLabel.text = text;
+        this.infoLabel.rawText = text;
     }
 
     private void DisplayFile()
     {
         this.FileListPanel.SetActive(true);
         this.slotGameObject.SetActive(true);
-        this.helpTitleLabel.text = Localization.Get("SelectDataHelpInfo");
+        this.helpTitleLabel.rightAnchor.absolute = -this.helpSlotLabel.width - 15;
+        this.helpTitleLabel.UpdateAnchors();
+        this.helpTitleLabel.rawText = Localization.Get("SelectDataHelpInfo");
         if (this.syncState == CloudUI.Sync.Upload)
         {
-            this.syncStatusLabel.text = Localization.Get("UploadCaption");
+            this.syncStatusLabel.rawText = Localization.Get("UploadCaption");
             this.syncStatusLabel.color = FF9TextTool.Cyan;
-            this.helpSlotLabel.text = Localization.Get("Upload");
-            UISprite[] array = this.arrowSprites;
-            for (Int32 i = 0; i < (Int32)array.Length; i++)
-            {
-                UISprite uisprite = array[i];
-                uisprite.transform.localRotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
-            }
+            this.helpSlotLabel.rawText = Localization.Get("Upload");
+            foreach (UISprite sprite in this.arrowSprites)
+                sprite.transform.localRotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
         }
         else
         {
-            this.syncStatusLabel.text = Localization.Get("DownloadCaption");
+            this.syncStatusLabel.rawText = Localization.Get("DownloadCaption");
             this.syncStatusLabel.color = FF9TextTool.Green;
-            this.helpSlotLabel.text = Localization.Get("Download");
-            UISprite[] array2 = this.arrowSprites;
-            for (Int32 j = 0; j < (Int32)array2.Length; j++)
-            {
-                UISprite uisprite2 = array2[j];
-                uisprite2.transform.localRotation = Quaternion.Euler(new Vector3(0f, 0f, 180f));
-            }
+            this.helpSlotLabel.rawText = Localization.Get("Download");
+            foreach (UISprite sprite in this.arrowSprites)
+                sprite.transform.localRotation = Quaternion.Euler(new Vector3(0f, 0f, 180f));
         }
     }
 
@@ -279,65 +273,64 @@ public class CloudUI : UIScene
         {
             fileHud.Container.SetActive(true);
             fileHud.EmptySlotTextGameObject.SetActive(false);
-            Int32 num = 1;
-            String text = String.Empty;
-            String empty = String.Empty;
-            Boolean flag = false;
-            Int32 num2 = 0;
+            Int32 leaderLvl = 1;
+            String leaderName = String.Empty;
+            Boolean leaderFound = false;
+            Int32 charIndex = 0;
             foreach (SharedDataPreviewCharacterInfo sharedDataPreviewCharacterInfo in file.CharacterInfoList)
             {
-                fileHud.CharacterAvatarList[num2].alpha = 0f;
-                fileHud.CharacterAvatarList[num2].spriteName = String.Empty;
+                fileHud.CharacterAvatarList[charIndex].alpha = 0f;
+                fileHud.CharacterAvatarList[charIndex].spriteName = String.Empty;
                 if (sharedDataPreviewCharacterInfo != null)
                 {
-                    if (!flag)
+                    if (!leaderFound)
                     {
-                        num = sharedDataPreviewCharacterInfo.Level;
-                        text = sharedDataPreviewCharacterInfo.Name;
-                        flag = true;
+                        leaderLvl = sharedDataPreviewCharacterInfo.Level;
+                        leaderName = sharedDataPreviewCharacterInfo.Name;
+                        leaderFound = true;
                     }
-                    fileHud.CharacterAvatarList[num2].alpha = 1f;
-                    FF9UIDataTool.DisplayCharacterAvatar((CharacterSerialNumber)sharedDataPreviewCharacterInfo.SerialID, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), fileHud.CharacterAvatarList[num2], false);
+                    fileHud.CharacterAvatarList[charIndex].alpha = 1f;
+                    FF9UIDataTool.DisplayCharacterAvatar((CharacterSerialNumber)sharedDataPreviewCharacterInfo.SerialID, Vector3.zero, Vector3.zero, fileHud.CharacterAvatarList[charIndex], false);
                 }
-                num2++;
+                charIndex++;
             }
-            fileHud.LeaderNameLabel.text = text;
-            fileHud.LeaderLvLabel.text = num.ToString();
-            fileHud.GilLabel.text = Localization.GetWithDefault("GilSymbol").Replace("%", file.Gil.ToString());
-            fileHud.LocationNameLabel.text = file.Location;
-            Color color = FF9TextTool.White;
-            Double num3 = (Double)(file.PlayDuration % 360000f);
+            fileHud.LeaderNameLabel.rawText = leaderName;
+            fileHud.LeaderLvLabel.rawText = leaderLvl.ToString();
+            fileHud.GilLabel.rawText = Localization.GetWithDefault("GilSymbol").Replace("%", file.Gil.ToString());
+            fileHud.LocationNameLabel.rawText = file.Location;
+            Color timerColor = FF9TextTool.White;
+            Double timerValue = (Double)(file.PlayDuration % 360000f);
             switch ((Int32)(file.PlayDuration / 360000f))
             {
                 case 0:
-                    color = FF9TextTool.White;
+                    timerColor = FF9TextTool.White;
                     break;
                 case 1:
-                    color = FF9TextTool.Red;
+                    timerColor = FF9TextTool.Red;
                     break;
                 case 2:
-                    color = FF9TextTool.Yellow;
+                    timerColor = FF9TextTool.Yellow;
                     break;
                 case 3:
-                    color = FF9TextTool.Cyan;
+                    timerColor = FF9TextTool.Cyan;
                     break;
                 case 4:
-                    color = FF9TextTool.Magenta;
+                    timerColor = FF9TextTool.Magenta;
                     break;
                 case 5:
-                    color = FF9TextTool.Green;
+                    timerColor = FF9TextTool.Green;
                     break;
                 default:
-                    num3 = 359999.0;
-                    color = FF9TextTool.Green;
+                    timerValue = 359999.0;
+                    timerColor = FF9TextTool.Green;
                     break;
             }
-            String text2 = ((Int32)(num3 / 3600.0)).ToString("0#");
-            String text3 = ((Int32)(num3 / 60.0) % 60).ToString("0#");
-            String text4 = ((Int32)num3 % 60).ToString("0#");
-            fileHud.TimeLabel.color = color;
-            fileHud.TimeLabel.text = String.Concat(new String[] { text2, " : ", text3, " : ", text4 });
-            this.DisplayWindowBackground(fileHud.Self, (file.win_type != 0UL) ? FF9UIDataTool.BlueAtlas : FF9UIDataTool.GrayAtlas);
+            String hours = ((Int32)(timerValue / 3600.0)).ToString("0#");
+            String minutes = ((Int32)(timerValue / 60.0) % 60).ToString("0#");
+            String seconds = ((Int32)timerValue % 60).ToString("0#");
+            fileHud.TimeLabel.color = timerColor;
+            fileHud.TimeLabel.rawText = $"{hours} : {minutes} : {seconds}";
+            this.DisplayWindowBackground(fileHud.Self, file.win_type != 0UL ? FF9UIDataTool.BlueAtlas : FF9UIDataTool.GrayAtlas);
         }
         else
         {
@@ -350,26 +343,27 @@ public class CloudUI : UIScene
                 {
                     case DataSerializerErrorCode.FileCorruption:
                     case DataSerializerErrorCode.DataCorruption:
-                        fileHud.EmptySlotTextLabel.text = Localization.Get("LocalDecryptFailed");
+                        fileHud.EmptySlotTextLabel.rawText = Localization.Get("LocalDecryptFailed");
                         fileHud.EmptySlotTextLabel.color = FF9TextTool.Red;
-                        goto IL_3E7;
+                        break;
                     case DataSerializerErrorCode.CloudDataCorruption:
-                        fileHud.EmptySlotTextLabel.text = Localization.Get("CloudDataCorrupt");
+                        fileHud.EmptySlotTextLabel.rawText = Localization.Get("CloudDataCorrupt");
                         fileHud.EmptySlotTextLabel.color = FF9TextTool.Red;
-                        goto IL_3E7;
+                        break;
                     case DataSerializerErrorCode.CloudConnectionTimeout:
-                        fileHud.EmptySlotTextLabel.text = Localization.Get("CloudConnectionTimeout");
-                        goto IL_3E7;
+                        fileHud.EmptySlotTextLabel.rawText = Localization.Get("CloudConnectionTimeout");
+                        break;
                     case DataSerializerErrorCode.CloudDataUnknownError:
-                        fileHud.EmptySlotTextLabel.text = Localization.Get("CloudDataUnknownError");
-                        goto IL_3E7;
+                        fileHud.EmptySlotTextLabel.rawText = Localization.Get("CloudDataUnknownError");
+                        break;
+                    default:
+                        fileHud.EmptySlotTextLabel.rawText = Localization.Get("EmptyFile");
+                        break;
                 }
-                fileHud.EmptySlotTextLabel.text = Localization.Get("EmptyFile");
-            IL_3E7:;
             }
             else
             {
-                fileHud.EmptySlotTextLabel.text = Localization.Get("EmptyFile");
+                fileHud.EmptySlotTextLabel.rawText = Localization.Get("EmptyFile");
             }
             this.UpdateEmptySlotLabelSize(fileHud.EmptySlotTextLabel);
         }
@@ -384,29 +378,27 @@ public class CloudUI : UIScene
         emptySlotLabel.width = (Int32)UIManager.UIContentSize.x;
         emptySlotLabel.height = (Int32)UIManager.UIContentSize.y;
         emptySlotLabel.ProcessText();
-        emptySlotLabel.UpdateNGUIText();
-        Int32 num = (Int32)NGUIText.CalculatePrintedSize(emptySlotLabel.text).x + 3;
-        emptySlotLabel.width = (Int32)((width >= num) ? width : num);
+        Int32 textWidth = Mathf.RoundToInt(emptySlotLabel.Parser.MaxWidth) + 3;
+        emptySlotLabel.width = Math.Max(width, textWidth);
         emptySlotLabel.height = height;
     }
 
     private void DisplayTimeStamp()
     {
         String format = String.Empty;
-        String language = Localization.CurrentLanguage;
-        switch (language)
+        switch (Localization.CurrentDisplaySymbol)
         {
-            case "English(US)":
+            case "US":
                 format = "MM/dd/yyyy";
                 break;
-            case "English(UK)":
-            case "Spanish":
-            case "French":
-            case "German":
-            case "Italian":
+            case "UK":
+            case "ES":
+            case "FR":
+            case "GR":
+            case "IT":
                 format = "dd/MM/yyyy";
                 break;
-            case "Japanese":
+            case "JP":
                 format = "yyyy/MM/dd";
                 break;
         }
@@ -415,25 +407,23 @@ public class CloudUI : UIScene
             if (this.latestLocalTime > 0.0)
             {
                 DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-                String str = dateTime.AddSeconds(Math.Round(this.latestLocalTime)).ToString(format);
-                this.localFileHud.LatestTimeLabel.text = Localization.Get("LatestSave") + str;
+                this.localFileHud.LatestTimeLabel.rawText = Localization.Get("LatestSave") + dateTime.AddSeconds(Math.Round(this.latestLocalTime)).ToString(format);
             }
             else
             {
-                this.localFileHud.LatestTimeLabel.text = Localization.Get("LatestSave") + "------------";
+                this.localFileHud.LatestTimeLabel.rawText = Localization.Get("LatestSave") + "------------";
             }
         }
         if (this.cloudFileHud.Self.activeSelf)
         {
             if (this.latestCloudTime > 0.0)
             {
-                DateTime dateTime2 = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-                String str2 = dateTime2.AddSeconds(Math.Round(this.latestCloudTime)).ToString(format);
-                this.cloudFileHud.LatestTimeLabel.text = Localization.Get("LatestSave") + str2;
+                DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+                this.cloudFileHud.LatestTimeLabel.rawText = Localization.Get("LatestSave") + dateTime.AddSeconds(Math.Round(this.latestCloudTime)).ToString(format);
             }
             else
             {
-                this.cloudFileHud.LatestTimeLabel.text = Localization.Get("LatestSave") + "------------";
+                this.cloudFileHud.LatestTimeLabel.rawText = Localization.Get("LatestSave") + "------------";
             }
         }
     }
@@ -445,21 +435,12 @@ public class CloudUI : UIScene
 
     private void DisplaySuccessfulAccessDialog(Boolean isSuccess)
     {
-        if (isSuccess)
-        {
-            if (this.syncState == CloudUI.Sync.Upload)
-            {
-                this.successfulAccessLabel.text = Localization.Get("SuccessUploadDesc");
-            }
-            else
-            {
-                this.successfulAccessLabel.text = Localization.Get("SuccessDownloadDesc");
-            }
-        }
+        if (!isSuccess)
+            this.successfulAccessLabel.rawText = Localization.Get("FailedConnectDesc");
+        else if (this.syncState == CloudUI.Sync.Upload)
+            this.successfulAccessLabel.rawText = Localization.Get("SuccessUploadDesc");
         else
-        {
-            this.successfulAccessLabel.text = Localization.Get("FailedConnectDesc");
-        }
+            this.successfulAccessLabel.rawText = Localization.Get("SuccessDownloadDesc");
         this.SuccessfulAccessPanel.SetActive(true);
         base.StartCoroutine(this.HideSuccessfulAccessDialog());
     }
@@ -472,19 +453,20 @@ public class CloudUI : UIScene
             case DataSerializerErrorCode.FileCorruption:
             case DataSerializerErrorCode.DataCorruption:
                 key = "LocalDecryptFailed";
-                goto IL_66;
+                break;
             case DataSerializerErrorCode.CloudDataCorruption:
                 key = "CloudDataCorrupt";
-                goto IL_66;
+                break;
             case DataSerializerErrorCode.CloudConnectionTimeout:
                 key = "CloudConnectionTimeout";
-                goto IL_66;
+                break;
             case DataSerializerErrorCode.CloudFileNotFound:
                 key = "CloudFileNotFound";
-                goto IL_66;
+                break;
+            default:
+                key = "CloudDataUnknownError";
+                break;
         }
-        key = "CloudDataUnknownError";
-    IL_66:
         this.saveCorruptDialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(key), 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.Notice);
         ButtonGroupState.DisableAllGroup(true);
         base.StartCoroutine(this.HideCorruptAccessDialog(callback));
@@ -492,9 +474,9 @@ public class CloudUI : UIScene
 
     private void UpdateLabelLanguage()
     {
-        this.helpSlotLabel.text = Localization.Get("Download");
-        this.helpTitleLabel.text = Localization.Get("SelectDataHelpInfo");
-        this.syncStatusLabel.text = Localization.Get("DownloadCaption");
+        this.helpSlotLabel.rawText = Localization.Get("Download");
+        this.helpTitleLabel.rawText = Localization.Get("SelectDataHelpInfo");
+        this.syncStatusLabel.rawText = Localization.Get("DownloadCaption");
     }
 
     private IEnumerator HideSuccessfulAccessDialog()
@@ -506,10 +488,7 @@ public class CloudUI : UIScene
             {
                 if (errNo == DataSerializerErrorCode.Success)
                 {
-                    FF9StateSystem.Settings.CurrentLanguage = LanguageCode.ConvertToLanguageName(selectedLanguage);
-                    Localization.CurrentLanguage = LanguageCode.ConvertToLanguageName(selectedLanguage);
-                    UIManager.Field.InitializeATEText();
-                    this.StartCoroutine(PersistenSingleton<FF9TextTool>.Instance.UpdateTextLocalization(delegate
+                    Localization.SetCurrentLanguage(LanguageName.ConvertToLanguageName(selectedLanguage), this, delegate
                     {
                         this.Loading = false;
                         this.SuccessfulAccessPanel.SetActive(false);
@@ -520,7 +499,7 @@ public class CloudUI : UIScene
                         this.CheckData();
                         ButtonGroupState.ActiveGroup = CloudUI.LocalFileGroupButton;
                         ButtonGroupState.HoldActiveStateOnGroup(CloudUI.SubMenuGroupButton);
-                    }));
+                    });
                 }
                 else
                 {
@@ -736,7 +715,7 @@ public class CloudUI : UIScene
         Single remainTime = Mathf.Max(2f - (Time.time - this.timeCounter), 0f);
         yield return new WaitForSeconds(remainTime);
         this.LoadingPreviewDialog.SetActive(false);
-        this.helpTitleLabel.text = Localization.Get("SelectSyncHelpInfo");
+        this.helpTitleLabel.rawText = Localization.Get("SelectSyncHelpInfo");
         if (isSuccess)
         {
             base.Loading = false;
@@ -791,14 +770,7 @@ public class CloudUI : UIScene
                 this.DisplayFileInfo(this.cloudFileHud, this.cloudPreview, this.corruptFile == CloudUI.Sync.Download, ISharedDataSerializer.LastErrno);
                 this.DisplayTimeStamp();
                 this.CheckData();
-                if (this.syncState == CloudUI.Sync.Upload)
-                {
-                    ButtonGroupState.ActiveGroup = CloudUI.CloudFileGroupButton;
-                }
-                else
-                {
-                    ButtonGroupState.ActiveGroup = CloudUI.LocalFileGroupButton;
-                }
+                ButtonGroupState.ActiveGroup = this.syncState == CloudUI.Sync.Upload ? CloudUI.CloudFileGroupButton : CloudUI.LocalFileGroupButton;
                 ButtonGroupState.HoldActiveStateOnGroup(CloudUI.SubMenuGroupButton);
             });
         }
@@ -810,33 +782,25 @@ public class CloudUI : UIScene
         if (this.isLocalFileExist)
         {
             if (ButtonGroupState.ActiveGroup == CloudUI.SubMenuGroupButton)
-            {
                 ButtonGroupState.SetButtonEnable(this.UploadButton, true);
-            }
             this.uploadButtonLabel.color = FF9TextTool.White;
         }
         else
         {
             if (ButtonGroupState.ActiveGroup == CloudUI.SubMenuGroupButton)
-            {
                 ButtonGroupState.SetButtonEnable(this.UploadButton, false);
-            }
             this.uploadButtonLabel.color = FF9TextTool.Gray;
         }
         if (this.isCloudFileExist)
         {
             if (ButtonGroupState.ActiveGroup == CloudUI.SubMenuGroupButton)
-            {
                 ButtonGroupState.SetButtonEnable(this.DownloadButton, true);
-            }
             this.downloadButtonLabel.color = FF9TextTool.White;
         }
         else
         {
             if (ButtonGroupState.ActiveGroup == CloudUI.SubMenuGroupButton)
-            {
                 ButtonGroupState.SetButtonEnable(this.DownloadButton, false);
-            }
             this.downloadButtonLabel.color = FF9TextTool.Gray;
         }
     }
@@ -849,12 +813,12 @@ public class CloudUI : UIScene
         base.StartCoroutine("RunProgressBar");
         if (this.syncState == CloudUI.Sync.Upload)
         {
-            FF9StateSystem.Serializer.UploadToCloud((ISharedDataSerializer.OnSyncCloudSlotStart)null, new ISharedDataSerializer.OnSyncCloudSlotFinish(this.OnFinishedSync));
+            FF9StateSystem.Serializer.UploadToCloud(null, this.OnFinishedSync);
             this.loadingAccessLocalize.key = "WarningUploadData";
         }
         else
         {
-            FF9StateSystem.Serializer.DownloadFromCloud((ISharedDataSerializer.OnSyncCloudSlotStart)null, new ISharedDataSerializer.OnSyncCloudSlotFinish(this.OnFinishedSync));
+            FF9StateSystem.Serializer.DownloadFromCloud(null, this.OnFinishedSync);
             this.loadingAccessLocalize.key = "WarningDownloadData";
         }
         this.LoadingAccessDialog.SetActive(true);
@@ -885,16 +849,23 @@ public class CloudUI : UIScene
         this.uploadButtonLabel = this.UploadButton.GetChild(1).GetComponent<UILabel>();
         this.downloadButtonLabel = this.DownloadButton.GetChild(1).GetComponent<UILabel>();
         this.overWriteDialogDespLabel = this.OverWriteDialog.GetChild(0).GetComponent<UILabel>();
-        UIEventListener.Get(this.OverWriteDialog.GetChild(1)).onClick += this.onClick;
-        UIEventListener.Get(this.OverWriteDialog.GetChild(2)).onClick += this.onClick;
         this.successfulAccessLabel = this.SuccessfulAccessPanel.GetChild(0).GetComponent<UILabel>();
+        UIScene.SetupYesNoLabels(this.OverWriteDialog.transform, this.OverWriteDialog.GetChild(1), this.OverWriteDialog.GetChild(2), this.onClick);
         this.background = new GOMenuBackground(this.transform.GetChild(9).gameObject, "cloud_bg");
+        this.FileListPanel.GetChild(3).GetChild(4).GetChild(0).GetComponent<UILabel>().rightAnchor.Set(1f, -28);
+        this.OverWriteDialog.GetChild(3).GetChild(0).GetComponent<UILabel>().rightAnchor.Set(1f, -32);
+        this.gameObject.GetChild(6).GetChild(2).GetChild(0).GetComponent<UILabel>().rightAnchor.Set(1f, -32);
+        this.LoadingAccessDialog.GetChild(3).GetChild(0).GetComponent<UILabel>().rightAnchor.Set(1f, -32);
+        this.localFileHud.LeaderNameLabel.fixedAlignment = true;
+        this.cloudFileHud.LeaderNameLabel.fixedAlignment = true;
+        this.localFileHud.FileNoLabel.fixedAlignment = true;
+        this.cloudFileHud.FileNoLabel.fixedAlignment = true;
     }
 
-    private static String SubMenuGroupButton = "Cloud.SubMenu";
-    private static String LocalFileGroupButton = "Cloud.LocalFile";
-    private static String CloudFileGroupButton = "Cloud.CloudFile";
-    private static String ConfirmDialogGroupButton = "Cloud.Choice";
+    private const String SubMenuGroupButton = "Cloud.SubMenu";
+    private const String LocalFileGroupButton = "Cloud.LocalFile";
+    private const String CloudFileGroupButton = "Cloud.CloudFile";
+    private const String ConfirmDialogGroupButton = "Cloud.Choice";
 
     public GameObject HelpPanel;
     public GameObject FileListPanel;

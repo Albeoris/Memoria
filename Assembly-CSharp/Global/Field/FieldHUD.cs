@@ -40,6 +40,9 @@ public class FieldHUD : UIScene
     private Single _previousVibRight;
     private EventEngine _eventEngineCache;
 
+    [NonSerialized]
+    private Dialog skipMovieDialog;
+
     public MinigameHUD CurrentMinigameHUD => _currentMinigameHUD;
 
     public Int32 PauseWidth
@@ -53,10 +56,6 @@ public class FieldHUD : UIScene
     }
 
     public EventEngine eventEngine => _eventEngineCache ?? (_eventEngineCache = GameObject.Find("EventEngine").GetComponent<EventEngine>());
-
-    public FieldHUD()
-    {
-    }
 
     public Boolean IsDisplayChanbaraHUD()
     {
@@ -151,23 +150,21 @@ public class FieldHUD : UIScene
                 _currentMinigameHUDGameObject = NGUITools.AddChild(MinigameHUDContainer, _jumpingRopeHUDPrefab);
                 if (_currentMinigameHUD == MinigameHUD.ChocoHot)
                 {
-                    Transform child = _currentMinigameHUDGameObject.transform.GetChild(0);
-                    child.GetComponent<OnScreenButton>().KeyCommand = Control.Special;
-                    UISprite component1 = child.GetComponent<UISprite>();
-                    UIButton component2 = child.GetComponent<UIButton>();
-                    component1.spriteName = "button_chocobo_dig_idle";
-                    component2.normalSprite = component1.spriteName;
-                    component2.pressedSprite = "button_chocobo_dig_act";
+                    Transform digButtonTransf = _currentMinigameHUDGameObject.transform.GetChild(0);
+                    digButtonTransf.GetComponent<OnScreenButton>().KeyCommand = Control.Special;
+                    UISprite idleSprite = digButtonTransf.GetComponent<UISprite>();
+                    UIButton actButton = digButtonTransf.GetComponent<UIButton>();
+                    idleSprite.spriteName = "button_chocobo_dig_idle";
+                    actButton.normalSprite = idleSprite.spriteName;
+                    actButton.pressedSprite = "button_chocobo_dig_act";
                 }
                 break;
             case MinigameHUD.RacingHippaul:
                 if (_racingHippaulHUDPrefab == null)
                     _racingHippaulHUDPrefab = Resources.Load("EmbeddedAsset/UI/Prefabs/Racing Hippaul HUD Container") as GameObject;
                 _currentMinigameHUDGameObject = NGUITools.AddChild(MinigameHUDContainer, _racingHippaulHUDPrefab);
-                if (FF9StateSystem.Settings.CurrentLanguage == "Japanese")
-                {
+                if (Localization.CurrentSymbol == "JP")
                     _currentMinigameHUDGameObject.transform.GetChild(1).GetComponent<EventButton>().KeyCommand = Control.Confirm;
-                }
                 break;
             case MinigameHUD.SwingACage:
                 if (_swingACageHUDPrefab == null)
@@ -181,18 +178,18 @@ public class FieldHUD : UIScene
                 _currentMinigameHUDGameObject.GetComponent<UIPanel>().depth = Dialog.DialogAdditionalRaiseDepth + Dialog.DialogMaximumDepth - Convert.ToInt32(Dialog.WindowID.ID0) * 2 + 2;
                 break;
         }
-        if (!(_currentMinigameHUDGameObject != null))
+        if (_currentMinigameHUDGameObject == null)
             return;
-        UIWidget component3 = _currentMinigameHUDGameObject.GetComponent<UIWidget>();
-        Int32 num = Singleton<DialogManager>.Instance.Widget.depth + 1;
-        if (component3 != null)
-            component3.depth = num++;
+        UIWidget hudWidget = _currentMinigameHUDGameObject.GetComponent<UIWidget>();
+        Int32 depth = Singleton<DialogManager>.Instance.Widget.depth + 1;
+        if (hudWidget != null)
+            hudWidget.depth = depth++;
 
-        foreach (Component component in _currentMinigameHUDGameObject.transform)
+        foreach (Component subComponent in _currentMinigameHUDGameObject.transform)
         {
-            UIWidget widget = component.GetComponent<UIWidget>();
-            if (widget != null)
-                widget.depth = num;
+            UIWidget subWidget = subComponent.GetComponent<UIWidget>();
+            if (subWidget != null)
+                subWidget.depth = depth;
         }
     }
 
@@ -223,7 +220,7 @@ public class FieldHUD : UIScene
     {
         SceneVoidDelegate action = OnShownAction;
         if (afterFinished != null)
-            action = (SceneVoidDelegate)Delegate.Combine(action, afterFinished);
+            action += afterFinished;
         base.Show(action);
         PersistenSingleton<UIManager>.Instance.Booster.SetBoosterState(PersistenSingleton<UIManager>.Instance.UnityScene);
         VirtualAnalog.Init(gameObject);
@@ -237,12 +234,20 @@ public class FieldHUD : UIScene
     {
         SceneVoidDelegate action = OnHideAfterHide;
         if (afterFinished != null)
-            action = (SceneVoidDelegate)Delegate.Combine(action, afterFinished);
+            action += afterFinished;
         base.Hide(action);
         PauseButtonGameObject.SetActive(false);
         HelpButtonGameObject.SetActive(false);
         PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(false, null);
         PersistenSingleton<UIManager>.Instance.SetEventEnable(false);
+    }
+
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        if (skipMovieDialog != null)
+            skipMovieDialog.ChangePhraseSoft(Localization.Get("SkipMovieDialog"));
     }
 
     public override Boolean OnKeyMenu(GameObject go)
@@ -269,14 +274,14 @@ public class FieldHUD : UIScene
 
     public override Boolean OnKeyConfirm(GameObject go)
     {
-        if (base.OnKeyConfirm(go) && MovieHitArea.activeSelf && (!MBG.IsNull && !MBG.Instance.IsFinished()))
+        if (base.OnKeyConfirm(go) && MovieHitArea.activeSelf && !MBG.IsNull && !MBG.Instance.IsFinished())
         {
             MovieHitArea.SetActive(false);
             ETb.sChoose = 1;
-            Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get("SkipMovieDialog"), 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.Notice);
+            skipMovieDialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get("SkipMovieDialog"), 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.Notice);
             isShowSkipMovieDialog = true;
-            dialog.AfterDialogShown = OnKeyConfirmAfterDialogShown;
-            dialog.AfterDialogHidden = OnKeyConfirmAfterDialogHidden;
+            skipMovieDialog.AfterDialogShown = OnKeyConfirmAfterDialogShown;
+            skipMovieDialog.AfterDialogHidden = OnKeyConfirmAfterDialogHidden;
         }
         return true;
     }
@@ -376,19 +381,14 @@ public class FieldHUD : UIScene
         if (_previousDebugState == ShowDebugButton)
             return;
         _previousDebugState = ShowDebugButton;
-
         gameObject.GetChild(1).SetActive(ShowDebugButton);
     }
 
     private void Awake()
     {
         FadingComponent = ScreenFadeGameObject.GetComponent<HonoFading>();
-
-        UIEventListener uiEventListener1 = UIEventListener.Get(MenuButtonGameObject);
-        uiEventListener1.Press += OnPressButton;
-
-        UIEventListener uiEventListener2 = UIEventListener.Get(PauseButtonGameObject);
-        uiEventListener2.Press += OnPressButton;
+        UIEventListener.Get(MenuButtonGameObject).Press += OnPressButton;
+        UIEventListener.Get(PauseButtonGameObject).Press += OnPressButton;
     }
 
     private void OnShownAction()
@@ -441,6 +441,7 @@ public class FieldHUD : UIScene
             vib.VIB_actuatorSet(1, _previousVibLeft, _previousVibRight);
         }
         isShowSkipMovieDialog = false;
+        skipMovieDialog = null;
     }
 
     private void OnItemShopClickHide()
@@ -476,7 +477,7 @@ public class FieldHUD : UIScene
 
     private static void OnDialogClickAttach()
     {
-        Singleton<DialogManager>.Instance.AttachDialog(NGUIText.GetTestingResource(), 0, 0, Dialog.TailPosition.AutoPosition, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.None);
+        Singleton<DialogManager>.Instance.AttachDialog(String.Empty, 0, 0, Dialog.TailPosition.AutoPosition, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.None);
     }
 
     private static void OnSaveClickSwitchScene()

@@ -127,11 +127,11 @@ namespace Memoria
             // Sky
             if (_bg == null && FF9StateSystem.Battle.FF9Battle.map.btlBGPtr != null && !_bgInitialised)
             {
-                if (battlebg.nf_BbgSkyRotation != 0 && battlebg.nf_BbgNumber != 7) // Fix #672: the sky against Nova Dragon has a sky rotation + a BbgObjAnimation. Come back to it when objAnimModel movements are smoothened (battlebg.getBbgObjAnimation)
+                if (battlebg.nf_BbgSkyRotation != 0 && battlebg.nf_BbgNumber != 7) // Fix #672: the sky against Nova Dragon has a sky rotation + a "vertical" texture animation
                 {
                     foreach (Transform transform in FF9StateSystem.Battle.FF9Battle.map.btlBGPtr.gameObject.transform)
                     {
-                        if (battlebg.getBbgAttr(transform.name) == 8)
+                        if (battlebg.getBbgAttr(transform.name) == battlebg.BBG_ATTR_SKY)
                         {
                             _bg = transform;
                             _bgRotPrevious = _bg.localRotation;
@@ -147,6 +147,7 @@ namespace Memoria
                 _bgRotPrevious = _bgRotActual;
                 _bgRotActual = _bg.localRotation;
             }
+            // TODO: Smoothen some animated background objects (battlebg.getBbgObjAnimation) - NOTE: thunders in the Nova Dragon battle should most likely not be smoothened anyway (but things like the Crystal against Trance Kuja should)
             // Camera
             Camera camera = Camera.main ? Camera.main : GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>().GetComponent<Camera>();
             if (camera != null)
@@ -215,7 +216,8 @@ namespace Memoria
                 // Log.Message($"[DEBUG {Time.frameCount} cur {_bg.localRotation.eulerAngles} prev {_bgRotPrevious.eulerAngles} actual {_bgRotActual.eulerAngles} t {smoothFactor}");
             }
             // Vertical texture animation of the background
-            battlebg.geoBGTexAnimSmoothen(smoothFactor);
+            if (battlebg.nf_BbgNumber != 7) // Fix #672: the sky against Nova Dragon has a sky rotation + a "vertical" texture animation
+                battlebg.geoBGTexAnimSmoothen(smoothFactor);
             // SPS
             if (FF9StateSystem.Battle.FF9Battle.btl_phase != FF9StateBattleSystem.PHASE_ENTER && FF9StateSystem.Battle.FF9Battle.btl_phase != FF9StateBattleSystem.PHASE_INIT_SYSTEM)
             {

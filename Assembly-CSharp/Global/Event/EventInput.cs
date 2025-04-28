@@ -57,10 +57,9 @@ public static class EventInput
         }
     }
 
-    public static void ChangeInputLayout(String language)
+    public static void UpdateInputLayout()
     {
-        // TODO: maybe add a configuration for that? As a Localization entry (like "ReadingDirection")?
-        if (language == "Japanese")
+        if (Configuration.Control.SwapConfirmCancel)
             EventInput.SetJapaneseLayout();
         else
             EventInput.SetOtherLangLayout();
@@ -69,16 +68,12 @@ public static class EventInput
     private static void SetJapaneseLayout()
     {
         EventInput.isJapaneseLayout = true;
-        NGUIText.ButtonNames[0] = "CIRCLE";
-        NGUIText.ButtonNames[1] = "CROSS";
         PersistenSingleton<HonoInputManager>.Instance.SetJapaneseLayout(true);
     }
 
     private static void SetOtherLangLayout()
     {
         EventInput.isJapaneseLayout = false;
-        NGUIText.ButtonNames[0] = "CROSS";
-        NGUIText.ButtonNames[1] = "CIRCLE";
         PersistenSingleton<HonoInputManager>.Instance.SetJapaneseLayout(false);
     }
 

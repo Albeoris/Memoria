@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using Assets.Sources.Scripts.UI.Common;
+using Assets.Scripts.Common;
+using UnityEngine;
 
 namespace Memoria.Assets
 {
     public static class Localization
     {
         internal static readonly LanguageMap Provider;
+
+        private static Boolean useSecondaryLanguage = false;
+        private static String loadedSecondarySymbol = String.Empty;
 
         static Localization()
         {
@@ -16,20 +22,56 @@ namespace Memoria.Assets
         public static ICollection<String> KnownLanguages => Provider.KnownLanguages;
         public static Dictionary<String, Dictionary<String, String>> DefaultDictionary => _defaultDictionary;
 
-        public static String CurrentLanguage
+        /// <summary>The language name ("English(US)", "Japanese", "Spanish"...) of the currently displayed language</summary>
+        public static String CurrentDisplayLanguage => useSecondaryLanguage ? Provider.SymbolToLanguage(Configuration.Lang.DualLanguage) : Provider.CurrentLanguage;
+        /// <summary>The language symbol ("US", "JP", "ES"...) of the currently displayed language</summary>
+        public static String CurrentDisplaySymbol => useSecondaryLanguage ? Configuration.Lang.DualLanguage : Provider.CurrentSymbol;
+        /// <summary>The language name ("English(US)", "Japanese", "Spanish"...) of the current primary language</summary>
+        public static String CurrentLanguage => Provider.CurrentLanguage;
+        /// <summary>The language symbol ("US", "JP", "ES"...) of the current primary language</summary>
+        public static String CurrentSymbol => Provider.CurrentSymbol;
+
+        public static void SetCurrentLanguage(String lang, MonoBehaviour caller = null, Action callback = null, Boolean updateDatabase = true)
         {
-            get => Provider.CurrentLanguage;
-            set => Provider.SelectLanguage(value);
+            FF9StateSystem.Settings.CurrentLanguage = lang;
+            Provider.SelectLanguage(lang);
+            if (caller != null && updateDatabase)
+            {
+                UIManager.Field.InitializeATEText();
+                caller.StartCoroutine(PersistenSingleton<FF9TextTool>.Instance.UpdateTextLocalization(callback));
+            }
+            UIRoot.Broadcast("OnLocalize");
         }
 
-        public static String GetSymbol()
+        public static Boolean UseSecondaryLanguage
         {
-            return Provider.CurrentSymbol;
+            get => useSecondaryLanguage;
+            set
+            {
+                if (Configuration.Export.Enabled || PersistenSingleton<UIManager>.Instance.TitleScene?.IsJustLaunch == true)
+                    value = false;
+                if (useSecondaryLanguage == value)
+                    return;
+                useSecondaryLanguage = value;
+                if (value && loadedSecondarySymbol != Configuration.Lang.DualLanguage)
+                {
+                    String symbol = Configuration.Lang.DualLanguage;
+                    String lang = Provider.SymbolToLanguage(symbol);
+                    loadedSecondarySymbol = symbol;
+                    Provider.SelectSecondaryLanguage(lang);
+                    FF9TextTool.LoadSecondaryLanguage(symbol);
+                }
+                if (Configuration.Lang.DualLanguageMode == 1)
+                    UIRoot.Broadcast("OnLocalize");
+            }
         }
 
         public static String Get(String key)
         {
-            return Provider.Get(key);
+            String str = Provider.Get(key, UseSecondaryLanguage);
+            if (key == "StatusDetailHelp") // Fix: Status help in StatusUI
+                str = str.Replace("[YADD=4]", "").Replace("[YSUB=4]", "");
+            return str;
         }
 
         public static String ProcessEntryForCSVWriting(String entry)
@@ -49,15 +91,21 @@ namespace Memoria.Assets
             return "US";
         }
 
+        /// <summary>Deprecated: use "Localization.CurrentDisplaySymbol" or "Localization.CurrentSymbol" instead</summary>
+        public static String GetSymbol()
+        {
+            return CurrentDisplaySymbol;
+        }
+
         /// <summary>For keys not present in vanilla</summary>
         public static String GetWithDefault(String key)
         {
-            String value = Provider.Get(key);
+            String value = Provider.Get(key, UseSecondaryLanguage);
             if (!String.Equals(value, key))
                 return value;
             if (_defaultDictionary.TryGetValue(key, out Dictionary<String, String> defaultValue))
             {
-                if (defaultValue.TryGetValue(Provider.CurrentSymbol, out value))
+                if (defaultValue.TryGetValue(CurrentDisplaySymbol, out value))
                     return value;
                 else if (defaultValue.TryGetValue(GetFallbackSymbol(), out value))
                     return value;
@@ -68,7 +116,7 @@ namespace Memoria.Assets
         private static Dictionary<String, Dictionary<String, String>> _defaultDictionary = new Dictionary<String, Dictionary<String, String>>()
         {
             // The base reading direction of the language
-            { "ReadingDirection", new Dictionary<String, String>()
+            { LanguageMap.ReadingDirectionKey, new Dictionary<String, String>()
                 {
                     { "US", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
                     { "UK", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
@@ -77,6 +125,18 @@ namespace Memoria.Assets
                     { "FR", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
                     { "GR", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
                     { "IT", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT }
+                }
+            },
+            // The digit shapes of the language
+            { LanguageMap.DigitShapesKey, new Dictionary<String, String>()
+                {
+                    { "US", UnicodeBIDI.DIGIT_SHAPES_LATIN },
+                    { "UK", UnicodeBIDI.DIGIT_SHAPES_LATIN },
+                    { "JP", UnicodeBIDI.DIGIT_SHAPES_LATIN },
+                    { "ES", UnicodeBIDI.DIGIT_SHAPES_LATIN },
+                    { "FR", UnicodeBIDI.DIGIT_SHAPES_LATIN },
+                    { "GR", UnicodeBIDI.DIGIT_SHAPES_LATIN },
+                    { "IT", UnicodeBIDI.DIGIT_SHAPES_LATIN }
                 }
             },
             // Language name in the title menu's button
@@ -101,6 +161,41 @@ namespace Memoria.Assets
                     { "FR", "%[YSUB=1.3][sub]G" },
                     { "GR", "%[YSUB=1.3][sub]G" },
                     { "IT", "%[YSUB=1.3][sub]G" }
+                }
+            },
+            // Number of points for Tetra Master
+            { "CardPoints", new Dictionary<String, String>()
+                {
+                    { "US", "%p" },
+                    { "UK", "%p" },
+                    { "JP", "%p" },
+                    { "ES", "%p" },
+                    { "FR", "%p" },
+                    { "GR", "%p" },
+                    { "IT", "%p" }
+                }
+            },
+            { "AutoDiscardHelp", new Dictionary<String, String>()
+                {
+                    { "US", "Discard all unnecessary cards." },
+                    { "UK", "Discard all unnecessary cards." },
+                    { "JP", "不要なカードをすべて捨てます。" },
+                    { "ES", "Descarta todas las cartas innecesarias." },
+                    { "FR", "Jeter les cartes superflues." },
+                    { "GR", "Werfen Sie alle unnötigen Karten weg." },
+                    { "IT", "Scarta tutte le carte non necessarie." }
+                }
+            },
+            // Panel caption for magic stones (used to show "MP" in the Ability menu instead, since PSX)
+            { "MagicStoneCaption", new Dictionary<String, String>()
+                {
+                    { "US", "MG ST" },
+                    { "UK", "MG ST" },
+                    { "JP", "魔石力" },
+                    { "ES", "PIEDRAS" },
+                    { "FR", "MAGIK" },
+                    { "GR", "MG ST" },
+                    { "IT", "PIETRE" }
                 }
             },
             // New options in the config menu
@@ -203,6 +298,73 @@ namespace Memoria.Assets
                     { "IT", "Testo Automatico" }
                 }
             },
+            // Black Jack labels
+            { "BlackJackBankroll", new Dictionary<String, String>()
+                {
+                    { "US", "BANKROLL" },
+                    { "UK", "BANKROLL" },
+                    { "JP", "財源" },
+                    { "ES", "EFECTIVO" },
+                    { "FR", "FONDS" },
+                    { "GR", "BANK" },
+                    { "IT", "CONTANTE" }
+                }
+            },
+            { "BlackJackWager", new Dictionary<String, String>()
+                {
+                    { "US", "WAGER" },
+                    { "UK", "WAGER" },
+                    { "JP", "賭け" },
+                    { "ES", "APUESTA" },
+                    { "FR", "MISE" },
+                    { "GR", "WETTE" },
+                    { "IT", "PUNTATA" }
+                }
+            },
+            { "BlackJackStand", new Dictionary<String, String>()
+                {
+                    { "US", "STAND" },
+                    { "UK", "STAND" },
+                    { "JP", "スタンド" },
+                    { "ES", "PLANTARSE" },
+                    { "FR", "RESTE" },
+                    { "GR", "STEHT" },
+                    { "IT", "STARE" }
+                }
+            },
+            { "BlackJackHit", new Dictionary<String, String>()
+                {
+                    { "US", "HIT" },
+                    { "UK", "HIT" },
+                    { "JP", "ヒット" },
+                    { "ES", "PEDIR" },
+                    { "FR", "CARTE" },
+                    { "GR", "KARTE" },
+                    { "IT", "CARTA" }
+                }
+            },
+            { "BlackJackDouble", new Dictionary<String, String>()
+                {
+                    { "US", "DOUBLE" },
+                    { "UK", "DOUBLE" },
+                    { "JP", "ダブルダウン" },
+                    { "ES", "DOBLAR" },
+                    { "FR", "DOUBLE" },
+                    { "GR", "VERDOPPELN" },
+                    { "IT", "RADDOPPIO" }
+                }
+            },
+            { "BlackJackSplit", new Dictionary<String, String>()
+                {
+                    { "US", "SPLIT" },
+                    { "UK", "SPLIT" },
+                    { "JP", "スプリット" },
+                    { "ES", "SEPARAR" },
+                    { "FR", "SPLIT" },
+                    { "GR", "TEILEN" },
+                    { "IT", "DIVISIONE" }
+                }
+            },
             // Mix battle message
             { "FailedMixMessage", new Dictionary<String, String>()
                 {
@@ -255,9 +417,9 @@ namespace Memoria.Assets
                     { "UK", "Absorb [FFCC00]%[FFFFFF]" },
                     { "JP", "[FFCC00]%[FFFFFF]属性を吸収" },
                     { "ES", "Absorber el elemento [FFCC00]%[FFFFFF]" },
-                    { "FR", "Absorbe l'élément [FFCC00]%[FFFFFF]" },
+                    { "FR", "Absorbe l’élément [FFCC00]%[FFFFFF]" },
                     { "GR", "Absorbiert [FFCC00]%[FFFFFF]-Element" },
-                    { "IT", "Assorbire l'elemento [FFCC00]%[FFFFFF]" }
+                    { "IT", "Assorbire l’elemento [FFCC00]%[FFFFFF]" }
                 }
             },
             { "StatusImmune", new Dictionary<String, String>()

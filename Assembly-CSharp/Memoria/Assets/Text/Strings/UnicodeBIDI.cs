@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Memoria.Assets
 {
@@ -18,16 +20,18 @@ namespace Memoria.Assets
     {
         public const String DIRECTION_NAME_LEFT_TO_RIGHT = "Left_To_Right";
         public const String DIRECTION_NAME_RIGHT_TO_LEFT = "Right_To_Left";
+        public const String DIGIT_SHAPES_LATIN = "Latin";
 
-        public readonly Char[] FullText;
-        public readonly Int32[] Reposition;
-        public readonly HashSet<Int32> MustMirror;
+        /// <summary>Text with ligatures, join characters and mirrored characters</summary>
+        public readonly List<Char> FullText;
+        /// <summary>Sorted list of directional blocks (each block must be rendered right of the previous one)</summary>
+        public readonly List<DirectionBlock> Directions;
 
-        public UnicodeBIDI(Char[] text, LanguageReadingDirection paragraphDirection)
+        public UnicodeBIDI(Char[] text, LanguageReadingDirection paragraphDirection, DigitShapes digitShapes = DigitShapes.Latin)
         {
             // Non-compliant implementation of the algorithm
-            FullText = text;
-            Int32 textLength = text.Length;
+            FullText = new List<Char>(text);
+            Int32 textLength = FullText.Count;
             Int32 index = 0;
             Int32 closeIndex = 0;
             Int32 isolateCount = 0;
@@ -45,7 +49,9 @@ namespace Memoria.Assets
             DirectionalStackRoot.Add(currentState);
             while (index < textLength)
             {
-                CharacterClass bidiClass = GetBIDIClass(text[index]);
+                if (digitShapes != DigitShapes.Latin && FullText[index] >= '0' && FullText[index] <= '9')
+                    FullText[index] = (Char)(DigitBase[digitShapes] + FullText[index] - '0');
+                CharacterClass bidiClass = GetBIDIClass(FullText[index]);
                 switch (bidiClass)
                 {
                     case CharacterClass.Right_To_Left_Embedding:
@@ -161,15 +167,38 @@ namespace Memoria.Assets
             while (currentState.parent != null)
                 DirectionalStatus.Pop(ref currentState, closeIndex);
             HashSet<Int32> pairPositions = new HashSet<Int32>();
-            MustMirror = new HashSet<Int32>();
-            Reposition = new Int32[FullText.Length];
-            for (Int32 i = 0; i < textLength; i++)
-                Reposition[i] = i;
+            LinkedList<DirectionBlock> linkedDirections = new LinkedList<DirectionBlock>();
             foreach (DirectionalStatus lineStatus in DirectionalStackRoot)
             {
-                foreach (DirectionalStatus status in lineStatus.GetAllDirectionChanges(true))
+                foreach (DirectionalStatus status in lineStatus.GetAllDirectionChanges(!lineStatus.ltr))
                 {
-                    ChangeDirection(Reposition, status.start, status.end - 1);
+                    DirectionBlock block = new DirectionBlock(status.ltr, status.start, status.end);
+                    LinkedListNode<DirectionBlock> splitted;
+                    for (splitted = linkedDirections.First; splitted != null; splitted = splitted.Next)
+                        if (block.start < splitted.Value.end)
+                            break;
+                    if (splitted != null)
+                    {
+                        DirectionBlock remain = splitted.Value.Split(block);
+                        if (splitted.Value.ltr)
+                        {
+                            LinkedListNode<DirectionBlock> blockNode = linkedDirections.AddAfter(splitted, block);
+                            if (remain.start < remain.end)
+                                linkedDirections.AddAfter(blockNode, remain);
+                        }
+                        else
+                        {
+                            LinkedListNode<DirectionBlock> blockNode = linkedDirections.AddBefore(splitted, block);
+                            if (remain.start < remain.end)
+                                linkedDirections.AddBefore(blockNode, remain);
+                        }
+                        if (splitted.Value.start >= splitted.Value.end)
+                            linkedDirections.Remove(splitted);
+                    }
+                    else
+                    {
+                        linkedDirections.AddLast(block);
+                    }
                     for (Int32 i = status.start; i < status.end; i++)
                     {
                         Char ch = FullText[i];
@@ -180,33 +209,93 @@ namespace Memoria.Assets
                             else
                                 pairPositions.Add(i);
                         }
-                        else if (MirroringCharactersNoEquivalent.Contains(ch))
-                        {
-                            if (status.ltr)
-                                MustMirror.Remove(i);
-                            else
-                                MustMirror.Add(i);
-                        }
                     }
                 }
             }
-            for (Int32 i = 0; i < textLength; i++)
-                if (pairPositions.Contains(i))
-                    FullText[i] = GetMirroredCharacter(FullText[i]);
-            for (Int32 i = 0; i < textLength;)
-                ApplyWordJoining(ref i);
+            Directions = linkedDirections.ToList();
             DirectionalStackRoot.Clear();
+            foreach (Int32 pair in pairPositions)
+                FullText[pair] = GetMirroredCharacter(FullText[pair]);
+            for (Int32 i = 0; i < FullText.Count;)
+                ApplyWordJoining(ref i);
         }
 
-        public static Char GetMirroredCharacter(Char c)
+        public LanguageReadingDirection GetDirectionAt(Int32 index)
         {
-            // TODO: Maybe apply the algorithm BD16 (https://www.unicode.org/reports/tr9/#BD16) instead of mirroring every bracket character, paired or not, in RTL
-            if (MirroringCharacters.TryGetValue(c, out Char mirror))
-                return mirror;
-            return c;
+            for (Int32 i = 0; i < Directions.Count; i++)
+                if (index >= Directions[i].start && index < Directions[i].end)
+                    return Directions[i].ltr ? LanguageReadingDirection.LeftToRight : LanguageReadingDirection.RightToLeft;
+            return LanguageReadingDirection.LeftToRight;
         }
 
-        public void ApplyWordJoining(ref Int32 index)
+        public void RemovePart(Int32 pos, Int32 length)
+        {
+            FullText.RemoveRange(pos, length);
+            for (Int32 i = 0; i < Directions.Count; i++)
+            {
+                DirectionBlock dir = Directions[i];
+                if (pos <= dir.start && pos + length >= dir.end)
+                {
+                    Directions.RemoveAt(i--);
+                }
+                else if (pos < dir.end)
+                {
+                    if (pos < dir.start)
+                        dir.start -= Math.Min(length, dir.start - pos);
+                    dir.end -= Math.Min(length, dir.end - pos);
+                    Directions[i] = dir;
+                }
+            }
+        }
+
+        public void RegisterWrappingNewLines(List<Int32> newLineIndices, LanguageReadingDirection paragraphDirection)
+        {
+            if (newLineIndices.Count == 0)
+                return;
+            HashSet<Int32> nlProcessed = new HashSet<Int32>();
+            foreach (Int32 index in newLineIndices)
+            {
+                Int32 blockSplit = Directions.FindIndex(block => index >= block.start && index < block.end);
+                if (blockSplit < 0)
+                    continue;
+                DirectionBlock beforeBlock = Directions[blockSplit];
+                DirectionBlock afterBlock = new DirectionBlock(beforeBlock.ltr, index + 1, beforeBlock.end);
+                beforeBlock.end = index;
+                Directions.Insert(beforeBlock.ltr ? blockSplit + 1 : blockSplit, afterBlock);
+                if (paragraphDirection == LanguageReadingDirection.RightToLeft)
+                {
+                    // RTL paragraph: all the blocks on the splitted line that were left of the splitting point are now moved to the next line, and should thus be placed after all the blocks that were on their right
+                    Int32 leftBlockStart = blockSplit;
+                    Int32 rightBlockEnd = blockSplit + 1;
+                    while (leftBlockStart > 0 && !DirectionBlockEndsLineLeft(leftBlockStart, nlProcessed))
+                        leftBlockStart--;
+                    while (rightBlockEnd + 1 < Directions.Count && !DirectionBlockEndsLineRight(rightBlockEnd, nlProcessed))
+                        rightBlockEnd++;
+                    List<DirectionBlock> leftBlockList = new List<DirectionBlock>(blockSplit - leftBlockStart + 1);
+                    for (Int32 i = leftBlockStart; i <= blockSplit; i++)
+                        leftBlockList.Add(Directions[leftBlockStart]);
+                    Directions.RemoveRange(leftBlockStart, blockSplit - leftBlockStart + 1);
+                    Directions.InsertRange(rightBlockEnd + leftBlockStart - blockSplit, leftBlockList);
+                }
+                nlProcessed.Add(index);
+            }
+        }
+
+        private Boolean DirectionBlockEndsLineLeft(Int32 blockIndex, HashSet<Int32> newLineIndices)
+        {
+            if (Directions[blockIndex].ltr)
+                return Directions[blockIndex].start == 0 || (FullText[Directions[blockIndex].start - 1] == '\n' || newLineIndices.Contains(Directions[blockIndex].start - 1));
+            return Directions[blockIndex].end == FullText.Count || (FullText[Directions[blockIndex].end] == '\n' || newLineIndices.Contains(Directions[blockIndex].end));
+        }
+
+        private Boolean DirectionBlockEndsLineRight(Int32 blockIndex, HashSet<Int32> newLineIndices)
+        {
+            if (Directions[blockIndex].ltr)
+                return Directions[blockIndex].end == FullText.Count || (FullText[Directions[blockIndex].end] == '\n' || newLineIndices.Contains(Directions[blockIndex].end));
+            return Directions[blockIndex].start == 0 || (FullText[Directions[blockIndex].start - 1] == '\n' || newLineIndices.Contains(Directions[blockIndex].start - 1));
+        }
+
+        private void ApplyWordJoining(ref Int32 index)
         {
             Int32 chPos = index;
             Char ch = FullText[index++];
@@ -224,7 +313,7 @@ namespace Memoria.Assets
             }
             if (initJoin)
             {
-                while (index < FullText.Length)
+                while (index < FullText.Count)
                 {
                     ch = FullText[index];
                     if (ch == 0x0627 && FullText[chPos] == 0x0644) // Lam-Aleph ligatures
@@ -233,7 +322,7 @@ namespace Memoria.Assets
                             FullText[chPos] = (Char)0xFEFB; // isolated form
                         else
                             FullText[chPos] = (Char)0xFEFC; // final form
-                        FullText[index++] = (Char)0x200B; // Zero-width space, which is join-transparent, in order to keep the same character count
+                        RemovePart(index, 1);
                         return;
                     }
                     else if (DualJoiningCharacters.TryGetValue(ch, out transformNext))
@@ -276,14 +365,30 @@ namespace Memoria.Assets
             }
         }
 
+        public static Boolean IsRenderMirrorCharacter(Char ch)
+        {
+            return MirroringCharactersNoEquivalent.Contains(ch);
+        }
+
+        public static Char GetMirroredCharacter(Char c)
+        {
+            // TODO: Maybe apply the algorithm BD16 (https://www.unicode.org/reports/tr9/#BD16) instead of mirroring every bracket character, paired or not, in RTL
+            if (MirroringCharacters.TryGetValue(c, out Char mirror))
+                return mirror;
+            return c;
+        }
+
         public static CharacterClass GetBIDIClass(Char c)
         {
             if (c <= 0x058F)
             {
-                if (c == '[') // Brackets, used for text opcodes, force a left-to-right isolate
-                    return CharacterClass.Left_To_Right_Isolate;
-                if (c == ']') // The game uses the special characters【】(0x3010 and 0x3011) for non-opcode brackets
-                    return CharacterClass.Pop_Directional_Isolate;
+                // Brackets and braces are used for text tags
+                // However, there shouldn't be any text tag in textual format by the time BIDI is called, so the exception is disabled
+                // Note that the game uses the special characters【】(0x3010 and 0x3011) for non-opcode brackets
+                //if (c == '[' || c == '{')
+                //    return CharacterClass.Left_To_Right_Isolate;
+                //if (c == ']' || c == '}')
+                //    return CharacterClass.Pop_Directional_Isolate;
                 if (c >= 0x0000 && c <= 0x0008)
                     return CharacterClass.Boundary_Neutral;
                 if (c == 0x000C || c == 0x0020)
@@ -477,18 +582,6 @@ namespace Memoria.Assets
             if (c >= 0xFFF9 && c <= 0xFFFD)
                 return CharacterClass.Other_Neutral;
             return CharacterClass.Left_To_Right;
-        }
-
-        private static void ChangeDirection(Int32[] array, Int32 start, Int32 endInclusive)
-        {
-            Int32 count = (endInclusive - start + 1) / 2;
-            Int32 tmp;
-            for (Int32 i = 0; i < count; i++)
-            {
-                tmp = array[start + i];
-                array[start + i] = array[endInclusive - i];
-                array[endInclusive - i] = tmp;
-            }
         }
 
         // Only supports (most) common and arabic characters
@@ -768,8 +861,8 @@ namespace Memoria.Assets
             { ')', '(' },
             { '<', '>' },
             { '>', '<' },
-            //{ '[', ']' },
-            //{ ']', '[' },
+            { '[', ']' },
+            { ']', '[' },
             { '{', '}' },
             { '}', '{' },
             { '«', '»' },
@@ -1420,6 +1513,45 @@ namespace Memoria.Assets
             (Char)0x200D
         };
 
+        private static Dictionary<DigitShapes, Char> DigitBase = new Dictionary<DigitShapes, Char>()
+        {
+            { DigitShapes.Latin,    (Char)0x0030 },
+            { DigitShapes.Arab,     (Char)0x0660 },
+            { DigitShapes.ArabExt,  (Char)0x06F0 },
+            { DigitShapes.Bali,     (Char)0x1B50 },
+            { DigitShapes.Beng,     (Char)0x09E6 },
+            { DigitShapes.Cham,     (Char)0xAA50 },
+            { DigitShapes.Deva,     (Char)0x0966 },
+            { DigitShapes.FullWide, (Char)0xFF10 },
+            { DigitShapes.Gujr,     (Char)0x0AE6 },
+            { DigitShapes.Guru,     (Char)0x0A66 },
+            { DigitShapes.Java,     (Char)0xA9D0 },
+            { DigitShapes.Kali,     (Char)0xA900 },
+            { DigitShapes.Khmr,     (Char)0x17E0 },
+            { DigitShapes.Knda,     (Char)0x0CE6 },
+            { DigitShapes.Lana,     (Char)0x1A80 },
+            { DigitShapes.LanaTham, (Char)0x1A90 },
+            { DigitShapes.Laoo,     (Char)0x0ED0 },
+            { DigitShapes.Lepc,     (Char)0x1C40 },
+            { DigitShapes.Limb,     (Char)0x1946 },
+            { DigitShapes.Mlym,     (Char)0x0D66 },
+            { DigitShapes.Mong,     (Char)0x1810 },
+            { DigitShapes.Mtei,     (Char)0xABF0 },
+            { DigitShapes.Mymr,     (Char)0x1040 },
+            { DigitShapes.MymrShan, (Char)0x1090 },
+            { DigitShapes.Nkoo,     (Char)0x07C0 },
+            { DigitShapes.Olck,     (Char)0x1C50 },
+            { DigitShapes.Orya,     (Char)0x0B66 },
+            { DigitShapes.Saur,     (Char)0xA8D0 },
+            { DigitShapes.Sund,     (Char)0x1BB0 },
+            { DigitShapes.Talu,     (Char)0x19D0 },
+            { DigitShapes.TamlDec,  (Char)0x0BE6 },
+            { DigitShapes.Telu,     (Char)0x0C66 },
+            { DigitShapes.Thai,     (Char)0x0E50 },
+            { DigitShapes.Tibt,     (Char)0x0F20 },
+            { DigitShapes.Vaii,     (Char)0xA620 }
+        };
+
         private static List<DirectionalStatus> DirectionalStackRoot = new List<DirectionalStatus>();
 
         private class DirectionalStatus
@@ -1464,6 +1596,27 @@ namespace Memoria.Assets
             }
         }
 
+        public class DirectionBlock
+        {
+            public Boolean ltr;
+            public Int32 start;
+            public Int32 end;
+
+            public DirectionBlock(Boolean ltr, Int32 start, Int32 end)
+            {
+                this.ltr = ltr;
+                this.start = start;
+                this.end = end;
+            }
+
+            public DirectionBlock Split(DirectionBlock spliter)
+            {
+                DirectionBlock remaining = new DirectionBlock(ltr, spliter.end, end);
+                end = spliter.start;
+                return remaining;
+            }
+        }
+
         private const Int32 OVERRIDE_STATUS_NEUTRAL = 0;
         private const Int32 OVERRIDE_STATUS_RTL = 1;
         private const Int32 OVERRIDE_STATUS_LTR = 2;
@@ -1475,6 +1628,45 @@ namespace Memoria.Assets
             RightToLeft,   // Partly supported
             Boustrophedon, // Not supported yet
             TopToBottom    // Not supported yet
+        }
+
+        public enum DigitShapes
+        {
+            Latin,
+            Arab,
+            ArabExt,
+            Bali,
+            Beng,
+            Cham,
+            Deva,
+            FullWide,
+            Gujr,
+            Guru,
+            Java,
+            Kali,
+            Khmr,
+            Knda,
+            Lana,
+            LanaTham,
+            Laoo,
+            Lepc,
+            Limb,
+            Mlym,
+            Mong,
+            Mtei,
+            Mymr,
+            MymrShan,
+            Nkoo,
+            Olck,
+            Orya,
+            Saur,
+            Sund,
+            Talu,
+            TamlDec,
+            Telu,
+            Thai,
+            Tibt,
+            Vaii
         }
 
         public enum CharacterClass

@@ -81,7 +81,7 @@ public class UITooltip : MonoBehaviour
         {
             this.mTarget = 1f;
             this.mTooltip = UICamera.tooltipObject;
-            this.text.text = tooltipText;
+            this.text.rawText = tooltipText;
             this.mPos = UICamera.lastEventPosition;
             Transform transform = this.text.transform;
             Vector3 localPosition = transform.localPosition;

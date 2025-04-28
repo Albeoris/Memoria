@@ -3,13 +3,11 @@ using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria;
 using Memoria.Data;
-using Memoria.Database;
 using Memoria.Prime;
 using Memoria.Scripts;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -266,6 +264,8 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             btl[i] = new BTL_DATA { gameObject = ModelFactory.CreateModel(path, true, true, Configuration.Graphics.ElementsSmoothTexture) };
             btl[i].typeNo = monType;
             btl[i].weaponModels.Clear();
+            if (sb2MonParm.TextureFiles != null)
+                ModelFactory.ChangeModelTexture(btl[i].gameObject, sb2MonParm.TextureFiles);
             if (sb2MonParm.WeaponAttachment != null)
             {
                 if (!btl_eqp.EnemyBuiltInWeaponTable.TryGetValue(sb2MonParm.Geo, out Int32[] builtInWeapons))
@@ -300,8 +300,6 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             {
                 btl[i].weapon_geo = null;
             }
-            if (sb2MonParm.TextureFiles != null)
-                ModelFactory.ChangeModelTexture(btl[i].gameObject, sb2MonParm.TextureFiles);
             if (btl[i].weapon_geo != null)
             {
                 MeshRenderer[] weaponRenderers = btl[i].weapon_geo.GetComponentsInChildren<MeshRenderer>();
@@ -332,7 +330,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                             textureFiles.Add(file);
                     }
                     if (textureFiles.Count > 0)
-                    {
+                    {          
                         MeshRenderer[] weaponRenderers = btl[i].weaponModels[j].geo.GetComponentsInChildren<MeshRenderer>();
                         if (weaponRenderers.Length > 0)
                             for (Int32 k = 0; k < weaponRenderers.Length && k < textureFiles.Count; k++)

@@ -1,5 +1,6 @@
 using Memoria.Prime;
 using Memoria.Prime.CSV;
+using Memoria.Prime.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,9 +11,10 @@ namespace Memoria.Assets
 {
     internal sealed class LanguageMap
     {
-        private const String LanguageKey = "KEY";
-        private const String SymbolKey = "Symbol";
-        private const String ReadingDirectionKey = "ReadingDirection";
+        public const String LanguageKey = "KEY";
+        public const String SymbolKey = "Symbol";
+        public const String ReadingDirectionKey = "ReadingDirection";
+        public const String DigitShapesKey = "DigitShapes";
 
         private readonly String[] _knownLanguages;
         private readonly Dictionary<String, SortedList<String, String>> _languages;
@@ -22,23 +24,22 @@ namespace Memoria.Assets
         private String _currentLanguage;
         private String _currentSymbol;
         private SortedList<String, String> _current;
+        private SortedList<String, String> _secondary;
 
         public LanguageMap()
         {
-            Byte[] tableData = ReadEmbadedTable();
-
-            ByteReader reader = new ByteReader(tableData);
-            BetterList<String> cells = reader.ReadCSV();
-            if (cells.size < 2 || cells[0] != LanguageKey)
+            TextCSVReader reader = new TextCSVReader(ReadEmbeddedTable());
+            List<String> cells = reader.ReadCSV();
+            if (cells.Count < 2 || cells[0] != LanguageKey)
                 throw new CsvParseException("Invalid localisation file.");
 
-            Int32 languageCount = cells.size - 1;
+            Int32 languageCount = cells.Count - 1;
             Dictionary<Int32, String> cellLanguages = new Dictionary<Int32, String>(languageCount);
 
             _languages = new Dictionary<String, SortedList<String, String>>(languageCount);
             _knownLanguages = new String[languageCount];
 
-            for (Int32 i = 1; i < cells.size; i++)
+            for (Int32 i = 1; i < cells.Count; i++)
             {
                 String language = cells[i];
                 cellLanguages.Add(i, language);
@@ -56,6 +57,7 @@ namespace Memoria.Assets
             _failbackLanguage = cellLanguages[1];
             _failback = _languages[_failbackLanguage];
             _current = _failback;
+            _secondary = _failback;
 
             LoadModText(cellLanguages);
             LoadExternalText();
@@ -76,6 +78,20 @@ namespace Memoria.Assets
         public void Broadcast()
         {
             SelectLanguage(LanguagePrefs.Key);
+            UIRoot.Broadcast("OnLocalize");
+        }
+
+        public void SelectSecondaryLanguage(String language)
+        {
+            if (_languages.TryGetValue(language, out var languageDic))
+            {
+                _secondary = languageDic;
+            }
+            else
+            {
+                _secondary = _failback;
+                Log.Error($"[LocalizationDictionary] Cannot find localisation data for the language [{language}].");
+            }
         }
 
         public void SelectLanguage(String language)
@@ -95,7 +111,8 @@ namespace Memoria.Assets
             }
             _currentSymbol = Get(SymbolKey);
             NGUIText.readingDirection = Localization.GetWithDefault(ReadingDirectionKey) == UnicodeBIDI.DIRECTION_NAME_RIGHT_TO_LEFT ? UnicodeBIDI.LanguageReadingDirection.RightToLeft : UnicodeBIDI.LanguageReadingDirection.LeftToRight;
-            UIRoot.Broadcast("OnLocalize");
+            if (!Localization.GetWithDefault(DigitShapesKey).TryEnumParse(out NGUIText.digitShapes))
+                NGUIText.digitShapes = UnicodeBIDI.DigitShapes.Latin;
         }
 
         private Boolean TryGetAlternativeKey(String key, out String alternativeKey)
@@ -114,53 +131,38 @@ namespace Memoria.Assets
             return false;
         }
 
-        public String Get(String key)
+        public String Get(String key, Boolean secondaryLang = false)
         {
-            if (TryGetAlternativeKey(key, out var alternativeKey))
-            {
-                if (TryGetValue(alternativeKey, out var alternativeValue))
-                    return alternativeValue;
-            }
-
-            if (TryGetValue(key, out var value))
+            SortedList<String, String> dict = secondaryLang ? _secondary : _current;
+            if (TryGetAlternativeKey(key, out var alternativeKey) && dict.TryGetValue(alternativeKey, out var alternativeValue))
+                return alternativeValue;
+            if (dict.TryGetValue(key, out var value))
                 return value;
-
             return key;
         }
 
-        private Boolean TryGetValue(String key, out String value)
-        {
-            if (_current.TryGetValue(key, out value))
-                return true;
-
-            //if (_failback.TryGetValue(key, out value))
-            //    return true;
-
-            return false;
-        }
-
-        private void ReadText(ByteReader reader, Dictionary<Int32, String> cellLanguages, Boolean init)
+        private void ReadText(TextCSVReader reader, Dictionary<Int32, String> cellLanguages, Boolean init)
         {
             Boolean firstEntry = true;
-            while (reader.canRead)
+            while (reader.HasMoreEntries)
             {
-                BetterList<String> cells = reader.ReadCSV();
-                if (cells == null || cells.size < 2)
+                List<String> cells = reader.ReadCSV();
+                if (cells == null || cells.Count < 2)
                     continue;
 
                 String key = cells[0];
                 if (String.IsNullOrEmpty(key))
                     continue;
 
-                if (firstEntry && !init && key == "KEY")
+                if (firstEntry && !init && key == LanguageKey)
                 {
                     Dictionary<Int32, String> customLayout = new Dictionary<Int32, String>();
-                    for (Int32 i = 1; i < cells.size; i++)
+                    for (Int32 i = 1; i < cells.Count; i++)
                     {
                         String value = cells[i];
                         foreach (String language in cellLanguages.Values)
                         {
-                            if (_languages[language]["KEY"] == value)
+                            if (_languages[language][LanguageKey] == value)
                             {
                                 customLayout.Add(i, language);
                                 break;
@@ -171,7 +173,7 @@ namespace Memoria.Assets
                 }
                 else
                 {
-                    for (Int32 i = 1; i < cells.size; i++)
+                    for (Int32 i = 1; i < cells.Count; i++)
                     {
                         String value = cells[i];
                         if (!cellLanguages.TryGetValue(i, out String language))
@@ -193,9 +195,9 @@ namespace Memoria.Assets
             {
                 if (folder.TryFindAssetInModOnDisc(inputPath, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
                 {
-                    Byte[] tableData = File.ReadAllBytes(fullPath);
-                    ByteReader reader = new ByteReader(tableData);
-                    ReadText(reader, cellLanguages, false);
+                    TextCSVReader reader = TextCSVReader.Open(fullPath);
+                    if (reader != null)
+                        ReadText(reader, cellLanguages, false);
                 }
             }
         }
@@ -227,8 +229,8 @@ namespace Memoria.Assets
 
                     switch (entry.Prefix)
                     {
-                        case "KEY":
-                        case "Symbol":
+                        case LanguageKey:
+                        case SymbolKey:
                         case "Name":
                         case "":
                             continue;
@@ -240,9 +242,9 @@ namespace Memoria.Assets
             Log.Message("[LocalizationDictionary] Loading completed successfully.");
         }
 
-        private static Byte[] ReadEmbadedTable()
+        private static String[] ReadEmbeddedTable()
         {
-            return AssetManager.LoadBytes("EmbeddedAsset/Manifest/Text/Localization.txt");
+            return AssetManager.LoadString("EmbeddedAsset/Manifest/Text/Localization.txt").Split('\n');
         }
 
         private void StoreValue(String language, String key, String value)
@@ -262,9 +264,24 @@ namespace Memoria.Assets
             }
         }
 
+        public String SymbolToLanguage(String symbol)
+        {
+            foreach (var kvp in _languages)
+                if (kvp.Value.TryGetValue(SymbolKey, out String langSymbol) && symbol == langSymbol)
+                    return kvp.Key;
+            return LanguageName.EnglishUS;
+        }
+
+        public String LanguageToSymbol(String lang)
+        {
+            if (_languages.TryGetValue(lang, out SortedList<String, String> dict) && dict.TryGetValue(SymbolKey, out String symbol))
+                return symbol;
+            return LanguageName.SymbolEnglishUS;
+        }
+
         private static class LanguagePrefs
         {
-            private const String DefaultLanguage = "English(US)";
+            private const String DefaultLanguage = LanguageName.EnglishUS;
 
             public static String Key
             {

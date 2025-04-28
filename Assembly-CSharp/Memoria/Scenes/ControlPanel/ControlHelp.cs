@@ -21,7 +21,7 @@ namespace Memoria.Scenes
             HelpLabel.topAnchor.Set(panel.transform, 1f, -50);
             HelpLabel.bottomAnchor.Set(panel.transform, 0f, 50);
             HelpLabel.multiLine = true;
-            HelpLabel.text = help;
+            HelpLabel.rawText = help;
             HelpOpener = control.AddHitBoxOption(name, () => control.SetActivePanel(true, helpPanelIndex), panelIndex);
         }
     }

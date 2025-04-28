@@ -71,6 +71,25 @@ public partial class BattleHUD : UIScene
             RemoveCursorMemorize();
     }
 
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        if (_subMenuType == SubMenuType.Ability && AbilityPanel.activeSelf)
+            _abilityScrollList.UpdateTableViewImp();
+        if ((_subMenuType == SubMenuType.Item || _subMenuType == SubMenuType.Throw) && ItemPanel.activeSelf)
+            _itemScrollList.UpdateTableViewImp();
+        if (CommandPanel.activeSelf)
+            DisplayCommand();
+        if (TargetPanel.activeSelf)
+        {
+            Int32 enemyIndex = 0;
+            foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+                if (unit.Id != 0 && unit.IsTargetable && !unit.IsPlayer)
+                    _targetPanel.Enemies[enemyIndex++].Name.Label.rawText = GetEnemyDisplayName(unit);
+        }
+    }
+
     public void UpdateSlidingButtonState()
     {
         if (!Configuration.Interface.PSXBattleMenu || ButtonGroupState.ActiveGroup != CommandGroupButton)
@@ -132,6 +151,7 @@ public partial class BattleHUD : UIScene
                 _buttonSliding.Highlight.Sprite.ResetAndUpdateAnchors();
                 _buttonSliding.Background.Widget.ResetAndUpdateAnchors();
                 _buttonSliding.Background.Border.Sprite.ResetAndUpdateAnchors();
+                _buttonSliding.Name.Label.Parser.ResetBeforeVariableTags();
             }
             else
             {
@@ -210,14 +230,14 @@ public partial class BattleHUD : UIScene
                 else if (ff9Command.Type == CharacterCommandType.Throw)
                 {
                     _subMenuType = SubMenuType.Throw;
-                    DisplayItem(true);
+                    DisplayItem(ff9Command);
                     SetCommandVisibility(false, false);
                     SetItemPanelVisibility(true, false);
                 }
                 else if (ff9Command.Type == CharacterCommandType.Item)
                 {
                     _subMenuType = SubMenuType.Item;
-                    DisplayItem(false);
+                    DisplayItem(ff9Command);
                     SetCommandVisibility(false, false);
                     SetItemPanelVisibility(true, false);
                 }
@@ -306,7 +326,7 @@ public partial class BattleHUD : UIScene
                 {
                     ++_doubleCastCount;
                     _firstCommand = ProcessCommand(1, _cursorType);
-                    DisplayItem(CharacterCommands.Commands[_firstCommand.CommandId].Type == CharacterCommandType.Throw);
+                    DisplayItem(CharacterCommands.Commands[_firstCommand.CommandId]);
                     SetItemPanelVisibility(true, true);
                 }
                 else
@@ -370,7 +390,7 @@ public partial class BattleHUD : UIScene
                 else
                 {
                     SetItemPanelVisibility(true, false);
-                    DisplayItem(CharacterCommands.Commands[_currentCommandId].Type == CharacterCommandType.Throw);
+                    DisplayItem(CharacterCommands.Commands[_currentCommandId]);
                 }
             }
             else if (ButtonGroupState.ActiveGroup == String.Empty && UIManager.Input.ContainsAndroidQuitKey())
@@ -435,7 +455,7 @@ public partial class BattleHUD : UIScene
             Boolean canOpen = true;
             BattleUnit selectedChar = CurrentPlayerIndex >= 0 ? FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex) : null;
             if (Configuration.Battle.AccessMenus == 1 || Configuration.Battle.AccessMenus == 2)
-                canOpen = !hasAccessMenuButton && !_hidingHud && ButtonGroupState.ActiveGroup == ItemGroupButton && _currentCommandId == BattleCommandId.Item && (selectedChar == null || !selectedChar.IsMonsterTransform || !selectedChar.Data.monster_transform.disable_commands.Contains(BattleCommandId.AccessMenu));
+                canOpen = !hasAccessMenuButton && !_hidingHud && ButtonGroupState.ActiveGroup == ItemGroupButton && _currentCommandIndex == BattleCommandMenu.Item && (selectedChar == null || !selectedChar.IsMonsterTransform || !selectedChar.Data.monster_transform.disable_commands.Contains(BattleCommandId.AccessMenu));
             else if (Configuration.Battle.AccessMenus == 3)
                 canOpen = FF9BMenu_IsEnable() && ((!hasAccessMenuButton && ButtonGroupState.ActiveGroup != CommandGroupButton && ButtonGroupState.ActiveGroup != TargetGroupButton) || (hasAccessMenuButton && selectedChar == null));
             if (canOpen)

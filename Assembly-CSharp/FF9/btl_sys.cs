@@ -212,6 +212,14 @@ namespace FF9
             return start_type;
         }
 
+        public static Boolean SetBonus(BTL_DATA btl)
+        {
+            if (btl.bi.player != 0 || btl.bonus_given)
+                return false;
+            SetBonus(btl_util.getEnemyPtr(btl));
+            return true;
+        }
+
         public static void SetBonus(ENEMY enemy)
         {
             // Notes about item drops:

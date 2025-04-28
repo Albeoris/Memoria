@@ -1067,7 +1067,7 @@ public class EBin
             case op_binary.B_KEYON: // B_KEYON = 79
             {
                 VoicePlayer.scriptRequestedButtonPress = true;
-                _v0 = (Mathf.Abs(EvaluateValueExpression() & ETb.KeyOn(true)) <= 0) ? 0 : 1;
+                _v0 = (Mathf.Abs(EvaluateValueExpression() & ETb.KeyOn(Localization.CurrentSymbol == "JP")) <= 0) ? 0 : 1;
                 expr_Push_v0_Int24();
                 break;
             }
@@ -1087,13 +1087,13 @@ public class EBin
             }
             case op_binary.B_KEYOFF:
             {
-                _v0 = (Mathf.Abs(EvaluateValueExpression() & ETb.KeyOff(true)) <= 0) ? 0 : 1;
+                _v0 = (Mathf.Abs(EvaluateValueExpression() & ETb.KeyOff(Localization.CurrentSymbol == "JP")) <= 0) ? 0 : 1;
                 expr_Push_v0_Int24();
                 break;
             }
             case op_binary.B_KEY:
             {
-                _v0 = (Mathf.Abs(EvaluateValueExpression() & ETb.GetInputs(true)) <= 0) ? 0 : 1;
+                _v0 = (Mathf.Abs(EvaluateValueExpression() & ETb.GetInputs(Localization.CurrentSymbol == "JP")) <= 0) ? 0 : 1;
                 expr_Push_v0_Int24();
                 break;
             }
@@ -1303,35 +1303,27 @@ public class EBin
         _v0 = getv1i(ref s5);
         if (FF9StateSystem.Common.FF9.fldMapNo == 3011) // Ending/TH
         {
-            String symbol = Localization.GetSymbol();
-            if (symbol != "US" && symbol != "JP")
+            String lang = Localization.CurrentSymbol;
+            if (lang != "US" && lang != "JP")
             {
                 if (_v0 == 82)
-                {
                     _v0 = 102;
-                }
                 else if (_v0 == 50)
-                {
                     _v0 = 90;
-                }
             }
         }
         else if (FF9StateSystem.Common.FF9.fldMapNo == 3009) // Ending/TH
         {
-            String symbol2 = Localization.GetSymbol();
-            if (symbol2 != "US" && symbol2 != "JP" && s1.uid == 17 && _v0 == 15)
-            {
+            String lang = Localization.CurrentSymbol;
+            if (lang != "US" && lang != "JP" && s1.uid == 17 && _v0 == 15)
                 _v0 = 20;
-            }
         }
         Int32 a0 = _v0 - 254;
         if (_v0 != 0)
         {
             _v0--;
             if (a0 > 0)
-            {
                 _v0 = 253;
-            }
             s1.wait = (Byte)_v0;
             _s2 = 1;
         }
@@ -1681,7 +1673,7 @@ public class EBin
 
     private Int32 GetMemoriaCustomVariable(memoria_variable varCode)
     {
-        switch (varCode)
+        switch (varCode) // Custom variables for HW (ScriptAPI.txt)
         {
             case memoria_variable.TETRA_MASTER_WIN:
                 return FF9StateSystem.MiniGame.SavedData.sWin;
@@ -1697,6 +1689,15 @@ public class EBin
                 return FF9StateSystem.EventState.GetTreasureHunterPoints();
             case memoria_variable.BATTLE_RUNAWAY:
                 return FF9StateSystem.Battle.FF9Battle.btl_scene.Info.Runaway ? 1 : 0;
+            case memoria_variable.BATTLE_NOGAMEOVER:
+                return FF9StateSystem.Battle.FF9Battle.btl_scene.Info.NoGameOver ? 1 : 0;
+            case memoria_variable.BATTLE_WINPOSE:
+                return FF9StateSystem.Battle.FF9Battle.btl_scene.Info.WinPose ? 1 : 0;
+            case memoria_variable.BATTLE_IPSENCURSE:
+                return FF9StateSystem.Battle.FF9Battle.btl_scene.Info.ReverseAttack ? 1 : 0;
+            case memoria_variable.BATTLE_AFTEREVENT:
+                return FF9StateSystem.Battle.FF9Battle.btl_scene.Info.AfterEvent ? 1 : 0;
+
         }
         return 0;
     }
@@ -1716,6 +1717,18 @@ public class EBin
                 break;
             case memoria_variable.BATTLE_RUNAWAY:
                 FF9StateSystem.Battle.FF9Battle.btl_scene.Info.Runaway = val != 0;
+                break;
+            case memoria_variable.BATTLE_NOGAMEOVER:
+                FF9StateSystem.Battle.FF9Battle.btl_scene.Info.NoGameOver = val != 0;
+                break;
+            case memoria_variable.BATTLE_WINPOSE:
+                FF9StateSystem.Battle.FF9Battle.btl_scene.Info.WinPose = val != 0;
+                break;
+            case memoria_variable.BATTLE_IPSENCURSE:
+                FF9StateSystem.Battle.FF9Battle.btl_scene.Info.ReverseAttack = val != 0;
+                break;
+            case memoria_variable.BATTLE_AFTEREVENT:
+                FF9StateSystem.Battle.FF9Battle.btl_scene.Info.AfterEvent = val != 0;
                 break;
         }
     }
@@ -2395,6 +2408,10 @@ public class EBin
         TETRA_MASTER_RANK,
         TREASURE_HUNTER_POINTS,
         BATTLE_RUNAWAY,
+        BATTLE_NOGAMEOVER,
+        BATTLE_WINPOSE,
+        BATTLE_IPSENCURSE,
+        BATTLE_AFTEREVENT
     }
 
     public enum op_binary

@@ -30,6 +30,7 @@ namespace Assets.Sources.Scripts.UI.Common
                 this.NameLabel = this.Content.GetChild(1).GetComponent<UILabel>();
                 this.NumberLabel = haveNumberLabel ? this.Content.GetChild(2).GetComponent<UILabel>() : null;
             }
+            this.NameLabel.fixedAlignment = true;
         }
 
         public GameObject Self;

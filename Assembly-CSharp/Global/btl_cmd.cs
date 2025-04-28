@@ -282,7 +282,7 @@ public class btl_cmd
             //    }
             //}
             caster.bi.cmd_idle = 1;
-            if (Configuration.Battle.Speed < 3 && caster != null && caster.bi.player != 0)
+            if (Configuration.Battle.Speed < 3 && caster.bi.player != 0)
                 btl_mot.SetDefaultIdle(caster); // Don't wait for the "Idle" animation to finish its cycle to get ready
         }
         if (commandId == BattleCommandId.SummonGarnet || commandId == BattleCommandId.Phantom || commandId == BattleCommandId.SummonEiko)
@@ -864,7 +864,8 @@ public class btl_cmd
     public static UInt16 CheckReflec(CMD_DATA cmd)
     {
         UInt16 reflectingBtl = 0;
-        if (cmd.cmd_no != BattleCommandId.Item && cmd.cmd_no != BattleCommandId.Throw && cmd.cmd_no != BattleCommandId.AutoPotion && (cmd.AbilityCategory & 1) != 0 && !cmd.info.ReflectNull && !cmd.info.HasCheckedReflect)
+        CharacterCommandType cmdType = btl_util.GetCommandTypeSafe(cmd.cmd_no);
+        if (cmdType != CharacterCommandType.Item && cmdType != CharacterCommandType.Throw && (cmd.AbilityCategory & 1) != 0 && !cmd.info.ReflectNull && !cmd.info.HasCheckedReflect)
         {
             UInt16[] targetablePlayers = new UInt16[4];
             UInt16[] targetableEnemies = new UInt16[4];
@@ -1211,21 +1212,14 @@ public class btl_cmd
         if (cmd.tar_id == 0)
             return false;
         Boolean forDead;
-        switch (cmd.cmd_no)
-        {
-            case BattleCommandId.Item:
-            case BattleCommandId.AutoPotion:
-                forDead = ff9item.GetItemEffect(btl_util.GetCommandItem(cmd)).info.ForDead;
-                break;
-            case BattleCommandId.SysTrans:
-                return true;
-            default:
-                forDead = cmd.aa.Info.ForDead;
-                break;
-        }
-
-        if (BattleHUD.MixCommandSet.ContainsKey(cmd.cmd_no) && ff9mixitem.MixItemsData.TryGetValue(cmd.sub_no, out MixItems MixChoosen))
+        if (cmd.cmd_no == BattleCommandId.SysTrans)
+            forDead = true;
+        else if (BattleHUD.MixCommandSet.ContainsKey(cmd.cmd_no) && ff9mixitem.MixItemsData.TryGetValue(cmd.sub_no, out MixItems MixChoosen))
             forDead = ff9item.GetItemEffect(MixChoosen.Result).info.ForDead;
+        else if (btl_util.GetCommandTypeSafe(cmd.cmd_no) == CharacterCommandType.Item)
+            forDead = ff9item.GetItemEffect(btl_util.GetCommandItem(cmd)).info.ForDead;
+        else
+            forDead = cmd.aa.Info.ForDead;
 
         for (BTL_DATA btl = btlsys.btl_list.next; btl != null; btl = btl.next)
             if (btl.bi.target != 0 && (btl.btl_id & cmd.tar_id) != 0 && (forDead && btl.bi.player != 0 || !btl_stat.CheckStatus(btl, BattleStatus.Death)) && (!btl.out_of_reach || !cmd.IsShortRange))
@@ -1568,8 +1562,6 @@ public class btl_cmd
                 }
                 return;
             }
-            case BattleCommandId.Item:
-            case BattleCommandId.AutoPotion:
             default:
                 SBattleCalculator.CalcMain(caster, target, cmd, sfxThread);
                 return;

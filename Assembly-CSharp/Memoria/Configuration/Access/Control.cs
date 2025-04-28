@@ -38,6 +38,7 @@ namespace Memoria
             */
             public static Boolean PSXMovementMethod => Instance._control.PSXMovementMethod;
             public static Boolean AlwaysCaptureGamepad => Instance._control.AlwaysCaptureGamepad;
+            public static Boolean SwapConfirmCancel => Instance._control.SwapConfirmCancel;
         }
     }
 }

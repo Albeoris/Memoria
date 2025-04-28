@@ -133,10 +133,8 @@ public class SoundEffectPlayer : SoundPlayer
         if (soundProfile == null)
         {
             soundProfile = this.sceneSoundDatabase.Read(soundIndex);
-        }
-        if (soundProfile == null)
-        {
-            soundProfile = this.onTheFlySoundDatabase.Read(soundIndex);
+            if (soundProfile == null)
+                soundProfile = this.onTheFlySoundDatabase.Read(soundIndex);
         }
         if (soundProfile != null)
         {
@@ -178,7 +176,7 @@ public class SoundEffectPlayer : SoundPlayer
                 SoundLib.Log("Unload on the fly sound database.");
                 base.UnloadResource(this.onTheFlySoundDatabase);
             }
-            base.LoadResource(soundProfile, this.onTheFlySoundDatabase, new SoundPlayer.LoadResourceCallback(this.LoadOnTheFlySoundResourceCallback));
+            base.LoadResource(soundProfile, this.onTheFlySoundDatabase, this.LoadOnTheFlySoundResourceCallback);
         }
     }
 
@@ -263,16 +261,15 @@ public class SoundEffectPlayer : SoundPlayer
     }
 
     private SoundDatabase gameSoundDatabase = new SoundDatabase();
-
     private SoundDatabase sceneSoundDatabase = new SoundDatabase();
-
     private SoundDatabase onTheFlySoundDatabase = new SoundDatabase();
 
     private HashSet<Int32> playedEffectSet = new HashSet<Int32>();
-
     private List<Int32> playedEffectRemoveList = new List<Int32>();
 
     private SoundProfile activeSoundEffect;
 
     public override Single Volume => Memoria.Configuration.Audio.SoundVolume / 100f;
+    public SoundDatabase VolatileDatabase => this.onTheFlySoundDatabase;
+    public SoundDatabase PermanentDatabase => this.gameSoundDatabase;
 }

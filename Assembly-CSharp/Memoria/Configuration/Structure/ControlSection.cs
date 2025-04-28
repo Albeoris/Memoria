@@ -37,6 +37,7 @@ namespace Memoria
             public readonly IniValue<Boolean> PSXScrollingMethod;
             public readonly IniValue<Boolean> PSXMovementMethod;
             public readonly IniValue<Boolean> AlwaysCaptureGamepad;
+            public readonly IniValue<Boolean> SwapConfirmCancel;
 
             public ControlSection() : base(nameof(ControlSection), true)
             {
@@ -50,6 +51,7 @@ namespace Memoria
                 PSXScrollingMethod = BindBoolean(nameof(PSXScrollingMethod), true);
                 PSXMovementMethod = BindBoolean(nameof(PSXMovementMethod), false);
                 AlwaysCaptureGamepad = BindBoolean(nameof(AlwaysCaptureGamepad), true);
+                SwapConfirmCancel = BindBoolean(nameof(SwapConfirmCancel), false);
             }
         }
     }

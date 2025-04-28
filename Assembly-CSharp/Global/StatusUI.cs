@@ -71,6 +71,7 @@ public class StatusUI : UIScene
             afterFinished?.Invoke();
         });
 
+        UpdateUserInterface();
         DisplayPlayerArrow(true);
         DisplayAllCharacterInfo(true);
         if (ButtonGroupState.HelpEnabled)
@@ -85,6 +86,26 @@ public class StatusUI : UIScene
         if (_fastSwitch)
             return;
         PersistenSingleton<UIManager>.Instance.MainMenuScene.StartSubmenuTweenIn();
+    }
+
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        PLAYER player = FF9StateSystem.Common.FF9.party.member[_currentPartyIndex];
+        CharacterCommandSet cmdSet = CharacterCommands.CommandSets[player.info.menu_type];
+        SetupCommandLabel(_attackLabel, BattleCommandMenu.Attack, player, cmdSet);
+        SetupCommandLabel(_ability1Label, BattleCommandMenu.Ability1, player, cmdSet);
+        SetupCommandLabel(_ability2Label, BattleCommandMenu.Ability2, player, cmdSet);
+        SetupCommandLabel(_itemLabel, BattleCommandMenu.Item, player, cmdSet);
+        FF9UIDataTool.DisplayItem(player.equip[0], _equipmentHud.Weapon.IconSprite, _equipmentHud.Weapon.NameLabel, true);
+        FF9UIDataTool.DisplayItem(player.equip[1], _equipmentHud.Head.IconSprite, _equipmentHud.Head.NameLabel, true);
+        FF9UIDataTool.DisplayItem(player.equip[2], _equipmentHud.Wrist.IconSprite, _equipmentHud.Wrist.NameLabel, true);
+        FF9UIDataTool.DisplayItem(player.equip[3], _equipmentHud.Body.IconSprite, _equipmentHud.Body.NameLabel, true);
+        FF9UIDataTool.DisplayItem(player.equip[4], _equipmentHud.Accessory.IconSprite, _equipmentHud.Accessory.NameLabel, true);
+        for (Int32 index = 0; index < _abilityHudList.Count; ++index)
+            DrawAbilityInfo(_abilityHudList[index], index);
+        DisplayHelp(false);
     }
 
     public override Boolean OnKeyConfirm(GameObject go)
@@ -179,7 +200,7 @@ public class StatusUI : UIScene
 
         _currentPartyIndex = prev;
 
-        PLAYER player = FF9StateSystem.Common.FF9.party.member[this._currentPartyIndex];
+        PLAYER player = FF9StateSystem.Common.FF9.party.member[_currentPartyIndex];
         String spritName = FF9UIDataTool.AvatarSpriteName(player.info.serial_no);
         Loading = true;
         Boolean isKnockOut = player.cur.hp == 0;
@@ -205,7 +226,7 @@ public class StatusUI : UIScene
             return true;
 
         _currentPartyIndex = next;
-        PLAYER player = FF9StateSystem.Common.FF9.party.member[this._currentPartyIndex];
+        PLAYER player = FF9StateSystem.Common.FF9.party.member[_currentPartyIndex];
         String spritName = FF9UIDataTool.AvatarSpriteName(player.info.serial_no);
         Loading = true;
         Boolean isKnockOut = player.cur.hp == 0;
@@ -220,7 +241,7 @@ public class StatusUI : UIScene
         return true;
     }
 
-    private void DisplayHelp(Boolean isPlaySE)
+    private void DisplayHelp(Boolean playSound)
     {
         if (ButtonGroupState.HelpEnabled)
         {
@@ -230,16 +251,14 @@ public class StatusUI : UIScene
             Singleton<HelpDialog>.Instance.Tail = false;
             Singleton<HelpDialog>.Instance.Depth = 5;
             Singleton<HelpDialog>.Instance.ShowDialog();
-            if (!isPlaySE)
-                return;
-            FF9Sfx.FF9SFX_Play(682);
+            if (playSound)
+                FF9Sfx.FF9SFX_Play(682);
         }
         else
         {
             Singleton<HelpDialog>.Instance.HideDialog();
-            if (!isPlaySE)
-                return;
-            FF9Sfx.FF9SFX_Play(101);
+            if (playSound)
+                FF9Sfx.FF9SFX_Play(101);
         }
     }
 
@@ -258,15 +277,15 @@ public class StatusUI : UIScene
     {
         PLAYER player = FF9StateSystem.Common.FF9.party.member[_currentPartyIndex];
         DisplayPlayer(updateAvatar);
-        _parameterHud.SpeedLabel.text = player.elem.dex.ToString();
-        _parameterHud.StrengthLabel.text = player.elem.str.ToString();
-        _parameterHud.MagicLabel.text = player.elem.mgc.ToString();
-        _parameterHud.SpiritLabel.text = player.elem.wpr.ToString();
-        _parameterHud.AttackLabel.text = ff9item.GetItemWeapon(player.equip[0]).Ref.Power.ToString();
-        _parameterHud.DefendLabel.text = player.defence.PhysicalDefence.ToString();
-        _parameterHud.EvadeLabel.text = player.defence.PhysicalEvade.ToString();
-        _parameterHud.MagicDefLabel.text = player.defence.MagicalDefence.ToString();
-        _parameterHud.MagicEvaLabel.text = player.defence.MagicalEvade.ToString();
+        _parameterHud.SpeedLabel.rawText = player.elem.dex.ToString();
+        _parameterHud.StrengthLabel.rawText = player.elem.str.ToString();
+        _parameterHud.MagicLabel.rawText = player.elem.mgc.ToString();
+        _parameterHud.SpiritLabel.rawText = player.elem.wpr.ToString();
+        _parameterHud.AttackLabel.rawText = ff9item.GetItemWeapon(player.equip[0]).Ref.Power.ToString();
+        _parameterHud.DefendLabel.rawText = player.defence.PhysicalDefence.ToString();
+        _parameterHud.EvadeLabel.rawText = player.defence.PhysicalEvade.ToString();
+        _parameterHud.MagicDefLabel.rawText = player.defence.MagicalDefence.ToString();
+        _parameterHud.MagicEvaLabel.rawText = player.defence.MagicalEvade.ToString();
 
         UInt32 exp = player.level < ff9level.LEVEL_COUNT ? ff9level.CharacterLevelUps[player.level].ExperienceToLevel : player.exp;
         if (FF9StateSystem.EventState.gEventGlobal[16] != 0 && (player.category & 16) == 0)
@@ -279,8 +298,8 @@ public class StatusUI : UIScene
             _tranceGameObject.SetActive(false);
         }
 
-        _expLabel.text = player.exp.ToString();
-        _nextLvLabel.text = (exp - player.exp).ToString();
+        _expLabel.rawText = player.exp.ToString();
+        _nextLvLabel.rawText = (exp - player.exp).ToString();
 
         FF9UIDataTool.DisplayItem(player.equip[0], _equipmentHud.Weapon.IconSprite, _equipmentHud.Weapon.NameLabel, true);
         FF9UIDataTool.DisplayItem(player.equip[1], _equipmentHud.Head.IconSprite, _equipmentHud.Head.NameLabel, true);
@@ -303,9 +322,9 @@ public class StatusUI : UIScene
     {
         BattleCommandId cmdId = BattleCommandHelper.Patch(cmdSet.GetRegular(menu), menu, player);
         if (BattleCommandHelper.GetCommandEnabledState(cmdId, menu, player) > 0)
-            label.text = FF9TextTool.CommandName(cmdId);
+            label.rawText = FF9TextTool.CommandName(cmdId);
         else
-            label.text = String.Empty;
+            label.rawText = String.Empty;
     }
 
     private void DisplayPlayer(Boolean updateAvatar)
@@ -357,9 +376,20 @@ public class StatusUI : UIScene
             }
             abilityHud.Self.SetActive(true);
             abilityHud.IconSprite.spriteName = stoneSprite;
-            abilityHud.NameLabel.text = abilName;
+            abilityHud.NameLabel.rawText = abilName;
             FF9UIDataTool.DisplayAPBar(player, abilId, isShowText, abilityHud.APBar);
         }
+    }
+
+    private void UpdateUserInterface()
+    {
+        String colon = NGUIText.readingDirection == UnicodeBIDI.LanguageReadingDirection.RightToLeft ? "" : ":";
+        for (Int32 i = 0; i < 10; i++)
+            if (i != 4)
+                _parameterHud.Self.GetChild(i).GetChild(1).GetComponent<UILabel>().rawText = colon;
+        ETCInfo.GetChild(0).GetChild(1).GetComponent<UILabel>().rawText = colon;
+        ETCInfo.GetChild(1).GetChild(1).GetComponent<UILabel>().rawText = colon;
+        ETCInfo.GetChild(2).GetChild(2).GetComponent<UILabel>().rawText = colon;
     }
 
     protected void Awake()
@@ -379,49 +409,51 @@ public class StatusUI : UIScene
         for (Int32 index = 0; index < AbilityPanelList.Count; ++index)
         {
             for (Int32 childIndex = 0; childIndex < 8; ++childIndex)
-            {
-                //int num = index * 8 + childIndex;
                 _abilityHudList.Add(new AbilityItemHUD(AbilityPanelList[index].GetChild(0).GetChild(childIndex)));
-            }
             _abilityCaptionList.Add(AbilityPanelList[index].GetChild(1).GetChild(3));
         }
         _abilityPanelTransition = TransitionGroup.GetChild(0).GetComponent<HonoTweenPosition>();
         _avatarTransition = CharacterDetailPanel.GetChild(0).GetChild(6).GetChild(0).GetComponent<HonoAvatarTweenPosition>();
 
-        this._characterHud.MagicStoneLabel.SetAnchor((Transform)null);
-        this._characterHud.MagicStoneLabel.width = 60;
-        this._characterHud.MagicStoneLabel.height = 52;
-        this._parameterHud.SpeedLabel.SetAnchor((Transform)null);
-        this._parameterHud.StrengthLabel.SetAnchor((Transform)null);
-        this._parameterHud.MagicLabel.SetAnchor((Transform)null);
-        this._parameterHud.SpiritLabel.SetAnchor((Transform)null);
-        this._parameterHud.AttackLabel.SetAnchor((Transform)null);
-        this._parameterHud.DefendLabel.SetAnchor((Transform)null);
-        this._parameterHud.EvadeLabel.SetAnchor((Transform)null);
-        this._parameterHud.MagicDefLabel.SetAnchor((Transform)null);
-        this._parameterHud.MagicEvaLabel.SetAnchor((Transform)null);
+        _characterHud.MagicStoneLabel.SetAnchor((Transform)null);
+        _characterHud.MagicStoneLabel.width = 60;
+        _characterHud.MagicStoneLabel.height = 52;
+        _parameterHud.SpeedLabel.SetAnchor((Transform)null);
+        _parameterHud.StrengthLabel.SetAnchor((Transform)null);
+        _parameterHud.MagicLabel.SetAnchor((Transform)null);
+        _parameterHud.SpiritLabel.SetAnchor((Transform)null);
+        _parameterHud.AttackLabel.SetAnchor((Transform)null);
+        _parameterHud.DefendLabel.SetAnchor((Transform)null);
+        _parameterHud.EvadeLabel.SetAnchor((Transform)null);
+        _parameterHud.MagicDefLabel.SetAnchor((Transform)null);
+        _parameterHud.MagicEvaLabel.SetAnchor((Transform)null);
+
+        _attackLabel.alignment = NGUIText.Alignment.Center;
+        _ability1Label.alignment = NGUIText.Alignment.Center;
+        _ability2Label.alignment = NGUIText.Alignment.Center;
+        _itemLabel.alignment = NGUIText.Alignment.Center;
 
         // Update 27.02.2017
-        this._parameterHud.SpeedLabel.width = 90;
-        this._parameterHud.StrengthLabel.width = 90;
-        this._parameterHud.MagicLabel.width = 90;
-        this._parameterHud.SpiritLabel.width = 90;
-        this._parameterHud.AttackLabel.width = 90;
-        this._parameterHud.DefendLabel.width = 90;
-        this._parameterHud.EvadeLabel.width = 90;
-        this._parameterHud.MagicDefLabel.width = 90;
-        this._parameterHud.MagicEvaLabel.width = 90;
-        this._parameterHud.SpeedLabel.height = 40;
-        this._parameterHud.StrengthLabel.height = 40;
-        this._parameterHud.MagicLabel.height = 40;
-        this._parameterHud.SpiritLabel.height = 40;
-        this._parameterHud.AttackLabel.height = 40;
-        this._parameterHud.DefendLabel.height = 40;
-        this._parameterHud.EvadeLabel.height = 40;
-        this._parameterHud.MagicDefLabel.height = 40;
-        this._parameterHud.MagicEvaLabel.height = 40;
+        _parameterHud.SpeedLabel.width = 90;
+        _parameterHud.StrengthLabel.width = 90;
+        _parameterHud.MagicLabel.width = 90;
+        _parameterHud.SpiritLabel.width = 90;
+        _parameterHud.AttackLabel.width = 90;
+        _parameterHud.DefendLabel.width = 90;
+        _parameterHud.EvadeLabel.width = 90;
+        _parameterHud.MagicDefLabel.width = 90;
+        _parameterHud.MagicEvaLabel.width = 90;
+        _parameterHud.SpeedLabel.height = 40;
+        _parameterHud.StrengthLabel.height = 40;
+        _parameterHud.MagicLabel.height = 40;
+        _parameterHud.SpiritLabel.height = 40;
+        _parameterHud.AttackLabel.height = 40;
+        _parameterHud.DefendLabel.height = 40;
+        _parameterHud.EvadeLabel.height = 40;
+        _parameterHud.MagicDefLabel.height = 40;
+        _parameterHud.MagicEvaLabel.height = 40;
 
-        this._background = new GOMenuBackground(this.transform.GetChild(10).gameObject, "status_bg");
+        _background = new GOMenuBackground(transform.GetChild(10).gameObject, "status_bg");
     }
 
     public class ParameterDetailHUD

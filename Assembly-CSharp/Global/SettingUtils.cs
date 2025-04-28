@@ -105,7 +105,7 @@ public static class SettingUtils
         public FieldMapSettings()
         {
             this.enable = false;
-            this.language = "English(US)";
+            this.language = LanguageName.EnglishUS;
             this.fldMapNo = 50;
             this.SC_COUNTER_SVR = 0;
             this.MAP_INDEX_SVR = 0;

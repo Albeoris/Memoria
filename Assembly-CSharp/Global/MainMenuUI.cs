@@ -1,12 +1,11 @@
-﻿using Assets.Scripts.Common;
+﻿using System;
+using System.Collections.Generic;
+using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Scenes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class MainMenuUI : UIScene
@@ -57,13 +56,7 @@ public class MainMenuUI : UIScene
             this.SubMenuPanel.SetActive(true);
             this.HelpDespLabelGameObject.SetActive(FF9StateSystem.PCPlatform);
             base.Loading = true;
-            this.characterTransition.TweenIn(new Byte[]
-            {
-                0,
-                1,
-                2,
-                3
-            }, delegate
+            this.characterTransition.TweenIn([0, 1, 2, 3], delegate
             {
                 base.Loading = false;
             });
@@ -102,7 +95,7 @@ public class MainMenuUI : UIScene
         else
         {
             this.screenFadePanel.depth = 7;
-            this.submenuTransition.AnimationTime = (!FF9StateSystem.Settings.IsFastForward) ? Configuration.Interface.FadeDuration : Configuration.Interface.FadeDuration / FF9StateSystem.Settings.FastForwardFactor;
+            this.submenuTransition.AnimationTime = FF9StateSystem.Settings.IsFastForward ? Configuration.Interface.FadeDuration / FF9StateSystem.Settings.FastForwardFactor : Configuration.Interface.FadeDuration;
             this.submenuTransition.TweenOut(null);
         }
         base.Hide(afterHideAction);
@@ -110,8 +103,8 @@ public class MainMenuUI : UIScene
 
     public void StartSubmenuTweenIn()
     {
-        this.submenuTransition.AnimationTime = (!FF9StateSystem.Settings.IsFastForward) ? Configuration.Interface.FadeDuration : Configuration.Interface.FadeDuration / FF9StateSystem.Settings.FastForwardFactor;
-        this.submenuTransition.TweenIn((Action)null);
+        this.submenuTransition.AnimationTime = FF9StateSystem.Settings.IsFastForward ? Configuration.Interface.FadeDuration / FF9StateSystem.Settings.FastForwardFactor : Configuration.Interface.FadeDuration;
+        this.submenuTransition.TweenIn(null);
     }
 
     public void SetSubmenuVisibility(Boolean isVisible)
@@ -121,13 +114,21 @@ public class MainMenuUI : UIScene
 
     private void RemoveCursorMemorize()
     {
-        this.characterMemorize = (GameObject)null;
-        this.characterOrderMemorize = (GameObject)null;
+        this.characterMemorize = null;
+        this.characterOrderMemorize = null;
         this.currentMenu = MainMenuUI.SubMenu.Item;
         ButtonGroupState.RemoveCursorMemorize(MainMenuUI.SubMenuGroupButton);
         ButtonGroupState.RemoveCursorMemorize(MainMenuUI.CharacterGroupButton);
         ButtonGroupState.RemoveCursorMemorize(MainMenuUI.OrderGroupButton);
         ButtonGroupState.DisableAllGroup(false);
+    }
+
+    public void OnLocalize()
+    {
+        if (!isActiveAndEnabled)
+            return;
+        DisplayGeneralInfo();
+        DisplayHelp(currentMenu);
     }
 
     public override Boolean OnKeyConfirm(GameObject go)
@@ -398,8 +399,16 @@ public class MainMenuUI : UIScene
         ButtonGroupState.RemoveCursorMemorize(MainMenuUI.SubMenuGroupButton);
         ButtonGroupState.SetPointerDepthToGroup(10, MainMenuUI.SubMenuGroupButton);
         ButtonGroupState.SetPointerDepthToGroup(12, MainMenuUI.OrderGroupButton);
-        ButtonGroupState.SetPointerOffsetToGroup(new Vector2(10f, 0f), MainMenuUI.CharacterGroupButton);
-        ButtonGroupState.SetPointerOffsetToGroup(new Vector2(30f, -28f), MainMenuUI.OrderGroupButton);
+        if (NGUIText.readingDirection == UnicodeBIDI.LanguageReadingDirection.RightToLeft)
+        {
+            ButtonGroupState.SetPointerOffsetToGroup(new Vector2(80f, 0f), MainMenuUI.CharacterGroupButton);
+            ButtonGroupState.SetPointerOffsetToGroup(new Vector2(100f, -28f), MainMenuUI.OrderGroupButton);
+        }
+        else
+        {
+            ButtonGroupState.SetPointerOffsetToGroup(new Vector2(10f, 0f), MainMenuUI.CharacterGroupButton);
+            ButtonGroupState.SetPointerOffsetToGroup(new Vector2(30f, -28f), MainMenuUI.OrderGroupButton);
+        }
         ButtonGroupState.ActiveGroup = MainMenuUI.SubMenuGroupButton;
     }
 
@@ -420,12 +429,12 @@ public class MainMenuUI : UIScene
                 {
                     for (Int32 i = 0; i < 5; i++)
                     {
-                        help += "[ICON=" + (625 + i).ToString() + "] [FEED=1]:[FEED=2]";
+                        help += $"[ICON={625 + i}] [FEED=1]:[FEED=2]";
                         RegularItem equipId = player.equip[i];
                         if (equipId != RegularItem.NoItem)
                         {
                             FF9ITEM_DATA itemData = ff9item._FF9Item_Data[equipId];
-                            String itemIconSpriteName = "item" + itemData.shape.ToString("0#") + "_" + itemData.color.ToString("0#");
+                            String itemIconSpriteName = $"item{itemData.shape:0#}_{itemData.color:0#}";
                             help += $"[SPRT={itemIconSpriteName},64,64]  [FEED=1]{FF9TextTool.ItemName(equipId)}";
                         }
                         if (i < 4)
@@ -448,7 +457,7 @@ public class MainMenuUI : UIScene
                 if (player != null)
                 {
                     UInt32 exp = (player.level < ff9level.LEVEL_COUNT) ? ff9level.CharacterLevelUps[player.level].ExperienceToLevel : player.exp;
-                    Int32 expSpriteKey = (Localization.CurrentLanguage == "English(US)" || Localization.CurrentLanguage == "English(UK)" || Localization.CurrentLanguage == "German") ? 82 : 64;
+                    Int32 expSpriteKey = (Localization.CurrentDisplaySymbol == "US" || Localization.CurrentDisplaySymbol == "UK" || Localization.CurrentDisplaySymbol == "GR") ? 82 : 64;
                     help += $"{Localization.Get("EXP")}[XTAB={expSpriteKey}]{player.exp}\n";
                     help += $"{Localization.Get("NextLevel")}[XTAB={expSpriteKey}]{exp - player.exp}";
                 }
@@ -483,14 +492,19 @@ public class MainMenuUI : UIScene
 
     private void DisplayGeneralInfo()
     {
-        this.gilLabel.text = Localization.GetWithDefault("GilSymbol").Replace("%", FF9StateSystem.Common.FF9.party.gil.ToString());
-        this.locationNameLabel.text = FF9StateSystem.Common.FF9.mapNameStr;
+        this.gilLabel.rawText = Localization.GetWithDefault("GilSymbol").Replace("%", FF9StateSystem.Common.FF9.party.gil.ToString());
+        if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Field)
+            this.locationNameLabel.rawText = FF9TextTool.LocationName(FF9StateSystem.Common.FF9.fldMapNo);
+        else if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.World)
+            this.locationNameLabel.rawText = FF9TextTool.WorldLocationText(PersistenSingleton<EventEngine>.Instance.GetSysvar(192));
+        else
+            this.locationNameLabel.rawText = FF9StateSystem.Common.FF9.mapNameStr;
     }
 
     private void DisplayTime(Boolean ForceUpdateColor)
     {
         Color color = FF9TextTool.White;
-        Double num = FF9StateSystem.Settings.time % 360000.0;
+        Double displayTime = FF9StateSystem.Settings.time % 360000.0;
         switch ((Int32)(FF9StateSystem.Settings.time / 360000.0))
         {
             case 0:
@@ -512,24 +526,20 @@ public class MainMenuUI : UIScene
                 color = FF9TextTool.Green;
                 break;
             default:
-                num = 359999.0;
+                displayTime = 359999.0;
                 color = FF9TextTool.Green;
                 break;
         }
-        this.hourLabel.text = ((Int32)(num / 3600.0)).ToString("0#");
-        this.minuteLabel.text = ((Int32)(num / 60.0) % 60).ToString("0#");
-        this.secondLabel.text = ((Int32)num % 60).ToString("0#");
-        if ((Single)((Int32)FF9StateSystem.Settings.time) % 360000f == 0f || ForceUpdateColor)
+        this.hourLabel.rawText = ((Int32)(displayTime / 3600.0)).ToString("0#");
+        this.minuteLabel.rawText = ((Int32)(displayTime / 60.0) % 60).ToString("0#");
+        this.secondLabel.rawText = ((Int32)displayTime % 60).ToString("0#");
+        if ((Int32)displayTime % 360000 == 0 || ForceUpdateColor)
         {
             this.hourLabel.color = color;
             this.minuteLabel.color = color;
             this.secondLabel.color = color;
-            UILabel[] array = this.colonLabel;
-            for (Int32 i = 0; i < (Int32)array.Length; i++)
-            {
-                UILabel uilabel = array[i];
-                uilabel.color = color;
-            }
+            for (Int32 i = 0; i < this.colonLabel.Length; i++)
+                this.colonLabel[i].color = color;
         }
     }
 
@@ -609,45 +619,41 @@ public class MainMenuUI : UIScene
 
     private void SetAvailableCharacter(Boolean includeEmpty)
     {
-        List<CharacterDetailHUD> list = new List<CharacterDetailHUD>();
+        List<CharacterDetailHUD> enabledHUD = new List<CharacterDetailHUD>();
         if (!includeEmpty)
         {
-            foreach (CharacterDetailHUD characterDetailHUD in this.CharacterHUDList)
+            foreach (CharacterDetailHUD detailHUD in this.CharacterHUDList)
             {
-                if (characterDetailHUD.Content.activeSelf)
+                if (detailHUD.Content.activeSelf)
                 {
-                    list.Add(characterDetailHUD);
-                    ButtonGroupState.SetButtonEnable(characterDetailHUD.Self, true);
+                    enabledHUD.Add(detailHUD);
+                    ButtonGroupState.SetButtonEnable(detailHUD.Self, true);
                 }
                 else
                 {
-                    ButtonGroupState.SetButtonEnable(characterDetailHUD.Self, false);
+                    ButtonGroupState.SetButtonEnable(detailHUD.Self, false);
                 }
             }
         }
         else
         {
-            foreach (CharacterDetailHUD characterDetailHUD2 in this.CharacterHUDList)
+            foreach (CharacterDetailHUD detailHUD in this.CharacterHUDList)
             {
-                list.Add(characterDetailHUD2);
-                ButtonGroupState.SetButtonEnable(characterDetailHUD2.Self, true);
+                enabledHUD.Add(detailHUD);
+                ButtonGroupState.SetButtonEnable(detailHUD.Self, true);
             }
         }
-        for (Int32 i = 0; i < list.Count; i++)
+        for (Int32 i = 0; i < enabledHUD.Count; i++)
         {
-            Int32 index = i - 1;
-            Int32 index2 = i + 1;
+            Int32 previous = i - 1;
+            Int32 next = i + 1;
             if (i == 0)
-            {
-                index = list.Count - 1;
-            }
-            if (i == list.Count - 1)
-            {
-                index2 = 0;
-            }
-            UIKeyNavigation component = list[i].Self.GetComponent<UIKeyNavigation>();
-            component.onUp = list[index].Self;
-            component.onDown = list[index2].Self;
+                previous = enabledHUD.Count - 1;
+            if (i == enabledHUD.Count - 1)
+                next = 0;
+            UIKeyNavigation keyNavig = enabledHUD[i].Self.GetComponent<UIKeyNavigation>();
+            keyNavig.onUp = enabledHUD[previous].Self;
+            keyNavig.onDown = enabledHUD[next].Self;
         }
     }
 
@@ -686,17 +692,17 @@ public class MainMenuUI : UIScene
             this.PartySubMenu.GetComponent<UIKeyNavigation>().onDown = this.ConfigSubMenu;
             this.ConfigSubMenu.GetComponent<UIKeyNavigation>().onUp = this.PartySubMenu;
             this.PartySubMenu.GetComponent<UIKeyNavigation>().onUp = this.CardSubMenu;
-            Vector3 buttonScale = new Vector3(1f, 7f / 8f, 1f);
-            this.ItemSubMenu.transform.localScale = buttonScale;
-            this.AbilitySubMenu.transform.localScale = buttonScale;
-            this.EquipSubMenu.transform.localScale = buttonScale;
-            this.StatusSubMenu.transform.localScale = buttonScale;
-            this.OrderSubMenu.transform.localScale = buttonScale;
-            this.CardSubMenu.transform.localScale = buttonScale;
-            this.PartySubMenu.transform.localScale = buttonScale;
-            this.ConfigSubMenu.transform.localScale = buttonScale;
-            //this.PartySubMenu.active = true;
-            table.repositionNow = true;
+            this.PartySubMenu.transform.localScale = Vector3.one;
+            Int32 y = -39;
+            Int32 h = 79;
+            foreach (GameObject go in new GameObject[] { this.ItemSubMenu, this.AbilitySubMenu, this.EquipSubMenu, this.StatusSubMenu, this.OrderSubMenu, this.CardSubMenu, this.PartySubMenu, this.ConfigSubMenu })
+            {
+                go.GetComponent<UIWidget>().SetRawRect(201, y, 402, h);
+                go.GetComponent<BoxCollider>().size = new Vector3(402, h);
+                y -= h + 8;
+                h = h == 79 ? 78 : 79;
+            }
+            table.enabled = false;
         }
 
         UIEventListener.Get(this.ItemSubMenu).Click += onClick;
@@ -746,6 +752,9 @@ public class MainMenuUI : UIScene
         locationFrame.leftAnchor.Set(0f, 30f);
 
         this.Background = new GOMenuBackground(this.transform.GetChild(4).gameObject, "main_menu_bg");
+
+        this.LocationInfoPanel.GetChild(1).GetChild(2).GetComponent<UILabel>().rightAnchor.absolute = -40;
+        this.GenericInfoPanel.GetChild(2).GetChild(2).GetComponent<UILabel>().rightAnchor.absolute = -40;
     }
 
     public GameObject SubMenuPanel;

@@ -401,7 +401,7 @@ public partial class EventEngine
                 Int16 maxY = (Int16)this.getv2();
 
                 if (mapNo == 2220 && minX == 154 && FieldMap.ActualPsxScreenWidth > 390) // Desert Palace fix to widescreen cam seeing hidden path too soon
-                    minX = (Int16)544;
+                    minX = 544;
 
                 this.fieldmap.EBG_cameraSetViewport(camId, minX, maxX, minY, maxY);
                 return 0;
@@ -412,48 +412,49 @@ public partial class EventEngine
                 Int32 uiFlags = this.getv1(); // arg2: UI flag list. 3: disable bubble tail 4: mognet format 5: hide window 7: ATE window 8: dialog window
                 this.SetFollow(this.gCur, this.gCur.winnum, uiFlags);
                 Int32 textID = this.getv2(); // arg3: text to display
-                if (mapNo == 1757 && scCounter == 6740 && mapIndex == 30)
+                if (mapNo == 1757 && scCounter == 6740 && mapIndex == 30) // Iifa Tree/Outer Seal
                 {
                     this.stay();
                     return 1;
                 }
-                if (mapNo == 1060)
+                if (mapNo == 1060) // Cleyra/Cathedral
                 {
-                    String symbol = Localization.GetSymbol();
-                    Dictionary<Int32, Int32> dictionary = (Dictionary<Int32, Int32>)null;
-                    if (symbol == "JP")
+                    String lang = Localization.CurrentSymbol;
+                    if (lang == "JP")
                     {
-                        if (textID == 271)
+                        if (textID == 271) // Start of the dancing scene
                         {
                             HonoBehaviorSystem.FrameSkipEnabled = true;
                             HonoBehaviorSystem.TargetFrameTime = 0.03333334f;
                         }
-                        else if (textID == 272)
+                        else if (textID == 272) // End of the dancing scene
                             HonoBehaviorSystem.FrameSkipEnabled = false;
                     }
-                    else if (textID == 262)
+                    else if (textID == 262) // Start of the dancing scene
                     {
                         HonoBehaviorSystem.TargetFrameTime = 0.03333334f;
                         HonoBehaviorSystem.FrameSkipEnabled = true;
                     }
-                    else if (textID == 264)
+                    else if (textID == 264) // End of the dancing scene
                         HonoBehaviorSystem.FrameSkipEnabled = false;
-                    if (symbol == "ES" || symbol == "FR")
-                        dictionary = this._mesIdES_FR;
-                    else if (symbol == "GR")
-                        dictionary = this._mesIdGR;
-                    else if (symbol == "IT")
-                        dictionary = this._mesIdIT;
-                    if (dictionary != null && dictionary.ContainsKey(textID))
-                        textID = dictionary[textID];
+                    Dictionary<Int32, Int32> remapDictionary = null;
+                    if (lang == "ES" || lang == "FR")
+                        remapDictionary = this._mesIdES_FR;
+                    else if (lang == "GR")
+                        remapDictionary = this._mesIdGR;
+                    else if (lang == "IT")
+                        remapDictionary = this._mesIdIT;
+                    if (remapDictionary != null && remapDictionary.ContainsKey(textID))
+                        textID = remapDictionary[textID];
                 }
-                if (mapNo == 2172 && scCounter < 9100 && Localization.GetSymbol() == "JP" && textID == 91 && this.gCur.sid == 1 && this.gCur.ip == 145 && EIcon.AIconMode == 0)
+                if (mapNo == 2172 && scCounter < 9100 && Localization.CurrentSymbol == "JP" && textID == 91 && this.gCur.sid == 1 && this.gCur.ip == 145 && EIcon.AIconMode == 0)
                 {
+                    // L. Castle/Telescope
                     DialogManager.SelectChoice = 15;
                     return 0;
                 }
-                ETb.NewMesWin(textID, this.gCur.winnum, uiFlags, !this.isPosObj(this.gCur) ? (PosObj)null : (PosObj)this.gCur);
-                this.gCur.wait = (Byte)254;
+                ETb.NewMesWin(textID, this.gCur.winnum, uiFlags, this.isPosObj(this.gCur) ? (PosObj)this.gCur : null);
+                this.gCur.wait = 254;
                 return 1;
             }
             case EBin.event_code_binary.MESN: // 0x20, "WindowAsync", "Display a window with text inside and continue the execution of the script without waiting"
@@ -462,43 +463,43 @@ public partial class EventEngine
                 Int32 uiFlags = this.getv1(); // arg2: UI flag list: 3: disable bubble tail 4: mognet format 5: hide window 7: ATE window 8: dialog window
                 this.SetFollow(this.gCur, this.gCur.winnum, uiFlags);
                 Int32 textID = this.getv2(); // arg3: text to display
-                if (mapNo == 1060)
+                if (mapNo == 1060) // Cleyra/Cathedral
                 {
-                    String symbol = Localization.GetSymbol();
-                    Dictionary<Int32, Int32> dictionary = (Dictionary<Int32, Int32>)null;
+                    String symbol = Localization.CurrentSymbol;
                     if (symbol == "JP")
                     {
-                        if (textID == 271)
+                        if (textID == 271) // Start of the dancing scene
                         {
                             HonoBehaviorSystem.TargetFrameTime = 0.03333334f;
                             HonoBehaviorSystem.FrameSkipEnabled = true;
                         }
-                        else if (textID == 272)
+                        else if (textID == 272) // End of the dancing scene
                             HonoBehaviorSystem.FrameSkipEnabled = false;
                     }
-                    else if (textID == 262)
+                    else if (textID == 262) // Start of the dancing scene
                     {
                         HonoBehaviorSystem.TargetFrameTime = 0.03333334f;
                         HonoBehaviorSystem.FrameSkipEnabled = true;
                     }
-                    else if (textID == 264)
+                    else if (textID == 264) // End of the dancing scene
                         HonoBehaviorSystem.FrameSkipEnabled = false;
+                    Dictionary<Int32, Int32> remapDictionary = null;
                     if (symbol == "ES" || symbol == "FR")
-                        dictionary = this._mesIdES_FR;
+                        remapDictionary = this._mesIdES_FR;
                     else if (symbol == "GR")
-                        dictionary = this._mesIdGR;
+                        remapDictionary = this._mesIdGR;
                     else if (symbol == "IT")
-                        dictionary = this._mesIdIT;
-                    if (dictionary != null && dictionary.ContainsKey(textID))
-                        textID = dictionary[textID];
+                        remapDictionary = this._mesIdIT;
+                    if (remapDictionary != null && remapDictionary.ContainsKey(textID))
+                        textID = remapDictionary[textID];
                 }
-                if (mapNo == 1757 && scCounter == 6740 && mapIndex == 30)
+                if (mapNo == 1757 && scCounter == 6740 && mapIndex == 30) // Iifa Tree/Outer Seal
                 {
                     this.stay();
                     return 1;
                 }
                 PersistenSingleton<CheatingManager>.Instance.CheatJumpingRobe();
-                ETb.NewMesWin(textID, this.gCur.winnum, uiFlags, !this.isPosObj(this.gCur) ? (PosObj)null : (PosObj)this.gCur);
+                ETb.NewMesWin(textID, this.gCur.winnum, uiFlags, this.isPosObj(this.gCur) ? (PosObj)this.gCur : null);
                 return 0;
             }
             case EBin.event_code_binary.MESA:// 0x95, "WindowSyncEx", "Display a window with text inside and wait until it closes"
@@ -533,7 +534,24 @@ public partial class EventEngine
                 //    goto case EBin.event_code_binary.WAITMES;
                 //}
 
-                var windowID = this.getv1(); // arg1: window ID determined at its creation
+                Int32 windowID = this.getv1(); // arg1: window ID determined at its creation
+                if (Configuration.VoiceActing.Enabled)
+                {
+                    Dialog dialog = Singleton<DialogManager>.Instance.GetDialogByWindowID(windowID);
+                    if (dialog != null && VoicePlayer.HasDialogVoice(dialog) && dialog.ChoiceNumber == 0)
+                    {
+                        // Timed windows closed by script (usually have a [TIME=-1] tag in the text and the following kind of script:
+                        //   WindowAsync( winId, uiFlags, textId )
+                        //   Wait( 30 )
+                        //   CloseWindow( winId )
+                        if (VoicePlayer.HoldDialogUntilSoundEnds(FF9TextTool.FieldZoneId, UniversalTextId.GetUniversalTextId(Localization.CurrentSymbol, FF9TextTool.FieldZoneId, dialog.TextId), mapNo))
+                        {
+                            // Block the script and wait for the voice acting sound to complete
+                            this.stay();
+                            return 1;
+                        }
+                    }
+                }
                 ETb.DisposWindowByID(windowID, true);
                 return 0;
             }
@@ -549,13 +567,14 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.WAITMES: // 0x54, "WaitWindow", "Wait until the window is closed"
             {
-                if (mapNo == 1650 && FF9StateSystem.Settings.CurrentLanguage == "Japanese" && ((Int32)this.gCur.sid == 19 && this.gCur.ip == 1849))
+                if (mapNo == 1650 && Localization.CurrentSymbol == "JP" && this.gCur.sid == 19 && this.gCur.ip == 1849)
                 {
+                    // Iifa Tree/Outer Seal, Zidane, binary position of a line, maybe the one before Zidane's dialog "Alright. Let’s go!"
                     this.getv1();
                     return 0;
                 }
                 this.gCur.winnum = (Byte)this.getv1(); // arg1: window ID determined at its creation
-                this.gCur.wait = (Byte)254;
+                this.gCur.wait = 254;
                 return 1;
             }
             case EBin.event_code_binary.TIMERSET: // 0x69, "ChangeTimerTime", "Change the remaining time of the timer window"
@@ -884,31 +903,29 @@ public partial class EventEngine
             case EBin.event_code_binary.MSPEED: // 0x26, "SetWalkSpeed", "Change the walk speed"
             {
                 Byte walkSpeed = (Byte)this.getv1(); // arg1: speed (surely in unit/frame)
-                if (mapNo == 3010)
+                if (mapNo == 3010) // Ending/TH
                 {
-                    String symbol = Localization.GetSymbol();
-                    if (!(symbol != "US") || !(symbol != "JP"))
+                    String symbol = Localization.CurrentSymbol;
+                    if (symbol == "US" || symbol == "JP")
                     {
-                        if (symbol == "US" && (Int32)actor.sid == 17)
+                        if (symbol == "US" && actor.sid == 17)
                         {
-                            if ((Int32)walkSpeed == 15)
-                                walkSpeed = (Byte)20;
-                            else if ((Int32)walkSpeed == 23)
-                                walkSpeed = (Byte)25;
+                            if (walkSpeed == 15)
+                                walkSpeed = 20;
+                            else if (walkSpeed == 23)
+                                walkSpeed = 25;
                         }
-                        if (symbol == "JP" && (Int32)actor.sid == 16)
+                        else if (symbol == "JP" && actor.sid == 16)
                         {
-                            if ((Int32)walkSpeed == 15)
-                                walkSpeed = (Byte)20;
-                            else if ((Int32)walkSpeed == 23)
-                                walkSpeed = (Byte)25;
+                            if (walkSpeed == 15)
+                                walkSpeed = 20;
+                            else if (walkSpeed == 23)
+                                walkSpeed = 25;
                         }
                     }
                 }
-                if (mapNo == 658 && actor.sid == 18 && walkSpeed == 30 && actor.ip == 323)
-                {
+                if (mapNo == 658 && actor.sid == 18 && walkSpeed == 30 && actor.ip == 323) // Marsh/Pond, Quina's speed, surely the binary position of function Quina_19
                     walkSpeed = 25;
-                }
                 actor.speed = walkSpeed;
                 return 0;
             }
@@ -1265,7 +1282,7 @@ public partial class EventEngine
             {
                 if (eventCodeBinary == EBin.event_code_binary.DANIM)
                     actor = (Actor)this.GetObj1(); // arg1: object's entry
-                Int32 anim = this.getv2(); // arg1/2: animation ID
+                Int32 anim = (UInt16)this.getv2(); // arg1/2: animation ID
 
                 if (mapNo == 103 && po.model == 5492) // Jump rope from little girls at Alexandria (before Alexandria destruction)
                 {
@@ -1338,14 +1355,14 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.WAITANIM: // 0x41, "WaitAnimation", "Wait until the current object's animation has ended."
             {
-                if (((Int32)actor.animFlag & EventEngine.afExec) == 0)
+                if ((actor.animFlag & EventEngine.afExec) == 0)
                     return 0;
                 this.stay();
                 return 1;
             }
             case EBin.event_code_binary.DWAITANIM: // 0xBE, "WaitAnimationEx", "Wait until the object's animation has ended"
             {
-                if (((Int32)((Actor)this.GetObj1()).animFlag & EventEngine.afExec) == 0) // arg1: object's entry
+                if ((((Actor)this.GetObj1()).animFlag & EventEngine.afExec) == 0) // arg1: object's entry
                     return 0;
                 this.stay();
                 return 1;
@@ -1353,9 +1370,9 @@ public partial class EventEngine
             case EBin.event_code_binary.ENDANIM: // 0x42, "StopAnimation", "Stop the character's animation."
             {
                 this.AnimStop(actor);
-                if (mapNo == 1601 && scCounter == 6600 && po.sid == 17) // Zidane shadow on when standing up
+                if (mapNo == 1601 && scCounter == 6600 && po.sid == 17) // Zidane shadow on when standing up, Madain Sari, conversation with Eiko
                 {
-                    ff9shadow.FF9ShadowOnField((Int32)po.uid);
+                    ff9shadow.FF9ShadowOnField(po.uid);
                     po.isShadowOff = false;
                 }
                 return 0;
@@ -2249,7 +2266,7 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.MENUON: // 0xAA, "EnableMenu", "Enable menu access by the player."
             {
-                if (mapNo == 2172 && scCounter < 9100 && Localization.GetSymbol() == "JP" && this.gCur.sid == 1 && this.gCur.ip == 2964 && EIcon.AIconMode == 0)
+                if (mapNo == 2172 && scCounter < 9100 && Localization.CurrentSymbol == "JP" && this.gCur.sid == 1 && this.gCur.ip == 2964 && EIcon.AIconMode == 0)
                     return 0; // L. Castle/Telescope
                 EventInput.PSXCntlClearPadMask(0, EventInput.MenuControl);
                 PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(true);
@@ -2257,7 +2274,7 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.MENUOFF: // 0xAB, "DisableMenu", "Disable menu access by the player."
             {
-                if (mapNo == 2172 && scCounter < 9100 && Localization.GetSymbol() == "JP" && this.gCur.sid == 1 && this.gCur.ip == 119 && EIcon.AIconMode == 0)
+                if (mapNo == 2172 && scCounter < 9100 && Localization.CurrentSymbol == "JP" && this.gCur.sid == 1 && this.gCur.ip == 119 && EIcon.AIconMode == 0)
                     return 0; // L. Castle/Telescope
                 EventInput.PSXCntlSetPadMask(0, EventInput.MenuControl);
                 PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(false);
@@ -2666,6 +2683,7 @@ public partial class EventEngine
                         player.info.menu_type = charPreset;
                     ff9play.FF9Play_Change(player, enableLeveling != 0, eqp_id);
                     player.info.sub_replaced = true;
+                    ff9feqp.FF9FEqp_UpdateSA(player); // Make sure equipped abilities are still valid
                 }
                 else
                 {
@@ -2737,10 +2755,22 @@ public partial class EventEngine
                         PLAYER subPlayer = FF9StateSystem.Common.FF9.GetPlayer(charId + 3);
                         subPlayer.cur.hp = (UInt32)Math.Min(subPlayer.max.hp, newHp);
                     }
-                    if (charId == CharacterId.Beatrix && hpHealProp >= 0f)
-                        foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
-                            if (play.Index > CharacterId.Amarant && play.Index != CharacterId.Beatrix)
-                                play.cur.hp = (UInt32)Math.Min(play.max.hp, play.cur.hp + hpHealProp * play.max.hp);
+                    if (this.gMode == 1 || (this.gMode == 3 && newHp == Int32.MaxValue))
+                    {
+                        // Vanilla field heals (tent, inn, water sources...) and world map full heal (beaches) apply to the characters 0-8 (Beatrix included)
+                        if (charId == CharacterId.Beatrix && hpHealProp >= 0f)
+                            foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
+                                if (play.Index > CharacterId.Amarant && play.Index != CharacterId.Beatrix)
+                                    play.cur.hp = (UInt32)Math.Min(play.max.hp, play.cur.hp + hpHealProp * play.max.hp);
+                    }
+                    else if (this.gMode == 3)
+                    {
+                        // Vanilla world map heals (tent) apply to the characters 0-7 (Beatrix excluded)
+                        if (charId == CharacterId.Amarant && hpHealProp >= 0f)
+                            foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
+                                if (play.Index > CharacterId.Amarant)
+                                    play.cur.hp = (UInt32)Math.Min(play.max.hp, play.cur.hp + hpHealProp * play.max.hp);
+                    }
                 }
                 return 0;
             }
@@ -2764,10 +2794,22 @@ public partial class EventEngine
                         PLAYER subPlayer = FF9StateSystem.Common.FF9.GetPlayer(charId + 3);
                         subPlayer.cur.mp = (UInt32)Math.Min(subPlayer.max.mp, newMp);
                     }
-                    if (charId == CharacterId.Beatrix && mpHealProp >= 0f)
-                        foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
-                            if (play.Index > CharacterId.Amarant && play.Index != CharacterId.Beatrix)
-                                play.cur.mp = (UInt32)Math.Min(play.max.mp, play.cur.mp + mpHealProp * play.max.mp);
+                    if (this.gMode == 1 || (this.gMode == 3 && newMp == Int32.MaxValue))
+                    {
+                        // Vanilla field heals (tent, inn, water sources...) and world map full heal (beaches) apply to the characters 0-8 (Beatrix included)
+                        if (charId == CharacterId.Beatrix && mpHealProp >= 0f)
+                            foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
+                                if (play.Index > CharacterId.Amarant && play.Index != CharacterId.Beatrix)
+                                    play.cur.mp = (UInt32)Math.Min(play.max.mp, play.cur.mp + mpHealProp * play.max.mp);
+                    }
+                    else if (this.gMode == 3)
+                    {
+                        // Vanilla world map heals (tent) apply to the characters 0-7 (Beatrix excluded)
+                        if (charId == CharacterId.Amarant && mpHealProp >= 0f)
+                            foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
+                                if (play.Index > CharacterId.Amarant)
+                                    play.cur.mp = (UInt32)Math.Min(play.max.mp, play.cur.mp + mpHealProp * play.max.mp);
+                    }
                 }
                 return 0;
             }
@@ -2800,6 +2842,7 @@ public partial class EventEngine
                 // https://github.com/Albeoris/Memoria/issues/22
                 if (!player.info.sub_replaced)
                     FieldCalculator.RemoveStatuses(FF9StateSystem.Common.FF9.GetPlayer(charId + 3), statusList);
+                // Vanilla cures (inn, water sources...) apply to the characters 0-8 (Beatrix included)
                 if (charId == CharacterId.Beatrix)
                     foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
                         if (play.Index > CharacterId.Amarant && play.Index != CharacterId.Beatrix)
