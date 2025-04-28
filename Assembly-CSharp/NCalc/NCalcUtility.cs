@@ -592,7 +592,8 @@ namespace NCalc
         {
             expr.Parameters["CommandId"] = (Int32)command.Id;
             expr.Parameters["AbilityId"] = (Int32)command.AbilityId;
-            expr.Parameters["AbilityName"] = (String)Regex.Replace(command.AbilityCastingName, @"\[[^\]]*\]", "").Trim(); // /!\ Language dependent
+            expr.Parameters["AbilityRawId"] = (Int32)command.RawIndex;
+            expr.Parameters["AbilityCastingName"] = (String)command.AbilityCastingName; // /!\ Language dependent, use of AbilityRawId instead is recommended
             expr.Parameters["ScriptId"] = command.ScriptId;
             expr.Parameters["Power"] = command.Power;
             expr.Parameters["AbilityStatus"] = (UInt64)command.AbilityStatus;
