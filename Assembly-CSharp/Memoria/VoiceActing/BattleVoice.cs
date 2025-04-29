@@ -36,6 +36,17 @@ namespace Memoria.Data
             _currentVoicePlay.Clear();
         }
 
+        public enum BattleMoment
+        {
+            Unknown,
+            // BattleInOut
+            BattleStart, GameOver, Defeated, VictoryPose, Victory, Flee, BattleInterrupted, EnemyEscape,
+            //BattleAct
+            CommandPerform, CommandInput, HitEffect, Cover,
+            // BattleStatusChange
+            Added, Removed, Used
+        }
+
         private class BattleSpeaker
         {
             public CharacterId playerId = CharacterId.NONE;
@@ -113,13 +124,13 @@ namespace Memoria.Data
 
         private class BattleInOut : GenericVoiceEffect
         {
-            public String When = "BattleStart"; // "GameOver", "Defeated", "VictoryPose", "Victory", "Flee", "BattleInterrupted", "EnemyEscape"
+            public BattleMoment When = BattleMoment.BattleStart; // "GameOver", "Defeated", "VictoryPose", "Victory", "Flee", "BattleInterrupted", "EnemyEscape"
         }
         private class BattleAct : GenericVoiceEffect
         {
             // SomeoneElse: unused option for now
             public Boolean SomeoneElse = false;
-            public String When = "CommandPerform"; // "CommandInput", "HitEffect", "Cover"
+            public BattleMoment When = BattleMoment.CommandPerform; // "CommandInput", "HitEffect", "Cover"
         }
         private class BattleHitted : GenericVoiceEffect
         {
@@ -128,7 +139,7 @@ namespace Memoria.Data
         private class BattleStatusChange : GenericVoiceEffect
         {
             public Boolean SomeoneElse = false;
-            public String When = "Added"; // "Removed", "Used"
+            public BattleMoment When = BattleMoment.Added; // "Removed", "Used"
             public BattleStatusId Status = 0;
         }
 
@@ -209,7 +220,7 @@ namespace Memoria.Data
             }
         }
 
-        public static void TriggerOnBattleInOut(String when)
+        public static void TriggerOnBattleInOut(BattleMoment when)
         {
             if (!Configuration.VoiceActing.Enabled)
                 return;
@@ -220,7 +231,7 @@ namespace Memoria.Data
             Int32 retainedPriority = Int32.MinValue;
             foreach (BattleInOut effect in InOutEffect)
             {
-                if (String.Compare(effect.When, when) != 0 || effect.Priority < retainedPriority || !effect.CheckSpeakerAll())
+                if (effect.When != when || effect.Priority < retainedPriority || !effect.CheckSpeakerAll())
                     continue;
                 if (!String.IsNullOrEmpty(effect.Condition))
                 {
@@ -255,7 +266,7 @@ namespace Memoria.Data
             PlayVoiceEffect(retainedEffects[UnityEngine.Random.Range(0, retainedEffects.Count)]);
         }
 
-        public static void TriggerOnBattleAct(BTL_DATA actingChar, String when, CMD_DATA cmdUsed, BattleCalculator calc = null)
+        public static void TriggerOnBattleAct(BTL_DATA actingChar, BattleMoment when, CMD_DATA cmdUsed, BattleCalculator calc = null)
         {
             if (!Configuration.VoiceActing.Enabled)
                 return;
@@ -266,7 +277,7 @@ namespace Memoria.Data
             Int32 retainedPriority = Int32.MinValue;
             foreach (BattleAct effect in ActEffect)
             {
-                if (String.Compare(effect.When, when) != 0 || effect.Priority < retainedPriority || !effect.CheckSpeakerAll() || !effect.CheckIsFirstSpeaker(actingChar))
+                if (effect.When != when || effect.Priority < retainedPriority || !effect.CheckSpeakerAll() || !effect.CheckIsFirstSpeaker(actingChar))
                     continue;
                 if (!String.IsNullOrEmpty(effect.Condition))
                 {
@@ -360,7 +371,7 @@ namespace Memoria.Data
             PlayVoiceEffect(retainedEffects[UnityEngine.Random.Range(0, retainedEffects.Count)]);
         }
 
-        public static void TriggerOnStatusChange(BTL_DATA statusedChar, String when, BattleStatusId whichStatus)
+        public static void TriggerOnStatusChange(BTL_DATA statusedChar, BattleMoment when, BattleStatusId whichStatus)
         {
             if (!Configuration.VoiceActing.Enabled)
                 return;
@@ -369,10 +380,10 @@ namespace Memoria.Data
 
             List<BattleStatusChange> retainedEffects = new List<BattleStatusChange>();
             Int32 retainedPriority = Int32.MinValue;
-            Boolean discardStatusChecks = String.Compare(when, "Removed") != 0;
+            Boolean discardStatusChecks = when != BattleMoment.Removed;
             foreach (BattleStatusChange effect in StatusChangeEffect)
             {
-                if (whichStatus != effect.Status || String.Compare(effect.When, when) != 0 || effect.Priority < retainedPriority || !effect.CheckSpeakerAll(statusedChar, effect.Status))
+                if (whichStatus != effect.Status || effect.When != when || effect.Priority < retainedPriority || !effect.CheckSpeakerAll(statusedChar, effect.Status))
                     continue;
                 if (discardStatusChecks && !effect.CheckIsFirstSpeaker(statusedChar, effect.Status))
                     continue;
@@ -504,7 +515,22 @@ namespace Memoria.Data
                     newEffect.Priority = priority;
                     Match whenMatch = new Regex(@"\bWhen(\w+)\b").Match(bvArgs);
                     if (whenMatch.Success)
-                        newEffect.When = whenMatch.Groups[1].Value;
+                    {
+                        try
+                        {
+                            newEffect.When = (BattleMoment)Enum.Parse(typeof(BattleMoment), whenMatch.Groups[1].Value, true);
+                            if(newEffect.When < BattleMoment.BattleStart || newEffect.When > BattleMoment.EnemyEscape)
+                            {
+                                Log.Warning($"[{nameof(BattleVoice)}] Invalid battle moment 'When{whenMatch.Groups[1].Value}' for >BattleInOut");
+                                continue;
+                        }
+                        }
+                        catch
+                        {
+                            Log.Warning($"[{nameof(BattleVoice)}] Unrecognized battle moment 'When{whenMatch.Groups[1].Value}'");
+                            continue;
+                        }
+                    }
                     InOutEffect.Add(newEffect);
                 }
                 else if (String.Compare(bvCode, ">Act") == 0)
@@ -516,7 +542,22 @@ namespace Memoria.Data
                     newEffect.Priority = priority;
                     Match whenMatch = new Regex(@"\bWhen(\w+)\b").Match(bvArgs);
                     if (whenMatch.Success)
-                        newEffect.When = whenMatch.Groups[1].Value;
+                    {
+                        try
+                        {
+                            newEffect.When = (BattleMoment)Enum.Parse(typeof(BattleMoment), whenMatch.Groups[1].Value, true);
+                            if (newEffect.When < BattleMoment.CommandInput || newEffect.When > BattleMoment.Cover)
+                            {
+                                Log.Warning($"[{nameof(BattleVoice)}] Invalid battle moment 'When{whenMatch.Groups[1].Value}' for >Act");
+                                continue;
+                            }
+                        }
+                        catch
+                        {
+                            Log.Warning($"[{nameof(BattleVoice)}] Unrecognized battle moment 'When{whenMatch.Groups[1].Value}'");
+                            continue;
+                        }
+                    }
                     ActEffect.Add(newEffect);
                 }
                 else if (String.Compare(bvCode, ">Hitted") == 0)
@@ -537,7 +578,22 @@ namespace Memoria.Data
                     newEffect.Priority = priority;
                     Match whenMatch = new Regex(@"\bWhen(\w+)\b").Match(bvArgs);
                     if (whenMatch.Success)
-                        newEffect.When = whenMatch.Groups[1].Value;
+                    {
+                        try
+                        {
+                            newEffect.When = (BattleMoment)Enum.Parse(typeof(BattleMoment), whenMatch.Groups[1].Value, true);
+                            if (newEffect.When < BattleMoment.Added || newEffect.When > BattleMoment.Used)
+                            {
+                                Log.Warning($"[{nameof(BattleVoice)}] Invalid battle moment 'When{whenMatch.Groups[1].Value}' for >StatusChange");
+                                continue;
+                            }
+                        }
+                        catch
+                        {
+                            Log.Warning($"[{nameof(BattleVoice)}] Unrecognized battle moment 'When{whenMatch.Groups[1].Value}'");
+                            continue;
+                        }
+                    }
                     try
                     {
                         Match statusMatch = new Regex(@"\bStatus:([\w ,]+)\b").Match(bvArgs);

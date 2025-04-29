@@ -29,7 +29,7 @@ namespace Memoria.DefaultScripts
                 Target.CurrentHp = Math.Min((UInt32)HPRestore, Target.MaximumHp);
                 btl_stat.RemoveStatus(Target, BattleStatusId.Death);
             }
-            BattleVoice.TriggerOnStatusChange(Target, "Used", BattleStatusId.AutoLife);
+            BattleVoice.TriggerOnStatusChange(Target, BattleVoice.BattleMoment.Used, BattleStatusId.AutoLife);
             return true;
         }
     }

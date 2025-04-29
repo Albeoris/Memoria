@@ -45,7 +45,7 @@ namespace Memoria.DefaultScripts
                 return false;
             }
             if (btl_stat.AlterStatus(Target, BattleStatusId.Death, Inflicter) == btl_stat.ALTER_SUCCESS)
-                BattleVoice.TriggerOnStatusChange(Target, "Used", BattleStatusId.Doom);
+                BattleVoice.TriggerOnStatusChange(Target, BattleVoice.BattleMoment.Used, BattleStatusId.Doom);
             btl2d.Btl2dReq(Target);
             return true;
         }

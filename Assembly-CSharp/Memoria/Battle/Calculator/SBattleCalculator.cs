@@ -290,7 +290,7 @@ namespace Memoria
                 saFeature.TriggerOnAbility(v, "EffectDone", false);
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(target))
                 saFeature.TriggerOnAbility(v, "EffectDone", true);
-            BattleVoice.TriggerOnBattleAct(caster, "HitEffect", cmd, v);
+            BattleVoice.TriggerOnBattleAct(caster, BattleVoice.BattleMoment.HitEffect, cmd, v);
             BattleVoice.TriggerOnHitted(target, v);
             BattleCalculator.FrameAppliedEffectList.Add(v);
             if (target.bi.player != 0 || FF9StateSystem.Battle.isDebug)
