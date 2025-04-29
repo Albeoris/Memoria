@@ -71,6 +71,7 @@ public class SaveLoadUI : UIScene
                 Int32 index = FF9StateSystem.Settings.LatestSlot < 0 ? 0 : FF9StateSystem.Settings.LatestSlot;
                 ButtonGroupState.SetCursorStartSelect(this.slotNameButtonList[index].gameObject, SaveLoadUI.SlotGroupButton);
                 ButtonGroupState.ActiveGroup = SaveLoadUI.SlotGroupButton;
+                this.helpSlotLabel.rawText = String.Format(Localization.Get("SlotNo"), index + 1);
             };
             if (afterFinished != null)
                 afterShowDelegate += afterFinished;
