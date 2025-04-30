@@ -50,7 +50,7 @@ namespace Memoria.Data
         private class BattleSpeaker
         {
             public CharacterId playerId = CharacterId.NONE;
-            public String enemyModel = null;
+            public Int32 enemyModelId = -1;
             public Int32 enemyBattleId = -1;
 
             public Boolean CheckIsCharacter(BTL_DATA btl)
@@ -59,8 +59,7 @@ namespace Memoria.Data
                     return playerId != CharacterId.NONE && (CharacterId)btl.bi.slot_no == playerId;
                 if (playerId != CharacterId.NONE)
                     return false;
-                String modelName = (btl.dms_geo_id == -1) ? String.Empty : FF9BattleDB.GEO.GetValue(btl.dms_geo_id);
-                return (enemyModel == null || enemyModel == modelName) && (enemyBattleId < 0 || enemyBattleId == FF9StateSystem.Battle.battleMapIndex);
+                return (enemyModelId < 0 || enemyModelId == btl.dms_geo_id) && (enemyBattleId < 0 || enemyBattleId == FF9StateSystem.Battle.battleMapIndex);
             }
 
             public BTL_DATA FindBtlUnlimited()
@@ -476,8 +475,26 @@ namespace Memoria.Data
                         BattleSpeaker speak = new BattleSpeaker();
                         if (charArgToken[0].Length > 0)
                             Int32.TryParse(charArgToken[0], out speak.enemyBattleId);
+                        // Note: Empty string is valid, allowing to target any enemy. Useful for debugging.
                         if (charArgToken[1].Length > 0)
-                            speak.enemyModel = charArgToken[1];
+                        {
+                            if (Int32.TryParse(charArgToken[1], out int modelid))
+                            {
+                                // Verify the number is a valid ModelId
+                                if (!FF9BattleDB.GEO.ContainsKey(modelid))
+                                {
+                                    Log.Warning($"[{nameof(BattleVoice)}] Invalid model id '{modelid}' at line {i + 1}");
+                                    continue;
+                                }
+                                speak.enemyModelId = modelid;
+                            }
+                            // Look for the model name
+                            else if (!FF9BattleDB.GEO.TryGetKey(charArgToken[1], out speak.enemyModelId))
+                            {
+                                Log.Warning($"[{nameof(BattleVoice)}] Invalid model name '{charArgToken[1]}' at line {i + 1}");
+                                continue;
+                            }
+                        }
                         newSpeakers.Add(speak);
                     }
                 }
