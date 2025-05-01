@@ -69,9 +69,9 @@ public class SaveLoadUI : UIScene
                 ButtonGroupState.SetPointerLimitRectToGroup(this.FileListPanel.GetComponent<UIWidget>(), this.fileScrollList.ItemHeight, SaveLoadUI.FileGroupButton);
                 ButtonGroupState.SetScrollButtonToGroup(this.FileListPanel.GetChild(0).GetComponent<ScrollButton>(), SaveLoadUI.FileGroupButton);
                 Int32 index = FF9StateSystem.Settings.LatestSlot < 0 ? 0 : FF9StateSystem.Settings.LatestSlot;
+                this.helpSlotLabel.rawText = String.Format(Localization.Get("SlotNo"), index + 1);
                 ButtonGroupState.SetCursorStartSelect(this.slotNameButtonList[index].gameObject, SaveLoadUI.SlotGroupButton);
                 ButtonGroupState.ActiveGroup = SaveLoadUI.SlotGroupButton;
-                this.helpSlotLabel.rawText = String.Format(Localization.Get("SlotNo"), index + 1);
             };
             if (afterFinished != null)
                 afterShowDelegate += afterFinished;
