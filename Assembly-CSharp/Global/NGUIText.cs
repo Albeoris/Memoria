@@ -314,10 +314,11 @@ public static class NGUIText
         NGUIText.useSymbols = NGUIText.bitmapFont != null && NGUIText.bitmapFont.hasSymbols && NGUIText.encoding && NGUIText.symbolStyle != NGUIText.SymbolStyle.None;
         if (requestBaseLine && NGUIText.dynamicFont != null)
         {
-            NGUIText.dynamicFont.RequestCharactersInTexture(NGUIText.CHARACTER_CONSTANT_REQUESTS, NGUIText.finalSize, NGUIText.fontStyle);
-            if (!NGUIText.dynamicFont.GetCharacterInfo(')', out NGUIText.mTempChar, NGUIText.finalSize, NGUIText.fontStyle) || NGUIText.mTempChar.maxY == 0f)
+            Font sizedFont = NGUIText.dynamicFont;
+            sizedFont.RequestCharactersInTexture(NGUIText.CHARACTER_CONSTANT_REQUESTS, NGUIText.finalSize, NGUIText.fontStyle);
+            if (!sizedFont.GetCharacterInfo(')', out NGUIText.mTempChar, NGUIText.finalSize, NGUIText.fontStyle) || NGUIText.mTempChar.maxY == 0f)
             {
-                if (!NGUIText.dynamicFont.GetCharacterInfo('A', out NGUIText.mTempChar, NGUIText.finalSize, NGUIText.fontStyle))
+                if (!sizedFont.GetCharacterInfo('A', out NGUIText.mTempChar, NGUIText.finalSize, NGUIText.fontStyle))
                 {
                     NGUIText.baseline = 0f;
                     return;
