@@ -41,8 +41,10 @@ namespace Memoria.Data
             Unknown,
             // BattleInOut
             BattleStart, GameOver, Defeated, VictoryPose, Victory, Flee, BattleInterrupted, EnemyEscape,
-            //BattleAct
+            // BattleAct
             CommandPerform, CommandInput, HitEffect, Cover,
+            // Hitted
+            Damaged, Healed, Ability, Dodged, Missed,
             // BattleStatusChange
             Added, Removed, Used
         }
@@ -135,6 +137,7 @@ namespace Memoria.Data
         private class BattleHitted : GenericVoiceEffect
         {
             public Boolean SomeoneElse = false;
+            public BattleMoment When = BattleMoment.Ability; // "Damaged", "Healed", "Ability", "Dodged", "Missed"
         }
         private class BattleStatusChange : GenericVoiceEffect
         {
@@ -324,7 +327,7 @@ namespace Memoria.Data
             PlayVoiceEffect(retainedEffects[UnityEngine.Random.Range(0, retainedEffects.Count)]);
         }
 
-        public static void TriggerOnHitted(BTL_DATA hittedChar, BattleCalculator calc)
+        public static void TriggerOnHitted(BTL_DATA hittedChar, BattleMoment when, BattleCalculator calc)
         {
             if (!Configuration.VoiceActing.Enabled)
                 return;
@@ -335,7 +338,7 @@ namespace Memoria.Data
             Int32 retainedPriority = Int32.MinValue;
             foreach (BattleHitted effect in HittedEffect)
             {
-                if (effect.Priority < retainedPriority || !effect.CheckSpeakerAll() || !effect.CheckIsFirstSpeaker(hittedChar))
+                if (effect.When != when || effect.Priority < retainedPriority || !effect.CheckSpeakerAll() || !effect.CheckIsFirstSpeaker(hittedChar))
                     continue;
                 if (!String.IsNullOrEmpty(effect.Condition))
                 {
@@ -655,12 +658,19 @@ namespace Memoria.Data
                 }
                 else if (String.Compare(effect, ">Hitted") == 0)
                 {
+                    if (moment != BattleMoment.Unknown && (moment < BattleMoment.Damaged || moment > BattleMoment.Missed))
+                    {
+                        Log.Warning($"[{nameof(BattleVoice)}] Invalid battle moment 'When{moment}' for {effect} at line {effectLine + 1}");
+                        continue;
+                    }
                     BattleHitted newEffect = new BattleHitted();
                     newEffect.ConditionLine = conditionLine;
                     newEffect.Speakers = newSpeakers;
                     newEffect.AudioPaths = paths;
                     newEffect.Condition = condition;
                     newEffect.Priority = priority;
+                    if (moment != BattleMoment.Unknown)
+                        newEffect.When = moment;
                     HittedEffect.Add(newEffect);
                 }
                 else if (String.Compare(effect, ">StatusChange") == 0)
