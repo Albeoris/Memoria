@@ -217,7 +217,10 @@ public static class btl_vfx
             btl.weaponModels[0].offset_pos = btlParam.WeaponOffsetPos.ToVector3(false);
             btl.weaponModels[0].offset_rot = btlParam.GetWeaponRotationFixed(btl.weapon.ModelId, false);
         }
-        geo.geoAttach(btl.weapon_geo, btl.gameObject, btl.weapon_bone);
+        foreach (BTL_DATA.WEAPON_MODEL weapon in btl.weaponModels)
+            if (weapon.geo != null && weapon.bone >= 0)
+                geo.geoAttach(weapon.geo, btl.gameObject, weapon.bone);
+
         btl2d.ShowMessages(true);
     }
 
