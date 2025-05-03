@@ -110,7 +110,7 @@ namespace Memoria.Data
                     }
                     if (btl == null)
                         return false;
-                    if (!BattleSpeaker.CheckCanSpeak(btl, Priority, statusExceptionBtl == btl ? statusException : BattleStatusId.None))
+                    if (!BattleSpeaker.CheckCanSpeak(btl, Priority, (statusExceptionBtl == null || statusExceptionBtl == btl) ? statusException : BattleStatusId.None))
                         return false;
                 }
                 return true;
@@ -232,9 +232,10 @@ namespace Memoria.Data
 
             List<BattleInOut> retainedEffects = new List<BattleInOut>();
             Int32 retainedPriority = Int32.MinValue;
+            BattleStatusId statusException = (when == BattleMoment.GameOver || when == BattleMoment.Defeated) ? BattleStatusId.Death : BattleStatusId.None;
             foreach (BattleInOut effect in InOutEffect)
             {
-                if (effect.When != when || effect.Priority < retainedPriority || !effect.CheckSpeakerAll())
+                if (effect.When != when || effect.Priority < retainedPriority || !effect.CheckSpeakerAll(null, statusException))
                     continue;
                 if (!String.IsNullOrEmpty(effect.Condition))
                 {
