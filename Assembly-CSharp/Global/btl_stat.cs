@@ -339,7 +339,7 @@ public static class btl_stat
         }
         else if (data.bi.disappear == 0)
         {
-            data.CustomGlowEffect.Remove(data.CustomGlowEffect.FirstOrDefault(CustomGlowBTL => CustomGlowBTL.Status != BattleStatusId.None));
+            data.GlowEffect.Remove(data.GlowEffect.FirstOrDefault(CustomGlowBTL => CustomGlowBTL.Status != BattleStatusId.None));
             BBGINFO bbgInfoPtr = battlebg.nf_GetBbgInfoPtr();
             Int32 highestPriority = Int32.MinValue;
             Boolean useColor = false;
@@ -348,7 +348,7 @@ public static class btl_stat
                 BattleStatusDataEntry statusData = statusId.GetStatData();
                 if (statusData.ColorKind >= 0)
                 {
-                    BTL_DATA.CUSTOM_GLOW NewGlowEffect = new BTL_DATA.CUSTOM_GLOW()
+                    BTL_DATA.EFFECT_GLOW NewGlowEffect = new BTL_DATA.EFFECT_GLOW()
                     {
                         Status = statusId,
                         ColorKind = statusData.ColorKind,
@@ -358,28 +358,28 @@ public static class btl_stat
 
                     if (statusData.ColorPriority == highestPriority)
                     {
-                        data.CustomGlowEffect.Add(NewGlowEffect);
+                        data.GlowEffect.Add(NewGlowEffect);
                     }
                     else if (statusData.ColorPriority > highestPriority)
                     {
-                        data.CustomGlowEffect.Remove(data.CustomGlowEffect.FirstOrDefault(CustomGlowBTL => CustomGlowBTL.Status != BattleStatusId.None));
-                        data.CustomGlowEffect.Add(NewGlowEffect);
+                        data.GlowEffect.Remove(data.GlowEffect.FirstOrDefault(CustomGlowBTL => CustomGlowBTL.Status != BattleStatusId.None));
+                        data.GlowEffect.Add(NewGlowEffect);
                         highestPriority = statusData.ColorPriority;
                     }
                 }
             }
 
-            if (data.CustomGlowEffect.Count > 0)
+            if (data.GlowEffect.Count > 0)
             {
-                Int32 kind = data.CustomGlowEffect[0].ColorKind;
+                Int32 kind = data.GlowEffect[0].ColorKind;
                 useColor = true;
                 switch (kind)
                 {
                     case 0: // Like Freeze or Berserk
                     {
-                        Byte r = (Byte)Mathf.Clamp(bbgInfoPtr.chr_r + data.CustomGlowEffect[0].ColorBase[0], 0, Byte.MaxValue);
-                        Byte g = (Byte)Mathf.Clamp(bbgInfoPtr.chr_g + data.CustomGlowEffect[0].ColorBase[1], 0, Byte.MaxValue);
-                        Byte b = (Byte)Mathf.Clamp(bbgInfoPtr.chr_b + data.CustomGlowEffect[0].ColorBase[2], 0, Byte.MaxValue);
+                        Byte r = (Byte)Mathf.Clamp(bbgInfoPtr.chr_r + data.GlowEffect[0].ColorBase[0], 0, Byte.MaxValue);
+                        Byte g = (Byte)Mathf.Clamp(bbgInfoPtr.chr_g + data.GlowEffect[0].ColorBase[1], 0, Byte.MaxValue);
+                        Byte b = (Byte)Mathf.Clamp(bbgInfoPtr.chr_b + data.GlowEffect[0].ColorBase[2], 0, Byte.MaxValue);
                         if (!FF9StateSystem.Battle.isFade)
                             btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect", data);
                         btl_util.GeoSetColor2DrawPacket(data.gameObject, r, g, b, Byte.MaxValue);
@@ -389,12 +389,12 @@ public static class btl_stat
                     }
                     case 1: // Like Shell or Protect
                     {
-                        Int32 index = ff9Battle.btl_cnt / 24 % data.CustomGlowEffect.Count;
+                        Int32 index = ff9Battle.btl_cnt / 24 % data.GlowEffect.Count;
                         Byte counter = (Byte)(ff9Battle.btl_cnt % 24);
                         Byte strength = (Byte)(counter >= 8 ? (counter >= 16 ? (24 - counter) : 8) : counter);
-                        Int16 r = (Int16)((bbgInfoPtr.chr_r + data.CustomGlowEffect[index].ColorBase[0]) * strength >> 3);
-                        Int16 g = (Int16)((bbgInfoPtr.chr_g + data.CustomGlowEffect[index].ColorBase[1]) * strength >> 3);
-                        Int16 b = (Int16)((bbgInfoPtr.chr_b + data.CustomGlowEffect[index].ColorBase[2]) * strength >> 3);
+                        Int16 r = (Int16)((bbgInfoPtr.chr_r + data.GlowEffect[index].ColorBase[0]) * strength >> 3);
+                        Int16 g = (Int16)((bbgInfoPtr.chr_g + data.GlowEffect[index].ColorBase[1]) * strength >> 3);
+                        Int16 b = (Int16)((bbgInfoPtr.chr_b + data.GlowEffect[index].ColorBase[2]) * strength >> 3);
 
                         if (!FF9StateSystem.Battle.isFade)
                             btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect", data);
@@ -441,24 +441,24 @@ public static class btl_stat
             data.pos = pos;
         }
     }
-    public static void AddCustomGlowEffect(BTL_DATA btl, int ColorKind, int ColorPriority, int[] ColorBase, int ID)
+    public static void AddGlowEffect(BTL_DATA btl, int ColorKind, int ColorPriority, int[] ColorBase, int ID)
     {
-        BTL_DATA.CUSTOM_GLOW CustomGlowBTL = new BTL_DATA.CUSTOM_GLOW();
+        BTL_DATA.EFFECT_GLOW CustomGlowBTL = new BTL_DATA.EFFECT_GLOW();
         CustomGlowBTL.ID = ID;
         CustomGlowBTL.ColorKind = ColorKind;
         CustomGlowBTL.ColorPriority = ColorPriority;
         CustomGlowBTL.ColorBase = ColorBase;
-        btl.CustomGlowEffect.Add(CustomGlowBTL);
+        btl.GlowEffect.Add(CustomGlowBTL);
     }
 
-    public static void RemoveCustomGlowEffect(BTL_DATA btl, int ID)
+    public static void RemoveGlowEffect(BTL_DATA btl, int ID)
     {
-        btl.CustomGlowEffect.Remove(btl.CustomGlowEffect.FirstOrDefault(CustomGlowBTL => CustomGlowBTL.ID == ID));
+        btl.GlowEffect.Remove(btl.GlowEffect.FirstOrDefault(CustomGlowBTL => CustomGlowBTL.ID == ID));
     }
 
-    public static void ClearAllCustomGlowEffect(BTL_DATA btl)
+    public static void ClearAllGlowEffect(BTL_DATA btl)
     {
-        btl.CustomGlowEffect.Clear();
+        btl.GlowEffect.Clear();
     }
 
     public static void SetDefaultShader(BTL_DATA btl)
