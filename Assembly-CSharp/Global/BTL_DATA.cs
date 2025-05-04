@@ -292,6 +292,7 @@ public partial class BTL_DATA
     public Boolean bonus_given;
 
     public List<WEAPON_MODEL> weaponModels = new List<WEAPON_MODEL>();
+    public List<CUSTOM_GLOW> CustomGlowEffect = new List<CUSTOM_GLOW>();
 
     public Boolean is_monster_transform;
     public MONSTER_TRANSFORM monster_transform;
@@ -328,6 +329,15 @@ public partial class BTL_DATA
         public List<BattleCommandId> disable_commands;
         public String[] motion_normal;
         public String[] motion_alternate;
+    }
+
+    public class CUSTOM_GLOW
+    {
+        public int ID = -1;
+        public BattleStatusId Status = BattleStatusId.None;
+        public Int32 ColorKind = -1;
+        public Int32 ColorPriority = 0;
+        public Int32[] ColorBase = [0, 0, 0];
     }
 
     public class DelayedModifier
