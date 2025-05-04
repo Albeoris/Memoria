@@ -337,7 +337,7 @@ public class SaveLoadUI : UIScene
                     }
                     fileInfoHUD.CharacterAvatarList[characterIndex].alpha = 1f;
                     FF9UIDataTool.DisplayCharacterAvatar((CharacterSerialNumber)sharedDataPreviewCharacterInfo.SerialID, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), fileInfoHUD.CharacterAvatarList[characterIndex], false);
-                    helpStr += $"{sharedDataPreviewCharacterInfo.Name}[XTAB=80][YADD=4]{Localization.Get("LvDialogIcon")}[YSUB=2][FEED=1] {sharedDataPreviewCharacterInfo.Level}\n";
+                    helpStr += $"{sharedDataPreviewCharacterInfo.Name}[XTAB=80]{Localization.Get("LvDialogIcon")}[FEED=1] {sharedDataPreviewCharacterInfo.Level}\n";
                 }
                 characterIndex++;
             }
