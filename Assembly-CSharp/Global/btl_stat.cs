@@ -448,19 +448,19 @@ public static class btl_stat
         }
     }
 
-    public static void AddGlowEffect(BTL_DATA btl, int ColorKind, int ColorPriority, int[] ColorBase, int ID)
+    public static EFFECT_GLOW AddCustomGlowEffect(BTL_DATA btl, int ColorKind, int ColorPriority, int[] ColorBase)
     {
         EFFECT_GLOW CustomGlowBTL = new EFFECT_GLOW();
-        CustomGlowBTL.ID = ID;
         CustomGlowBTL.ColorKind = ColorKind;
         CustomGlowBTL.ColorPriority = ColorPriority;
         CustomGlowBTL.ColorBase = ColorBase;
         btl.CustomGlowEffect.Add(CustomGlowBTL);
+        return CustomGlowBTL;
     }
 
-    public static void RemoveGlowEffect(BTL_DATA btl, int ID)
+    public static void RemoveGlowEffect(BTL_DATA btl, EFFECT_GLOW CustomGlowBTL)
     {
-        btl.CustomGlowEffect.Remove(btl.CustomGlowEffect.FirstOrDefault(CustomGlowBTL => CustomGlowBTL.ID == ID));
+        btl.CustomGlowEffect.Remove(CustomGlowBTL);
     }
 
     public static void ClearAllGlowEffect(BTL_DATA btl)
