@@ -199,6 +199,11 @@ namespace Memoria.Launcher
                 };
                 if (uiElement.ToolTip == null || uiElement.ToolTip is string)
                 {
+                    uiElement.ToolTipOpening += (object sender, ToolTipEventArgs e) =>
+{
+                        // Allegedly fixes the System.ArgumentNullException within System.Windows.Controls.ToolTipService.GetBetweenShowDelay
+                        e.Handled = true;
+                    };
                     uiElement.MouseEnter += (sender, e) =>
                     {
                         if (uiElement.ToolTip is ToolTip)
@@ -295,6 +300,11 @@ namespace Memoria.Launcher
                 HorizontalOffset = 0,
                 ForceCursor = true,
                 Opacity = 1
+            };
+            uiElement.ToolTipOpening += (object sender, ToolTipEventArgs e) =>
+            {
+                // Allegedly fixes the System.ArgumentNullException within System.Windows.Controls.ToolTipService.GetBetweenShowDelay
+                e.Handled = true;
             };
             uiElement.MouseEnter += (sender, e) =>
             {
