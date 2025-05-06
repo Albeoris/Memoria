@@ -40,7 +40,7 @@ namespace Memoria.DefaultScripts
             else
                 Target.Kill(Inflicter);
             btl2d.Btl2dStatReq(Target, (Int32)damage, (Int32)mpdamage);
-            BattleVoice.TriggerOnStatusChange(Target, "Used", BattleStatusId.Venom);
+            BattleVoice.TriggerOnStatusChange(Target, BattleVoice.BattleMoment.Used, BattleStatusId.Venom);
             return false;
         }
     }

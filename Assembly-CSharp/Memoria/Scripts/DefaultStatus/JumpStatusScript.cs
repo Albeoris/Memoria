@@ -81,7 +81,7 @@ namespace Memoria.DefaultScripts
                 if (useSpear != CurrentlyUseSpear)
                 {
                     if (useSpear)
-                        BattleVoice.TriggerOnStatusChange(freya, "Used", BattleStatusId.Jump);
+                        BattleVoice.TriggerOnStatusChange(freya, BattleVoice.BattleMoment.Used, BattleStatusId.Jump);
                     CurrentlyUseSpear = useSpear;
                 }
             }

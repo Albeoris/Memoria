@@ -289,7 +289,7 @@ namespace Memoria
             if (IsUnderAnyStatus(BattleStatus.EasyKill)) // Behaviour added by Memoria with no influence on vanilla - Boss can't die when frozen
                 return false;
 
-            BattleVoice.TriggerOnStatusChange(Data, "Used", BattleStatusId.Freeze);
+            BattleVoice.TriggerOnStatusChange(Data, BattleVoice.BattleMoment.Used, BattleStatusId.Freeze);
             btl_cmd.KillSpecificCommand(Data, BattleCommandId.SysStone);
             Kill();
             UIManager.Battle.SetBattleFollowMessage(BattleMesages.ImpactCrushes);

@@ -293,7 +293,7 @@ public class btl_cmd
         if (caster != null && cmd == caster.cmd[0])
         {
             btl_stat.RemoveStatuses(new BattleUnit(caster), BattleStatusConst.RemoveOnMainCommand);
-            BattleVoice.TriggerOnBattleAct(caster, "CommandInput", cmd);
+            BattleVoice.TriggerOnBattleAct(caster, BattleVoice.BattleMoment.CommandInput, cmd);
         }
         EnqueueCommand(cmd);
     }
@@ -420,7 +420,7 @@ public class btl_cmd
         if (cmd == caster.Data.cmd[0])
         {
             btl_stat.RemoveStatuses(caster, BattleStatusConst.RemoveOnMainCommand);
-            BattleVoice.TriggerOnBattleAct(caster.Data, "CommandInput", cmd);
+            BattleVoice.TriggerOnBattleAct(caster.Data, BattleVoice.BattleMoment.CommandInput, cmd);
         }
         EnqueueCommand(cmd);
     }
@@ -523,7 +523,7 @@ public class btl_cmd
                     if (btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
                     {
                         btl_para.SetLogicalHP(btl, 0, false);
-                        BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatusId.Heat);
+                        BattleVoice.TriggerOnStatusChange(btl, BattleVoice.BattleMoment.Used, BattleStatusId.Heat);
                         KillCommand(cmd);
                         if (btl.cur.hp == 0 && btl.bi.player == 0) // Prevent dying animation for enemies
                         {
@@ -538,7 +538,7 @@ public class btl_cmd
                     }
                     else if (btl_stat.AlterStatus(new BattleUnit(btl), BattleStatusId.Death) == btl_stat.ALTER_SUCCESS)
                     {
-                        BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatusId.Heat);
+                        BattleVoice.TriggerOnStatusChange(btl, BattleVoice.BattleMoment.Used, BattleStatusId.Heat);
                         KillCommand(cmd);
                         return;
                     }
@@ -605,7 +605,7 @@ public class btl_cmd
                                 cmd.info.cover = 1;
                                 BattleUnit coveringTarget = btl_scrp.FindBattleUnit(coverId);
                                 if (caster != null && coveringTarget != null)
-                                    BattleVoice.TriggerOnBattleAct(coveringTarget.Data, "Cover", cmd);
+                                    BattleVoice.TriggerOnBattleAct(coveringTarget.Data, BattleVoice.BattleMoment.Cover, cmd);
                             }
                         }
                     }
@@ -613,7 +613,7 @@ public class btl_cmd
                         break;
 
                     if (caster != null)
-                        BattleVoice.TriggerOnBattleAct(caster, "CommandPerform", cmd);
+                        BattleVoice.TriggerOnBattleAct(caster, BattleVoice.BattleMoment.CommandPerform, cmd);
                     btl_vfx.SelectCommandVfx(cmd);
 
                     if (caster != null && caster.bi.player != 0)
@@ -885,7 +885,7 @@ public class btl_cmd
                         else
                             enemyReflectCount++;
                         foreach (BattleStatusId reflectStatus in (BattleStatusConst.ApplyReflect & btl.stat.cur).ToStatusList())
-                            BattleVoice.TriggerOnStatusChange(btl, "Used", reflectStatus);
+                            BattleVoice.TriggerOnStatusChange(btl, BattleVoice.BattleMoment.Used, reflectStatus);
                     }
                 }
                 else if (!btl_stat.CheckStatus(btl, BattleStatus.Death) && btl.bi.target != 0)
@@ -1123,7 +1123,7 @@ public class btl_cmd
             return true;
         UIManager.Battle.SetBattleFollowMessage(BattleMesages.CannotCast);
         foreach (BattleStatusId silenceStatus in (BattleStatusConst.CannotUseMagic & cmd.regist.stat.cur).ToStatusList())
-            BattleVoice.TriggerOnStatusChange(cmd.regist, "Used", silenceStatus);
+            BattleVoice.TriggerOnStatusChange(cmd.regist, BattleVoice.BattleMoment.Used, silenceStatus);
         return false;
     }
 

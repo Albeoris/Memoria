@@ -264,7 +264,7 @@ public class btl_para
                 }
             }
         }
-        BattleVoice.TriggerOnStatusChange(btl, "Used", btl_stat.CheckStatus(btl, BattleStatus.Venom) ? BattleStatusId.Venom : BattleStatusId.Poison);
+        BattleVoice.TriggerOnStatusChange(btl, BattleVoice.BattleMoment.Used, btl_stat.CheckStatus(btl, BattleStatus.Venom) ? BattleStatusId.Venom : BattleStatusId.Poison);
     }
 
     public static void SetRegeneRecover(BTL_DATA btl)
@@ -290,7 +290,7 @@ public class btl_para
                 btl.cur.hp = btl.max.hp;
             }
         }
-        BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatusId.Regen);
+        BattleVoice.TriggerOnStatusChange(btl, BattleVoice.BattleMoment.Used, BattleStatusId.Regen);
     }
 
     public static void SetPoisonMpDamage(BTL_DATA btl)
@@ -320,7 +320,7 @@ public class btl_para
             if (next.IsPlayer == btl.IsPlayer && next.Id != btl.Id && next.IsTargetable)
             {
                 SetDamage(next, dmg, 0, requestFigureNow: true);
-                BattleVoice.TriggerOnStatusChange(next.Data, "Used", BattleStatusId.Trouble);
+                BattleVoice.TriggerOnStatusChange(next.Data, BattleVoice.BattleMoment.Used, BattleStatusId.Trouble);
             }
         }
     }

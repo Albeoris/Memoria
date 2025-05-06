@@ -344,7 +344,7 @@ public class BattleActionThread
                             if (AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false))
                                 mainThread.code.AddLast(new BattleActionCode("PlaySound", "SoundType", "Voice", "Sound", btlId + ":" + messExactId));
                             else
-                                SoundLib.VALog(String.Format("field:battle/{0}, msg:{1}, text:{2} path:{3} (not found)", btlId, messExactId, text, vaPath));
+                                SoundLib.VALog(String.Format("field:battle/{0}, msg:{1}, abilityRawId: {4}, text:{2} path:{3} (not found), ", btlId, messExactId, text, vaPath, messExactId - FF9StateSystem.Battle.FF9Battle.btl_scene.header.TypCount));
                         }
                         if (langBattleText == null || (messId & 128) != 0)
                         {

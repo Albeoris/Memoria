@@ -46,7 +46,7 @@ namespace Memoria.DefaultScripts
         private void TriggerUsageForBattleVoice(BattleUnit unit)
         {
             if (unit.ATBCommand.ExecutionStep != command_mode_index.CMD_MODE_INSPECTION)
-                BattleVoice.TriggerOnStatusChange(unit, "Used", BattleStatusId.Berserk);
+                BattleVoice.TriggerOnStatusChange(unit, BattleVoice.BattleMoment.Used, BattleStatusId.Berserk);
         }
     }
 }
