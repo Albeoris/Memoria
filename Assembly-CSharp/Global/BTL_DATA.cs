@@ -292,6 +292,7 @@ public partial class BTL_DATA
     public Boolean bonus_given;
 
     public List<WEAPON_MODEL> weaponModels = new List<WEAPON_MODEL>();
+    public List<EFFECT_GLOW> CustomGlowEffect = new List<EFFECT_GLOW>();
 
     public Boolean is_monster_transform;
     public MONSTER_TRANSFORM monster_transform;

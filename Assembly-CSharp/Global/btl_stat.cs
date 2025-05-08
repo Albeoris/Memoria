@@ -5,6 +5,7 @@ using Memoria.Scripts;
 using NCalc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Object = System.Object;
 
@@ -338,24 +339,40 @@ public static class btl_stat
         }
         else if (data.bi.disappear == 0)
         {
-            List<BattleStatusDataEntry> retainedData = new List<BattleStatusDataEntry>();
+            List<EFFECT_GLOW> retainedData = new List<EFFECT_GLOW>();
             BBGINFO bbgInfoPtr = battlebg.nf_GetBbgInfoPtr();
             Int32 highestPriority = Int32.MinValue;
             Boolean useColor = false;
             foreach (BattleStatusId statusId in unit.CurrentStatus.ToStatusList())
             {
                 BattleStatusDataEntry statusData = statusId.GetStatData();
-                if (statusData.ColorKind >= 0)
+                if (statusData.StatusGlowEffect.ColorKind >= 0)
                 {
-                    if (statusData.ColorPriority == highestPriority)
+                    if (statusData.StatusGlowEffect.ColorPriority == highestPriority)
                     {
-                        retainedData.Add(statusData);
+                        retainedData.Add(statusData.StatusGlowEffect);
                     }
-                    else if (statusData.ColorPriority > highestPriority)
+                    else if (statusData.StatusGlowEffect.ColorPriority > highestPriority)
                     {
                         retainedData.Clear();
-                        retainedData.Add(statusData);
-                        highestPriority = statusData.ColorPriority;
+                        retainedData.Add(statusData.StatusGlowEffect);
+                        highestPriority = statusData.StatusGlowEffect.ColorPriority;
+                    }
+                }
+            }
+            foreach (EFFECT_GLOW BTLGlowEffect in data.CustomGlowEffect)
+            {
+                if (BTLGlowEffect.ColorKind >= 0)
+                {
+                    if (BTLGlowEffect.ColorPriority == highestPriority)
+                    {
+                        retainedData.Add(BTLGlowEffect);
+                    }
+                    else if (BTLGlowEffect.ColorPriority > highestPriority)
+                    {
+                        retainedData.Clear();
+                        retainedData.Add(BTLGlowEffect);
+                        highestPriority = BTLGlowEffect.ColorPriority;
                     }
                 }
             }
@@ -429,6 +446,26 @@ public static class btl_stat
             }
             data.pos = pos;
         }
+    }
+
+    public static EFFECT_GLOW AddCustomGlowEffect(BTL_DATA btl, int ColorKind, int ColorPriority, int[] ColorBase)
+    {
+        EFFECT_GLOW CustomGlowBTL = new EFFECT_GLOW();
+        CustomGlowBTL.ColorKind = ColorKind;
+        CustomGlowBTL.ColorPriority = ColorPriority;
+        CustomGlowBTL.ColorBase = ColorBase;
+        btl.CustomGlowEffect.Add(CustomGlowBTL);
+        return CustomGlowBTL;
+    }
+
+    public static void RemoveGlowEffect(BTL_DATA btl, EFFECT_GLOW CustomGlowBTL)
+    {
+        btl.CustomGlowEffect.Remove(CustomGlowBTL);
+    }
+
+    public static void ClearAllGlowEffect(BTL_DATA btl)
+    {
+        btl.CustomGlowEffect.Clear();
     }
 
     public static void SetDefaultShader(BTL_DATA btl)

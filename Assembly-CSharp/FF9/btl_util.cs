@@ -298,8 +298,12 @@ namespace FF9
             CharacterCommandType cmdType = GetCommandTypeSafe(cmd.cmd_no);
             if (cmdType == CharacterCommandType.Item)
                 return BattleAbilityId.Void;
-            else if (cmdType == CharacterCommandType.Throw)
+            if (cmdType == CharacterCommandType.Throw)
+            {
+                if (CharacterCommands.Commands.TryGetValue(cmd.cmd_no, out CharacterCommand chcmd) && chcmd.GetAbilityId() != BattleAbilityId.Void)
+                    return chcmd.GetAbilityId();
                 return BattleAbilityId.Throw;
+            }
             switch (cmd.cmd_no)
             {
                 case BattleCommandId.SysEscape:

@@ -69,6 +69,7 @@ public class SaveLoadUI : UIScene
                 ButtonGroupState.SetPointerLimitRectToGroup(this.FileListPanel.GetComponent<UIWidget>(), this.fileScrollList.ItemHeight, SaveLoadUI.FileGroupButton);
                 ButtonGroupState.SetScrollButtonToGroup(this.FileListPanel.GetChild(0).GetComponent<ScrollButton>(), SaveLoadUI.FileGroupButton);
                 Int32 index = FF9StateSystem.Settings.LatestSlot < 0 ? 0 : FF9StateSystem.Settings.LatestSlot;
+                this.helpSlotLabel.rawText = String.Format(Localization.Get("SlotNo"), index + 1);
                 ButtonGroupState.SetCursorStartSelect(this.slotNameButtonList[index].gameObject, SaveLoadUI.SlotGroupButton);
                 ButtonGroupState.ActiveGroup = SaveLoadUI.SlotGroupButton;
             };
@@ -336,7 +337,7 @@ public class SaveLoadUI : UIScene
                     }
                     fileInfoHUD.CharacterAvatarList[characterIndex].alpha = 1f;
                     FF9UIDataTool.DisplayCharacterAvatar((CharacterSerialNumber)sharedDataPreviewCharacterInfo.SerialID, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), fileInfoHUD.CharacterAvatarList[characterIndex], false);
-                    helpStr += $"{sharedDataPreviewCharacterInfo.Name}[XTAB=80][YADD=4]{Localization.Get("LvDialogIcon")}[YSUB=2][FEED=1] {sharedDataPreviewCharacterInfo.Level}\n";
+                    helpStr += $"{sharedDataPreviewCharacterInfo.Name}[XTAB=80]{Localization.Get("LvDialogIcon")}[FEED=1] {sharedDataPreviewCharacterInfo.Level}\n";
                 }
                 characterIndex++;
             }

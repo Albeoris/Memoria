@@ -17,6 +17,8 @@ namespace Memoria.Scenes
             Body = new GOSprite(obj.FindChild("Body"));
             Border = new GOSprite(obj.FindChild("Border"));
             Shadow = new GOSprite(obj.FindChild("Shadow"));
+            Caption.Label.preventWrapping = true;
+            Caption.Label.overflowMethod = UILabel.Overflow.ClampContent;
         }
     }
 }
