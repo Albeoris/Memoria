@@ -75,39 +75,33 @@ namespace FF9
         {
             foreach (String line in allLines)
             {
-                // eg.: 0 AddItem 31 32 RemoveItem 57
-                // (Add to Dali's shop the Javelin and Mythril Spear, and remove Rod from it)
-                // or: 32 AddSynth 6 RemoveSynth 0 1
-                // (Add to Linblum's first synthesis shop the Masamune recipe, and remove Butterfly Sword and The Ogre recipes from it)
+                // eg.: Add the Javelin (31) to Dali's and Cleyra's shops (0 5) and remove it from Lindblum's first shop (1)
+                // 31 Add 0 5 Remove 1
                 // Note: items are automatically inserted after the other items of the same type; it might become more customisable in the future
                 if (String.IsNullOrEmpty(line) || line.Trim().StartsWith("//"))
                     continue;
                 String[] allWords = line.Trim().Split(DataPatchers.SpaceSeparators, StringSplitOptions.RemoveEmptyEntries);
                 if (allWords.Length < 3)
                     continue;
-                if (!Int32.TryParse(allWords[0], out Int32 shopId))
+                if (!Int32.TryParse(allWords[0], out Int32 itemId) || !ff9item._FF9Item_Data.TryGetValue((RegularItem)itemId, out FF9ITEM_DATA item))
                     continue;
-                if (!ShopItems.TryGetValue(shopId, out ShopItems assortiment))
-                {
-                    assortiment = new ShopItems(shopId);
-                    ShopItems[shopId] = assortiment;
-                }
                 Int32 currentOperation = -1;
                 for (Int32 wordIndex = 1; wordIndex < allWords.Length; wordIndex++)
                 {
                     String word = allWords[wordIndex].Trim();
-                    if (String.Equals(word, "AddItem"))
+                    if (String.Equals(word, "Add"))
                         currentOperation = 0;
-                    else if (String.Equals(word, "RemoveItem"))
+                    else if (String.Equals(word, "Remove"))
                         currentOperation = 1;
-                    else if (String.Equals(word, "AddSynth"))
-                        currentOperation = 2;
-                    else if (String.Equals(word, "RemoveSynth"))
-                        currentOperation = 3;
                     else if (currentOperation == 0 || currentOperation == 1)
                     {
-                        if (!Int32.TryParse(word, out Int32 itemId) || !ff9item._FF9Item_Data.TryGetValue((RegularItem)itemId, out FF9ITEM_DATA item))
+                        if (!Int32.TryParse(word, out Int32 shopId))
                             continue;
+                        if (!ShopItems.TryGetValue(shopId, out ShopItems assortiment))
+                        {
+                            assortiment = new ShopItems(shopId);
+                            ShopItems[shopId] = assortiment;
+                        }
                         if (currentOperation == 0)
                         {
                             Int32 insertPos = assortiment.ItemIds.FindIndex(id => ff9item._FF9Item_Data[id].type < item.type);
@@ -117,15 +111,6 @@ namespace FF9
                         {
                             assortiment.ItemIds.Remove((RegularItem)itemId);
                         }
-                    }
-                    else if (currentOperation == 2 || currentOperation == 3)
-                    {
-                        if (!Int32.TryParse(word, out Int32 recipeId) || !ff9mix.SynthesisData.TryGetValue(recipeId, out FF9MIX_DATA mix))
-                            continue;
-                        if (currentOperation == 2)
-                            mix.Shops.Add(shopId);
-                        else if (currentOperation == 3)
-                            mix.Shops.Remove(shopId);
                     }
                 }
             }

@@ -1973,8 +1973,19 @@ public partial class BattleHUD : UIScene
                 };
                 testCommand.SetAAData(aaData);
                 testCommand.ScriptId = btl_util.GetCommandScriptId(testCommand);
-                if (Configuration.Mod.TranceSeek && CharacterCommands.Commands[_currentCommandId].Type == CharacterCommandType.Throw) // [DV] Change TargetType for throwing items (magic scrolls for Trance Seek)
-                { // Or i can make it with the DictionaryPatch.txt instead ?
+                if (CharacterCommands.Commands[_currentCommandId].Type == CharacterCommandType.Throw && ff9item.HasItemEffect(_itemIdList[_currentSubMenuIndex]))
+                {
+                    ITEM_DATA effect = ff9item.GetItemEffect(_itemIdList[_currentSubMenuIndex]);
+                    if (targetType == TargetType.SingleAny || targetType == TargetType.SingleAlly || targetType == TargetType.SingleEnemy)
+                        targetType = effect.info.Target;
+                    _defaultTargetAlly = effect.info.DefaultAlly;
+                    _defaultTargetDead = effect.info.DefaultOnDead;
+                    _targetDead = effect.info.ForDead;
+                }
+                // TODO: This is not required anymore and should be removed
+                // Add an item effect to scrolls and setup their target type there
+                if (Configuration.Mod.TranceSeek && CharacterCommands.Commands[_currentCommandId].Type == CharacterCommandType.Throw)
+                {
                     ItemAttack weapon = ff9item.GetItemWeapon(_itemIdList[_currentSubMenuIndex]);
                     if (((weapon.Category & WeaponCategory.Throw) != 0) && (weapon.ModelId == 65535 || weapon.ModelId == 0))
                     {

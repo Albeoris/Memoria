@@ -226,6 +226,7 @@ namespace Memoria
                                 v.Caster.Flags |= CalcFlag.HpRecovery;
                             else
                                 v.Caster.Flags &= ~CalcFlag.HpRecovery;
+                            caster.fig.info |= (UInt16)(v.Caster.Flags & CalcFlag.HpDamageOrHeal);
                             v.Caster.HpDamage = v.Target.HpDamage;
                         }
                     }
@@ -245,6 +246,7 @@ namespace Memoria
                                 v.Caster.Flags |= CalcFlag.MpRecovery;
                             else
                                 v.Caster.Flags &= ~CalcFlag.MpRecovery;
+                            caster.fig.info |= (UInt16)(v.Caster.Flags & CalcFlag.MpDamageOrHeal);
                             v.Caster.MpDamage = v.Target.MpDamage;
                         }
                     }

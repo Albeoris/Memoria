@@ -65,7 +65,7 @@ public static class btl_vfx
             else
                 return SpecialEffect.Steal_Blank;
         }
-        else if (cmdType == CharacterCommandType.Throw)
+        else if (cmdType == CharacterCommandType.Throw && cmd.aa.Info.VfxIndex == 10)
         {
             Int32 shape = ff9item._FF9Item_Data[btl_util.GetCommandItem(cmd)].shape;
             if (shape == 1)

@@ -1218,6 +1218,8 @@ public class btl_cmd
             forDead = ff9item.GetItemEffect(MixChoosen.Result).info.ForDead;
         else if (btl_util.GetCommandTypeSafe(cmd.cmd_no) == CharacterCommandType.Item)
             forDead = ff9item.GetItemEffect(btl_util.GetCommandItem(cmd)).info.ForDead;
+        else if (btl_util.GetCommandTypeSafe(cmd.cmd_no) == CharacterCommandType.Throw && ff9item.HasItemEffect(btl_util.GetCommandItem(cmd)))
+            forDead = ff9item.GetItemEffect(btl_util.GetCommandItem(cmd)).info.ForDead;
         else
             forDead = cmd.aa.Info.ForDead;
 

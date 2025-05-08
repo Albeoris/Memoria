@@ -4,6 +4,7 @@ using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
+using Memoria.Prime.CSV;
 using Memoria.Prime.Text;
 using System;
 using System.Collections.Generic;
@@ -47,7 +48,8 @@ public class ff9item
     {
         _FF9Item_Data = LoadItems();
         _FF9Item_Info = LoadItemEffects();
-        PatchItemEquipability();
+        PatchItemEquip();
+        PatchItemAbility();
     }
 
     public static void FF9Item_Init()
@@ -93,14 +95,29 @@ public class ff9item
         }
     }
 
-    private static void PatchItemEquipability()
+    private static void PatchItemEquip()
     {
         try
         {
             String inputPath = DataResources.Items.PureDirectory + DataResources.Items.ItemEquipPatchFile;
             foreach (AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
                 if (folder.TryFindAssetInModOnDisc(inputPath, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
-                    ApplyItemEquipabilityPatchFile(File.ReadAllLines(fullPath));
+                    ApplyItemEquipPatchFile(File.ReadAllLines(fullPath));
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "[ff9item] Patch item equipability failed.");
+        }
+    }
+
+    private static void PatchItemAbility()
+    {
+        try
+        {
+            String inputPath = DataResources.Items.PureDirectory + DataResources.Items.ItemAbilityPatchFile;
+            foreach (AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
+                if (folder.TryFindAssetInModOnDisc(inputPath, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
+                    ApplyItemAbilityPatchFile(File.ReadAllLines(fullPath));
         }
         catch (Exception ex)
         {
@@ -582,12 +599,12 @@ public class ff9item
         return -1;
     }
 
-    private static void ApplyItemEquipabilityPatchFile(String[] allLines)
+    private static void ApplyItemEquipPatchFile(String[] allLines)
     {
         foreach (String line in allLines)
         {
-            // eg.: Garnet Add 1 2 Remove 56
-            // (allows Garnet to equip Dagger and Mage Masher but disallows her to equip Tiger Racket)
+            // eg.: Allow Garnet to equip Dagger and Mage Masher (1 2) but disallows her to equip Tiger Racket (56)
+            // Garnet Add 1 2 Remove 56
             if (String.IsNullOrEmpty(line) || line.Trim().StartsWith("//"))
                 continue;
             String[] allWords = line.Trim().Split(DataPatchers.SpaceSeparators, StringSplitOptions.RemoveEmptyEntries);
@@ -610,12 +627,57 @@ public class ff9item
                     currentOperation = 1;
                 else
                 {
-                    if (!Int32.TryParse(word, out Int32 itemId) || !_FF9Item_Data.ContainsKey((RegularItem)itemId))
+                    if (!Int32.TryParse(word, out Int32 itemId) || !_FF9Item_Data.TryGetValue((RegularItem)itemId, out FF9ITEM_DATA item))
                         continue;
                     if (currentOperation == 0)
-                        _FF9Item_Data[(RegularItem)itemId].equip |= charMask;
+                        item.equip |= charMask;
                     else if (currentOperation == 1)
-                        _FF9Item_Data[(RegularItem)itemId].equip &= ~charMask;
+                        item.equip &= ~charMask;
+                }
+            }
+        }
+    }
+
+    private static void ApplyItemAbilityPatchFile(String[] allLines)
+    {
+        foreach (String line in allLines)
+        {
+            // eg.: AA:6 Add 51 57 Remove 68
+            // Make it so Full-Life (AA:6) is taught by the Air Racket and Rod (51 57) but not by Siren's Flute (68)
+            if (String.IsNullOrEmpty(line) || line.Trim().StartsWith("//"))
+                continue;
+            String[] allWords = line.Trim().Split(DataPatchers.SpaceSeparators, StringSplitOptions.RemoveEmptyEntries);
+            if (allWords.Length < 3)
+                continue;
+            Int32 abilId = 0;
+            try
+            {
+                abilId = CsvParser.AnyAbility(allWords[0].Trim());
+            }
+            catch (Exception)
+            {
+                Log.Warning($"[ff9item] Could not parse '{allWords[0]}' as an abilty ID");
+            }
+            if (abilId == 0)
+                continue;
+            Int32 currentOperation = -1;
+            for (Int32 wordIndex = 1; wordIndex < allWords.Length; wordIndex++)
+            {
+                String word = allWords[wordIndex].Trim();
+                if (String.Equals(word, "Add"))
+                    currentOperation = 0;
+                else if (String.Equals(word, "Remove"))
+                    currentOperation = 1;
+                else
+                {
+                    if (!Int32.TryParse(word, out Int32 itemId) || !_FF9Item_Data.TryGetValue((RegularItem)itemId, out FF9ITEM_DATA item))
+                        continue;
+                    List<Int32> abilList = new List<Int32>(item.ability);
+                    if (currentOperation == 0)
+                        abilList.Add(abilId);
+                    else if (currentOperation == 1)
+                        abilList.Remove(abilId);
+                    item.ability = abilList.ToArray();
                 }
             }
         }

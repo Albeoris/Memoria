@@ -214,6 +214,15 @@ public partial class BattleHUD : UIScene
         return false;
     }
 
+    public static String FormatLearnAbilityMessage(String abilityName)
+    {
+        if (Localization.CurrentDisplaySymbol == "JP" || Localization.CurrentDisplaySymbol == "GR")
+            return abilityName + Localization.Get("BattleResultLearn");
+        if (Localization.CurrentDisplaySymbol == "FR")
+            return Localization.Get("BattleResultLearn") + abilityName;
+        return Localization.Get("BattleResultLearn") + " " + abilityName;
+    }
+
     private static BattleCommandId GetCommandFromCommandIndex(BattleCommandMenu commandIndex, Int32 playerIndex)
     {
         BattleUnit player = FF9StateSystem.Battle.FF9Battle.GetUnit(playerIndex);
