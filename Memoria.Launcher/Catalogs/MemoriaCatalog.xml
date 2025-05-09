@@ -90,10 +90,10 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 	
 <Mod>
 	<Name>Trance Seek</Name>
-	<Version>0.3.32</Version>
+	<Version>0.3.33</Version>
 	<InstallationPath>TranceSeek</InstallationPath>
 	<ReleaseDateOriginal>28 Jan 2022</ReleaseDateOriginal>
-	<ReleaseDate>7 Apr 2025</ReleaseDate>
+	<ReleaseDate>28 Apr 2025</ReleaseDate>
 	<Author>DV</Author>
 	<IncompatibleWith>Alternate Fantasy,Amazing Quina,Beatrix Mod,Black Cat - Endgame Shop,David Bowie Edition,Freya Game+,Garnet is Main Character,Perfect Stats,Play As Kuja,Playable Character Pack,Tantalus</IncompatibleWith>
 	<Description>
@@ -110,6 +110,8 @@ Currently, Trance Seek is...
 - And lots more ^_^
 
 This is not an EXTREME hardcore difficult mod: it only adds a higher difficulty than the original version while keeping a constant progression.
+But it's still a hard mode so be prepared for a challenge... you need to have a good basic understanding of the game (particularly ATB management).
+The entire difficulty system will be reworked when Disc 4 is released.
 
 It's currently a demo : Disc1/2/3 available but almost +30 hours of gameplay !
 Don't hesitate to try!
@@ -118,60 +120,81 @@ Don't hesitate to try!
 Recommended language : Français / English (UK)
 Not supported language : Japanese (a lot of things get deleted... need to wait until full release... sorry !)</Description>
 	<PatchNotes>
-------[0.3.32]------
+------[0.3.33]------
+
+{Features}
+- A new visual + sound effect (called SPS) has been added to indicate that monsters are immune to status.
+The principle is equivalent to FFX : this SPS will be played at the same time as damage to indicate whether the monster is immune to the attack's status, such as Poison or Magic Hammer.
+If the spell inflicts no damage and the monster is immune to the status inflicted (like Sleep), the game will indicate that the monster is "immune".
+Technically, the game will explicitly indicate whether or not the monster is immune to a status!
+
+- Rework of the Venom status: the duration between damages (tick) is identical to Poison... but for each damage received by Venom,
+it will be faster and faster (until it reaches the previously known speed).
+
+In Vivi mode, Venom will remain at the same speed as Poison and will be unchanged.
+In Necron mode, Venom will remain the same as before (meaning the status is deadly and will quickly kill the player if the ATB is not correctly managed).
+In all other difficulties, the new formula explained above will now be applied.
 
 {Characters}
-- Change to Beatrix's model in Trance... for the lulz ^^
-- Zidane can no longer trigger his dodge passive if he attacks himself.
+- Rearrangement of all character SAs: now, all characters can learn 60 different SAs.
+In addition, some SAs have been grouped together to make them more logical for the player, notably status protection and unique one for each character.
+It should be noted that a large number of SAs cannot be learned for the time being: right now, i just "sorted" them.
 
-{Skills}
-- All enhanced versions of existing SAs in the base game have been correctly translated into all languages.
-- The "Guardian" and "Dual" commands no longer open the targeting window.
-- New damage formula for AA Authority.
-- Correction to the damage inflicted by the SA Proliferation.
-- Numerous small corrections to the "Mug" script, in particular the steal message that wasn't always displayed.
-- Fixed the damage formula for ?000 Needles.
-- New animation for the "Flash" attack, to better distinguish it from "Shockwave".
-- Optimisation of the code for the "Flash" attack.
-- "Light Step" and “Light Step+” SA corrected.
-- The "Healer" SA completely ignores dodging, even under certain SAs such as "Light Step".
-- Fixed script 0016_DrainHpScript, where the CanAttackMagic function was called twice by mistake.
-- Fixed a softlock when Beatrix died when loading a fight.
-- Correction of a particular bug on certain state alterations such as Dragon and Redemption.
+- When a character or monster is under "Defense" status, it will produce a slight sound effect when physical damage is received.
+This feature is particularly useful when a monster is under this status, as nothing necessarily indicates this (unless it adopts a particular posture, like Lani).
+
+{Abilities SA / AA}
+- Rework of SA Master Thief and Master Thief+. Its cost has also been reduced.
+- Adjustment to SA Initiative. Its cost has also been reduced.
+- Adjustment to SA High Jump and High Jump+. Its cost has also been reduced.
+- Fixed a bug on Zidane's "Thief!" and "Bandit!" spells where status stacked (such as Perfect Dodge) would visually disappear.
+- Corrected several formula damages, based on elemental bonuses, that were slightly wrong.
+- Zidane's Warm-up grants him PowerUp in addition to his PerfectDodge.
+- Corrected Larceny SA.
+- "Lucky Star" and "Lucky Star+" SA corrected.
+- Correction of the "Doom" spell.
+- The "Magic Hammer" spell now displays the amount of MP stolen on Kweena.
+- Changed the description of the "Angel's Snack" spell to make it clearer.
+- Corrected Angel's Snack's code, which did not take into account all status.
+- New correction to summon sequence files (forget to upload on previous version, woops!).
+- Fixed Beatrix's Cleave SFX, which aimed at invisible enemies.
 
 {Items}
-- Correction to script 0042_ThrowScript.cs, concerning a bug on scrolls.
+- Magic forks inflict HP damage (in addition to the MP damage that already exists) but the HP damage is much lower than a classic fork.
+- Magic forks inflict less MP damage.
 
-{Monsters / Bosses}
-- Correction on the Thorn and Zorn fight (Disc 2), to avoid a potential softlock ?
-- Correction to script 0065_EatScript.cs, concerning monsters that didn't have blue magic.
-- Added a visual (SPS) to Black Waltz 3 (Disc 1 and Disc 2), for its Polarity mechanic, to make it clearer for the players... ?
-- Fixed Black Waltz 1's HP calculation in Kuja and Necron mode.
-- Fixed a bug on Gizamaluke, which could die from the Heat effect after a certain stage of the fight, resulting in a softlock.
-- Changed Gizamaluke's animation during one of these attacks.
-- Slight change to Gizamaluke's AI, making combat slightly easier in Kuja and Necron modes.
-- Fixed Carve Spider's AI.
-- Fixed the AI of Sand Golem.
-- Fixed the AI of the Ypsen secret boss, which was not compatible with Kuja/Necron mode.
-- Slight correction to Beatrix 3's AI (for Kuja and Necron mode).
-- Until a rework of certain weapons, Tantarian is immune to certain weapons that attack 2 times in a row, such as Vivi's scepters (except Zidane's daggers).
-- Clipper's Armor attack changed.
-- Carrion Worm's Gastric Acid attack changed.
-- Changed Thorn and Zorn (Disc 2) sequences on several attacks (just an improvement on their animations).
-- Fixed a bug when initializing a fight against Goblins and Fangs on field no. 250 (Path/Cursed Forest).
-- Some monsters' attack flags have been updated.
+{Monsters + Bosses}
+- New version of the Guardian of the Wind, with new animations! (Not perfect, but at least he's got some ^^)
+- Black Waltz 1 is less likely to use "Tinkerbell".
+- Slight correction to Black Waltz 2's "Stasis" spell, which was displaying “Miss!”.
+- Earth Guardian is no longer immune to Mini.
+- Changed Ogra's "Zenitude" spell.
+- Corrected a softlock on Garland.
+- Softlock fixed on Ralvurahva.
+- Corrected two bugs on Ifa superboss AI.
+- Fixed Silver Dragon AI.
+- Correction of Lani's AI, following Runic's latest rework.
+- Corrected Fire Guardian AI for Kuja/Necron difficulties.
+- Corrected Soulcage AI, which could catch fire on neutral spells if the attacker had a Fire weapon type.
+- Added a visual effect to Soulcage's mechanic: from now on, when he catches fire, he will be under the Heat effect.
+- Corrected some monster attacks that did not use the correct script.
+- Fixed a boss's Might spell, which was giving 5 stacks instead of 1.
+- Fixed the name of some attacks.
+- Improved some sequence files, which were targeting knocked-out allies.
+- Corrected the AI of some battles, notably those where monsters remained at the end of a boss fight.
 
 {Fields}
-- Correction of some dialogues on the English (US) language, which could lead to softlocks.
-- Corrected Beatrix animation on fields (Talk2_1).
-- Correction of Brutos animation on fields (Hiza_2).
-- Corrected spring source on Arc Boden/South Gate field (854).
-- Corrected a few dialog boxes.
+- The range for speaking to Kweena in the field Earth Shrine/Interior (no.2552) has been divided by 3.
+- A menu is available just before the "You are not alone" scene, to equip any character and save.
+- Corrected the script in the Water Shrine where Beatrix remained in the team if she was present.
+- Added text at the start of the game, including a list of recommended mods and a warning to not use cheats, as this could break the mod (e.g. the frog minigame).
+- Fixed a bug where the Field_BGM was missing after fighting a Necromancer in the Desert Palace library.
+- The music is correctly preserved throughout the whole Shrines battle section.
+- Multiple dialogs fixed.
 
 {Miscellaneous}
-- The "Stop" status no longer ends the fight.
-- Multiple descriptions corrected.
-- Sequence folders/files fixed and managed in the mod.</PatchNotes>
+- Code cleanup in Memoria.Scripts.dll, including better management of status application.
+- Cleaned up dialog boxes generated by Memoria.Scripts.dll + translated into all languages (except some in JP).</PatchNotes>
 	<Category>Gameplay</Category>
 	<PreviewFileUrl>https://i.ibb.co/HC3GH4j/Logo-Trance-Seek.png</PreviewFileUrl>
 	<PreviewFile>Thumbnail/LogoTranceSeek.png</PreviewFile>
