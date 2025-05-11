@@ -93,7 +93,7 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 	<Version>0.3.33</Version>
 	<InstallationPath>TranceSeek</InstallationPath>
 	<ReleaseDateOriginal>28 Jan 2022</ReleaseDateOriginal>
-	<ReleaseDate>28 Apr 2025</ReleaseDate>
+	<ReleaseDate>11 May 2025</ReleaseDate>
 	<Author>DV</Author>
 	<IncompatibleWith>Alternate Fantasy,Amazing Quina,Beatrix Mod,Black Cat - Endgame Shop,David Bowie Edition,Freya Game+,Garnet is Main Character,Perfect Stats,Play As Kuja,Playable Character Pack,Tantalus</IncompatibleWith>
 	<Description>
@@ -104,13 +104,13 @@ Currently, Trance Seek is...
 - A complete overhaul of all combat, in terms of stats, AI and skills.
 - Around 30 new bosses added (including 2 superbosses): all the game's bosses have been reworked to offer different mechanics and more!
 - The game has a total of 84 SA + 84 additional enhanced versions (WIP).
-- All characters have 44 SA available (not counting boosted versions, so a total of 88 SA each!).
+- All characters have 60 SA available (not counting boosted versions, so a total of 120 SA each!).
 - Each character has its own unique passive or mechanic. +40 new skills added.
-- 59 new items (WIP) !
+- 59 new items... but more to come !
 - And lots more ^_^
 
 This is not an EXTREME hardcore difficult mod: it only adds a higher difficulty than the original version while keeping a constant progression.
-But it's still a hard mode so be prepared for a challenge... you need to have a good basic understanding of the game (particularly ATB management).
+But it's still a hard mode ! So be prepared for a challenge... you need to have a good basic understanding of the game (particularly ATB management).
 The entire difficulty system will be reworked when Disc 4 is released.
 
 It's currently a demo : Disc1/2/3 available but almost +30 hours of gameplay !
@@ -138,12 +138,19 @@ In all other difficulties, the new formula explained above will now be applied.
 {Characters}
 - Rearrangement of all character SAs: now, all characters can learn 60 different SAs.
 In addition, some SAs have been grouped together to make them more logical for the player, notably status protection and unique one for each character.
-It should be noted that a large number of SAs cannot be learned for the time being: right now, i just "sorted" them.
+It should be noted that a large number of SAs cannot be learned for the time being: right now, i just "sorted" them... but I've included a few if you'd like to try them out :)
+
+- A clean-up of Eiko's passive: a total rework of the code, new attacks (20 instead of 8) and the effect can be triggered at any time (base 10%), even if Eiko is not the target of an attack!
+What's more, this new version is supposed to correct some minor visual problems that existed previously.
+Some attacks are only unlocked once Eiko reaches a certain level, so some may not be available when she joins the team at Disc 2.
 
 - When a character or monster is under "Defense" status, it will produce a slight sound effect when physical damage is received.
 This feature is particularly useful when a monster is under this status, as nothing necessarily indicates this (unless it adopts a particular posture, like Lani).
+- Total rework on the visual effect of the "Old" status.
+- A character in Trance can no longer suffer "Old".
 
 {Abilities SA / AA}
+- Restoration of these white magics: Stona, Silence, Confuse and Blind. (Aero spells will have to be learn again as they have a new ID).
 - Rework of SA Master Thief and Master Thief+. Its cost has also been reduced.
 - Adjustment to SA Initiative. Its cost has also been reduced.
 - Adjustment to SA High Jump and High Jump+. Its cost has also been reduced.
@@ -151,6 +158,7 @@ This feature is particularly useful when a monster is under this status, as noth
 - Corrected several formula damages, based on elemental bonuses, that were slightly wrong.
 - Zidane's Warm-up grants him PowerUp in addition to his PerfectDodge.
 - Corrected Larceny SA.
+- The accuracy of "Maelstrom" has been increased (30 instead of 10).
 - "Lucky Star" and "Lucky Star+" SA corrected.
 - Correction of the "Doom" spell.
 - The "Magic Hammer" spell now displays the amount of MP stolen on Kweena.
@@ -158,10 +166,21 @@ This feature is particularly useful when a monster is under this status, as noth
 - Corrected Angel's Snack's code, which did not take into account all status.
 - New correction to summon sequence files (forget to upload on previous version, woops!).
 - Fixed Beatrix's Cleave SFX, which aimed at invisible enemies.
+- Adjustment to the AP cost of certain AA and SA.
 
 {Items}
+- The sequence files have been cleaned up and a few changes have been made to the "Scepters" weapons, meaning that :
+○ Antlion's Cane, Gizamaluke's Cane and Black Waltz's Cane are now considered to be scepters, therefore losing their "Focus" bonus and being renamed.
+○ Sceptres become physical weapons again (and not magical). However, the second blow is still considered to be magical.
+○ Sceptres have a chance of triggering magic of different powers (weak, medium or strong).
+For example: The Antlion's Scepter has a chance of triggering Fire (2 chances out of 3) or Fira (1 chance out of 3).
+○ The weapon's second strike is no longer a "Counter" attack type, so it can be reflected by "Reflect" and provoke a counter from the monster.
+- 2 new items added: 1 helmet and 1 accessory.
 - Magic forks inflict HP damage (in addition to the MP damage that already exists) but the HP damage is much lower than a classic fork.
 - Magic forks inflict less MP damage.
+- New texture for the Claymore.
+- Annoyntment, Remedies and Remedies+ as well as the Esuna spell now take into account the "Old" status in the target window (based on RateTarget function).
+- Some descriptions have been corrected and updated.
 
 {Monsters + Bosses}
 - New version of the Guardian of the Wind, with new animations! (Not perfect, but at least he's got some ^^)
@@ -172,7 +191,8 @@ This feature is particularly useful when a monster is under this status, as noth
 - Corrected a softlock on Garland.
 - Softlock fixed on Ralvurahva.
 - Corrected two bugs on Ifa superboss AI.
-- Fixed Silver Dragon AI.
+- Fixed Silver Dragon's AI.
+- Fixed Friendly Ladybug's AI.
 - Correction of Lani's AI, following Runic's latest rework.
 - Corrected Fire Guardian AI for Kuja/Necron difficulties.
 - Corrected Soulcage AI, which could catch fire on neutral spells if the attacker had a Fire weapon type.
@@ -194,7 +214,8 @@ This feature is particularly useful when a monster is under this status, as noth
 
 {Miscellaneous}
 - Code cleanup in Memoria.Scripts.dll, including better management of status application.
-- Cleaned up dialog boxes generated by Memoria.Scripts.dll + translated into all languages (except some in JP).</PatchNotes>
+- Cleaned up dialog boxes generated by Memoria.Scripts.dll + translated into all languages (except some in JP).
+- A super-rare easter egg has been added.... ôo</PatchNotes>
 	<Category>Gameplay</Category>
 	<PreviewFileUrl>https://i.ibb.co/HC3GH4j/Logo-Trance-Seek.png</PreviewFileUrl>
 	<PreviewFile>Thumbnail/LogoTranceSeek.png</PreviewFile>

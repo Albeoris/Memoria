@@ -1982,30 +1982,6 @@ public partial class BattleHUD : UIScene
                     _defaultTargetDead = effect.info.DefaultOnDead;
                     _targetDead = effect.info.ForDead;
                 }
-                // TODO: This is not required anymore and should be removed
-                // Add an item effect to scrolls and setup their target type there
-                if (Configuration.Mod.TranceSeek && CharacterCommands.Commands[_currentCommandId].Type == CharacterCommandType.Throw)
-                {
-                    ItemAttack weapon = ff9item.GetItemWeapon(_itemIdList[_currentSubMenuIndex]);
-                    if (((weapon.Category & WeaponCategory.Throw) != 0) && (weapon.ModelId == 65535 || weapon.ModelId == 0))
-                    {
-                        switch (weapon.Offset2)
-                        {
-                            case 1:
-                                targetType = TargetType.SingleAlly;
-                                break;
-                            case 6:
-                                targetType = TargetType.All;
-                                break;
-                            case 7:
-                                targetType = TargetType.AllAlly;
-                                break;
-                            case 8:
-                                targetType = TargetType.AllEnemy;
-                                break;
-                        }
-                    }
-                }
                 SelectBestTarget(targetType, testCommand);
             }
             _isAllTarget = false;
