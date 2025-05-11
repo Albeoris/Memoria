@@ -151,6 +151,7 @@ This feature is particularly useful when a monster is under this status, as noth
 
 {Abilities SA / AA}
 - Restoration of these white magics: Stona, Silence, Confuse and Blind. (Aero spells will have to be learn again as they have a new ID).
+- 4 new black magics for Vivi: 1 of Poison, 2 of Gravity and one more. Some of these magics are not yet available in this version.
 - Rework of SA Master Thief and Master Thief+. Its cost has also been reduced.
 - Adjustment to SA Initiative. Its cost has also been reduced.
 - Adjustment to SA High Jump and High Jump+. Its cost has also been reduced.
@@ -183,6 +184,8 @@ For example: The Antlion's Scepter has a chance of triggering Fire (2 chances ou
 - Some descriptions have been corrected and updated.
 
 {Monsters + Bosses}
+- [WIP] New "type" of monsters: elites. There will now be "normal" monsters, "elite" monsters and "boss".
+Elite monsters are quite similar to normals, but will be more resistant to deadly status such as "Death", "Petrify" and "Stop".
 - New version of the Guardian of the Wind, with new animations! (Not perfect, but at least he's got some ^^)
 - Black Waltz 1 is less likely to use "Tinkerbell".
 - Slight correction to Black Waltz 2's "Stasis" spell, which was displaying “Miss!”.
