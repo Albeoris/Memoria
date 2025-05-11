@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 // NCalc source code embedded in Assembly-CSharp.dll for avoiding a DLL dependency
 // Original author of NCalc: sebastienros, https://archive.codeplex.com/?p=ncalc
@@ -591,6 +592,8 @@ namespace NCalc
         {
             expr.Parameters["CommandId"] = (Int32)command.Id;
             expr.Parameters["AbilityId"] = (Int32)command.AbilityId;
+            expr.Parameters["AbilityRawId"] = (Int32)command.RawIndex;
+            expr.Parameters["AbilityCastingName"] = (String)command.AbilityCastingName; // /!\ Language dependent, use of AbilityRawId instead is recommended
             expr.Parameters["ScriptId"] = command.ScriptId;
             expr.Parameters["Power"] = command.Power;
             expr.Parameters["AbilityStatus"] = (UInt64)command.AbilityStatus;
