@@ -102,7 +102,7 @@ public class VoicePlayer : SoundPlayer
         // Compile the list of candidate paths for the file name
         List<String> candidates = new List<String>();
         String lang = Localization.CurrentSymbol;
-        String pageIndex = dialog.SubPage.Count > 1 ? $"_{Math.Max(0, dialog.CurrentPage - 1)}" : "";
+        String pageIndex = dialog.SubPage.Count > 1 ? $"_P{Math.Max(0, dialog.CurrentPage - 1)}" : "";
 
         // Path for the hunt/hot and cold
         String specialAppend = GetSpecialAppend(FieldZoneId, messageNumber);
@@ -111,7 +111,7 @@ public class VoicePlayer : SoundPlayer
 
         // Path using the object id
         if (dialog.Po != null)
-            candidates.Add($"Voices/{lang}/{FieldZoneId}/va_{messageNumber}_{dialog.Po.uid}{pageIndex}");
+            candidates.Add($"Voices/{lang}/{FieldZoneId}/va_{messageNumber}_ID{dialog.Po.uid}{pageIndex}");
 
         // Path using the character name at the top of the box
         String[] msgStrings = dialog.ChoicePhrases;
@@ -155,9 +155,7 @@ public class VoicePlayer : SoundPlayer
         Boolean isMsgEmpty = msgString.Length == 0;
         if (!found)
         {
-            candidates.Reverse(); // Reverse for display
-            SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, text:{msgString}, path(s):'{String.Join("', '", candidates.ToArray())}' (not found)");
-            candidates.Reverse();
+            SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, text:{msgString}, path(s):'{String.Join("', '", candidates.ToArray().Reverse().ToArray())}' (not found)");
             isMsgEmpty = true;
         }
 
@@ -168,29 +166,29 @@ public class VoicePlayer : SoundPlayer
                 if (dialog.CurrentState != Dialog.State.CompleteAnimation || !dialog.IsChoiceReady)
                     return;
 
-                String vaOptionPathMain = candidates.Last() + "_" + optionIndex; // Shorter (eg. "va_{messageNumber}_{optionIndex}")
-                String vaOptionPathSub = candidates.First() + "_" + optionIndex; // Longer  (eg. "va_{messageNumber}_{dialog.Po.uid}_{optionIndex}")
-                Int32 selectedVisibleOption = dialog.ActiveIndexes.Count > 0 ? Math.Max(0, dialog.ActiveIndexes.FindIndex(index => index == optionIndex)) : optionIndex;
-                String optString = selectedVisibleOption + 1 < msgStrings.Length ? msgStrings[selectedVisibleOption + 1].Trim() : "[Invalid option index]";
+                Boolean found = false;
+                List<String> choiceCandidates = [];
+                foreach (String path in candidates)
+                {
+                    String vaOptionPathMain = path + "_" + optionIndex;
+                    choiceCandidates.Add(vaOptionPathMain);
+                    Int32 selectedVisibleOption = dialog.ActiveIndexes.Count > 0 ? Math.Max(0, dialog.ActiveIndexes.FindIndex(index => index == optionIndex)) : optionIndex;
+                    String optString = selectedVisibleOption + 1 < msgStrings.Length ? msgStrings[selectedVisibleOption + 1].Trim() : "[Invalid option index]";
 
-                if (AssetManager.HasAssetOnDisc($"Sounds/{vaOptionPathSub}.akb", true, true) || AssetManager.HasAssetOnDisc($"Sounds/{vaOptionPathSub}.ogg", true, false))
-                {
-                    FieldZoneReleaseVoice(dialog, true);
-                    SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, opt:{optionIndex}, text:{optString} path:{vaOptionPathSub}");
-                    soundOfDialog[dialog] = CreateLoadThenPlayVoice(vaOptionPathSub.GetHashCode(), vaOptionPathSub, () => AfterSoundFinished_Default(dialog));
+                    if (AssetManager.HasAssetOnDisc($"Sounds/{vaOptionPathMain}.akb", true, true) || AssetManager.HasAssetOnDisc($"Sounds/{vaOptionPathMain}.ogg", true, false))
+                    {
+                        FieldZoneReleaseVoice(dialog, true);
+                        SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, opt:{optionIndex}, text:{optString} path:{vaOptionPathMain}");
+                        soundOfDialog[dialog] = CreateLoadThenPlayVoice(vaOptionPathMain.GetHashCode(), vaOptionPathMain, () => AfterSoundFinished_Default(dialog));
+
+                        found = true;
+                        break;
+                    }
                 }
-                else if (AssetManager.HasAssetOnDisc($"Sounds/{vaOptionPathMain}.akb", true, true) || AssetManager.HasAssetOnDisc($"Sounds/{vaOptionPathMain}.ogg", true, false))
+
+                if (!found)
                 {
-                    FieldZoneReleaseVoice(dialog, true);
-                    SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, opt:{optionIndex}, text:{optString} path:{vaOptionPathMain}");
-                    soundOfDialog[dialog] = CreateLoadThenPlayVoice(vaOptionPathMain.GetHashCode(), vaOptionPathMain, () => AfterSoundFinished_Default(dialog));
-                }
-                else
-                {
-                    if (candidates.Count > 1)
-                        SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, opt:{optionIndex}, text:{optString} paths:'{vaOptionPathMain}', '{vaOptionPathSub}' (not found)");
-                    else
-                        SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, opt:{optionIndex}, text:{optString} path:'{vaOptionPathMain}' (not found)");
+                    SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, text:{msgString}, path(s):'{String.Join("', '", choiceCandidates.ToArray().Reverse().ToArray())}' (not found)");
                 }
             };
 

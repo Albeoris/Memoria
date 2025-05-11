@@ -217,7 +217,7 @@ public static class NGUIText
         DialogImage dialogImage = new DialogImage();
         dialogImage.Size = FF9UIDataTool.GetIconSize(iconId);
         if (iconId == 180) // text_lv_us_uk_jp_gr_it
-            dialogImage.Offset = new Vector3(0f, 5.5f); // was 15.2f
+            dialogImage.Offset = new Vector3(0f, 15.2f);
         else if (iconId >= 27 && iconId <= 29) // help_mog_dialog
             dialogImage.Offset = new Vector3(0f, Math.Max(0f, dialogImage.Size.y * 0.7f));
         else
@@ -314,10 +314,11 @@ public static class NGUIText
         NGUIText.useSymbols = NGUIText.bitmapFont != null && NGUIText.bitmapFont.hasSymbols && NGUIText.encoding && NGUIText.symbolStyle != NGUIText.SymbolStyle.None;
         if (requestBaseLine && NGUIText.dynamicFont != null)
         {
-            NGUIText.dynamicFont.RequestCharactersInTexture(NGUIText.CHARACTER_CONSTANT_REQUESTS, NGUIText.finalSize, NGUIText.fontStyle);
-            if (!NGUIText.dynamicFont.GetCharacterInfo(')', out NGUIText.mTempChar, NGUIText.finalSize, NGUIText.fontStyle) || NGUIText.mTempChar.maxY == 0f)
+            Font sizedFont = NGUIText.dynamicFont;
+            sizedFont.RequestCharactersInTexture(NGUIText.CHARACTER_CONSTANT_REQUESTS, NGUIText.finalSize, NGUIText.fontStyle);
+            if (!sizedFont.GetCharacterInfo(')', out NGUIText.mTempChar, NGUIText.finalSize, NGUIText.fontStyle) || NGUIText.mTempChar.maxY == 0f)
             {
-                if (!NGUIText.dynamicFont.GetCharacterInfo('A', out NGUIText.mTempChar, NGUIText.finalSize, NGUIText.fontStyle))
+                if (!sizedFont.GetCharacterInfo('A', out NGUIText.mTempChar, NGUIText.finalSize, NGUIText.fontStyle))
                 {
                     NGUIText.baseline = 0f;
                     return;

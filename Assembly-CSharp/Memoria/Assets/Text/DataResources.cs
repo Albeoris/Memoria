@@ -42,8 +42,9 @@ namespace Memoria.Assets
             public const String ShopItems = "ShopItems.csv";
             public const String InitialItemsFile = "InitialItems.csv";
             public const String MixItemsFile = "MixItems.csv";
-            public const String ItemEquipPatchFile = "ItemEquipPatch.txt";
-            public const String ShopPatchFile = "ShopPatch.txt";
+            public const String ItemEquipPatchFile = "ItemEquipPatch.txt"; // Define equipability "per character" instead of "per item"
+            public const String ShopPatchFile = "ItemShopPatch.txt"; // Define merchant supplies "per item" instead of "per shop"
+            public const String ItemAbilityPatchFile = "ItemAbilityPatch.txt"; // Define ability teaching "per ability" instead of "per item"
 
             public static String ModDirectory(String modFolder)
             {

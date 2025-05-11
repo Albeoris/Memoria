@@ -526,7 +526,7 @@ namespace Memoria.Assets
                     else if (Input.GetKeyDown(KeyCode.DownArrow))
                         ChangeAnimation(currentAnimIndex - (ctrl ? 5 : 1));
                 }
-                else if (Input.GetKeyDown(KeyCode.L))
+                if (Input.GetKeyDown(KeyCode.L))
                 {
                     Animation anim = currentModel.GetComponent<Animation>();
                     if (anim != null && !String.IsNullOrEmpty(savedAnimationPath))

@@ -51,7 +51,7 @@ namespace Memoria.DefaultScripts
             {
                 UInt32 tryPetrify = btl_stat.AlterStatus(Target, BattleStatusId.Petrify, Inflicter);
                 if (tryPetrify == btl_stat.ALTER_SUCCESS || tryPetrify == btl_stat.ALTER_SUCCESS_NO_SET)
-                    BattleVoice.TriggerOnStatusChange(Target, "Used", BattleStatusId.GradualPetrify);
+                    BattleVoice.TriggerOnStatusChange(Target, BattleVoice.BattleMoment.Used, BattleStatusId.GradualPetrify);
                 else
                     btl2d.Btl2dReqInstant(Target, Param.FIG_INFO_MISS, 0, 0);
             }

@@ -24,9 +24,7 @@ namespace Memoria.Data
         public Int32 SHPAttach = 0;
         public Vector3 SHPExtraPos = default;
 
-        public Int32 ColorKind = -1;
-        public Int32 ColorPriority = 0;
-        public Int32[] ColorBase = [0, 0, 0];
+        public EFFECT_GLOW StatusGlowEffect = new EFFECT_GLOW();
 
         public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
@@ -63,11 +61,12 @@ namespace Memoria.Data
                     SHPExtraPos = new Vector3(arrayf[0], 0f, arrayf[1]);
                 else if (arrayf.Length >= 3)
                     SHPExtraPos = new Vector3(arrayf[0], arrayf[1], arrayf[2]);
-                ColorKind = CsvParser.Int32(raw[index++]);
-                ColorPriority = CsvParser.Int32(raw[index++]);
-                ColorBase = CsvParser.Int32Array(raw[index++]);
-                if (ColorBase.Length < 3)
-                    Array.Resize(ref ColorBase, 3);
+
+                StatusGlowEffect.ColorKind = CsvParser.Int32(raw[index++]);
+                StatusGlowEffect.ColorPriority = CsvParser.Int32(raw[index++]);
+                StatusGlowEffect.ColorBase = CsvParser.Int32Array(raw[index++]);
+                if (StatusGlowEffect.ColorBase.Length < 3)
+                    Array.Resize(ref StatusGlowEffect.ColorBase, 3);
             }
             else
             {
@@ -93,20 +92,20 @@ namespace Memoria.Data
                         SHPExtraPos = new Vector3(92f, 0f, 0f);
                         break;
                     case BattleStatusId.Zombie:
-                        ColorKind = 0;
-                        ColorPriority = 100;
-                        ColorBase = [-48, -72, -88];
+                        StatusGlowEffect.ColorKind = 0;
+                        StatusGlowEffect.ColorPriority = 100;
+                        StatusGlowEffect.ColorBase = [-48, -72, -88];
                         break;
                     case BattleStatusId.Berserk:
                         SPSEffect = 7;
                         SPSAttach = 4;
-                        ColorKind = 0;
-                        ColorPriority = 95;
-                        ColorBase = [16, -40, -40];
+                        StatusGlowEffect.ColorKind = 0;
+                        StatusGlowEffect.ColorPriority = 95;
+                        StatusGlowEffect.ColorBase = [16, -40, -40];
                         break;
                     case BattleStatusId.Trance:
-                        ColorKind = 2;
-                        ColorPriority = 10;
+                        StatusGlowEffect.ColorKind = 2;
+                        StatusGlowEffect.ColorPriority = 10;
                         break;
                     case BattleStatusId.Poison:
                         SPSEffect = 0;
@@ -127,28 +126,28 @@ namespace Memoria.Data
                         SHPExtraPos = new Vector3(212f, 0f, 0f);
                         break;
                     case BattleStatusId.Shell:
-                        ColorKind = 1;
-                        ColorPriority = 50;
-                        ColorBase = [-64, 24, 72];
+                        StatusGlowEffect.ColorKind = 1;
+                        StatusGlowEffect.ColorPriority = 50;
+                        StatusGlowEffect.ColorBase = [-64, 24, 72];
                         break;
                     case BattleStatusId.Protect:
-                        ColorKind = 1;
-                        ColorPriority = 50;
-                        ColorBase = [40, 40, -80];
+                        StatusGlowEffect.ColorKind = 1;
+                        StatusGlowEffect.ColorPriority = 50;
+                        StatusGlowEffect.ColorBase = [40, 40, -80];
                         break;
                     case BattleStatusId.Heat:
                         SPSEffect = 3;
                         SPSAttach = 1;
-                        ColorKind = 0;
-                        ColorPriority = 90;
-                        ColorBase = [80, -16, -72];
+                        StatusGlowEffect.ColorKind = 0;
+                        StatusGlowEffect.ColorPriority = 90;
+                        StatusGlowEffect.ColorBase = [80, -16, -72];
                         break;
                     case BattleStatusId.Freeze:
                         SPSEffect = 4;
                         SPSAttach = 1;
-                        ColorKind = 0;
-                        ColorPriority = 85;
-                        ColorBase = [-48, 0, 96];
+                        StatusGlowEffect.ColorKind = 0;
+                        StatusGlowEffect.ColorPriority = 85;
+                        StatusGlowEffect.ColorBase = [-48, 0, 96];
                         break;
                     case BattleStatusId.Reflect:
                         SPSEffect = 5;
@@ -178,9 +177,9 @@ namespace Memoria.Data
                 sw.Int32(SHPEffect);
                 sw.Int32(SHPAttach);
                 sw.SingleArray([SHPExtraPos.x, SHPExtraPos.y, SHPExtraPos.z]);
-                sw.Int32(ColorKind);
-                sw.Int32(ColorPriority);
-                sw.Int32Array(ColorBase);
+                sw.Int32(StatusGlowEffect.ColorKind);
+                sw.Int32(StatusGlowEffect.ColorPriority);
+                sw.Int32Array(StatusGlowEffect.ColorBase);
             }
         }
     }
