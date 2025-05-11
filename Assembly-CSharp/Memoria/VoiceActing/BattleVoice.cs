@@ -1,16 +1,38 @@
-﻿using Memoria.Assets;
+﻿using FF9;
+using Memoria.Assets;
 using Memoria.Prime;
+using Memoria.Scripts;
 using NCalc;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace Memoria.Data
 {
     public static class BattleVoice
     {
         public const String BattleVoicePath = "BattleVoiceEffects.txt";
+
+        //--- Events for scripting
+        public static readonly IOverloadVoiceActingBattleScript BattleScript = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadVoiceActingBattleScript)) as IOverloadVoiceActingBattleScript;
+
+        public delegate Boolean BattleInOutDelegate(BattleMoment when);
+        public delegate Boolean BattleActDelegate(BattleUnit unit, BattleCalculator calc, BattleMoment when);
+        public delegate Boolean StatusChangeDelegate(BattleUnit unit, BattleStatusId status, BattleMoment when);
+        public delegate void BattleDialogDelegate(Int32 voiceId, String text);
+
+        public static event BattleInOutDelegate OnBattleInOut;
+        public static event BattleActDelegate OnAct;
+        public static event BattleActDelegate OnHit;
+        public static event StatusChangeDelegate OnStatusChange;
+        public static event BattleDialogDelegate OnDialogAudioStart;
+        public static event BattleDialogDelegate OnDialogAudioEnd;
+
+        public static void InvokeOnBattleDialogAudioStart(Int32 voiceId, String text) => OnDialogAudioStart.Invoke(voiceId, text);
+        public static void InvokeOnBattleDialogAudioEnd(Int32 voiceId, String text) => OnDialogAudioEnd.Invoke(voiceId, text);
+        //---
 
         static BattleVoice()
         {
@@ -29,6 +51,15 @@ namespace Memoria.Data
             watcher.EnableRaisingEvents = true;
 
             LoadEffects();
+            try
+            {
+                BattleScript?.Initialize();
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"[VoiceActing] Error while running BattleScript.Initialize");
+                Log.Error(ex);
+            }
         }
 
         public static void InitBattle()
@@ -49,11 +80,42 @@ namespace Memoria.Data
             Added, Removed, Used
         }
 
-        private class BattleSpeaker
+        public class BattleSpeaker
         {
             public CharacterId playerId = CharacterId.NONE;
             public Int32 enemyModelId = -1;
             public Int32 enemyBattleId = -1;
+
+            public BattleSpeaker() { }
+
+            //--- Helping methods for scripting
+            public BattleSpeaker(BattleUnit unit)
+            {
+                if (unit.IsPlayer)
+                {
+                    playerId = unit.PlayerIndex;
+                }
+                else
+                {
+                    enemyModelId = unit.Data.dms_geo_id;
+                    enemyBattleId = FF9StateSystem.Battle.battleMapIndex;
+                }
+            }
+
+            public Boolean CanSpeak(Int32 voicePriority = 0, BattleStatusId statusException = BattleStatusId.None)
+            {
+                FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
+                for (Int32 i = 0; i < 8; i++)
+                    if (CheckIsCharacter(ff9Battle.btl_data[i]))
+                        return CheckCanSpeak(ff9Battle.btl_data[i], voicePriority, statusException);
+                return false;
+            }
+
+            public Boolean Equals(BattleSpeaker speaker)
+            {
+                return speaker.playerId == playerId && speaker.enemyModelId == enemyModelId && speaker.enemyBattleId == enemyBattleId;
+            }
+            //---
 
             public Boolean CheckIsCharacter(BTL_DATA btl)
             {
@@ -64,12 +126,12 @@ namespace Memoria.Data
                 return (enemyModelId < 0 || enemyModelId == btl.dms_geo_id) && (enemyBattleId < 0 || enemyBattleId == FF9StateSystem.Battle.battleMapIndex);
             }
 
-            public BTL_DATA FindBtlUnlimited()
+            public BattleUnit FindBattleUnit()
             {
                 FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
                 for (Int32 i = 0; i < 8; i++)
                     if (CheckIsCharacter(ff9Battle.btl_data[i]))
-                        return ff9Battle.btl_data[i];
+                        return new BattleUnit(ff9Battle.btl_data[i]);
                 return null;
             }
 
@@ -120,7 +182,7 @@ namespace Memoria.Data
             {
                 if (Speakers.Count == 0)
                     return false;
-                return Speakers[0].CheckIsCharacter(btl) && BattleSpeaker.CheckCanSpeak(btl, Priority, statusException);
+                return Speakers[0].CheckIsCharacter(btl) && BattleSpeaker.CheckCanSpeak(new BattleUnit(btl), Priority, statusException);
             }
         }
 
@@ -155,7 +217,7 @@ namespace Memoria.Data
 
         private static Boolean isDirty = true;
 
-        private static CharacterId VictoryFocusIndex => SFX.lastPlayedExeId != 0 && SFX.lastPlayedExeId < 16 ? btl_scrp.FindBattleUnit(SFX.lastPlayedExeId)?.PlayerIndex ?? CharacterId.NONE : CharacterId.NONE;
+        public static CharacterId VictoryFocusIndex => SFX.lastPlayedExeId != 0 && SFX.lastPlayedExeId < 16 ? btl_scrp.FindBattleUnit(SFX.lastPlayedExeId)?.PlayerIndex ?? CharacterId.NONE : CharacterId.NONE;
 
         private static void LoadEffects()
         {
@@ -176,12 +238,71 @@ namespace Memoria.Data
             }
         }
 
+        //--- Helping methods for scripting
+        public static void PlayVoice(BattleUnit speaker, String audioPath, Int32 priority = 0, Action onFinished = null)
+        {
+            PlayVoice([speaker.Data], audioPath, priority, onFinished: onFinished);
+        }
+
+        public static void StopVoice(BattleUnit unit)
+        {
+            KeyValuePair<Int32, SoundProfile> playingVoice;
+            if (_currentVoicePlay.TryGetValue(unit.Data, out playingVoice))
+            {
+                SoundLib.VoicePlayer.StopSound(playingVoice.Value);
+                _currentVoicePlay.Remove(unit.Data);
+            }
+        }
+
+        public static void StopAllVoices()
+        {
+            foreach (KeyValuePair<Int32, SoundProfile> playingVoice in _currentVoicePlay.Values)
+                SoundLib.VoicePlayer.StopSound(playingVoice.Value);
+            _currentVoicePlay.Clear();
+        }
+
+        public static Int32 GetPlayingVoicesCount()
+        {
+            return _currentVoicePlay.Count;
+        }
+        //---
+
+        private static void PlayVoice(List<BTL_DATA> speakerBtlList, String audioPath, Int32 priority = 0, String type = "Script", Action onFinished = null)
+        {
+            new Thread(() =>
+            {
+                String soundPath = $"Voices/{Localization.CurrentSymbol}/{audioPath}";
+                Boolean soundExists = AssetManager.HasAssetOnDisc("Sounds/" + soundPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + soundPath + ".ogg", true, false);
+                SoundLib.VALog($"battlevoice:{type} character:{(speakerBtlList.Count > 0 ? new BattleUnit(speakerBtlList[0]).Name : "no speaker")} path:{soundPath}" + (soundExists ? "" : " (not found)"));
+                if (!soundExists)
+                {
+                    onFinished?.Invoke();
+                    return;
+                }
+
+                SoundProfile audioProfile = VoicePlayer.CreateLoadThenPlayVoice(soundPath.GetHashCode(), soundPath,
+                () =>
+                {
+                    foreach (BTL_DATA btl in speakerBtlList)
+                        _currentVoicePlay.Remove(btl);
+                    onFinished?.Invoke();
+                });
+                KeyValuePair<Int32, SoundProfile> playingVoice;
+                foreach (BTL_DATA btl in speakerBtlList)
+                {
+                    if (_currentVoicePlay.TryGetValue(btl, out playingVoice))
+                        SoundLib.VoicePlayer.StopSound(playingVoice.Value);
+                    _currentVoicePlay[btl] = new KeyValuePair<Int32, SoundProfile>(priority, audioProfile);
+                }
+            }).Start();
+        }
+
         private static void PlayVoiceEffect(GenericVoiceEffect voiceEffect)
         {
             List<BTL_DATA> speakerBtlList = new List<BTL_DATA>();
             foreach (BattleSpeaker speaker in voiceEffect.Speakers)
             {
-                BTL_DATA btl = speaker.FindBtlUnlimited();
+                BTL_DATA btl = speaker.FindBattleUnit();
                 if (btl != null)
                     speakerBtlList.Add(btl);
             }
@@ -203,30 +324,23 @@ namespace Memoria.Data
             }
             voiceEffect.lastPlayed = audioIndex;
 
-            String soundPath = $"Voices/{Localization.CurrentSymbol}/{voiceEffect.AudioPaths[audioIndex]}";
-            Boolean soundExists = AssetManager.HasAssetOnDisc("Sounds/" + soundPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + soundPath + ".ogg", true, false);
-            SoundLib.VALog($"battlevoice:{voiceEffect.GetType()} character:{(speakerBtlList.Count > 0 ? new BattleUnit(speakerBtlList[0]).Name : "no speaker")} path:{soundPath}" + (soundExists ? "" : " (not found)"));
-            if (!soundExists) return;
-
-            SoundProfile audioProfile = VoicePlayer.CreateLoadThenPlayVoice(soundPath.GetHashCode(), soundPath,
-            () =>
-            {
-                foreach (BTL_DATA btl in speakerBtlList)
-                    _currentVoicePlay.Remove(btl);
-            });
-            KeyValuePair<Int32, SoundProfile> playingVoice;
-            foreach (BTL_DATA btl in speakerBtlList)
-            {
-                if (_currentVoicePlay.TryGetValue(btl, out playingVoice))
-                    SoundLib.VoicePlayer.StopSound(playingVoice.Value);
-                _currentVoicePlay[btl] = new KeyValuePair<Int32, SoundProfile>(voiceEffect.Priority, audioProfile);
-            }
+            PlayVoice(speakerBtlList, voiceEffect.AudioPaths[audioIndex], voiceEffect.Priority, voiceEffect.GetType().ToString());
         }
 
         public static void TriggerOnBattleInOut(BattleMoment when)
         {
             if (!Configuration.VoiceActing.Enabled)
                 return;
+            try
+            {
+                if (OnBattleInOut?.Invoke(when) ?? false)
+                    return;
+            }
+            catch (Exception e)
+            {
+                Log.Error($"[VoiceActing] Error while running script event OnBattleInOut");
+                Log.Error(e);
+            }
 
             if (isDirty) LoadEffects();
 
@@ -240,7 +354,7 @@ namespace Memoria.Data
                 if (!String.IsNullOrEmpty(effect.Condition))
                 {
                     Expression c = new Expression(effect.Condition);
-                    BattleUnit unit = new BattleUnit(effect.Speakers[0].FindBtlUnlimited());
+                    BattleUnit unit = effect.Speakers[0].FindBattleUnit();
                     NCalcUtility.InitializeExpressionUnit(ref c, unit);
                     c.Parameters["VictoryFocusIndex"] = (UInt32)VictoryFocusIndex;
                     c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
@@ -275,6 +389,28 @@ namespace Memoria.Data
             if (!Configuration.VoiceActing.Enabled)
                 return;
 
+            if (BattleScript != null)
+            {
+                BattleCalculator v = calc;
+                if (v is null)
+                {
+                    BTL_DATA target = null;
+                    BattleCommand command = new BattleCommand(cmdUsed);
+                    if (Comn.countBits(command.Data.tar_id) == 1) target = btl_scrp.FindBattleUnit(command.Data.tar_id) ?? null;
+                    if (target == null) target = actingChar; // Target cannot be null, we use the actingChar when no target is valid (i.e multi-target)
+                    v = new BattleCalculator(actingChar, target, command);
+                }
+                try
+                {
+                    if (OnAct?.Invoke(new BattleUnit(actingChar), v, when) ?? false)
+                        return;
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"[VoiceActing] Error while running script event OnBattleAct");
+                    Log.Error(e);
+                }
+            }
             if (isDirty) LoadEffects();
 
             List<BattleAct> retainedEffects = new List<BattleAct>();
@@ -333,6 +469,17 @@ namespace Memoria.Data
             if (!Configuration.VoiceActing.Enabled)
                 return;
 
+            try
+            {
+                if (OnHit?.Invoke(new BattleUnit(hittedChar), calc, when) ?? false)
+                    return;
+            }
+            catch (Exception e)
+            {
+                Log.Error($"[VoiceActing] Error while running script event OnHit");
+                Log.Error(e);
+            }
+
             if (isDirty) LoadEffects();
 
             List<BattleHitted> retainedEffects = new List<BattleHitted>();
@@ -379,6 +526,17 @@ namespace Memoria.Data
         {
             if (!Configuration.VoiceActing.Enabled)
                 return;
+
+            try
+            {
+                if (OnStatusChange?.Invoke(new BattleUnit(statusedChar), whichStatus, when) ?? false)
+                    return;
+            }
+            catch (Exception e)
+            {
+                Log.Error($"[VoiceActing] Error while running script event OnStatusChange");
+                Log.Error(e);
+            }
 
             if (isDirty) LoadEffects();
 
@@ -578,22 +736,22 @@ namespace Memoria.Data
                     else if (lines[i].StartsWith("VoicePath:"))
                     {
                         if (paths != null)
-                {
+                        {
                             Log.Warning($"[{nameof(BattleVoice)}] VoicePath: is defined more than once at line {i + 1}");
                             continue;
                         }
                         String pathsValue = lines[i].Substring("VoicePath:".Length);
-                    if (pathsValue.IndexOf(',') > 0)
-                    {
-                        Int32 p = pathsValue.LastIndexOf('/');
-                        String folder = (p < 0) ? "" : pathsValue.Substring(0, p + 1);
-                        String[] files = (p < 0) ? pathsValue.Split(',') : pathsValue.Substring(p + 1).Split(',');
-                        paths = new String[files.Length];
-                        for (Int32 j = 0; j < files.Length; j++)
-                            paths[j] = folder + files[j].Trim();
-                    }
-                    else if (!String.IsNullOrEmpty(pathsValue))
-                    {
+                        if (pathsValue.IndexOf(',') > 0)
+                        {
+                            Int32 p = pathsValue.LastIndexOf('/');
+                            String folder = (p < 0) ? "" : pathsValue.Substring(0, p + 1);
+                            String[] files = (p < 0) ? pathsValue.Split(',') : pathsValue.Substring(p + 1).Split(',');
+                            paths = new String[files.Length];
+                            for (Int32 j = 0; j < files.Length; j++)
+                                paths[j] = folder + files[j].Trim();
+                        }
+                        else if (!String.IsNullOrEmpty(pathsValue))
+                        {
                             paths = [pathsValue];
                         }
                     }
@@ -606,8 +764,8 @@ namespace Memoria.Data
                             if (condition != null)
                             {
                                 Log.Warning($"[{nameof(BattleVoice)}] Condition is defined more than once at line {i + 1}");
-                            continue;
-                }
+                                continue;
+                            }
                             condition = conditionMatch.Groups[1].Value.Trim();
                             conditionLine = i + 1;
                         }
@@ -625,10 +783,10 @@ namespace Memoria.Data
                 if (effect == ">BattleInOut")
                 {
                     if (moment != BattleMoment.Unknown && (moment < BattleMoment.BattleStart || moment > BattleMoment.EnemyEscape))
-                        {
+                    {
                         Log.Warning($"[{nameof(BattleVoice)}] Invalid battle moment 'When{moment}' for {effect} at line {effectLine + 1}");
-                            continue;
-                        }
+                        continue;
+                    }
 
                     BattleInOut newEffect = new BattleInOut();
                     newEffect.ConditionLine = conditionLine;
@@ -677,10 +835,10 @@ namespace Memoria.Data
                 else if (String.Compare(effect, ">StatusChange") == 0)
                 {
                     if (status == null)
-                        {
+                    {
                         Log.Warning($"[{nameof(BattleVoice)}] Expected a status for the effect {effect} at line {effectLine + 1}");
-                            continue;
-                        }
+                        continue;
+                    }
                     if (moment != BattleMoment.Unknown && (moment < BattleMoment.Added || moment > BattleMoment.Used))
                     {
                         Log.Warning($"[{nameof(BattleVoice)}] Invalid battle moment 'When{moment}' for {effect} at line {effectLine + 1}");
