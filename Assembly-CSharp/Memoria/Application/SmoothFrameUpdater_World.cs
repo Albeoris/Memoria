@@ -1,5 +1,4 @@
-﻿using Memoria.Prime;
-using System;
+﻿using System;
 using UnityEngine;
 
 namespace Memoria
@@ -159,11 +158,14 @@ namespace Memoria
                 }
                 //if (actor.name == "obj12_WM") Log.Message($"[DEBUG] {Time.frameCount} {actor.name} framerate {animState?.clip?.frameRate} actualName {actor._smoothUpdateAnimNameActual} speed {actor._smoothUpdateAnimSpeed} {animState.enabled} animTime {animState.time} animLength {animState.length} t {smoothFactor} prev {actor._smoothUpdateAnimTimePrevious} actual {actor._smoothUpdateAnimTimePrevious + actor._smoothUpdateAnimSpeed}");
             }
-            foreach (WMShadow shadow in WMWorld.Instance.Shadows)
+            if (WMWorld.Instance.Shadows != null)
             {
-                if (shadow == null || !shadow._smoothUpdateRegistered)
-                    continue;
-                shadow.transform.position = Vector3.Lerp(shadow._smoothUpdatePosPrevious, shadow._smoothUpdatePosActual, smoothFactor);
+                foreach (WMShadow shadow in WMWorld.Instance.Shadows)
+                {
+                    if (shadow == null || !shadow._smoothUpdateRegistered)
+                        continue;
+                    shadow.transform.position = Vector3.Lerp(shadow._smoothUpdatePosPrevious, shadow._smoothUpdatePosActual, smoothFactor);
+                }
             }
             if (_cameraRegistered && ff9.world.MainCamera != null)
             {

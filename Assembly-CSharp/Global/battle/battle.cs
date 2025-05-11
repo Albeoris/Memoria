@@ -155,12 +155,12 @@ public static class battle
                         if (ff9.btl_result == FF9StateGlobal.BTL_RESULT_DEFEAT || ff9.btl_result == FF9StateGlobal.BTL_RESULT_GAMEOVER)
                         {
                             if (ff9Battle.btl_scene.Info.NoGameOver)
-                                BattleVoice.TriggerOnBattleInOut("Defeated");
+                                BattleVoice.TriggerOnBattleInOut(BattleVoice.BattleMoment.Defeated);
                             else
-                                BattleVoice.TriggerOnBattleInOut("GameOver");
+                                BattleVoice.TriggerOnBattleInOut(BattleVoice.BattleMoment.GameOver);
                         }
                         if ((!ff9Battle.btl_scene.Info.WinPose && ff9.btl_result == FF9StateGlobal.BTL_RESULT_VICTORY) || ff9.btl_result == FF9StateGlobal.BTL_RESULT_VICTORY_NO_POSE)
-                            BattleVoice.TriggerOnBattleInOut("Victory");
+                            BattleVoice.TriggerOnBattleInOut(BattleVoice.BattleMoment.Victory);
                         if (ff9.btl_result != FF9StateGlobal.BTL_RESULT_INTERRUPTION)
                             SceneDirector.FF9Wipe_FadeOutEx(32);
                         ff9Battle.btl_seq = FF9StateBattleSystem.SEQ_DEFEATCLOSE_WAIT;
@@ -199,7 +199,7 @@ public static class battle
                 ff9Battle.btl_phase = FF9StateBattleSystem.PHASE_CLOSE;
                 ff9Battle.btl_seq = FF9StateBattleSystem.SEQ_DEFEATCLOSE_FADEOUT;
                 if (ff9.btl_result == FF9StateGlobal.BTL_RESULT_ENEMY_FLEE) // Enemy flee, such as (Magic) Vice or friendly monsters when attacked
-                    BattleVoice.TriggerOnBattleInOut("EnemyEscape");
+                    BattleVoice.TriggerOnBattleInOut(BattleVoice.BattleMoment.EnemyEscape);
             }
         }
         ++ff9Battle.btl_cnt;
@@ -348,7 +348,7 @@ public static class battle
                                 btlsnd.ff9btlsnd_sndeffect_play(2907, 0, SByte.MaxValue, 128);
                                 btlsnd.ff9btlsnd_sndeffect_play(2908, 0, SByte.MaxValue, 128);
                                 btlsys.btl_escape_fade -= 2;
-                                BattleVoice.TriggerOnBattleInOut("Flee");
+                                BattleVoice.TriggerOnBattleInOut(BattleVoice.BattleMoment.Flee);
                             }
                         }
                         break;
@@ -376,7 +376,7 @@ public static class battle
                 {
                     if (!btl_util.ManageBattleSong(sys, 30, 5))
                         break;
-                    BattleVoice.TriggerOnBattleInOut("VictoryPose");
+                    BattleVoice.TriggerOnBattleInOut(BattleVoice.BattleMoment.VictoryPose);
                     btlsys.btl_phase = FF9StateBattleSystem.PHASE_VICTORY;
                     for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
                     {
@@ -553,7 +553,7 @@ public static class battle
                 return;
             }
             btlsys.btl_load_status |= ff9btl.LOAD_CHR;
-            BattleVoice.TriggerOnBattleInOut("BattleStart");
+            BattleVoice.TriggerOnBattleInOut(BattleVoice.BattleMoment.BattleStart);
         }
     }
 

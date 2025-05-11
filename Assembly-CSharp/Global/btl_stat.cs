@@ -124,7 +124,7 @@ public static class btl_stat
             SetOprStatusCount(target, statusId);
         if (btl.bi.player != 0)
             BattleAchievement.UpdateAbnormalStatus(status);
-        BattleVoice.TriggerOnStatusChange(btl, "Added", statusId);
+        BattleVoice.TriggerOnStatusChange(btl, BattleVoice.BattleMoment.Added, statusId);
         return result;
     }
 
@@ -155,7 +155,7 @@ public static class btl_stat
             SetStatusClut(btl, CheckStatus(btl, BattleStatusConst.ChgPolyClut));
         if (statusData.SPSEffect >= 0 || statusData.SHPEffect >= 0)
             HonoluluBattleMain.battleSPS.RemoveBtlSPSObj(unit, statusId);
-        BattleVoice.TriggerOnStatusChange(btl, "Removed", statusId);
+        BattleVoice.TriggerOnStatusChange(btl, BattleVoice.BattleMoment.Removed, statusId);
         if (stat.permanent_on_hold != 0)
             MakeStatusesPermanent(unit, stat.permanent_on_hold, true);
         return 2;
