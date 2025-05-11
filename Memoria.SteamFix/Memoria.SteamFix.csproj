@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Memoria.SteamFix</RootNamespace>
     <AssemblyName>Memoria.SteamFix</AssemblyName>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net481</TargetFramework>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>

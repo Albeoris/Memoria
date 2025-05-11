@@ -1,4 +1,44 @@
-﻿#Version 2024.12.04
+﻿#Version 2025.05.11
+
+Dual language, Model importer, text modding...
+
+#Features
+
+    FBX model importer: custom 3D models can now be provided by mods, either replacing existing models or for another usage
+    Cheat option "Get all items" that gives 99 of each item, accessible through the cheat "Max gil" in-game
+    Dual-language option: switch between two languages at any time when playing
+    Smoother text appearance of texts and dialogs
+
+#Launcher
+
+    Add Traditional Chinese (繁體中文) in the Launcher's languages (thanks @chuck15kimo)
+    Check for update when the launcher opens rather than when clicking play
+    Fix priorities (mod order) of non-active mods not saved
+    Sub-mods can now apply a launcher theme
+
+#Backend
+
+    Flexible and dynamic text modding: makes it easier to have mods changing global aspects of the texts
+    The stat bonuses given by custom ability features are now be previewed in the "Equip" menu
+    Remove the limit on the number of Magic Stones, AP and item icons
+    Patch shops in a way that preserves mod compatibilities
+    Many improvements of the Model Viewer
+    More NCalc functions, more text tags
+    Improve support for translation mods
+    Various voice acting adjusments
+
+#Bugfixes
+
+    Restore a small moogle animation when reading mognet letters: there is "gif" that was dummied (even in the PSX version)
+    Fix a bug with Lani's weapon disappearing in trance (and other similar situations of a weapon disappearing in trance)
+    Remove an irritating 1px line surrounding the screen in some situations (thanks andy013)
+    All non-main characters are healed by World Map tents
+    Fix the controls during the Blank swordfight mini-game
+
+
+
+
+#Version 2024.12.04
 
 Key bindings, auto resolution, better mod options...
 
