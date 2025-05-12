@@ -2,14 +2,11 @@
 using Microsoft.Build.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
-using System.Threading;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
@@ -152,10 +149,16 @@ namespace Memoria.MSBuild
 
         private void PrepairPackFile(FileInfo file, String targetRelativePath, GZipStream output, BinaryWriter bw, Dictionary<String, UInt16> pathMap)
         {
-            if (file.Extension.Equals(".exe", StringComparison.OrdinalIgnoreCase) || file.Extension.Equals(".dll", StringComparison.OrdinalIgnoreCase))
-            {
+            if (
+                (
+                    file.Extension.Equals(".exe", StringComparison.OrdinalIgnoreCase) 
+                || 
+                    file.Extension.Equals(".dll", StringComparison.OrdinalIgnoreCase)
+                ) && 
+                !file.Name.Contains("Microsoft.") && 
+                !file.Name.Contains("System.")
+            ){
                 signPaths.Add(file.FullName);
-
             }
             packFileOperations.Enqueue(() =>
             {
@@ -201,6 +204,7 @@ namespace Memoria.MSBuild
                 inputFile.CopyTo(output);
 
             uncompressedDataSize += fileSize;
+            _log.LogMessage(MessageImportance.High, "{0}Packing [{1}]:{0}File size: {2}{0}Last write time: {3}{0} Total size: {4}{0}", Environment.NewLine, targetRelativePath, fileSize, file.LastWriteTimeUtc, uncompressedDataSize);
 
             _log.LogMessage(targetRelativePath);
         }
@@ -216,10 +220,8 @@ namespace Memoria.MSBuild
             {
                 FileName = "signtool.exe",
                 Arguments = String.Join(" ", arguments),
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                CreateNoWindow = true
+                UseShellExecute = true,
+                CreateNoWindow = false
             };
             Process process = new Process
             {
