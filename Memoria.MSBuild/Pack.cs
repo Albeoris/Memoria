@@ -6,6 +6,8 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 
@@ -38,6 +40,11 @@ namespace Memoria.MSBuild
             _log = new TaskLoggingHelper(this);
         }
 
+        private Int64 compressedDataPosition = 0;
+        private Int64 uncompressedDataSize = 0;
+        private Queue<Action> packFileOperations = new Queue<Action>();
+        private List<String> signPaths = new List<String>();
+
         public Boolean Execute()
         {
             if (BuildEnvironment.IsDebug)
@@ -46,9 +53,6 @@ namespace Memoria.MSBuild
             Stopwatch sw = Stopwatch.StartNew();
             using (FileStream executableFile = File.OpenWrite(TargetPath))
             {
-                Int64 compressedDataPosition = 0;
-                Int64 uncompressedDataSize = 0;
-
                 using (GZipStream compressStream = new GZipStream(executableFile, CompressionMode.Compress, true))
                 using (BinaryWriter bw = new BinaryWriter(compressStream))
                 {
@@ -56,23 +60,25 @@ namespace Memoria.MSBuild
                     compressedDataPosition = executableFile.Position;
 
                     Dictionary<String, UInt16> pathMap = new Dictionary<String, UInt16>(capacity: 400);
-                    PackFolder("StreamingAssets", "StreamingAssets", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    PackFolder("FF9_Data", "FF9_Data", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    PackFolder("Debugger", "Debugger", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    PackDLLs("", "{PLATFORM}\\FF9_Data\\Managed", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    PackOptionalFile("Launcher\\Memoria.Launcher.exe", "FF9_Launcher.exe", compressStream, bw, pathMap, ref uncompressedDataSize);                   
-                    PackOptionalFile("Launcher\\Memoria.Launcher.exe.config", "FF9_Launcher.exe.config", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    PackOptionalFile("Launcher\\Memoria.SteamFix.exe", "Memoria.SteamFix.exe", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    PackOptionalFile("Launcher\\Memoria.ini", "Memoria.ini", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    PackOptionalFile("Launcher\\Settings.ini", "Settings.ini", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    PackOptionalFile("XInputDotNetPure.dll", "{PLATFORM}\\FF9_Data\\Managed\\XInputDotNetPure.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    PackOptionalFile("Newtonsoft.Json.dll", "{PLATFORM}\\FF9_Data\\Managed\\Newtonsoft.Json.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    PackOptionalFile("System.Runtime.Serialization.dll", "{PLATFORM}\\FF9_Data\\Managed\\System.Runtime.Serialization.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    PackOptionalFile("JoyShockLibrary\\x64\\JoyShockLibrary.dll", "x64\\FF9_Data\\Plugins\\JoyShockLibrary.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    PackOptionalFile("JoyShockLibrary\\x86\\JoyShockLibrary.dll", "x86\\FF9_Data\\Plugins\\JoyShockLibrary.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    PackOptionalFile("Global\\Sound\\SoLoud\\x64\\soloud.dll", "x64\\FF9_Data\\Plugins\\soloud.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    PackOptionalFile("Global\\Sound\\SoLoud\\x86\\soloud.dll", "x86\\FF9_Data\\Plugins\\soloud.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
+                    AddPackFolder("StreamingAssets", "StreamingAssets", compressStream, bw, pathMap);
+                    AddPackFolder("FF9_Data", "FF9_Data", compressStream, bw, pathMap);
+                    AddPackFolder("Debugger", "Debugger", compressStream, bw, pathMap);
+                    AddPackDLLs("", "{PLATFORM}\\FF9_Data\\Managed", compressStream, bw, pathMap);
+                    AddPackOptionalFile("Launcher\\Memoria.Launcher.exe", "FF9_Launcher.exe", compressStream, bw, pathMap);
+                    AddPackOptionalFile("Launcher\\Memoria.Launcher.exe.config", "FF9_Launcher.exe.config", compressStream, bw, pathMap);
+                    AddPackOptionalFile("Launcher\\Memoria.SteamFix.exe", "Memoria.SteamFix.exe", compressStream, bw, pathMap);
+                    AddPackOptionalFile("Launcher\\Memoria.ini", "Memoria.ini", compressStream, bw, pathMap);
+                    AddPackOptionalFile("Launcher\\Settings.ini", "Settings.ini", compressStream, bw, pathMap);
+                    AddPackOptionalFile("XInputDotNetPure.dll", "{PLATFORM}\\FF9_Data\\Managed\\XInputDotNetPure.dll", compressStream, bw, pathMap);
+                    AddPackOptionalFile("Newtonsoft.Json.dll", "{PLATFORM}\\FF9_Data\\Managed\\Newtonsoft.Json.dll", compressStream, bw, pathMap);
+                    AddPackOptionalFile("System.Runtime.Serialization.dll", "{PLATFORM}\\FF9_Data\\Managed\\System.Runtime.Serialization.dll", compressStream, bw, pathMap);
+                    AddPackOptionalFile("JoyShockLibrary\\x64\\JoyShockLibrary.dll", "x64\\FF9_Data\\Plugins\\JoyShockLibrary.dll", compressStream, bw, pathMap);
+                    AddPackOptionalFile("JoyShockLibrary\\x86\\JoyShockLibrary.dll", "x86\\FF9_Data\\Plugins\\JoyShockLibrary.dll", compressStream, bw, pathMap);
+                    AddPackOptionalFile("Global\\Sound\\SoLoud\\x64\\soloud.dll", "x64\\FF9_Data\\Plugins\\soloud.dll", compressStream, bw, pathMap);
+                    AddPackOptionalFile("Global\\Sound\\SoLoud\\x86\\soloud.dll", "x86\\FF9_Data\\Plugins\\soloud.dll", compressStream, bw, pathMap);
 
+                    StartSigning();
+                    StartPacking();
                     bw.Flush();
                     Int64 compressedDataSize = executableFile.Position - compressedDataPosition;
                     Double compressionRation = (Double)compressedDataSize / uncompressedDataSize;
@@ -92,17 +98,17 @@ namespace Memoria.MSBuild
             return true;
         }
 
-        private void PackOptionalFile(String sourceFileRelativePath, String targetFileRelativePath, GZipStream output, BinaryWriter bw, Dictionary<String, UInt16> pathMap, ref Int64 uncompressedDataSize)
+        private void AddPackOptionalFile(String sourceFileRelativePath, String targetFileRelativePath, GZipStream output, BinaryWriter bw, Dictionary<String, UInt16> pathMap)
         {
             String sourceFilePath = Path.GetFullPath(Path.Combine(TargetDir, sourceFileRelativePath));
             FileInfo sourceFile = new FileInfo(sourceFilePath);
             if (!sourceFile.Exists)
                 return;
 
-            PackFile(sourceFile, targetFileRelativePath, output, bw, pathMap, ref uncompressedDataSize);
+            PrepairPackFile(sourceFile, targetFileRelativePath, output, bw, pathMap);
         }
 
-        private void PackDLLs(String sourceFolderRelativePath, String targetFolderRelativePath, GZipStream output, BinaryWriter bw, Dictionary<String, UInt16> pathMap, ref Int64 uncompressedDataSize)
+        private void AddPackDLLs(String sourceFolderRelativePath, String targetFolderRelativePath, GZipStream output, BinaryWriter bw, Dictionary<String, UInt16> pathMap)
         {
             String sourceDirectoryPath = Path.GetFullPath(Path.Combine(TargetDir, sourceFolderRelativePath));
             DirectoryInfo sourceDirectory = new DirectoryInfo(sourceDirectoryPath);
@@ -112,8 +118,8 @@ namespace Memoria.MSBuild
                 FileInfo dllFile = new FileInfo(Path.ChangeExtension(mdbFile.FullName, null));
                 if (dllFile.Exists)
                 {
-                    PackFile(dllFile, sourceDirectoryPathLength, targetFolderRelativePath, output, bw, pathMap, ref uncompressedDataSize);
-                    PackFile(mdbFile, sourceDirectoryPathLength, targetFolderRelativePath, output, bw, pathMap, ref uncompressedDataSize);
+                    AddPackFile(dllFile, sourceDirectoryPathLength, targetFolderRelativePath, output, bw, pathMap);
+                    AddPackFile(mdbFile, sourceDirectoryPathLength, targetFolderRelativePath, output, bw, pathMap);
                 }
             }
         }
@@ -126,25 +132,45 @@ namespace Memoria.MSBuild
             return sourceDirectoryPathLength;
         }
 
-        private void PackFolder(String sourceFolderRelativePath, String targetFolderRelativePath, GZipStream output, BinaryWriter bw, Dictionary<String, UInt16> pathMap, ref Int64 uncompressedDataSize)
+        private void AddPackFolder(String sourceFolderRelativePath, String targetFolderRelativePath, GZipStream output, BinaryWriter bw, Dictionary<String, UInt16> pathMap)
         {
             String sourceDirectoryPath = Path.GetFullPath(Path.Combine(TargetDir, sourceFolderRelativePath));
             DirectoryInfo sourceDirectory = new DirectoryInfo(sourceDirectoryPath);
             Int32 sourceDirectoryPathLength = GetSourceDirectoryPathLength(sourceDirectoryPath);
             foreach (FileInfo file in sourceDirectory.EnumerateFiles("*", SearchOption.AllDirectories))
             {
-                PackFile(file, sourceDirectoryPathLength, targetFolderRelativePath, output, bw, pathMap, ref uncompressedDataSize);
+                AddPackFile(file, sourceDirectoryPathLength, targetFolderRelativePath, output, bw, pathMap);
             }
         }
 
-        private void PackFile(FileInfo file, Int32 sourceDirectoryPathLength, String targetFolderRelativePath, GZipStream output, BinaryWriter bw, Dictionary<String, UInt16> pathMap, ref Int64 uncompressedDataSize)
+        private void AddPackFile(FileInfo file, Int32 sourceDirectoryPathLength, String targetFolderRelativePath, GZipStream output, BinaryWriter bw, Dictionary<String, UInt16> pathMap)
         {
             String sourceRelativePath = file.FullName.Substring(sourceDirectoryPathLength);
             String targetRelativePath = Path.Combine(targetFolderRelativePath, sourceRelativePath);
-            PackFile(file, targetRelativePath, output, bw, pathMap, ref uncompressedDataSize);
+            PrepairPackFile(file, targetRelativePath, output, bw, pathMap);
         }
 
-        private void PackFile(FileInfo file, String targetRelativePath, GZipStream output, BinaryWriter bw, Dictionary<String, UInt16> pathMap, ref Int64 uncompressedDataSize)
+        private void PrepairPackFile(FileInfo file, String targetRelativePath, GZipStream output, BinaryWriter bw, Dictionary<String, UInt16> pathMap)
+        {
+            if (file.Extension.Equals(".exe", StringComparison.OrdinalIgnoreCase) || file.Extension.Equals(".dll", StringComparison.OrdinalIgnoreCase))
+            {
+                signPaths.Add(file.FullName);
+
+            }
+            packFileOperations.Enqueue(() =>
+            {
+                try
+                {
+                    PackFile(file, targetRelativePath, output, bw, pathMap);
+                }
+                catch (Exception ex)
+                {
+                    _log.LogErrorFromException(ex);
+                }
+            });
+        }
+
+        private void PackFile(FileInfo file, String targetRelativePath, GZipStream output, BinaryWriter bw, Dictionary<String, UInt16> pathMap)
         {
             String[] targetPathParts = targetRelativePath.Split(Path.DirectorySeparatorChar);
 
@@ -177,6 +203,57 @@ namespace Memoria.MSBuild
             uncompressedDataSize += fileSize;
 
             _log.LogMessage(targetRelativePath);
+        }
+
+        private void StartSigning()
+        {
+            List<string> arguments = "sign /d \"Memoria FF9\" /td SHA256 /fd SHA256 /sha1 316b51aca09ee3b93d0b9a75a48ecee278491ce2 /tr http://timestamp.digicert.com".Split(' ').ToList();
+            foreach (String path in signPaths)
+            {
+                arguments.Add(path);
+            }
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                FileName = "signtool.exe",
+                Arguments = String.Join(" ", arguments),
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true
+            };
+            Process process = new Process
+            {
+                StartInfo = startInfo
+            };
+            process.OutputDataReceived += (sender, e) =>
+            {
+                if (!String.IsNullOrEmpty(e.Data))
+                    _log.LogMessage(e.Data);
+            };
+            process.ErrorDataReceived += (sender, e) =>
+            {
+                if (!String.IsNullOrEmpty(e.Data))
+                    _log.LogError(e.Data);
+            };
+            process.EnableRaisingEvents = true;
+            process.Exited += (sender, e) =>
+            {
+                if (process.ExitCode != 0)
+                    _log.LogError("signtool.exe failed with exit code " + process.ExitCode);
+                else
+                    _log.LogMessage("signtool.exe completed successfully.");
+            };
+            process.Start();
+            process.WaitForExit();
+        }
+
+        private void StartPacking()
+        {
+            while (packFileOperations.Count > 0)
+            {
+                Action action = packFileOperations.Dequeue();
+                action();
+            }
         }
     }
 }
