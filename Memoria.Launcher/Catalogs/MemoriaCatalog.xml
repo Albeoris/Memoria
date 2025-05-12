@@ -1457,6 +1457,95 @@ Change some card textures (add boss + characters)</Description>
 </Mod>
 
 <Mod>
+	<Name>Launcher Themes</Name>
+	<Version>1.0.1</Version>
+	<InstallationPath>MemoriaLauncherThemes</InstallationPath>
+	<ReleaseDate>2025-5-12</ReleaseDate>
+	<ReleaseDateOriginal>2024-12-07</ReleaseDateOriginal>
+	<Author>faospark, SamsamTS</Author>
+	<Description>Alternate Themes to Memoria Launcher</Description>
+	<PatchNotes>First Public Release
+Special citation to SamsamTS  for making this possible	</PatchNotes>
+	<Category>Launcher</Category>
+	<Website>https://next.nexusmods.com/profile/faospark/mods?gameId=1948</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/gvyh8otf7exe99x008mxh/MemoriaLauncherThemes.zip?rlkey=h3fhorrmmvr6nzip9uyrv6kpk&amp;st=h3ec8vdk&amp;dl=1</DownloadUrl>
+	<PreviewFile>preview/theme.png</PreviewFile>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/96/96-1747010588-477349050.png</PreviewFileUrl>
+	<MinimumMemoriaVersion>2025.05.11</MinimumMemoriaVersion>
+	<SubMod>
+		<Name>Theme 1 : The Engine room</Name>
+		<InstallationPath>1</InstallationPath>
+		<LauncherBackground>Themes/theme-1.png</LauncherBackground>
+		<LauncherColor>b76b0e</LauncherColor>
+		<Group>Theme</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Theme 2 : Night Black Mage</Name>
+		<InstallationPath>2</InstallationPath>
+		<LauncherBackground>Themes/theme-2.png</LauncherBackground>
+		<LauncherColor>06837f</LauncherColor>
+		<Group>Theme</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Theme 3 : Face Room</Name>
+		<InstallationPath>3</InstallationPath>
+		<LauncherBackground>Themes/theme-3.png</LauncherBackground>
+		<LauncherColor>162f65</LauncherColor>
+		<Group>Theme</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Theme 4 : Tree Root</Name>
+		<InstallationPath>4</InstallationPath>
+		<LauncherBackground>Themes/theme-4.png</LauncherBackground>
+		<LauncherColor>004e00</LauncherColor>
+		<Group>Theme</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Theme 5 : Yuletide Glee</Name>
+		<InstallationPath>5</InstallationPath>
+		<LauncherBackground>Themes/theme-5.png</LauncherBackground>
+		<LauncherColor>aa192e</LauncherColor>
+		<Group>Theme</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Theme 6 : Princess Quarters</Name>
+		<InstallationPath>6</InstallationPath>
+		<LauncherBackground>Themes/theme-6.png</LauncherBackground>
+		<LauncherColor>546E53</LauncherColor>
+		<Group>Theme</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Theme 7 : Clock Room</Name>
+		<InstallationPath>7</InstallationPath>
+		<LauncherBackground>Themes/theme-7.png</LauncherBackground>
+		<LauncherColor>2c5e5f</LauncherColor>
+		<Group>Theme</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Theme 8 : Key Art</Name>
+		<InstallationPath>8</InstallationPath>
+		<LauncherBackground>Themes/theme-8.png</LauncherBackground>
+		<LauncherColor>485b46</LauncherColor>
+		<Group>Theme</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Theme 9 : Material type</Name>
+		<InstallationPath>9</InstallationPath>
+		<LauncherBackground>Themes/theme-9.png</LauncherBackground>
+		<LauncherColor>310140</LauncherColor>
+		<Group>Theme</Group>
+	</SubMod>
+		<SubMod>
+		<Name>Theme 10 : 25th Anniversary</Name>
+		<InstallationPath>10</InstallationPath>
+		<LauncherBackground>Themes/theme-10.png</LauncherBackground>
+		<LauncherColor>2c5e5f</LauncherColor>
+		<Group>Theme</Group>
+		<Default/>
+	</SubMod>
+</Mod>
+
+<Mod>
 	<Name>Better Card Drops</Name>
 	<Version>1.1</Version>
 	<InstallationPath>BetterCardDrop</InstallationPath>
