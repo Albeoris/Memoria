@@ -812,7 +812,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
 
     public CharacterId GetEventPartyPlayer(Int32 partyIndex)
     {
-        return this._context.eventPartyMember[partyIndex];
+        return partyIndex >= 0 && partyIndex < this._context.eventPartyMember.Length ? this._context.eventPartyMember[partyIndex] : CharacterId.NONE;
     }
 
     public Boolean partychk(Int32 x)

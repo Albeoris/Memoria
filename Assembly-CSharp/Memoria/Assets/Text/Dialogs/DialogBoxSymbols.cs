@@ -55,7 +55,7 @@ namespace Memoria.Assets
                 case FFIXTextTagCode.CharacterName:
                     return FF9StateSystem.Common.FF9.GetPlayer((CharacterId)tag.IntParam(0))?.Name;
                 case FFIXTextTagCode.Party:
-                    return FF9StateSystem.Common.FF9.GetPlayer(PersistenSingleton<EventEngine>.Instance.GetEventPartyPlayer(tag.IntParam(0)))?.Name;
+                    return FF9StateSystem.Common.FF9.GetPlayer(PersistenSingleton<EventEngine>.Instance.GetEventPartyPlayer(tag.IntParam(0) - 1))?.Name;
                 case FFIXTextTagCode.Text:
                     return ETb.GetStringFromTable(tag.UIntParam(0), tag.UIntParam(1));
                 case FFIXTextTagCode.Zidane:
