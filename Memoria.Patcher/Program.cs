@@ -216,7 +216,8 @@ namespace Memoria.Patcher
                 while (leftSize > 0)
                 {
                     Int64 uncompressedSize = br.ReadUInt32();
-                    DateTime writeTimeUtc = new DateTime(br.ReadInt64(), DateTimeKind.Utc);
+                    Int64 ticks = br.ReadInt64();
+                    DateTime writeTimeUtc = new DateTime(ticks, DateTimeKind.Utc);
 
                     Boolean hasPlatform = false;
                     String[] pathParts = new String[br.ReadByte() + 1];
