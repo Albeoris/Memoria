@@ -689,7 +689,7 @@ namespace Memoria.Assets
                     dialog.CancelChoice = choiceExactCount - 1;
                     dialog.DefaultChoice = 0;
                 }
-                dialog.SetupChooseMask(ETb.sChooseMask, choiceExactCount);
+                dialog.SetupChooseMask(maskTag != null ? ETb.sChooseMask : -1, choiceExactCount);
                 if (dialog.DisableIndexes.Count > 0)
                 {
                     if (dialog.DisableIndexes.Contains(dialog.DefaultChoice) || !dialog.ActiveIndexes.Contains(dialog.DefaultChoice))
