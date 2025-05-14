@@ -43,7 +43,7 @@ public static class AssetManager
             modsNames += "'" + name + "' ";
         Log.Message($"[Initialization] Mods: {modsNames}");
 
-        WindowManager.CenterWindow();
+        WindowManager.AlignWindow();
 
         AssetManager.IsFullyInitialized = false;
         Array moduleList = Enum.GetValues(typeof(AssetManagerUtil.ModuleBundle));

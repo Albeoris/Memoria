@@ -27,7 +27,8 @@ namespace Memoria.Launcher
             {
                 "Settings.Window",
                 "Settings.ExclusiveFullscreen",
-                "Settings.BorderlessFullscreen"
+                "Settings.BorderlessFullscreen",
+                "Settings.BorderlessWindow"
             };
             ComboBox modeComboBox = CreateCombobox("WindowMode", comboboxchoices, 50, "Settings.WindowMode", "Settings.WindowMode_Tooltip");
 
