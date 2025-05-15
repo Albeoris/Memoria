@@ -231,6 +231,7 @@ public class VoicePlayer : SoundPlayer
         if (dialog == specialDialog) specialDialog = null;
         soundOfDialog.Remove(dialog);
     }
+
     private static void AfterSoundFinished_Battle(Int32 va_id, String text)
     {
         try
