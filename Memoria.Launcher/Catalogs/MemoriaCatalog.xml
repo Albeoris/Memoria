@@ -86,10 +86,11 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 	
 <Mod>
 	<Name>Trance Seek</Name>
-	<Version>0.3.33</Version>
+	<Version>0.3.33d</Version>
 	<InstallationPath>TranceSeek</InstallationPath>
 	<ReleaseDateOriginal>28 Jan 2022</ReleaseDateOriginal>
-	<ReleaseDate>11 May 2025</ReleaseDate>
+	<ReleaseDate>17 May 2025</ReleaseDate>
+	<MinimumMemoriaVersion>2025-05-11</MinimumMemoriaVersion>
 	<Author>DV</Author>
 	<IncompatibleWith>Alternate Fantasy,Amazing Quina,Beatrix Mod,Black Cat - Endgame Shop,David Bowie Edition,Freya Game+,Garnet is Main Character,Perfect Stats,Play As Kuja,Playable Character Pack,Tantalus</IncompatibleWith>
 	<Description>
@@ -116,6 +117,27 @@ Don't hesitate to try!
 Recommended language : Français / English (UK)
 Not supported language : Japanese (a lot of things get deleted... need to wait until full release... sorry !)</Description>
 	<PatchNotes>
+------[0.3.33d]------
+Hotfix version :
+
+{Characters}
+- Fixed Vivi's "Dbl Blk" command, which was no longer linked to "Blk Mag" (fixed on 0.3.33b)
+
+{SA / AA Skills}
+- Correction of several descriptions, about some details.
+- New FR names for some skills and commands.
+
+{Items}
+- Image" no longer removes Confusion or Sleep from a target.
+
+{Monsters + Bosses}
+- Complete rewrite of Thorn/Zorn's AI battle in Disc 2.
+- Fixed Thorn's HP in Kuja/Necron mode.
+- Fixed Ragtime Mouse, where questions were no longer displayed following the latest version of Memoria.
+
+{Fields}
+- Correction of some softlocks on field n°2150 (L. Castle/Royal Cham.)
+
 ------[0.3.33]------
 
 {Features}
