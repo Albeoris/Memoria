@@ -178,7 +178,8 @@ namespace Memoria.Launcher
             Int64 outParse;
             Name = elName.InnerText;
             InstallationPath = elInstPath.InnerText;
-            CurrentVersion = elVer != null ? new Version(elVer.InnerText) : null;
+            if (elVer != null && Version.TryParse(Regex.Replace(elVer.InnerText, @"[^\d\.]", ""), out Version version))
+                CurrentVersion = version;
             ReleaseDate = modNode["ReleaseDate"]?.InnerText;
             ReleaseDateOriginal = modNode["ReleaseDateOriginal"]?.InnerText;
             Author = modNode["Author"]?.InnerText;
