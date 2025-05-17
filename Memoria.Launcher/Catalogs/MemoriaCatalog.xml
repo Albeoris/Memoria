@@ -614,11 +614,11 @@ Part of Kupo Mods’ Character formerly Mog Add-ons.
 
 <Mod>
 	<Name>Tantalus</Name>
-	<Version>3.3</Version>
+	<Version>3.4</Version>
 	<InstallationPath>PlayableTantalus</InstallationPath>
 	<ReleaseDateOriginal>2024-06-14</ReleaseDateOriginal>
-	<ReleaseDate>2024-12-09</ReleaseDate>
-	<MinimumMemoriaVersion>v2024.12.04</MinimumMemoriaVersion>
+	<ReleaseDate>2025-03-31</ReleaseDate>
+	<MinimumMemoriaVersion>v2024.12.06</MinimumMemoriaVersion>
 	<IncompatibleWith>Beatrix Mod, Trance Seek</IncompatibleWith>
 	<Author>Emeiru</Author>
 <Description>Overhauls Blank, Cinna, and Marcus to become actually usable characters
@@ -628,7 +628,7 @@ Part of Kupo Mods’ Character formerly Mog Add-ons.
 - New items and tweaks to complement the trio and thief gameplay
 - Minor name and ability text changes
 
-Compatible with Alternate Fantasy</Description>
+Compatible with Alternate Fantasy.</Description>
 	<PatchNotes>Complete changes can be found on the mod page.</PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/64</Website>
@@ -649,7 +649,7 @@ Compatible with Alternate Fantasy</Description>
 		<Name>Alternate Fantasy</Name>
 		<InstallationPath>AlternateFantasy</InstallationPath>
 		<Description>Version for Alternate Fantasy</Description>
-		<Priority>1</Priority>
+		<Priority>2</Priority>
 		<Group>GameMode</Group>
 		<ActivateWithMod>Alternate Fantasy</ActivateWithMod>
 	</SubMod>
@@ -760,6 +760,168 @@ Alternate Fantasy
 </Mod>
 
 <Mod>
+	<Name>Artifacts</Name>
+	<Version>1.1</Version>
+	<Author>Emeiru</Author>
+	<Category>Gameplay</Category>
+	<ReleaseDateOriginal>2025-04-01</ReleaseDateOriginal>
+	<ReleaseDate>2025-04-06</ReleaseDate>
+	<MinimumMemoriaVersion>v2024.12.06</MinimumMemoriaVersion>
+	<InstallationPath>Artifacts</InstallationPath>
+<Description> Adds new items in the game.
+
+- Excalipur: The legendary sword...? Synthesized at the Black Mage Village.
+- and more soon!</Description>
+	<PatchNotes>Complete changes can be found on the mod page.</PatchNotes>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/93</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/p4a4tlpubs4feeukk6iuu/Artifacts.zip?rlkey=k81wrhygb0ko7fd6ue6je6x5f&amp;dl=1</DownloadUrl>
+	<PreviewFile>Preview.jpg</PreviewFile>
+	<PreviewFileUrl>https://u.cubeupload.com/Emeiru/Artifacts.jpg</PreviewFileUrl>
+</Mod>
+	
+<Mod>
+    <Name>Amazing Abilities</Name>
+    <Version>1.0</Version>
+	<Author>Emeiru</Author>
+	<ReleaseDateOriginal>2025-01-21</ReleaseDateOriginal>
+	<ReleaseDate>2025-01-21</ReleaseDate>
+	<MinimumMemoriaVersion>v2024.12.06</MinimumMemoriaVersion>
+	<Category>Gameplay</Category>
+	<InstallationPath>AmazingAbilities</InstallationPath>
+<Description>A collection of ability tweaks and gameplay changes.
+
+Healer - Changes Attack to Healer, a single-target heal
+Flee-Gil - Now only costs 1 magic stone
+</Description>
+	<PatchNotes>Complete changes can be found on the mod page.</PatchNotes>
+	<PreviewFile>Preview.JPG</PreviewFile>
+	<PreviewFileUrl></PreviewFileUrl>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/89</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/2vglg06fu8rzwx9cdc2j9/AmazingAbilities.zip?rlkey=5uxafkelitnesdwxawftupd96&amp;st=xqtxon42&amp;dl=1</DownloadUrl>
+	<Header>Game Mode</Header>
+	<SubMod>
+		<Name>Vanilla</Name>
+		<InstallationPath>Vanilla</InstallationPath>
+		<Description>Version for regular FFIX</Description>
+		<Priority>1</Priority>
+		<Group>GameMode</Group>
+		<ActivateWithoutMod>Alternate Fantasy</ActivateWithoutMod>
+		<Default/>
+		</SubMod>
+	<SubMod>
+		<Name>Alternate Fantasy</Name>
+		<InstallationPath>AlternateFantasy</InstallationPath>
+		<Description>Version for Alternate Fantasy</Description>
+		<Priority>2</Priority>
+		<Group>GameMode</Group>
+		<ActivateWithMod>Alternate Fantasy</ActivateWithMod>
+		</SubMod>
+</Mod>
+	
+<Mod>
+    <Name>Amazing Freya</Name>
+    <Version>1.0</Version>
+	<Author>Emeiru</Author>
+	<Category>Gameplay</Category>
+	<ReleaseDateOriginal>2024-10-04</ReleaseDateOriginal>
+	<ReleaseDate>2025-05-02</ReleaseDate>
+	<MinimumMemoriaVersion>v2024.12.06</MinimumMemoriaVersion>
+    <InstallationPath>AmazingFreya</InstallationPath>
+    <Description>Amazing tweaks and improvement for the valiant Freya
+- Jump is now a priority command, and increases Trance
+- Dragon consumes less Trance
+- Six Dragons have significantly less MP use
+- Initiative now also fills ATB at the start of battle
+
+Alternate Fantasy only
+- Lancer cost slightly less MP
+</Description>
+	<PatchNotes>Complete changes can be found on the mod page.</PatchNotes>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/95</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/wznpk6s7cgqzh7vsm4oqa/AmazingFreya.zip?rlkey=08vb7jb4ffuza8wngiyxm1jib&amp;st=anhsj54c&amp;dl=1</DownloadUrl>
+	<PreviewFile>Preview.JPG</PreviewFile>
+	<PreviewFileUrl>https://u.cubeupload.com/Emeiru/AmazingFreya.jpg</PreviewFileUrl>
+	<Header>Game Mode</Header>
+	<SubMod>
+		<Name>Vanilla</Name>
+		<InstallationPath>Vanilla</InstallationPath>
+		<Description>Version for regular FFIX</Description>
+		<Priority>1</Priority>
+		<Group>Game Mode</Group>
+		<ActivateWithoutMod>Alternate Fantasy</ActivateWithoutMod>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Name>Alternate Fantasy</Name>
+		<InstallationPath>AlternateFantasy</InstallationPath>
+		<Description>Version for Alternate Fantasy</Description>
+		<Priority>2</Priority>
+		<Group>GameMode</Group>
+		<ActivateWithMod>Alternate Fantasy</ActivateWithMod>
+	</SubMod>
+</Mod>
+
+<Mod>
+	<Name>Amazing Garnet</Name>
+	<Version>1.1</Version>
+	<Author>Emeiru</Author>
+	<Category>Gameplay</Category>
+	<ReleaseDateOriginal>2025-03-29</ReleaseDateOriginal>
+	<ReleaseDate>2025-04-06</ReleaseDate>
+	<MinimumMemoriaVersion>v2024.12.06</MinimumMemoriaVersion>
+	<InstallationPath>AmazingGarnet</InstallationPath>
+	<Description>Amazing tweaks and improvement for Garnet... and summoning in general.
+- Wht Mag consumes less Trance
+- Odin's Sword cost less ability gems
+- Reworked Boost: Now increases damage instead of forcing full animations
+- Optional: Disable summon's full animations in random battles
+
+Alternate Fantasy only
+- Whale Whisker: New ability - Rising Tide, increases Trance each cast
+
+Playable Character Pack only
+- Kuja: Also learns the reworked Boost</Description>
+	<PatchNotes>Complete changes can be found on the mod page.</PatchNotes>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/90</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/mkmzntygv46sh4qg4qjxi/PlayableTantalus.zip?rlkey=r92lksa6neyz3g52nkiyb6rhq&amp;dl=1</DownloadUrl>
+	<PreviewFile>Preview.jpg</PreviewFile>
+	<PreviewFileUrl>https://u.cubeupload.com/Emeiru/AmazingGarnet.jpg</PreviewFileUrl>
+	<Header>Options</Header>
+	<SubMod>
+		<Name>Vanilla</Name>
+		<InstallationPath>Vanilla</InstallationPath>
+		<Description>Version for regular FFIX</Description>
+		<Priority>1</Priority>
+		<Group>Options</Group>
+		<ActivateWithoutMod>Alternate Fantasy</ActivateWithoutMod>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Name>Alternate Fantasy</Name>
+		<InstallationPath>AlternateFantasy</InstallationPath>
+		<Description>Version for Alternate Fantasy</Description>
+		<Priority>2</Priority>
+		<Group>Options</Group>
+		<ActivateWithMod>Alternate Fantasy</ActivateWithMod>
+	</SubMod>
+	<SubMod>
+		<Name>Playable Character Pack</Name>
+		<InstallationPath>PlayableCharacterPack</InstallationPath>
+		<Description>For Kuja</Description>
+		<Priority>3</Priority>
+		<Group>Options</Group>
+		<ActivateWithMod>Playable Character Pack</ActivateWithMod>
+	</SubMod>
+	<SubMod>
+		<Name>No Full Summons</Name>
+		<InstallationPath>NoFullSummon</InstallationPath>
+		<Description>No full summon animations in random battles</Description>
+		<Priority>4</Priority>
+		<Group>Options</Group>
+	</SubMod>
+</Mod>
+	
+<Mod>
 	<Name>Amazing Quina</Name>
 	<Version>2.1</Version>
 	<InstallationPath>AmazingQuina</InstallationPath>
@@ -802,6 +964,49 @@ Compatible with Alternate Fantasy</Description>
 </Mod>
 
 <Mod>
+    <Name>Amazing Steiner</Name>
+    <Version>1.1</Version>
+	<Author>Emeiru</Author>
+	<Category>Gameplay</Category>
+	<ReleaseDateOriginal>2024-11-18</ReleaseDateOriginal>
+	<ReleaseDate>2024-12-09</ReleaseDate>
+	<MinimumMemoriaVersion>v2024.12.04</MinimumMemoriaVersion>
+	<InstallationPath>AmazingSteiner</InstallationPath>
+<Description>Amazing tweaks and improvement for Rus.. err Steiner
+- Steiner now can use basic Swd Mag without Vivi
+- Trance removes damage limit
+- Break techniques have high hit rate in random encounters or when in Trance
+- With Cover, Steiner will always take damage for Garnet
+
+Alternate Fantasy
+- Shock's animation reverted to default
+- Renamed Sword Dance to Sword Blitz (different name and animation only)</Description>
+	<PatchNotes>Complete changes can be found on the mod page.</PatchNotes>
+	<PreviewFile>Preview.JPG</PreviewFile>
+	<PreviewFileUrl>https://u.cubeupload.com/Emeiru/AmazingSteiner.jpg</PreviewFileUrl>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/83</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/wdqqrrg17715wmcbemqi5/AmazingSteiner.zip?rlkey=qxkl3wyp98mx0e9jdk1f47d6m&amp;st=n042djcc&amp;dl=1</DownloadUrl>
+<Header>Game Mode</Header>
+	<SubMod>
+		<Name>Vanilla</Name>
+		<InstallationPath>Vanilla</InstallationPath>
+		<Description>Version for regular FFIX</Description>
+		<Priority>1</Priority>
+		<Group>GameMode</Group>
+		<ActivateWithoutMod>Alternate Fantasy</ActivateWithoutMod>
+		<Default/>
+		</SubMod>
+	<SubMod>
+		<Name>Alternate Fantasy</Name>
+		<InstallationPath>AlternateFantasy</InstallationPath>
+		<Description>Version for Alternate Fantasy</Description>
+		<Priority>2</Priority>
+		<Group>GameMode</Group>
+		<ActivateWithMod>Alternate Fantasy</ActivateWithMod>
+		</SubMod>
+</Mod>
+
+<Mod>
 	<Name>David Bowie Edition</Name>
 	<Version>2.0</Version>
 	<InstallationPath>DavidBowie</InstallationPath>
@@ -812,6 +1017,48 @@ Compatible with Alternate Fantasy</Description>
 	<Category>Gameplay</Category>
 	<Website>https://forums.qhimm.com/index.php?topic=19499.0</Website>
 	<DownloadUrl>https://www.dropbox.com/s/k5o64e3g8iyah63/FF9%20DBE%20v1.16%20Memoria.zip?dl=1</DownloadUrl>
+</Mod>
+
+<Mod>
+    <Name>Amazing Vivi</Name>
+    <Version>1.0</Version>
+	<InstallationPath>AmazingVivi</InstallationPath>
+	<ReleaseDateOriginal>2024-12-26</ReleaseDateOriginal>
+	<ReleaseDate>2024-12-26</ReleaseDate>
+	<MinimumMemoriaVersion>v2024.12.04</MinimumMemoriaVersion>
+	<Author>Emeiru</Author>
+<Description>Amazing tweaks and improvement for our precious Vivi.
+- Staves deal damage based on Mag (basic attacks are still relatively low)
+- Focus increases Trance gauge and slightly recovers MP
+- Focus also consumes less Trance
+
+Alternate Fantasy only
+- -ra spells have slightly lower MP use
+- Prolepsis replaced with Burst, a weaker version of Flare for midgame</Description>
+	<PatchNotes>Complete changes can be found on this mod page.</PatchNotes>
+	<Category>Gameplay</Category>
+	<PreviewFile>Preview.JPG</PreviewFile>
+	<PreviewFileUrl>https://u.cubeupload.com/Emeiru/92aAmazingVivi.jpg</PreviewFileUrl>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/86/</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/yuet1rxgx45qmu7ycrd15/AmazingVivi.zip?rlkey=4nivi4kgn9fzu6q4xh7vqa1ey&amp;st=gedj1523&amp;dl=1</DownloadUrl>
+<Header>Game Mode</Header>
+	<SubMod>
+		<Name>Vanilla</Name>
+		<InstallationPath>Vanilla</InstallationPath>
+		<Description>Version for regular FFIX</Description>
+		<Priority>1</Priority>
+		<Group>GameMode</Group>
+		<ActivateWithoutMod>Alternate Fantasy</ActivateWithoutMod>
+		<Default/>
+		</SubMod>
+	<SubMod>
+		<Name>Alternate Fantasy</Name>
+		<InstallationPath>AlternateFantasy</InstallationPath>
+		<Description>Version for Alternate Fantasy</Description>
+		<Priority>2</Priority>
+		<Group>GameMode</Group>
+		<ActivateWithMod>Alternate Fantasy</ActivateWithMod>
+		</SubMod>
 </Mod>
 
 <Mod>
