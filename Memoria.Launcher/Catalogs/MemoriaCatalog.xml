@@ -86,7 +86,7 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 	
 <Mod>
 	<Name>Trance Seek</Name>
-	<Version>0.3.33d</Version>
+	<Version>0.3.34</Version>
 	<InstallationPath>TranceSeek</InstallationPath>
 	<ReleaseDateOriginal>28 Jan 2022</ReleaseDateOriginal>
 	<ReleaseDate>17 May 2025</ReleaseDate>
@@ -117,7 +117,7 @@ Don't hesitate to try!
 Recommended language : Français / English (UK)
 Not supported language : Japanese (a lot of things get deleted... need to wait until full release... sorry !)</Description>
 	<PatchNotes>
-------[0.3.33d]------
+------[0.3.34]------
 Hotfix version :
 
 {Characters}
