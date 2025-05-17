@@ -1118,13 +1118,20 @@ namespace Memoria.Launcher
                     }
                     else if (tabCtrlMain.SelectedIndex == 0 && mod.PreviewFileUrl != null)
                     {
-                        mod.PreviewImage = new BitmapImage(new Uri(mod.PreviewFileUrl, UriKind.Absolute));
-                        mod.PreviewImage.DownloadCompleted += OnPreviewFileDownloaded;
+                        try
+                        {
+                            mod.PreviewImage = new BitmapImage(new Uri(mod.PreviewFileUrl, UriKind.Absolute));
+                            mod.PreviewImage.DownloadCompleted += OnPreviewFileDownloaded;
+                        } catch { }
                     }
                     else if (tabCtrlMain.SelectedIndex == 1 && mod.PreviewFileUrl != null)
                     {
-                        mod.PreviewImage = new BitmapImage(new Uri(mod.PreviewFileUrl, UriKind.Absolute));
-                        mod.PreviewImage.DownloadCompleted += OnPreviewFileDownloaded;
+                        try
+                        {
+                            mod.PreviewImage = new BitmapImage(new Uri(mod.PreviewFileUrl, UriKind.Absolute));
+                            mod.PreviewImage.DownloadCompleted += OnPreviewFileDownloaded;
+                        }
+                        catch { }
                     }
                 }
                 if (mod.PreviewImage == null)

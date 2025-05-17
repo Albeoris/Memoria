@@ -129,6 +129,9 @@ namespace Memoria.Patcher
                 // signtool sign /d "Memoria Patcher for Modding FF9" /td SHA256 /fd SHA256 /sha1 {your certificates SHA1 signature} /tr http://timestamp.digicert.com .\Memoria.Patcher.exe 
                 if (certificate != null)
                 {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write("V ");
+                    Console.ResetColor();
                     Console.WriteLine("Memoria.Patcher is Digitally signed, please wait while we validate");
                     Int64 possition = -0x2920;
                     bool Found = false;
@@ -146,19 +149,36 @@ namespace Memoria.Patcher
                     if (!Found)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("File is Signed but could not find magic number, file might be corrupted");
+                        Console.Write("X ");
                         Console.ResetColor();
+                        Console.WriteLine("File is Signed but could not find magic number, file might be corrupted");
                         throw new InvalidDataException("File is Signed but could not find magic number, file might be corrupted");
                     }
                 }
                 else
                 {
+                    Console.Write("V ");
+                    Console.ResetColor();
+
                     // if the file is not signed
                     inputFile.Seek(-0x18, SeekOrigin.End);
 
                     magicNumber = br.ReadInt64();
-                    if (magicNumber != 0x004149524F4D454D)// MEMORIA\0 
+                    if (magicNumber != 0x004149524F4D454D)
+                    {// MEMORIA\0 
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.Write("X ");
+                        Console.ResetColor();
+                        Console.WriteLine("Could not find magic number, file might be corrupted");
                         throw new InvalidDataException("Invalid magic number: " + magicNumber);
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.Write("V ");
+                        Console.ResetColor();
+                        Console.WriteLine("File Validated Successfully");
+                    }
                 }
                 //Console.Clear();
                 try
@@ -216,7 +236,8 @@ namespace Memoria.Patcher
                 while (leftSize > 0)
                 {
                     Int64 uncompressedSize = br.ReadUInt32();
-                    DateTime writeTimeUtc = new DateTime(br.ReadInt64(), DateTimeKind.Utc);
+                    Int64 ticks = br.ReadInt64();
+                    DateTime writeTimeUtc = new DateTime(ticks, DateTimeKind.Utc);
 
                     Boolean hasPlatform = false;
                     String[] pathParts = new String[br.ReadByte() + 1];
