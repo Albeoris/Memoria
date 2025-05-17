@@ -124,6 +124,7 @@ Hotfix version :
 - Fixed Vivi's "Dbl Blk" command, which was no longer linked to "Blk Mag" (fixed on 0.3.33b)
 
 {SA / AA Skills}
+- If the first strike of a magic weapon (such as scepters) misses, the second hit will not trigger.
 - Correction of several descriptions, about some details.
 - New FR names for some skills and commands.
 
