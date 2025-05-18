@@ -883,7 +883,7 @@ Playable Character Pack only
 - Kuja: Also learns the reworked Boost</Description>
 	<PatchNotes>Complete changes can be found on the mod page.</PatchNotes>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/90</Website>
-	<DownloadUrl>https://www.dropbox.com/scl/fi/mkmzntygv46sh4qg4qjxi/PlayableTantalus.zip?rlkey=r92lksa6neyz3g52nkiyb6rhq&amp;dl=1</DownloadUrl>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/du3s4udw2rgec45te9qm4/AmazingGarnet.zip?rlkey=z2wuq39854380mcg4ln4eqioq&amp;st=4q5fke67&amp;dl=1</DownloadUrl>
 	<PreviewFile>Preview.jpg</PreviewFile>
 	<PreviewFileUrl>https://u.cubeupload.com/Emeiru/AmazingGarnet.jpg</PreviewFileUrl>
 	<Header>Options</Header>
@@ -1007,19 +1007,6 @@ Alternate Fantasy
 </Mod>
 
 <Mod>
-	<Name>David Bowie Edition</Name>
-	<Version>2.0</Version>
-	<InstallationPath>DavidBowie</InstallationPath>
-	<Author>Clem Fandango</Author>
-	<ReleaseDateOriginal>2020-02-01</ReleaseDateOriginal>
-	<ReleaseDate>2022-09-14</ReleaseDate>
-	<Description>Final Fantasy IX: David Bowie Edition (DBE) is a gameplay mod that is meant to function as a rebalance, or better yet a remix of the original game. This mod includes new skills, items, enemy behavior, Chocograph rewards and a number of smaller tweaks.</Description>
-	<Category>Gameplay</Category>
-	<Website>https://forums.qhimm.com/index.php?topic=19499.0</Website>
-	<DownloadUrl>https://www.dropbox.com/s/k5o64e3g8iyah63/FF9%20DBE%20v1.16%20Memoria.zip?dl=1</DownloadUrl>
-</Mod>
-
-<Mod>
     <Name>Amazing Vivi</Name>
     <Version>1.0</Version>
 	<InstallationPath>AmazingVivi</InstallationPath>
@@ -1059,6 +1046,19 @@ Alternate Fantasy only
 		<Group>GameMode</Group>
 		<ActivateWithMod>Alternate Fantasy</ActivateWithMod>
 		</SubMod>
+</Mod>
+	
+<Mod>
+	<Name>David Bowie Edition</Name>
+	<Version>2.0</Version>
+	<InstallationPath>DavidBowie</InstallationPath>
+	<Author>Clem Fandango</Author>
+	<ReleaseDateOriginal>2020-02-01</ReleaseDateOriginal>
+	<ReleaseDate>2022-09-14</ReleaseDate>
+	<Description>Final Fantasy IX: David Bowie Edition (DBE) is a gameplay mod that is meant to function as a rebalance, or better yet a remix of the original game. This mod includes new skills, items, enemy behavior, Chocograph rewards and a number of smaller tweaks.</Description>
+	<Category>Gameplay</Category>
+	<Website>https://forums.qhimm.com/index.php?topic=19499.0</Website>
+	<DownloadUrl>https://www.dropbox.com/s/k5o64e3g8iyah63/FF9%20DBE%20v1.16%20Memoria.zip?dl=1</DownloadUrl>
 </Mod>
 
 <Mod>
