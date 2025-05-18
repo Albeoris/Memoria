@@ -144,8 +144,7 @@ namespace Memoria.Launcher
 
         public static void LoadModDescriptions(StreamReader reader, ref ObservableCollection<Mod> modList)
         {
-            XmlDocument doc = new XmlDocument();
-            doc.Load(reader);
+            XmlDocument doc = LoadDocument(reader);
             XmlNodeList rootNode = doc.SelectNodes("/ModCatalog");
             if (rootNode.Count != 1)
                 return;
@@ -160,12 +159,21 @@ namespace Memoria.Launcher
 
         public Boolean ReadDescription(StreamReader reader)
         {
-            XmlDocument doc = new XmlDocument();
-            doc.Load(reader);
+            XmlDocument doc = LoadDocument(reader);
             XmlNodeList modList = doc.SelectNodes("/Mod");
             if (modList.Count != 1)
                 return false;
             return ReadDescription(modList[0]);
+        }
+
+        public static XmlDocument LoadDocument(StreamReader reader)
+        {
+            String fullText = reader.ReadToEnd();
+            // Fixes issue when '&' is in the url instead of '&amp;'
+            fullText = Regex.Replace(fullText, "&(?!amp;)", "&amp;");
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(fullText);
+            return doc;
         }
 
         public Boolean ReadDescription(XmlNode modNode)
