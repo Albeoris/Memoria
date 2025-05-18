@@ -400,7 +400,7 @@ namespace Memoria.Launcher
             {
                 foreach (Mod sub in SubMod)
                 {
-                    if(String.IsNullOrEmpty(sub.InstallationPath))
+                    if (String.IsNullOrEmpty(sub.InstallationPath))
                     {
                         el = doc.CreateElement("Header");
                         el.InnerText = sub.Name;
