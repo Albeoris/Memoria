@@ -450,7 +450,7 @@ namespace Memoria.Launcher
                     if (sub.ActivateWithoutMod != null)
                     {
                         subEl = doc.CreateElement("ActivateWithoutMod");
-                        subEl.InnerText = String.Join(", ", sub.ActivateWithMod);
+                        subEl.InnerText = String.Join(", ", sub.ActivateWithoutMod);
                         el.AppendChild(subEl);
                     }
                     if (sub.Priority != 0)
