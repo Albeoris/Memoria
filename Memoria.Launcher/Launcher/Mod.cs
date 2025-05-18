@@ -102,8 +102,8 @@ namespace Memoria.Launcher
                 using (Stream input = File.OpenRead(folderPath + "/" + DESCRIPTION_FILE))
                 using (StreamReader reader = new StreamReader(input))
                     ReadDescription(reader);
-                if (InstallationPath == null)
-                    InstallationPath = folderPath;
+                if (InstallationPath == null || Path.GetFullPath(InstallationPath) != Path.GetFullPath(folderPath))
+                    InstallationPath = folderPath.Replace(@".\", "");
             }
             catch (Exception)
             {
