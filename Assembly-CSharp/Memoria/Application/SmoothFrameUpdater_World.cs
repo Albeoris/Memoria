@@ -42,7 +42,7 @@ namespace Memoria
             }
         }
 
-        public static Boolean Enabled => Configuration.Graphics.WorldTPS < Configuration.Graphics.WorldFPS;
+        public static Boolean Enabled => Configuration.Graphics.WorldFPS < 0 || Configuration.Graphics.WorldTPS < Configuration.Graphics.WorldFPS;
 
         public static void RegisterState()
         {

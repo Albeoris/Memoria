@@ -8,6 +8,7 @@ namespace Memoria
     {
         public static class Graphics
         {
+            public static Boolean VSync => Instance._graphics.VSync;
             public static Int32 BattleFPS => Instance._graphics.BattleFPS;
             public static Int32 BattleTPS => Instance._graphics.BattleTPS;
             public static Int32 FieldFPS => Instance._graphics.FieldFPS;

@@ -109,6 +109,11 @@ namespace Memoria.Launcher
                     // Set AntiAliasing to 0
                     IniFile.MemoriaIni.SetSetting("Graphics", "AntiAliasing", "0");
                 }
+                else if (date < new DateTime(2025, 05, 19))
+                {
+                    // Set FPS to auto
+                    FPSDropboxChoice = 0;
+                }
                 // Set windows mode to 0 if it can't be parsed
                 if (!Int32.TryParse(IniFile.SettingsIni.GetSetting("Settings", "WindowMode", "null"), NumberStyles.Integer, CultureInfo.InvariantCulture, out _))
                     IniFile.SettingsIni.SetSetting("Settings", "WindowMode", "0");

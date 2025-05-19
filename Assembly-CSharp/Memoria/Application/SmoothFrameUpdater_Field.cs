@@ -45,7 +45,7 @@ namespace Memoria
             }
         }
 
-        public static Boolean Enabled => Configuration.Graphics.FieldTPS < Configuration.Graphics.FieldFPS;
+        public static Boolean Enabled => Configuration.Graphics.FieldFPS < 0 || Configuration.Graphics.FieldTPS < Configuration.Graphics.FieldFPS;
 
         public static void RegisterState()
         {

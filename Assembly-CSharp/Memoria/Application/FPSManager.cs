@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Memoria
@@ -41,6 +40,9 @@ namespace Memoria
 
         public static void SetTargetFPS(Int32 fps)
         {
+            if ((QualitySettings.vSyncCount == 1) != Configuration.Graphics.VSync)
+                QualitySettings.vSyncCount = Configuration.Graphics.VSync ? 1 : 0;
+
             if (fps == Application.targetFrameRate)
                 return;
             Application.targetFrameRate = fps;
@@ -49,6 +51,11 @@ namespace Memoria
         public static Int32 GetTargetFPS()
         {
             return Application.targetFrameRate;
+        }
+
+        public static Int32 GetEstimatedFps()
+        {
+            return (Int32)Mathf.Round(0.2f / Time.smoothDeltaTime) * 5;
         }
 
         public static void SetMainLoopSpeed(Int32 lps)

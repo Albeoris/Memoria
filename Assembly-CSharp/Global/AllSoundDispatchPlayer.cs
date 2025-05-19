@@ -74,9 +74,13 @@ public class AllSoundDispatchPlayer : SoundPlayer
 
     public static Int32 ConvertTickToMillisec(Int32 ticks)
     {
-        Single msPerTick = 1000f / (Single)FPSManager.GetTargetFPS();
-        Single ms = ticks * msPerTick;
+        Single ms = ticks * FPSManager.GetEstimatedFps();
         return ((Int32)(ms * 10f) % 10 > 5) ? (Int32)ms + 1 : (Int32)ms;
+    }
+
+    public static UInt16 ConvertMillisecToTick(Single ms)
+    {
+        return (UInt16)(ms / FPSManager.GetEstimatedFps());
     }
 
     public Int32 GetCurrentMusicId()
