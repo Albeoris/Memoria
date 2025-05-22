@@ -59,6 +59,7 @@ namespace Memoria.Launcher
             ["UseAbsoluteOrientation", "_useAbsoluteOrientation", "UseAbsoluteOrientation", "AnalogControl", 0, 1, 1],
             ["AlwaysCaptureGamepad", "_alwaysCaptureGamepad", "AlwaysCaptureGamepad", "Control", 0, 1, 1],
 
+            ["VSync", "_vSync", "VSync", "Graphics", 0, 1, 1],
             ["SwapConfirmCancel", "_swapConfirmCancel", "SwapConfirmCancel", "Control", 0, 1, 0],
 
             // Sliders
@@ -329,6 +330,13 @@ namespace Memoria.Launcher
         {
             get => _alwaysCaptureGamepad;
             set => SetProperty(ref _alwaysCaptureGamepad, value);
+        }
+
+        private Int16 _vSync;
+        public Int16 VSync
+        {
+            get => _vSync;
+            set => SetProperty(ref _vSync, value);
         }
 
         private Int16 _swapConfirmCancel;
@@ -916,9 +924,7 @@ namespace Memoria.Launcher
                     _worldmapmistpreset = -1;
                 Refresh(nameof(WorldmapMistPreset));
 
-                value = iniFile.GetSetting("Graphics", "BattleSwirlFrames");
-                if (String.IsNullOrEmpty(value))
-                    value = " 0";
+                value = iniFile.GetSetting("Graphics", "BattleSwirlFrames", "0");
                 value1isInt = Int16.TryParse(value, out value1);
                 if (value1isInt)
                 {
@@ -928,11 +934,7 @@ namespace Memoria.Launcher
 
 
 
-                value = iniFile.GetSetting("Cheats", "SpeedMode");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 1";
-                }
+                value = iniFile.GetSetting("Cheats", "SpeedMode", "1");
                 value1isInt = Int16.TryParse(value, out value1);
                 if (value1isInt && value1 == 0)
                 {
@@ -942,11 +944,7 @@ namespace Memoria.Launcher
                 else
                 {
                     SpeedMode = 1;
-                    value = iniFile.GetSetting("Cheats", "SpeedFactor");
-                    if (String.IsNullOrEmpty(value))
-                    {
-                        value = " 3";
-                    }
+                    value = iniFile.GetSetting("Cheats", "SpeedFactor", "3");
                     if (!Int16.TryParse(value, out _speedfactor))
                         _speedfactor = 3;
                 }
@@ -1019,7 +1017,7 @@ namespace Memoria.Launcher
                 value = iniFile.GetSetting("Battle", "Speed");
                 if (String.IsNullOrEmpty(value))
                 {
-                    value = " 0";
+                    value = "0";
                     OnPropertyChanged("ATBModeChoice");
                 }
                 if (!Int16.TryParse(value, out _atbmodechoice))
@@ -1141,7 +1139,7 @@ namespace Memoria.Launcher
                 value = iniFile.GetSetting("Battle", "AccessMenus");
                 if (String.IsNullOrEmpty(value))
                 {
-                    value = " 0";
+                    value = "0";
                     OnPropertyChanged(nameof(AccessBattleMenu));
                 }
                 if (!Int16.TryParse(value, out _accessBattleMenu))

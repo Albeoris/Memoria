@@ -125,7 +125,7 @@ namespace Memoria.Launcher
                 PlayButton.Click();
 
             String checkUpdates = IniFile.SettingsIni.GetSetting("Memoria", "CheckUpdates", "True");
-            if (checkUpdates == "True")
+            if (!Boolean.TryParse(checkUpdates, out Boolean result) || result)
             {
                 await UiLauncherPlayButton.CheckUpdates((Window)this.GetRootElement(), new ManualResetEvent(false), GameSettings);
             }
