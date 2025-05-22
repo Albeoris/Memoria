@@ -285,9 +285,9 @@ You should set the priority of this mod to be higher than the priority of the Mo
 	<PatchNotes>Requires Memoria v2025.05.11 or later Currently this mod is not compatible with Trance Seek, but I plan on getting it to eventually</PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://steamcommunity.com/app/377840/discussions/0/3497635791229563331/</Website>
-	<DownloadUrl>https://www.dropbox.com/s/b5pbed8pshd3l4t/PC_PlayableCharacterPack.zip?dl=1</DownloadUrl>
+	<DownloadUrl>https://github.com/WarpedEdge/ffix-mod-projects/releases/download/v1.5/PlayableCharacterPack.zip</DownloadUrl>
 	<PreviewFile>Preview.png</PreviewFile>
-	<PreviewFileUrl>https://i.imgur.com/vZ8DbNQ.png</PreviewFileUrl>
+	<PreviewFileUrl>https://i.imgur.com/oxSjSIE.png</PreviewFileUrl>
 	<Header>Costumes</Header>
 	<SubMod>
 		<Name>Zidane Pluto outfit</Name>
