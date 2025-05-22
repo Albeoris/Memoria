@@ -248,28 +248,61 @@ Elite monsters are quite similar to normals, but will be more resistant to deadl
 
 <Mod>
 	<Name>Playable Character Pack</Name>
-	<Version>1.2</Version>
+	<Version>1.5</Version>
 	<InstallationPath>PlayableCharacterPack</InstallationPath>
-	<Author>Tirlititi</Author>
-	<ReleaseDate>2024-08-06</ReleaseDate>
-	<PatchNotes>Requires Memoria v2023.08.05</PatchNotes>
-	<Description>Add Kuja, Fratley and Lani as playable characters.
-You can press Alt+F2 in-game to access the party menu (changing the party at any time is a feature of Memoria, not related to this mod).
+	<Author>Tirlititi and WarpedEdge</Author>
+	<ReleaseDate>22 May 2025</ReleaseDate>
+	<PatchNotes>Requires Memoria v2025-05-11</PatchNotes>
+	<MinimumMemoriaVersion>2025-05-11</MinimumMemoriaVersion>
+	<Description>Adds new playable characters to the roster.
+Currently, these characters are added:
+- Kuja
+- Fratley
+- Lani
+- Haagen
+- Kohel
+- Aria (Alexandrian soldier)
+- Ophelia (Alexandrian soldier)
+- Dan
+- Jeame (Cleyra dancer)
+- Puck
+These characters will be available soon:
+- Mikoto
+- Gerome (Genome)
+- Ruby
+- Baku
+
+You can press Alt+F2 or Ctrl+Alt+Shift+F2 if on Linux in-game to access the party menu (changing the party at any time is a feature of Memoria, not related to this mod).
+
+Special Thanks for their important help:
+- Emeiru (support)
+- Hope (scripting)
+- faospark (concept art)
+- samtoki (character portraits)
+- DV (ability sequences and features)
+
 You should set the priority of this mod to be higher than the priority of the Moguri mod but lower than other mods.</Description>
+	<PatchNotes>Requires Memoria v2025.05.11 or later Currently this mod is not compatible with Trance Seek, but I plan on getting it to eventually</PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://steamcommunity.com/app/377840/discussions/0/3497635791229563331/</Website>
-	<DownloadUrl>https://www.dropbox.com/scl/fi/2nvxgs49ytlxctozel6ga/PC_PlayableCharacterPack.zip?rlkey=vrbnqez1rdtdhuxv7blp5tjdb&amp;dl=1</DownloadUrl>
+	<DownloadUrl>https://github.com/WarpedEdge/ffix-mod-projects/releases/download/v1.5/PlayableCharacterPack.zip</DownloadUrl>
 	<PreviewFile>Preview.png</PreviewFile>
-	<PreviewFileUrl>https://i.imgur.com/vZ8DbNQ.png</PreviewFileUrl>
+	<PreviewFileUrl>https://i.imgur.com/oxSjSIE.png</PreviewFileUrl>
+	<Header>Costumes</Header>
 	<SubMod>
 		<Name>Zidane Pluto outfit</Name>
-		<InstallationPath>ZidaneArmor</InstallationPath>
-		<Description>When enabled, Zidane's battle model will wear a Pluto armor.</Description>
+		<InstallationPath>Costumes/ZidaneArmor</InstallationPath>
+		<Description>When enabled, Zidane's battle model will wear Pluto knight armor from the story.</Description>
 	</SubMod>
 	<SubMod>
 		<Name>Garnet White Mage robe</Name>
-		<InstallationPath>GarnetHooded</InstallationPath>
+		<InstallationPath>Costumes/GarnetHooded</InstallationPath>
 		<Description>When enabled, Garnet's battle model will wear the traditional White Mage robe.</Description>
+	</SubMod>
+	<SubMod>
+		<Name>Blank Pluto outfit</Name>
+		<InstallationPath>Costumes/BlankArmor</InstallationPath>
+		<Description>When enabled, Blank's battle model will wear the Pluto knight armor from the story.</Description>
 	</SubMod>
 </Mod>
 
