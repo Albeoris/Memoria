@@ -31,7 +31,7 @@ namespace Memoria
             }
         }
 
-        public static Boolean Enabled => Configuration.Graphics.BattleTPS < Configuration.Graphics.BattleFPS;
+        public static Boolean Enabled => Configuration.Graphics.BattleFPS < 0 || Configuration.Graphics.BattleTPS < Configuration.Graphics.BattleFPS;
 
         public static void OnBattleMapChange()
         {

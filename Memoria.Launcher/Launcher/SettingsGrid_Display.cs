@@ -11,6 +11,7 @@ namespace Memoria.Launcher
         {
             DataContext = (MainWindow)Application.Current.MainWindow;
             String[] comboboxchoices = [
+                "Launcher.Auto",
                 "Settings.FPSDropboxChoice0", // default 30 20 15
                 "Settings.FPSDropboxChoice1", // 30
                 "Settings.FPSDropboxChoice2", // 60

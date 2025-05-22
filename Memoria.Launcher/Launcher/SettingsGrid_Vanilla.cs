@@ -236,9 +236,7 @@ namespace Memoria.Launcher
             {
                 IniFile iniFile = IniFile.SettingsIni;
 
-                String value = iniFile.GetSetting("Memoria", nameof(IsX64));
-                if (String.IsNullOrEmpty(value))
-                    value = "true";
+                String value = iniFile.GetSetting("Memoria", nameof(IsX64), "true");
                 if (!Boolean.TryParse(value, out _isX64))
                     _isX64 = true;
                 if (!Environment.Is64BitOperatingSystem || !Directory.Exists("x64"))
@@ -252,21 +250,15 @@ namespace Memoria.Launcher
                     _isX64Enabled = false;
                 }
 
-                value = iniFile.GetSetting("Memoria", nameof(IsDebugMode));
-                if (String.IsNullOrEmpty(value))
-                    value = "false";
+                value = iniFile.GetSetting("Memoria", nameof(IsDebugMode), "false");
                 if (!Boolean.TryParse(value, out _isDebugMode))
                     _isDebugMode = false;
 
-                value = iniFile.GetSetting("Memoria", nameof(CheckUpdates));
-                if (String.IsNullOrEmpty(value))
-                    value = "true";
+                value = iniFile.GetSetting("Memoria", nameof(CheckUpdates), "true");
                 if (!Boolean.TryParse(value, out _checkUpdates))
                     _checkUpdates = true;
 
-                value = iniFile.GetSetting("Memoria", nameof(AutoRunGame));
-                if (String.IsNullOrEmpty(value))
-                    value = "false";
+                value = iniFile.GetSetting("Memoria", nameof(AutoRunGame), "false");
                 AutoRunGame = App.AutoRunGame || (Boolean.TryParse(value, out var autoRunGame) && autoRunGame);
 
                 value = iniFile.GetSetting("Memoria", nameof(DownloadMirrors));
@@ -280,9 +272,7 @@ namespace Memoria.Launcher
                     _downloadMirrors = value.Split(',');
                 }
 
-                value = iniFile.GetSetting("Memoria", "LauncherLanguage").Trim();
-                if (String.IsNullOrEmpty(value))
-                    value = Lang.LangName;
+                value = iniFile.GetSetting("Memoria", "LauncherLanguage", Lang.LangName);
                 _launcherlanguage = 0;
                 for (Int32 i = 0; i < Lang.LauncherLanguageList.Length; i++)
                 {

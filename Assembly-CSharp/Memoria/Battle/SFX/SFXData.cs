@@ -55,7 +55,7 @@ public class SFXData
             return;
         Stopwatch watch = new Stopwatch();
         watch.Start();
-        Int32 maxLoadingTime = Math.Max(5, (Int32)Mathf.Floor(LoadingTimeAllocatedPerFrame / Configuration.Graphics.BattleFPS));
+        Int32 maxLoadingTime = Math.Max(5, (Int32)Mathf.Floor(LoadingTimeAllocatedPerFrame / FPSManager.GetEstimatedFps()));
         while (!SFXData.lockLoading && watch.ElapsedMilliseconds < maxLoadingTime)
         {
             if (LoadCur == null)

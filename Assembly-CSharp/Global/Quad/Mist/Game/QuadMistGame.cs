@@ -709,7 +709,7 @@ public class QuadMistGame : MonoBehaviour
     public void QuitQuadMist()
     {
         SceneDirector.FF9Wipe_FadeOutEx(30);
-        StartCoroutine(QuitQuadMistTransition(30f / FPSManager.GetTargetFPS()));
+        StartCoroutine(QuitQuadMistTransition(0.5f));
     }
 
     [DebuggerHidden]

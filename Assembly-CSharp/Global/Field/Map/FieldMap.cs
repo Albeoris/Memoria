@@ -735,21 +735,20 @@ public class FieldMap : HonoBehavior
         {
             if (SmoothCamDelay <= 0)
             {
-                SmoothCamDelta.x = (Prev_CamPositionX - CamPositionX) * (float)(SmoothCamPercent() / 100f);
+                SmoothCamDelta.x = (Prev_CamPositionX - CamPositionX) * SmoothCamPercent;
                 CamPositionX += SmoothCamDelta.x;
-                Prev_CamPositionX = CamPositionX;
 
-                SmoothCamDelta.y = (Prev_CamPositionY - CamPositionY) * (float)(SmoothCamPercent() / 100f);
+                SmoothCamDelta.y = (Prev_CamPositionY - CamPositionY) * SmoothCamPercent;
                 CamPositionY += SmoothCamDelta.y;
-                Prev_CamPositionY = CamPositionY;
             }
             else
             {
-                SmoothCamDelay -= 1;
-                Prev_CamPositionX = CamPositionX;
-                Prev_CamPositionY = CamPositionY;
+                SmoothCamDelay--;
             }
         }
+
+        Prev_CamPositionX = CamPositionX;
+        Prev_CamPositionY = CamPositionY;
 
         localPosition.x = CamPositionX;
         localPosition.y = CamPositionY;
@@ -2422,10 +2421,8 @@ public class FieldMap : HonoBehavior
     private bool dbug = false;
 
     private float Prev_CamPositionX, Prev_CamPositionY;
-    private Int16 SmoothCamPercent()
-    {
-        return (Int16)Mathf.Clamp(Configuration.Graphics.CameraStabilizer, 0, 99);
-    }
+    private static Single SmoothCamPercent = Mathf.Clamp(Configuration.Graphics.CameraStabilizer, 0, 99) / 100f;
+    
     private Int16 SmoothCamDelay;
     private Vector2 SmoothCamDelta;
     private Boolean SmoothCamActive;

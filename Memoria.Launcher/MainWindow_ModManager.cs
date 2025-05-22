@@ -723,6 +723,13 @@ namespace Memoria.Launcher
                                 foreach (String sd in subDirectories)
                                     if (Mod.LooksLikeAModFolder(sd))
                                     {
+                                        // TODO language:
+                                        MessageBox.Show($"The mod folder name '{Path.GetFileName(sd)}' is different than expected '{downloadingMod.InstallationPath}'\n\nPlease inform the author of the mod{(downloadingMod.Author != null ? $" ({downloadingMod.Author})" : "")}.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                                        if (File.Exists(sd + "/" + Mod.DESCRIPTION_FILE))
+                                        {
+                                            descPath = sd + "/" + Mod.DESCRIPTION_FILE;
+                                            moveDesc = true;
+                                        }
                                         sourcePath = sd;
                                         destPath = downloadingMod.InstallationPath ?? downloadingModName;
                                         proceedNext = true;
@@ -1122,7 +1129,8 @@ namespace Memoria.Launcher
                         {
                             mod.PreviewImage = new BitmapImage(new Uri(mod.PreviewFileUrl, UriKind.Absolute));
                             mod.PreviewImage.DownloadCompleted += OnPreviewFileDownloaded;
-                        } catch { }
+                        }
+                        catch { }
                     }
                     else if (tabCtrlMain.SelectedIndex == 1 && mod.PreviewFileUrl != null)
                     {
