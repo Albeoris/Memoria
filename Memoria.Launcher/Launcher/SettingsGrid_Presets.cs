@@ -72,10 +72,10 @@ namespace Memoria.Launcher
                     VerticalAlignment = VerticalAlignment.Center,
                     Margin = new Thickness(0)
                 };
-                DeleteButton.Click += DeleteBtn_Click;
-                Children.Add(DeleteButton);
             }
             catch { }
+            DeleteButton.Click += DeleteBtn_Click;
+            Children.Add(DeleteButton);
 
             MakeTooltip(DeleteButton, "Launcher.DeletePreset_Tooltip", "", "hand");
 
