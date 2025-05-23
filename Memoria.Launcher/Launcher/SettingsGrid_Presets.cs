@@ -61,15 +61,19 @@ namespace Memoria.Launcher
             DeleteButton.SetValue(ColumnProperty, 52);
             DeleteButton.SetValue(RowSpanProperty, 1);
             DeleteButton.SetValue(ColumnSpanProperty, 8);
-            DeleteButton.Content = new Image
+            try
             {
-                Source = new BitmapImage(new Uri("pack://application:,,,/images/btnUninstallimg_small.png")),
-                Height = 15,
-                Width = 15,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                Margin = new Thickness(0)
-            };
+                DeleteButton.Content = new Image
+                {
+                    Source = new BitmapImage(new Uri("pack://application:,,,/images/btnUninstallimg_small.png")),
+                    Height = 15,
+                    Width = 15,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(0)
+                };
+            }
+            catch { }
             DeleteButton.Click += DeleteBtn_Click;
             Children.Add(DeleteButton);
 
