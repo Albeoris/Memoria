@@ -248,11 +248,11 @@ Elite monsters are quite similar to normals, but will be more resistant to deadl
 
 <Mod>
 	<Name>Playable Character Pack</Name>
-	<Version>1.5</Version>
+	<Version>1.5.1</Version>
 	<InstallationPath>PlayableCharacterPack</InstallationPath>
-	<Author>Tirlititi and WarpedEdge</Author>
+	<Author>Tirlititi / WarpedEdge</Author>
 	<ReleaseDateOriginal>9 Nov 2022</ReleaseDateOriginal>
-	<ReleaseDate>22 May 2025</ReleaseDate>
+	<ReleaseDate>23 May 2025</ReleaseDate>
 	<PatchNotes>Requires Memoria v2025-05-11</PatchNotes>
 	<MinimumMemoriaVersion>2025-05-11</MinimumMemoriaVersion>
 	<Description>Adds new playable characters to the roster.
@@ -286,7 +286,7 @@ You should set the priority of this mod to be higher than the priority of the Mo
 	<PatchNotes>Requires Memoria v2025.05.11 or later Currently this mod is not compatible with Trance Seek, but I plan on getting it to eventually</PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://steamcommunity.com/app/377840/discussions/0/3497635791229563331/</Website>
-	<DownloadUrl>https://github.com/WarpedEdge/ffix-mod-projects/releases/download/v1.5/PlayableCharacterPack.zip</DownloadUrl>
+	<DownloadUrl>https://github.com/WarpedEdge/ffix-mod-projects/releases/download/PCP-v1.5.1/PlayableCharacterPack.zip</DownloadUrl>
 	<PreviewFile>Preview.png</PreviewFile>
 	<PreviewFileUrl>https://i.imgur.com/oxSjSIE.png</PreviewFileUrl>
 	<Header>Costumes</Header>
