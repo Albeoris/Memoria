@@ -251,6 +251,7 @@ Elite monsters are quite similar to normals, but will be more resistant to deadl
 	<Version>1.5</Version>
 	<InstallationPath>PlayableCharacterPack</InstallationPath>
 	<Author>Tirlititi and WarpedEdge</Author>
+	<ReleaseDateOriginal>9 Nov 2022</ReleaseDateOriginal>
 	<ReleaseDate>22 May 2025</ReleaseDate>
 	<PatchNotes>Requires Memoria v2025-05-11</PatchNotes>
 	<MinimumMemoriaVersion>2025-05-11</MinimumMemoriaVersion>
@@ -417,7 +418,7 @@ Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</D
 		<InstallationPath>Features/Tweaks/2xgil</InstallationPath>
 		<Description>Doubles Gil received after battle</Description>
 		<Priority>1</Priority>
-		<Group>GIL</Group>	
+		<Group>GIL</Group>
 	</SubMod>
 	<SubMod>
 		<Name>4x gil</Name>
@@ -553,7 +554,7 @@ Part of Kupo Mods’ Character formerly Mog Add-ons.
 		<Name>Add Resistance to Zombie and Virus </Name>
 		<InstallationPath>Features/All</InstallationPath>
 		<Description>Auto-life resists Zombie, Anti-body Resists Virus </Description>
-		<Default/>		
+		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>Bye Auto-Potion </Name>
@@ -1232,7 +1233,7 @@ Originally released as part of Kupo Mods formerly Mog-Addons to see previews and
 		<Name>UI Option: No Highlight</Name>
 		<InstallationPath>Features/frames/highlightless</InstallationPath>
 		<Description>Removes dividers in menu</Description>
-		<Priority>4</Priority>		
+		<Priority>4</Priority>
 	</SubMod>
 	<Header>Tiled Menu Backgrounds</Header>
 	<SubMod>
@@ -1342,7 +1343,7 @@ Originally released as part of Kupo Mods formerly Mog-Addons to see previews and
 		<Description>Triple triad inspired mat and UI for the Game, This automatically sets the game to be in triple triad mode </Description>
 		<PreviewFile>preview/tm.png</PreviewFile>
 		<Default/>
-	</SubMod>	
+	</SubMod>
 	<SubMod>
 		<Name>Alternate Colored Maps</Name>
 		<InstallationPath>Features/Maps</InstallationPath>
@@ -1376,7 +1377,7 @@ Originally released as part of Kupo Mods formerly Mog-Addons to see previews and
 		<Description>A custom Key Item background when reading description.</Description>
 		<PreviewFile>preview/tk.png</PreviewFile>
 		<Default/>
-	</SubMod>	
+	</SubMod>
 	<SubMod>
 		<Name>Concept Art Title Loop</Name>
 		<InstallationPath>Features/TitleLogo/TitleLoop</InstallationPath>
@@ -1711,7 +1712,7 @@ Originally part of Kupo Mods, formerly Mog Add-ons.
 		<Description>For Extra costumes of PCP, must be used with default or PSX like portraits </Description>
 		<Priority>2</Priority>
 		<Group>g-port-extra</Group>
-		<PreviewFile>preview/ext-alt.jpg</PreviewFile>		
+		<PreviewFile>preview/ext-alt.jpg</PreviewFile>
 	</SubMod>
 	<Header>DFFOO Portraits</Header>
 	<SubMod>
@@ -1728,7 +1729,7 @@ Originally part of Kupo Mods, formerly Mog Add-ons.
 		<Description>DFFOO Style for Extra costumes of PCP, must be used with the Opera Omnia portraits </Description>
 		<Priority>2</Priority>
 		<Group>g-port-extra</Group>
-		<PreviewFile>preview/dffoo.jpg</PreviewFile>		
+		<PreviewFile>preview/dffoo.jpg</PreviewFile>
 	</SubMod>
 </Mod>
 
