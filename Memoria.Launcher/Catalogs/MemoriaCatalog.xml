@@ -1097,6 +1097,32 @@ Alternate Fantasy only
 </Mod>
 
 <Mod>
+	<Name>[Tsunamods] Scavenger 9</Name>
+	<Version>1.0</Version>
+	<InstallationPath>Scavenger 9</InstallationPath>
+	<Author>Tsuna + death_unites_us</Author>
+	<ReleaseDateOriginal>2025-05-23</ReleaseDateOriginal>
+	<ReleaseDate>2025-05-23</ReleaseDate>
+	<Description>FF9 will be broken up into multiple sections.
+Each time you complete a section, you will be notified. 
+
+When sections are completed, you will:
+Lose all Items
+Lose all Gear
+Lose all Gil
+Forget all abilities
+Be reset to default equipment
+
+You will then have to use only what the game provides in the upcoming section to beat it.
+Good luck!</Description>
+	<Category>Challenge</Category>
+	<Website>https://www.tsunamods.com</Website>
+	<DownloadUrl>https://download.tsunamods.com/?id=21</DownloadUrl>
+	<PreviewFile>Preview/Scavenger 9 Logo.png</PreviewFile>
+	<PreviewFileUrl>https://i.imgur.com/04sKNQq.png</PreviewFileUrl>
+</Mod>
+
+<Mod>
 	<Name>Garnet is Main Character</Name>
 	<Version>1.1</Version>
 	<InstallationPath>GarnetIsMainCharacter</InstallationPath>
