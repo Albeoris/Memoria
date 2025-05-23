@@ -967,12 +967,16 @@ namespace Memoria.Launcher
             }
             if (image != currentImage)
             {
-                BitmapImage bitmap = new BitmapImage();
-                bitmap.BeginInit();
-                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                bitmap.UriSource = new Uri(image, UriKind.Absolute);
-                bitmap.EndInit();
-                Launcher.Source = bitmap;
+                try
+                {
+                    BitmapImage bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.UriSource = new Uri(image, UriKind.Absolute);
+                    bitmap.EndInit();
+                    Launcher.Source = bitmap;
+                }
+                catch { }
                 currentImage = image;
             }
         }
@@ -1051,11 +1055,15 @@ namespace Memoria.Launcher
                 gridModInfo.Visibility = Visibility.Collapsed;
                 PreviewModWebsite.Visibility = Visibility.Collapsed;
                 PreviewModCategoryTagline.Visibility = Visibility.Collapsed;
-                BitmapImage bitmap = new BitmapImage();
-                bitmap.BeginInit();
-                bitmap.UriSource = new Uri("pack://application:,,,/images/Gradient.png");
-                bitmap.EndInit();
-                PreviewModImage.Source = bitmap;
+                try
+                {
+                    BitmapImage bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.UriSource = new Uri("pack://application:,,,/images/Gradient.png");
+                    bitmap.EndInit();
+                    PreviewModImage.Source = bitmap;
+                }
+                catch { }
                 DoubleAnimation animation = new DoubleAnimation
                 {
                     To = 0,
@@ -1116,11 +1124,15 @@ namespace Memoria.Launcher
                         String imagePath = $"./{mod.InstallationPath}/{mod.PreviewFile}";
                         if (File.Exists(imagePath))
                         {
-                            mod.PreviewImage = new BitmapImage();
-                            mod.PreviewImage.BeginInit();
-                            mod.PreviewImage.UriSource = new Uri(imagePath, UriKind.Relative);
-                            mod.PreviewImage.CacheOption = BitmapCacheOption.OnLoad;
-                            mod.PreviewImage.EndInit();
+                            try
+                            {
+                                mod.PreviewImage = new BitmapImage();
+                                mod.PreviewImage.BeginInit();
+                                mod.PreviewImage.UriSource = new Uri(imagePath, UriKind.Relative);
+                                mod.PreviewImage.CacheOption = BitmapCacheOption.OnLoad;
+                                mod.PreviewImage.EndInit();
+                            }
+                            catch { }
                         }
                     }
                     else if (tabCtrlMain.SelectedIndex == 0 && mod.PreviewFileUrl != null)
@@ -1144,11 +1156,15 @@ namespace Memoria.Launcher
                 }
                 if (mod.PreviewImage == null)
                 {
-                    BitmapImage bitmap = new BitmapImage();
-                    bitmap.BeginInit();
-                    bitmap.UriSource = new Uri("pack://application:,,,/images/Gradient.png");
-                    bitmap.EndInit();
-                    PreviewModImage.Source = bitmap;
+                    try
+                    {
+                        BitmapImage bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.UriSource = new Uri("pack://application:,,,/images/Gradient.png");
+                        bitmap.EndInit();
+                        PreviewModImage.Source = bitmap;
+                    }
+                    catch { }
                 }
                 else if (mod.PreviewImage.IsDownloading)
                 {
