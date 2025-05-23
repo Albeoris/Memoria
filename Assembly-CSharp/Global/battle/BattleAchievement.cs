@@ -9,9 +9,9 @@ public class BattleAchievement
     public static void UpdateEndBattleAchievement()
     {
         Int32 battleMapIndex = FF9StateSystem.Battle.battleMapIndex;
-        BTL_SCENE btl_scene = FF9StateSystem.Battle.FF9Battle.btl_scene;
-        SB2_PATTERN sb2_PATTERN = btl_scene.PatAddr[(Int32)FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
-        BattleAchievement.IncreaseNumber(ref BattleAchievement.achievement.enemy_no, (Int32)sb2_PATTERN.MonsterCount);
+        BTL_SCENE btlScene = FF9StateSystem.Battle.FF9Battle.btl_scene;
+        SB2_PATTERN btlPattern = btlScene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
+        BattleAchievement.IncreaseNumber(ref BattleAchievement.achievement.enemy_no, btlPattern.MonsterCount);
         AchievementManager.ReportAchievement(AcheivementKey.Defeat100, BattleAchievement.achievement.enemy_no);
         AchievementManager.ReportAchievement(AcheivementKey.Defeat1000, BattleAchievement.achievement.enemy_no);
         AchievementManager.ReportAchievement(AcheivementKey.Defeat10000, BattleAchievement.achievement.enemy_no);
@@ -38,16 +38,17 @@ public class BattleAchievement
         else if (battleMapIndex == 634 || battleMapIndex == 627 || battleMapIndex == 755 || battleMapIndex == 753)
         {
             // Ragtime Mouse (quizz result)
-            Int32 varManually = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(50900);
-            Int32 num = varManually >> 3 & 31;
-            Int32 num2 = num * 100 / 16;
-            if (num2 >= 100)
+            Int32 genVarRagtimeQuizzSuccess = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.getVarOperation(EBin.VariableSource.Global, EBin.VariableType.Byte, 198));
+            Int32 successCount = genVarRagtimeQuizzSuccess >> 3 & 31;
+            Int32 successPourcent = successCount * 100 / 16;
+            if (successPourcent >= 100)
                 AchievementManager.ReportAchievement(AcheivementKey.AllOX, 1);
         }
         else if (battleMapIndex == 920 || battleMapIndex == 921)
         {
-            Int32 varManually2 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(405732);
-            if (varManually2 == 1)
+            // Friendly Yan
+            Int32 genVarFriendlyYan = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.getVarOperation(EBin.VariableSource.Global, EBin.VariableType.Bit, 1584));
+            if (genVarFriendlyYan == 1)
                 AchievementManager.ReportAchievement(AcheivementKey.YanBlessing, 1);
         }
         else if (battleMapIndex == 339 && BattleAchievement.IsChallengingPlayerIsGarnet())

@@ -72,24 +72,20 @@ namespace Assets.SiliconSocial
         public static void ReportAchievement(AcheivementKey key, Int32 totalProgress)
         {
             if (key == AcheivementKey.AllAbility || key == AcheivementKey.CardWinAll)
-            {
                 return;
-            }
             AchievementStatusesEnum achievementStatus = AchievementManager.GetAchievementStatus(key);
             if (FF9StateSystem.Settings.IsFastTrophyMode)
-            {
                 totalProgress = AchievementManager.GetFastTrophyModeProgess(key, totalProgress);
-            }
-            Int32 num = AchievementManager.CalculateProgressPercent(key, totalProgress);
+            Int32 percentProgress = AchievementManager.CalculateProgressPercent(key, totalProgress);
             Int32 retryCount = 1;
             if (achievementStatus == AchievementStatusesEnum.NotUnlockYet)
             {
-                if (num >= 100)
+                if (percentProgress >= 100)
                 {
                     AchievementManager.SetAchievementStatus(key, AchievementStatusesEnum.ReadyToUnlock);
                     retryCount = 5;
                 }
-                AchievementManager.ProcessAchievementReport(key, totalProgress, num, retryCount);
+                AchievementManager.ProcessAchievementReport(key, totalProgress, percentProgress, retryCount);
             }
             else
             {
@@ -100,15 +96,13 @@ namespace Assets.SiliconSocial
         private static Int32 CalculateProgressPercent(AcheivementKey key, Int32 progress)
         {
             Single target = AchievementManager.Data[key].Target;
-            return (Int32)Math.Floor((Double)((Single)progress / target * 100f));
+            return (Int32)Math.Floor(progress / target * 100f);
         }
 
         public static void ProcessAchievementReport(AcheivementKey key, Int32 progress, Int32 percentProgress, Int32 retryCount)
         {
             if (!Social.IsSocialPlatformAuthenticated())
-            {
                 return;
-            }
             AchievementManager.AchievementRetryCount[(Int32)key] = retryCount;
             AchievementManager.SendAchievementRequestPerPlatform(key, progress, percentProgress);
         }
@@ -286,51 +280,51 @@ namespace Assets.SiliconSocial
 
         private static Int32 GetFastTrophyModeProgess(AcheivementKey key, Int32 originalProgress)
         {
-            Int32 num = 1;
+            Int32 factor = 1;
             switch (key)
             {
                 case AcheivementKey.Synth10:
-                    num = 10; break;
+                    factor = 10; break;
                 case AcheivementKey.Synth30:
-                    num = 15; break;
+                    factor = 15; break;
                 case AcheivementKey.BlkMag100:
-                    num = 50; break;
+                    factor = 50; break;
                 case AcheivementKey.WhtMag200:
-                    num = 100; break;
+                    factor = 100; break;
                 case AcheivementKey.BluMag100:
-                    num = 50; break;
+                    factor = 50; break;
                 case AcheivementKey.Summon50:
-                    num = 25; break;
+                    factor = 25; break;
                 case AcheivementKey.Defeat100:
-                    num = 100; break;
+                    factor = 100; break;
                 case AcheivementKey.Defeat1000:
-                    num = 200; break;
+                    factor = 200; break;
                 case AcheivementKey.Defeat10000:
-                    num = 1000; break;
+                    factor = 1000; break;
                 case AcheivementKey.ChocoboLv99:
-                    num = 50; break;
+                    factor = 50; break;
                 case AcheivementKey.Frog99:
-                    num = 33; break;
+                    factor = 33; break;
                 case AcheivementKey.Auction10:
-                    num = 10; break;
+                    factor = 10; break;
                 case AcheivementKey.CardWin10:
-                    num = 10; break;
+                    factor = 10; break;
                 case AcheivementKey.CardWin100:
-                    num = 50; break;
+                    factor = 50; break;
                 case AcheivementKey.CardWinAll:
-                    num = 80; break;
+                    factor = 80; break;
                 case AcheivementKey.BackAttack30:
-                    num = 30; break;
+                    factor = 30; break;
                 case AcheivementKey.Steal50:
-                    num = 50; break;
+                    factor = 50; break;
                 case AcheivementKey.Defense50:
-                    num = 50; break;
+                    factor = 50; break;
                 case AcheivementKey.Trance50:
-                    num = 50; break;
+                    factor = 50; break;
                 case AcheivementKey.QueenReward10:
-                    num = 10; break;
+                    factor = 10; break;
                 case AcheivementKey.ATE80:
-                    num = 79; break;
+                    factor = 79; break;
                 case AcheivementKey.AllStiltzkinItem:
                 case AcheivementKey.AllPasssiveAbility:
                 case AcheivementKey.AllAbility:
@@ -349,30 +343,17 @@ namespace Assets.SiliconSocial
                 default:
                     break;
             }
-            return originalProgress * num;
+            return originalProgress * factor;
         }
 
         public static String GetRefKeyForPlatform(AcheivementKey key)
         {
-            String empty = String.Empty;
             return AchievementManager.Data[key].refKey_Steam;
         }
 
         public static void ReportCallback(AcheivementKey Key, Int32 progress, Int32 percentProgress, Boolean isSuccess)
         {
-            Debug.Log(String.Concat(new Object[]
-            {
-                "reportachievement callback isSuccess = ",
-                isSuccess,
-                ", Key = ",
-                Key,
-                ", keyID = ",
-                (Int32)Key,
-                ", progress = ",
-                progress,
-                ", percent = ",
-                percentProgress
-            }));
+            Debug.Log($"reportachievement callback isSuccess = {isSuccess}, Key = {Key}, keyID = {(Int32)Key}, progress = {progress}, percent = {percentProgress}");
             if (isSuccess)
             {
                 if (percentProgress >= 100)

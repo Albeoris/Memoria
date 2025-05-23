@@ -213,7 +213,7 @@ public class DialogManager : Singleton<DialogManager>
                 dialog.ForceClose();
                 if (FF9StateSystem.Common.FF9.fldMapNo == 100) // Alexandria/Main Street
                 {
-                    Int32 varManually = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(8149);
+                    Int32 varManually = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.getVarOperation(EBin.VariableSource.Map, EBin.VariableType.Byte, 31));
                     if (varManually == 3) // When Puck hits Vivi
                         dialog.AfterHidden();
                 }
