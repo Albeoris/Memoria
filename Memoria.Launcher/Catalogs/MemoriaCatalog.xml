@@ -309,16 +309,18 @@ You should set the priority of this mod to be higher than the priority of the Mo
 
 <Mod>
 	<Name>Support Ability Cost</Name>
-	<Version>4.1.3</Version>
+	<Version>4.1.4</Version>
 	<InstallationPath>KupoGemSATweak</InstallationPath>
-	<ReleaseDate>2025-01-13</ReleaseDate>
+	<ReleaseDate>2025-05-24</ReleaseDate>
 	<ReleaseDateOriginal>2022-4-14</ReleaseDateOriginal>
 	<Author>faospark / Tirlititi </Author>
 	<Description> Allows You to have 1 Gem cost per support ability or Half.
 [1] 1 Gem Cost is activate by default 
 [2] Half the cost of Support abilities
 [3] Double the cost of Support abilities
- 
+
+Changelog : Added Compatability for Playable Character Pack and Playable Tantalus Mod
+
 Mod Order : Position 1 or on top of Any Gameplay mods such as Alternate Fantasy , Playable Character pack. Tantalus Etc 
 This was the earliest public release of this type of Mod that modifies the Gem Cost of Support Abilities 
 Originally released as part of the tweaks of Kupo Mods formerly Mog Add-ons
