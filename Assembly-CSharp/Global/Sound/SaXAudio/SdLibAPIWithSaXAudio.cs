@@ -18,12 +18,11 @@ namespace Global.Sound.SaXAudio
         }
 
         private Dictionary<Int32, LoopData> loopData = new Dictionary<Int32, LoopData>();
-        private Dictionary<Int32, String> bank = new Dictionary<Int32, String>();
 
         public override Int32 SdSoundSystem_Create(String config)
         {
             SoundLib.Log("Create");
-            if(SaXAudio.Init())
+            if (SaXAudio.Init())
             {
                 Log.Message($"[SaXAudio] Initialized");
                 return 0;
@@ -75,7 +74,7 @@ namespace Global.Sound.SaXAudio
                         End2 = header.LoopStartAlternate
                     };
                 }
-                bank[bankID] = profile.ResourceID;
+                Log.Message($"[SaXAudio] Added B{bankID} '{profile.ResourceID}'");
                 return bankID;
             }
         }
@@ -105,7 +104,6 @@ namespace Global.Sound.SaXAudio
                     SaXAudio.SetLooping(soundID, true);
                 }
             }
-            Log.Message($"[SaXAudio] Created sound {soundID} '{bank[bankID]}'");
             return soundID;
         }
 

@@ -57,11 +57,17 @@ public class VoicePlayer : SoundPlayer
         {
             if (ISdLibAPIProxy.Instance is SdLibAPIWithSaXAudio)
             {
-                SaXAudio.OnVoiceFinished += (soundID) =>
+                SaXAudio.OnFinishedDelegate handler = null;
+                handler = (soundID) =>
                 {
-                    if(soundProfile.SoundID == soundID)
+                    if (soundProfile.SoundID == soundID)
+                    {
                         onFinished();
+                        SaXAudio.OnVoiceFinished -= handler;
+                    }
+
                 };
+                SaXAudio.OnVoiceFinished += handler;
             }
             else
             {
