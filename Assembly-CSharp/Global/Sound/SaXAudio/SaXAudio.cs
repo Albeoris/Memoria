@@ -5,12 +5,15 @@ namespace Global.Sound.SaXAudio
 {
     static class SaXAudio
     {
+        public static event OnFinishedDelegate OnVoiceFinished;
+
         public static Boolean Init()
         {
             Boolean result = Create();
             SetOnFinishedCallback(TriggerOnFinished);
             return result;
         }
+
         [DllImport("SaXAudio")]
         private static extern Boolean Create();
         [DllImport("SaXAudio")]
@@ -25,6 +28,8 @@ namespace Global.Sound.SaXAudio
         public static extern void PauseAll(Single fade = 0.1f);
         [DllImport("SaXAudio")]
         public static extern void ResumeAll(Single fade = 0.1f);
+        [DllImport("SaXAudio")]
+        public static extern void Protect(Int32 voiceID);
 
         [DllImport("SaXAudio")]
         public static extern Int32 BankAddOgg(IntPtr buffer, UInt32 length);
@@ -87,7 +92,5 @@ namespace Global.Sound.SaXAudio
         {
             OnVoiceFinished(voiceID);
         }
-
-        public static event OnFinishedDelegate OnVoiceFinished;
     }
 }

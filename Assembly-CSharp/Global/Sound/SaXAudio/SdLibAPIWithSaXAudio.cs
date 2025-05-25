@@ -152,7 +152,6 @@ namespace Global.Sound.SaXAudio
 
         public override void SdSoundSystem_SoundCtrl_SetVolume(Int32 soundID, Single volume, Int32 transTimeMSec)
         {
-            // Volume is generally louder with SaXAudio, we compensate for that
             SaXAudio.SetVolume(soundID, volume, transTimeMSec / 1000f);
         }
 
