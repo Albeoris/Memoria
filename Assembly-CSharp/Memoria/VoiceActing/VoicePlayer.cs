@@ -1,4 +1,5 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
+using Global.Sound.SaXAudio;
 using Memoria;
 using Memoria.Assets;
 using System;
@@ -54,31 +55,42 @@ public class VoicePlayer : SoundPlayer
     {
         if (onFinished != null)
         {
-            Thread onFinishThread = new Thread(() =>
+            if (ISdLibAPIProxy.Instance is SdLibAPIWithSaXAudio)
             {
-                try
+                SaXAudio.OnVoiceFinished += (soundID) =>
                 {
-                    // we need to delay if we run it instantly we're at 0 = 0 which is usless
-                    Thread.Sleep(1000);
-                    while (true)
+                    if(soundProfile.SoundID == soundID)
+                        onFinished();
+                };
+            }
+            else
+            {
+                Thread onFinishThread = new Thread(() =>
+                {
+                    try
                     {
-                        Int32 currentTime = ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(soundProfile.SoundID);
-                        if (currentTime == 0)
+                        // we need to delay if we run it instantly we're at 0 = 0 which is useless
+                        Thread.Sleep(500);
+                        while (true)
                         {
-                            onFinished();
-                            break;
+                            Int32 currentTime = ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(soundProfile.SoundID);
+                            if (currentTime == 0)
+                            {
+                                onFinished();
+                                break;
+                            }
+                            Thread.Sleep(50);
                         }
-                        Thread.Sleep(200);
+                        watcherOfSound.Remove(soundProfile);
                     }
-                    watcherOfSound.Remove(soundProfile);
-                }
-                catch (Exception)
-                {
-                    watcherOfSound.Remove(soundProfile);
-                }
-            });
-            watcherOfSound[soundProfile] = onFinishThread;
-            onFinishThread.Start(soundProfile);
+                    catch (Exception)
+                    {
+                        watcherOfSound.Remove(soundProfile);
+                    }
+                });
+                watcherOfSound[soundProfile] = onFinishThread;
+                onFinishThread.Start(soundProfile);
+            }
         }
 
         if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) == 0)
