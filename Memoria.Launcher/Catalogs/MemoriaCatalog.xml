@@ -651,11 +651,11 @@ Part of Kupo Mods’ Character formerly Mog Add-ons.
 
 <Mod>
 	<Name>Tantalus</Name>
-	<Version>3.4</Version>
+	<Version>3.5</Version>
 	<InstallationPath>PlayableTantalus</InstallationPath>
 	<ReleaseDateOriginal>2024-06-14</ReleaseDateOriginal>
-	<ReleaseDate>2025-03-31</ReleaseDate>
-	<MinimumMemoriaVersion>v2024.12.06</MinimumMemoriaVersion>
+	<ReleaseDate>2025-05-26</ReleaseDate>
+	<MinimumMemoriaVersion>v2025.05.12</MinimumMemoriaVersion>
 	<IncompatibleWith>Beatrix Mod, Trance Seek</IncompatibleWith>
 	<Author>Emeiru</Author>
 <Description>Overhauls Blank, Cinna, and Marcus to become actually usable characters
@@ -665,7 +665,7 @@ Part of Kupo Mods’ Character formerly Mog Add-ons.
 - New items and tweaks to complement the trio and thief gameplay
 - Minor name and ability text changes
 
-Compatible with Alternate Fantasy.</Description>
+Compatible with Alternate Fantasy v6.8+ only.</Description>
 	<PatchNotes>Complete changes can be found on the mod page.</PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/64</Website>
@@ -700,6 +700,7 @@ Compatible with Alternate Fantasy.</Description>
 	<ReleaseDateOriginal>2024-10-25</ReleaseDateOriginal>
 	<ReleaseDate>2024-12-09</ReleaseDate>
 	<MinimumMemoriaVersion>v2024.12.04</MinimumMemoriaVersion>
+	<IncompatibleWith>Playable Character Pack</IncompatibleWith>
 <Description>[!] A new save game is recommended [!]
 Removes the equipment stat-boosting mechanic and replaces it with a fixed additional per level stat-gain. Players will no longer need to mind their equipment and wear stat-boosting gear on level-up. Party members will always achieve a fixed maximum stat just by leveling. Note that this will naturally decrease the difficulty of the game due to stats having linear progression now. A new save game is required to apply these changes, but if you installed this mod mid-game, you can also visit Chocobo's Forest to inject the mod's changes, level up, and see the new stats.
 
