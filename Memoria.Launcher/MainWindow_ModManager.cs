@@ -889,6 +889,27 @@ namespace Memoria.Launcher
             try
             {
                 modListCatalog.Clear();
+
+                // Add/update priorities from PriorityList.txt to the catalog
+                if (false)
+                {
+                    String catalog = File.ReadAllText(CATALOG_PATH); ;
+                    Dictionary<String, Int32> priorities = new Dictionary<String, Int32>();
+                    String[] lines = File.ReadAllLines("PriorityList.txt");
+
+                    foreach (String line in lines)
+                    {
+                        String[] tokens = line.Split('\t');
+                        String search1 = @"(<Name>" + tokens[0] + @"((?!<\/Mod>).)*<\/Version>\s*<Priority>)((?!<\/Priority>).)*";
+                        String search2 = @"(<Name>" + tokens[0] + @"((?!<\/Mod>).)*<\/Version>)(?!\s*<Priority>)";
+                        Match m = Regex.Match(catalog, search2, RegexOptions.Singleline);
+                        catalog = Regex.Replace(catalog, search1, $"$1\r\n{tokens[1]}", RegexOptions.Singleline);
+                        catalog = Regex.Replace(catalog, search2, $"$1\r\n\t<Priority>{tokens[1]}</Priority>", RegexOptions.Singleline);
+                    }
+
+                    File.WriteAllText(CATALOG_PATH, catalog);
+                }
+
                 using (Stream input = File.OpenRead(CATALOG_PATH))
                 using (StreamReader reader = new StreamReader(input))
                     Mod.LoadModDescriptions(reader, ref modListCatalog);
