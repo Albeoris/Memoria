@@ -454,7 +454,7 @@ public partial class BattleHUD : UIScene
             {
                 _commandPanel.Change.SetLabelText(Localization.Get("Trance"));
                 _commandPanel.Change.SetLabelColor(FF9TextTool.Yellow);
-                _commandPanel.Change.ButtonGroup.Help.Text = "Activates the trance mode.";
+                _commandPanel.Change.ButtonGroup.Help.Text = Localization.GetWithDefault("TranceCommandHelp");
                 _isManualTrance = true;
             }
         }
