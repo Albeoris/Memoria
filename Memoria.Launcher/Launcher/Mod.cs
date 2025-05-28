@@ -155,6 +155,16 @@ namespace Memoria.Launcher
                 if (mod.ReadDescription(node))
                     modList.Add(mod);
             }
+            // Create priority list file from the current catalog
+            if (false)
+            {
+                String list = "";
+                foreach (Mod mod in modList)
+                {
+                    list += $"{mod.Name}\t{mod.Priority}\r\n";
+                }
+                File.WriteAllText("PriorityList.txt", list);
+            }
         }
 
         public Boolean ReadDescription(StreamReader reader)

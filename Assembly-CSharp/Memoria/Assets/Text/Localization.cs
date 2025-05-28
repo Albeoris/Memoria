@@ -365,6 +365,18 @@ namespace Memoria.Assets
                     { "IT", "DIVISIONE" }
                 }
             },
+            // Manual trance command help
+            { "TranceCommandHelp", new Dictionary<String, String>()
+                {
+                    { "US", "Activates the trance mode." },
+                    { "UK", "Activates the trance mode." },
+                    { "JP", "トランス状態を活性化する。" },
+                    { "ES", "Activa el trance." },
+                    { "FR", "Active la transe." },
+                    { "GR", "Aktiviert die Trance." },
+                    { "IT", "Attiva la trance." }
+                }
+            },
             // Mix battle message
             { "FailedMixMessage", new Dictionary<String, String>()
                 {
