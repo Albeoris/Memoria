@@ -82,6 +82,11 @@ namespace Global.Sound.SaXAudio
         [DllImport("SaXAudio")]
         public static extern Single GetPositionTime(Int32 voiceID);
 
+        [DllImport("SaXAudio")]
+        public static extern UInt32 GetTotalSample(Int32 voiceID);
+        [DllImport("SaXAudio")]
+        public static extern Single GetTotalTime(Int32 voiceID);
+
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void OnFinishedDelegate(Int32 voiceID);
 

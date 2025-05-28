@@ -11,6 +11,7 @@ namespace Global.Sound.SaXAudio
         private const Int32 AkbHeaderSize = 304;
         private struct LoopData
         {
+            public Int32 SoundID;
             public UInt32 Start;
             public UInt32 End;
             public UInt32 Start2;
@@ -71,7 +72,7 @@ namespace Global.Sound.SaXAudio
                         Start = header.LoopStart,
                         End = header.LoopEnd,
                         Start2 = header.LoopStartAlternate,
-                        End2 = header.LoopStartAlternate
+                        End2 = header.LoopEndAlternate
                     };
                 }
                 Log.Message($"[SaXAudio] Added B{bankID} '{profile.ResourceID}'");
@@ -90,6 +91,7 @@ namespace Global.Sound.SaXAudio
         {
             SoundLib.Log($"RemoveData({bankID})");
             SaXAudio.BankRemove(bankID);
+            loopData.Remove(bankID);
             return 0;
         }
 
@@ -102,6 +104,9 @@ namespace Global.Sound.SaXAudio
                 {
                     SaXAudio.SetLoopPoints(soundID, loopData[bankID].Start, loopData[bankID].End);
                     SaXAudio.SetLooping(soundID, true);
+                    LoopData loop = loopData[bankID];
+                    loop.SoundID = soundID;
+                    loopData[bankID] = loop;
                 }
             }
             return soundID;
@@ -115,9 +120,7 @@ namespace Global.Sound.SaXAudio
 
         public override Int32 SdSoundSystem_SoundCtrl_GetPlayTime(Int32 soundID)
         {
-            // Doesn't seem to be used
-            SoundLib.Log($"No Implementation - SoundCtrl_GetPlayTime({soundID}");
-            return 0;
+            return (Int32)(SaXAudio.GetTotalTime(soundID) * 1000f);
         }
 
         public override Int32 SdSoundSystem_SoundCtrl_Start(Int32 soundID, Int32 offsetTimeMSec)
@@ -173,8 +176,14 @@ namespace Global.Sound.SaXAudio
 
         public override void SdSoundSystem_SoundCtrl_SetNextLoopRegion(Int32 soundID)
         {
-            if (loopData.ContainsKey(soundID))
-                SaXAudio.SetLoopPoints(soundID, loopData[soundID].Start2, loopData[soundID].End2);
+            foreach (LoopData loop in loopData.Values)
+            {
+                if (loop.SoundID == soundID)
+                {
+                    SaXAudio.SetLoopPoints(soundID, loop.Start2, loop.End2);
+                    break;
+                }
+            }
         }
 
         public override Int32 SdSoundSystem_BankCtrl_IsLoop(Int32 bankID, Int32 soundID)
