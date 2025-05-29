@@ -345,6 +345,8 @@ namespace Memoria.Scripts
                     result.OverloadableMethodScripts[interf] = type;
                 if (interf == typeof(IOverloadOnBattleScriptStartScript))
                     result.OverloadableMethodScripts[interf] = type;
+                if (interf == typeof(IOverloadOnBattleScriptEndScript))
+                    result.OverloadableMethodScripts[interf] = type;
                 if (interf == typeof(IOverloadOnCommandRunScript))
                     result.OverloadableMethodScripts[interf] = type;
                 if (interf == typeof(IOverloadOnGameOverScript))

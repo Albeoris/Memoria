@@ -306,7 +306,7 @@ namespace Memoria
                 when = BattleVoice.BattleMoment.Healed;
             else if ((v.Target.Flags & (CalcFlag.HpAlteration | CalcFlag.MpAlteration)) != 0)
                 when = BattleVoice.BattleMoment.Damaged;
-            BattleVoice.TriggerOnHitted(target, when , v);
+            BattleVoice.TriggerOnHitted(target, when, v);
             BattleCalculator.FrameAppliedEffectList.Add(v);
             if (target.bi.player != 0 || FF9StateSystem.Battle.isDebug)
                 return;
@@ -319,6 +319,10 @@ namespace Memoria
                     PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyCounter, targetId, caster.btl_id, (Int32)cmd.cmd_no, cmd.sub_no, cmd);
             }
             PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyReaction, targetId, caster.btl_id, (Int32)cmd.cmd_no, cmd.sub_no, cmd);
+
+            IOverloadOnBattleScriptEndScript overloadedMethod = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadOnBattleScriptEndScript)) as IOverloadOnBattleScriptEndScript;
+            if (overloadedMethod != null)
+                overloadedMethod.OnBattleScriptEnd(v);
         }
 
         public static BattleScriptFactory FindScriptFactory(Int32 scriptId)
