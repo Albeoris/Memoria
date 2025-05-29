@@ -38,7 +38,7 @@ namespace Memoria
 
     public interface IOverloadOnBattleScriptEndScript
     {
-        /// <summary>Run a code at the end of a battle script, right after the CalcResult</summary>
+        /// <summary>Run a code at the end of a battle script, at the end of SBattleCalculator.CalcResult(v)</summary>
         public void OnBattleScriptEnd(BattleCalculator v);
     }
 
