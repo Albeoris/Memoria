@@ -1458,7 +1458,6 @@ namespace Memoria.Assets
                     label += $"[FFFF00][⇧P][FFFFFF] Selected: [FF007F]Bone\n";
                 else if (partcontrolled == PartControlled.FLOOR)
                     label += $"[FFFF00][⇧P][FFFFFF] Selected: [FFAA00]Floor\n";
-                label += "\n";
 
                 if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS)
                 {
@@ -1482,10 +1481,8 @@ namespace Memoria.Assets
                     {
                         for (Int32 i = 0; i < currentHiddenBonesID.Count; i++)
                             label += $"{currentHiddenBonesID[i]} ";
-                        label += $"\n";
                     }
-                    else
-                        label += "\n";
+                    label += "\n";
                 }
                 if (currentFloorModel != null && currentFloorModel.activeSelf)
                     label += $"[FFFF00][^C][Alt.C][FFFFFF]Floor: {floorgeoList[currentFloorIndex].Name}\n";
