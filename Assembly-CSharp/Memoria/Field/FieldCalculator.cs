@@ -224,6 +224,12 @@ namespace Memoria
                 Flags |= BattleCalcFlags.Miss;
         }
 
+        public void ApplyActionStatuses()
+        {
+            if (AlterStatuses(Target, Action.Status) != 2)
+                Flags |= BattleCalcFlags.Miss;
+        }
+
         public sealed class ActionData
         {
             public BattleCommandInfo Info;
@@ -242,7 +248,7 @@ namespace Memoria
                 MP = 0;
                 Category = 0;
                 Type = 0;
-                Status = item.status;
+                Status = item.status & BattleStatusConst.OutOfBattle;
                 ItemId = itemId;
                 AbilityId = BattleAbilityId.Void;
             }
@@ -254,7 +260,7 @@ namespace Memoria
                 MP = aa.MP;
                 Category = aa.Category;
                 Type = aa.Type;
-                Status = FF9BattleDB.StatusSets[aa.AddStatusNo].Value;
+                Status = FF9BattleDB.StatusSets[aa.AddStatusNo].Value & BattleStatusConst.OutOfBattle;
                 ItemId = RegularItem.NoItem;
                 AbilityId = abilId;
             }

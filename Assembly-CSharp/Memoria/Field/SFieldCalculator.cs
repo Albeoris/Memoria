@@ -134,12 +134,20 @@ namespace Memoria
                     v.CureActionStatuses();
                     break;
                 case 69: // Item Potion
-                    if (v.CanBeHealed(true, false))
+                {
+                    Boolean hasHeal = v.Action.Ref.Power > 0;
+                    Boolean hasStatus = v.Action.Status != 0;
+                    if (hasHeal && v.CanBeHealed(true, false))
                     {
                         v.SetupItemHeal();
                         v.HealHp();
                     }
+                    if (hasHeal && hasStatus)
+                        v.Flags &= ~BattleCalcFlags.Miss;
+                    if (hasStatus)
+                        v.ApplyActionStatuses();
                     break;
+                }
                 case 70: // Item Ether
                     if (v.CanBeHealed(false, true))
                     {
