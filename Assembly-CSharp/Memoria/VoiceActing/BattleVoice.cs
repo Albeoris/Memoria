@@ -16,7 +16,7 @@ namespace Memoria.Data
         public const String BattleVoicePath = "BattleVoiceEffects.txt";
 
         //--- Events for scripting
-        public static readonly IOverloadVoiceActingBattleScript BattleScript = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadVoiceActingBattleScript)) as IOverloadVoiceActingBattleScript;
+        public static readonly IOverloadVABattleScript BattleScript = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadVABattleScript)) as IOverloadVABattleScript;
 
         public delegate Boolean BattleInOutDelegate(BattleMoment when);
         public delegate Boolean BattleActDelegate(BattleUnit unit, BattleCalculator calc, BattleMoment when);

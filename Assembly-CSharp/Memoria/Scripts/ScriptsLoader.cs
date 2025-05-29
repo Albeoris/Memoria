@@ -355,7 +355,7 @@ namespace Memoria.Scripts
                     result.OverloadableMethodScripts[interf] = type;
                 if (interf == typeof(IOverloadOnBattleInitScript))
                     result.OverloadableMethodScripts[interf] = type;
-                if (interf == typeof(IOverloadVoiceActingBattleScript))
+                if (interf == typeof(IOverloadVABattleScript))
                     result.OverloadableMethodScripts[interf] = type;
             }
         }

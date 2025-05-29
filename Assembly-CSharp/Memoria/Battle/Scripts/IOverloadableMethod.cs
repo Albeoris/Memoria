@@ -69,7 +69,7 @@ namespace Memoria
         public void OnDamageFinalChanges(BattleCalculator v);
     }
 
-    public interface IOverloadVoiceActingBattleScript
+    public interface IOverloadVABattleScript
     {
         /// <summary>Called to initialize the voice acting battle script (subscribe to BattleVoice events there)</summary>
         public void Initialize();
