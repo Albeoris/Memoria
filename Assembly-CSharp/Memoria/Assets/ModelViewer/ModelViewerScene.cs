@@ -973,14 +973,16 @@ namespace Memoria.Assets
                         }
                     }
                 }
-                if (Input.GetKeyDown(KeyCode.P) && currentBonesID.Count > 0)
+                if (Input.GetKeyDown(KeyCode.P))
                 {
                     if (shift)
                     {
                         partcontrolled++;
                         if (currentWeaponModel == null && partcontrolled == PartControlled.WEAPON)
                             partcontrolled++;
-                        else if (currentFloorModel == null && partcontrolled == PartControlled.FLOOR)
+                        if (currentBonesID.Count == 0 && partcontrolled == PartControlled.BONE)
+                            partcontrolled++;
+                        if ((currentFloorModel == null || !currentFloorModel.activeSelf) && partcontrolled == PartControlled.FLOOR)
                             partcontrolled++;
 
                         if (partcontrolled > PartControlled.FLOOR)
@@ -1297,7 +1299,6 @@ namespace Memoria.Assets
                             else
                                 currentFloorModel.SetActive(!currentFloorModel.activeSelf);
                         }
-
                     }
                     else if (ctrl || alt)
                     {
@@ -1444,10 +1445,21 @@ namespace Memoria.Assets
                 boneDialogs.RemoveRange(boneDialogCount, boneDialogs.Count - boneDialogCount);
             if (displayUI)
             {
-                String label = $"[FFFF00][⇧↔/1-0][E5E5FF] {GetCategoryEnumeration(currentGeoIndex, true)}[FFFFFF]"; //[222222]{GetCategoryEnumeration(currentGeoIndex, true, -1)} [FFFFFF]{GetCategoryEnumeration(currentGeoIndex, true)} [222222]{GetCategoryEnumeration(currentGeoIndex, true, 1)}[FFFFFF]
+                String label = $"\n\n[FFFF00][⇧↔/1-0][E5E5FF] {GetCategoryEnumeration(currentGeoIndex, true)}[FFFFFF]"; //[222222]{GetCategoryEnumeration(currentGeoIndex, true, -1)} [FFFFFF]{GetCategoryEnumeration(currentGeoIndex, true)} [222222]{GetCategoryEnumeration(currentGeoIndex, true, 1)}[FFFFFF]
                 label += "\n";
                 label += $"[FFFF00][↔][FFFFFF] Model {GetCategoryEnumeration(currentGeoIndex)}: {geoList[currentGeoIndex].Name} ({geoList[currentGeoIndex].Id})";
                 label += "\n";
+
+                if (partcontrolled == PartControlled.MODEL)
+                    label += $"[FFFF00][⇧P][FFFFFF] Selected: [00FF00]Model\n";
+                else if (partcontrolled == PartControlled.WEAPON)
+                    label += $"[FFFF00][⇧P][FFFFFF] Selected: [2BFAFA]Weapon\n";
+                else if (partcontrolled == PartControlled.BONE)
+                    label += $"[FFFF00][⇧P][FFFFFF] Selected: [FF007F]Bone\n";
+                else if (partcontrolled == PartControlled.FLOOR)
+                    label += $"[FFFF00][⇧P][FFFFFF] Selected: [FFAA00]Floor\n";
+                label += "\n";
+
                 if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS)
                 {
                     label += $"[FFFF00][␣][FFFFFF] {currentAnimName}";
@@ -1461,23 +1473,10 @@ namespace Memoria.Assets
                     label += "\n";
                     label += $"[CCCCCC]  - Anim name: {currentAnimName} ({animList[currentAnimIndex].Key})[FFFFFF]";
                     label += "\n";
-                    if (currentFloorModel != null && currentFloorModel.activeSelf)
-                    {
-                        label += $"[FFFF00][^C][Alt.C][FFFFFF]Floor: {floorgeoList[currentFloorIndex].Name}\n";
-                    }
                     if (currentWeaponModel)
                         label += $"[FFFF00][^Scroll][FFFFFF] Weapon: {weapongeoList[currentWeaponGeoIndex].Name} ({geoList[currentWeaponGeoIndex].Id})\n";
 
                     label += $"[FFFF00][⇧Scroll][FFFFFF] Bone: {currentBoneIndex}\n";
-                    if (partcontrolled == PartControlled.MODEL)
-                        label += $"[FFFF00][⇧P][FFFFFF] Selected: [00FF00]Model\n";
-                    else if (partcontrolled == PartControlled.WEAPON)
-                        label += $"[FFFF00][⇧P][FFFFFF] Selected: [2BFAFA]Weapon\n";
-                    else if (partcontrolled == PartControlled.BONE)
-                        label += $"[FFFF00][⇧P][FFFFFF] Selected: [FF007F]Bone\n";
-                    else if (partcontrolled == PartControlled.FLOOR)
-                        label += $"[FFFF00][⇧P][FFFFFF] Selected: [FFAA00]Floor\n";
-
                     label += $"[FFFF00][^B][FFFFFF] BoneHidden: ";
                     if (currentHiddenBonesID.Count > 0)
                     {
@@ -1486,13 +1485,12 @@ namespace Memoria.Assets
                         label += $"\n";
                     }
                     else
-                        label += "\n\n\n";
+                        label += "\n";
+                }
+                if (currentFloorModel != null && currentFloorModel.activeSelf)
+                    label += $"[FFFF00][^C][Alt.C][FFFFFF]Floor: {floorgeoList[currentFloorIndex].Name}\n";
 
-                }
-                else
-                {
-                    label += "\n\n\n\n\n\n\n";
-                }
+                label += "\n\n\n\n\n\n\n\n\n\n";
 
                 if (!String.Equals(infoLabel.Parser.InitialText, label))
                     infoLabel.rawText = label;
@@ -1703,7 +1701,8 @@ namespace Memoria.Assets
             isLoadingModel = true;
             if (currentFloorModel != null)
             {
-                FloorPresent = true;
+                if (currentFloorModel.activeSelf)
+                    FloorPresent = true;
                 UnityEngine.Object.Destroy(currentFloorModel);
             }
             if (currentModel != null && geoList[currentGeoIndex].Kind != MODEL_KIND_SPS)

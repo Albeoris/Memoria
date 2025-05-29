@@ -59,10 +59,10 @@ namespace Memoria
                 foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target))
                     saFeature.TriggerOnAbility(v, "BattleScriptStart", true);
 
-                IOverloadOnBattleScriptStartScript overloadedMethod = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadOnBattleScriptStartScript)) as IOverloadOnBattleScriptStartScript;
-                if (overloadedMethod != null)
+                IOverloadOnBattleScriptStartScript overloadedStartMethod = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadOnBattleScriptStartScript)) as IOverloadOnBattleScriptStartScript;
+                if (overloadedStartMethod != null)
                 {
-                    if (overloadedMethod.OnBattleScriptStart(v))
+                    if (overloadedStartMethod.OnBattleScriptStart(v))
                     {
                         SBattleCalculator.CalcResult(v);
                         return;
@@ -302,7 +302,7 @@ namespace Memoria
                 when = BattleVoice.BattleMoment.Healed;
             else if ((v.Target.Flags & (CalcFlag.HpAlteration | CalcFlag.MpAlteration)) != 0)
                 when = BattleVoice.BattleMoment.Damaged;
-            BattleVoice.TriggerOnHitted(target, when , v);
+            BattleVoice.TriggerOnHitted(target, when, v);
             BattleCalculator.FrameAppliedEffectList.Add(v);
             if (target.bi.player != 0 || FF9StateSystem.Battle.isDebug)
                 return;
@@ -315,6 +315,10 @@ namespace Memoria
                     PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyCounter, targetId, caster.btl_id, (Int32)cmd.cmd_no, cmd.sub_no, cmd);
             }
             PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyReaction, targetId, caster.btl_id, (Int32)cmd.cmd_no, cmd.sub_no, cmd);
+
+            IOverloadOnBattleScriptEndScript overloadedEndMethod = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadOnBattleScriptEndScript)) as IOverloadOnBattleScriptEndScript;
+            if (overloadedEndMethod != null)
+                overloadedEndMethod.OnBattleScriptEnd(v);
         }
 
         public static BattleScriptFactory FindScriptFactory(Int32 scriptId)
