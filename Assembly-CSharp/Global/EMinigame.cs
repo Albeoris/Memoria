@@ -14,19 +14,19 @@ public class EMinigame
             if (s1.sid == 4 && s1.ip == 223)
             {
                 // Somewhere in a "Code4" function (only "Code4_Loop" is long enough)
-                Int32 score = eBin.getVarManually(0x30D9); // VAR_GlobInt16_48, aka. TotalScore
+                Int32 score = eBin.getVarManually(EBin.getVarOperation(EBin.VariableSource.Map, EBin.VariableType.Int16, 48)); // VAR_GlobInt16_48, aka. TotalScore
                 if (Configuration.Hacks.SwordplayAssistance >= 1)
                     score += score / 10 * 3; // +30% bonus granted by the Steam version
                 EMinigame.GetEncoreChanbaraAchievement(score);
-                eBin.setVarManually(0x30D9, score);
+                eBin.setVarManually(EBin.getVarOperation(EBin.VariableSource.Map, EBin.VariableType.Int16, 48), score);
             }
             else if (Configuration.Hacks.SwordplayAssistance >= 2 && s1.sid == 4)
             {
                 // Anywhere in any "Code4" function
                 // 0x3409 = VAR_GlobUInt8_52, aka. TimeLeft
                 // 0x22D9 = VAR_GlobInt16_34, aka. HitCount
-                if (eBin.getVarManually(0x3409) > 0 && eBin.getVarManually(0x22D9) < 50)
-                    eBin.setVarManually(0x3409, 50);
+                if (eBin.getVarManually(EBin.getVarOperation(EBin.VariableSource.Map, EBin.VariableType.Byte, 52)) > 0 && eBin.getVarManually(EBin.getVarOperation(EBin.VariableSource.Map, EBin.VariableType.Int16, 34)) < 50)
+                    eBin.setVarManually(EBin.getVarOperation(EBin.VariableSource.Map, EBin.VariableType.Byte, 52), 50);
             }
         }
     }
@@ -45,7 +45,7 @@ public class EMinigame
 
     public static void StiltzkinAchievement(PosObj gCur, UInt32 gilDecrease)
     {
-        if (gCur.model == 212)
+        if (gCur.model == EMinigame.StiltzkinMogModelId)
         {
             if (gilDecrease == 333 || gilDecrease == 444 || gilDecrease == 555 || gilDecrease == 666 || gilDecrease == 777 || gilDecrease == 888 || gilDecrease == 2222 || gilDecrease == 5555)
                 FF9StateSystem.Achievement.StiltzkinBuy++;
@@ -53,183 +53,137 @@ public class EMinigame
         }
     }
 
-    public static void EidolonMuralAchievement(String currentLanguange, Int32 messageId)
+    public static void EidolonMuralAchievement(String langSymbol, Int32 messageId)
     {
-        Int32 fldMapNo = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
-        if (fldMapNo == 1704)
+        Int32 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
+        if (fldMapNo == 1704) // Madain Sari/Eidolon Wall
         {
-            Boolean flag;
-            switch (currentLanguange)
+            Boolean nameRead;
+            switch (langSymbol)
             {
-                case "French":
-                case "Italian":
-                    flag = (messageId == 119);
-                    goto IL_C2;
-                case "German":
-                    flag = (messageId == 120);
-                    goto IL_C2;
-                case "Japanese":
-                    flag = (messageId == 122);
-                    goto IL_C2;
+                case "FR":
+                case "IT":
+                    nameRead = messageId == 119;
+                    break;
+                case "GR":
+                    nameRead = messageId == 120;
+                    break;
+                case "JP":
+                    nameRead = messageId == 122;
+                    break;
+                default:
+                    nameRead = messageId == 118; // Message giving Garnet's birthname and her mother's name
+                    break;
             }
-            flag = (messageId == 118);
-        IL_C2:
-            if (flag)
-            {
+            if (nameRead)
                 AchievementManager.ReportAchievement(AcheivementKey.EidolonMural, 1);
-            }
         }
     }
 
-    public static void ExcellentLuckColorFortuneTellingAchievement(String currentLanguage, Int32 messageId)
+    public static void ExcellentLuckColorFortuneTellingAchievement(String langSymbol, Int32 messageId)
     {
-        Int32 fldMapNo = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
-        if (fldMapNo == 352)
+        Int32 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
+        if (fldMapNo == 352) // Dali/Inn
         {
-            Boolean flag;
-            switch (currentLanguage)
+            Boolean bestLuck;
+            switch (langSymbol)
             {
-                case "English(UK)":
-                case "English(US)":
-                    flag = (messageId == 222);
-                    goto IL_B0;
-                case "Spanish":
-                    flag = (messageId == 230);
-                    goto IL_B0;
+                case "UK":
+                case "US":
+                    bestLuck = messageId == 222; // "Very Good Omen [...]"
+                    break;
+                case "ES":
+                    bestLuck = messageId == 230;
+                    break;
+                default:
+                    bestLuck = messageId == 233;
+                    break;
             }
-
-            flag = (messageId == 233);
-        IL_B0:
-            if (flag)
-            {
+            if (bestLuck)
                 AchievementManager.ReportAchievement(AcheivementKey.ExcellentLuck, 1);
-            }
         }
     }
 
-    public static void JumpingRopeAchievement(String lang, Int32 mesId)
+    public static void JumpingRopeAchievement(String langSymbol, Int32 mesId)
     {
-        Int32 num = 0;
-        Int32 fldMapNo = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
-        Int32 varManually = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(220);
-        if (fldMapNo == 103)
-        {
-            num = 11209;
-        }
-        if (fldMapNo == 2456 && varManually >= 10300)
-        {
-            num = 15305;
-        }
-        if (num == 0)
-        {
+        Int32 varOperation = 0;
+        Int32 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
+        Int32 scenarioCounter = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
+        if (fldMapNo == 103) // Early game
+            varOperation = EBin.getVarOperation(EBin.VariableSource.Map, EBin.VariableType.Int24, 43);
+        if (fldMapNo == 2456 && scenarioCounter >= 10300) // Late game
+            varOperation = EBin.getVarOperation(EBin.VariableSource.Map, EBin.VariableType.Int24, 59);
+        if (varOperation == 0)
             return;
-        }
-        Int32 varManually2 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(num);
+        Int32 jumpCount = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(varOperation);
         if (FF9StateSystem.Settings.IsFastTrophyMode)
         {
-            if (varManually2 == 5)
-            {
+            if (jumpCount == 5)
                 AchievementManager.ReportAchievement(AcheivementKey.Rope100, 1);
-            }
-            if (varManually2 == 10)
-            {
+            if (jumpCount == 10)
                 AchievementManager.ReportAchievement(AcheivementKey.Rope1000, 1);
-            }
             return;
         }
-        Boolean flag = EMinigame.IsCongratMessage(lang, mesId, fldMapNo);
-        if (varManually2 == 100 && flag)
-        {
+        Boolean success = EMinigame.IsCongratMessage(langSymbol, mesId, fldMapNo);
+        if (jumpCount == 100 && success)
             AchievementManager.ReportAchievement(AcheivementKey.Rope100, 1);
-        }
-        if (varManually2 >= 1000 && flag)
-        {
+        if (jumpCount >= 1000 && success)
             AchievementManager.ReportAchievement(AcheivementKey.Rope1000, 1);
-        }
     }
 
-    private static Boolean IsCongratMessage(String lang, Int32 mesId, Int32 fieldId)
+    private static Boolean IsCongratMessage(String langSymbol, Int32 mesId, Int32 fieldId)
     {
-        Boolean result = false;
-        if (fieldId == 103)
+        if (fieldId == 103) // Alexandria/Square
+            return mesId == 241 || mesId == 69;
+        if (fieldId == 2456 && !String.IsNullOrEmpty(langSymbol)) // Alexandria/Steeple
         {
-            result = (mesId == 241 || mesId == 69);
-        }
-        if (fieldId == 2456 && lang != null)
-        {
-            switch (lang)
+            switch (langSymbol)
             {
-                case "English(UK)":
-                case "English(US)":
+                case "FR":
+                case "ES":
+                case "GR":
+                case "IT":
+                case "JP":
+                    return mesId == 266 || mesId == 69;
                 default:
-                    result = (mesId == 259 || mesId == 69);
-                    break;
-                case "French":
-                case "Spanish":
-                case "German":
-                case "Italian":
-                case "Japanese":
-                    result = (mesId == 266 || mesId == 69);
-                    break;
+                    return mesId == 259 || mesId == 69;
             }
         }
-        return result;
+        return false;
     }
 
-    public static void ProvokeMogAchievement(String currentLanguange, Int32 messageId)
+    public static void ProvokeMogAchievement(String langSymbol, Int32 messageId)
     {
         if (PersistenSingleton<SceneDirector>.Instance.CurrentScene != SceneDirector.WorldMapSceneName)
-        {
             return;
-        }
-        Boolean flag = false;
-        switch (currentLanguange)
-        {
-            case "English(US)":
-            case "English(UK)":
-            case "French":
-            case "Spanish":
-            case "German":
-            case "Italian":
-            case "Japanese":
-                flag = (messageId == 49);
-                break;
-        }
-        if (flag)
-        {
+        if (messageId == 49)
             AchievementManager.ReportAchievement(AcheivementKey.ProvokeMoogle, 1);
-        }
     }
 
     public static void Catching99FrogAchievement(Int32 numFrog)
     {
         AchievementManager.ReportAchievement(AcheivementKey.Frog99, numFrog);
-        if (numFrog == 99)
-        {
-        }
     }
-
-    public const Int32 GoldenFrogModelId = 423;
 
     public static void CatchingGoldenFrogAchievement(Obj frogObj)
     {
-        if (((PosObj)frogObj).model == GoldenFrogModelId)
+        if (((PosObj)frogObj).model == EMinigame.GoldenFrogModelId)
             AchievementManager.ReportAchievement(AcheivementKey.GoldenFrog, 1);
     }
 
     public static void GetRewardFromQueenStellaAchievement()
     {
-        Int32 fldMapNo = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
-        if (fldMapNo == 911 || fldMapNo == 1911)
+        Int32 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
+        if (fldMapNo == 911 || fldMapNo == 1911) // Treno/Queen's House
         {
-            Int32 num = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(91132);
-            Int32 num2 = 0;
-            for (Int32 i = 0; i < 12; i++)
+            Int32 stellazzioBitFlags = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.getVarOperation(EBin.VariableSource.Global, EBin.VariableType.UInt16, 355));
+            Int32 stellazzioCount = 0;
+            for (Int32 i = 0; i < 13; i++)
             {
-                num2 += (Int32)((num % 2 != 1) ? 0 : 1);
-                num >>= 1;
+                stellazzioCount += stellazzioBitFlags & 1;
+                stellazzioBitFlags >>= 1;
             }
-            AchievementManager.ReportAchievement(AcheivementKey.QueenReward10, num2);
+            AchievementManager.ReportAchievement(AcheivementKey.QueenReward10, stellazzioCount);
         }
     }
 
@@ -237,82 +191,65 @@ public class EMinigame
     {
         if (PersistenSingleton<EventEngine>.Instance.gMode == 3)
         {
-            Int32 varManually = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(220);
-            Int32 varManually2 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(728);
-            if (varManually == 10400 && varManually2 == 60)
-            {
+            Int32 scenarioCounter = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
+            Int32 mapIndex = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR);
+            if (scenarioCounter == 10400 && mapIndex == 60)
                 AchievementManager.ReportAchievement(AcheivementKey.Airship, 1);
-            }
         }
     }
 
-    public static void TreasureHunterSAchievement(String lang, Int32 mesId)
+    public static void TreasureHunterSAchievement(String langSymbol, Int32 mesId)
     {
-        Boolean flag = false;
-        if (FF9StateSystem.Common.FF9.fldMapNo == 1900 && mesId == 289)
-        {
-            flag = true;
-        }
-        else if (FF9StateSystem.Common.FF9.fldMapNo == 2801 && mesId == 236)
-        {
-            flag = true;
-        }
-        if (flag)
-        {
+        // Treno/Pub or Daguerreo/Right Hall
+        if ((FF9StateSystem.Common.FF9.fldMapNo == 1900 && mesId == 289) || (FF9StateSystem.Common.FF9.fldMapNo == 2801 && mesId == 236))
             AchievementManager.ReportAchievement(AcheivementKey.TreasureHuntS, 1);
-        }
     }
 
-    public static void ShuffleGameAchievement(String lang, Int32 mesId)
+    public static void ShuffleGameAchievement(String langSymbol, Int32 mesId)
     {
-        Int32 fldMapNo = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
-        if (fldMapNo == 1858)
+        Int32 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
+        if (fldMapNo == 1858) // Alexandria/Weapon Shop
         {
-            Boolean flag;
-            switch (lang)
+            Boolean isCongratulation;
+            switch (langSymbol)
             {
-                case "English(US)":
-                case "English(UK)":
-                    flag = (mesId == 265);
-                    goto IL_8E;
+                case "US":
+                case "UK":
+                    isCongratulation = mesId == 265; // Zenero "Ahh! You're too good!"
+                    break;
+                default:
+                    isCongratulation = mesId == 264;
+                    break;
             }
-
-            flag = (mesId == 264);
-        IL_8E:
-            if (flag)
-            {
+            if (isCongratulation)
                 AchievementManager.ReportAchievement(AcheivementKey.Shuffle9, 1);
-            }
         }
     }
 
     public static void GetTheaterShipMaquetteAchievement()
     {
-        Int32 fldMapNo = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
-        Int32 varManually = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(220);
-        if ((fldMapNo == 457 || (fldMapNo == 455 && varManually < 11090)) && EMinigame.g_tship_model_get_flg == 0)
+        Int32 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
+        Int32 scenarioCounter = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
+        if ((fldMapNo == 457 || (fldMapNo == 455 && scenarioCounter < 11090)) && EMinigame.g_tship_model_get_flg == 0)
         {
-            EMinigame.g_tship_model_get_flg = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(619492);
+            // Mountain/Shack or Mountain/Base
+            EMinigame.g_tship_model_get_flg = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.getVarOperation(EBin.VariableSource.Global, EBin.VariableType.Bit, 2419));
             if (EMinigame.g_tship_model_get_flg == 1)
-            {
                 AchievementManager.ReportAchievement(AcheivementKey.ShipMaquette, 1);
-            }
         }
     }
 
     public static void GetHelpAllVictimsInCleyraTown()
     {
-        Int32 fldMapNo = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
-        Int32 varManually = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(220);
-        if (fldMapNo == 1109 && varManually == 4980)
+        Int32 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
+        Int32 scenarioCounter = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
+        if (fldMapNo == 1109 && scenarioCounter == 4980) // Cleyra/Cathedral
         {
-            Int32 varManually2 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(993764);
-            Int32 varManually3 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(994020);
-            Int32 varManually4 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(994276);
-            if (varManually2 == 1 && varManually3 == 1 && varManually4 == 1)
-            {
+            Int32 motherHelped1 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.getVarOperation(EBin.VariableSource.Global, EBin.VariableType.Bit, 3881));
+            Int32 motherHelped2 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.getVarOperation(EBin.VariableSource.Global, EBin.VariableType.Bit, 3882));
+            Int32 priestessHelped = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.getVarOperation(EBin.VariableSource.Global, EBin.VariableType.Bit, 3883));
+            if (motherHelped1 == 1 && motherHelped2 == 1 && priestessHelped == 1)
                 AchievementManager.ReportAchievement(AcheivementKey.CleyraVictimAll, 1);
-            }
         }
     }
 
@@ -321,29 +258,29 @@ public class EMinigame
         AchievementManager.ReportAchievement(AcheivementKey.Blackjack, 1);
     }
 
-    public static void ChocoboBeakLV99Achievement(String language, Int32 mesId)
+    public static void ChocoboBeakLV99Achievement(String langSymbol, Int32 mesId)
     {
-        Int32 fldMapNo = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
-        if (fldMapNo == 2950 || fldMapNo == 2951 || fldMapNo == 2952)
+        Int32 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
+        if (fldMapNo == 2950 || fldMapNo == 2951 || fldMapNo == 2952) // Chocobo's Forest, Lagoon or Air Garden
         {
-            Boolean flag;
-            switch (language)
+            Boolean checkBeakUpdate;
+            switch (langSymbol)
             {
-                case "Japanese":
-                    flag = (mesId == 325 || mesId == 277);
-                    goto IL_F5;
-                case "English(US)":
-                case "English(UK)":
-                    flag = (mesId == 320 || mesId == 277);
-                    goto IL_F5;
+                case "JP":
+                    checkBeakUpdate = mesId == 325 || mesId == 277;
+                    break;
+                case "US":
+                case "UK":
+                    checkBeakUpdate = mesId == 320 || mesId == 277; // "Choco's beak became stronger!" or "Time's Up"
+                    break;
+                default:
+                    checkBeakUpdate = mesId == 326 || mesId == 278;
+                    break;
             }
-
-            flag = (mesId == 326 || mesId == 278);
-        IL_F5:
-            if (flag)
+            if (checkBeakUpdate)
             {
-                Int32 varManually = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(35796);
-                AchievementManager.ReportAchievement(AcheivementKey.ChocoboLv99, varManually);
+                Int32 beakLevel = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.getVarOperation(EBin.VariableSource.Global, EBin.VariableType.Byte, 139));
+                AchievementManager.ReportAchievement(AcheivementKey.ChocoboLv99, beakLevel);
             }
         }
     }
@@ -351,31 +288,20 @@ public class EMinigame
     public static void Auction10TimesAchievement(Obj gCur)
     {
         if (gCur == null)
-        {
             return;
-        }
-        Int32 fldMapNo = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
-        if ((fldMapNo == 909 && gCur.sid == 7) || (fldMapNo == 1909 && gCur.sid == 3))
-        {
+        Int32 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
+        if ((fldMapNo == 909 && gCur.sid == 7) || (fldMapNo == 1909 && gCur.sid == 3)) // Treno/Auction Site
             AchievementManager.ReportAchievement(AcheivementKey.Auction10, ++FF9StateSystem.Achievement.AuctionTime);
-        }
     }
 
     public static void ViviWinHuntAchievement()
     {
-        Int32 fldMapNo = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
-        if (fldMapNo == 600)
+        Int32 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
+        if (fldMapNo == 600) // Lindblum Castle/Royal Chamber
         {
-            Boolean flag = false;
-            Int32 varManually = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(80372);
-            if (varManually == 2)
-            {
-                flag = true;
-            }
-            if (flag)
-            {
+            Int32 huntWinner = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.getVarOperation(EBin.VariableSource.Global, EBin.VariableType.Byte, 313));
+            if (huntWinner == 2)
                 AchievementManager.ReportAchievement(AcheivementKey.ViviWinHunt, 1);
-            }
         }
     }
 
@@ -393,235 +319,150 @@ public class EMinigame
 
     public static void SetQuadmistOpponentId(Obj gCur)
     {
-        Int32 fldMapNo = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
-        Int32 uid = (Int32)gCur.uid;
-        EMinigame.quadmistOpponentId = EMinigame.CreateNPCID(fldMapNo, uid);
+        EMinigame.quadmistOpponentId = EMinigame.CreateNPCID(FF9StateSystem.Common.FF9.fldMapNo, gCur.uid);
         EMinigame.SetGroupingOpponentId();
     }
 
     private static void SetGroupingOpponentId()
     {
-        Int32 num = EMinigame.quadmistOpponentId;
-        if (num != 558002)
+        Int32 opponentId = EMinigame.quadmistOpponentId;
+        if (opponentId == 558002 || opponentId == 1306002 || opponentId == 2106002)
         {
-            if (num != 908009)
-            {
-                if (num == 1306002)
-                {
-                    goto IL_42;
-                }
-                if (num != 1908006)
-                {
-                    if (num != 2106002)
-                    {
-                        return;
-                    }
-                    goto IL_42;
-                }
-            }
-            EBin eBin = PersistenSingleton<EventEngine>.Instance.eBin;
-            Int32 varManually = eBin.getVarManually(94708);
-            EMinigame.quadmistOpponentId = 908009;
-            if (varManually >= 51)
-            {
-                EMinigame.quadmistOpponentId += 255;
-            }
-            return;
+            EMinigame.quadmistOpponentId = 558002;
         }
-    IL_42:
-        EMinigame.quadmistOpponentId = 558002;
+        else if (opponentId == 908009 || opponentId == 1908006)
+        {
+            Int32 coinThrowed = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.getVarOperation(EBin.VariableSource.Global, EBin.VariableType.Byte, 369));
+            EMinigame.quadmistOpponentId = 908009;
+            if (coinThrowed >= EMinigame.ThiefNPCCoinCondition)
+                EMinigame.quadmistOpponentId += 255;
+        }
     }
 
     public static void SetQuadmistStadiumOpponentId(Obj gCur, Int32 minigameFlag)
     {
-        Int32 fldMapNo = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
-        if ((fldMapNo == 903 && gCur.sid == 11) || (fldMapNo == 1903 && gCur.sid == 15))
-        {
+        Int32 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
+        if ((fldMapNo == 903 && gCur.sid == 11) || (fldMapNo == 1903 && gCur.sid == 15)) // Treno/Card Stadium
             EMinigame.quadmistOpponentId = fldMapNo * 1000 + minigameFlag + 100;
-        }
-        else if (fldMapNo == 112 && gCur.sid == 7)
-        {
+        else if (fldMapNo == 112 && gCur.sid == 7) // Alexandria/Pub
             EMinigame.SetQuadmistOpponentId(gCur);
-        }
     }
 
     public static void SetThiefId(Obj gCur)
     {
-        Int32 fldMapNo = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
-        if (fldMapNo == 908 || fldMapNo == 1908)
+        Int32 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
+        if (fldMapNo == 908 || fldMapNo == 1908) // Treno/Gate
         {
-            Int32 num = EMinigame.CreateNPCID(fldMapNo, (Int32)gCur.uid);
-            Int32 num2 = num;
-            if (num2 == 908009 || num2 == 1908006)
-            {
+            Int32 opponentId = EMinigame.CreateNPCID(fldMapNo, gCur.uid);
+            if (opponentId == 908009 || opponentId == 1908006)
                 EMinigame.SetGroupingOpponentId();
-            }
         }
     }
 
     public static void SetFatChocoboId(Obj gCur)
     {
-        Int32 fldMapNo = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
-        if (fldMapNo == 2955 && gCur.uid == 9)
-        {
+        Int32 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
+        if (fldMapNo == 2955 && gCur.uid == 9) // Chocobo's Paradise
             EMinigame.SetQuadmistOpponentId(gCur);
-        }
     }
 
     public static void QuadmistWinAllNPCAchievement()
     {
         if (EMinigame.quadmistOpponentId <= 0)
-        {
             return;
-        }
         if (FF9StateSystem.Achievement.QuadmistWinList.Add(EMinigame.quadmistOpponentId))
-        {
             AchievementManager.ReportAchievement(AcheivementKey.CardWinAll, FF9StateSystem.Achievement.QuadmistWinList.Count);
-        }
         EMinigame.quadmistOpponentId = 0;
     }
 
     public static void DigUpMadainRingAchievement()
     {
-        Int32 fldMapNo = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
-        if (fldMapNo == 1421)
-        {
-            Boolean flag = true;
-            if (flag)
-            {
-                AchievementManager.ReportAchievement(AcheivementKey.MadainRing, 1);
-            }
-        }
+        Int32 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
+        if (fldMapNo == 1421) // Fossil Roo/Mining Site
+            AchievementManager.ReportAchievement(AcheivementKey.MadainRing, 1);
     }
 
     public static void DigUpMadianRingCheating()
     {
         EBin eBin = PersistenSingleton<EventEngine>.Instance.eBin;
-        if (FF9StateSystem.Common.FF9.fldMapNo == 1421 && EBin.s1.sid == 0 && EBin.s1.ip == 813)
+        if (FF9StateSystem.Common.FF9.fldMapNo == 1421 && EBin.s1.sid == 0 && EBin.s1.ip == 813)  // Fossil Roo/Mining Site
         {
-            eBin.setVarManually(12245, 2);
-            eBin.setVarManually(14553, 203);
+            eBin.setVarManually(EBin.getVarOperation(EBin.VariableSource.Map, EBin.VariableType.Byte, 47), 2);
+            eBin.setVarManually(EBin.getVarOperation(EBin.VariableSource.Map, EBin.VariableType.Int16, 56), 203);
         }
     }
 
     public static void MognetCentralAchievement()
     {
-        Int32 fldMapNo = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
-        if (fldMapNo == 3100)
-        {
-            Boolean flag = true;
-            if (flag)
-            {
-                AchievementManager.ReportAchievement(AcheivementKey.MognetCentral, 1);
-            }
-        }
+        Int32 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
+        if (fldMapNo == 3100) // Mognet Central
+            AchievementManager.ReportAchievement(AcheivementKey.MognetCentral, 1);
     }
 
-    public static void AtleteQueenAchievement_Debug(String lang, Int32 mesId)
+    public static void AtleteQueenAchievement_ByMessage(String langSymbol, Int32 mesId)
     {
-        if (FF9StateSystem.Common.FF9.fldMapNo != 1850)
-        {
-            return;
-        }
-        if (mesId == 152 && FF9StateSystem.Settings.IsFastTrophyMode && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(125940) < 80)
-        {
-            PersistenSingleton<EventEngine>.Instance.eBin.setVarManually(125940, 80);
-        }
+        if (FF9StateSystem.Common.FF9.fldMapNo == 1850 // Alexandria/Main Street
+         && mesId == 152 // "Vivi wins!"
+         && FF9StateSystem.Settings.IsFastTrophyMode
+         && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.getVarOperation(EBin.VariableSource.Global, EBin.VariableType.Byte, 491)) < 80)
+            PersistenSingleton<EventEngine>.Instance.eBin.setVarManually(EBin.getVarOperation(EBin.VariableSource.Global, EBin.VariableType.Byte, 491), 80);
     }
 
-    public static void AtleteQueenAchievement()
+    public static void AtleteQueenAchievement_ByReward()
     {
-        if (FF9StateSystem.Common.FF9.fldMapNo != 1850)
-        {
-            return;
-        }
-        AchievementManager.ReportAchievement(AcheivementKey.AthleteQueen, 1);
+        if (FF9StateSystem.Common.FF9.fldMapNo == 1850) // Alexandria/Main Street
+            AchievementManager.ReportAchievement(AcheivementKey.AthleteQueen, 1);
     }
 
     public static void SuperSlickOilAchievement()
     {
-        Int32 fldMapNo = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
-        if (fldMapNo == 2457)
-        {
-            Boolean flag = true;
-            if (flag)
-            {
-                AchievementManager.ReportAchievement(AcheivementKey.SuperSlickOil, 1);
-            }
-        }
+        if (FF9StateSystem.Common.FF9.fldMapNo == 2457) // Alexandria/Mini-Theater
+            AchievementManager.ReportAchievement(AcheivementKey.SuperSlickOil, 1);
     }
 
     public static void SuperSlickOilCheating()
     {
         EBin eBin = PersistenSingleton<EventEngine>.Instance.eBin;
-        eBin.setVarManually(2174948, 1);
-        eBin.setVarManually(1952740, 0);
+        eBin.setVarManually(EBin.getVarOperation(EBin.VariableSource.Global, EBin.VariableType.Bit, 8495), 1);
+        eBin.setVarManually(EBin.getVarOperation(EBin.VariableSource.Global, EBin.VariableType.Bit, 7627), 0);
     }
 
     public static void AllTreasureAchievement()
     {
         if (PersistenSingleton<SceneDirector>.Instance.CurrentScene != SceneDirector.WorldMapSceneName)
-        {
             return;
-        }
-        Boolean flag = false;
         EBin eBin = PersistenSingleton<EventEngine>.Instance.eBin;
-        Int32 num = eBin.getVarManually(47304);
-        num &= 16777215;
-        Int32 num2 = EMinigame.CountOpenedTreasure();
-        if (EMinigame.lastGWldItemGet0 != num && num == 16777215)
-        {
-            flag = true;
-        }
-        if (flag)
-        {
+        Int32 chocographFlags = eBin.getVarManually(EBin.getVarOperation(EBin.VariableSource.Global, EBin.VariableType.Int24, 184));
+        chocographFlags &= 0xFFFFFF;
+        if (EMinigame.lastGWldItemGet0 != chocographFlags && chocographFlags == 0xFFFFFF)
             AchievementManager.ReportAchievement(AcheivementKey.AllTreasure, EMinigame.numOfTreasures);
-        }
-        EMinigame.lastGWldItemGet0 = num;
+        EMinigame.lastGWldItemGet0 = chocographFlags;
     }
 
     public static void InitializeAllTreasureAchievement()
     {
         EBin eBin = PersistenSingleton<EventEngine>.Instance.eBin;
-        EMinigame.lastGWldItemGet0 = eBin.getVarManually(47304);
-        EMinigame.lastGWldItemGet0 &= 16777215;
-    }
-
-    private static Int32 CountOpenedTreasure()
-    {
-        EBin eBin = PersistenSingleton<EventEngine>.Instance.eBin;
-        Int32 varManually = eBin.getVarManually(47304);
-        Int32 num = 0;
-        for (Int32 i = 0; i < num; i++)
-        {
-            Int32 num2 = varManually >> i & 1;
-            if (num2 == 1)
-            {
-                num++;
-            }
-        }
-        return num;
+        EMinigame.lastGWldItemGet0 = eBin.getVarManually(EBin.getVarOperation(EBin.VariableSource.Global, EBin.VariableType.Int24, 184));
+        EMinigame.lastGWldItemGet0 &= 0xFFFFFF;
     }
 
     public static void AllTreasureCheating()
     {
         EBin eBin = PersistenSingleton<EventEngine>.Instance.eBin;
-        eBin.setVarManually(47304, 16777214);
-        eBin.setVarManually(48072, 16777215);
+        eBin.setVarManually(EBin.getVarOperation(EBin.VariableSource.Global, EBin.VariableType.Int24, 184), 0xFFFFFE);
+        eBin.setVarManually(EBin.getVarOperation(EBin.VariableSource.Global, EBin.VariableType.Int24, 187), 0xFFFFFF);
         FF9StateSystem.EventState.gEventGlobal[191] = 5;
     }
 
     public static void AllSandyBeachAchievement()
     {
         if (PersistenSingleton<SceneDirector>.Instance.CurrentScene != SceneDirector.WorldMapSceneName)
-        {
             return;
-        }
-        Int32 num = EMinigame.CountVisitedSandyBeach();
-        if (EMinigame.lastNumOfVisitedSandyBeach != num)
+        Int32 beachCount = EMinigame.CountVisitedSandyBeach();
+        if (EMinigame.lastNumOfVisitedSandyBeach != beachCount)
         {
-            AchievementManager.ReportAchievement(AcheivementKey.AllSandyBeach, num);
-            EMinigame.lastNumOfVisitedSandyBeach = num;
+            AchievementManager.ReportAchievement(AcheivementKey.AllSandyBeach, beachCount);
+            EMinigame.lastNumOfVisitedSandyBeach = beachCount;
         }
     }
 
@@ -633,78 +474,56 @@ public class EMinigame
     private static Int32 CountVisitedSandyBeach()
     {
         EBin eBin = PersistenSingleton<EventEngine>.Instance.eBin;
-        Int32 num = 0;
+        Int32 beachCount = 0;
         for (Int32 i = 0; i < EMinigame.numOfSandyBeach; i++)
         {
-            Int32 varManually = eBin.getVarManually(219364 + i * 256);
-            if (varManually == 1)
-            {
-                num++;
-            }
+            Int32 beachVisited = eBin.getVarManually(EBin.getVarOperation(EBin.VariableSource.Global, EBin.VariableType.Bit, 856 + i));
+            if (beachVisited == 1)
+                beachCount++;
         }
-        return num;
+        return beachCount;
     }
 
     public static void AllSandyBeachCheating()
     {
         EBin eBin = PersistenSingleton<EventEngine>.Instance.eBin;
-        eBin.setVarManually(266980, 1);
-        eBin.setVarManually(27608, 65534);
-        eBin.setVarManually(28120, 31);
+        eBin.setVarManually(EBin.getVarOperation(EBin.VariableSource.Global, EBin.VariableType.Bit, 1042), 1);
+        eBin.setVarManually(EBin.getVarOperation(EBin.VariableSource.Global, EBin.VariableType.Int16, 107), 0xFFFE);
+        eBin.setVarManually(EBin.getVarOperation(EBin.VariableSource.Global, EBin.VariableType.Int16, 109), 31);
         FF9StateSystem.EventState.gEventGlobal[191] = 5;
     }
 
     public static void DigUpKupoAchievement()
     {
         EBin eBin = PersistenSingleton<EventEngine>.Instance.eBin;
-        Int32 varManually = eBin.getVarManually(833508);
-        if (FF9StateSystem.Common.FF9.fldMapNo == 1421 && EMinigame.lastGFFossilMog != varManually && varManually == 1)
+        Int32 kupoFound = eBin.getVarManually(EBin.getVarOperation(EBin.VariableSource.Global, EBin.VariableType.Bit, 3255));
+        if (FF9StateSystem.Common.FF9.fldMapNo == 1421 && EMinigame.lastGFFossilMog != kupoFound && kupoFound == 1) // Fossil Roo/Mining Site
         {
             AchievementManager.ReportAchievement(AcheivementKey.Kuppo, 1);
-            EMinigame.lastGFFossilMog = varManually;
+            EMinigame.lastGFFossilMog = kupoFound;
         }
     }
 
     public static void InitializeDigUpKupoAchievement()
     {
-        EBin eBin = PersistenSingleton<EventEngine>.Instance.eBin;
-        EMinigame.lastGFFossilMog = eBin.getVarManually(833508);
+        EMinigame.lastGFFossilMog = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.getVarOperation(EBin.VariableSource.Global, EBin.VariableType.Bit, 3255));
     }
 
     public static void ATE80Achievement(Int32 ateID)
     {
         if (ateID == -1)
-        {
             return;
-        }
         EBin eBin = PersistenSingleton<EventEngine>.Instance.eBin;
         Int32[] ateCheck = FF9StateSystem.Achievement.AteCheck;
-        Boolean flag = true;
-        Debug.Log(String.Concat(new Object[]
-        {
-            AcheivementKey.ATE80,
-            " : ateCheck[",
-            ateID,
-            "] = ",
-            ateCheck[ateID]
-        }));
+        Debug.Log($"{AcheivementKey.ATE80} : ateCheck[{ateID}] = {ateCheck[ateID]}");
         if (ateCheck[ateID] == 0)
-        {
             ateCheck[ateID] = 1;
-        }
-        Int32 num = 0;
+        Int32 ateCount = 0;
         for (Int32 i = 0; i < 83; i++)
-        {
             if (ateCheck[i] == 1 && i != 6 && i != 7 && i != 14)
-            {
-                num++;
-            }
-        }
-        if (flag)
-        {
-            Debug.Log(AcheivementKey.ATE80 + " : numOfSeenATE = " + num);
-            AchievementManager.ReportAchievement(AcheivementKey.ATE80, num);
-        }
+                ateCount++;
+        Debug.Log(AcheivementKey.ATE80 + " : numOfSeenATE = " + ateCount);
+        AchievementManager.ReportAchievement(AcheivementKey.ATE80, ateCount);
     }
 
     public static Int32 MappingATEID(Dialog dialog, Int32 selectedChoice, Boolean isCompulsory)
@@ -713,80 +532,48 @@ public class EMinigame
         if (FF9StateSystem.Common.FF9.fldLocNo == 40)
         {
             if (FF9StateSystem.Common.FF9.fldMapNo == 206 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 1900 && selectedChoice == 0)
-            {
-                result = 0;
-            }
+                result = 0; // Prima Vista/Crash Site
             else
-            {
                 result = 1 + selectedChoice;
-            }
         }
         else if (FF9StateSystem.Common.FF9.fldLocNo == 4)
         {
             if (selectedChoice == 4 && !isCompulsory)
-            {
                 result = 4;
-            }
             else if ((FF9StateSystem.Common.FF9.fldMapNo == 253 || FF9StateSystem.Common.FF9.fldMapNo == 204) && isCompulsory)
-            {
                 result = 5;
-            }
             else if (FF9StateSystem.Common.FF9.fldMapNo == 262 && isCompulsory)
-            {
                 result = 6;
-            }
         }
         else if (FF9StateSystem.Common.FF9.fldLocNo == 8)
         {
             if (FF9StateSystem.Common.FF9.fldMapNo == 306 && isCompulsory)
-            {
                 result = 7;
-            }
         }
         else if (FF9StateSystem.Common.FF9.fldLocNo == 47 || FF9StateSystem.Common.FF9.fldLocNo == 53)
         {
             if (isCompulsory)
-            {
                 result = 8;
-            }
             else
-            {
                 result = 8 + selectedChoice;
-            }
         }
         else if (FF9StateSystem.Common.FF9.fldLocNo == 276)
         {
             if (FF9StateSystem.Common.FF9.fldMapNo == 554 && isCompulsory)
-            {
                 result = 14;
-            }
             else if (FF9StateSystem.Common.FF9.fldMapNo == 552 && isCompulsory)
-            {
                 result = 16;
-            }
             else if (FF9StateSystem.Common.FF9.fldMapNo == 565 && isCompulsory)
-            {
                 result = 18;
-            }
             else
-            {
-                result = 15 + selectedChoice;
-                if (selectedChoice == 3)
-                {
-                    result = 19;
-                }
-            }
+                result = selectedChoice == 3 ? 19 : 15 + selectedChoice;
         }
         else if (FF9StateSystem.Common.FF9.fldLocNo == 70)
         {
             if (isCompulsory)
-            {
                 result = 24;
-            }
             else
-            {
                 result = 20 + selectedChoice;
-            }
         }
         else if (FF9StateSystem.Common.FF9.fldLocNo == 44)
         {
@@ -799,53 +586,35 @@ public class EMinigame
         else if (FF9StateSystem.Common.FF9.fldLocNo == 485)
         {
             if (!isCompulsory)
-            {
                 result = 32;
-            }
             else if (FF9StateSystem.Common.FF9.fldMapNo == 1307)
-            {
                 result = 33;
-            }
         }
         else if (FF9StateSystem.Common.FF9.fldLocNo == 525)
         {
             if (isCompulsory && FF9StateSystem.Common.FF9.fldMapNo == 1353)
-            {
                 result = 34;
-            }
         }
         else if (FF9StateSystem.Common.FF9.fldLocNo == 32)
         {
             if (isCompulsory)
-            {
                 result = 40;
-            }
             else
-            {
                 result = 35 + selectedChoice;
-            }
         }
         else if (FF9StateSystem.Common.FF9.fldLocNo == 37)
         {
             if (isCompulsory)
-            {
                 result = 42;
-            }
             else
-            {
                 result = 41 + selectedChoice;
-            }
         }
         else if (FF9StateSystem.Common.FF9.fldLocNo == 358)
         {
             if (isCompulsory)
-            {
                 result = 49;
-            }
             else
-            {
                 result = 47 + selectedChoice;
-            }
         }
         else if (FF9StateSystem.Common.FF9.fldLocNo == 88 || FF9StateSystem.Common.FF9.fldLocNo == 90)
         {
@@ -854,9 +623,7 @@ public class EMinigame
         else if (FF9StateSystem.Common.FF9.fldLocNo == 359)
         {
             if (FF9StateSystem.Common.FF9.fldMapNo == 956 && isCompulsory)
-            {
                 result = 57;
-            }
         }
         else if (FF9StateSystem.Common.FF9.fldLocNo == 741)
         {
@@ -868,23 +635,15 @@ public class EMinigame
             {
                 if (FF9StateSystem.Common.FF9.fldMapNo == 2169)
                 {
-                    Int32 varManually = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
-                    if (varManually == 9100)
-                    {
+                    Int32 scenarioCounter = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
+                    if (scenarioCounter == 9100)
                         result = 70;
-                    }
-                    else if (varManually == 9200)
-                    {
+                    else if (scenarioCounter == 9200)
                         result = 71;
-                    }
-                    else if (varManually == 10010)
-                    {
+                    else if (scenarioCounter == 10010)
                         result = 76;
-                    }
-                    else if (varManually == 10030)
-                    {
+                    else if (scenarioCounter == 10030)
                         result = 77;
-                    }
                 }
                 else if (FF9StateSystem.Common.FF9.fldMapNo == 2113)
                 {
@@ -903,13 +662,9 @@ public class EMinigame
         else if (FF9StateSystem.Common.FF9.fldLocNo == 52)
         {
             if (isCompulsory)
-            {
                 result = 81;
-            }
             else
-            {
                 result = 78 + selectedChoice;
-            }
         }
         else if (FF9StateSystem.Common.FF9.fldLocNo == 344)
         {
@@ -925,42 +680,35 @@ public class EMinigame
             if (PersistenSingleton<EventEngine>.Instance.gMode == 1)
             {
                 if (EventHUD.CurrentHUD == MinigameHUD.ChocoHot)
-                {
                     return true;
-                }
             }
             else if (PersistenSingleton<EventEngine>.Instance.gMode == 3)
             {
                 if (EventCollision.IsRidingChocobo() && EventInput.IsPressedDig)
-                {
                     return true;
-                }
                 EventInput.IsPressedDig = false;
             }
         }
         return false;
     }
 
-    public static void SetHippaulLevel(Obj s1, EBin eBin, Int32 level)
-    {
-    }
-
     public static void SetViviSpeed(Obj s1, EBin eBin)
     {
-        if (FF9StateSystem.Common.FF9.fldMapNo == 1850 && s1.sid == 15)
+        if (FF9StateSystem.Common.FF9.fldMapNo == 1850 && s1.sid == 15) // Alexandria/Main Street
         {
+            Int32 varOp = EBin.getVarOperation(EBin.VariableSource.Map, EBin.VariableType.Byte, 36);
             if (s1.ip == 1445 || s1.ip == 1497)
             {
-                Int32 varManually = eBin.getVarManually(9429);
-                eBin.setVarManually(9429, Configuration.Hacks.HippaulRacingViviSpeed);
+                Int32 speed = eBin.getVarManually(varOp);
+                eBin.setVarManually(varOp, Configuration.Hacks.HippaulRacingViviSpeed);
             }
             else if (s1.ip == 1595)
             {
-                Int32 num = eBin.getVarManually(9429);
-                if (num != 0 && num < 5)
+                Int32 speed = eBin.getVarManually(varOp);
+                if (speed != 0 && speed < 5)
                 {
-                    num = 5;
-                    eBin.setVarManually(9429, num);
+                    speed = 5;
+                    eBin.setVarManually(varOp, speed);
                 }
             }
         }
@@ -972,33 +720,27 @@ public class EMinigame
         EventEngine instance = PersistenSingleton<EventEngine>.Instance;
         if (instance.gMode == 3 && WMUIData.ControlNo == 0)
         {
-            Int32 varManually = instance.eBin.getVarManually(266980);
+            Int32 varManually = instance.eBin.getVarManually(EBin.getVarOperation(EBin.VariableSource.Global, EBin.VariableType.Bit, 1042));
             if (varManually > 0)
             {
-                Int32 num = ff9.w_frameGetParameter(192);
+                Int32 areaId = ff9.w_frameGetParameter(192);
                 Int32 count = EMinigame.BeachData.Count;
-                Int32 num2 = 0;
-                Int32 num3 = 0;
+                Int32 curBeachOp = 0;
+                Int32 beachFlags = 0;
                 for (Int32 i = 0; i < count; i++)
                 {
-                    Int32 num4 = 219364 + (i << 8);
-                    if (num == EMinigame.BeachData[i])
-                    {
-                        num2 = num4;
-                    }
-                    if (instance.eBin.getVarManually(num4) > 0)
-                    {
-                        num3++;
-                    }
+                    Int32 beachOp = EBin.getVarOperation(EBin.VariableSource.Global, EBin.VariableType.Bit, 856 + i);
+                    if (areaId == EMinigame.BeachData[i])
+                        curBeachOp = beachOp;
+                    if (instance.eBin.getVarManually(beachOp) > 0)
+                        beachFlags++;
                     if (i < count - 1)
-                    {
-                        num3 <<= 1;
-                    }
+                        beachFlags <<= 1;
                 }
-                if (num2 != 0)
+                if (curBeachOp != 0)
                 {
-                    Int32 varManually2 = instance.eBin.getVarManually(num2);
-                    result = (varManually2 == 0 || (varManually2 == 1 && num3 == 2097151));
+                    Int32 wasVisited = instance.eBin.getVarManually(curBeachOp);
+                    result = wasVisited == 0 || (wasVisited == 1 && beachFlags == 0x1FFFFF);
                 }
             }
         }
@@ -1006,81 +748,19 @@ public class EMinigame
     }
 
     private const Boolean showLog = false;
-
     private const Boolean debugMode = false;
 
-    private const Int32 ChanbaraPointCondition = 10;
-
-    private const Int32 ChanbaraBonusPoint = 3;
-
-    private const Int32 StiltzkinMogModelId = 212;
-
-    public const Int32 GTrenoIzumiAddress = 94708;
-
+    public const Int32 StiltzkinMogModelId = 212;
+    public const Int32 GoldenFrogModelId = 423;
     public const Int32 ThiefNPCCoinCondition = 51;
-
-    public const Int32 GKabaoLevelAddress = 125940;
-
-    public const Int32 RaceVecAddress = 9429;
-
     public const Int32 ViviRunningVelocity = 33;
 
-    public const Int32 WM_AREA_04 = 4;
-
-    public const Int32 WM_AREA_05 = 5;
-
-    public const Int32 WM_AREA_13 = 13;
-
-    public const Int32 WM_AREA_16 = 16;
-
-    public const Int32 WM_AREA_17 = 17;
-
-    public const Int32 WM_AREA_18 = 18;
-
-    public const Int32 WM_AREA_19 = 19;
-
-    public const Int32 WM_AREA_25 = 25;
-
-    public const Int32 WM_AREA_29 = 29;
-
-    public const Int32 WM_AREA_30 = 30;
-
-    public const Int32 WM_AREA_31 = 31;
-
-    public const Int32 WM_AREA_33 = 33;
-
-    public const Int32 WM_AREA_37 = 37;
-
-    public const Int32 WM_AREA_38 = 38;
-
-    public const Int32 WM_AREA_46 = 46;
-
-    public const Int32 WM_AREA_47 = 47;
-
-    public const Int32 WM_AREA_49 = 49;
-
-    public const Int32 WM_AREA_50 = 50;
-
-    public const Int32 WM_AREA_51 = 51;
-
-    public const Int32 WM_AREA_52 = 52;
-
-    public const Int32 WM_AREA_58 = 58;
-
-    public const Int32 BeachFlagStartOffset = 219364;
-
     private static Int32 stiltzkinBuy = 0;
-
     private static Int32 g_tship_model_get_flg = 0;
-
     private static Int32 quadmistOpponentId = 0;
-
     private static Int32 lastGWldItemGet0 = 0;
-
     private static Int32 numOfTreasures = 24;
-
     private static Int32 numOfSandyBeach = 21;
-
     private static Int32 lastNumOfVisitedSandyBeach = 0;
 
     public static Int32 lastGFFossilMog;

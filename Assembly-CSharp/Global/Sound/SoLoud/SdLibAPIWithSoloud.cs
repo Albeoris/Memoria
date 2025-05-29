@@ -262,7 +262,7 @@ namespace Global.Sound.SoLoud
 
         public override Int32 SdSoundSystem_SoundCtrl_IsExist(Int32 soundID)
         {
-            return soloud.isValidVoiceHandle((uint)soundID); ;
+            return soloud.isValidVoiceHandle((uint)soundID);
         }
 
         public override void SdSoundSystem_SoundCtrl_SetPause(Int32 soundID, Int32 pauseOn, Int32 transTimeMSec)

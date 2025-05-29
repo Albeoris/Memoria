@@ -74,9 +74,21 @@ public class AllSoundDispatchPlayer : SoundPlayer
 
     public static Int32 ConvertTickToMillisec(Int32 ticks)
     {
-        Single msPerTick = 1000f / (Single)FPSManager.GetTargetFPS();
-        Single ms = ticks * msPerTick;
-        return ((Int32)(ms * 10f) % 10 > 5) ? (Int32)ms + 1 : (Int32)ms;
+        // This is used to fade sound volume, we want a fps independent result,
+        // ticks are always the same regardless of fps so target/current fps shouldn't be used
+        // I'm gonna assume 60fps is gonna be the most correct, e.g. this results in a 2 sec fade 
+        // after exiting the battle result screen, it's seems too long with 30fps = 4 sec
+        // - SamsamTS
+        // Single ms = ticks * FPSManager.GetEstimatedFps();
+        Single ms = ticks * 1000f / 60f;
+        return Mathf.RoundToInt(ms);
+    }
+
+    public static UInt16 ConvertMillisecToTick(Single ms)
+    {
+        // Same here ms gets converted to ticks which later gets converted back to ms with
+        // ConvertTickToMillisec, so we use 60 for consistency
+        return (UInt16)(ms / 60);
     }
 
     public Int32 GetCurrentMusicId()

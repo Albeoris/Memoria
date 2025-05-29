@@ -591,7 +591,7 @@ namespace Assets.Scripts.Common
             SceneDirector.fadeMode = mode;
             Boolean flag = PersistenSingleton<EventEngine>.Instance.IsEventContextValid()
                         && FF9StateSystem.Common.FF9.fldMapNo == 60 // Prima Vista/Interior
-                        && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(6357) == 5
+                        && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.getVarOperation(EBin.VariableSource.Map, EBin.VariableType.Byte, 24)) == 5
                         && mode == FadeMode.Add
                         && FF9StateSystem.Settings.IsFastForward;
             Boolean flag2 = PersistenSingleton<EventEngine>.Instance.IsEventContextValid()

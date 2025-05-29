@@ -723,6 +723,13 @@ namespace Memoria.Launcher
                                 foreach (String sd in subDirectories)
                                     if (Mod.LooksLikeAModFolder(sd))
                                     {
+                                        // TODO language:
+                                        MessageBox.Show($"The mod folder name '{Path.GetFileName(sd)}' is different than expected '{downloadingMod.InstallationPath}'\n\nPlease inform the author of the mod{(downloadingMod.Author != null ? $" ({downloadingMod.Author})" : "")}.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                                        if (File.Exists(sd + "/" + Mod.DESCRIPTION_FILE))
+                                        {
+                                            descPath = sd + "/" + Mod.DESCRIPTION_FILE;
+                                            moveDesc = true;
+                                        }
                                         sourcePath = sd;
                                         destPath = downloadingMod.InstallationPath ?? downloadingModName;
                                         proceedNext = true;
@@ -882,6 +889,27 @@ namespace Memoria.Launcher
             try
             {
                 modListCatalog.Clear();
+
+                // Add/update priorities from PriorityList.txt to the catalog
+                if (false)
+                {
+                    String catalog = File.ReadAllText(CATALOG_PATH); ;
+                    Dictionary<String, Int32> priorities = new Dictionary<String, Int32>();
+                    String[] lines = File.ReadAllLines("PriorityList.txt");
+
+                    foreach (String line in lines)
+                    {
+                        String[] tokens = line.Split('\t');
+                        String search1 = @"(<Name>" + tokens[0] + @"((?!<\/Mod>).)*<\/Version>\s*<Priority>)((?!<\/Priority>).)*";
+                        String search2 = @"(<Name>" + tokens[0] + @"((?!<\/Mod>).)*<\/Version>)(?!\s*<Priority>)";
+                        Match m = Regex.Match(catalog, search2, RegexOptions.Singleline);
+                        catalog = Regex.Replace(catalog, search1, $"$1\r\n{tokens[1]}", RegexOptions.Singleline);
+                        catalog = Regex.Replace(catalog, search2, $"$1\r\n\t<Priority>{tokens[1]}</Priority>", RegexOptions.Singleline);
+                    }
+
+                    File.WriteAllText(CATALOG_PATH, catalog);
+                }
+
                 using (Stream input = File.OpenRead(CATALOG_PATH))
                 using (StreamReader reader = new StreamReader(input))
                     Mod.LoadModDescriptions(reader, ref modListCatalog);
@@ -960,12 +988,16 @@ namespace Memoria.Launcher
             }
             if (image != currentImage)
             {
-                BitmapImage bitmap = new BitmapImage();
-                bitmap.BeginInit();
-                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                bitmap.UriSource = new Uri(image, UriKind.Absolute);
-                bitmap.EndInit();
-                Launcher.Source = bitmap;
+                try
+                {
+                    BitmapImage bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.UriSource = new Uri(image, UriKind.Absolute);
+                    bitmap.EndInit();
+                    Launcher.Source = bitmap;
+                }
+                catch { }
                 currentImage = image;
             }
         }
@@ -1044,11 +1076,15 @@ namespace Memoria.Launcher
                 gridModInfo.Visibility = Visibility.Collapsed;
                 PreviewModWebsite.Visibility = Visibility.Collapsed;
                 PreviewModCategoryTagline.Visibility = Visibility.Collapsed;
-                BitmapImage bitmap = new BitmapImage();
-                bitmap.BeginInit();
-                bitmap.UriSource = new Uri("pack://application:,,,/images/Gradient.png");
-                bitmap.EndInit();
-                PreviewModImage.Source = bitmap;
+                try
+                {
+                    BitmapImage bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.UriSource = new Uri("pack://application:,,,/images/Gradient.png");
+                    bitmap.EndInit();
+                    PreviewModImage.Source = bitmap;
+                }
+                catch { }
                 DoubleAnimation animation = new DoubleAnimation
                 {
                     To = 0,
@@ -1109,11 +1145,15 @@ namespace Memoria.Launcher
                         String imagePath = $"./{mod.InstallationPath}/{mod.PreviewFile}";
                         if (File.Exists(imagePath))
                         {
-                            mod.PreviewImage = new BitmapImage();
-                            mod.PreviewImage.BeginInit();
-                            mod.PreviewImage.UriSource = new Uri(imagePath, UriKind.Relative);
-                            mod.PreviewImage.CacheOption = BitmapCacheOption.OnLoad;
-                            mod.PreviewImage.EndInit();
+                            try
+                            {
+                                mod.PreviewImage = new BitmapImage();
+                                mod.PreviewImage.BeginInit();
+                                mod.PreviewImage.UriSource = new Uri(imagePath, UriKind.Relative);
+                                mod.PreviewImage.CacheOption = BitmapCacheOption.OnLoad;
+                                mod.PreviewImage.EndInit();
+                            }
+                            catch { }
                         }
                     }
                     else if (tabCtrlMain.SelectedIndex == 0 && mod.PreviewFileUrl != null)
@@ -1122,7 +1162,8 @@ namespace Memoria.Launcher
                         {
                             mod.PreviewImage = new BitmapImage(new Uri(mod.PreviewFileUrl, UriKind.Absolute));
                             mod.PreviewImage.DownloadCompleted += OnPreviewFileDownloaded;
-                        } catch { }
+                        }
+                        catch { }
                     }
                     else if (tabCtrlMain.SelectedIndex == 1 && mod.PreviewFileUrl != null)
                     {
@@ -1136,11 +1177,15 @@ namespace Memoria.Launcher
                 }
                 if (mod.PreviewImage == null)
                 {
-                    BitmapImage bitmap = new BitmapImage();
-                    bitmap.BeginInit();
-                    bitmap.UriSource = new Uri("pack://application:,,,/images/Gradient.png");
-                    bitmap.EndInit();
-                    PreviewModImage.Source = bitmap;
+                    try
+                    {
+                        BitmapImage bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.UriSource = new Uri("pack://application:,,,/images/Gradient.png");
+                        bitmap.EndInit();
+                        PreviewModImage.Source = bitmap;
+                    }
+                    catch { }
                 }
                 else if (mod.PreviewImage.IsDownloading)
                 {

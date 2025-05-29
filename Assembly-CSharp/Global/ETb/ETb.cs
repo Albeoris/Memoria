@@ -151,16 +151,16 @@ public static class ETb
 
         ETb.gMesCount++;
         EIcon.SetHereIcon(0);
-        String currentLanguage = Localization.CurrentSymbol;
-        EMinigame.EidolonMuralAchievement(currentLanguage, mes);
-        EMinigame.ExcellentLuckColorFortuneTellingAchievement(currentLanguage, mes);
-        EMinigame.ProvokeMogAchievement(currentLanguage, mes);
-        EMinigame.JumpingRopeAchievement(currentLanguage, mes);
+        String lang = Localization.CurrentSymbol;
+        EMinigame.EidolonMuralAchievement(lang, mes);
+        EMinigame.ExcellentLuckColorFortuneTellingAchievement(lang, mes);
+        EMinigame.ProvokeMogAchievement(lang, mes);
+        EMinigame.JumpingRopeAchievement(lang, mes);
         EMinigame.GetRewardFromQueenStellaAchievement();
-        EMinigame.ShuffleGameAchievement(currentLanguage, mes);
-        EMinigame.ChocoboBeakLV99Achievement(currentLanguage, mes);
-        EMinigame.AtleteQueenAchievement_Debug(currentLanguage, mes);
-        EMinigame.TreasureHunterSAchievement(currentLanguage, mes);
+        EMinigame.ShuffleGameAchievement(lang, mes);
+        EMinigame.ChocoboBeakLV99Achievement(lang, mes);
+        EMinigame.AtleteQueenAchievement_ByMessage(lang, mes);
+        EMinigame.TreasureHunterSAchievement(lang, mes);
         ETb.FixChocoAccidenlyFly(dialog);
     }
 

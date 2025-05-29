@@ -7,6 +7,7 @@ namespace Memoria
     {
         private sealed class GraphicsSection : IniSection
         {
+            public readonly IniValue<Boolean> VSync;
             public readonly IniValue<Int32> BattleFPS;
             public readonly IniValue<Int32> BattleTPS;
             public readonly IniValue<Int32> FieldFPS;
@@ -31,6 +32,7 @@ namespace Memoria
 
             public GraphicsSection() : base(nameof(GraphicsSection), false)
             {
+                VSync = BindBoolean(nameof(VSync), true);
                 BattleFPS = BindInt32(nameof(BattleFPS), 30);
                 BattleTPS = BindInt32(nameof(BattleTPS), 15);
                 FieldFPS = BindInt32(nameof(FieldFPS), 30);

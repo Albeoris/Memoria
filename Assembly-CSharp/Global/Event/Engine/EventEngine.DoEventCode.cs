@@ -1438,7 +1438,7 @@ public partial class EventEngine
                 else if (itemID == 324)
                     EMinigame.SuperSlickOilAchievement();
                 else if (itemID == 283)
-                    EMinigame.AtleteQueenAchievement();
+                    EMinigame.AtleteQueenAchievement_ByReward();
                 return 0;
             }
             case EBin.event_code_binary.ITEMDELETE: // 0x49, "RemoveItem", "Remove item from the player's inventory"
