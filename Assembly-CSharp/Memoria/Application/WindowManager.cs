@@ -46,7 +46,7 @@ namespace Memoria
 
         public static List<MONITORINFOEX> Displays { get; private set; } = GetDisplays();
 
-        public static void CenterWindow()
+        public static void AlignWindow()
         {
             try
             {
@@ -56,6 +56,8 @@ namespace Memoria
                 Int32.TryParse(IniFile.SettingsIni.GetSetting("Settings", "ActiveMonitor", "0 -").Split(' ')[0], out monitor);
                 Int32.TryParse(IniFile.SettingsIni.GetSetting("Settings", "WindowMode", "0"), out windowMode);
 
+                String alignment = IniFile.SettingsIni.GetSetting("Settings", "WindowPosition", "center").ToLower();
+
                 IntPtr hWindow = GetActiveWindow();
                 RECT windowRect = new RECT();
                 GetWindowRect(hWindow, ref windowRect);
@@ -63,7 +65,7 @@ namespace Memoria
                 if (monitor > Displays.Count - 1) return;
                 var display = Displays[monitor]; // Hopefully it's the same order
 
-                RECT rect = windowMode > 0 ? display.rcMonitor : display.rcWork;
+                RECT rect = windowMode == 1 || windowMode == 2 ? display.rcMonitor : display.rcWork;
 
                 int displayWidth = rect.right - rect.left;
                 int displayHeight = rect.bottom - rect.top;
@@ -72,7 +74,7 @@ namespace Memoria
                 int width = displayWidth;
                 int height = displayHeight;
 
-                if (windowMode == 0)
+                if (windowMode == 0 || windowMode == 3)
                 {
                     Int32 targetWidth = 0;
                     Int32 targetHeight = 0;
@@ -108,6 +110,27 @@ namespace Memoria
 
                 int x = rect.left + (displayWidth - width) / 2;
                 int y = rect.top + (displayHeight - height) / 2;
+
+                if (alignment.Contains("top"))
+                    y = rect.top;
+                else if (alignment.Contains("bottom"))
+                    y = rect.top + (displayHeight - height);
+
+                if(alignment.Contains("left"))
+                    x = rect.left;
+                else if (alignment.Contains("right"))
+                    x = rect.left + (displayWidth - width);
+
+                if (alignment.Contains(","))
+                {
+                    String[] tokens = alignment.Split(',');
+                    Int32 newX, newY;
+                    if (Int32.TryParse(tokens[0].Trim(), out newX) && Int32.TryParse(tokens[1].Trim(), out newY))
+                    {
+                        x = rect.left + newX;
+                        y = rect.top + newY;
+                    }
+                }
 
                 if (x != windowRect.left || y != windowRect.top)
                 {

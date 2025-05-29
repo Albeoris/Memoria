@@ -52,7 +52,7 @@ public class MBG : HonoBehavior
     public override void HonoOnDestroy()
     {
         MBG.MarkCharacterDepth = false;
-        QualitySettings.vSyncCount = 0;
+        //QualitySettings.vSyncCount = 0;
         this.movieMaterial.Destroy();
         base.HonoOnDestroy();
     }

@@ -5796,7 +5796,7 @@ public static class ff9
         ff9.w_moveCHRControlPtr = s_moveCHRControl2;
         if (previousTransport == 7) // Blue Narciss
         {
-            ff9.w_musicSEVolumeIntpl(s_moveCHRControl.se, (UInt16)FPSManager.GetTargetFPS(), 0);
+            ff9.w_musicSEVolumeIntpl(s_moveCHRControl.se, AllSoundDispatchPlayer.ConvertMillisecToTick(1000f), 0);
             ff9.w_musicSEStop(s_moveCHRControl.se, 1000);
         }
         if (s_moveCHRControl2.se != 0)
@@ -5833,7 +5833,7 @@ public static class ff9
         ff9.w_moveCHRControl_YAlpha = 0f;
         ff9.s_moveCHRControl currentTransport = ff9.w_moveCHRControlPtr;
         ff9.s_moveCHRControl nextTransport = ff9.w_moveCHRControl[0];
-        UInt16 tick = (UInt16)(3 * FPSManager.GetTargetFPS());
+        UInt16 tick = AllSoundDispatchPlayer.ConvertMillisecToTick(3000);
         ff9.w_musicSEVolumeIntpl(currentTransport.se, tick, 0);
         ff9.w_musicSEVolumeIntpl(38, tick, 0);
         ff9.w_musicRequestSend(nextTransport.music);

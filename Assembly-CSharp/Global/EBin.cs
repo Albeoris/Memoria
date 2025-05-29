@@ -31,8 +31,8 @@ public class EBin
     public static ObjList s0;
     public static Obj s1;
     public static Obj objV0;
-    public static Int32 SC_COUNTER_SVR = 220;
-    public static Int32 MAP_INDEX_SVR = 728;
+    public static Int32 SC_COUNTER_SVR = 0xDC; // EBin.getVarOperation(VariableSource.Global, VariableType.UInt16, 0)
+    public static Int32 MAP_INDEX_SVR = 0x2D8; // EBin.getVarOperation(VariableSource.Global, VariableType.Int16, 2)
 
     public CalcStack calcstack = new CalcStack();
 
@@ -280,7 +280,7 @@ public class EBin
     {
         if (s0 != null)
         {
-            getVarManually(6357);
+            getVarManually(EBin.getVarOperation(EBin.VariableSource.Map, EBin.VariableType.Byte, 24));
             s0 = s0.next;
         }
         next1();
@@ -315,13 +315,9 @@ public class EBin
                 if (FF9StateSystem.Settings.IsFastTrophyMode)
                 {
                     if (FF9StateSystem.Common.FF9.fldMapNo == 2801 && s1.sid == 11 && s1.ip == 3834) // Daguerreo/Right Hall, Gilgamesh
-                    {
-                        setVarManually(11989, 8);
-                    }
+                        setVarManually(EBin.getVarOperation(EBin.VariableSource.Map, EBin.VariableType.Byte, 46), 8);
                     if (FF9StateSystem.Common.FF9.fldMapNo == 1900 && s1.sid == 0 && s1.ip == 4138) // Treno/Pub, Main
-                    {
-                        setVarManually(8198869, 8);
-                    }
+                        setVarManually(EBin.getVarOperation(EBin.VariableSource.Map, EBin.VariableType.Byte, 26), 8);
                 }
             }
             if (FF9StateSystem.Common.FF9.fldMapNo == 705 && s1.sid == 3 && s1.ip == 541) // Gizamaluke/Bell Room, Female Moogle
@@ -505,6 +501,16 @@ public class EBin
         Int32 result = EvaluateValueExpression();
         _s7 = calcStack;
         return result;
+    }
+
+    public static Int32 getVarOperation(VariableSource varSrc, VariableType varType, Int32 index)
+    {
+        if (index > 0xFFFF || index < 0 || varSrc > VariableSource.Null)
+            throw new ArgumentOutOfRangeException();
+        Int32 varOperation = (index << 8) | ((Int32)varType << 2) | ((Int32)varSrc) | 0xC0;
+        if (index > 0xFF)
+            varOperation |= 0x20;
+        return varOperation;
     }
 
     private void expr_jumpToSubCommand(op_binary arg0)
