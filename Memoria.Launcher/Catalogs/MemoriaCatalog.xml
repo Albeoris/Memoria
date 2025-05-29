@@ -252,6 +252,24 @@ Elite monsters are quite similar to normals, but will be more resistant to deadl
 </Mod>
 
 <Mod>
+	<Name>NoHardcodedBattles</Name>
+	<Version>1.0</Version>
+	<Author>DV</Author>
+	<ReleaseDateOriginal>29 May 2025</ReleaseDateOriginal>
+	<ReleaseDate>29 May 2025</ReleaseDate>
+	<InstallationPath>NoHardcodedBattles</InstallationPath>
+	<IncompatibleWith>AlternateFantasy, Trance Seek, David Bowie Edition</IncompatibleWith>
+	<Category>Gameplay</Category>
+	<Description>
+		A tiny mod to remove some "hardcoded" scripts in battles.
+		The goal is to make these fights compatible with any characters in battle, in order to avoid any softlocks.
+	</Description>
+	<PreviewFileUrl>https://i.imgur.com/KL9DWPk.jpeg</PreviewFileUrl>
+	<PreviewFile>Thumbnail/NoHardcodedBattles.jpg</PreviewFile>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/9nj3r6ph66soi94pokpqt/NoHardcodedBattles.zip?rlkey=nkbi7dxzstozytuxsykqcgejv&amp;dl=1</DownloadUrl>
+</Mod>
+
+<Mod>
 	<Name>Playable Character Pack</Name>
 	<Version>1.5.1</Version>
 	<Priority>-20</Priority>
