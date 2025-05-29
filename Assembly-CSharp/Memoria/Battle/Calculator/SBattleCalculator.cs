@@ -59,10 +59,10 @@ namespace Memoria
                 foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target))
                     saFeature.TriggerOnAbility(v, "BattleScriptStart", true);
 
-                IOverloadOnBattleScriptStartScript overloadedStartMethod = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadOnBattleScriptStartScript)) as IOverloadOnBattleScriptStartScript;
-                if (overloadedStartMethod != null)
+                IOverloadOnBattleScriptStartScript overloadedMethod = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadOnBattleScriptStartScript)) as IOverloadOnBattleScriptStartScript;
+                if (overloadedMethod != null)
                 {
-                    if (overloadedStartMethod.OnBattleScriptStart(v))
+                    if (overloadedMethod.OnBattleScriptStart(v))
                     {
                         SBattleCalculator.CalcResult(v);
                         return;
@@ -316,9 +316,9 @@ namespace Memoria
             }
             PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyReaction, targetId, caster.btl_id, (Int32)cmd.cmd_no, cmd.sub_no, cmd);
 
-            IOverloadOnBattleScriptEndScript overloadedEndMethod = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadOnBattleScriptEndScript)) as IOverloadOnBattleScriptEndScript;
-            if (overloadedEndMethod != null)
-                overloadedEndMethod.OnBattleScriptEnd(v);
+            IOverloadOnBattleScriptEndScript overloadedMethod = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadOnBattleScriptEndScript)) as IOverloadOnBattleScriptEndScript;
+            if (overloadedMethod != null)
+                overloadedMethod.OnBattleScriptEnd(v);
         }
 
         public static BattleScriptFactory FindScriptFactory(Int32 scriptId)
