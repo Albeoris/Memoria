@@ -20,7 +20,7 @@ namespace Memoria.Data
 
         public delegate Boolean BattleInOutDelegate(BattleMoment when);
         public delegate Boolean BattleActDelegate(BattleUnit unit, BattleCalculator calc, BattleMoment when);
-        public delegate Boolean StatusChangeDelegate(BattleUnit unit, BattleStatusId status, BattleMoment when);
+        public delegate Boolean StatusChangeDelegate(BattleUnit unit, BattleCalculator calc, BattleStatusId status, BattleMoment when);
         public delegate void BattleDialogDelegate(Int32 voiceId, String text);
 
         public static event BattleInOutDelegate OnBattleInOut;
@@ -218,6 +218,8 @@ namespace Memoria.Data
         private static Boolean isDirty = true;
 
         public static CharacterId VictoryFocusIndex => SFX.lastPlayedExeId != 0 && SFX.lastPlayedExeId < 16 ? btl_scrp.FindBattleUnit(SFX.lastPlayedExeId)?.PlayerIndex ?? CharacterId.NONE : CharacterId.NONE;
+
+        public static BattleCalculator CurrentCalc;
 
         private static void LoadEffects()
         {
@@ -529,7 +531,7 @@ namespace Memoria.Data
 
             try
             {
-                if (OnStatusChange?.Invoke(new BattleUnit(statusedChar), whichStatus, when) ?? false)
+                if (OnStatusChange?.Invoke(new BattleUnit(statusedChar), CurrentCalc, whichStatus, when) ?? false)
                     return;
             }
             catch (Exception e)

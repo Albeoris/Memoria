@@ -53,6 +53,7 @@ namespace Memoria
                 command.ScriptId = scriptId;
                 BattleCalculator v = new BattleCalculator(caster, target, command);
                 v.Context.sfxThread = sfxThread;
+                BattleVoice.CurrentCalc = v;
                 BattleScriptFactory factory = FindScriptFactory(scriptId);
                 foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Caster))
                     saFeature.TriggerOnAbility(v, "BattleScriptStart", false);
@@ -86,12 +87,14 @@ namespace Memoria
                         if ((v.Context.Flags & (BattleCalcFlags.Miss | BattleCalcFlags.Guard)) != 0)
                         {
                             SBattleCalculator.CalcResult(v);
+                            BattleVoice.CurrentCalc = null;
                             return;
                         }
                     }
                     if ((command.AbilityCategory & 8) != 0 && v.Target.TryKillFrozen()) // Is Physical
                     {
                         SBattleCalculator.CalcResult(v);
+                        BattleVoice.CurrentCalc = null;
                         return;
                     }
                 }
@@ -132,6 +135,7 @@ namespace Memoria
                     Log.Error(err);
                 }
             }
+            BattleVoice.CurrentCalc = null;
         }
 
         public static void CalcResult(BattleCalculator v)
