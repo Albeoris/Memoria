@@ -661,11 +661,11 @@ Part of Kupo Mods’ Character formerly Mog Add-ons.
 
 <Mod>
 	<Name>Tantalus</Name>
-	<Version>3.5</Version>
+	<Version>3.6</Version>
 	<Priority>-14</Priority>
 	<InstallationPath>PlayableTantalus</InstallationPath>
 	<ReleaseDateOriginal>2024-06-14</ReleaseDateOriginal>
-	<ReleaseDate>2025-05-26</ReleaseDate>
+	<ReleaseDate>2025-05-29</ReleaseDate>
 	<MinimumMemoriaVersion>v2025.05.12</MinimumMemoriaVersion>
 	<IncompatibleWith>Beatrix Mod, Trance Seek</IncompatibleWith>
 	<Author>Emeiru</Author>
@@ -676,7 +676,7 @@ Part of Kupo Mods’ Character formerly Mog Add-ons.
 - New items and tweaks to complement the trio and thief gameplay
 - Minor name and ability text changes
 
-Compatible with Alternate Fantasy v6.8+ only.</Description>
+Compatible with Alternate Fantasy v6.8 only.</Description>
 	<PatchNotes>Complete changes can be found on the mod page.</PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/64</Website>
@@ -917,13 +917,13 @@ Alternate Fantasy only
 
 <Mod>
 	<Name>Amazing Garnet</Name>
-	<Version>1.1</Version>
+	<Version>1.2</Version>
 	<Priority>-8</Priority>
 	<Author>Emeiru</Author>
 	<Category>Gameplay</Category>
 	<ReleaseDateOriginal>2025-03-29</ReleaseDateOriginal>
-	<ReleaseDate>2025-04-06</ReleaseDate>
-	<MinimumMemoriaVersion>v2024.12.06</MinimumMemoriaVersion>
+	<ReleaseDate>2025-05-29</ReleaseDate>
+	<MinimumMemoriaVersion>v2025.05.12</MinimumMemoriaVersion>
 	<InstallationPath>AmazingGarnet</InstallationPath>
 	<Description>Amazing tweaks and improvement for Garnet... and summoning in general.
 - Wht Mag consumes less Trance
@@ -935,7 +935,9 @@ Alternate Fantasy only
 - Whale Whisker: New ability - Rising Tide, increases Trance each cast
 
 Playable Character Pack only
-- Kuja: Also learns the reworked Boost</Description>
+- Kuja: Also learns the reworked Boost
+
+Compatible with Alternate Fantasy v6.8 only</Description>
 	<PatchNotes>Complete changes can be found on the mod page.</PatchNotes>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/90</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/du3s4udw2rgec45te9qm4/AmazingGarnet.zip?rlkey=z2wuq39854380mcg4ln4eqioq&amp;st=4q5fke67&amp;dl=1</DownloadUrl>
@@ -1020,14 +1022,14 @@ Compatible with Alternate Fantasy</Description>
 </Mod>
 
 <Mod>
-    <Name>Amazing Steiner</Name>
-    <Version>1.1</Version>
+	<Name>Amazing Steiner</Name>
+	<Version>1.2</Version>
 	<Priority>-10</Priority>
 	<Author>Emeiru</Author>
 	<Category>Gameplay</Category>
 	<ReleaseDateOriginal>2024-11-18</ReleaseDateOriginal>
-	<ReleaseDate>2024-12-09</ReleaseDate>
-	<MinimumMemoriaVersion>v2024.12.04</MinimumMemoriaVersion>
+	<ReleaseDate>2025-05-29</ReleaseDate>
+	<MinimumMemoriaVersion>v2025.05.12</MinimumMemoriaVersion>
 	<InstallationPath>AmazingSteiner</InstallationPath>
 <Description>Amazing tweaks and improvement for Rus.. err Steiner
 - Steiner now can use basic Swd Mag without Vivi
@@ -1037,7 +1039,9 @@ Compatible with Alternate Fantasy</Description>
 
 Alternate Fantasy
 - Shock's animation reverted to default
-- Renamed Sword Dance to Sword Blitz (different name and animation only)</Description>
+- Renamed Sword Dance to Sword Blitz (different name and animation only)
+
+Compatible with Alternate Fantasy v6.8 only</Description>
 	<PatchNotes>Complete changes can be found on the mod page.</PatchNotes>
 	<PreviewFile>Preview.JPG</PreviewFile>
 	<PreviewFileUrl>https://u.cubeupload.com/Emeiru/AmazingSteiner.jpg</PreviewFileUrl>
@@ -1064,23 +1068,26 @@ Alternate Fantasy
 </Mod>
 
 <Mod>
-    <Name>Amazing Vivi</Name>
-    <Version>1.0</Version>
+	<Name>Amazing Vivi</Name>
+	<Version>1.1</Version>
 	<Priority>-11</Priority>
 	<InstallationPath>AmazingVivi</InstallationPath>
 	<ReleaseDateOriginal>2024-12-26</ReleaseDateOriginal>
-	<ReleaseDate>2024-12-26</ReleaseDate>
-	<MinimumMemoriaVersion>v2024.12.04</MinimumMemoriaVersion>
+	<ReleaseDate>2025-05-29</ReleaseDate>
+	<MinimumMemoriaVersion>v2025.05.12</MinimumMemoriaVersion>
 	<Author>Emeiru</Author>
 <Description>Amazing tweaks and improvement for our precious Vivi.
 - Staves deal damage based on Mag (basic attacks are still relatively low)
+- All add status effects for staves now have better hit-rate
 - Focus increases Trance gauge and slightly recovers MP
 - Focus also consumes less Trance
 
-Alternate Fantasy only
-- -ra spells have slightly lower MP use
-- Prolepsis replaced with Burst, a weaker version of Flare for midgame</Description>
-	<PatchNotes>Complete changes can be found on this mod page.</PatchNotes>
+Alternate Fantasy
+- 'ra spells have slightly lower MP use
+- Prolepsis replaced with Burst, a weaker version of Flare for midgame
+
+Compatible with Alternate Fantasy v6.8 only</Description>
+	<PatchNotes>Complete changes can be found on the mod page.</PatchNotes>
 	<Category>Gameplay</Category>
 	<PreviewFile>Preview.JPG</PreviewFile>
 	<PreviewFileUrl>https://u.cubeupload.com/Emeiru/92aAmazingVivi.jpg</PreviewFileUrl>
