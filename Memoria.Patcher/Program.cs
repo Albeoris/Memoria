@@ -86,7 +86,7 @@ namespace Memoria.Patcher
                 Console.WriteLine("---------------------------");
             }
 
-            
+
             if (ProgressPercent == 100)
             {
                 Console.ForegroundColor = ConsoleColor.Green;
@@ -157,9 +157,6 @@ namespace Memoria.Patcher
                 }
                 else
                 {
-                    Console.Write("V ");
-                    Console.ResetColor();
-
                     // if the file is not signed
                     inputFile.Seek(-0x18, SeekOrigin.End);
 
@@ -191,6 +188,24 @@ namespace Memoria.Patcher
                     //Boolean fixReleased = false;
                     //if (IsSteamOverlayFixed)
                     //    fixReleased = gameLocation.FixSteamOverlay(false); // Release the registry lock
+
+                    // Clean up old field script files
+                    const String scripts = @"StreamingAssets\Assets\Resources\CommonAsset\";
+                    String fieldScriptsPath = Path.Combine(gameLocation.RootDirectory, scripts);
+                    if (Directory.Exists(fieldScriptsPath))
+                    {
+                        try
+                        {
+                            Directory.Delete(fieldScriptsPath, true);
+                        }
+                        catch
+                        {
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.Write("X ");
+                            Console.ResetColor();
+                            Console.WriteLine($"Clean up of '{scripts}' failed");
+                        }
+                    }
 
                     inputFile.Position = compressedDataPosition;
                     using (ConsoleProgressHandler progressHandler = new ConsoleProgressHandler(uncompressedDataSize))
@@ -323,7 +338,8 @@ namespace Memoria.Patcher
 
         private static void ExtractFile(GZipStream input, Int64 uncompressedSize, Byte[] buff, DateTime writeTimeUtc, ConsoleProgressHandler progressHandler, params String[] outputPaths)
         {
-            try {
+            try
+            {
                 List<FileStream> outputs = new List<FileStream>(outputPaths.Length);
                 Boolean isIni = outputPaths.Length > 0 && _iniFileName.Contains(Path.GetFileName(outputPaths[0]));
                 Boolean success = false;
@@ -385,7 +401,7 @@ namespace Memoria.Patcher
                     // In Steam Overlay Fix mode: update FF9_Launcher.fix instead of FF9_Launcher.exe
                     outputPath = Path.ChangeExtension(outputPath, ".fix");
                 }
-                else if(_filesForBackup.Contains(extension))
+                else if (_filesForBackup.Contains(extension))
                 {
                     String backupPath = Path.ChangeExtension(outputPath, ".bak");
                     if (!File.Exists(backupPath))

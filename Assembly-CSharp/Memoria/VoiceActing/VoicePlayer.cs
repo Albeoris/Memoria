@@ -2,6 +2,8 @@
 using Global.Sound.SaXAudio;
 using Memoria;
 using Memoria.Assets;
+using Memoria.Data;
+using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,7 +67,6 @@ public class VoicePlayer : SoundPlayer
                         onFinished();
                         SaXAudio.OnVoiceFinished -= handler;
                     }
-
                 };
                 SaXAudio.OnVoiceFinished += handler;
             }
@@ -248,6 +249,19 @@ public class VoicePlayer : SoundPlayer
         soundOfDialog.Remove(dialog);
     }
 
+    private static void AfterSoundFinished_Battle(Int32 va_id, String text)
+    {
+        try
+        {
+            BattleVoice.InvokeOnBattleDialogAudioEnd(va_id, text);
+        }
+        catch (Exception e)
+        {
+            Log.Error($"[VoiceActing] Error while running BattleScript.OnBattleDialogAudioEnd");
+            Log.Error(e);
+        }
+    }
+
     public static void AfterSoundFinished(Dialog dialog)
     {
         if (dialog.ChoiceNumber > 0)
@@ -398,7 +412,17 @@ public class VoicePlayer : SoundPlayer
 
         SoundLib.VALog(String.Format("field:battle/{0}, msg:{1}, text:{2} path:{3}", btlFolder, va_id, text, vaPath));
 
-        CreateLoadThenPlayVoice(va_id, vaPath);
+        CreateLoadThenPlayVoice(va_id, vaPath, () => AfterSoundFinished_Battle(va_id, text));
+
+        try
+        {
+            BattleVoice.InvokeOnBattleDialogAudioStart(va_id, text);
+        }
+        catch (Exception e)
+        {
+            Log.Error($"[VoiceActing] Error while running BattleScript.OnBattleDialogAudioStart");
+            Log.Error(e);
+        }
     }
 
     public static Boolean HoldDialogUntilSoundEnds(Int32 zoneId, Int32 universalTextId, Int32 mapNo)
