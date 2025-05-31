@@ -8,9 +8,6 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Setup MSBuild path
-      uses: microsoft/setup-msbuild@v2
-
     - name: Checkout repository
       uses: actions/checkout@v4
 
@@ -20,14 +17,15 @@ jobs:
       shell: pwsh
       run: |
         7z x .\References\Dependencies.7z -p"$($env:ARCHIVE_PASSWORD)" -oReferences -y
-        
-    - name: Restore NuGet packages
-      run: |
-        msbuild Memoria.sln /p:SuppressCommandLineOutput=true /t:Restore /p:Configuration=Release
+
+    - name: Setup MSBuild path
+      uses: microsoft/setup-msbuild@v2
+
+    - name: NuGet restore
+      run: nuget restore Memoria.sln
 
     - name: Build project (Release)
-      run: |
-        msbuild Memoria.sln /p:SuppressCommandLineOutput=true /p:Configuration=Release /p:Platform="Any CPU"
+      run: msbuild Memoria.sln /t:Build /p:Configuration=Release
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
