@@ -4,11 +4,11 @@
 
 Note: This is **not** affiliated with the Memoria Project, a 2023 Proof-of-concept tribute render in Unreal Engine
 
-[![Download Latest Release](https://img.shields.io/badge/Download__Latest__Release-006400?logo=github)](https://github.com/Albeoris/Memoria/releases/latest)
+[![Download Latest Release](https://img.shields.io/badge/Download%20Latest%20Release-006400?logo=github)](https://github.com/Albeoris/Memoria/releases/latest)
 
 ## 🚀 Build the Latest Memoria Patcher
 
-[![Build Current Version](https://img.shields.io/badge/Build%20Current%20Version-Run%20on%20GitHub-blue?logo=github)](../../actions/workflows/build.yml)
+[![Build Current Version](https://img.shields.io/badge/Build%20Current%20Version-blue?logo=github)](../../actions/workflows/build.yml)
 
 **How to build and download the latest version:**
 1. Click the **"Build Current Version"** button above.
