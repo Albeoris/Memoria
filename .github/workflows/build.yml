@@ -10,12 +10,17 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      
+    - name: Debug Secrets
+      run: |
+        if ($env:ARCHIVE_PASSWORD) { echo "Password is set." } else { echo "Password is missing!" }
 
     - name: Decrypt and extract dependencies
       env:
         ARCHIVE_PASSWORD: ${{ secrets.DEPENDENCIES_PASSWORD }}
+      shell: pwsh
       run: |
-        7z x .\References\Dependencies.7z -p"%ARCHIVE_PASSWORD%" -oReferences -y
+        7z x .\References\Dependencies.7z -p"$($env:ARCHIVE_PASSWORD)" -oReferences -y
 
     - name: Build project (Release)
       run: |
