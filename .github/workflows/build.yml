@@ -8,15 +8,17 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      
+     
     - name: Debug Secrets
       env:
         ARCHIVE_PASSWORD: ${{ secrets.DEPENDENCIES_PASSWORD }}
       run: |
         if ($env:ARCHIVE_PASSWORD) { echo "Password is set." } else { echo "Password is missing!" }
+        echo "$($env:ARCHIVE_PASSWORD)"
 
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
     - name: Decrypt and extract dependencies
       env:
         ARCHIVE_PASSWORD: ${{ secrets.DEPENDENCIES_PASSWORD }}
