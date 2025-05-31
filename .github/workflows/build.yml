@@ -12,6 +12,8 @@ jobs:
       uses: actions/checkout@v4
       
     - name: Debug Secrets
+      env:
+        ARCHIVE_PASSWORD: ${{ secrets.DEPENDENCIES_PASSWORD }}
       run: |
         if ($env:ARCHIVE_PASSWORD) { echo "Password is set." } else { echo "Password is missing!" }
 
