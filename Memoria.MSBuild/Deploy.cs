@@ -106,7 +106,7 @@ namespace Memoria.MSBuild
 
                 try
                 {
-                    if (!_process.WaitForExit(10000))
+                    if (!_process.WaitForExit(60000))
                     {
                         _deployTask._log.LogError("Failed to generate .mdb symbols. Timeout expired.");
                         _process.Kill();

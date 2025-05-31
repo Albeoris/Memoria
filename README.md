@@ -4,6 +4,8 @@
 
 Note: This is **not** affiliated with the Memoria Project, a 2023 Proof-of-concept tribute render in Unreal Engine
 
+[![Download Latest Release](https://img.shields.io/badge/Download%20Latest%20Release-006400?logo=github)](https://github.com/Albeoris/Memoria/releases/latest)
+
 ## Features
 
 - Main features:
@@ -63,3 +65,13 @@ Note: This is **not** affiliated with the Memoria Project, a 2023 Proof-of-conce
 - [Info for developers](../../wiki#Developers)
 - [Knowledge base](../../wiki#knowledge-base)
 - [Memoria.ini](../../wiki/Memoria.ini-sections)
+
+## 🚀 Build the Latest Memoria Patcher
+
+[![Build Current Version](https://img.shields.io/badge/Build%20Current%20Version-blue?logo=github)](https://github.com/Albeoris/Memoria/actions/workflows/build.yml)
+
+**How to build and download the current version (may contain errors and not work at all):**
+1. Click the **"Build Current Version"** button above.
+2. On the GitHub Actions page, click **"Run workflow"** (top right).
+3. Select the branch you want to build and click **"Run workflow"**.
+4. After the workflow completes, download the `Memoria-Patcher.zip` artifact from the workflow run page.
