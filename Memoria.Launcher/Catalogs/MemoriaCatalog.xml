@@ -1771,15 +1771,15 @@ Part of Kupo Mods formerly Mog Add-ons.
 		<InstallationPath>Features/PortraitPSXLike</InstallationPath>
 		<Description>PSX Like Portraits</Description>
 		<Default/>
-		<Group>g-psx</Group>
+		<Group>g-port</Group>
 		<PreviewFile>preview/psxlike.jpg</PreviewFile>
 	</SubMod>
 	<SubMod>
 		<Name>PSX Like Pluto Knights / White Mage </Name>
-		<InstallationPath>Features/PortraitPSXLike</InstallationPath>
+		<InstallationPath>Features/PortraitPSXLikePCP</InstallationPath>
 		<Description>PSX Like Portraits</Description>
 		<Default/>
-		<Group>g-psx</Group>
+		<Group>g-port-extra</Group>
 		<PreviewFile>preview/psxlike.jpg</PreviewFile>
 	</SubMod>	
 </Mod>
