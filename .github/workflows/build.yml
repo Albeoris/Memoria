@@ -1,0 +1,28 @@
+name: Manual Build Memoria Patcher
+
+on:
+  workflow_dispatch: # Allows manual run from the GitHub Actions UI
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Decrypt and extract dependencies
+      env:
+        ARCHIVE_PASSWORD: ${{ secrets.DEPENDENCIES_PASSWORD }}
+      run: |
+        7z x .\References\Dependencies.7z -p"%ARCHIVE_PASSWORD%" -oReferences -y
+
+    - name: Build project (Release)
+      run: |
+        msbuild Memoria.sln /p:Configuration=Release /p:Platform="Any CPU"
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Memoria-Patcher
+        path: Output/Memoria.Patcher.exe
