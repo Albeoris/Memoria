@@ -8,7 +8,7 @@ Note: This is **not** affiliated with the Memoria Project, a 2023 Proof-of-conce
 
 ## 🚀 Build the Latest Memoria Patcher
 
-[![Build Current Version](https://img.shields.io/badge/Build%20Current%20Version-blue?logo=github)](../../actions/workflows/build.yml)
+[![Build Current Version](https://img.shields.io/badge/Build%20Current%20Version-blue?logo=github)](https://github.com/Albeoris/Memoria/actions/workflows/build.yml)
 
 **How to build and download the latest version:**
 1. Click the **"Build Current Version"** button above.
