@@ -15,7 +15,7 @@ jobs:
       env:
         ARCHIVE_PASSWORD: ${{ secrets.DEPENDENCIES_PASSWORD }}
       run: |
-        7z x .\References\Dependencies.7z -p"%ARCHIVE_PASSWORD%" -oReferences -y
+        7z x .\References\Dependencies.7z -p"$env:ARCHIVE_PASSWORD" -oReferences -y
 
     - name: Build project (Release)
       run: |
