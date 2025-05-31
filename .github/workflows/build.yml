@@ -21,6 +21,15 @@ jobs:
     - name: Setup MSBuild path
       uses: microsoft/setup-msbuild@v2
 
+    - name: Cache NuGet packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.nuget/packages
+        key: nuget-${{ runner.os }}-${{ hashFiles('**/packages.config', '**/*.csproj') }}
+        restore-keys: |
+          nuget-${{ runner.os }}-
+
     - name: NuGet restore
       run: nuget restore Memoria.sln
 
