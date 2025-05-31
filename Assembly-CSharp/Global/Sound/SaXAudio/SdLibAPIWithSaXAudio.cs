@@ -35,6 +35,8 @@ namespace Global.Sound.SaXAudio
         public override void SdSoundSystem_Release()
         {
             SoundLib.Log("Release");
+            // Release is only called when the game closes which at this point the DLL might already be unloaded,
+            // leading to an unnecessary crash. Let Windows do the clean-up.
             //SaXAudio.Release();
         }
 
