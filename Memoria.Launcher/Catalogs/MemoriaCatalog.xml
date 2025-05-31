@@ -1727,20 +1727,30 @@ Originally part of Kupo Mods, formerly Mog Add-ons.
 
 <Mod>
 	<Name>Anniversary Portraits</Name>
-	<Version>0.9.1</Version>
+	<Version>0.9.2</Version>
 	<InstallationPath>AnniversaryPortraits</InstallationPath>
-	<ReleaseDate>2025-05-28</ReleaseDate>
+	<ReleaseDate>2025-05-31</ReleaseDate>
 	<ReleaseDateOriginal>2025-05-21</ReleaseDateOriginal>
 	<Author>Saro</Author>
 	<Description>Currently replaces the main party's character portraits with the 25th anniversary art.
 
-Placeholder art - Beatrix by Mugi, Blank/Marcus by nanpou0406.</Description>
-	<PatchNotes>- Added a default selection on install
-- Added headers for each border type</PatchNotes>
+Placeholder art - Beatrix by Mugi, Marcus by nanpou0406.</Description>
+	<PatchNotes>- Remade all portraits using a higher resolution source and a much better upscaling technique
+	
+- Replaced Blank's portrait with the 23rd Anniversary art
+
+- Added black background option for black borders
+
+- Fixed alignment issues with borders
+
+- Updated preview images to align with changes
+
+- Reduced overall file size with better image compression
+	</PatchNotes>
 	<Category>Visual</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/99</Website>
-	<DownloadUrl>https://www.dropbox.com/scl/fi/oa7h2jt1w9a506z07nfet/AnniversaryPortraits0.9.1.zip?rlkey=fsdmzs3gapud340dpks7xxvn9&amp;st=03xzbrs5&amp;dl=1</DownloadUrl>
-	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/99/99-1747808952-1490465539.png</PreviewFileUrl>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/ag6nzmsf30jehl5lqyy5q/AnniversaryPortraits.zip?rlkey=ppy9gsz3zk3zdaqksneeyzkpa&amp;st=frs31i1m&amp;dl=1</DownloadUrl>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/99/99-1748676885-1006456053.png</PreviewFileUrl>
 </Mod>
 
 <Mod>
