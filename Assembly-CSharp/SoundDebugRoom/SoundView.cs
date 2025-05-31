@@ -11,11 +11,13 @@ namespace SoundDebugRoom
     {
         private void Start()
         {
+            SoundLib.SuspendSoundSystem();
             this.soundViewController = new SoundViewController(this);
         }
 
         private void Exit()
         {
+            SoundLib.ResumeSoundSystem();
             SceneDirector.Replace("MainMenu", SceneTransition.FadeOutToBlack_FadeIn, true);
         }
 
@@ -161,7 +163,8 @@ namespace SoundDebugRoom
             }
             if (GUILayout.Button("Reload", new GUILayoutOption[0]))
             {
-                this.soundViewController.ReloadSoundMetaData();
+                // This goes into an infinite loop:
+                //this.soundViewController.ReloadSoundMetaData();
             }
             GUILayout.EndHorizontal();
             if (this.soundViewController.IsPlay)

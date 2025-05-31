@@ -86,6 +86,8 @@ namespace Memoria.MSBuild
                     AddPackOptionalFile("JoyShockLibrary\\x86\\JoyShockLibrary.dll", "x86\\FF9_Data\\Plugins\\JoyShockLibrary.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
                     AddPackOptionalFile("Global\\Sound\\SoLoud\\x64\\soloud.dll", "x64\\FF9_Data\\Plugins\\soloud.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
                     AddPackOptionalFile("Global\\Sound\\SoLoud\\x86\\soloud.dll", "x86\\FF9_Data\\Plugins\\soloud.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
+                    AddPackOptionalFile("Global\\Sound\\SaXAudio\\x64\\SaXAudio.dll", "x64\\FF9_Data\\Plugins\\SaXAudio.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
+                    AddPackOptionalFile("Global\\Sound\\SaXAudio\\x86\\SaXAudio.dll", "x86\\FF9_Data\\Plugins\\SaXAudio.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
 #if NEEDS_SIGNING
                     StartSigning();
 #endif
