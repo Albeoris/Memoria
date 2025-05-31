@@ -142,7 +142,7 @@ namespace Memoria.Launcher
             }
         }
 
-        public static void LoadModDescriptions(StreamReader reader, ref ObservableCollection<Mod> modList)
+        public static void LoadModDescriptions(StreamReader reader, ObservableCollection<Mod> modList)
         {
             XmlDocument doc = LoadDocument(reader);
             XmlNodeList rootNode = doc.SelectNodes("/ModCatalog");

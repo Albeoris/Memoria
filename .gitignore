@@ -21,3 +21,6 @@ obj/
 *.tlog
 *.meta
 *.log
+/Memoria.Injection/Debug/
+/Memoria.Injection/Release/
+/Memoria.Injection/x64/

@@ -1,0 +1,46 @@
+name: Manual Build Memoria Patcher
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Decrypt and extract dependencies
+      env:
+        ARCHIVE_PASSWORD: ${{ secrets.DEPENDENCIES_PASSWORD }}
+      shell: pwsh
+      run: |
+        7z x .\References\Dependencies.7z -p"$($env:ARCHIVE_PASSWORD)" -oReferences -y
+
+    - name: Setup MSBuild path
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Cache NuGet packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.nuget/packages
+        key: nuget-${{ runner.os }}-${{ hashFiles('**/packages.config', '**/*.csproj') }}
+        restore-keys: |
+          nuget-${{ runner.os }}-
+
+    - name: NuGet restore
+      run: nuget restore Memoria.sln
+
+    - name: Build Memoria.MSBuild.csproj (Release)
+      run: msbuild Memoria.MSBuild/Memoria.MSBuild.csproj /t:Build /p:Configuration=Release
+      
+    - name: Build main solution (Release)
+      run: msbuild Memoria.sln /t:Build /p:Configuration=Release
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Memoria-Patcher
+        path: Output/Memoria.Patcher.exe

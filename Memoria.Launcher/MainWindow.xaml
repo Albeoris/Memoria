@@ -311,7 +311,7 @@
                                                 <ListView x:Name="lstMods"
                                                     Margin="6,0,0,0"
                                                     Grid.Column="1"
-                                                    ItemsSource="{Binding modListInstalled}"
+                                                    ItemsSource="{Binding ModListInstalled}"
                                                     ScrollViewer.CanContentScroll="False"
                                                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                                     VirtualizingStackPanel.IsVirtualizing="False">
@@ -454,7 +454,7 @@
                                                 <ListView x:Name="lstCatalogMods"
                                                     Margin="6,0,0,0"
                                                     Grid.Column="1"
-                                                    ItemsSource="{Binding modListCatalog}"
+                                                    ItemsSource="{Binding ModListCatalog}"
                                                     ScrollViewer.CanContentScroll="False"
                                                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                                     VirtualizingStackPanel.IsVirtualizing="False">
@@ -535,7 +535,7 @@
                                                     MinHeight="0"
                                                     MaxHeight="100"
                                                     Height="0"
-                                                    ItemsSource="{Binding downloadList, UpdateSourceTrigger=PropertyChanged}"
+                                                    ItemsSource="{Binding DownloadList, UpdateSourceTrigger=PropertyChanged}"
                                                     SelectedItem="{Binding SelectedDownload, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                                     <ListView.View>
                                                         <GridView>

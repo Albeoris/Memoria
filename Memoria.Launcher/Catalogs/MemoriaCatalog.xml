@@ -91,12 +91,12 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 	
 <Mod>
 	<Name>Trance Seek</Name>
-	<Version>0.3.34</Version>
+	<Version>0.3.35</Version>
 	<Priority>1</Priority>
 	<InstallationPath>TranceSeek</InstallationPath>
 	<ReleaseDateOriginal>28 Jan 2022</ReleaseDateOriginal>
-	<ReleaseDate>17 May 2025</ReleaseDate>
-	<MinimumMemoriaVersion>2025-05-11</MinimumMemoriaVersion>
+	<ReleaseDate>30 May 2025</ReleaseDate>
+	<MinimumMemoriaVersion>2025-05-12</MinimumMemoriaVersion>
 	<Author>DV</Author>
 	<IncompatibleWith>Alternate Fantasy,Amazing Quina,Beatrix Mod,Black Cat - Endgame Shop,David Bowie Edition,Freya Game+,Garnet is Main Character,Perfect Stats,Play As Kuja,Playable Character Pack,Tantalus</IncompatibleWith>
 	<Description>
@@ -123,132 +123,53 @@ Don't hesitate to try!
 Recommended language : Français / English (UK)
 Not supported language : Japanese (a lot of things get deleted... need to wait until full release... sorry !)</Description>
 	<PatchNotes>
-------[0.3.34]------
-Hotfix version :
-
+------[0.3.35]------
 {Characters}
-- Fixed Vivi's "Dbl Blk" command, which was no longer linked to "Blk Mag" (fixed on 0.3.33b)
+- Fixed Eiko's passive, which was appearing far too frequently.
 
 {SA / AA Skills}
-- If the first strike of a magic weapon (such as scepters) misses, the second hit will not trigger.
-- Correction of several descriptions, about some details.
-- New FR names for some skills and commands.
+- Fixed SA and AA skills that were granting a Trance bonus (failed to trigger the character's Trance).
+- Fixed the AA "Soul Blade" on allies.
+- The "Death" spell now triggers Vivi's passive.
 
 {Items}
-- Image" no longer removes Confusion or Sleep from a target.
+- 17 new weapon models, including Zidane's daggers/swords and 3 Vivi's Scepters.
+- [WIP] Adjusted the power of Zidane's daggers and swords: the new daggers are less powerful, while the Gladius, Zorlin, and Orichalcum swords are slightly more powerful.
+- Added a new weapon.
+- Fixed the Lamia’s Flute special effect.
+- Adjusted the behavior of the SPS effect on status immunities with magic weapons.
+- Some items have been renamed.
+- Fixed some descriptions.
 
 {Monsters + Bosses}
-- Complete rewrite of Thorn/Zorn's AI battle in Disc 2.
-- Fixed Thorn's HP in Kuja/Necron mode.
-- Fixed Ragtime Mouse, where questions were no longer displayed following the latest version of Memoria.
+- Fixed a softlock with the Sandworm.
 
 {Fields}
-- Correction of some softlocks on field n°2150 (L. Castle/Royal Cham.)
-
-------[0.3.33]------
-
-{Features}
-- A new visual + sound effect (called SPS) has been added to indicate that monsters are immune to status.
-The principle is equivalent to FFX : this SPS will be played at the same time as damage to indicate whether the monster is immune to the attack's status, such as Poison or Magic Hammer.
-If the spell inflicts no damage and the monster is immune to the status inflicted (like Sleep), the game will indicate that the monster is "immune".
-Technically, the game will explicitly indicate whether or not the monster is immune to a status!
-
-- Rework of the Venom status: the duration between damages (tick) is identical to Poison... but for each damage received by Venom,
-it will be faster and faster (until it reaches the previously known speed).
-
-In Vivi mode, Venom will remain at the same speed as Poison and will be unchanged.
-In Necron mode, Venom will remain the same as before (meaning the status is deadly and will quickly kill the player if the ATB is not correctly managed).
-In all other difficulties, the new formula explained above will now be applied.
-
-{Characters}
-- Rearrangement of all character SAs: now, all characters can learn 60 different SAs.
-In addition, some SAs have been grouped together to make them more logical for the player, notably status protection and unique one for each character.
-It should be noted that a large number of SAs cannot be learned for the time being: right now, i just "sorted" them... but I've included a few if you'd like to try them out :)
-
-- A clean-up of Eiko's passive: a total rework of the code, new attacks (20 instead of 8) and the effect can be triggered at any time (base 10%), even if Eiko is not the target of an attack!
-What's more, this new version is supposed to correct some minor visual problems that existed previously.
-Some attacks are only unlocked once Eiko reaches a certain level, so some may not be available when she joins the team at Disc 2.
-
-- When a character or monster is under "Defense" status, it will produce a slight sound effect when physical damage is received.
-This feature is particularly useful when a monster is under this status, as nothing necessarily indicates this (unless it adopts a particular posture, like Lani).
-- Total rework on the visual effect of the "Old" status.
-- A character in Trance can no longer suffer "Old".
-
-{Abilities SA / AA}
-- Restoration of these white magics: Stona, Silence, Confuse and Blind. (Aero spells will have to be learn again as they have a new ID).
-- 4 new black magics for Vivi: 1 of Poison, 2 of Gravity and one more. Some of these magics are not yet available in this version.
-- Rework of SA Master Thief and Master Thief+. Its cost has also been reduced.
-- Adjustment to SA Initiative. Its cost has also been reduced.
-- Adjustment to SA High Jump and High Jump+. Its cost has also been reduced.
-- Fixed a bug on Zidane's "Thief!" and "Bandit!" spells where status stacked (such as Perfect Dodge) would visually disappear.
-- Corrected several formula damages, based on elemental bonuses, that were slightly wrong.
-- Zidane's Warm-up grants him PowerUp in addition to his PerfectDodge.
-- Corrected Larceny SA.
-- The accuracy of "Maelstrom" has been increased (30 instead of 10).
-- "Lucky Star" and "Lucky Star+" SA corrected.
-- Correction of the "Doom" spell.
-- The "Magic Hammer" spell now displays the amount of MP stolen on Kweena.
-- Changed the description of the "Angel's Snack" spell to make it clearer.
-- Corrected Angel's Snack's code, which did not take into account all status.
-- New correction to summon sequence files (forget to upload on previous version, woops!).
-- Fixed Beatrix's Cleave SFX, which aimed at invisible enemies.
-- Adjustment to the AP cost of certain AA and SA.
-
-{Items}
-- The sequence files have been cleaned up and a few changes have been made to the "Scepters" weapons, meaning that :
-○ Antlion's Cane, Gizamaluke's Cane and Black Waltz's Cane are now considered to be scepters, therefore losing their "Focus" bonus and being renamed.
-○ Sceptres become physical weapons again (and not magical). However, the second blow is still considered to be magical.
-○ Sceptres have a chance of triggering magic of different powers (weak, medium or strong).
-For example: The Antlion's Scepter has a chance of triggering Fire (2 chances out of 3) or Fira (1 chance out of 3).
-○ The weapon's second strike is no longer a "Counter" attack type, so it can be reflected by "Reflect" and provoke a counter from the monster.
-- 2 new items added: 1 helmet and 1 accessory.
-- Magic forks inflict HP damage (in addition to the MP damage that already exists) but the HP damage is much lower than a classic fork.
-- Magic forks inflict less MP damage.
-- New texture for the Claymore.
-- Annoyntment, Remedies and Remedies+ as well as the Esuna spell now take into account the "Old" status in the target window (based on RateTarget function).
-- Some descriptions have been corrected and updated.
-
-{Monsters + Bosses}
-- [WIP] New "type" of monsters: elites. There will now be "normal" monsters, "elite" monsters and "boss".
-Elite monsters are quite similar to normals, but will be more resistant to deadly status such as "Death", "Petrify" and "Stop".
-- New version of the Guardian of the Wind, with new animations! (Not perfect, but at least he's got some ^^)
-- Black Waltz 1 is less likely to use "Tinkerbell".
-- Slight correction to Black Waltz 2's "Stasis" spell, which was displaying “Miss!”.
-- Earth Guardian is no longer immune to Mini.
-- Changed Ogra's "Zenitude" spell.
-- Corrected a softlock on Garland.
-- Softlock fixed on Ralvurahva.
-- Corrected two bugs on Ifa superboss AI.
-- Fixed Silver Dragon's AI.
-- Fixed Friendly Ladybug's AI.
-- Correction of Lani's AI, following Runic's latest rework.
-- Corrected Fire Guardian AI for Kuja/Necron difficulties.
-- Corrected Soulcage AI, which could catch fire on neutral spells if the attacker had a Fire weapon type.
-- Added a visual effect to Soulcage's mechanic: from now on, when he catches fire, he will be under the Heat effect.
-- Corrected some monster attacks that did not use the correct script.
-- Fixed a boss's Might spell, which was giving 5 stacks instead of 1.
-- Fixed the name of some attacks.
-- Improved some sequence files, which were targeting knocked-out allies.
-- Corrected the AI of some battles, notably those where monsters remained at the end of a boss fight.
-
-{Fields}
-- The range for speaking to Kweena in the field Earth Shrine/Interior (no.2552) has been divided by 3.
-- A menu is available just before the "You are not alone" scene, to equip any character and save.
-- Corrected the script in the Water Shrine where Beatrix remained in the team if she was present.
-- Added text at the start of the game, including a list of recommended mods and a warning to not use cheats, as this could break the mod (e.g. the frog minigame).
-- Fixed a bug where the Field_BGM was missing after fighting a Necromancer in the Desert Palace library.
-- The music is correctly preserved throughout the whole Shrines battle section.
-- Multiple dialogs fixed.
-
-{Miscellaneous}
-- Code cleanup in Memoria.Scripts.dll, including better management of status application.
-- Cleaned up dialog boxes generated by Memoria.Scripts.dll + translated into all languages (except some in JP).
-- A super-rare easter egg has been added.... ôo</PatchNotes>
+- A new Easter egg has been added... ô_o
+	</PatchNotes>
 	<Category>Gameplay</Category>
 	<PreviewFileUrl>https://i.ibb.co/HC3GH4j/Logo-Trance-Seek.png</PreviewFileUrl>
 	<PreviewFile>Thumbnail/LogoTranceSeek.png</PreviewFile>
 	<Website>https://steamcommunity.com/app/377840/discussions/0/5362100202713255072/</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/8c4ndrnppvyd8jlrx5wul/TranceSeek-Demo-CD3-by-DV.zip?rlkey=85hqper3dtu0ojc2sir32km27&amp;dl=1</DownloadUrl>
+</Mod>
+
+<Mod>
+	<Name>NoHardcodedBattles</Name>
+	<Version>1.0</Version>
+	<Author>DV</Author>
+	<ReleaseDateOriginal>29 May 2025</ReleaseDateOriginal>
+	<ReleaseDate>29 May 2025</ReleaseDate>
+	<InstallationPath>NoHardcodedBattles</InstallationPath>
+	<IncompatibleWith>AlternateFantasy, Trance Seek, David Bowie Edition</IncompatibleWith>
+	<Category>Gameplay</Category>
+	<Description>
+		A tiny mod to remove some "hardcoded" scripts in battles.
+		The goal is to make these fights compatible with any characters in battle, in order to avoid any softlocks.
+	</Description>
+	<PreviewFileUrl>https://i.imgur.com/KL9DWPk.jpeg</PreviewFileUrl>
+	<PreviewFile>Thumbnail/NoHardcodedBattles.jpg</PreviewFile>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/9nj3r6ph66soi94pokpqt/NoHardcodedBattles.zip?rlkey=nkbi7dxzstozytuxsykqcgejv&amp;dl=1</DownloadUrl>
 </Mod>
 
 <Mod>
@@ -315,10 +236,10 @@ You should set the priority of this mod to be higher than the priority of the Mo
 
 <Mod>
 	<Name>Support Ability Cost</Name>
-	<Version>4.1.4</Version>
-	<Priority>-2</Priority>
+	<Version>4.1.5</Version>
+	<Priority>-2</Priority>	
 	<InstallationPath>KupoGemSATweak</InstallationPath>
-	<ReleaseDate>2025-05-24</ReleaseDate>
+	<ReleaseDate>2025-05-31</ReleaseDate>
 	<ReleaseDateOriginal>2022-4-14</ReleaseDateOriginal>
 	<Author>faospark / Tirlititi </Author>
 	<Description> Allows You to have 1 Gem cost per support ability or Half.
@@ -326,13 +247,14 @@ You should set the priority of this mod to be higher than the priority of the Mo
 [2] Half the cost of Support abilities
 [3] Double the cost of Support abilities
 
-Changelog : Added Compatability for Playable Character Pack and Playable Tantalus Mod
+Changelog : Added compatibility for Playable Character Pack and Playable Tantalus Mod
 
 Mod Order : Position 1 or on top of Any Gameplay mods such as Alternate Fantasy , Playable Character pack. Tantalus Etc 
 This was the earliest public release of this type of Mod that modifies the Gem Cost of Support Abilities 
 Originally released as part of the tweaks of Kupo Mods formerly Mog Add-ons
 	</Description>
-	<PatchNotes>added third option for increased difficulty</PatchNotes>
+	<PatchNotes>Maintenance Release
+Corrected website links and preview url	</PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/88</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/71w3a8qnfbg5g3lvnl1bd/KupoGemSATweak.zip?rlkey=qnsqgc70ngf3ix9u4f7ut82ob&amp;dl=1</DownloadUrl>
@@ -363,7 +285,7 @@ Originally released as part of the tweaks of Kupo Mods formerly Mog Add-ons
 <Mod>
 	<Name>Exp, AP, Gil, Rewards Tweaks</Name>
 	<Version>4.1.3</Version>
-	<Priority>-3</Priority>
+	<Priority>-3</Priority>	
 	<InstallationPath>KupoTweaks</InstallationPath>
 	<ReleaseDate>2025-01-13</ReleaseDate>
 	<ReleaseDateOriginal>2022-08-14</ReleaseDateOriginal>
@@ -376,7 +298,7 @@ Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</D
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/87</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/z2df6bk4hps21v53j105w/KupoTweaks.zip?rlkey=wfw287bn1u27gz4najtx1jm9a&amp;dl=1</DownloadUrl>
 	<PreviewFile>preview/kupo-exp.png</PreviewFile>
-	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313895-1037308229.png</PreviewFileUrl>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/87/87-1736789460-227248806.png</PreviewFileUrl>
 	<MinimumMemoriaVersion>2024.05.19</MinimumMemoriaVersion>
 	<Header>Ability Points Modifier</Header>
 	<SubMod>
@@ -428,7 +350,7 @@ Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</D
 		<InstallationPath>Features/Tweaks/2xgil</InstallationPath>
 		<Description>Doubles Gil received after battle</Description>
 		<Priority>1</Priority>
-		<Group>GIL</Group>
+		<Group>GIL</Group>	
 	</SubMod>
 	<SubMod>
 		<Name>4x gil</Name>
@@ -464,9 +386,9 @@ Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</D
 </Mod>
 
 <Mod>
-	<Name>No Exp Plus </Name>
+	<Name>No Exp Plus</Name>
 	<Version>4.1.3</Version>
-	<Priority>-4</Priority>
+	<Priority>-4</Priority>	
 	<InstallationPath>KupoNoEXP</InstallationPath>
 	<ReleaseDate>2024-12-06</ReleaseDate>
 	<ReleaseDateOriginal>2023-07-20</ReleaseDateOriginal>
@@ -483,7 +405,7 @@ This mod was initially introduced as the Exp challenge tweaks within Kupo Mods, 
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/79</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/yc3unvr4l9ra0pu7wzfjf/KupoNoEXP.zip?rlkey=twu5mwcm4aa20c3f76pvemurv&amp;dl=1</DownloadUrl>
 	<PreviewFile>preview/kuponoexp.png</PreviewFile>
-	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313900-1782999351.png</PreviewFileUrl>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/79/79-1730465183-1914558067.png</PreviewFileUrl>
 	<MinimumMemoriaVersion>2024.05.19</MinimumMemoriaVersion>
 	<SubMod>
 		<Name>Challenge: No / Zero AP and EXP Gain After Battle</Name>
@@ -518,55 +440,35 @@ This mod was initially introduced as the Exp challenge tweaks within Kupo Mods, 
 </Mod>
 
 <Mod>
-	<Name>Kupo Heroes Pack </Name>
-	<Version>4.1.6</Version>
+	<Name>Kupo Heroes Pack</Name>
+	<Version>4.1.7</Version>
 	<Priority>-13</Priority>
 	<InstallationPath>KupoHeroPack</InstallationPath>
-	<ReleaseDate>2025-01-13</ReleaseDate>
+	<ReleaseDate>2025-05-31</ReleaseDate>
 	<ReleaseDateOriginal>2024-05-10</ReleaseDateOriginal>
 	<Author>faospark</Author>
-	<Description>A set of Character enhancements that powers up characters and reduces grind. Ideal for players seeking a fresh character experience without changing the story, flow, or core gameplay mechanics.
-
-ALL Characters:
-- Adds resistance to Zombie (via Auto-Life) and Virus (via Anti-Body).
-- Replaces Auto-Potion with +5% HP and MP.
-
-Transportation:
-- Increases Airship and Chocobo speed.
-
-Characters:
-- Zidane gains *Pillage*, which doubles *Thievery* damage, items, and gil received after battles.
-- Amarant gains *Tensai*, allowing him to learn abilities and gain experience 8x faster, balancing his late recruitment.
-- Vivi gains *Aero*, *Quake*, and *Water*, each upgraded to *AGA* level.
-- Steiner can equip *Save The Queen* and gains Vivi's new black magic.
-- Garnet gains *Photons*, a medium Holy damage spell, to increase utility.
-- Eiko’s *Titan* and *Fenrir* summons are independent: *Moonstone* grants *Fenrir*, *Sapphire* grants *Titan*.
-- Quina’s *Eat* is usable at 50% enemy HP; *Cook* at 100%.
-- Freya gains *High Jump* early, with *Jump* damage increased.
-- Gains all enhancements in Beatrix mod / Alternate fantasy; retains stats if the Beatrix mod is off.
-
+	<Description>A set of Character enhancements that powers up characters and reduces grind. Ideal for players seeking 
+a fresh character experience without changing the story, flow, or core gameplay mechanics.
 See the readme.txt for more details.
-
-
 Mod Order:
 - Place above Beatrix and Tantalus mods.
-- Partially compatible with Alternate Fantasy, though some skills may interfere.
 
-Part of Kupo Mods’ Character formerly Mog Add-ons.
+Part of Kupo Mods formerly Mog Add-ons.
 	</Description>
-	<PatchNotes>Read the Readme file</PatchNotes>
+	<PatchNotes>Added Compatibility with Alternate Fantasy and playable character pack </PatchNotes>
 	<Category>Gameplay</Category>
+	<IncompatibleWith>Trance Seek</IncompatibleWith>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/78</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/4v6b8ijknci17on89ow01/KupoHeroPack.zip?rlkey=xsdn7vf32f41eregepx2fu118&amp;dl=1</DownloadUrl>
 	<PreviewFile>preview/kupo-hero.png</PreviewFile>
-	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/78/78-1733396525-286566443.png</PreviewFileUrl>
-	<MinimumMemoriaVersion>2024.05.19</MinimumMemoriaVersion>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/80/80-1730472843-2082770053.png</PreviewFileUrl>
+	<MinimumMemoriaVersion>2025.05.12</MinimumMemoriaVersion>
 	<Header>General</Header>
 	<SubMod>
 		<Name>Add Resistance to Zombie and Virus </Name>
 		<InstallationPath>Features/All</InstallationPath>
 		<Description>Auto-life resists Zombie, Anti-body Resists Virus </Description>
-		<Default/>
+		<Default/>		
 	</SubMod>
 	<SubMod>
 		<Name>Bye Auto-Potion </Name>
@@ -581,7 +483,7 @@ Part of Kupo Mods’ Character formerly Mog Add-ons.
 	<SubMod>
 		<Name>Mirrored Daggers</Name>
 		<InstallationPath>Features/ZidaneWep</InstallationPath>
-		<Description>Have Zidane Equip identical daggers</Description>
+		<Description>Have Zidane Equip identical daggers (For Aesthetics)</Description>
 		<Default/>
 	</SubMod>
 	<Header>Transportation</Header>
@@ -603,59 +505,124 @@ Part of Kupo Mods’ Character formerly Mog Add-ons.
 		<Group>g-wm</Group>
 	</SubMod>
 	<Header>Character Tweaks</Header>
+	<Header>Eiko</Header>
 	<SubMod>
 		<Name>[Eiko] The Summoner  </Name>
 		<InstallationPath>Features/Eiko</InstallationPath>
 		<Description>Splits Titan and Fenrir as their won independent summon</Description>
+		<Group>g-eiko</Group>
 		<Default/>
 	</SubMod>
 	<SubMod>
-		<Name>[Freya] The Dragoon   </Name>
+		<Name>[Freya] The Dragoon  </Name>
 		<InstallationPath>Features/Freya</InstallationPath>
-		<Description>Make Freya's High Jump do 3x damage</Description>
+		<Description>Make Freya's High Jump do 3x damage, Early Access to High Jump and Taharka drops Kain Lance </Description>
+		<Group>g-freya</Group>
 		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Quina] The Chef </Name>
 		<InstallationPath>Features/Quina</InstallationPath>
 		<Description>Better Eat at 50% Cook at 100% </Description>
+		<Group>g-quina</Group>
 		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Steiner] The Queens Knight</Name>
 		<InstallationPath>Features/Steiner</InstallationPath>
 		<Description>Steiner can Equip Save the Queen, has access to all Vivi's additional spell </Description>
+		<Group>g-steiner</Group>
 		<Default/>
 	</SubMod>
 	<SubMod>
-		<Name>[Vivi] The Warlock   </Name>
+		<Name>[Vivi] The Warlock</Name>
 		<InstallationPath>Features/Vivi</InstallationPath>
 		<Description>Vivi and Steiner can Cast Aero,Quake,Water to RA to AGA spells </Description>
+		<Group>g-vivi</Group>
 		<Default/>
 	</SubMod>
 	<SubMod>
-		<Name>[Garnet] The White Mage   </Name>
+		<Name>[Garnet] The White Mage</Name>
 		<InstallationPath>Features/Garnet</InstallationPath>
 		<Description>Adds A White Magic Ability to Garnet that causes damage</Description>
+		<Group>g-garnet</Group>		
 		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Amaranth] The Genius Nomad </Name>
 		<InstallationPath>Features/Amaranth</InstallationPath>
 		<Description>Amaranth learns the Passive Tensai which makes him Learn and Level UP fast</Description>
+		<Group>g-amaranth</Group>
 		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Zidane] The Pillager</Name>
 		<InstallationPath>Features/Zidane</InstallationPath>
-		<Description>Boosts damage of thievery </Description>
+		<Description>Boosts damage of thievery, Doubles items received after battle</Description>
+		<Group>g-zidane</Group>
 		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Beatrix] The Paladin </Name>
 		<InstallationPath>Features/Beatrix</InstallationPath>
 		<Description>Add Basic stat Support for Beatrix based of the Beatrix mod  </Description>
+		<Group>g-beatrix</Group>
 		<Default/>
+	</SubMod>
+	<Header>Compatability for Alternate Fantasy</Header>
+	<SubMod>
+		<Name>[Eiko] The Summoner</Name>
+		<InstallationPath>Features/Eiko-AF</InstallationPath>
+		<Description>Splits Titan and Fenrir as their own independent summon</Description>
+		<Group>g-eiko</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[Freya] The Dragoon  </Name>
+		<InstallationPath>Features/Freya-AF</InstallationPath>
+		<Description>Make Freya's High Jump do 3x damage, Early Access to High Jump and Taharka drops Kain Lance </Description>
+		<Group>g-freya</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[Quina] The Chef</Name>
+		<InstallationPath>Features/Quina-AF</InstallationPath>
+		<Description>Easy Eat with Gastro Fork. WARNING simply cant be identical as the feature above</Description>
+		<Group>g-quina</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[Steiner] The Queens Knight</Name>
+		<InstallationPath>Features/Steiner-AF</InstallationPath>
+		<Description>Steiner can Equip Save the Queen, has access to all Vivi's additional spell </Description>
+		<Group>g-steiner</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[Vivi] The Warlock</Name>
+		<InstallationPath>Features/Vivi-AF</InstallationPath>
+		<Description>Vivi and Steiner can Cast Aero, Quake, Water to RA to AGA spells </Description>
+		<Group>g-vivi</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[Garnet] The White Mage</Name>
+		<InstallationPath>Features/Garnet-AF</InstallationPath>
+		<Description>Adds A White Magic Ability to Garnet that causes damage</Description>
+		<Group>g-garnet</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[Amaranth] The Genius Nomad</Name>
+		<InstallationPath>Features/Amaranth-AF</InstallationPath>
+		<Description>Amaranth learns the Passive Tensai which makes him Learn and Level UP fast</Description>
+		<Group>g-amaranth</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[Zidane] The Pillager</Name>
+		<InstallationPath>Features/Zidane-AF</InstallationPath>
+		<Description>Boosts damage of thievery, Doubles items received after battle</Description>
+		<Group>g-zidane</Group>
+	</SubMod>	
+	<SubMod>
+		<Name>[Beatrix] The Paladin </Name>
+		<InstallationPath>Features/Beatrix-AF</InstallationPath>
+		<Description>Add Basic stat Support for Beatrix based of the Beatrix mod  </Description>
+		<Group>g-beatrix</Group>
 	</SubMod>
 </Mod>
 
@@ -1210,23 +1177,21 @@ You should better use the Playable Characters Pack instead. This later one doesn
 
 <Mod>
 	<Name>Kupo UI Suite</Name>
-	<Version>4.2.0</Version>
+	<Version>4.2.1</Version>
 	<Priority>2</Priority>
 	<InstallationPath>KupoUISuite</InstallationPath>
-	<ReleaseDate>2025-05-23</ReleaseDate>
+	<ReleaseDate>2025-05-31</ReleaseDate>
 	<ReleaseDateOriginal>2021-08-14</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>
-The First User Interface Suite for FFIX. This mod allows you to change the ff: Dialogue UI, Menu, Title Screen, Menu Bg , World Map , Title loop , Triple Triad Mat. Also Included Text UI helpers Synthesis menus 
-
+The First User Interface Suite for FFIX. This mod allows you to change the ff: Dialogue UI, Menu, Title Screen, Menu Bg , World Map , Title loop , Triple Triad Mat. etc
 See More information on the Readme.txt file 
 
-Mod Order : Position one or on top of Any Gameplay mod .
-
-Recommendations: Best used with Cursors, Portrait Mod and Buttons Pack that are also part of The Kupo Mods Umbrella. 
-Originally released as part of Kupo Mods formerly Mog-Addons to see previews and learn more about the mod visit the website url
+Mod Order : Position one or on top of Any Gameplay mod.
+Originally released as part of Kupo Mods formerly Mog-Addons 
 	</Description>
-	<PatchNotes>Improved compatibility Playable Character Pack</PatchNotes>
+	<PatchNotes>Improved compatibility Playable Character Pack
+added another frame option	</PatchNotes>
 	<Category>UI</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/bwgd9529j6wx7jhiju419/KupoUISuite.zip?rlkey=z8yybpjg9i5fi9vu3kz33zeiw&amp;dl=1</DownloadUrl>
@@ -1290,10 +1255,16 @@ Originally released as part of Kupo Mods formerly Mog-Addons to see previews and
 		<Priority>4</Priority>
 	</SubMod>
 	<SubMod>
+		<Name>UI Option: No battle Divider</Name>
+		<InstallationPath>Features/frames/dividelessbat</InstallationPath>
+		<Description>removes dividers in battles only </Description>
+		<Priority>4</Priority>
+	</SubMod>
+	<SubMod>
 		<Name>UI Option: No Highlight</Name>
 		<InstallationPath>Features/frames/highlightless</InstallationPath>
 		<Description>Removes dividers in menu</Description>
-		<Priority>4</Priority>
+		<Priority>4</Priority>		
 	</SubMod>
 	<Header>Tiled Menu Backgrounds</Header>
 	<SubMod>
@@ -1403,7 +1374,7 @@ Originally released as part of Kupo Mods formerly Mog-Addons to see previews and
 		<Description>Triple triad inspired mat and UI for the Game, This automatically sets the game to be in triple triad mode </Description>
 		<PreviewFile>preview/tm.png</PreviewFile>
 		<Default/>
-	</SubMod>
+	</SubMod>	
 	<SubMod>
 		<Name>Alternate Colored Maps</Name>
 		<InstallationPath>Features/Maps</InstallationPath>
@@ -1437,7 +1408,7 @@ Originally released as part of Kupo Mods formerly Mog-Addons to see previews and
 		<Description>A custom Key Item background when reading description.</Description>
 		<PreviewFile>preview/tk.png</PreviewFile>
 		<Default/>
-	</SubMod>
+	</SubMod>	
 	<SubMod>
 		<Name>Concept Art Title Loop</Name>
 		<InstallationPath>Features/TitleLogo/TitleLoop</InstallationPath>
@@ -1509,21 +1480,21 @@ Note: 30fps videos and the alternative soundtrack are now separate mods</Descrip
 
 <Mod>
 	<Name>Cursors Mod</Name>
-	<Version>4.1.3</Version>
-	<Priority>3</Priority>
+	<Version>4.1.4</Version>
+	<Priority>3</Priority>	
 	<InstallationPath>KupoCursors</InstallationPath>
-	<ReleaseDate>2024-12-11</ReleaseDate>
+	<ReleaseDate>2025-05-31</ReleaseDate>
 	<ReleaseDateOriginal>2024-10-01</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>Makes the game menu cursor a lot smaller.
 Defaults to smaller cursor but has several options Dagger, Ultima Blade, Staff	
 	</Description>
-	<PatchNotes>Improved Coordinates</PatchNotes>
+	<PatchNotes>Maintenance Release</PatchNotes>
 	<Category>Visual</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/75</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/ztddigympwe7shemwy6in/KupoCursors.zip?rlkey=jsa3vs0e9ioybf7upznt0qsyo&amp;st=waxr6kzw&amp;dl=1</DownloadUrl>
 	<PreviewFile>preview/kupo-Cursors.png</PreviewFile>
-	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313891-596422989.png</PreviewFileUrl>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/75/75-1729229852-2125451386.png</PreviewFileUrl>
 	<MinimumMemoriaVersion>2024.05.19</MinimumMemoriaVersion>
 	<SubMod>
 		<Name>Cursor : Hand</Name>
@@ -1610,7 +1581,7 @@ Defaults to smaller cursor but has several options Dagger, Ultima Blade, Staff
 <Mod>
 	<Name>Kupo Controller Pack</Name>
 	<Version>4.1.3</Version>
-	<Priority>7</Priority>
+	<Priority>7</Priority>	
 	<InstallationPath>KupoButtonsPack</InstallationPath>
 	<ReleaseDate>2024-12-06</ReleaseDate>
 	<ReleaseDateOriginal>2021-08-27</ReleaseDateOriginal>
@@ -1633,7 +1604,7 @@ Available Themes:
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/81</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/aro9kltyr05pwgspwi9bg/KupoButtonsPack.zip?rlkey=6gg5g2fkizchhp4vthop0v4nd&amp;dl=1</DownloadUrl>
 	<PreviewFile>preview/kupo-buttons-pack.png</PreviewFile>
-	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313891-536918021.png</PreviewFileUrl>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/81/81-1730476327-697295505.png</PreviewFileUrl>
 	<MinimumMemoriaVersion>2024.05.19</MinimumMemoriaVersion>
 	<Header>Buttons Prompts</Header>
 	<SubMod>
@@ -1742,19 +1713,19 @@ Available Themes:
 
 <Mod>
 	<Name>Portraits Pack</Name>
-	<Version>4.2.3</Version>
-	<Priority>9</Priority>
+	<Version>4.2.5</Version>
+	<Priority>9</Priority>	
 	<InstallationPath>KupoPortraits</InstallationPath>
-	<ReleaseDate>2025-05-23</ReleaseDate>
+	<ReleaseDate>2025-05-31</ReleaseDate>
 	<ReleaseDateOriginal>2021-10-18</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>DFFOO portraits are included here. All presets support released and some planned Playable Character Pack characters. 
 Changelog: Added support for new characters and costumes. Classic upscaled version discontinued.
 
 Mod Order: Place above Playable Character Pack, Beatrix Mod, Tantalus Mod, and Kupo UI Suite.
-Originally part of Kupo Mods, formerly Mog Add-ons.
+Part of Kupo Mods formerly Mog Add-ons.
 	</Description>
-	<PatchNotes>See Read-me.txt</PatchNotes>
+	<PatchNotes>Added PSX like Pluto Knight costume for Zidane</PatchNotes>
 	<Category>Visual</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/80</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/80dpdv5kn378cw27fay0q/KupoPortraits.zip?rlkey=dnb8htsnmqzoehuibij9tarxd&amp;dl=1</DownloadUrl>
@@ -1768,14 +1739,6 @@ Originally part of Kupo Mods, formerly Mog Add-ons.
 		<Description>Default Portraits</Description>
 		<Group>g-port</Group>
 		<PreviewFile>preview/ext.jpg</PreviewFile>
-	</SubMod>
-	<SubMod>
-		<Name>PSX Like</Name>
-		<InstallationPath>Features/PortraitPSXLike</InstallationPath>
-		<Description>PSX Like Portraits</Description>
-		<Default/>
-		<Group>g-port</Group>
-		<PreviewFile>preview/psxlike.jpg</PreviewFile>
 	</SubMod>
 	<SubMod>
 		<Name>Default Pluto Knights / White Mage  </Name>
@@ -1802,6 +1765,23 @@ Originally part of Kupo Mods, formerly Mog Add-ons.
 		<Group>g-port-extra</Group>
 		<PreviewFile>preview/dffoo.jpg</PreviewFile>
 	</SubMod>
+	<Header>PSX Like Portraits</Header>
+	<SubMod>
+		<Name>PSX Like</Name>
+		<InstallationPath>Features/PortraitPSXLike</InstallationPath>
+		<Description>PSX Like Portraits</Description>
+		<Default/>
+		<Group>g-psx</Group>
+		<PreviewFile>preview/psxlike.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>PSX Like Pluto Knights / White Mage </Name>
+		<InstallationPath>Features/PortraitPSXLike</InstallationPath>
+		<Description>PSX Like Portraits</Description>
+		<Default/>
+		<Group>g-psx</Group>
+		<PreviewFile>preview/psxlike.jpg</PreviewFile>
+	</SubMod>	
 </Mod>
 
 <Mod>
@@ -1988,10 +1968,10 @@ Idea by Snouz and made by DV.</Description>
 
 <Mod>
 	<Name>Modern Labels + </Name>
-	<Version>4.1.5</Version>
-	<Priority>13</Priority>
+	<Version>4.1.7</Version>
+	<Priority>13</Priority>	
 	<InstallationPath>KupoModernLabels</InstallationPath>
-	<ReleaseDate>2025-01-13</ReleaseDate>
+	<ReleaseDate>2025-05-31</ReleaseDate>
 	<ReleaseDateOriginal>2024-10-01</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>A mod that replaces old item, spell and UI names / labels to their modern counterparts or their now known consistent naming convention 
@@ -1999,17 +1979,17 @@ Ideal for those who were introduced to the series post final fantasy 12. Simply 
 For now the primary focus of the mod is the US and UK translation of the game so non english language players feel free to message me if you have something you want to change in your 
 Language of choice. 
 	</Description>
-	<PatchNotes>Read Readme file</PatchNotes>
+	<PatchNotes>Now uses the new TextPatch.txt</PatchNotes>
 	<Category>Translation</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/74</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/mi4qmy3h2qqoa57bf8wzu/KupoModernLabels.zip?rlkey=hfbawmgaiijosth1u6wcomwbk&amp;st=zcvbfu94&amp;dl=1</DownloadUrl>
 	<PreviewFile>preview/kupo-Modern-Items-spells.png</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/74/74-1729218273-991909550.png</PreviewFileUrl>
-	<MinimumMemoriaVersion>2024.05.19</MinimumMemoriaVersion>
+	<MinimumMemoriaVersion>2025.05.12</MinimumMemoriaVersion>
 	<SubMod>
 		<Name>Enable Extended</Name>
 		<InstallationPath>extended</InstallationPath>
-		<Description>Enable extended field scripts</Description>
+		<Description>Mainly Additional Icons on some menus</Description>
 		<Priority>1</Priority>
 		<Default/>
 	</SubMod>
