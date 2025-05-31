@@ -24,7 +24,10 @@ jobs:
     - name: NuGet restore
       run: nuget restore Memoria.sln
 
-    - name: Build project (Release)
+    - name: Build Memoria.MSBuild.csproj (Release)
+      run: msbuild Memoria.MSBuild/Memoria.MSBuild.csproj /t:Build /p:Configuration=Release
+      
+    - name: Build main solution (Release)
       run: msbuild Memoria.sln /t:Build /p:Configuration=Release
 
     - name: Upload artifact
