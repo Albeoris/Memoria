@@ -1,17 +1,19 @@
 name: Manual Build Memoria Patcher
 
 on:
-  workflow_dispatch: # Allows manual run from the GitHub Actions UI
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
+    - name: Setup MSBuild path
+      uses: microsoft/setup-msbuild@v2
 
     - name: Checkout repository
       uses: actions/checkout@v4
-      
+
     - name: Decrypt and extract dependencies
       env:
         ARCHIVE_PASSWORD: ${{ secrets.DEPENDENCIES_PASSWORD }}
