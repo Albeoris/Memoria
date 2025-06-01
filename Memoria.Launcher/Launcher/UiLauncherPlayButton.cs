@@ -55,42 +55,51 @@ namespace Memoria.Launcher
                     return;
                 }
 
-                Int32 activeMonitor = -1;
-                if (!String.IsNullOrEmpty(GameSettingsDisplay.ActiveMonitor))
-                {
-                    Int32 spaceIndex = GameSettingsDisplay.ActiveMonitor.IndexOf(' ');
-                    if (spaceIndex > 0)
-                    {
-                        String activeMonitorNumber = GameSettingsDisplay.ActiveMonitor.Substring(0, spaceIndex);
-                        Int32.TryParse(activeMonitorNumber, NumberStyles.Integer, CultureInfo.InvariantCulture, out activeMonitor);
-                    }
-                }
-
-                if (activeMonitor < 0)
-                {
-                    MessageBox.Show((Window)this.GetRootElement(), "Please select an available monitor.", "Information", MessageBoxButton.OK, MessageBoxImage.Asterisk);
-                    return;
-                }
-
                 String[] strArray = IniFile.SettingsIni.GetSetting("Settings", "ScreenResolution", GameSettingsDisplay.ScreenResolution).Split(' ')[0].Split('x');
-                Int32 screenWidth;
-                Int32 screenHeight;
+                Int32 screenWidth = 0;
+                Int32 screenHeight = 0;
                 if (strArray.Length < 2 || !Int32.TryParse(strArray[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out screenWidth) || !Int32.TryParse(strArray[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out screenHeight))
                 {
                     MessageBox.Show((Window)this.GetRootElement(), "Please select an available resolution.", "Information", MessageBoxButton.OK, MessageBoxImage.Asterisk);
                     return;
                 }
 
-                var display = DisplayInfo.Displays[activeMonitor];
-                if (GameSettingsDisplay.WindowMode == 2 || screenWidth == 0 || screenHeight == 0)
+                Int32 activeMonitor = 0;
+                if (DisplayInfo.Displays.Count > 0)
                 {
-                    screenWidth = display.monitorArea.right - display.monitorArea.left;
-                    screenHeight = display.monitorArea.bottom - display.monitorArea.top;
+                    if (!String.IsNullOrEmpty(GameSettingsDisplay.ActiveMonitor))
+                    {
+                        Int32 spaceIndex = GameSettingsDisplay.ActiveMonitor.IndexOf(' ');
+                        if (spaceIndex > 0)
+                        {
+                            String activeMonitorNumber = GameSettingsDisplay.ActiveMonitor.Substring(0, spaceIndex);
+                            Int32.TryParse(activeMonitorNumber, NumberStyles.Integer, CultureInfo.InvariantCulture, out activeMonitor);
+                        }
+                    }
+
+                    if (activeMonitor < 0 || activeMonitor >= DisplayInfo.Displays.Count)
+                    {
+                        MessageBox.Show((Window)this.GetRootElement(), "Please select an available monitor.", "Information", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                        return;
+                    }
+
+                    var display = DisplayInfo.Displays[activeMonitor];
+                    if (GameSettingsDisplay.WindowMode == 2 || screenWidth == 0 || screenHeight == 0)
+                    {
+                        screenWidth = display.monitorArea.right - display.monitorArea.left;
+                        screenHeight = display.monitorArea.bottom - display.monitorArea.top;
+                    }
+                    else
+                    {
+                        screenWidth = Math.Min(screenWidth, display.monitorArea.right - display.monitorArea.left);
+                        screenHeight = Math.Min(screenHeight, display.monitorArea.bottom - display.monitorArea.top);
+                    }
                 }
-                else
+                else if(screenWidth == 0 || screenHeight == 0)
                 {
-                    screenWidth = Math.Min(screenWidth, display.monitorArea.right - display.monitorArea.left);
-                    screenHeight = Math.Min(screenHeight, display.monitorArea.bottom - display.monitorArea.top);
+                    // Couldn't get any display information, default to 1080p
+                    screenWidth = 1920;
+                    screenHeight = 1080;
                 }
 
                 String directoyPath = Path.GetFullPath(".\\" + (GameSettings.IsX64 ? "x64" : "x86"));
