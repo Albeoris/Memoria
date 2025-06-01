@@ -31,167 +31,191 @@ namespace Memoria.Launcher
         protected override async Task DoAction()
         {
             SetResourceReference(LabelProperty, "Launcher.Launching");
+
+            ApplyDebugSettingsSafe();
+
+            int monitor = GetActiveMonitorIndex();
+            if (monitor < 0 || DisplayInfo.Displays == null || monitor >= DisplayInfo.Displays.Count)
+            {
+                MessageBox.Show((Window)this.GetRootElement(), $"Selected monitor ({monitor}) does not appear available.\nDisplaying to monitor 0.", "Information", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                monitor = 0;
+            }
+
+            GetScreenResolution(out int width, out int height, monitor);
+
+            String workingDirectory = Path.GetFullPath(".\\" + (GameSettings.IsX64 ? "x64" : "x86"));
+            String executablePath = PrepareExecutableAndData(workingDirectory);
+            String arguments = $"-runbylauncher -single-instance -monitor {monitor.ToString(CultureInfo.InvariantCulture)} -screen-width {width.ToString(CultureInfo.InvariantCulture)} -screen-height {height.ToString(CultureInfo.InvariantCulture)} -screen-fullscreen {(GameSettingsDisplay.WindowMode == 1 ? "1" : "0")} {(GameSettingsDisplay.WindowMode >= 2 ? "-popupwindow" : "")}";
+
+            SetResourceReference(LabelProperty, "Launcher.Launch");
+            StartGameProcess(executablePath, arguments);
+
+            Application.Current.Shutdown();
+        }
+
+        // Try to update debug ini settings. Ignore exceptions.
+        private void ApplyDebugSettingsSafe()
+        {
             try
             {
-                try
+                IniFile iniFile = IniFile.MemoriaIni;
+                if (LaunchModelViewer)
                 {
-                    IniFile iniFile = IniFile.MemoriaIni;
-                    if (LaunchModelViewer)
-                    {
-                        iniFile.SetSetting("Debug", "Enabled", "1");
-                        iniFile.SetSetting("Debug", "StartModelViewer", "1");
-                    }
-                    else
-                    {
-                        iniFile.SetSetting("Debug", "StartModelViewer", "0");
-                    }
-                    iniFile.Save();
+                    iniFile.SetSetting("Debug", "Enabled", "1");
+                    iniFile.SetSetting("Debug", "StartModelViewer", "1");
                 }
-                catch (Exception) { }
-
-                if (GameSettingsDisplay.ScreenResolution == null)
+                else
                 {
-                    MessageBox.Show((Window)this.GetRootElement(), "Please select an available resolution.", "Information", MessageBoxButton.OK, MessageBoxImage.Asterisk);
-                    return;
+                    iniFile.SetSetting("Debug", "StartModelViewer", "0");
                 }
+                iniFile.Save();
+            }
+            catch { }
+        }
 
-                String[] strArray = IniFile.SettingsIni.GetSetting("Settings", "ScreenResolution", GameSettingsDisplay.ScreenResolution).Split(' ')[0].Split('x');
-                Int32 screenWidth = 0;
-                Int32 screenHeight = 0;
-                if (strArray.Length < 2 || !Int32.TryParse(strArray[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out screenWidth) || !Int32.TryParse(strArray[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out screenHeight))
+        // Parse the selected monitor index from settings.
+        private int GetActiveMonitorIndex()
+        {
+            if (!string.IsNullOrEmpty(GameSettingsDisplay?.ActiveMonitor))
+            {
+                int spaceIndex = GameSettingsDisplay.ActiveMonitor.IndexOf(' ');
+                if (spaceIndex > 0)
                 {
-                    MessageBox.Show((Window)this.GetRootElement(), "Please select an available resolution.", "Information", MessageBoxButton.OK, MessageBoxImage.Asterisk);
-                    return;
+                    string num = GameSettingsDisplay.ActiveMonitor.Substring(0, spaceIndex);
+                    if (int.TryParse(num, NumberStyles.Integer, CultureInfo.InvariantCulture, out int res))
+                        return res;
                 }
+            }
+            return -1;
+        }
 
-                Int32 activeMonitor = 0;
-                if (DisplayInfo.Displays.Count > 0)
+        // Get the screen resolution
+        private void GetScreenResolution(out int width, out int height, int monitor)
+        {
+            width = height = 0;
+            string res = IniFile.SettingsIni.GetSetting("Settings", "ScreenResolution", GameSettingsDisplay.ScreenResolution);
+            if (!string.IsNullOrWhiteSpace(res))
+            {
+
+                var resString = res.Split(' ')[0];
+                var strArray = resString.Split('x');
+                if (strArray.Length < 2
+                    || !int.TryParse(strArray[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out width)
+                    || !int.TryParse(strArray[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out height))
                 {
-                    if (!String.IsNullOrEmpty(GameSettingsDisplay.ActiveMonitor))
-                    {
-                        Int32 spaceIndex = GameSettingsDisplay.ActiveMonitor.IndexOf(' ');
-                        if (spaceIndex > 0)
-                        {
-                            String activeMonitorNumber = GameSettingsDisplay.ActiveMonitor.Substring(0, spaceIndex);
-                            Int32.TryParse(activeMonitorNumber, NumberStyles.Integer, CultureInfo.InvariantCulture, out activeMonitor);
-                        }
-                    }
-
-                    if (activeMonitor < 0 || activeMonitor >= DisplayInfo.Displays.Count)
-                    {
-                        MessageBox.Show((Window)this.GetRootElement(), "Please select an available monitor.", "Information", MessageBoxButton.OK, MessageBoxImage.Asterisk);
-                        return;
-                    }
-
-                    var display = DisplayInfo.Displays[activeMonitor];
-                    if (GameSettingsDisplay.WindowMode == 2 || screenWidth == 0 || screenHeight == 0)
-                    {
-                        screenWidth = display.monitorArea.right - display.monitorArea.left;
-                        screenHeight = display.monitorArea.bottom - display.monitorArea.top;
-                    }
-                    else
-                    {
-                        screenWidth = Math.Min(screenWidth, display.monitorArea.right - display.monitorArea.left);
-                        screenHeight = Math.Min(screenHeight, display.monitorArea.bottom - display.monitorArea.top);
-                    }
+                    width = height = 0;
                 }
-                else if(screenWidth == 0 || screenHeight == 0)
+            }
+
+            // Ensure we have monitor information
+            if (monitor < 0 || DisplayInfo.Displays == null || monitor >= DisplayInfo.Displays.Count)
+            {
+                if (width == 0 || height == 0)
                 {
                     // Couldn't get any display information, default to 1080p
-                    screenWidth = 1920;
-                    screenHeight = 1080;
+                    width = 1920;
+                    height = 1080;
                 }
+                return;
+            }
 
-                String directoyPath = Path.GetFullPath(".\\" + (GameSettings.IsX64 ? "x64" : "x86"));
+            // Adjust the screen size to the monitor
+            var display = DisplayInfo.Displays[monitor];
 
-                String executablePath = directoyPath + "\\FF9.exe";
-                if (GameSettings.IsDebugMode)
+            int monitorWidth = display.monitorArea.right - display.monitorArea.left;
+            int monitorHeight = display.monitorArea.bottom - display.monitorArea.top;
+
+            if (GameSettingsDisplay.WindowMode == 2 || width == 0 || height == 0)
+            {
+                width = monitorWidth;
+                height = monitorHeight;
+            }
+            else
+            {
+                width = Math.Min(width, monitorWidth);
+                height = Math.Min(height, monitorHeight);
+            }
+        }
+
+        // Handles Unity/Debug shenanigans, returns the executable path to run.
+        private string PrepareExecutableAndData(string workingDirectory)
+        {
+            string executablePath = Path.Combine(workingDirectory, "FF9.exe");
+            if (GameSettings.IsDebugMode)
+            {
+                string unityPath = Path.Combine(workingDirectory, "Unity.exe");
+
+                // Copy Unity.exe if missing or outdated.
+                if (!File.Exists(unityPath) || !IsFileIdentical(unityPath, executablePath))
                 {
-                    String unityPath = directoyPath + "\\Unity.exe";
+                    File.Copy(executablePath, unityPath, true);
+                    File.SetLastWriteTimeUtc(unityPath, File.GetLastWriteTimeUtc(executablePath));
+                }
+                executablePath = unityPath;
 
-                    if (!File.Exists(unityPath))
+                string ff9DataPath = Path.Combine(workingDirectory, "FF9_Data");
+                string unityDataPath = Path.Combine(workingDirectory, "Unity_Data");
+
+                if (!Directory.Exists(unityDataPath))
+                {
+                    JunctionPoint.Create(unityDataPath, ff9DataPath, true);
+                }
+                else
+                {
+                    try
                     {
-                        File.Copy(executablePath, unityPath);
-                        File.SetLastWriteTimeUtc(unityPath, File.GetLastWriteTimeUtc(executablePath));
+                        // Check directory accessibility.
+                        foreach (string item in Directory.EnumerateFileSystemEntries(unityDataPath))
+                            break;
                     }
-                    else
+                    catch
                     {
-                        FileInfo fi1 = new FileInfo(executablePath);
-                        FileInfo fi2 = new FileInfo(unityPath);
-                        if (fi1.Length != fi2.Length || fi1.LastWriteTimeUtc != fi2.LastWriteTimeUtc)
-                        {
-                            File.Copy(executablePath, unityPath, true);
-                            File.SetLastWriteTimeUtc(unityPath, fi1.LastWriteTimeUtc);
-                        }
-                    }
-
-                    executablePath = unityPath;
-
-                    String ff9DataPath = directoyPath + "\\FF9_Data";
-                    String unityDataPath = directoyPath + "\\Unity_Data";
-
-                    if (!Directory.Exists(unityDataPath))
-                    {
+                        JunctionPoint.Delete(unityDataPath);
                         JunctionPoint.Create(unityDataPath, ff9DataPath, true);
                     }
-                    else
-                    {
-                        try
-                        {
-                            foreach (String item in Directory.EnumerateFileSystemEntries(unityDataPath))
-                                break;
-                        }
-                        catch
-                        {
-                            JunctionPoint.Delete(unityDataPath);
-                            JunctionPoint.Create(unityDataPath, ff9DataPath, true);
-                        }
-                    }
                 }
-
-                String arguments = $"-runbylauncher -single-instance -monitor {activeMonitor.ToString(CultureInfo.InvariantCulture)} -screen-width {screenWidth.ToString(CultureInfo.InvariantCulture)} -screen-height {screenHeight.ToString(CultureInfo.InvariantCulture)} -screen-fullscreen {(GameSettingsDisplay.WindowMode == 1 ? "1" : "0")} {(GameSettingsDisplay.WindowMode >= 2 ? "-popupwindow" : "")}";
-                // Why was this a task?
-                /*await Task.Factory.StartNew(
-                    () =>
-                    {*/
-                ProcessStartInfo gameStartInfo = new ProcessStartInfo(executablePath, arguments) { UseShellExecute = false };
-                if (GameSettings.IsDebugMode)
-                    gameStartInfo.EnvironmentVariables["UNITY_GIVE_CHANCE_TO_ATTACH_DEBUGGER"] = "1";
-
-                Process gameProcess = new Process { StartInfo = gameStartInfo };
-                gameProcess.Start();
-
-                if (GameSettings.IsDebugMode)
-                {
-                    Process debuggerProcess = Process.GetProcesses().FirstOrDefault(p => p.ProcessName.StartsWith("Memoria.Debugger"));
-                    if (debuggerProcess == null)
-                    {
-                        try
-                        {
-                            String debuggerDirectory = Path.Combine(Path.GetFullPath("Debugger"), (GameSettings.IsX64 ? "x64" : "x86"));
-                            String debuggerPath = Path.Combine(debuggerDirectory, "Memoria.Debugger.exe");
-                            String debuggerArgs = "10000"; // Timeout: 10 seconds
-                            if (Directory.Exists(debuggerDirectory) && File.Exists(debuggerPath))
-                            {
-                                ProcessStartInfo debuggerStartInfo = new ProcessStartInfo(debuggerPath, debuggerArgs) { WorkingDirectory = debuggerDirectory };
-                                debuggerProcess = new Process { StartInfo = debuggerStartInfo };
-                                debuggerProcess.Start();
-                            }
-                        }
-                        catch (Exception)
-                        {
-                        }
-
-                    }
-                }
-                /*}
-            );*/
-                Application.Current.Shutdown();
             }
-            finally
+            return executablePath;
+        }
+
+        // Compare files by length and last write time.
+        private bool IsFileIdentical(string path1, string path2)
+        {
+            FileInfo f1 = new FileInfo(path1);
+            FileInfo f2 = new FileInfo(path2);
+            return f1.Length == f2.Length && f1.LastWriteTimeUtc == f2.LastWriteTimeUtc;
+        }
+
+        // Launch the game process with given args.
+        private void StartGameProcess(string exePath, string args)
+        {
+            ProcessStartInfo gameStartInfo = new ProcessStartInfo(exePath, args) { UseShellExecute = false };
+            if (GameSettings.IsDebugMode)
+                gameStartInfo.EnvironmentVariables["UNITY_GIVE_CHANCE_TO_ATTACH_DEBUGGER"] = "1";
+
+            Process gameProcess = new Process { StartInfo = gameStartInfo };
+            gameProcess.Start();
+
+            if (!GameSettings.IsDebugMode)
+                return;
+
+            Process debuggerProcess = Process.GetProcesses().FirstOrDefault(p => p.ProcessName.StartsWith("Memoria.Debugger"));
+            if (debuggerProcess != null)
+                return;
+
+            try
             {
-                SetResourceReference(LabelProperty, "Launcher.Launch");
+                String debuggerDirectory = Path.Combine(Path.GetFullPath("Debugger"), (GameSettings.IsX64 ? "x64" : "x86"));
+                String debuggerPath = Path.Combine(debuggerDirectory, "Memoria.Debugger.exe");
+                String debuggerArgs = "10000"; // Timeout: 10 seconds
+                if (Directory.Exists(debuggerDirectory) && File.Exists(debuggerPath))
+                {
+                    ProcessStartInfo debuggerStartInfo = new ProcessStartInfo(debuggerPath, debuggerArgs) { WorkingDirectory = debuggerDirectory };
+                    debuggerProcess = new Process { StartInfo = debuggerStartInfo };
+                    debuggerProcess.Start();
+                }
             }
+            catch { }
         }
 
         internal static async Task<Boolean> CheckUpdates(Window rootElement, ManualResetEvent cancelEvent, SettingsGrid_Vanilla gameSettings)
