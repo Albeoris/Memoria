@@ -48,7 +48,7 @@ namespace Memoria.Launcher
                         {
                             if (!sectionMatch.Success) continue;
 
-                            String section = sectionMatch.Groups[0].Value;
+                            String section = sectionMatch.Groups[1].Value;
                             String version = Regex.Match(section, "v(20[^\\\"<]*)\\\"", RegexOptions.Singleline).Groups[1].Value;
                             String wikiLink = Regex.Match(section, @"https:\/\/github.com\/Albeoris\/Memoria\/wiki\/Changelog-v20[^\""]*", RegexOptions.Singleline).Groups?[0].Value;
                             String title = Regex.Match(section, @"<h2[^>]*>(.*?)</h2>", RegexOptions.Singleline).Groups[1].Value;
