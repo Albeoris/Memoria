@@ -9,22 +9,30 @@ namespace Global.Sound.SaXAudio
     internal class SdLibAPIWithSaXAudio : ISdLibAPI
     {
         private const Int32 AkbHeaderSize = 304;
-        private struct LoopData
+        private struct BankData
         {
             public Int32 SoundID;
-            public UInt32 Start;
-            public UInt32 End;
-            public UInt32 Start2;
-            public UInt32 End2;
+
+            public SoundProfile Profile;
+
+            public UInt32 LoopStart;
+            public UInt32 LoopEnd;
+            public UInt32 LoopStart2;
+            public UInt32 LoopEnd2;
         }
 
-        private Dictionary<Int32, LoopData> loopData = new Dictionary<Int32, LoopData>();
+        private static readonly Dictionary<Int32, BankData> bankData = new Dictionary<Int32, BankData>();
+
+        private Int32 busSoundEffects;
+        private Int32 busVoices;
 
         public override Int32 SdSoundSystem_Create(String config)
         {
             SoundLib.Log("Create");
             if (SaXAudio.Init())
             {
+                busSoundEffects = SaXAudio.CreateBus();
+                busVoices = SaXAudio.CreateBus();
                 Log.Message($"[SaXAudio] Initialized");
                 return 0;
             }
@@ -66,17 +74,28 @@ namespace Global.Sound.SaXAudio
                 AKB2Header header = new AKB2Header();
                 header.ReadFromBytes(akbBin);
 
-                Int32 bankID = SaXAudio.BankAddOgg((IntPtr)((Byte*)akb + AkbHeaderSize), header.ContentSize);
-                if (bankID >= 0 && header.LoopEnd > 0)
+                static void DeleteAkbBin(Int32 bankID)
                 {
-                    loopData[bankID] = new LoopData
+                    if (!bankData.ContainsKey(bankID))
+                        return;
+                    IntPtr akbBin = bankData[bankID].Profile.AkbBin;
+                    if (akbBin != IntPtr.Zero)
                     {
-                        Start = header.LoopStart,
-                        End = header.LoopEnd,
-                        Start2 = header.LoopStartAlternate,
-                        End2 = header.LoopEndAlternate
-                    };
+                        Log.Message($"[SaXAudio] Deleting B{bankID}");
+                        Marshal.FreeHGlobal(akbBin);
+                        bankData[bankID].Profile.AkbBin = IntPtr.Zero;
+                    }
                 }
+
+                Int32 bankID = SaXAudio.BankAddOgg((IntPtr)((Byte*)akb + AkbHeaderSize), header.ContentSize, DeleteAkbBin);
+                bankData[bankID] = new BankData
+                    {
+                    Profile = profile,
+                    LoopStart = header.LoopStart,
+                    LoopEnd = header.LoopEnd,
+                    LoopStart2 = header.LoopStartAlternate,
+                    LoopEnd2 = header.LoopEndAlternate
+                    };
                 Log.Message($"[SaXAudio] Added B{bankID} '{profile.ResourceID}'");
                 return bankID;
             }
@@ -93,22 +112,35 @@ namespace Global.Sound.SaXAudio
         {
             SoundLib.Log($"RemoveData({bankID})");
             SaXAudio.BankRemove(bankID);
-            loopData.Remove(bankID);
+            bankData.Remove(bankID);
             return 0;
         }
 
         public override Int32 SdSoundSystem_CreateSound(Int32 bankID)
         {
-            Int32 soundID = SaXAudio.CreateVoice(bankID);
+            BankData data = bankData[bankID];
+            Int32 busID = -1;
+
+            if(data.Profile.SoundProfileType == SoundProfileType.Voice)
+            {
+                busID = busVoices;
+            }
+            else if ((data.Profile.SoundProfileType == SoundProfileType.SoundEffect || data.Profile.SoundProfileType == SoundProfileType.Sfx)
+                && data.LoopEnd == 0
+                && !data.Profile.ResourceID.StartsWith("Sounds02/SE00"))
+            {
+                busID = busSoundEffects;
+            }
+
+            Int32 soundID = SaXAudio.CreateVoice(bankID, busID);
             if (soundID >= 0)
             {
-                if (loopData.ContainsKey(bankID))
+                if (data.LoopEnd > 0)
                 {
-                    SaXAudio.SetLoopPoints(soundID, loopData[bankID].Start, loopData[bankID].End);
+                    SaXAudio.SetLoopPoints(soundID, data.LoopStart, data.LoopEnd);
                     SaXAudio.SetLooping(soundID, true);
-                    LoopData loop = loopData[bankID];
-                    loop.SoundID = soundID;
-                    loopData[bankID] = loop;
+                    data.SoundID = soundID;
+                    bankData[bankID] = data;
                 }
             }
             return soundID;
@@ -132,7 +164,7 @@ namespace Global.Sound.SaXAudio
 
         public override void SdSoundSystem_SoundCtrl_Stop(Int32 soundID, Int32 transTimeMSec)
         {
-            if (transTimeMSec < 100) transTimeMSec = 200; // Add a small fade
+            if (transTimeMSec < 100) transTimeMSec = 100; // Add a small fade
             SaXAudio.Stop(soundID, transTimeMSec / 1000f);
         }
 
@@ -178,11 +210,11 @@ namespace Global.Sound.SaXAudio
 
         public override void SdSoundSystem_SoundCtrl_SetNextLoopRegion(Int32 soundID)
         {
-            foreach (LoopData loop in loopData.Values)
+            foreach (BankData loop in bankData.Values)
             {
                 if (loop.SoundID == soundID)
                 {
-                    SaXAudio.SetLoopPoints(soundID, loop.Start2, loop.End2);
+                    SaXAudio.SetLoopPoints(soundID, loop.LoopStart2, loop.LoopEnd2);
                     break;
                 }
             }
