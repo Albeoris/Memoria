@@ -62,12 +62,19 @@ public class VoicePlayer : SoundPlayer
                 SaXAudio.OnFinishedDelegate handler = null;
                 handler = (soundID) =>
                 {
+                    if (!watcherOfSound.ContainsKey(soundProfile))
+                    {
+                        SaXAudio.OnVoiceFinished -= handler;
+                        return;
+                    }
                     if (soundProfile.SoundID == soundID)
                     {
-                        onFinished();
                         SaXAudio.OnVoiceFinished -= handler;
+                        watcherOfSound.Remove(soundProfile);
+                        onFinished();
                     }
                 };
+                watcherOfSound[soundProfile] = null;
                 SaXAudio.OnVoiceFinished += handler;
             }
             else
@@ -193,8 +200,6 @@ public class VoicePlayer : SoundPlayer
                 {
                     String vaOptionPathMain = path + "_" + optionIndex;
                     choiceCandidates.Add(vaOptionPathMain);
-                    Int32 selectedVisibleOption = dialog.ActiveIndexes.Count > 0 ? Math.Max(0, dialog.ActiveIndexes.FindIndex(index => index == optionIndex)) : optionIndex;
-                    String optString = selectedVisibleOption + 1 < msgStrings.Length ? msgStrings[selectedVisibleOption + 1].Trim() : "[Invalid option index]";
 
                     if (AssetManager.HasAssetOnDisc($"Sounds/{vaOptionPathMain}.akb", true, true) || AssetManager.HasAssetOnDisc($"Sounds/{vaOptionPathMain}.ogg", true, false))
                     {
@@ -354,7 +359,7 @@ public class VoicePlayer : SoundPlayer
                 SoundLib.VoicePlayer.StopSound(attachedVoice);
             if (watcherOfSound.TryGetValue(attachedVoice, out Thread soundWatcher))
             {
-                soundWatcher.Interrupt();
+                soundWatcher?.Interrupt();
                 watcherOfSound.Remove(attachedVoice);
             }
             soundOfDialog.Remove(dialog);
