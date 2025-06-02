@@ -1253,7 +1253,7 @@ namespace Memoria.Launcher
                         previewPath = $"./{submod.ParentMod.InstallationPath}/{submod.PreviewFile}";
                     if (!String.IsNullOrEmpty(submod.PreviewFileUrl) && (String.IsNullOrEmpty(submod.PreviewFile) || !File.Exists(previewPath)))
                         previewPath = submod.PreviewFileUrl;
-                    UiGrid.MakeTooltip(grid, submod.Description, previewPath, "");
+                    UiGrid.MakeTooltip(grid, submod.Description, previewPath, "", placement: System.Windows.Controls.Primitives.PlacementMode.Left);
                 }
                 count++;
             }
