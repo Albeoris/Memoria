@@ -368,32 +368,41 @@ public class VoicePlayer : SoundPlayer
 
     public static SoundProfile CreateLoadThenPlayVoice(Int32 soundIndex, String vaPath, Action onFinished = null)
     {
-        SoundProfile soundProfile = new SoundProfile
+        SoundProfile soundProfile = ETb.voiceDatabase.Read(soundIndex);
+        if (soundProfile == null)
         {
-            Code = soundIndex.ToString(),
-            Name = vaPath,
-            SoundIndex = soundIndex,
-            ResourceID = vaPath,
-            SoundProfileType = SoundProfileType.Voice,
-            SoundVolume = 1f,
-            Panning = 0f,
-            Pitch = Configuration.Audio.Backend == 0 ? 0.5f : 1f // SdLib needs 0.5f for some reason
-        };
-
-        SoundLoaderProxy.Instance.Load(soundProfile,
-        (soundProfile, db) =>
-        {
-            if (soundProfile != null)
+            soundProfile = new SoundProfile
             {
-                SoundLib.VoicePlayer.CreateSound(soundProfile);
-                SoundLib.VoicePlayer.StartSound(soundProfile, onFinished);
-                if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
-                    db.Update(soundProfile);
-                else
-                    db.Create(soundProfile);
-            }
-        },
-        ETb.voiceDatabase);
+                Code = soundIndex.ToString(),
+                Name = vaPath,
+                SoundIndex = soundIndex,
+                ResourceID = vaPath,
+                SoundProfileType = SoundProfileType.Voice,
+                SoundVolume = 1f,
+                Panning = 0f,
+                Pitch = Configuration.Audio.Backend == 0 ? 0.5f : 1f // SdLib needs 0.5f for some reason
+            };
+
+            SoundLoaderProxy.Instance.Load(soundProfile,
+            (soundProfile, db) =>
+            {
+                if (soundProfile != null)
+                {
+                    SoundLib.VoicePlayer.CreateSound(soundProfile);
+                    SoundLib.VoicePlayer.StartSound(soundProfile, onFinished);
+                    if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
+                        db.Update(soundProfile);
+                    else
+                        db.Create(soundProfile);
+                }
+            },
+            ETb.voiceDatabase);
+        }
+        else
+        {
+            SoundLib.VoicePlayer.CreateSound(soundProfile);
+            SoundLib.VoicePlayer.StartSound(soundProfile, onFinished);
+        }
 
         return soundProfile;
     }
