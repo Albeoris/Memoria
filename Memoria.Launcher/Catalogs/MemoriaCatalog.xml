@@ -2042,6 +2042,44 @@ Eredeti telepítő: Evin</Description>
 </Mod>
 
 <Mod>
+	<Name>Tradução Português Brasil</Name>
+	<PreviewFile>preview/pt1.png</PreviewFile>
+	<Version>3.0</Version>
+	<Author>dkPsycho/Brtraducoes</Author>
+	<ReleaseDate>01/06/2025</ReleaseDate>
+	<ReleaseDateOriginal>02/09/2022</ReleaseDateOriginal>
+	<InstallationPath>Tradução Português Brasil</InstallationPath>
+	<Category>Tradução</Category>
+	<Website>https://steamcommunity.com/sharedfiles/filedetails/?id=2111796362</Website>
+	<MinimumMemoriaVersion>2024.05.19</MinimumMemoriaVersion>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/kyeir22qipyd7zm2mag8y/Tradu-o-Portugu-s-Brasil.rar?rlkey=ebsepmranfzogp6zobsezpc9m&amp;st=3tkt8qsg&amp;dl=1</DownloadUrl>
+	<Description>Tradução Completa para Português Brasil
+
+- Adicionada a opção de baixar a tradução diretamente no gerenciador de mods automaticamente.
+- Adicionada a opção de escolher entre itens, magias e habilidades em inglês ou português.
+- Adicionada a função de usar novos ícones de elementos nos status elementais como: Fogo, Raio, Gelo, etc...
+- Adicionada a opção de usar novos ícones curativos diretamente do idioma original. (Recomendado)
+- Adicionada a tradução das imagens das trocas de discos assim como era no PS1.
+- Adicionada a tradução das texturas dos nomes das cidades assim que entra no local.</Description>
+	<PatchNotes>A tradução é parcialmente compatível com os mods Beatrix, Alternate Fantasy e Trance Seek. Para usar junto com a tradução recomendo apagar os arquivos de textos/diálogos dos mods. Para mais detalhes acompanhe o Discord ou canal do Youtube(dkPsycho).</PatchNotes>
+	<Header>Opcionais</Header>
+	<SubMod>
+		<Default/>
+		<Name>Ícones: Novos Ícones Curativos</Name>
+		<InstallationPath>Opcionais/Novos Ícones Curativos</InstallationPath>
+		<Description>Novos ícones curativos para fazer mais sentido com a tradução apartir do idioma original.</Description>
+		<PreviewFile>preview/i1.png</PreviewFile>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Name>Tradução: Itens e Magias em Inglês</Name>
+		<InstallationPath>Opcionais/Tradução Itens e Magias em Inglês</InstallationPath>
+		<Description>Itens, Magias e Habilidades em Inglês</Description>
+		<PreviewFile>preview/it1.png</PreviewFile>
+	</SubMod>
+</Mod>
+
+<Mod>
 	<Name>Modern German</Name>
 	<Version>1.0</Version>
 	<Priority>12</Priority>
