@@ -187,6 +187,8 @@ public class VoicePlayer : SoundPlayer
 
                 Boolean found = false;
                 List<String> choiceCandidates = [];
+                Int32 selectedVisibleOption = dialog.ActiveIndexes.Count > 0 ? Math.Max(0, dialog.ActiveIndexes.FindIndex(index => index == optionIndex)) : optionIndex;
+                String optString = selectedVisibleOption + 1 < msgStrings.Length ? msgStrings[selectedVisibleOption + 1].Trim() : "[Invalid option index]";
                 foreach (String path in candidates)
                 {
                     String vaOptionPathMain = path + "_" + optionIndex;
@@ -207,7 +209,7 @@ public class VoicePlayer : SoundPlayer
 
                 if (!found)
                 {
-                    SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, text:{msgString}, path(s):'{String.Join("', '", choiceCandidates.ToArray().Reverse().ToArray())}' (not found)");
+                    SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, text:{optString}, path(s):'{String.Join("', '", choiceCandidates.ToArray().Reverse().ToArray())}' (not found)");
                 }
             };
 
