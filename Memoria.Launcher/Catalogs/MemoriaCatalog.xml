@@ -566,7 +566,7 @@ Part of Kupo Mods formerly Mog Add-ons.
 	<SubMod>
 		<Name>[Eiko] The Summoner</Name>
 		<InstallationPath>Features/Eiko-AF</InstallationPath>
-		<Description>Splits Titan and Fenrir as their won independent summon</Description>
+		<Description>Splits Titan and Fenrir as their own independent summon</Description>
 		<Group>g-eiko</Group>
 	</SubMod>
 	<SubMod>
