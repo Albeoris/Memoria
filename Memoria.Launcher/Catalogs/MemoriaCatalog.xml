@@ -441,10 +441,10 @@ This mod was initially introduced as the Exp challenge tweaks within Kupo Mods, 
 
 <Mod>
 	<Name>Kupo Heroes Pack</Name>
-	<Version>4.1.7</Version>
+	<Version>4.1.8</Version>
 	<Priority>-13</Priority>
 	<InstallationPath>KupoHeroPack</InstallationPath>
-	<ReleaseDate>2025-05-31</ReleaseDate>
+	<ReleaseDate>2025-06-03</ReleaseDate>
 	<ReleaseDateOriginal>2024-05-10</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>A set of Character enhancements that powers up characters and reduces grind. Ideal for players seeking 
@@ -455,7 +455,9 @@ Mod Order:
 
 Part of Kupo Mods formerly Mog Add-ons.
 	</Description>
-	<PatchNotes>Added Compatibility with Alternate Fantasy and playable character pack </PatchNotes>
+	<PatchNotes>
+	- Fixed mod group issue to ensure modularity. 
+	- Added Compatibility with Alternate fantasy and playable character pack </PatchNotes>
 	<Category>Gameplay</Category>
 	<IncompatibleWith>Trance Seek</IncompatibleWith>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/78</Website>
@@ -511,63 +513,54 @@ Part of Kupo Mods formerly Mog Add-ons.
 		<InstallationPath>Features/Eiko</InstallationPath>
 		<Description>Splits Titan and Fenrir as their won independent summon</Description>
 		<Group>g-eiko</Group>
-		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Freya] The Dragoon  </Name>
 		<InstallationPath>Features/Freya</InstallationPath>
 		<Description>Make Freya's High Jump do 3x damage, Early Access to High Jump and Taharka drops Kain Lance </Description>
 		<Group>g-freya</Group>
-		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Quina] The Chef </Name>
 		<InstallationPath>Features/Quina</InstallationPath>
 		<Description>Better Eat at 50% Cook at 100% </Description>
 		<Group>g-quina</Group>
-		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Steiner] The Queens Knight</Name>
 		<InstallationPath>Features/Steiner</InstallationPath>
 		<Description>Steiner can Equip Save the Queen, has access to all Vivi's additional spell </Description>
 		<Group>g-steiner</Group>
-		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Vivi] The Warlock</Name>
 		<InstallationPath>Features/Vivi</InstallationPath>
 		<Description>Vivi and Steiner can Cast Aero,Quake,Water to RA to AGA spells </Description>
 		<Group>g-vivi</Group>
-		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Garnet] The White Mage</Name>
 		<InstallationPath>Features/Garnet</InstallationPath>
 		<Description>Adds A White Magic Ability to Garnet that causes damage</Description>
 		<Group>g-garnet</Group>		
-		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Amaranth] The Genius Nomad </Name>
 		<InstallationPath>Features/Amaranth</InstallationPath>
 		<Description>Amaranth learns the Passive Tensai which makes him Learn and Level UP fast</Description>
 		<Group>g-amaranth</Group>
-		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Zidane] The Pillager</Name>
 		<InstallationPath>Features/Zidane</InstallationPath>
 		<Description>Boosts damage of thievery, Doubles items received after battle</Description>
 		<Group>g-zidane</Group>
-		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Beatrix] The Paladin </Name>
 		<InstallationPath>Features/Beatrix</InstallationPath>
 		<Description>Add Basic stat Support for Beatrix based of the Beatrix mod  </Description>
 		<Group>g-beatrix</Group>
-		<Default/>
 	</SubMod>
 	<Header>Compatability for Alternate Fantasy</Header>
 	<SubMod>
@@ -2049,7 +2042,7 @@ Eredeti telepítő: Evin</Description>
 	<ReleaseDate>01/06/2025</ReleaseDate>
 	<ReleaseDateOriginal>02/09/2022</ReleaseDateOriginal>
 	<InstallationPath>Tradução Português Brasil</InstallationPath>
-	<Category>Tradução</Category>
+	<Category>Translation</Category>
 	<Website>https://steamcommunity.com/sharedfiles/filedetails/?id=2111796362</Website>
 	<MinimumMemoriaVersion>2024.05.19</MinimumMemoriaVersion>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/kyeir22qipyd7zm2mag8y/Tradu-o-Portugu-s-Brasil.rar?rlkey=ebsepmranfzogp6zobsezpc9m&amp;st=3tkt8qsg&amp;dl=1</DownloadUrl>
