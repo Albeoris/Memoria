@@ -1445,7 +1445,7 @@ added another frame option	</PatchNotes>
 <Mod>
 	<Name>Moguri Mod (2020)</Name>
 	<Version>8.4</Version>
-	<Priority>-25</Priority>
+	<Priority>-26</Priority>
 	<InstallationPath>MoguriMain8</InstallationPath>
 	<ReleaseDateOriginal>2019-01-01</ReleaseDateOriginal>
 	<ReleaseDate>2024-08-12</ReleaseDate>
