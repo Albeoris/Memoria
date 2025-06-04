@@ -2037,6 +2037,7 @@ Eredeti telepítő: Evin</Description>
 <Mod>
 	<Name>Tradução Português Brasil</Name>
 	<PreviewFile>preview/pt1.png</PreviewFile>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/82/82-1748996941-950777641.png</PreviewFileUrl>
 	<Version>3.0</Version>
 	<Author>dkPsycho/Brtraducoes</Author>
 	<ReleaseDate>01/06/2025</ReleaseDate>
@@ -2089,9 +2090,8 @@ Eredeti telepítő: Evin</Description>
 </Mod>
 
 <!--
-TODO: manage translation mods
-many download links should be changed and several ones use the "[Import] Text" feature of Memoria instead of "[Mod] FolderNames"
--->
+This mod is outdated and has never been compatible with the Mod Manager (it uses the [Import] feature of Memoria.ini)
+
 <Mod>
 	<Name>Brazilian-Portuguese Translation</Name>
 	<InstallationPath>BrazilianTranslation</InstallationPath>
@@ -2117,6 +2117,7 @@ Note: this mod doesn't support automatic installation yet. Download it from its 
 	<Website>https://steamcommunity.com/sharedfiles/filedetails/?id=2111796362</Website>
 	<PreviewFileUrl>https://i.imgur.com/Zpi8Nc6.png</PreviewFileUrl>
 </Mod>
+-->
 	 
 <!-- DEAD LINK 
 <Mod>
