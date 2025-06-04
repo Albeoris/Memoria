@@ -77,7 +77,7 @@ namespace Memoria.Launcher
 
         public Mod(String name, String path)
         {
-            Name = name;
+            Name = name?.Trim();
             InstallationPath = path;
             CompatibilityNotes = new CompatibilityNoteClass();
             FileContent = new HashSet<String>();
@@ -126,7 +126,7 @@ namespace Memoria.Launcher
                 yield break;
             Int32 subModIndex = 0;
             List<Mod> mods = new List<Mod>(SubMod);
-            mods.Sort((a, b) => b.Priority - a.Priority);
+            mods.Sort((a, b) => a.Priority.CompareTo(b.Priority));
             while (subModIndex < mods.Count && mods[subModIndex].Priority >= 0)
             {
                 if (!activeOnly || mods[subModIndex].IsActive)
@@ -194,7 +194,7 @@ namespace Memoria.Launcher
                 return false;
             XmlElement elVer = modNode["Version"];
             Int64 outParse;
-            Name = elName.InnerText;
+            Name = elName.InnerText?.Trim();
             InstallationPath = elInstPath.InnerText;
             if (elVer != null && Version.TryParse(Regex.Replace(elVer.InnerText, @"[^\d\.]", ""), out Version version))
                 CurrentVersion = version;
@@ -247,7 +247,7 @@ namespace Memoria.Launcher
                 Mod sub = new Mod();
                 if (subNode.Name == "Header")
                 {
-                    sub.Name = subNode.InnerText;
+                    sub.Name = subNode.InnerText?.Trim();
                     sub.IsHeader = true;
                     if (!String.IsNullOrEmpty(sub.Name))
                         SubMod.Add(sub);
@@ -257,7 +257,7 @@ namespace Memoria.Launcher
                 elInstPath = subNode["InstallationPath"];
                 if (elName == null || elInstPath == null)
                     continue;
-                sub.Name = elName.InnerText;
+                sub.Name = elName.InnerText?.Trim();
                 sub.InstallationPath = elInstPath.InnerText;
                 sub.Description = subNode["Description"]?.InnerText;
                 sub.Category = subNode["Category"]?.InnerText;

@@ -1335,7 +1335,10 @@ namespace Memoria.Launcher
         private void UpdateInstalledPriorityValue()
         {
             for (Int32 i = 0; i < ModListInstalled.Count; i++)
-                ModListInstalled[i].Priority = i + 1;
+            {
+                Mod mod = Mod.SearchWithName(ModListCatalog, ModListInstalled[i].Name);
+                ModListInstalled[i].Priority = mod != null ? mod.Priority : 0;
+            }
             lstMods.Items.Refresh();
             UpdateModSettings();
         }
