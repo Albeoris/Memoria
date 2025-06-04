@@ -890,6 +890,7 @@ namespace Memoria.Launcher
             {
                 ModListCatalog.Clear();
 
+                // This is here to help updating the priorities in the catalog
                 // Add/update priorities from PriorityList.txt to the catalog
                 if (false)
                 {
@@ -902,8 +903,7 @@ namespace Memoria.Launcher
                         String[] tokens = line.Split('\t');
                         String search1 = @"(<Name>" + tokens[0] + @"((?!<\/Mod>).)*<\/Version>\s*<Priority>)((?!<\/Priority>).)*";
                         String search2 = @"(<Name>" + tokens[0] + @"((?!<\/Mod>).)*<\/Version>)(?!\s*<Priority>)";
-                        Match m = Regex.Match(catalog, search2, RegexOptions.Singleline);
-                        catalog = Regex.Replace(catalog, search1, $"$1\r\n{tokens[1]}", RegexOptions.Singleline);
+                        catalog = Regex.Replace(catalog, search1, "${1}" + tokens[1], RegexOptions.Singleline);
                         catalog = Regex.Replace(catalog, search2, $"$1\r\n\t<Priority>{tokens[1]}</Priority>", RegexOptions.Singleline);
                     }
 
