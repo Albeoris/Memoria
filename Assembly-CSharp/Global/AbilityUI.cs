@@ -1234,7 +1234,7 @@ public class AbilityUI : UIScene
         {
             if (ff9abil.FF9Abil_GetIndex(player, abilityId) < 0)
                 return AbilityType.NoDraw;
-            return this.equipmentPartInAbilityDict.ContainsKey(abilityId) ? AbilityType.CantDisable : AbilityType.CantSpell;
+            return (this.equipmentPartInAbilityDict.ContainsKey(abilityId) || player.saForced.Contains(ff9abil.GetSupportAbilityFromAbilityId(abilityId))) ? AbilityType.CantDisable : AbilityType.CantSpell;
         }
 
         if (ff9abil.FF9Abil_IsEnableSA(player.saExtended, ff9abil.GetSupportAbilityFromAbilityId(abilityId)))
