@@ -102,6 +102,7 @@ namespace Memoria.Data
             {
                 for (Int32 i = 0; i < PermanentEffect.Count; i++)
                 {
+                    Boolean RetrieveGem = Configuration.Battle.LockEquippedAbilities == 0 || Configuration.Battle.LockEquippedAbilities == 2;
                     if (PermanentEffect[i].Condition.Length > 0)
                     {
                         Expression c = new Expression(PermanentEffect[i].Condition);
@@ -127,7 +128,7 @@ namespace Memoria.Data
                             if (Sa != SupportAbility.Void && !play.saForced.Contains(Sa))
                             {
                                 if (ff9abil.FF9Abil_IsEnableSA(play, Sa))
-                                    ff9abil.FF9Abil_SetEnableSA(play, Sa, false, true);
+                                    ff9abil.FF9Abil_SetEnableSA(play, Sa, false, RetrieveGem);
 
                                 play.saForced.Add(Sa);
                                 ff9abil.FF9Abil_SetEnableSA(play, Sa, true);
