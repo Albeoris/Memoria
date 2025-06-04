@@ -155,6 +155,7 @@ namespace Memoria.Launcher
                 if (mod.ReadDescription(node))
                     modList.Add(mod);
             }
+            // This is here to help updating the priorities in the catalog
             // Create priority list file from the current catalog
             if (false)
             {

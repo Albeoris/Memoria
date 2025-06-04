@@ -92,7 +92,7 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 <Mod>
 	<Name>Trance Seek</Name>
 	<Version>0.3.35</Version>
-	<Priority>1</Priority>
+	<Priority>2</Priority>
 	<InstallationPath>TranceSeek</InstallationPath>
 	<ReleaseDateOriginal>28 Jan 2022</ReleaseDateOriginal>
 	<ReleaseDate>30 May 2025</ReleaseDate>
@@ -157,6 +157,7 @@ Not supported language : Japanese (a lot of things get deleted... need to wait u
 <Mod>
 	<Name>NoHardcodedBattles</Name>
 	<Version>1.0</Version>
+	<Priority>1</Priority>
 	<Author>DV</Author>
 	<ReleaseDateOriginal>29 May 2025</ReleaseDateOriginal>
 	<ReleaseDate>29 May 2025</ReleaseDate>
@@ -664,8 +665,8 @@ Compatible with Alternate Fantasy v6.8 only.</Description>
 </Mod>
 
 <Mod>
-    <Name>Perfect Stats</Name>
-    <Version>1.1</Version>
+	<Name>Perfect Stats</Name>
+	<Version>1.1</Version>
 	<Priority>-1</Priority>
 	<Author>Emeiru</Author>
 	<InstallationPath>PerfectStats</InstallationPath>
@@ -792,8 +793,8 @@ Alternate Fantasy
 </Mod>
 	
 <Mod>
-    <Name>Amazing Abilities</Name>
-    <Version>1.0</Version>
+	<Name>Amazing Abilities</Name>
+	<Version>1.0</Version>
 	<Priority>-6</Priority>
 	<Author>Emeiru</Author>
 	<ReleaseDateOriginal>2025-01-21</ReleaseDateOriginal>
@@ -832,16 +833,16 @@ Flee-Gil - Now only costs 1 magic stone
 </Mod>
 	
 <Mod>
-    <Name>Amazing Freya</Name>
-    <Version>1.0</Version>
+	<Name>Amazing Freya</Name>
+	<Version>1.0</Version>
 	<Priority>-7</Priority>
 	<Author>Emeiru</Author>
 	<Category>Gameplay</Category>
 	<ReleaseDateOriginal>2024-10-04</ReleaseDateOriginal>
 	<ReleaseDate>2025-05-02</ReleaseDate>
 	<MinimumMemoriaVersion>v2024.12.06</MinimumMemoriaVersion>
-    <InstallationPath>AmazingFreya</InstallationPath>
-    <Description>Amazing tweaks and improvement for the valiant Freya
+	<InstallationPath>AmazingFreya</InstallationPath>
+	<Description>Amazing tweaks and improvement for the valiant Freya
 - Jump is now a priority command, and increases Trance
 - Dragon consumes less Trance
 - Six Dragons have significantly less MP use
@@ -1171,7 +1172,7 @@ You should better use the Playable Characters Pack instead. This later one doesn
 <Mod>
 	<Name>Kupo UI Suite</Name>
 	<Version>4.2.1</Version>
-	<Priority>2</Priority>
+	<Priority>3</Priority>
 	<InstallationPath>KupoUISuite</InstallationPath>
 	<ReleaseDate>2025-05-31</ReleaseDate>
 	<ReleaseDateOriginal>2021-08-14</ReleaseDateOriginal>
@@ -1444,7 +1445,7 @@ added another frame option	</PatchNotes>
 <Mod>
 	<Name>Moguri Mod (2020)</Name>
 	<Version>8.4</Version>
-	<Priority>-25</Priority>
+	<Priority>-26</Priority>
 	<InstallationPath>MoguriMain8</InstallationPath>
 	<ReleaseDateOriginal>2019-01-01</ReleaseDateOriginal>
 	<ReleaseDate>2024-08-12</ReleaseDate>
@@ -1474,7 +1475,7 @@ Note: 30fps videos and the alternative soundtrack are now separate mods</Descrip
 <Mod>
 	<Name>Cursors Mod</Name>
 	<Version>4.1.4</Version>
-	<Priority>3</Priority>	
+	<Priority>4</Priority>	
 	<InstallationPath>KupoCursors</InstallationPath>
 	<ReleaseDate>2025-05-31</ReleaseDate>
 	<ReleaseDateOriginal>2024-10-01</ReleaseDateOriginal>
@@ -1559,7 +1560,7 @@ Defaults to smaller cursor but has several options Dagger, Ultima Blade, Staff
 <Mod>
 	<Name>PSX Buttons</Name>
 	<Version>1.0</Version>
-	<Priority>6</Priority>
+	<Priority>7</Priority>
 	<InstallationPath>PSXButtons</InstallationPath>
 	<Author>gdi</Author>
 	<ReleaseDate>2017-05-22</ReleaseDate>
@@ -1574,7 +1575,7 @@ Defaults to smaller cursor but has several options Dagger, Ultima Blade, Staff
 <Mod>
 	<Name>Kupo Controller Pack</Name>
 	<Version>4.1.3</Version>
-	<Priority>7</Priority>	
+	<Priority>8</Priority>	
 	<InstallationPath>KupoButtonsPack</InstallationPath>
 	<ReleaseDate>2024-12-06</ReleaseDate>
 	<ReleaseDateOriginal>2021-08-27</ReleaseDateOriginal>
@@ -1646,27 +1647,31 @@ Available Themes:
 
 <Mod>
 	<Name>Dualsense Buttons</Name>
-	<Version>1.0</Version>
-	<Priority>5</Priority>
+	<Version>1.1</Version>
+	<Priority>6</Priority>
 	<InstallationPath>DualsenseButtons</InstallationPath>
-	<ReleaseDate>2023-07-19</ReleaseDate>
+	<ReleaseDate>2025-06-04</ReleaseDate>
+	<ReleaseDateOriginal>2023-07-19</ReleaseDateOriginal>
 	<Author>SamsamTS</Author>
 	<Description>Replace Xbox buttons with the Playstation Dualsense buttons.</Description>
+	<PatchNotes>Won't replace the whole icon atlas anymore</PatchNotes>
 	<Category>Visual</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/52</Website>
 	<DownloadUrl>https://github.com/SamsamTS/FF9-DualsenseButtons/releases/download/Main/DualsenseButtons.zip</DownloadUrl>
-	<PreviewFileUrl>https://raw.githubusercontent.com/SamsamTS/FF9-DualsenseButtons/main/PreviewImage.jpg</PreviewFileUrl>
 	<PreviewFile>PreviewImage.jpg</PreviewFile>
+	<PreviewFileUrl>https://raw.githubusercontent.com/SamsamTS/FF9-DualsenseButtons/main/PreviewImage.jpg</PreviewFileUrl>
 </Mod>
 
 <Mod>
 	<Name>Switch Buttons</Name>
-	<Version>1.0</Version>
-	<Priority>4</Priority>
+	<Version>1.1</Version>
+	<Priority>5</Priority>
 	<InstallationPath>SwitchButtons</InstallationPath>
-	<ReleaseDate>28 April 2024</ReleaseDate>
+	<ReleaseDate>2025-06-04</ReleaseDate>
+	<ReleaseDateOriginal>2024-04-28</ReleaseDateOriginal>
 	<Author>SamsamTS</Author>
 	<Description>Replace Xbox buttons with the Nintendo Switch buttons.</Description>
+	<PatchNotes>Won't replace the whole icon atlas anymore</PatchNotes>
 	<Category>Visual</Category>
 	<Website>https://github.com/SamsamTS/FF9-SwitchButtons/</Website>
 	<DownloadUrl>https://github.com/SamsamTS/FF9-SwitchButtons/releases/download/Main/SwitchButtons.zip</DownloadUrl>
@@ -1693,7 +1698,7 @@ Available Themes:
 	<Name>Tweaked Portraits</Name>
 	<InstallationPath>TweakedPortraits</InstallationPath>
 	<Version>1.0</Version>
-	<Priority>8</Priority>
+	<Priority>9</Priority>
 	<Author>Lykon</Author>
 	<ReleaseDateOriginal>2020-05-16</ReleaseDateOriginal>
 	<Description>This is a simple mod that slightly tweaks the portrait shown in the main menu.</Description>
@@ -1707,7 +1712,7 @@ Available Themes:
 <Mod>
 	<Name>Portraits Pack</Name>
 	<Version>4.2.5</Version>
-	<Priority>9</Priority>	
+	<Priority>10</Priority>	
 	<InstallationPath>KupoPortraits</InstallationPath>
 	<ReleaseDate>2025-05-31</ReleaseDate>
 	<ReleaseDateOriginal>2021-10-18</ReleaseDateOriginal>
@@ -1780,6 +1785,7 @@ Part of Kupo Mods formerly Mog Add-ons.
 <Mod>
 	<Name>Anniversary Portraits</Name>
 	<Version>0.9.2</Version>
+	<Priority>11</Priority>
 	<InstallationPath>AnniversaryPortraits</InstallationPath>
 	<ReleaseDate>2025-05-31</ReleaseDate>
 	<ReleaseDateOriginal>2025-05-21</ReleaseDateOriginal>
@@ -1819,7 +1825,7 @@ Placeholder art - Beatrix by Mugi, Marcus by nanpou0406.</Description>
 <Mod>
 	<Name>Triple Triad</Name>
 	<Version>1.0</Version>
-	<Priority>11</Priority>
+	<Priority>13</Priority>
 	<InstallationPath>TripleTriad</InstallationPath>
 	<ReleaseDateOriginal>25 Jul 2023</ReleaseDateOriginal>
 	<Author>DV</Author>
@@ -1834,7 +1840,7 @@ Change some card textures (add boss + characters)</Description>
 <Mod>
 	<Name>Launcher Themes</Name>
 	<Version>1.0.1</Version>
-	<Priority>19</Priority>
+	<Priority>21</Priority>
 	<InstallationPath>MemoriaLauncherThemes</InstallationPath>
 	<ReleaseDate>2025-5-12</ReleaseDate>
 	<ReleaseDateOriginal>2024-12-07</ReleaseDateOriginal>
@@ -1924,7 +1930,7 @@ Special citation to SamsamTS  for making this possible	</PatchNotes>
 <Mod>
 	<Name>Better Card Drops</Name>
 	<Version>1.1</Version>
-	<Priority>10</Priority>
+	<Priority>12</Priority>
 	<InstallationPath>BetterCardDrop</InstallationPath>
 	<ReleaseDateOriginal>2024-06-27</ReleaseDateOriginal>
 	<Author>DV</Author>
@@ -1972,7 +1978,7 @@ Idea by Snouz and made by DV.</Description>
 <Mod>
 	<Name>Modern Labels + </Name>
 	<Version>4.1.7</Version>
-	<Priority>13</Priority>	
+	<Priority>15</Priority>	
 	<InstallationPath>KupoModernLabels</InstallationPath>
 	<ReleaseDate>2025-05-31</ReleaseDate>
 	<ReleaseDateOriginal>2024-10-01</ReleaseDateOriginal>
@@ -2001,7 +2007,7 @@ Language of choice.
 <Mod>
 	<Name>Ukrainian Translation</Name>
 	<Version>1.0</Version>
-	<Priority>18</Priority>
+	<Priority>20</Priority>
 	<Author>Дракон Сходу (DragonOfTheEast)</Author>
 	<InstallationPath>TranslationUkr</InstallationPath>
 	<ReleaseDateOriginal>2024-05-02</ReleaseDateOriginal>
@@ -2018,7 +2024,7 @@ Language of choice.
 <Mod>
 	<Name>Hungarian Translation</Name>
 	<Version>1.0</Version>
-	<Priority>17</Priority>
+	<Priority>19</Priority>
 	<InstallationPath>TranslationHun</InstallationPath>
 	<ReleaseDate>2025-01-23</ReleaseDate>
 	<ReleaseDateOriginal>2016-09-21</ReleaseDateOriginal>
@@ -2036,8 +2042,10 @@ Eredeti telepítő: Evin</Description>
 
 <Mod>
 	<Name>Tradução Português Brasil</Name>
-	<PreviewFile>preview/pt1.png</PreviewFile>
 	<Version>3.0</Version>
+	<Priority>18</Priority>
+	<PreviewFile>preview/pt1.png</PreviewFile>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/82/82-1748996941-950777641.png</PreviewFileUrl>
 	<Author>dkPsycho/Brtraducoes</Author>
 	<ReleaseDate>01/06/2025</ReleaseDate>
 	<ReleaseDateOriginal>02/09/2022</ReleaseDateOriginal>
@@ -2075,7 +2083,7 @@ Eredeti telepítő: Evin</Description>
 <Mod>
 	<Name>Modern German</Name>
 	<Version>1.0</Version>
-	<Priority>12</Priority>
+	<Priority>14</Priority>
 	<Author>Plasquar</Author>
 	<InstallationPath>ModernGerman</InstallationPath>
 	<Category>Translation</Category>
@@ -2089,9 +2097,7 @@ Eredeti telepítő: Evin</Description>
 </Mod>
 
 <!--
-TODO: manage translation mods
-many download links should be changed and several ones use the "[Import] Text" feature of Memoria instead of "[Mod] FolderNames"
--->
+This mod is outdated and has never been compatible with the Mod Manager (it uses the [Import] feature of Memoria.ini)
 <Mod>
 	<Name>Brazilian-Portuguese Translation</Name>
 	<InstallationPath>BrazilianTranslation</InstallationPath>
@@ -2117,7 +2123,7 @@ Note: this mod doesn't support automatic installation yet. Download it from its 
 	<Website>https://steamcommunity.com/sharedfiles/filedetails/?id=2111796362</Website>
 	<PreviewFileUrl>https://i.imgur.com/Zpi8Nc6.png</PreviewFileUrl>
 </Mod>
-	 
+-->
 <!-- DEAD LINK 
 <Mod>
 	<Name>Polish Translation</Name>
@@ -2135,7 +2141,7 @@ Note: this mod doesn't support automatic installation yet. Download it from its 
 <Mod>
 	<Name>Russian Translation</Name>
 	<Version>1.0</Version>
-	<Priority>15</Priority>
+	<Priority>17</Priority>
 	<InstallationPath>TranslationRu</InstallationPath>
 	<ReleaseDate>2024-11-22</ReleaseDate>
 	<ReleaseDateOriginal>2013-12-27</ReleaseDateOriginal>
@@ -2175,7 +2181,7 @@ Check them out at https://www.nexusmods.com/finalfantasy9/mods/</Description>
 <Mod>
 	<Name>Chinese (FFSky Rebirth)</Name>
 	<Version>0.9</Version>
-	<Priority>14</Priority>
+	<Priority>16</Priority>
 	<InstallationPath>Chinese (FFSky Rebirth)</InstallationPath>
 	<ReleaseDate>2025-03-24</ReleaseDate>
 	<ReleaseDateOriginal>2025-03-24</ReleaseDateOriginal>
