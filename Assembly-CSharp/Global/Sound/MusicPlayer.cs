@@ -304,6 +304,7 @@ public class MusicPlayer : SoundPlayer
         }
         if (Configuration.Audio.Backend == 0)
         {
+            // This is a convoluted seek
             Single volume = ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_GetVolume(this.activeSoundProfile.SoundID);
             ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(this.activeSoundProfile.SoundID, 0);
             this.activeSoundProfile.SoundID = ISdLibAPIProxy.Instance.SdSoundSystem_CreateSound(this.activeSoundProfile.BankID);
@@ -312,7 +313,7 @@ public class MusicPlayer : SoundPlayer
         }
         else
         {
-            // This will seek with Soloud
+            // This will seek with Soloud and SaXAudio
             ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(this.activeSoundProfile.SoundID, offsetTimeMSec);
         }
     }
