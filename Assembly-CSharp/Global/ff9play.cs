@@ -4,15 +4,10 @@ using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
-using Memoria.Prime.Collections;
-using Memoria.Prime.CSV;
-using Memoria.Prime.PsdFile;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using static AbilityUI;
-using static Memoria.IOverloadPlayerUIScript;
 
 #pragma warning disable 169
 #pragma warning disable 414
