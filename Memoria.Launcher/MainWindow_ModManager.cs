@@ -1253,7 +1253,7 @@ namespace Memoria.Launcher
                         previewPath = $"./{submod.ParentMod.InstallationPath}/{submod.PreviewFile}";
                     if (!String.IsNullOrEmpty(submod.PreviewFileUrl) && (String.IsNullOrEmpty(submod.PreviewFile) || !File.Exists(previewPath)))
                         previewPath = submod.PreviewFileUrl;
-                    UiGrid.MakeTooltip(grid, submod.Description, previewPath, "");
+                    UiGrid.MakeTooltip(grid, submod.Description, previewPath, "", placement: System.Windows.Controls.Primitives.PlacementMode.Left);
                 }
                 count++;
             }
@@ -1335,7 +1335,10 @@ namespace Memoria.Launcher
         private void UpdateInstalledPriorityValue()
         {
             for (Int32 i = 0; i < ModListInstalled.Count; i++)
-                ModListInstalled[i].Priority = i + 1;
+            {
+                Mod mod = Mod.SearchWithName(ModListCatalog, ModListInstalled[i].Name);
+                ModListInstalled[i].Priority = mod != null ? mod.Priority : 0;
+            }
             lstMods.Items.Refresh();
             UpdateModSettings();
         }
