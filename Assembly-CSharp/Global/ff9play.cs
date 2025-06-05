@@ -271,26 +271,6 @@ public static class ff9play
 
     public static void FF9Play_Update(PLAYER play)
     {
-        Boolean RetrieveGem = Configuration.Battle.LockEquippedAbilities == 0 || Configuration.Battle.LockEquippedAbilities == 2;
-        HashSet<SupportAbility> OldForcedSA = new HashSet<SupportAbility>();
-        foreach (SupportAbility forcedSA in play.saForced)
-            if (ff9abil.FF9Abil_IsEnableSA(play, forcedSA))
-            {
-                ff9abil.FF9Abil_SetEnableSA(play, forcedSA, false);
-                OldForcedSA.Add(forcedSA);
-            }
-
-        foreach (SupportAbility hiddenSA in play.saHidden)
-        {
-            SupportAbility BaseSA = ff9abil.GetBaseAbilityFromBoostedAbility(hiddenSA);
-            List<SupportAbility> boostedList = ff9abil.GetBoostedAbilityList(BaseSA);
-            foreach (SupportAbility boosted in boostedList)
-                if (ff9abil.FF9Abil_IsEnableSA(play.saExtended, boosted))
-                    ff9abil.FF9Abil_SetEnableSA(play, boosted, false, RetrieveGem);
-        }
-
-        play.saForced.Clear();
-        play.saHidden.Clear();
         play.max.hp = play.basis.max_hp;
         play.max.mp = play.basis.max_mp;
         play.elem.dex = play.basis.dex;
@@ -342,19 +322,8 @@ public static class ff9play
         play.maxMpLimit = ff9play.FF9PLAY_MP_MAX;
         play.maxDamageLimit = ff9play.FF9PLAY_DAMAGE_MAX;
         play.maxMpDamageLimit = ff9play.FF9PLAY_MPDAMAGE_MAX;
-        foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledGlobalSA(play))
-            saFeature.TriggerForcedSA(play);
 
-        foreach (SupportAbility BoostedSA in OldForcedSA)
-            if (!play.saForced.Contains(BoostedSA) || play.saHidden.Contains(BoostedSA))
-            {
-                SupportAbility BaseSA = ff9abil.GetBaseAbilityFromBoostedAbility(BoostedSA);
-                List<SupportAbility> boostedList = ff9abil.GetBoostedAbilityList(BaseSA);
-                foreach (SupportAbility boosted in boostedList)
-                    if (ff9abil.FF9Abil_IsEnableSA(play.saExtended, boosted))
-                        ff9abil.FF9Abil_SetEnableSA(play, boosted, false, RetrieveGem);
-
-            }
+        FF9Play_ForcedSA_Update(play);
 
         foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(play))
             saFeature.TriggerOnEnable(play);
