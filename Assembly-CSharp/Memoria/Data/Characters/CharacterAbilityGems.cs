@@ -95,6 +95,55 @@ namespace Memoria.Data
         public Boolean EnableAsMonsterTransform = false;
         public Boolean EnableAsEnemy = false;
 
+        public void TriggerForcedSA(PLAYER play)
+        {
+            try
+            {
+                for (Int32 i = 0; i < PermanentEffect.Count; i++)
+                {
+                    Boolean RetrieveGem = Configuration.Battle.LockEquippedAbilities == 0 || Configuration.Battle.LockEquippedAbilities == 2;
+                    if (PermanentEffect[i].Condition.Length > 0)
+                    {
+                        Expression c = new Expression(PermanentEffect[i].Condition);
+                        NCalcUtility.InitializeExpressionPlayer(ref c, play);
+                        c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                        c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                        if (!NCalcUtility.EvaluateNCalcCondition(c.Evaluate()))
+                            continue;
+                        if (!PermanentEffect[i].Formula.ContainsKey("HiddenSA") && !PermanentEffect[i].Formula.ContainsKey("ActivateSA"))
+                            continue;
+                    }
+                    foreach (KeyValuePair<String, String> formula in PermanentEffect[i].Formula)
+                    {
+                        Expression e = new Expression(formula.Value);
+                        NCalcUtility.InitializeExpressionPlayer(ref e, play);
+                        e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                        e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                        SupportAbility Sa = (SupportAbility)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)SupportAbility.Void);
+                        if (String.Equals(formula.Key, "HiddenSA"))
+                        {
+                            play.saHidden.Add(Sa);
+                        }
+                        else if (String.Equals(formula.Key, "ActivateSA"))
+                        {
+                            if (Sa != SupportAbility.Void && !play.saForced.Contains(Sa))
+                            {
+                                if (ff9abil.FF9Abil_IsEnableSA(play, Sa))
+                                    ff9abil.FF9Abil_SetEnableSA(play, Sa, false, RetrieveGem);
+
+                                play.saForced.Add(Sa);
+                                ff9abil.FF9Abil_SetEnableSA(play, Sa, true);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception err)
+            {
+                Log.Error(err);
+            }
+        }
+
         public void TriggerOnEnable(PLAYER play)
         {
             try

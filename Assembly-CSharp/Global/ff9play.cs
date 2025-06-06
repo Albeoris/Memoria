@@ -4,8 +4,7 @@ using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
-using Memoria.Prime.Collections;
-using Memoria.Prime.CSV;
+using Memoria.Prime.PsdFile;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -324,8 +323,12 @@ public static class ff9play
         play.maxMpLimit = ff9play.FF9PLAY_MP_MAX;
         play.maxDamageLimit = ff9play.FF9PLAY_DAMAGE_MAX;
         play.maxMpDamageLimit = ff9play.FF9PLAY_MPDAMAGE_MAX;
+
+        FF9Play_ForcedSA_Update(play);
+
         foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(play))
             saFeature.TriggerOnEnable(play);
+
         if (play.max.hp > play.maxHpLimit)
             play.max.hp = play.maxHpLimit;
         if (play.max.mp > play.maxMpLimit)
@@ -334,6 +337,44 @@ public static class ff9play
             play.cur.hp = play.max.hp;
         if (play.cur.mp > play.max.mp)
             play.cur.mp = play.max.mp;
+    }
+
+    public static void FF9Play_ForcedSA_Update(PLAYER play)
+    {
+        Boolean RetrieveGem = Configuration.Battle.LockEquippedAbilities == 0 || Configuration.Battle.LockEquippedAbilities == 2;
+        HashSet<SupportAbility> OldForcedSA = new HashSet<SupportAbility>();
+        foreach (SupportAbility forcedSA in play.saForced)
+            if (ff9abil.FF9Abil_IsEnableSA(play, forcedSA))
+            {
+                ff9abil.FF9Abil_SetEnableSA(play, forcedSA, false);
+                OldForcedSA.Add(forcedSA);
+            }
+
+        foreach (SupportAbility hiddenSA in play.saHidden)
+        {
+            SupportAbility BaseSA = ff9abil.GetBaseAbilityFromBoostedAbility(hiddenSA);
+            List<SupportAbility> boostedList = ff9abil.GetBoostedAbilityList(BaseSA);
+            foreach (SupportAbility boosted in boostedList)
+                if (ff9abil.FF9Abil_IsEnableSA(play.saExtended, boosted))
+                    ff9abil.FF9Abil_SetEnableSA(play, boosted, false, RetrieveGem);
+        }
+
+        play.saForced.Clear();
+        play.saHidden.Clear();
+
+        foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledGlobalSA(play))
+            saFeature.TriggerForcedSA(play);
+
+        foreach (SupportAbility BoostedSA in OldForcedSA)
+            if (!play.saForced.Contains(BoostedSA) || play.saHidden.Contains(BoostedSA))
+            {
+                SupportAbility BaseSA = ff9abil.GetBaseAbilityFromBoostedAbility(BoostedSA);
+                List<SupportAbility> boostedList = ff9abil.GetBoostedAbilityList(BaseSA);
+                foreach (SupportAbility boosted in boostedList)
+                    if (ff9abil.FF9Abil_IsEnableSA(play.saExtended, boosted))
+                        ff9abil.FF9Abil_SetEnableSA(play, boosted, false, RetrieveGem);
+
+            }
     }
 
     public static CharacterId CharacterOldIndexToID(CharacterOldIndex characterIndex)
@@ -453,7 +494,7 @@ public static class ff9play
         foreach (SupportAbility saIndex in play.saExtended)
         {
             if (play.cur.capa >= ff9abil._FF9Abil_SaData[saIndex].GemsCount)
-                play.cur.capa = (UInt32)(play.cur.capa - ff9abil._FF9Abil_SaData[saIndex].GemsCount);
+                play.cur.capa = (UInt32)(play.cur.capa - ff9abil.GetSAGemCostFromPlayer(play, saIndex));
             else
                 disableSet.Add(saIndex);
         }
