@@ -252,7 +252,7 @@ public class BattleSPSSystem : MonoBehaviour
         sps.attr |= SPSConst.ATTR_UPDATE_ANY_FRAME;
         if (neverUnload)
             sps.duration = -1;
-        else if(duration < 0 && sps.frameRate > 0)
+        else if (duration < 0 && sps.frameRate > 0)
             sps.attr |= SPSConst.ATTR_UNLOAD_ON_FINISH;
         else if (duration >= 0)
             sps.duration = duration;
