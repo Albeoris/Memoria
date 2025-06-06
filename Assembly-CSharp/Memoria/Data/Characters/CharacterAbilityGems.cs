@@ -6,7 +6,6 @@ using NCalc;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using static AbilityUI;
 
 namespace Memoria.Data
 {
@@ -110,6 +109,8 @@ namespace Memoria.Data
                         c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                         c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                         if (!NCalcUtility.EvaluateNCalcCondition(c.Evaluate()))
+                            continue;
+                        if (!PermanentEffect[i].Formula.ContainsKey("HiddenSA") && !PermanentEffect[i].Formula.ContainsKey("ActivateSA"))
                             continue;
                     }
                     foreach (KeyValuePair<String, String> formula in PermanentEffect[i].Formula)

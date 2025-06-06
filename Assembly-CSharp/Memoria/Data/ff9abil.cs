@@ -216,10 +216,10 @@ namespace FF9
 
         public static SupportAbility GetBaseAbilityFromBoostedAbility(SupportAbility boostedAbil)
         {
-            SupportAbility baseSA = _FF9Abil_SaData.FirstOrDefault(baseAbil => baseAbil.Value.Boosted.Contains(boostedAbil)).Key;
-            if (!_FF9Abil_SaData[baseSA].Boosted.Contains(boostedAbil))
-                baseSA = boostedAbil;
-            return baseSA;
+            foreach (var kvp in _FF9Abil_SaData)
+                if (kvp.Value.Boosted.Contains(boostedAbil))
+                    return kvp.Key;
+            return boostedAbil;
         }
 
         public static Int32 GetBoostedAbilityMaxLevel(PLAYER player, SupportAbility baseAbil)
@@ -241,6 +241,13 @@ namespace FF9
                 if (!FF9Abil_IsEnableSA(player.saExtended, boosted[level]))
                     return level;
             return boosted.Count;
+        }
+
+        public static Int32 GetSAGemCostFromPlayer(PLAYER player, SupportAbility baseAbil)
+        {
+            if (player.saForced.Contains(baseAbil))
+                return 0;
+            return _FF9Abil_SaData[baseAbil].GemsCount;
         }
 
         // The followings are also used by CsvParser and CsvWriter, so any change of behaviour should be reflected there as well

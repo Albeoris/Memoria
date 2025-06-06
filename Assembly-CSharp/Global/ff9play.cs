@@ -4,6 +4,7 @@ using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
+using Memoria.Prime.PsdFile;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -493,7 +494,7 @@ public static class ff9play
         foreach (SupportAbility saIndex in play.saExtended)
         {
             if (play.cur.capa >= ff9abil._FF9Abil_SaData[saIndex].GemsCount)
-                play.cur.capa = (UInt32)(play.cur.capa - (play.saForced.Contains(saIndex) ? 0 : ff9abil._FF9Abil_SaData[saIndex].GemsCount));
+                play.cur.capa = (UInt32)(play.cur.capa - ff9abil.GetSAGemCostFromPlayer(play, saIndex));
             else
                 disableSet.Add(saIndex);
         }
