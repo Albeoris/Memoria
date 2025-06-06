@@ -127,12 +127,16 @@ public partial class BattleHUD : UIScene
                 _buttonSlideInitial = _currentCommandIndex;
                 _buttonSliding.IsActive = true;
                 _commandPanel.GetCommandButton(_buttonSlideInitial).SetActive(false);
+                ButtonGroupState.MuteActiveSound = true;
                 ButtonGroupState.ActiveButton = _buttonSliding;
+                FF9Sfx.FF9SFX_Play(1047);
+                ButtonGroupState.MuteActiveSound = false;
                 _currentCommandIndex = (BattleCommandMenu)_buttonSliding.Transform.GetSiblingIndex();
             }
         }
         if (_buttonSliding != null)
         {
+            ButtonGroupState.MuteActiveSound = true;
             if (_buttonSliding == _commandPanel.Change && leftPressed)
                 _buttonSlideFactor += 0.3f;
             else if (_buttonSliding == _commandPanel.Defend && rightPressed)
@@ -157,6 +161,7 @@ public partial class BattleHUD : UIScene
             {
                 ResetSlidingButton();
             }
+            ButtonGroupState.MuteActiveSound = false;
         }
     }
 

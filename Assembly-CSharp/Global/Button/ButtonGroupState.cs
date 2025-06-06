@@ -1,5 +1,4 @@
-﻿using Memoria;
-using Memoria.Assets;
+﻿using Memoria.Assets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -554,15 +553,9 @@ public class ButtonGroupState : MonoBehaviour
         if (go == null)
             return;
         ButtonGroupState.UpdateActiveButton();
-        Boolean DontTriggerSound = Configuration.Interface.PSXBattleMenu && previousGo == go;
-        if (Configuration.Interface.PSXBattleMenu && ButtonGroupState.activeGroup == BattleHUD.CommandGroupButton && (go.name == "Change" || go.name == "Defend"))
-            FF9Sfx.FF9SFX_Play(1047);
-        else if (ButtonGroupState.PrevActiveButton != go && ButtonGroupState.activeGroup != Dialog.DialogGroupButton && !ButtonGroupState.muteActiveSound && !DontTriggerSound)
-        {
+        if (ButtonGroupState.PrevActiveButton != go && ButtonGroupState.activeGroup != Dialog.DialogGroupButton && !ButtonGroupState.muteActiveSound)
             FF9Sfx.FF9SFX_Play(103);
-            previousGo = go;
-        }
-        UICamera.Notify(PersistenSingleton<UIManager>.Instance.gameObject, "OnItemSelect", go);      
+        UICamera.Notify(PersistenSingleton<UIManager>.Instance.gameObject, "OnItemSelect", go);
     }
 
     private static void ActiveGroupChanged(String newGroupName)
@@ -681,7 +674,6 @@ public class ButtonGroupState : MonoBehaviour
     private static List<String> secondaryGroup = new List<String>();
 
     private static GameObject prevActiveButton;
-    private static GameObject previousGo;
     private static String prevActiveGroup = String.Empty;
     private static String activeGroup = String.Empty;
     private static Boolean muteActiveSound = false;
