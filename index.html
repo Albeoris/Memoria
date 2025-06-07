@@ -9,6 +9,35 @@
         body.dark-theme { background-color: #121212; color: #e0e0e0; }
         .dark-theme input, .dark-theme select, .dark-theme textarea { background: #232323; color: #e0e0e0; border-color: #555; }
         textarea { resize: none; overflow-y: hidden; }
+
+        /* Select2 dark theme override */
+        body.dark-theme .select2-container--default .select2-selection--single {
+            background-color: #232323 !important;
+            color: #e0e0e0 !important;
+            border-color: #555 !important;
+        }
+        body.dark-theme .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #e0e0e0 !important;
+        }
+        body.dark-theme .select2-container--default .select2-dropdown {
+            background-color: #232323 !important;
+            color: #e0e0e0 !important;
+            border-color: #555 !important;
+        }
+        body.dark-theme .select2-container--default .select2-results__option {
+            background-color: #232323 !important;
+            color: #e0e0e0 !important;
+        }
+        body.dark-theme .select2-container--default .select2-results__option--highlighted {
+            background-color: #383838 !important;
+            color: #fff !important;
+        }
+        body.dark-theme .select2-search--dropdown .select2-search__field {
+            background: #232323 !important;
+            color: #e0e0e0 !important;
+            border-color: #555 !important;
+        }
+        
     </style>
 </head>
 <body class="dark-theme">
