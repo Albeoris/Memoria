@@ -74,7 +74,8 @@
         function updateSubmods() {
             submodSelect.empty().append(new Option('Main'));
             const mod = mods[modSelect.prop('selectedIndex')];
-            mod.querySelectorAll(':scope > Mod').forEach(submod => {
+            const submods = mod.querySelectorAll('Mod');
+            submods.forEach(submod => {
                 submodSelect.append(new Option(submod.querySelector('Name').textContent));
             });
             fillForm(mod, false);
@@ -85,9 +86,10 @@
 
         submodSelect.on('change', () => {
             const mod = mods[modSelect.prop('selectedIndex')];
+            const submods = mod.querySelectorAll('Mod');
             const submodIndex = submodSelect.prop('selectedIndex') - 1;
             const isSubmod = submodIndex >= 0;
-            fillForm(isSubmod ? mod.querySelectorAll(':scope > Mod')[submodIndex] : mod, isSubmod);
+            fillForm(isSubmod ? submods[submodIndex] : mod, isSubmod);
         });
 
         $('#saveBtn').click(e => {
