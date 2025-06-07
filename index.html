@@ -7,6 +7,7 @@
     <style>
         body.dark-theme { background-color: #121212; color: #e0e0e0; }
         .dark-theme input, .dark-theme select, .dark-theme textarea { background: #232323; color: #e0e0e0; border-color: #555; }
+        textarea { resize: vertical; min-height: 100px; }
     </style>
 </head>
 <body class="dark-theme">
@@ -24,8 +25,8 @@
     <form id="modForm">
         <div class="mb-3"><label>Name</label><input id="name" class="form-control" required></div>
         <div class="mb-3"><label>Version</label><input id="version" class="form-control" required></div>
-        <div class="mb-3"><label>Installation Path</label><input id="path" class="form-control" required></div>
-        <div class="mb-3"><label>Author</label><input id="author" class="form-control" required></div>
+        <div class="mb-3" id="installationField"><label>Installation Path</label><input id="path" class="form-control" required></div>
+        <div class="mb-3" id="authorField"><label>Author</label><input id="author" class="form-control" required></div>
         <div class="mb-3"><label>Description</label><textarea id="description" class="form-control" required></textarea></div>
         <button id="saveBtn" class="btn btn-success">Save changes</button>
     </form>
@@ -38,6 +39,8 @@
         const xmlDoc = new DOMParser().parseFromString(xmlText, 'application/xml');
 
         const mods = Array.from(xmlDoc.querySelectorAll('ModCatalog > Mod'));
+        mods.sort((a, b) => a.querySelector('Name').textContent.localeCompare(b.querySelector('Name').textContent));
+
         const modSelect = document.getElementById('modSelect');
         const submodSelect = document.getElementById('submodSelect');
 
@@ -46,17 +49,47 @@
             modSelect.add(new Option(name));
         });
 
+        function fillForm(modElement, isSubmod) {
+            document.getElementById('name').value = modElement.querySelector('Name').textContent;
+            document.getElementById('version').value = modElement.querySelector('Version').textContent;
+            document.getElementById('description').value = modElement.querySelector('Description')?.textContent || '';
+
+            document.getElementById('installationField').style.display = isSubmod ? 'none' : 'block';
+            document.getElementById('authorField').style.display = isSubmod ? 'none' : 'block';
+
+            if (!isSubmod) {
+                document.getElementById('path').value = modElement.querySelector('InstallationPath').textContent;
+                document.getElementById('author').value = modElement.querySelector('Author').textContent;
+            }
+        }
+
         function updateSubmods() {
             submodSelect.innerHTML = '<option>Main</option>';
             const mod = mods[modSelect.selectedIndex];
-            mod.querySelectorAll(':scope > Mod').forEach(submod => {
+            const submods = mod.querySelectorAll(':scope > Mod');
+
+            submods.forEach(submod => {
                 const name = submod.querySelector('Name').textContent;
                 submodSelect.add(new Option(name));
             });
+
+            fillForm(mod, false);
         }
 
         modSelect.addEventListener('change', updateSubmods);
         updateSubmods();
+
+        submodSelect.addEventListener('change', () => {
+            const mod = mods[modSelect.selectedIndex];
+            const submodIndex = submodSelect.selectedIndex - 1;
+
+            if (submodIndex >= 0) {
+                const submod = mod.querySelectorAll(':scope > Mod')[submodIndex];
+                fillForm(submod, true);
+            } else {
+                fillForm(mod, false);
+            }
+        });
 
         document.getElementById('saveBtn').onclick = function (e) {
             e.preventDefault();
