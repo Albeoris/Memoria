@@ -2,9 +2,67 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Memoria</title>
+    <title>Memoria Catalog Editor</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <style>
+        body.dark-theme { background-color: #121212; color: #e0e0e0; }
+        .dark-theme input, .dark-theme select, .dark-theme textarea { background: #232323; color: #e0e0e0; border-color: #555; }
+    </style>
 </head>
-<body>
-    Hello World!
+<body class="dark-theme">
+<div class="container py-4">
+    <h2>Memoria Mod Catalog Editor</h2>
+    <div class="mb-3">
+        <label>Select Mod:</label>
+        <select id="modSelect" class="form-select"></select>
+    </div>
+    <div class="mb-3">
+        <label>Select Sub-mod:</label>
+        <select id="submodSelect" class="form-select"></select>
+    </div>
+
+    <form id="modForm">
+        <div class="mb-3"><label>Name</label><input id="name" class="form-control" required></div>
+        <div class="mb-3"><label>Version</label><input id="version" class="form-control" required></div>
+        <div class="mb-3"><label>Installation Path</label><input id="path" class="form-control" required></div>
+        <div class="mb-3"><label>Author</label><input id="author" class="form-control" required></div>
+        <div class="mb-3"><label>Description</label><textarea id="description" class="form-control" required></textarea></div>
+        <button id="saveBtn" class="btn btn-success">Save changes</button>
+    </form>
+</div>
+
+<script>
+    (async function () {
+        const xmlUrl = 'https://raw.githubusercontent.com/Albeoris/Memoria/main/Memoria.Launcher/Catalogs/MemoriaCatalog.xml';
+        const xmlText = await fetch(xmlUrl).then(r => r.text());
+        const xmlDoc = new DOMParser().parseFromString(xmlText, 'application/xml');
+
+        const mods = Array.from(xmlDoc.querySelectorAll('ModCatalog > Mod'));
+        const modSelect = document.getElementById('modSelect');
+        const submodSelect = document.getElementById('submodSelect');
+
+        mods.forEach(mod => {
+            const name = mod.querySelector('Name').textContent;
+            modSelect.add(new Option(name));
+        });
+
+        function updateSubmods() {
+            submodSelect.innerHTML = '<option>Main</option>';
+            const mod = mods[modSelect.selectedIndex];
+            mod.querySelectorAll(':scope > Mod').forEach(submod => {
+                const name = submod.querySelector('Name').textContent;
+                submodSelect.add(new Option(name));
+            });
+        }
+
+        modSelect.addEventListener('change', updateSubmods);
+        updateSubmods();
+
+        document.getElementById('saveBtn').onclick = function (e) {
+            e.preventDefault();
+            alert('Save action would trigger GitHub Actions or API call here.');
+        };
+    })();
+</script>
 </body>
 </html>
