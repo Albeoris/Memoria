@@ -8,7 +8,16 @@
     <style>
         body.dark-theme { background-color: #121212; color: #e0e0e0; }
         .dark-theme input, .dark-theme select, .dark-theme textarea { background: #232323; color: #e0e0e0; border-color: #555; }
-        textarea { resize: none; overflow-y: hidden; }
+        .dark-theme .btn-primary { background-color: #0d6efd; border-color: #0d6efd; }
+        .dark-theme .btn-secondary { background-color: #6c757d; border-color: #6c757d; }
+        .dark-theme .btn-success { background-color: #198754; border-color: #198754; }
+        .dark-theme .btn-info { background-color: #0dcaf0; border-color: #0dcaf0; color: #000; }
+        .dark-theme .card { background-color: #1e1e1e !important; border-color: #555; }
+        .dark-theme .card-body { background-color: #1e1e1e; }
+        .dark-theme .bg-secondary { background-color: #2d2d2d !important; }
+        textarea { resize: vertical; min-height: 60px; overflow-y: hidden; }
+        .form-control:focus { box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25); }
+        code { background-color: #2d2d2d; color: #f8f9fa; padding: 2px 4px; border-radius: 3px; }
 
         /* Select2 dark theme override */
         body.dark-theme .select2-container--default .select2-selection--single {
@@ -43,6 +52,47 @@
 <body class="dark-theme">
 <div class="container py-4">
     <h2>Memoria Mod Catalog Editor</h2>
+    
+    <!-- Help Section -->
+    <div class="mb-4">
+        <button class="btn btn-info btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#helpSection" aria-expanded="false">
+            Show Instructions
+        </button>
+        <div class="collapse mt-2" id="helpSection">
+            <div class="card bg-secondary">
+                <div class="card-body">
+                    <h5>How to use this editor:</h5>
+                    <ol>
+                        <li><strong>Authentication:</strong> Click "Login with GitHub" and enter your Personal Access Token. 
+                            <br><small>Create one at: GitHub Settings > Developer settings > Personal access tokens > Tokens (classic)<br>
+                            Required scopes: <code>repo</code>, <code>workflow</code></small></li>
+                        <li><strong>Select Mod:</strong> Choose an existing mod from the dropdown to edit it.</li>
+                        <li><strong>Select Sub-mod:</strong> Choose "Main" to edit the main mod, or select a sub-mod to edit it specifically.</li>
+                        <li><strong>Edit Fields:</strong> Fill in the form with your changes. Required fields are marked with *.</li>
+                        <li><strong>Create New:</strong> Use "Create New Mod" or "Create New SubMod" buttons to add new content.</li>
+                        <li><strong>Save:</strong> Click "Save Changes" to create a Pull Request with your modifications.</li>
+                    </ol>
+                    <p><strong>Note:</strong> All changes create Pull Requests that need to be reviewed and merged by repository maintainers.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Authentication Section -->
+    <div id="authSection" class="mb-4">
+        <div class="card bg-dark">
+            <div class="card-body">
+                <h5 class="card-title">GitHub Authentication</h5>
+                <p class="card-text">You need to authenticate with GitHub to save changes.</p>
+                <button id="authBtn" class="btn btn-primary">Login with GitHub</button>
+                <div id="authStatus" class="mt-2" style="display:none;">
+                    <span class="text-success">✓ Authenticated as <span id="username"></span></span>
+                    <button id="logoutBtn" class="btn btn-sm btn-outline-secondary ms-2">Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="mb-3">
         <label>Select Mod:</label>
         <select id="modSelect" class="form-select"></select>
@@ -51,35 +101,177 @@
         <label>Select Sub-mod:</label>
         <select id="submodSelect" class="form-select"></select>
     </div>
+    
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" class="alert alert-info" style="display:none;">
+        <div class="d-flex align-items-center">
+            <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+            <span>Loading...</span>
+        </div>
+    </div>
 
     <form id="modForm">
-        <div class="mb-3"><label>Name</label><input id="name" class="form-control" required></div>
-        <div class="mb-3"><label>Version</label><input id="version" class="form-control" required></div>
-        <div class="mb-3" id="installationField"><label>Installation Path</label><input id="path" class="form-control" required></div>
-        <div class="mb-3" id="authorField"><label>Author</label><input id="author" class="form-control" required></div>
-        <div class="mb-3"><label>Description</label><textarea id="description" class="form-control" required></textarea></div>
-        <button id="saveBtn" class="btn btn-success">Save changes</button>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3"><label>Name *</label><input id="name" class="form-control" required></div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3"><label>Version *</label><input id="version" class="form-control" required></div>
+            </div>
+        </div>
+        <div class="row" id="mainModFields">
+            <div class="col-md-6">
+                <div class="mb-3"><label>Installation Path *</label><input id="path" class="form-control" required></div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3"><label>Author *</label><input id="author" class="form-control" required></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3"><label>Priority</label><input id="priority" type="number" class="form-control"></div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3"><label>Category</label><input id="category" class="form-control"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3"><label>Release Date</label><input id="releaseDate" type="date" class="form-control"></div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3"><label>Website</label><input id="website" type="url" class="form-control"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3"><label>Download URL</label><input id="downloadUrl" type="url" class="form-control"></div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3"><label>Preview File URL</label><input id="previewFileUrl" type="url" class="form-control"></div>
+            </div>
+        </div>
+        <div class="mb-3"><label>Description *</label><textarea id="description" class="form-control" required rows="4"></textarea></div>
+        <div class="mb-3"><label>Patch Notes</label><textarea id="patchNotes" class="form-control" rows="3"></textarea></div>
+        <div class="mb-3"><label>Incompatible With</label><input id="incompatibleWith" class="form-control" placeholder="Comma-separated list of mod names"></div>
+        <div class="mb-3"><label>Minimum Memoria Version</label><input id="minimumMemoriaVersion" class="form-control" placeholder="YYYY-MM-DD"></div>
+        
+        <div class="mb-3">
+            <button type="button" id="newModBtn" class="btn btn-primary me-2">Create New Mod</button>
+            <button type="button" id="newSubmodBtn" class="btn btn-secondary me-2">Create New SubMod</button>
+            <button type="submit" id="saveBtn" class="btn btn-success">Save Changes</button>
+        </div>
     </form>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 <script>
     (async function () {
-        const xmlUrl = 'https://raw.githubusercontent.com/Albeoris/Memoria/main/Memoria.Launcher/Catalogs/MemoriaCatalog.xml';
-        const xmlText = await fetch(xmlUrl).then(r => r.text());
-        const xmlDoc = new DOMParser().parseFromString(xmlText, 'application/xml');
+        // GitHub API configuration
+        const REPO_OWNER = 'Albeoris';
+        const REPO_NAME = 'Memoria';
+        const CATALOG_PATH = 'Memoria.Launcher/Catalogs/MemoriaCatalog.xml';
+        
+        let accessToken = localStorage.getItem('github_token');
+        let currentUser = null;
+        
+        // Initialize authentication UI
+        function updateAuthUI() {
+            if (accessToken && currentUser) {
+                $('#authSection .card-text').text(`Authenticated as ${currentUser.login}`);
+                $('#authBtn').hide();
+                $('#authStatus').show();
+                $('#username').text(currentUser.login);
+            } else {
+                $('#authBtn').show();
+                $('#authStatus').hide();
+            }
+        }
+        
+        // Check if token is valid
+        async function validateToken() {
+            if (!accessToken) return false;
+            
+            try {
+                const response = await fetch('https://api.github.com/user', {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+                
+                if (response.ok) {
+                    currentUser = await response.json();
+                    updateAuthUI();
+                    return true;
+                } else {
+                    localStorage.removeItem('github_token');
+                    accessToken = null;
+                    updateAuthUI();
+                    return false;
+                }
+            } catch (error) {
+                console.error('Token validation error:', error);
+                return false;
+            }
+        }
+        
+        // Handle authentication
+        $('#authBtn').click(() => {
+            // For GitHub Pages, we'll use a simplified approach with Personal Access Token
+            const token = prompt('Please enter your GitHub Personal Access Token:\n\nTo create one:\n1. Go to GitHub Settings > Developer settings > Personal access tokens > Tokens (classic)\n2. Generate new token\n3. Required scopes: repo, workflow\n\nToken:');
+            
+            if (token) {
+                accessToken = token.trim();
+                localStorage.setItem('github_token', accessToken);
+                validateToken();
+            }
+        });
+        
+        $('#logoutBtn').click(() => {
+            localStorage.removeItem('github_token');
+            accessToken = null;
+            currentUser = null;
+            updateAuthUI();
+        });
+        
+        // Validate token on load
+        await validateToken();
 
-        const mods = Array.from(xmlDoc.querySelectorAll('ModCatalog > Mod'));
-        mods.sort((a, b) => a.querySelector('Name').textContent.localeCompare(b.querySelector('Name').textContent));
+        // Loading indicator
+        function showLoading(message = 'Loading...') {
+            $('#loadingIndicator').text(message).show();
+        }
+        
+        function hideLoading() {
+            $('#loadingIndicator').hide();
+        }
 
-        const modSelect = $('#modSelect');
-        const submodSelect = $('#submodSelect');
+        try {
+            showLoading('Loading mod catalog...');
+            const xmlUrl = 'https://raw.githubusercontent.com/Albeoris/Memoria/main/Memoria.Launcher/Catalogs/MemoriaCatalog.xml';
+            const xmlText = await fetch(xmlUrl).then(r => r.text());
+            const xmlDoc = new DOMParser().parseFromString(xmlText, 'application/xml');
 
-        mods.forEach(mod => modSelect.append(new Option(mod.querySelector('Name').textContent)));
+            const mods = Array.from(xmlDoc.querySelectorAll('ModCatalog > Mod'));
+            mods.sort((a, b) => a.querySelector('Name').textContent.localeCompare(b.querySelector('Name').textContent));
 
-        modSelect.select2();
-        submodSelect.select2();
+            const modSelect = $('#modSelect');
+            const submodSelect = $('#submodSelect');
+
+            mods.forEach(mod => modSelect.append(new Option(mod.querySelector('Name').textContent)));
+
+            modSelect.select2();
+            submodSelect.select2();
+            
+            hideLoading();
+        } catch (error) {
+            hideLoading();
+            alert('Error loading mod catalog: ' + error.message);
+            console.error('Loading error:', error);
+        }
 
         function autosizeTextarea(el) {
             el.style.height = 'auto';
@@ -87,23 +279,56 @@
         }
 
         function fillForm(modElement, isSubmod) {
-            $('#name').val(modElement.querySelector('Name').textContent);
-            $('#version').val(modElement.querySelector('Version').textContent);
+            // Clear all fields first
+            $('#modForm input, #modForm textarea').val('');
+            
+            // Basic fields
+            $('#name').val(modElement.querySelector('Name')?.textContent || '');
+            $('#version').val(modElement.querySelector('Version')?.textContent || '');
             $('#description').val(modElement.querySelector('Description')?.textContent || '');
-            autosizeTextarea(document.getElementById('description'));
-
-            $('#installationField, #authorField').toggle(!isSubmod);
-
-            if (!isSubmod) {
-                $('#path').val(modElement.querySelector('InstallationPath').textContent);
-                $('#author').val(modElement.querySelector('Author').textContent);
+            $('#patchNotes').val(modElement.querySelector('PatchNotes')?.textContent || '');
+            
+            // Optional fields
+            $('#priority').val(modElement.querySelector('Priority')?.textContent || '');
+            $('#category').val(modElement.querySelector('Category')?.textContent || '');
+            $('#website').val(modElement.querySelector('Website')?.textContent || '');
+            $('#downloadUrl').val(modElement.querySelector('DownloadUrl')?.textContent || '');
+            $('#previewFileUrl').val(modElement.querySelector('PreviewFileUrl')?.textContent || '');
+            $('#incompatibleWith').val(modElement.querySelector('IncompatibleWith')?.textContent || '');
+            $('#minimumMemoriaVersion').val(modElement.querySelector('MinimumMemoriaVersion')?.textContent || '');
+            
+            // Format date if present
+            const releaseDate = modElement.querySelector('ReleaseDate')?.textContent;
+            if (releaseDate) {
+                // Try to parse the date and format it for HTML date input
+                try {
+                    const date = new Date(releaseDate);
+                    if (!isNaN(date.getTime())) {
+                        $('#releaseDate').val(date.toISOString().split('T')[0]);
+                    }
+                } catch (e) {
+                    $('#releaseDate').val('');
+                }
             }
+
+            // Show/hide main mod fields
+            $('#mainModFields').toggle(!isSubmod);
+
+            // Main mod specific fields
+            if (!isSubmod) {
+                $('#path').val(modElement.querySelector('InstallationPath')?.textContent || '');
+                $('#author').val(modElement.querySelector('Author')?.textContent || '');
+            }
+            
+            // Auto-resize textareas
+            autosizeTextarea(document.getElementById('description'));
+            autosizeTextarea(document.getElementById('patchNotes'));
         }
 
         function updateSubmods() {
             submodSelect.empty().append(new Option('Main'));
             const mod = mods[modSelect.prop('selectedIndex')];
-            const submods = mod.querySelectorAll('Mod');
+            const submods = mod.querySelectorAll('SubMod');
             submods.forEach(submod => {
                 submodSelect.append(new Option(submod.querySelector('Name').textContent));
             });
@@ -115,15 +340,326 @@
 
         submodSelect.on('change', () => {
             const mod = mods[modSelect.prop('selectedIndex')];
-            const submods = mod.querySelectorAll('Mod');
+            const submods = mod.querySelectorAll('SubMod');
             const submodIndex = submodSelect.prop('selectedIndex') - 1;
             const isSubmod = submodIndex >= 0;
             fillForm(isSubmod ? submods[submodIndex] : mod, isSubmod);
         });
 
+        // Auto-resize textareas
+        $('textarea').on('input', function() {
+            autosizeTextarea(this);
+        });
+        
+        // Save functionality
+        async function saveChanges() {
+            if (!accessToken) {
+                alert('Please authenticate with GitHub first.');
+                return;
+            }
+            
+            // Enhanced validation
+            const form = document.getElementById('modForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            // Additional validation for required fields when not empty
+            const name = $('#name').val().trim();
+            const version = $('#version').val().trim();
+            const description = $('#description').val().trim();
+            
+            if (!name || !version || !description) {
+                alert('Name, Version, and Description are required and cannot be empty or whitespace only.');
+                return;
+            }
+            
+            // Check if we're editing a submod or main mod
+            const isSubmod = submodSelect.prop('selectedIndex') > 0;
+            const isNewMod = modSelect.val() === null || modSelect.val() === '';
+            const isNewSubmod = submodSelect.val() === 'new-submod';
+            
+            if (!isSubmod && !isNewSubmod) {
+                const path = $('#path').val().trim();
+                const author = $('#author').val().trim();
+                if (!path || !author) {
+                    alert('Installation Path and Author are required for main mods.');
+                    return;
+                }
+            }
+            
+            try {
+                $('#saveBtn').prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Saving...');
+                showLoading('Creating pull request...');
+                
+                // Get the current XML content
+                const currentXmlResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CATALOG_PATH}`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+                
+                if (!currentXmlResponse.ok) {
+                    throw new Error('Failed to fetch current XML content');
+                }
+                
+                const currentXmlData = await currentXmlResponse.json();
+                const currentXmlContent = atob(currentXmlData.content);
+                const currentXmlDoc = new DOMParser().parseFromString(currentXmlContent, 'application/xml');
+                
+                // Create modified XML
+                const modifiedXmlDoc = currentXmlDoc.cloneNode(true);
+                
+                if (isNewMod) {
+                    // Create new mod
+                    const newMod = createModElement(modifiedXmlDoc, false);
+                    modifiedXmlDoc.querySelector('ModCatalog').appendChild(newMod);
+                } else if (isNewSubmod) {
+                    // Create new submod
+                    const selectedModIndex = modSelect.prop('selectedIndex');
+                    const modsInXml = Array.from(modifiedXmlDoc.querySelectorAll('ModCatalog > Mod'));
+                    const targetMod = modsInXml[selectedModIndex];
+                    
+                    const newSubmod = createModElement(modifiedXmlDoc, true);
+                    targetMod.appendChild(newSubmod);
+                } else {
+                    // Update existing mod or submod
+                    const selectedModIndex = modSelect.prop('selectedIndex');
+                    const modsInXml = Array.from(modifiedXmlDoc.querySelectorAll('ModCatalog > Mod'));
+                    const targetMod = modsInXml[selectedModIndex];
+                    
+                    if (isSubmod) {
+                        const submodIndex = submodSelect.prop('selectedIndex') - 1;
+                        const submods = Array.from(targetMod.querySelectorAll('SubMod'));
+                        const targetSubmod = submods[submodIndex];
+                        updateModElement(targetSubmod, true);
+                    } else {
+                        updateModElement(targetMod, false);
+                    }
+                }
+                
+                // Serialize XML
+                const serializer = new XMLSerializer();
+                let newXmlContent = serializer.serializeToString(modifiedXmlDoc);
+                
+                // Clean up and format XML
+                newXmlContent = newXmlContent.replace(/>\s+</g, '><');
+                newXmlContent = formatXmlForCatalog(newXmlContent);
+                
+                // Create branch and PR
+                const branchName = `mod-edit-${Date.now()}`;
+                const commitMessage = isNewMod ? `Add new mod: ${name}` : 
+                                    isNewSubmod ? `Add new submod: ${name}` : 
+                                    `Update ${isSubmod ? 'submod' : 'mod'}: ${name}`;
+                
+                await createPullRequest(branchName, commitMessage, newXmlContent, currentXmlData.sha);
+                
+            } catch (error) {
+                console.error('Save error:', error);
+                alert('Error saving changes: ' + error.message);
+            } finally {
+                $('#saveBtn').prop('disabled', false).text('Save Changes');
+                hideLoading();
+            }
+        }
+        
+        function createModElement(doc, isSubmod) {
+            const element = doc.createElement(isSubmod ? 'SubMod' : 'Mod');
+            
+            // Add basic fields
+            addElementIfValue(doc, element, 'Name', $('#name').val().trim());
+            if (!isSubmod || $('#version').val().trim()) {
+                addElementIfValue(doc, element, 'Version', $('#version').val().trim());
+            }
+            addElementIfValue(doc, element, 'InstallationPath', $('#path').val().trim());
+            if (!isSubmod) {
+                addElementIfValue(doc, element, 'Author', $('#author').val().trim());
+            }
+            addElementIfValue(doc, element, 'Description', $('#description').val().trim());
+            
+            // Add optional fields
+            addElementIfValue(doc, element, 'Priority', $('#priority').val().trim());
+            addElementIfValue(doc, element, 'Category', $('#category').val().trim());
+            addElementIfValue(doc, element, 'ReleaseDate', $('#releaseDate').val().trim());
+            addElementIfValue(doc, element, 'Website', $('#website').val().trim());
+            addElementIfValue(doc, element, 'DownloadUrl', $('#downloadUrl').val().trim());
+            addElementIfValue(doc, element, 'PreviewFileUrl', $('#previewFileUrl').val().trim());
+            addElementIfValue(doc, element, 'PatchNotes', $('#patchNotes').val().trim());
+            addElementIfValue(doc, element, 'IncompatibleWith', $('#incompatibleWith').val().trim());
+            addElementIfValue(doc, element, 'MinimumMemoriaVersion', $('#minimumMemoriaVersion').val().trim());
+            
+            return element;
+        }
+        
+        function updateModElement(element, isSubmod) {
+            // Update existing element
+            updateElementText(element, 'Name', $('#name').val().trim());
+            if (!isSubmod || $('#version').val().trim()) {
+                updateElementText(element, 'Version', $('#version').val().trim());
+            }
+            updateElementText(element, 'InstallationPath', $('#path').val().trim());
+            if (!isSubmod) {
+                updateElementText(element, 'Author', $('#author').val().trim());
+            }
+            updateElementText(element, 'Description', $('#description').val().trim());
+            
+            // Update optional fields
+            updateElementText(element, 'Priority', $('#priority').val().trim());
+            updateElementText(element, 'Category', $('#category').val().trim());
+            updateElementText(element, 'ReleaseDate', $('#releaseDate').val().trim());
+            updateElementText(element, 'Website', $('#website').val().trim());
+            updateElementText(element, 'DownloadUrl', $('#downloadUrl').val().trim());
+            updateElementText(element, 'PreviewFileUrl', $('#previewFileUrl').val().trim());
+            updateElementText(element, 'PatchNotes', $('#patchNotes').val().trim());
+            updateElementText(element, 'IncompatibleWith', $('#incompatibleWith').val().trim());
+            updateElementText(element, 'MinimumMemoriaVersion', $('#minimumMemoriaVersion').val().trim());
+        }
+        
+        function addElementIfValue(doc, parent, tagName, value) {
+            if (value) {
+                const element = doc.createElement(tagName);
+                element.textContent = value;
+                parent.appendChild(element);
+            }
+        }
+        
+        function updateElementText(parent, tagName, value) {
+            let element = parent.querySelector(tagName);
+            if (value) {
+                if (!element) {
+                    element = parent.ownerDocument.createElement(tagName);
+                    parent.appendChild(element);
+                }
+                element.textContent = value;
+            } else if (element) {
+                element.remove();
+            }
+        }
+        
+        function formatXmlForCatalog(xmlString) {
+            // Basic formatting to match the original structure
+            return xmlString
+                .replace(/<ModCatalog>/g, '<ModCatalog>\n')
+                .replace(/<\/ModCatalog>/g, '\n</ModCatalog>')
+                .replace(/<Mod>/g, '\n<Mod>')
+                .replace(/<\/Mod>/g, '\n</Mod>')
+                .replace(/<SubMod>/g, '\n\t<SubMod>')
+                .replace(/<\/SubMod>/g, '\n\t</SubMod>')
+                .replace(/<([^\/][^>]*)>([^<]+)<\/[^>]+>/g, '\n\t<$1>$2</$1>')
+                .replace(/\n\s*\n/g, '\n')
+                .replace(/^\n/, '');
+        }
+        
+        async function createPullRequest(branchName, commitMessage, content, baseSha) {
+            // Get main branch SHA
+            const mainBranchResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/git/ref/heads/main`, {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+            
+            const mainBranchData = await mainBranchResponse.json();
+            const mainSha = mainBranchData.object.sha;
+            
+            // Create new branch
+            await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/git/refs`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    ref: `refs/heads/${branchName}`,
+                    sha: mainSha
+                })
+            });
+            
+            // Create or update file
+            const updateResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CATALOG_PATH}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: commitMessage,
+                    content: btoa(unescape(encodeURIComponent(content))),
+                    sha: baseSha,
+                    branch: branchName
+                })
+            });
+            
+            if (!updateResponse.ok) {
+                throw new Error('Failed to update file');
+            }
+            
+            // Create pull request
+            const prResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/pulls`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    title: commitMessage,
+                    head: branchName,
+                    base: 'main',
+                    body: `This pull request was created automatically from the Memoria Mod Catalog Editor.\n\nChanges made:\n- ${commitMessage}`
+                })
+            });
+            
+            if (!prResponse.ok) {
+                throw new Error('Failed to create pull request');
+            }
+            
+            const prData = await prResponse.json();
+            
+            // Show success message and redirect
+            alert(`Successfully created pull request #${prData.number}!\n\nYou will be redirected to the PR page.`);
+            window.open(prData.html_url, '_blank');
+        }
+
         $('#saveBtn').click(e => {
             e.preventDefault();
-            alert('Save action would trigger GitHub Actions or API call here.');
+            saveChanges();
+        });
+        
+        // New mod button
+        $('#newModBtn').click(() => {
+            if (confirm('Create a new mod? This will clear the current form.')) {
+                // Clear form and set up for new mod
+                $('#modForm input, #modForm textarea').val('');
+                $('#mainModFields').show();
+                $('#modSelect').val(null).trigger('change.select2');
+                $('#submodSelect').empty().append(new Option('Main')).val(null).trigger('change.select2');
+                $('#name').focus();
+            }
+        });
+        
+        // New submod button
+        $('#newSubmodBtn').click(() => {
+            const selectedModIndex = modSelect.prop('selectedIndex');
+            if (selectedModIndex < 0) {
+                alert('Please select a parent mod first.');
+                return;
+            }
+            
+            if (confirm('Create a new submod for the selected mod? This will clear the current form.')) {
+                // Clear form and set up for new submod
+                $('#modForm input, #modForm textarea').val('');
+                $('#mainModFields').hide();
+                // Add a temporary "New SubMod" option
+                const newOption = new Option('(New SubMod)', 'new-submod');
+                submodSelect.append(newOption);
+                submodSelect.val('new-submod').trigger('change.select2');
+                $('#name').focus();
+            }
         });
     })();
 </script>
