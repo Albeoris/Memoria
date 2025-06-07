@@ -256,12 +256,12 @@
             const xmlDoc = new DOMParser().parseFromString(xmlText, 'application/xml');
 
             const mods = Array.from(xmlDoc.querySelectorAll('ModCatalog > Mod'));
-            mods.sort((a, b) => a.querySelector('n').textContent.localeCompare(b.querySelector('n').textContent));
+            mods.sort((a, b) => a.querySelector('Name').textContent.localeCompare(b.querySelector('Name').textContent));
 
             const modSelect = $('#modSelect');
             const submodSelect = $('#submodSelect');
 
-            mods.forEach(mod => modSelect.append(new Option(mod.querySelector('n').textContent)));
+            mods.forEach(mod => modSelect.append(new Option(mod.querySelector('Name').textContent)));
 
             modSelect.select2();
             submodSelect.select2();
@@ -283,7 +283,7 @@
             $('#modForm input, #modForm textarea').val('');
             
             // Basic fields
-            $('#name').val(modElement.querySelector('n')?.textContent || '');
+            $('#name').val(modElement.querySelector('Name')?.textContent || '');
             $('#version').val(modElement.querySelector('Version')?.textContent || '');
             $('#description').val(modElement.querySelector('Description')?.textContent || '');
             $('#patchNotes').val(modElement.querySelector('PatchNotes')?.textContent || '');
@@ -330,7 +330,7 @@
             const mod = mods[modSelect.prop('selectedIndex')];
             const submods = mod.querySelectorAll('SubMod');
             submods.forEach(submod => {
-                submodSelect.append(new Option(submod.querySelector('n').textContent));
+                submodSelect.append(new Option(submod.querySelector('Name').textContent));
             });
             fillForm(mod, false);
         }
@@ -469,7 +469,7 @@
             const element = doc.createElement(isSubmod ? 'SubMod' : 'Mod');
             
             // Add basic fields
-            addElementIfValue(doc, element, 'n', $('#name').val().trim());
+            addElementIfValue(doc, element, 'Name', $('#name').val().trim());
             if (!isSubmod || $('#version').val().trim()) {
                 addElementIfValue(doc, element, 'Version', $('#version').val().trim());
             }
@@ -495,7 +495,7 @@
         
         function updateModElement(element, isSubmod) {
             // Update existing element
-            updateElementText(element, 'n', $('#name').val().trim());
+            updateElementText(element, 'Name', $('#name').val().trim());
             if (!isSubmod || $('#version').val().trim()) {
                 updateElementText(element, 'Version', $('#version').val().trim());
             }
