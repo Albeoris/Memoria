@@ -234,6 +234,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
 <script>
     (async function () {
         // GitHub API configuration
@@ -287,37 +288,48 @@
         const GITHUB_CLIENT_ID = 'Ov23liQYkBGETSNkXL6s';
 
         $('#authBtn').click(() => {
+            showDeviceFlowModal();
             githubDeviceLogin();
         });
 
-// Device Flow login with Bootstrap modal
-        async function githubDeviceLogin() {
-            // Request device code from GitHub
-            const resp = await fetch('https://github.com/login/device/code', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `client_id=${GITHUB_CLIENT_ID}&scope=repo`
-            });
-            const data = await resp.json();
+        function showDeviceFlowModal() {
+            // Always show the modal before starting Device Flow
+            $('#deviceFlowStep1').hide();
+            $('#deviceFlowStep2').hide();
+            $('#deviceFlowError').addClass('d-none').text('');
+            const modalEl = document.getElementById('deviceFlowModal');
+            const modal = new bootstrap.Modal(modalEl);
+            modal.show();
+        }
 
-            if (!data.device_code) {
-                showDeviceFlowError('GitHub Device Flow error: ' + (data.error || 'unknown error'));
-                return;
+        async function githubDeviceLogin() {
+            // Now, inside modal, show loading spinner while requesting code
+            $('#deviceFlowStep1').hide();
+            $('#deviceFlowStep2').show().find('.spinner-border').show();
+            $('#deviceFlowError').addClass('d-none').text('');
+
+            let data = null;
+            try {
+                const resp = await fetch('https://github.com/login/device/code', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `client_id=${GITHUB_CLIENT_ID}&scope=repo`
+                });
+                data = await resp.json();
+            } catch (e) {
+                return showDeviceFlowError('Network error. Try again.');
             }
 
-            // Show modal with code and link
+            if (!data || !data.device_code) {
+                return showDeviceFlowError('GitHub Device Flow error: ' + (data && data.error ? data.error : 'unknown error'));
+            }
+
+            // Now set code and steps
             $('#deviceUserCode').val(data.user_code);
-            $('#deviceFlowOpenBtn').off('click').on('click', () => {
-                window.open(data.verification_uri, '_blank');
-            });
             $('#deviceFlowStep1').show();
             $('#deviceFlowStep2').hide();
-            $('#deviceFlowError').addClass('d-none');
-            const modal = new bootstrap.Modal(document.getElementById('deviceFlowModal'));
-            modal.show();
 
-            // When user clicks button, switch to waiting UI
-            $('#deviceFlowOpenBtn').off('click').on('click', () => {
+            $('#deviceFlowOpenBtn').off('click').on('click', function () {
                 window.open(data.verification_uri, '_blank');
                 $('#deviceFlowStep1').hide();
                 $('#deviceFlowStep2').show();
@@ -337,8 +349,7 @@
                     localStorage.setItem('github_token', pollData.access_token);
                     gotToken = true;
                     const modalEl = document.getElementById('deviceFlowModal');
-                    const bsModal = bootstrap.Modal.getInstance(modalEl);
-                    bsModal.hide();
+                    bootstrap.Modal.getInstance(modalEl).hide();
                     location.reload();
                     break;
                 }
@@ -350,7 +361,7 @@
         }
 
         function showDeviceFlowError(msg) {
-            $('#deviceFlowError').text(msg).removeClass('d-none');
+            $('#deviceFlowError').removeClass('d-none').text(msg);
             $('#deviceFlowStep1').hide();
             $('#deviceFlowStep2').hide();
         }
