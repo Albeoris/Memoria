@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Memoria Catalog Editor</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet">
     <style>
         body.dark-theme { background-color: #121212; color: #e0e0e0; }
         .dark-theme input, .dark-theme select, .dark-theme textarea { background: #232323; color: #e0e0e0; border-color: #555; }
-        textarea { resize: vertical; min-height: 100px; }
+        textarea { resize: none; overflow-y: hidden; }
     </style>
 </head>
 <body class="dark-theme">
@@ -32,6 +33,8 @@
     </form>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 <script>
     (async function () {
         const xmlUrl = 'https://raw.githubusercontent.com/Albeoris/Memoria/main/Memoria.Launcher/Catalogs/MemoriaCatalog.xml';
@@ -41,60 +44,56 @@
         const mods = Array.from(xmlDoc.querySelectorAll('ModCatalog > Mod'));
         mods.sort((a, b) => a.querySelector('Name').textContent.localeCompare(b.querySelector('Name').textContent));
 
-        const modSelect = document.getElementById('modSelect');
-        const submodSelect = document.getElementById('submodSelect');
+        const modSelect = $('#modSelect');
+        const submodSelect = $('#submodSelect');
 
-        mods.forEach(mod => {
-            const name = mod.querySelector('Name').textContent;
-            modSelect.add(new Option(name));
-        });
+        mods.forEach(mod => modSelect.append(new Option(mod.querySelector('Name').textContent)));
+
+        modSelect.select2();
+        submodSelect.select2();
+
+        function autosizeTextarea(el) {
+            el.style.height = 'auto';
+            el.style.height = el.scrollHeight + 'px';
+        }
 
         function fillForm(modElement, isSubmod) {
-            document.getElementById('name').value = modElement.querySelector('Name').textContent;
-            document.getElementById('version').value = modElement.querySelector('Version').textContent;
-            document.getElementById('description').value = modElement.querySelector('Description')?.textContent || '';
+            $('#name').val(modElement.querySelector('Name').textContent);
+            $('#version').val(modElement.querySelector('Version').textContent);
+            $('#description').val(modElement.querySelector('Description')?.textContent || '');
+            autosizeTextarea(document.getElementById('description'));
 
-            document.getElementById('installationField').style.display = isSubmod ? 'none' : 'block';
-            document.getElementById('authorField').style.display = isSubmod ? 'none' : 'block';
+            $('#installationField, #authorField').toggle(!isSubmod);
 
             if (!isSubmod) {
-                document.getElementById('path').value = modElement.querySelector('InstallationPath').textContent;
-                document.getElementById('author').value = modElement.querySelector('Author').textContent;
+                $('#path').val(modElement.querySelector('InstallationPath').textContent);
+                $('#author').val(modElement.querySelector('Author').textContent);
             }
         }
 
         function updateSubmods() {
-            submodSelect.innerHTML = '<option>Main</option>';
-            const mod = mods[modSelect.selectedIndex];
-            const submods = mod.querySelectorAll(':scope > Mod');
-
-            submods.forEach(submod => {
-                const name = submod.querySelector('Name').textContent;
-                submodSelect.add(new Option(name));
+            submodSelect.empty().append(new Option('Main'));
+            const mod = mods[modSelect.prop('selectedIndex')];
+            mod.querySelectorAll(':scope > Mod').forEach(submod => {
+                submodSelect.append(new Option(submod.querySelector('Name').textContent));
             });
-
             fillForm(mod, false);
         }
 
-        modSelect.addEventListener('change', updateSubmods);
+        modSelect.on('change', updateSubmods);
         updateSubmods();
 
-        submodSelect.addEventListener('change', () => {
-            const mod = mods[modSelect.selectedIndex];
-            const submodIndex = submodSelect.selectedIndex - 1;
-
-            if (submodIndex >= 0) {
-                const submod = mod.querySelectorAll(':scope > Mod')[submodIndex];
-                fillForm(submod, true);
-            } else {
-                fillForm(mod, false);
-            }
+        submodSelect.on('change', () => {
+            const mod = mods[modSelect.prop('selectedIndex')];
+            const submodIndex = submodSelect.prop('selectedIndex') - 1;
+            const isSubmod = submodIndex >= 0;
+            fillForm(isSubmod ? mod.querySelectorAll(':scope > Mod')[submodIndex] : mod, isSubmod);
         });
 
-        document.getElementById('saveBtn').onclick = function (e) {
+        $('#saveBtn').click(e => {
             e.preventDefault();
             alert('Save action would trigger GitHub Actions or API call here.');
-        };
+        });
     })();
 </script>
 </body>
