@@ -11,10 +11,13 @@
         .dark-theme .btn-primary { background-color: #0d6efd; border-color: #0d6efd; }
         .dark-theme .btn-secondary { background-color: #6c757d; border-color: #6c757d; }
         .dark-theme .btn-success { background-color: #198754; border-color: #198754; }
+        .dark-theme .btn-info { background-color: #0dcaf0; border-color: #0dcaf0; color: #000; }
         .dark-theme .card { background-color: #1e1e1e !important; border-color: #555; }
         .dark-theme .card-body { background-color: #1e1e1e; }
+        .dark-theme .bg-secondary { background-color: #2d2d2d !important; }
         textarea { resize: vertical; min-height: 60px; overflow-y: hidden; }
         .form-control:focus { box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25); }
+        code { background-color: #2d2d2d; color: #f8f9fa; padding: 2px 4px; border-radius: 3px; }
 
         /* Select2 dark theme override */
         body.dark-theme .select2-container--default .select2-selection--single {
@@ -50,6 +53,31 @@
 <div class="container py-4">
     <h2>Memoria Mod Catalog Editor</h2>
     
+    <!-- Help Section -->
+    <div class="mb-4">
+        <button class="btn btn-info btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#helpSection" aria-expanded="false">
+            Show Instructions
+        </button>
+        <div class="collapse mt-2" id="helpSection">
+            <div class="card bg-secondary">
+                <div class="card-body">
+                    <h5>How to use this editor:</h5>
+                    <ol>
+                        <li><strong>Authentication:</strong> Click "Login with GitHub" and enter your Personal Access Token. 
+                            <br><small>Create one at: GitHub Settings > Developer settings > Personal access tokens > Tokens (classic)<br>
+                            Required scopes: <code>repo</code>, <code>workflow</code></small></li>
+                        <li><strong>Select Mod:</strong> Choose an existing mod from the dropdown to edit it.</li>
+                        <li><strong>Select Sub-mod:</strong> Choose "Main" to edit the main mod, or select a sub-mod to edit it specifically.</li>
+                        <li><strong>Edit Fields:</strong> Fill in the form with your changes. Required fields are marked with *.</li>
+                        <li><strong>Create New:</strong> Use "Create New Mod" or "Create New SubMod" buttons to add new content.</li>
+                        <li><strong>Save:</strong> Click "Save Changes" to create a Pull Request with your modifications.</li>
+                    </ol>
+                    <p><strong>Note:</strong> All changes create Pull Requests that need to be reviewed and merged by repository maintainers.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- Authentication Section -->
     <div id="authSection" class="mb-4">
         <div class="card bg-dark">
@@ -72,6 +100,14 @@
     <div class="mb-3">
         <label>Select Sub-mod:</label>
         <select id="submodSelect" class="form-select"></select>
+    </div>
+    
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" class="alert alert-info" style="display:none;">
+        <div class="d-flex align-items-center">
+            <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+            <span>Loading...</span>
+        </div>
     </div>
 
     <form id="modForm">
@@ -129,6 +165,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 <script>
     (async function () {
@@ -203,20 +240,38 @@
         // Validate token on load
         await validateToken();
 
-        const xmlUrl = 'https://raw.githubusercontent.com/Albeoris/Memoria/main/Memoria.Launcher/Catalogs/MemoriaCatalog.xml';
-        const xmlText = await fetch(xmlUrl).then(r => r.text());
-        const xmlDoc = new DOMParser().parseFromString(xmlText, 'application/xml');
+        // Loading indicator
+        function showLoading(message = 'Loading...') {
+            $('#loadingIndicator').text(message).show();
+        }
+        
+        function hideLoading() {
+            $('#loadingIndicator').hide();
+        }
 
-        const mods = Array.from(xmlDoc.querySelectorAll('ModCatalog > Mod'));
-        mods.sort((a, b) => a.querySelector('n').textContent.localeCompare(b.querySelector('n').textContent));
+        try {
+            showLoading('Loading mod catalog...');
+            const xmlUrl = 'https://raw.githubusercontent.com/Albeoris/Memoria/main/Memoria.Launcher/Catalogs/MemoriaCatalog.xml';
+            const xmlText = await fetch(xmlUrl).then(r => r.text());
+            const xmlDoc = new DOMParser().parseFromString(xmlText, 'application/xml');
 
-        const modSelect = $('#modSelect');
-        const submodSelect = $('#submodSelect');
+            const mods = Array.from(xmlDoc.querySelectorAll('ModCatalog > Mod'));
+            mods.sort((a, b) => a.querySelector('n').textContent.localeCompare(b.querySelector('n').textContent));
 
-        mods.forEach(mod => modSelect.append(new Option(mod.querySelector('n').textContent)));
+            const modSelect = $('#modSelect');
+            const submodSelect = $('#submodSelect');
 
-        modSelect.select2();
-        submodSelect.select2();
+            mods.forEach(mod => modSelect.append(new Option(mod.querySelector('n').textContent)));
+
+            modSelect.select2();
+            submodSelect.select2();
+            
+            hideLoading();
+        } catch (error) {
+            hideLoading();
+            alert('Error loading mod catalog: ' + error.message);
+            console.error('Loading error:', error);
+        }
 
         function autosizeTextarea(el) {
             el.style.height = 'auto';
@@ -335,7 +390,8 @@
             }
             
             try {
-                $('#saveBtn').prop('disabled', true).text('Saving...');
+                $('#saveBtn').prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Saving...');
+                showLoading('Creating pull request...');
                 
                 // Get the current XML content
                 const currentXmlResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CATALOG_PATH}`, {
@@ -405,6 +461,7 @@
                 alert('Error saving changes: ' + error.message);
             } finally {
                 $('#saveBtn').prop('disabled', false).text('Save Changes');
+                hideLoading();
             }
         }
         
