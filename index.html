@@ -1,240 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Memoria Catalog Editor</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet">
-    <style>
-        body.dark-theme { background-color: #121212; color: #e0e0e0; }
-        .dark-theme input, .dark-theme select, .dark-theme textarea { background: #232323; color: #e0e0e0; border-color: #555; }
-        .dark-theme .btn-primary { background-color: #0d6efd; border-color: #0d6efd; }
-        .dark-theme .btn-secondary { background-color: #6c757d; border-color: #6c757d; }
-        .dark-theme .btn-success { background-color: #198754; border-color: #198754; }
-        .dark-theme .btn-info { background-color: #0dcaf0; border-color: #0dcaf0; color: #000; }
-        .dark-theme .card { background-color: #1e1e1e !important; border-color: #555; }
-        .dark-theme .card-body { background-color: #1e1e1e; }
-        .dark-theme .bg-secondary { background-color: #2d2d2d !important; }
-        textarea { resize: vertical; min-height: 60px; overflow-y: hidden; }
-        .form-control:focus { box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25); }
-        code { background-color: #2d2d2d; color: #f8f9fa; padding: 2px 4px; border-radius: 3px; }
-        body.dark-theme .select2-container--default .select2-selection--single {
-            background-color: #232323 !important;
-            color: #e0e0e0 !important;
-            border-color: #555 !important;
-        }
-        body.dark-theme .select2-container--default .select2-selection--single .select2-selection__rendered {
-            color: #e0e0e0 !important;
-        }
-        body.dark-theme .select2-container--default .select2-dropdown {
-            background-color: #232323 !important;
-            color: #e0e0e0 !important;
-            border-color: #555 !important;
-        }
-        body.dark-theme .select2-container--default .select2-results__option {
-            background-color: #232323 !important;
-            color: #e0e0e0 !important;
-        }
-        body.dark-theme .select2-container--default .select2-results__option--highlighted {
-            background-color: #383838 !important;
-            color: #fff !important;
-        }
-        body.dark-theme .select2-search--dropdown .select2-search__field {
-            background: #232323 !important;
-            color: #e0e0e0 !important;
-            border-color: #555 !important;
-        }
-        body.dark-theme .bg-secondary,
-        body.dark-theme .card.bg-secondary,
-        body.dark-theme .card.bg-secondary .card-body {
-            background-color: #232323 !important;
-            color: #e0e0e0 !important;
-        }
-        body.dark-theme .bg-dark,
-        body.dark-theme .card.bg-dark,
-        body.dark-theme .card.bg-dark .card-body {
-            background-color: #232323 !important;
-            color: #e0e0e0 !important;
-        }
-    </style>
-</head>
-<body class="dark-theme">
-<div class="container py-4">
-    <h2>Memoria Mod Catalog Editor</h2>
-
-    <!-- Help Section -->
-    <div class="mb-4">
-        <button class="btn btn-info btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#helpSection" aria-expanded="false">
-            Show Instructions
-        </button>
-        <div class="collapse mt-2" id="helpSection">
-            <div class="card bg-secondary">
-                <div class="card-body">
-                    <h5>How to use this editor:</h5>
-                    <ol>
-                        <li><strong>Authentication:</strong> Click "Login with GitHub" and enter your Personal Access Token.
-                            <br><small>Create one at: GitHub Settings > Developer settings > Personal access tokens > Tokens (classic)<br>
-                                Required scopes: <code>repo</code>, <code>workflow</code></small></li>
-                        <li><strong>Select Mod:</strong> Choose an existing mod from the dropdown to edit it.</li>
-                        <li><strong>Select Sub-mod:</strong> Choose "Main" to edit the main mod, or select a sub-mod to edit it specifically.</li>
-                        <li><strong>Edit Fields:</strong> Fill in the form with your changes. Required fields are marked with *.</li>
-                        <li><strong>Create New:</strong> Use "Create New Mod" or "Create New SubMod" buttons to add new content.</li>
-                        <li><strong>Save:</strong> Click "Save Changes" to create a Pull Request with your modifications.</li>
-                    </ol>
-                    <p><strong>Note:</strong> All changes create Pull Requests that need to be reviewed and merged by repository maintainers.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Authentication Section -->
-    <div id="authSection" class="mb-4">
-        <div class="card bg-dark">
-            <div class="card-body">
-                <h5 class="card-title">GitHub Authentication</h5>
-                <p class="card-text">You need to authenticate with GitHub to save changes.</p>
-                <button id="authBtn" class="btn btn-primary">Login with GitHub</button>
-                <div id="authStatus" class="mt-2" style="display:none;">
-                    <span class="text-success">✓ Authenticated as <span id="username"></span></span>
-                    <button id="logoutBtn" class="btn btn-sm btn-outline-secondary ms-2">Logout</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- GitHub Device Flow Modal -->
-    <div class="modal fade" id="deviceFlowModal" tabindex="-1" aria-labelledby="deviceFlowModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content bg-dark text-light">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title" id="deviceFlowModalLabel">GitHub Login</h5>
-                </div>
-                <div class="modal-body">
-                    <div id="deviceFlowStep1">
-                        <p>1. Click the button below to open the GitHub authentication page.<br>
-                            2. Enter this code:</p>
-                        <div class="mb-3">
-                            <input id="deviceUserCode" class="form-control fw-bold text-center" readonly style="font-size:1.4em;">
-                        </div>
-                        <button class="btn btn-info w-100" id="deviceFlowOpenBtn" target="_blank">Open GitHub & Authorize</button>
-                    </div>
-                    <div id="deviceFlowStep2" style="display:none;">
-                        <div class="d-flex align-items-center mb-2">
-                            <div class="spinner-border spinner-border-sm me-2"></div>
-                            <div>Waiting for authorization...</div>
-                        </div>
-                        <div class="text-muted">After approving in GitHub, this window will close automatically.</div>
-                    </div>
-                    <div id="deviceFlowError" class="alert alert-danger mt-2 d-none"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="mb-3">
-        <label>Select Mod:</label>
-        <select id="modSelect" class="form-select"></select>
-    </div>
-    <div class="mb-3">
-        <label>Select Sub-mod:</label>
-        <select id="submodSelect" class="form-select"></select>
-    </div>
-
-    <!-- Loading Indicator -->
-    <div id="loadingIndicator" class="alert alert-info" style="display:none;">
-        <div class="d-flex align-items-center">
-            <div class="spinner-border spinner-border-sm me-2" role="status"></div>
-            <span>Loading...</span>
-        </div>
-    </div>
-
-    <form id="modForm">
-        <div id="mainModFields" class="row">
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label>Installation Path *</label>
-                    <input id="path" class="form-control" required>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label>Version *</label>
-                    <input id="version" class="form-control" required>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label>Author *</label>
-                    <input id="author" class="form-control" required>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label>Priority</label>
-                    <input id="priority" type="number" class="form-control">
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label>Category</label>
-                    <input id="category" class="form-control">
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label>Release Date</label>
-                    <input id="releaseDate" type="date" class="form-control">
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label>Website</label>
-                    <input id="website" type="url" class="form-control">
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label>Download URL</label>
-                    <input id="downloadUrl" type="url" class="form-control">
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label>Preview File URL</label>
-                    <input id="previewFileUrl" type="url" class="form-control">
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label>Patch Notes</label>
-                    <textarea id="patchNotes" class="form-control" rows="3"></textarea>
-                </div>
-            </div>
-        </div>
-        <div class="mb-3"><label>Description *</label><textarea id="description" class="form-control" required rows="4"></textarea></div>
-        <div class="mb-3"><label>Incompatible With</label><input id="incompatibleWith" class="form-control" placeholder="Comma-separated list of mod names"></div>
-        <div class="mb-3"><label>Minimum Memoria Version</label><input id="minimumMemoriaVersion" class="form-control" placeholder="YYYY-MM-DD"></div>
-
-        <div class="mb-3">
-            <button type="button" id="newModBtn" class="btn btn-primary me-2">Create New Mod</button>
-            <button type="button" id="newSubmodBtn" class="btn btn-secondary me-2">Create New SubMod</button>
-            <button type="submit" id="saveBtn" class="btn btn-success">Save Changes</button>
-        </div>
-    </form>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-
 <script>
     (async function () {
         // GitHub API configuration
@@ -247,6 +10,26 @@
         let modSelect = null;
         let submodSelect = null;
         let mods = [];
+
+        // Check if access_token present in URL
+        function extractTokenFromUrl() {
+            const url = new URL(window.location.href);
+            const token = url.searchParams.get('token');
+            if (token) {
+                localStorage.setItem('github_token', token);
+                // Remove ?token=... from history without reloading
+                url.searchParams.delete('token');
+                window.history.replaceState({}, document.title, url.pathname + url.search);
+                return token;
+            }
+            return null;
+        }
+
+        // Try to extract token at page load
+        const justReceivedToken = extractTokenFromUrl();
+        if (justReceivedToken) {
+            accessToken = justReceivedToken;
+        }
 
         function updateAuthUI() {
             if (accessToken && currentUser) {
@@ -285,86 +68,10 @@
             }
         }
 
-        const GITHUB_CLIENT_ID = 'Ov23liQYkBGETSNkXL6s';
-
         $('#authBtn').click(() => {
-            showDeviceFlowModal();
-            githubDeviceLogin();
+            const OAUTH_ENDPOINT = "https://memoria-oauth.netlify.app/.netlify/functions/auth";
+            window.location.href = OAUTH_ENDPOINT;
         });
-
-        function showDeviceFlowModal() {
-            // Always show the modal before starting Device Flow
-            $('#deviceFlowStep1').hide();
-            $('#deviceFlowStep2').hide();
-            $('#deviceFlowError').addClass('d-none').text('');
-            const modalEl = document.getElementById('deviceFlowModal');
-            const modal = new bootstrap.Modal(modalEl);
-            modal.show();
-        }
-
-        async function githubDeviceLogin() {
-            // Now, inside modal, show loading spinner while requesting code
-            $('#deviceFlowStep1').hide();
-            $('#deviceFlowStep2').show().find('.spinner-border').show();
-            $('#deviceFlowError').addClass('d-none').text('');
-
-            let data = null;
-            try {
-                const resp = await fetch('https://github.com/login/device/code', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: `client_id=${GITHUB_CLIENT_ID}&scope=repo`
-                });
-                data = await resp.json();
-            } catch (e) {
-                return showDeviceFlowError('Network error. Try again.');
-            }
-
-            if (!data || !data.device_code) {
-                return showDeviceFlowError('GitHub Device Flow error: ' + (data && data.error ? data.error : 'unknown error'));
-            }
-
-            // Now set code and steps
-            $('#deviceUserCode').val(data.user_code);
-            $('#deviceFlowStep1').show();
-            $('#deviceFlowStep2').hide();
-
-            $('#deviceFlowOpenBtn').off('click').on('click', function () {
-                window.open(data.verification_uri, '_blank');
-                $('#deviceFlowStep1').hide();
-                $('#deviceFlowStep2').show();
-            });
-
-            // Polling for access token
-            let gotToken = false;
-            while (!gotToken) {
-                await new Promise(r => setTimeout(r, data.interval * 1000));
-                const pollResp = await fetch('https://github.com/login/oauth/access_token', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' },
-                    body: `client_id=${GITHUB_CLIENT_ID}&device_code=${data.device_code}&grant_type=urn:ietf:params:oauth:grant-type:device_code`
-                });
-                const pollData = await pollResp.json();
-                if (pollData.access_token) {
-                    localStorage.setItem('github_token', pollData.access_token);
-                    gotToken = true;
-                    const modalEl = document.getElementById('deviceFlowModal');
-                    bootstrap.Modal.getInstance(modalEl).hide();
-                    location.reload();
-                    break;
-                }
-                if (pollData.error && pollData.error !== 'authorization_pending') {
-                    showDeviceFlowError('GitHub Auth Error: ' + pollData.error);
-                    break;
-                }
-            }
-        }
-
-        function showDeviceFlowError(msg) {
-            $('#deviceFlowError').removeClass('d-none').text(msg);
-            $('#deviceFlowStep1').hide();
-            $('#deviceFlowStep2').hide();
-        }
 
         $('#logoutBtn').click(() => {
             localStorage.removeItem('github_token');
@@ -440,7 +147,6 @@
                 }
             }
             $('#mainModFields').toggle(!isSubmod);
-            // Динамически требуем Version только для Main
             $('#version').prop('required', !isSubmod);
             if (!isSubmod) {
                 $('#path').val(modElement.querySelector('InstallationPath')?.textContent || '');
@@ -471,7 +177,7 @@
             fillForm(isSubmod ? submods[submodIndex] : mod, isSubmod);
         });
 
-        $('textarea').on('input', function() {
+        $('textarea').on('input', function () {
             autosizeTextarea(this);
         });
 
@@ -489,7 +195,6 @@
             const version = $('#version').val().trim();
             const description = $('#description').val().trim();
 
-            // Версия обязательна только для Main
             const isSubmod = submodSelect.prop('selectedIndex') > 0;
             if (!isSubmod && !version) {
                 alert('Version is required for main mods.');
@@ -735,5 +440,3 @@
         });
     })();
 </script>
-</body>
-</html>
