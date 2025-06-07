@@ -44,6 +44,18 @@
             color: #e0e0e0 !important;
             border-color: #555 !important;
         }
+        body.dark-theme .bg-secondary,
+        body.dark-theme .card.bg-secondary,
+        body.dark-theme .card.bg-secondary .card-body {
+            background-color: #232323 !important;
+            color: #e0e0e0 !important;
+        }
+        body.dark-theme .bg-dark,
+        body.dark-theme .card.bg-dark,
+        body.dark-theme .card.bg-dark .card-body {
+            background-color: #232323 !important;
+            color: #e0e0e0 !important;
+        }
     </style>
 </head>
 <body class="dark-theme">
@@ -85,6 +97,35 @@
                 <div id="authStatus" class="mt-2" style="display:none;">
                     <span class="text-success">✓ Authenticated as <span id="username"></span></span>
                     <button id="logoutBtn" class="btn btn-sm btn-outline-secondary ms-2">Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GitHub Device Flow Modal -->
+    <div class="modal fade" id="deviceFlowModal" tabindex="-1" aria-labelledby="deviceFlowModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title" id="deviceFlowModalLabel">GitHub Login</h5>
+                </div>
+                <div class="modal-body">
+                    <div id="deviceFlowStep1">
+                        <p>1. Click the button below to open the GitHub authentication page.<br>
+                            2. Enter this code:</p>
+                        <div class="mb-3">
+                            <input id="deviceUserCode" class="form-control fw-bold text-center" readonly style="font-size:1.4em;">
+                        </div>
+                        <button class="btn btn-info w-100" id="deviceFlowOpenBtn" target="_blank">Open GitHub & Authorize</button>
+                    </div>
+                    <div id="deviceFlowStep2" style="display:none;">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="spinner-border spinner-border-sm me-2"></div>
+                            <div>Waiting for authorization...</div>
+                        </div>
+                        <div class="text-muted">After approving in GitHub, this window will close automatically.</div>
+                    </div>
+                    <div id="deviceFlowError" class="alert alert-danger mt-2 d-none"></div>
                 </div>
             </div>
         </div>
@@ -243,14 +284,76 @@
             }
         }
 
+        const GITHUB_CLIENT_ID = 'Ov23liQYkBGETSNkXL6s';
+
         $('#authBtn').click(() => {
-            const token = prompt('Please enter your GitHub Personal Access Token:\n\nTo create one:\n1. Go to GitHub Settings > Developer settings > Personal access tokens > Tokens (classic)\n2. Generate new token\n3. Required scopes: repo, workflow\n\nToken:');
-            if (token) {
-                accessToken = token.trim();
-                localStorage.setItem('github_token', accessToken);
-                validateToken();
-            }
+            githubDeviceLogin();
         });
+
+// Device Flow login with Bootstrap modal
+        async function githubDeviceLogin() {
+            // Request device code from GitHub
+            const resp = await fetch('https://github.com/login/device/code', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `client_id=${GITHUB_CLIENT_ID}&scope=repo`
+            });
+            const data = await resp.json();
+
+            if (!data.device_code) {
+                showDeviceFlowError('GitHub Device Flow error: ' + (data.error || 'unknown error'));
+                return;
+            }
+
+            // Show modal with code and link
+            $('#deviceUserCode').val(data.user_code);
+            $('#deviceFlowOpenBtn').off('click').on('click', () => {
+                window.open(data.verification_uri, '_blank');
+            });
+            $('#deviceFlowStep1').show();
+            $('#deviceFlowStep2').hide();
+            $('#deviceFlowError').addClass('d-none');
+            const modal = new bootstrap.Modal(document.getElementById('deviceFlowModal'));
+            modal.show();
+
+            // When user clicks button, switch to waiting UI
+            $('#deviceFlowOpenBtn').off('click').on('click', () => {
+                window.open(data.verification_uri, '_blank');
+                $('#deviceFlowStep1').hide();
+                $('#deviceFlowStep2').show();
+            });
+
+            // Polling for access token
+            let gotToken = false;
+            while (!gotToken) {
+                await new Promise(r => setTimeout(r, data.interval * 1000));
+                const pollResp = await fetch('https://github.com/login/oauth/access_token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' },
+                    body: `client_id=${GITHUB_CLIENT_ID}&device_code=${data.device_code}&grant_type=urn:ietf:params:oauth:grant-type:device_code`
+                });
+                const pollData = await pollResp.json();
+                if (pollData.access_token) {
+                    localStorage.setItem('github_token', pollData.access_token);
+                    gotToken = true;
+                    const modalEl = document.getElementById('deviceFlowModal');
+                    const bsModal = bootstrap.Modal.getInstance(modalEl);
+                    bsModal.hide();
+                    location.reload();
+                    break;
+                }
+                if (pollData.error && pollData.error !== 'authorization_pending') {
+                    showDeviceFlowError('GitHub Auth Error: ' + pollData.error);
+                    break;
+                }
+            }
+        }
+
+        function showDeviceFlowError(msg) {
+            $('#deviceFlowError').text(msg).removeClass('d-none');
+            $('#deviceFlowStep1').hide();
+            $('#deviceFlowStep2').hide();
+        }
 
         $('#logoutBtn').click(() => {
             localStorage.removeItem('github_token');
