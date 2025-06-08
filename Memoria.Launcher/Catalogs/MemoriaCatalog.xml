@@ -941,12 +941,12 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 	
 <Mod>
 	<Name>Amazing Quina</Name>
-	<Version>2.1</Version>
+	<Version>2.2</Version>
 	<Priority>-9</Priority>
 	<InstallationPath>AmazingQuina</InstallationPath>
 	<ReleaseDateOriginal>2024-08-18</ReleaseDateOriginal>
-	<ReleaseDate>2024-12-09</ReleaseDate>
-	<MinimumMemoriaVersion>v2024.12.04</MinimumMemoriaVersion>
+	<ReleaseDate>2025-05-29</ReleaseDate>
+	<MinimumMemoriaVersion>v2025.05.12</MinimumMemoriaVersion>
 	<Author>Emeiru</Author>
 <Description>Amazing tweaks and improvement for the quirky Quina
 - Forks deal more consistent random damage
@@ -955,7 +955,7 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 - Quina now learns Scan, Return Magic, and others
 - Tweaks to abilities like Goblin Punch, White Wind, and more
 
-Compatible with Alternate Fantasy</Description>
+Compatible with Alternate Fantasy v6.8 only</Description>
 	<PatchNotes>Complete changes can be found on the mod page.</PatchNotes>
 	<Category>Gameplay</Category>
 	<PreviewFile>AmazingQuina.jpg</PreviewFile>
