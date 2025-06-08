@@ -231,6 +231,9 @@
             <button type="button" id="newModBtn" class="btn btn-primary me-2">Create New Mod</button>
             <button type="button" id="newSubmodBtn" class="btn btn-secondary me-2">Create New SubMod</button>
             <button type="submit" id="saveBtn" class="btn btn-success">Save Changes</button>
+            <div id="prLinkContainer" class="d-inline-block ms-3" style="display:none;">
+                <a id="prLink" href="#" target="_blank" class="btn btn-outline-info btn-sm">View Pull Request</a>
+            </div>
         </div>
     </form>
 </div>
@@ -422,6 +425,23 @@
             autosizeTextarea(this);
         });
 
+        function startButtonCooldown() {
+            let timeLeft = 10;
+            const originalText = 'Save Changes';
+            
+            function updateButton() {
+                if (timeLeft > 0) {
+                    $('#saveBtn').prop('disabled', true).text(`Save Changes (${timeLeft})`);
+                    timeLeft--;
+                    setTimeout(updateButton, 1000);
+                } else {
+                    $('#saveBtn').prop('disabled', false).text(originalText);
+                }
+            }
+            
+            updateButton();
+        }
+
         async function saveChanges() {
             if (!accessToken) {
                 alert('Please authenticate with GitHub first.');
@@ -456,6 +476,9 @@
                 }
             }
             try {
+                // Hide PR link container at start of new save
+                $('#prLinkContainer').hide();
+                
                 $('#saveBtn').prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Saving...');
                 showLoading('Creating pull request...');
                 const currentXmlResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CATALOG_PATH}`, {
@@ -502,11 +525,15 @@
                     isNewSubmod ? `Add new submod: ${name}` :
                         `Update ${isSubmod ? 'submod' : 'mod'}: ${name}`;
                 await createPullRequest(branchName, commitMessage, newXmlContent, currentXmlData.sha);
+                
+                // Start cooldown timer
+                startButtonCooldown();
+                
             } catch (error) {
                 console.error('Save error:', error);
                 alert('Error saving changes: ' + error.message);
-            } finally {
                 $('#saveBtn').prop('disabled', false).text('Save Changes');
+            } finally {
                 hideLoading();
             }
         }
@@ -580,7 +607,7 @@
             return xmlString
                 .replace(/<ModCatalog>/g, '<ModCatalog>\n')
                 .replace(/<\/ModCatalog>/g, '\n</ModCatalog>')
-                .replace(/<Mod>/g, '\n<Mod>')
+                .replace(/<Mod>/g, '\n\n<Mod>')
                 .replace(/<\/Mod>/g, '\n</Mod>')
                 .replace(/<SubMod>/g, '\n\t<SubMod>')
                 .replace(/<\/SubMod>/g, '\n\t</SubMod>')
@@ -619,7 +646,7 @@
                 },
                 body: JSON.stringify({
                     message: commitMessage,
-                    content: btoa(unescape(encodeURIComponent(content))),
+                    content: btoa(new TextEncoder().encode(content).reduce((data, byte) => data + String.fromCharCode(byte), '')),
                     sha: baseSha,
                     branch: branchName
                 })
@@ -645,8 +672,12 @@
                 throw new Error('Failed to create pull request');
             }
             const prData = await prResponse.json();
-            alert(`Successfully created pull request #${prData.number}!\n\nYou will be redirected to the PR page.`);
-            window.open(prData.html_url, '_blank');
+            
+            // Show the PR link instead of redirecting
+            $('#prLink').attr('href', prData.html_url).text(`Pull Request #${prData.number}`);
+            $('#prLinkContainer').show();
+            
+            alert(`Successfully created pull request #${prData.number}!`);
         }
 
         $('#saveBtn').click(e => {
