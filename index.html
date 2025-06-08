@@ -339,6 +339,21 @@
         // Track original form values to detect actual changes
         let originalFormValues = {};
         let isLoadingFormData = false; // Flag to prevent modification tracking during form loading
+        
+        // ==========================================
+        // OBJECT-BASED SELECTION SYSTEM
+        // ==========================================
+        // We NEVER use selectedIndex for mod/submod selection because:
+        // 1. selectedIndex changes when UI is sorted or filtered
+        // 2. selectedIndex doesn't correspond to XML position after sorting
+        // 3. This causes wrong mods to be edited/saved
+        // 
+        // Instead we maintain direct object references to selected mod/submod:
+        let selectedMod = null;        // Currently selected mod DOM element
+        let selectedSubMod = null;     // Currently selected submod DOM element (null for main mod)
+        
+        // For XML operations, we ONLY use originalIndex which is assigned during XML parsing
+        // and never changes during UI operations. This ensures correct XML element targeting.
 
         // Helper methods for working with originalIndex
         
@@ -427,22 +442,27 @@
             }
         }
         
-        // Function to select a mod/submod in the UI
+        // Function to select a mod/submod in the UI using object references
         function selectModInUI(element, parentElement, isSubmod) {
             if (isSubmod && parentElement) {
-                // Find parent mod in the sorted mods array
-                const parentName = parentElement.querySelector('Name')?.textContent;
-                const modIndex = mods.findIndex(mod => mod.querySelector('Name')?.textContent === parentName);
+                // Find parent mod in the sorted mods array by comparing originalIndex
+                const parentOriginalIndex = parentElement.originalIndex;
+                const modIndex = mods.findIndex(mod => mod.originalIndex === parentOriginalIndex);
                 
                 if (modIndex !== -1) {
                     // Select the parent mod first
                     modSelect.val(modSelect.find('option').eq(modIndex).val()).trigger('change');
                     
-                    // Then select the submod
+                    // Then select the submod by finding it in the submods using originalIndex
                     setTimeout(() => {
-                        const submodName = element.querySelector('Name')?.textContent;
-                        const submodOption = submodSelect.find('option').filter(function() {
-                            return $(this).text() === submodName;
+                        const submodOriginalIndex = element.originalIndex;
+                        const submodOption = submodSelect.find('option').filter(function(index) {
+                            if (index === 0) return false; // Skip 'Main' option
+                            // Get the corresponding submod by display order position
+                            const submods = Array.from(selectedMod.querySelectorAll('SubMod'));
+                            submods.sort((a, b) => a.querySelector('Name').textContent.localeCompare(b.querySelector('Name').textContent));
+                            const submodByPosition = submods[index - 1]; // -1 because 'Main' is at index 0
+                            return submodByPosition && submodByPosition.originalIndex === submodOriginalIndex;
                         });
                         if (submodOption.length > 0) {
                             submodSelect.val(submodOption.val()).trigger('change');
@@ -450,9 +470,9 @@
                     }, 100);
                 }
             } else {
-                // Select main mod
-                const modName = element.querySelector('Name')?.textContent;
-                const modIndex = mods.findIndex(mod => mod.querySelector('Name')?.textContent === modName);
+                // Select main mod using originalIndex for stable identification
+                const modOriginalIndex = element.originalIndex;
+                const modIndex = mods.findIndex(mod => mod.originalIndex === modOriginalIndex);
                 
                 if (modIndex !== -1) {
                     modSelect.val(modSelect.find('option').eq(modIndex).val()).trigger('change');
@@ -1025,23 +1045,12 @@
             // Skip if currently loading form data
             if (isLoadingFormData) return;
             
-            const modIndex = modSelect.prop('selectedIndex');
-            const submodDisplayIndex = submodSelect.prop('selectedIndex') - 1; // -1 because 'Main' is at index 0
-            const isSubmod = submodDisplayIndex >= 0;
+            // Use object references instead of selectedIndex - this ensures we edit the correct
+            // mod/submod regardless of UI sorting or filtering
+            const isSubmod = selectedSubMod !== null;
+            let targetElement = isSubmod ? selectedSubMod : selectedMod;
             
-            if (modIndex < 0 || !mods[modIndex]) return; // No mod selected
-            
-            let targetElement;
-            if (isSubmod) {
-                // Get submods in alphabetical order to match the UI display
-                const submods = Array.from(mods[modIndex].querySelectorAll('SubMod'));
-                submods.sort((a, b) => a.querySelector('Name').textContent.localeCompare(b.querySelector('Name').textContent));
-                targetElement = submods[submodDisplayIndex];
-            } else {
-                targetElement = mods[modIndex];
-            }
-            
-            if (!targetElement) return;
+            if (!targetElement) return; // No mod/submod selected
             
             // Check if any values actually changed
             let hasChanges = false;
@@ -1135,27 +1144,58 @@
 
         function updateSubmods() {
             submodSelect.empty().append(new Option('Main'));
-            const mod = mods[modSelect.prop('selectedIndex')];
-            const submods = Array.from(mod.querySelectorAll('SubMod'));
+            
+            // Use object reference instead of selectedIndex
+            const selectedModIndex = modSelect.prop('selectedIndex');
+            if (selectedModIndex < 0) {
+                selectedMod = null;
+                selectedSubMod = null;
+                return;
+            }
+            
+            // Update selectedMod object reference - this is the stable reference we'll use
+            selectedMod = mods[selectedModIndex];
+            selectedSubMod = null; // Reset submod selection when mod changes
+            
+            const submods = Array.from(selectedMod.querySelectorAll('SubMod'));
             // Sort submods alphabetically by name for display
             submods.sort((a, b) => a.querySelector('Name').textContent.localeCompare(b.querySelector('Name').textContent));
             submods.forEach(submod => {
                 submodSelect.append(new Option(submod.querySelector('Name').textContent));
             });
-            fillForm(mod, false);
+            fillForm(selectedMod, false);
         }
 
         modSelect.on('change', updateSubmods);
         updateSubmods();
 
         submodSelect.on('change', () => {
-            const mod = mods[modSelect.prop('selectedIndex')];
-            const submods = Array.from(mod.querySelectorAll('SubMod'));
-            // Sort submods alphabetically to match the display order
-            submods.sort((a, b) => a.querySelector('Name').textContent.localeCompare(b.querySelector('Name').textContent));
-            const submodIndex = submodSelect.prop('selectedIndex') - 1;
+            if (!selectedMod) return;
+            
+            const selectedValue = submodSelect.val();
+            
+            if (selectedValue === 'new-submod') {
+                // New submod mode
+                selectedSubMod = 'new-submod'; // Special marker for new submod
+                // Don't call fillForm for new submods, form should remain empty
+                return;
+            }
+            
+            const submodIndex = submodSelect.prop('selectedIndex') - 1; // -1 because 'Main' is at index 0
             const isSubmod = submodIndex >= 0;
-            fillForm(isSubmod ? submods[submodIndex] : mod, isSubmod);
+            
+            if (isSubmod) {
+                // Update selectedSubMod object reference
+                const submods = Array.from(selectedMod.querySelectorAll('SubMod'));
+                // Sort submods alphabetically to match the display order
+                submods.sort((a, b) => a.querySelector('Name').textContent.localeCompare(b.querySelector('Name').textContent));
+                selectedSubMod = submods[submodIndex];
+                fillForm(selectedSubMod, true);
+            } else {
+                // Main mod selected
+                selectedSubMod = null;
+                fillForm(selectedMod, false);
+            }
         });
 
         $('textarea').on('input', function () {
@@ -1198,7 +1238,8 @@
             const version = $('#version').val();
             const description = $('#description').val();
 
-            const isSubmod = submodSelect.prop('selectedIndex') > 0;
+            const isSubmod = selectedSubMod !== null && selectedSubMod !== 'new-submod'; // Use object reference instead of selectedIndex
+            const isNewSubmod = selectedSubMod === 'new-submod';
             if (!isSubmod && !version) {
                 alert('Version is required for main mods.');
                 return;
@@ -1207,8 +1248,7 @@
                 alert('Name and Description are required.');
                 return;
             }
-            const isNewMod = modSelect.val() === null || modSelect.val() === '';
-            const isNewSubmod = submodSelect.val() === 'new-submod';
+            const isNewMod = selectedMod === null; // Use object reference instead of selectedIndex check
             if (!isSubmod && !isNewSubmod) {
                 const path = $('#path').val();
                 const author = $('#author').val();
@@ -1284,9 +1324,10 @@
                     // Add the new mod to originalModsOrder for tracking
                     originalModsOrder.push(newModElement);
                 } else if (isNewSubmod) {
-                    // Handle new submods by finding the target mod and inserting at the end
-                    const selectedModIndex = modSelect.prop('selectedIndex');
-                    const selectedMod = mods[selectedModIndex];
+                    // Handle new submods by finding the target mod using object reference
+                    if (!selectedMod) {
+                        throw new Error('No mod selected for new submod');
+                    }
                     const selectedModName = selectedMod.querySelector('Name')?.textContent;
                     
                     // Find the chunk containing this mod by name instead of object reference
@@ -1585,6 +1626,10 @@
                 $('#modSelect').val(null).trigger('change.select2');
                 $('#submodSelect').empty().append(new Option('Main')).val(null).trigger('change.select2');
                 
+                // Clear object references for new mod
+                selectedMod = null;
+                selectedSubMod = null;
+                
                 // Clear original form values for new mod
                 originalFormValues = {};
                 $('#modForm input, #modForm textarea').each(function() {
@@ -1597,8 +1642,7 @@
         });
 
         $('#newSubmodBtn').click(() => {
-            const selectedModIndex = modSelect.prop('selectedIndex');
-            if (selectedModIndex < 0) {
+            if (!selectedMod) { // Use object reference instead of selectedIndex
                 alert('Please select a parent mod first.');
                 return;
             }
@@ -1609,6 +1653,9 @@
                 const newOption = new Option('(New SubMod)', 'new-submod');
                 submodSelect.append(newOption);
                 submodSelect.val('new-submod').trigger('change.select2');
+                
+                // Set selectedSubMod to indicate new submod mode, but keep selectedMod
+                selectedSubMod = 'new-submod'; // Special marker for new submod
                 
                 // Clear original form values for new submod
                 originalFormValues = {};
