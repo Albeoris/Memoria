@@ -252,15 +252,8 @@ namespace Memoria.Launcher
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
             Mod mod = (sender as CheckBox)?.DataContext as Mod;
-            if (mod != null)
-            {
-                // Update selectedMod when a main mod checkbox is clicked
-                selectedMod = mod;
-                selectedSubMod = null; // Reset submod selection
-                
-                if (mod.IsActive)
-                    mod.TryApplyPreset();
-            }
+            if (mod != null && mod.IsActive)
+                mod.TryApplyPreset();
             CheckOutdatedAndIncompatibleMods();
             UpdateModSettings();
             RefreshModOptions();
@@ -304,27 +297,12 @@ namespace Memoria.Launcher
         private void OnModListSelect(Object sender, RoutedEventArgs e)
         {
             ListView lv = sender as ListView;
-            Mod newSelectedMod = null;
-            
             if (lv == lstMods || lv == lstCatalogMods)
-            {
-                newSelectedMod = (Mod)lv.SelectedItem;
-            }
+                UpdateModDetails((Mod)lv.SelectedItem);
             else if (sender == tabCtrlMain && tabCtrlMain.SelectedIndex == 0)
-            {
-                newSelectedMod = (Mod)lstMods.SelectedItem;
-            }
+                UpdateModDetails((Mod)lstMods.SelectedItem);
             else if (sender == tabCtrlMain && tabCtrlMain.SelectedIndex == 1)
-            {
-                newSelectedMod = (Mod)lstCatalogMods.SelectedItem;
-            }
-
-            // Update selected mod object reference - this provides stable selection
-            // regardless of list sorting, filtering, or reordering
-            selectedMod = newSelectedMod;
-            selectedSubMod = null; // Reset submod selection when main mod changes
-            
-            UpdateModDetails(selectedMod);
+                UpdateModDetails((Mod)lstCatalogMods.SelectedItem);
 
             Boolean canDownload = false;
             foreach (Mod mod in lstCatalogMods.SelectedItems)
@@ -384,73 +362,53 @@ namespace Memoria.Launcher
 
         private void OnClickMoveUp(Object sender, RoutedEventArgs e)
         {
-            // Use object reference instead of selectedIndex to find the mod
-            if (selectedMod == null) return;
-            
-            Int32 currentIndex = ModListInstalled.IndexOf(selectedMod);
-            if (currentIndex > 0)
+            if (lstMods.SelectedIndex > 0)
             {
-                Mod modToMove = ModListInstalled[currentIndex];
-                Mod modAbove = ModListInstalled[currentIndex - 1];
-                ModListInstalled.Remove(modToMove);
-                ModListInstalled.Remove(modAbove);
-                ModListInstalled.Insert(currentIndex - 1, modToMove);
-                ModListInstalled.Insert(currentIndex, modAbove);
-                
-                // Update UI selection to maintain the same mod selected
-                lstMods.SelectedItem = selectedMod;
+                Int32 sel = lstMods.SelectedIndex;
+                Mod i1 = ModListInstalled[sel];
+                Mod i2 = ModListInstalled[sel - 1];
+                ModListInstalled.Remove(i1);
+                ModListInstalled.Remove(i2);
+                ModListInstalled.Insert(sel - 1, i1);
+                ModListInstalled.Insert(sel, i2);
+                lstMods.SelectedItem = i1;
                 UpdateInstalledPriorityValue();
             }
         }
         private void OnClickSendTop(Object sender, RoutedEventArgs e)
         {
-            // Use object reference instead of selectedIndex to find the mod
-            if (selectedMod == null) return;
-            
-            Int32 currentIndex = ModListInstalled.IndexOf(selectedMod);
-            if (currentIndex > 0)
+            if (lstMods.SelectedIndex > 0)
             {
-                ModListInstalled.Remove(selectedMod);
-                ModListInstalled.Insert(0, selectedMod);
-                
-                // Update UI selection to maintain the same mod selected
-                lstMods.SelectedItem = selectedMod;
+                Mod i1 = ModListInstalled[lstMods.SelectedIndex];
+                ModListInstalled.Remove(i1);
+                ModListInstalled.Insert(0, i1);
+                lstMods.SelectedItem = i1;
                 UpdateInstalledPriorityValue();
             }
         }
         private void OnClickMoveDown(Object sender, RoutedEventArgs e)
         {
-            // Use object reference instead of selectedIndex to find the mod
-            if (selectedMod == null) return;
-            
-            Int32 currentIndex = ModListInstalled.IndexOf(selectedMod);
-            if (currentIndex >= 0 && currentIndex + 1 < ModListInstalled.Count)
+            if (lstMods.SelectedIndex >= 0 && lstMods.SelectedIndex + 1 < lstMods.Items.Count)
             {
-                Mod modToMove = ModListInstalled[currentIndex];
-                Mod modBelow = ModListInstalled[currentIndex + 1];
-                ModListInstalled.Remove(modToMove);
-                ModListInstalled.Remove(modBelow);
-                ModListInstalled.Insert(currentIndex, modBelow);
-                ModListInstalled.Insert(currentIndex + 1, modToMove);
-                
-                // Update UI selection to maintain the same mod selected
-                lstMods.SelectedItem = selectedMod;
+                Int32 sel = lstMods.SelectedIndex;
+                Mod i1 = ModListInstalled[sel];
+                Mod i2 = ModListInstalled[sel + 1];
+                ModListInstalled.Remove(i1);
+                ModListInstalled.Remove(i2);
+                ModListInstalled.Insert(sel, i2);
+                ModListInstalled.Insert(sel + 1, i1);
+                lstMods.SelectedItem = i1;
                 UpdateInstalledPriorityValue();
             }
         }
         private void OnClickSendBottom(Object sender, RoutedEventArgs e)
         {
-            // Use object reference instead of selectedIndex to find the mod
-            if (selectedMod == null) return;
-            
-            Int32 currentIndex = ModListInstalled.IndexOf(selectedMod);
-            if (currentIndex >= 0 && currentIndex + 1 < ModListInstalled.Count)
+            if (lstMods.SelectedIndex >= 0 && lstMods.SelectedIndex + 1 < lstMods.Items.Count)
             {
-                ModListInstalled.Remove(selectedMod);
-                ModListInstalled.Insert(ModListInstalled.Count, selectedMod);
-                
-                // Update UI selection to maintain the same mod selected
-                lstMods.SelectedItem = selectedMod;
+                Mod i1 = ModListInstalled[lstMods.SelectedIndex];
+                ModListInstalled.Remove(i1);
+                ModListInstalled.Insert(ModListInstalled.Count, i1);
+                lstMods.SelectedItem = i1;
                 UpdateInstalledPriorityValue();
             }
         }
@@ -1309,32 +1267,28 @@ namespace Memoria.Launcher
             if (preventCheckLoop) return;
 
             CheckBox checkbox = sender as CheckBox;
-            Mod submod = (Mod)checkbox.Tag;
-            submod.IsActive = checkbox.IsChecked == true;
+            Mod mod = (Mod)checkbox.Tag;
+            mod.IsActive = checkbox.IsChecked == true;
 
-            // Update selectedSubMod when a submod checkbox is changed
-            // This ensures we track which submod is being interacted with
-            selectedSubMod = submod;
-
-            if (submod.Group != null && checkbox.IsChecked == true)
+            if (mod.Group != null && checkbox.IsChecked == true)
             {
                 // Deactivate all other sub-mods in the group
-                foreach (Mod otherSubmod in submod.ParentMod.SubMod)
+                foreach (Mod submod in mod.ParentMod.SubMod)
                 {
-                    if (otherSubmod == submod || otherSubmod.Group != submod.Group)
+                    if (submod == mod || submod.Group != mod.Group)
                         continue;
-                    otherSubmod.IsActive = false;
+                    submod.IsActive = false;
                 }
             }
-            else if (submod.Group != null && checkbox.IsChecked == false)
+            else if (mod.Group != null && checkbox.IsChecked == false)
             {
                 // Activate the default of the group if found
                 Mod defaultmod = null;
-                foreach (Mod groupSubmod in submod.ParentMod.SubMod)
+                foreach (Mod submod in mod.ParentMod.SubMod)
                 {
-                    if (groupSubmod.Group == submod.Group && groupSubmod.IsDefault)
+                    if (submod.Group == mod.Group && submod.IsDefault)
                     {
-                        defaultmod = groupSubmod;
+                        defaultmod = submod;
                         break;
                     }
                 }
@@ -1607,106 +1561,6 @@ namespace Memoria.Launcher
         private WebClient downloadClient;
         private WebClient downloadCatalogClient;
         private object ascendingSortedColumn = null;
-
-        // ==========================================
-        // OBJECT-BASED SELECTION SYSTEM - DETAILED EXPLANATION
-        // ==========================================
-        // 
-        // WHY WE CANNOT USE selectedIndex:
-        // ================================
-        // 1. UI Reordering Issues:
-        //    - Users can move mods up/down, changing their position in ModListInstalled
-        //    - selectedIndex reflects position in the UI list after reordering
-        //    - But mod settings need to be saved based on original XML structure
-        //    - Using selectedIndex after reordering targets wrong mod in XML
-        //
-        // 2. Sorting/Filtering Issues (future-proofing):
-        //    - If UI adds sorting by name, priority, etc., display order changes
-        //    - selectedIndex would point to wrong mod after sorting
-        //    - Object references remain stable regardless of display order
-        //
-        // 3. ObservableCollection Modifications:
-        //    - Operations like Insert/Remove change indices of all following items
-        //    - selectedIndex becomes invalid after collection modifications
-        //    - Object references remain valid through collection changes
-        //
-        // HOW THE NEW SYSTEM WORKS:
-        // =========================
-        // 1. Object References (selectedMod, selectedSubMod):
-        //    - Direct references to Mod objects in memory
-        //    - Remain stable regardless of list position changes
-        //    - Used for all UI operations and form interactions
-        //
-        // 2. OriginalIndex for XML Operations:
-        //    - Each Mod object has OriginalIndex assigned during XML parsing
-        //    - OriginalIndex corresponds to position in XML NodeList
-        //    - NEVER changes during UI operations (move, sort, etc.)
-        //    - Used only for finding correct XML element during save operations
-        //
-        // 3. Selection Flow:
-        //    - User selects in UI → Update selectedMod/selectedSubMod references
-        //    - Move operations → Use selectedMod reference, not selectedIndex
-        //    - Settings save → Use OriginalIndex to find correct XML element
-        //    - UI updates → Use selectedMod reference to maintain selection
-        //
-        // 4. Benefits:
-        //    - Selection works correctly after reordering
-        //    - Move operations target the correct mod
-        //    - Settings save to correct XML elements
-        //    - System is immune to collection modification side effects
-        
-        // We NEVER use selectedIndex for mod/submod selection because:
-        // 1. selectedIndex changes when UI is sorted, filtered, or reordered
-        // 2. selectedIndex doesn't correspond to XML position after sorting
-        // 3. This causes wrong mods to be edited/saved
-        // 
-        // Instead we maintain direct object references to selected mod/submod:
-        private Mod selectedMod = null;        // Currently selected mod object
-        private Mod selectedSubMod = null;     // Currently selected submod object (null for main mod)
-        
-        // For XML operations, we ONLY use OriginalIndex which is assigned during XML parsing
-        // and never changes during UI operations. This ensures correct XML element targeting.
-
-        // ==========================================
-        // HELPER METHODS FOR OBJECT-BASED SELECTION
-        // ==========================================
-        
-        /// <summary>
-        /// Finds a mod in the installed list by its OriginalIndex.
-        /// This should be used instead of direct array indexing for editing/saving operations
-        /// to ensure the correct mod is selected regardless of UI sorting or filtering.
-        /// </summary>
-        /// <param name="originalIndex">The OriginalIndex assigned during XML parsing</param>
-        /// <returns>The mod with matching OriginalIndex, or null if not found</returns>
-        private Mod FindModByOriginalIndex(Int32 originalIndex)
-        {
-            return Mod.FindByOriginalIndex(ModListInstalled, originalIndex);
-        }
-        
-        /// <summary>
-        /// Finds a submod within the selected mod by its OriginalIndex.
-        /// This should be used instead of direct array indexing for editing/saving operations
-        /// to ensure the correct submod is selected regardless of UI sorting or filtering.
-        /// </summary>
-        /// <param name="originalIndex">The OriginalIndex assigned during XML parsing</param>
-        /// <returns>The submod with matching OriginalIndex, or null if not found</returns>
-        private Mod FindSubModByOriginalIndex(Int32 originalIndex)
-        {
-            if (selectedMod == null) return null;
-            return Mod.FindSubModByOriginalIndex(selectedMod, originalIndex);
-        }
-        
-        /// <summary>
-        /// Updates the UI selection to match the currently selected mod object.
-        /// This ensures the UI stays in sync with our object-based selection system.
-        /// </summary>
-        private void UpdateUISelection()
-        {
-            if (selectedMod != null)
-            {
-                lstMods.SelectedItem = selectedMod;
-            }
-        }
 
         private const String CATALOG_PATH = "./ModCatalog.xml";
         private const String CATALOG_URL = "https://raw.githubusercontent.com/Albeoris/Memoria/main/Memoria.Launcher/Catalogs/MemoriaCatalog.xml";
