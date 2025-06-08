@@ -340,6 +340,36 @@
         let originalFormValues = {};
         let isLoadingFormData = false; // Flag to prevent modification tracking during form loading
 
+        // Helper methods for working with originalIndex
+        
+        // Find mod by originalIndex - provides stable lookup independent of UI sorting
+        function searchWithOriginalIndex(originalIndex) {
+            return originalModsOrder.find(mod => mod.originalIndex === originalIndex);
+        }
+        
+        // Find submod by originalIndex within a parent mod - ensures consistent targeting
+        function searchSubModWithOriginalIndex(parentMod, originalIndex) {
+            if (!parentMod) return null;
+            const submods = Array.from(parentMod.querySelectorAll('SubMod'));
+            return submods.find(submod => submod.originalIndex === originalIndex);
+        }
+        
+        // Get next available originalIndex for new mods - ensures new mods are placed at end
+        function getNextModOriginalIndex() {
+            if (originalModsOrder.length === 0) return 0;
+            const maxIndex = Math.max(...originalModsOrder.map(mod => mod.originalIndex || 0));
+            return maxIndex + 1;
+        }
+        
+        // Get next available originalIndex for new submods - ensures submods are added at end of parent
+        function getNextSubModOriginalIndex(parentMod) {
+            if (!parentMod) return 0;
+            const submods = Array.from(parentMod.querySelectorAll('SubMod'));
+            if (submods.length === 0) return 0;
+            const maxIndex = Math.max(...submods.map(submod => submod.originalIndex || 0));
+            return maxIndex + 1;
+        }
+
         // Function to update the changed mods sidebar
         function updateChangedModsSidebar() {
             const changedModsList = $('#changedModsList');
@@ -551,9 +581,14 @@
                 return updateModFieldsInXmlText(modXml, mod);
             } else {
                 // Some submods modified - need to replace individual submods
+                // Sort submods by originalIndex to maintain original order in XML
+                // This ensures XML structure preservation regardless of UI sort/filter state
                 let reconstructedModXml = modXml;
                 
-                submods.forEach(submod => {
+                // Get submods sorted by originalIndex for consistent ordering
+                const submodsInOriginalOrder = Array.from(submods).sort((a, b) => (a.originalIndex || 0) - (b.originalIndex || 0));
+                
+                submodsInOriginalOrder.forEach(submod => {
                     const submodName = submod.querySelector('Name')?.textContent;
                     const isSubmodModified = Array.from(modifiedSubmods).some(modifiedSubmod => 
                         modifiedSubmod.querySelector('Name')?.textContent === submodName &&
@@ -770,6 +805,10 @@
             for (let i = 0; i < mods.length; i++) {
                 const mod = mods[i];
                 
+                // Assign originalIndex to track position in XML document
+                // This ensures consistent mod targeting regardless of UI sort order
+                mod.originalIndex = i;
+                
                 // Find the complete mod text in original XML
                 const modStartPos = xmlText.indexOf('<Mod>', currentPos);
                 const modEndPos = xmlText.indexOf('</Mod>', modStartPos) + 6; // +6 for '</Mod>'
@@ -783,9 +822,12 @@
                 // Store original XML for this mod
                 originalModXml.set(mod, modXmlText);
                 
-                // Store submods original XML
+                // Store submods original XML and assign originalIndex
                 const submods = mod.querySelectorAll('SubMod');
-                submods.forEach(submod => {
+                submods.forEach((submod, submodIndex) => {
+                    // Assign originalIndex to track position within parent mod
+                    // This maintains consistent submod targeting during operations
+                    submod.originalIndex = submodIndex;
                     // Find submod text within the mod text
                     const submodName = submod.querySelector('Name')?.textContent || '';
                     if (submodName) {
@@ -1221,6 +1263,13 @@
                 
                 // Handle new mods - add them at the end before closing tag
                 if (isNewMod) {
+                    // Create a temporary DOM element to assign originalIndex
+                    // New mods get assigned to the end of the document structure
+                    const tempDoc = new DOMParser().parseFromString('<temp></temp>', 'application/xml');
+                    const newModElement = createModElement(tempDoc, false);
+                    // Assign next available originalIndex for new mod
+                    newModElement.originalIndex = getNextModOriginalIndex();
+                    
                     const newModXml = createModElementAsXmlString(false);
                     // Insert before the closing </ModCatalog> tag
                     const closingTagPos = reconstructedXml.lastIndexOf('</ModCatalog>');
@@ -1231,6 +1280,9 @@
                     } else {
                         reconstructedXml += '\n\n' + newModXml;
                     }
+                    
+                    // Add the new mod to originalModsOrder for tracking
+                    originalModsOrder.push(newModElement);
                 } else if (isNewSubmod) {
                     // Handle new submods by finding the target mod and inserting at the end
                     const selectedModIndex = modSelect.prop('selectedIndex');
@@ -1251,6 +1303,14 @@
                     
                     if (targetChunkIndex >= 0) {
                         const modChunk = xmlChunks[targetChunkIndex];
+                        const selectedMod = modChunk.element;
+                        
+                        // Create a temporary DOM element to assign originalIndex
+                        // New submods get assigned to the end of their parent mod
+                        const tempDoc = new DOMParser().parseFromString('<temp></temp>', 'application/xml');
+                        const newSubmodElement = createModElement(tempDoc, true);
+                        // Assign next available originalIndex for new submod within parent mod
+                        newSubmodElement.originalIndex = getNextSubModOriginalIndex(selectedMod);
                         
                         // Reconstruct this mod with the new submod
                         const newSubmodXml = createModElementAsXmlString(true);
