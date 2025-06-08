@@ -615,7 +615,7 @@
                 const valueFromXmlText = getValueFromXmlText(xmlText, fieldName);
                 
                 if (newValue !== valueFromXmlText) {
-                    const fieldRegex = new RegExp(`(<${fieldName}>)[^<]*(</\s*${fieldName}>)`, 'g');
+                    const fieldRegex = new RegExp(`(<${fieldName}>)[^<]*(</\s*${fieldName}>)`);
                     if (newValue) {
                         if (xmlText.includes(`<${fieldName}>`)) {
                             updatedXml = updatedXml.replace(fieldRegex, `$1${newValue}$2`);
@@ -664,7 +664,7 @@
                 const valueFromXmlText = getValueFromXmlText(xmlText, fieldName);
                 
                 if (newValue !== valueFromXmlText) {
-                    const fieldRegex = new RegExp(`(<${fieldName}>)[^<]*(</\s*${fieldName}>)`, 'g');
+                    const fieldRegex = new RegExp(`(<${fieldName}>)[^<]*(</\s*${fieldName}>)`);
                     if (newValue) {
                         if (xmlText.includes(`<${fieldName}>`)) {
                             updatedXml = updatedXml.replace(fieldRegex, `$1${newValue}$2`);
