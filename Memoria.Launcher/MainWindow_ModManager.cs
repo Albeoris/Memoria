@@ -1609,8 +1609,52 @@ namespace Memoria.Launcher
         private object ascendingSortedColumn = null;
 
         // ==========================================
-        // OBJECT-BASED SELECTION SYSTEM
+        // OBJECT-BASED SELECTION SYSTEM - DETAILED EXPLANATION
         // ==========================================
+        // 
+        // WHY WE CANNOT USE selectedIndex:
+        // ================================
+        // 1. UI Reordering Issues:
+        //    - Users can move mods up/down, changing their position in ModListInstalled
+        //    - selectedIndex reflects position in the UI list after reordering
+        //    - But mod settings need to be saved based on original XML structure
+        //    - Using selectedIndex after reordering targets wrong mod in XML
+        //
+        // 2. Sorting/Filtering Issues (future-proofing):
+        //    - If UI adds sorting by name, priority, etc., display order changes
+        //    - selectedIndex would point to wrong mod after sorting
+        //    - Object references remain stable regardless of display order
+        //
+        // 3. ObservableCollection Modifications:
+        //    - Operations like Insert/Remove change indices of all following items
+        //    - selectedIndex becomes invalid after collection modifications
+        //    - Object references remain valid through collection changes
+        //
+        // HOW THE NEW SYSTEM WORKS:
+        // =========================
+        // 1. Object References (selectedMod, selectedSubMod):
+        //    - Direct references to Mod objects in memory
+        //    - Remain stable regardless of list position changes
+        //    - Used for all UI operations and form interactions
+        //
+        // 2. OriginalIndex for XML Operations:
+        //    - Each Mod object has OriginalIndex assigned during XML parsing
+        //    - OriginalIndex corresponds to position in XML NodeList
+        //    - NEVER changes during UI operations (move, sort, etc.)
+        //    - Used only for finding correct XML element during save operations
+        //
+        // 3. Selection Flow:
+        //    - User selects in UI → Update selectedMod/selectedSubMod references
+        //    - Move operations → Use selectedMod reference, not selectedIndex
+        //    - Settings save → Use OriginalIndex to find correct XML element
+        //    - UI updates → Use selectedMod reference to maintain selection
+        //
+        // 4. Benefits:
+        //    - Selection works correctly after reordering
+        //    - Move operations target the correct mod
+        //    - Settings save to correct XML elements
+        //    - System is immune to collection modification side effects
+        
         // We NEVER use selectedIndex for mod/submod selection because:
         // 1. selectedIndex changes when UI is sorted, filtered, or reordered
         // 2. selectedIndex doesn't correspond to XML position after sorting

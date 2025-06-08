@@ -341,8 +341,50 @@
         let isLoadingFormData = false; // Flag to prevent modification tracking during form loading
         
         // ==========================================
-        // OBJECT-BASED SELECTION SYSTEM
+        // OBJECT-BASED SELECTION SYSTEM - DETAILED EXPLANATION
         // ==========================================
+        // 
+        // WHY WE CANNOT USE selectedIndex:
+        // ================================
+        // 1. UI Sorting/Filtering Issues:
+        //    - When user sorts mods by name, author, etc., the display order changes
+        //    - selectedIndex=2 might point to "ModA" before sorting, but "ModZ" after sorting
+        //    - This causes the wrong mod to be edited when form changes are saved
+        //
+        // 2. XML Position vs UI Position:
+        //    - selectedIndex reflects position in the UI list (which can be sorted/filtered)
+        //    - XML operations need the position in the original XML document
+        //    - These positions don't match after any UI manipulation
+        //
+        // 3. Concurrency Issues:
+        //    - Form changes are saved automatically on input
+        //    - If user changes selection while typing, wrong mod gets updated
+        //    - selectedIndex can change between form input and save operation
+        //
+        // HOW THE NEW SYSTEM WORKS:
+        // =========================
+        // 1. Object References:
+        //    - selectedMod: Direct reference to the DOM element for selected mod
+        //    - selectedSubMod: Direct reference to the DOM element for selected submod (or null for main mod)
+        //    - These references remain stable regardless of UI sorting/filtering
+        //
+        // 2. OriginalIndex for XML Operations:
+        //    - Each mod/submod gets an originalIndex assigned during XML parsing
+        //    - originalIndex corresponds to position in the XML NodeList
+        //    - This NEVER changes during UI operations
+        //    - Used only for XML element identification during save operations
+        //
+        // 3. Selection Flow:
+        //    - User selects in UI → Update selectedMod/selectedSubMod object references
+        //    - Form changes → Save to the object referenced by selectedMod/selectedSubMod
+        //    - Save to server → Use originalIndex to find correct XML element to update
+        //
+        // 4. Benefits:
+        //    - Selection works correctly after sorting/filtering
+        //    - Form edits always target the correct mod/submod
+        //    - Adding new mods/submods works reliably
+        //    - System is immune to UI manipulation side effects
+        
         // We NEVER use selectedIndex for mod/submod selection because:
         // 1. selectedIndex changes when UI is sorted or filtered
         // 2. selectedIndex doesn't correspond to XML position after sorting
