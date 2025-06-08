@@ -751,9 +751,7 @@
                 .replace(/<\/Mod>/g, '\n</Mod>')
                 .replace(/<SubMod>/g, '\n\t<SubMod>')
                 .replace(/<\/SubMod>/g, '\n\t</SubMod>')
-                .replace(/<([^\/][^>]*)>([^<]+)<\/[^>]+>/g, '\n\t<$1>$2</$1>')
-                .replace(/\n\s*\n(?!<Mod>)/g, '\n')  // Only remove double newlines that aren't before <Mod>
-                .replace(/^\n/, '');
+                .replace(/<([^\/][^>]*)>([^<]+)<\/[^>]+>/g, '\n\t<$1>$2</$1>');
         }
 
         async function createPullRequest(branchName, commitMessage, content, baseSha) {
