@@ -26,6 +26,8 @@ namespace Global.Sound.SaXAudio
         private Int32 busSoundEffects;
         private Int32 busVoices;
 
+        public Int32 LastSoundID { get; private set; } = -1;
+
         public override Int32 SdSoundSystem_Create(String config)
         {
             SoundLib.Log("Create");
@@ -143,6 +145,7 @@ namespace Global.Sound.SaXAudio
                     bankData[bankID] = data;
                 }
             }
+            LastSoundID = soundID;
             return soundID;
         }
 

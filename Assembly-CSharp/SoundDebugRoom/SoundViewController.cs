@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Global.Sound.SaXAudio;
+using System;
 using System.Collections.Generic;
 
 namespace SoundDebugRoom
@@ -68,6 +69,7 @@ namespace SoundDebugRoom
 
         public void PlayActiveSound()
         {
+            if (IsPlay) StopActiveSound();
             if (this.activeSound.SoundProfileType == SoundProfileType.SoundEffect)
             {
                 this.IsPlay = false;
@@ -86,7 +88,7 @@ namespace SoundDebugRoom
             else if (this.activeSound.SoundProfileType == SoundProfileType.Sfx)
             {
                 this.IsPlay = false;
-                SoundLib.PlaySfxSound(this.activeSound.SoundIndex, this.soundView.SoundVolume, this.soundView.PanningPosition, this.soundView.PitchPosition);
+                this.activeSound = SoundLib.PlaySfxSound(this.activeSound.SoundIndex, this.soundView.SoundVolume, this.soundView.PanningPosition, this.soundView.PitchPosition);
             }
             else if (this.activeSound.SoundProfileType == SoundProfileType.MovieAudio)
             {
@@ -100,6 +102,14 @@ namespace SoundDebugRoom
             else
             {
                 this.IsPlay = false;
+                return;
+            }
+            if (IsSaXAudio)
+            {
+                this.activeSound.SoundID = SaXAudioApi.LastSoundID;
+                if (IsReverbEnabled) SetReverb(ref Reverb);
+                if (IsEqEnabled) SetEq(ref Eq);
+                if (IsEchoEnabled) SetEcho(ref Echo);
             }
         }
 
@@ -135,6 +145,32 @@ namespace SoundDebugRoom
             {
                 SoundLib.MovieAudioPlayer.SetMusicPitch(pitch);
             }
+        }
+
+        public void SetReverb(ref SaXAudio.ReverbParameters parameters)
+        {
+            SaXAudio.SetReverb(activeSound.SoundID, parameters, 0, false);
+        }
+        public void RemoveReverb()
+        {
+            SaXAudio.RemoveReverb(activeSound.SoundID, 0, false);
+        }
+
+        public void SetEq(ref SaXAudio.EqParameters parameters)
+        {
+            SaXAudio.SetEq(activeSound.SoundID, parameters, 0, false);
+        }
+        public void RemoveEq()
+        {
+            SaXAudio.RemoveEq(activeSound.SoundID, 0, false);
+        }
+        public void SetEcho(ref SaXAudio.EchoParameters parameters)
+        {
+            SaXAudio.SetEcho(activeSound.SoundID, parameters, 0, false);
+        }
+        public void RemoveEcho()
+        {
+            SaXAudio.RemoveEcho(activeSound.SoundID, 0, false);
         }
 
         public void SeekMusic(Single position)
@@ -451,6 +487,22 @@ namespace SoundDebugRoom
         private SoundView soundView;
 
         public Boolean IsPlay;
+
+        public Boolean IsSaXAudio = ISdLibAPIProxy.Instance is SdLibAPIWithSaXAudio;
+
+        SdLibAPIWithSaXAudio SaXAudioApi = ISdLibAPIProxy.Instance as SdLibAPIWithSaXAudio;
+
+        public SaXAudio.EqParameters Eq = new SaXAudio.EqParameters();
+
+        public SaXAudio.ReverbParameters Reverb = new SaXAudio.ReverbParameters();
+
+        public SaXAudio.EchoParameters Echo = new SaXAudio.EchoParameters();
+
+        public Boolean IsReverbEnabled = false;
+
+        public Boolean IsEqEnabled = false;
+
+        public Boolean IsEchoEnabled = false;
 
         private SoundProfileType activeType = SoundProfileType.SoundEffect;
 
