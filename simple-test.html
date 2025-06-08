@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Test</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+<div id="results"></div>
+<script>
+// Minimal test of the XML preservation logic
+async function testBasicXmlPreservation() {
+    try {
+        const xmlResponse = await fetch('MemoriaCatalog.xml');
+        const xmlText = await xmlResponse.text();
+        
+        console.log('Loaded XML with', xmlText.length, 'characters');
+        
+        const xmlDoc = new DOMParser().parseFromString(xmlText, 'application/xml');
+        const mods = Array.from(xmlDoc.querySelectorAll('ModCatalog > Mod'));
+        
+        console.log('Found', mods.length, 'mods');
+        
+        // Test if we can find mods by name
+        const firstModName = mods[0]?.querySelector('Name')?.textContent;
+        console.log('First mod name:', firstModName);
+        
+        // Test sorting  
+        const originalOrder = mods.map(mod => mod.querySelector('Name')?.textContent);
+        mods.sort((a, b) => a.querySelector('Name').textContent.localeCompare(b.querySelector('Name').textContent));
+        const sortedOrder = mods.map(mod => mod.querySelector('Name')?.textContent);
+        
+        console.log('Original order:', originalOrder);
+        console.log('Sorted order:', sortedOrder);
+        console.log('Orders differ:', JSON.stringify(originalOrder) !== JSON.stringify(sortedOrder));
+        
+        // Test finding mod by name in sorted array
+        const foundMod = mods.find(mod => mod.querySelector('Name')?.textContent === firstModName);
+        console.log('Found first mod in sorted array:', !!foundMod);
+        
+        $('#results').html(`
+            <h3>Test Results:</h3>
+            <p>✅ XML loaded: ${xmlText.length} characters</p>
+            <p>✅ Mods found: ${mods.length}</p>
+            <p>✅ First mod: ${firstModName}</p>
+            <p>✅ Orders differ: ${JSON.stringify(originalOrder) !== JSON.stringify(sortedOrder)}</p>
+            <p>✅ Can find by name: ${!!foundMod}</p>
+        `);
+        
+    } catch (error) {
+        console.error('Test failed:', error);
+        $('#results').html(`<p>❌ Test failed: ${error.message}</p>`);
+    }
+}
+
+// Run test when page loads
+$(document).ready(() => {
+    testBasicXmlPreservation();
+});
+</script>
+</body>
+</html>

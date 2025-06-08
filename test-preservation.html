@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>XML Preservation Test</title>
+</head>
+<body>
+<script>
+// Test the XML preservation system
+let originalXmlText = '';
+let originalModsOrder = [];
+let originalModXml = new Map();
+let originalSubmodXml = new Map();
+let modifiedMods = new Set();
+let modifiedSubmods = new Set();
+let xmlChunks = [];
+let modToChunkIndex = new Map();
+
+function parseXmlIntoChunks(xmlText) {
+    xmlChunks = [];
+    modToChunkIndex.clear();
+    originalModXml.clear();
+    originalSubmodXml.clear();
+    
+    const xmlDoc = new DOMParser().parseFromString(xmlText, 'application/xml');
+    const catalogElement = xmlDoc.querySelector('ModCatalog');
+    
+    if (!catalogElement) {
+        throw new Error('Invalid catalog XML - no ModCatalog element found');
+    }
+    
+    // Track position in original text
+    let currentPos = 0;
+    
+    // Add opening tag and any content before first mod
+    const firstModStart = xmlText.indexOf('<Mod>');
+    if (firstModStart > 0) {
+        xmlChunks.push({
+            type: 'text',
+            content: xmlText.substring(0, firstModStart)
+        });
+        currentPos = firstModStart;
+    }
+    
+    // Process each mod element
+    const mods = Array.from(catalogElement.querySelectorAll('Mod'));
+    originalModsOrder = [...mods];
+    
+    for (let i = 0; i < mods.length; i++) {
+        const mod = mods[i];
+        
+        // Find the complete mod text in original XML
+        const modStartPos = xmlText.indexOf('<Mod>', currentPos);
+        const modEndPos = xmlText.indexOf('</Mod>', modStartPos) + 6; // +6 for '</Mod>'
+        
+        if (modStartPos === -1 || modEndPos === -1) {
+            throw new Error(`Could not find mod boundaries for mod ${i}`);
+        }
+        
+        const modXmlText = xmlText.substring(modStartPos, modEndPos);
+        
+        // Store original XML for this mod
+        originalModXml.set(mod, modXmlText);
+        
+        // Store submods original XML
+        const submods = mod.querySelectorAll('SubMod');
+        submods.forEach(submod => {
+            // Find submod text within the mod text
+            const submodName = submod.querySelector('Name')?.textContent || '';
+            if (submodName) {
+                // Look for this submod in the mod XML text
+                const submodStart = modXmlText.indexOf(`<Name>${submodName}</Name>`);
+                if (submodStart > -1) {
+                    // Find the enclosing SubMod tags
+                    const beforeName = modXmlText.lastIndexOf('<SubMod>', submodStart);
+                    const afterName = modXmlText.indexOf('</SubMod>', submodStart) + 9;
+                    if (beforeName > -1 && afterName > -1) {
+                        const submodXmlText = modXmlText.substring(beforeName, afterName);
+                        originalSubmodXml.set(submod, submodXmlText);
+                    }
+                }
+            }
+        });
+        
+        // Add mod chunk
+        const chunkIndex = xmlChunks.length;
+        xmlChunks.push({
+            type: 'mod',
+            element: mod,
+            originalContent: modXmlText
+        });
+        modToChunkIndex.set(mod, chunkIndex);
+        
+        currentPos = modEndPos;
+        
+        // Add any text between this mod and the next one
+        const nextModStart = i < mods.length - 1 ? 
+            xmlText.indexOf('<Mod>', currentPos) : 
+            xmlText.indexOf('</ModCatalog>', currentPos);
+            
+        if (nextModStart > currentPos) {
+            xmlChunks.push({
+                type: 'text',
+                content: xmlText.substring(currentPos, nextModStart)
+            });
+            currentPos = nextModStart;
+        }
+    }
+    
+    // Add closing tag and any remaining content
+    const closingPos = xmlText.indexOf('</ModCatalog>', currentPos);
+    if (closingPos > -1) {
+        xmlChunks.push({
+            type: 'text',
+            content: xmlText.substring(currentPos)  // Include everything from current position to end
+        });
+    }
+}
+
+function testReconstruction() {
+    let reconstructedXml = '';
+    for (let i = 0; i < xmlChunks.length; i++) {
+        const chunk = xmlChunks[i];
+        if (chunk.type === 'text') {
+            reconstructedXml += chunk.content;
+        } else if (chunk.type === 'mod') {
+            reconstructedXml += chunk.originalContent;
+        }
+    }
+    
+    console.log('Original XML length:', originalXmlText.length);
+    console.log('Reconstructed XML length:', reconstructedXml.length);
+    console.log('Are identical:', reconstructedXml === originalXmlText);
+    
+    if (reconstructedXml !== originalXmlText) {
+        // Find first difference
+        for (let i = 0; i < Math.min(originalXmlText.length, reconstructedXml.length); i++) {
+            if (originalXmlText[i] !== reconstructedXml[i]) {
+                console.log('First difference at position', i);
+                console.log('Original char:', originalXmlText.charCodeAt(i), originalXmlText[i]);
+                console.log('Reconstructed char:', reconstructedXml.charCodeAt(i), reconstructedXml[i]);
+                console.log('Context original:', originalXmlText.substring(i-20, i+20));
+                console.log('Context reconstructed:', reconstructedXml.substring(i-20, i+20));
+                break;
+            }
+        }
+    }
+    
+    return reconstructedXml === originalXmlText;
+}
+
+// Load and test
+fetch('MemoriaCatalog.xml')
+    .then(response => response.text())
+    .then(xmlText => {
+        originalXmlText = xmlText;
+        console.log('Loaded XML:', xmlText.length, 'characters');
+        
+        try {
+            parseXmlIntoChunks(xmlText);
+            console.log('Parsed into', xmlChunks.length, 'chunks');
+            
+            const success = testReconstruction();
+            console.log('Test result:', success);
+            
+            // Test with a modification
+            const xmlDoc = new DOMParser().parseFromString(xmlText, 'application/xml');
+            const firstMod = xmlDoc.querySelector('Mod');
+            if (firstMod) {
+                // Simulate modifying the first mod
+                firstMod.querySelector('Description').textContent = 'MODIFIED DESCRIPTION';
+                modifiedMods.add(firstMod);
+                
+                console.log('Testing with modification...');
+                // Need to implement reconstructModWithSubmodPreservation for complete test
+            }
+            
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    })
+    .catch(error => console.error('Failed to load XML:', error));
+</script>
+</body>
+</html>
