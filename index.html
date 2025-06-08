@@ -254,7 +254,6 @@
         let modSelect = null;
         let submodSelect = null;
         let mods = [];
-        let draftMods = {}; // Store draft changes: { modIndex: { 'main' | submodIndex: formData } }
 
         // Check if access_token present in URL
         function extractTokenFromUrl() {
@@ -367,99 +366,66 @@
             el.style.height = el.scrollHeight + 'px';
         }
 
-        function saveDraftState() {
+        function saveToXmlElement() {
             const modIndex = modSelect.prop('selectedIndex');
             const submodIndex = submodSelect.prop('selectedIndex') - 1; // -1 because 'Main' is at index 0
             const isSubmod = submodIndex >= 0;
             
-            if (modIndex < 0) return; // No mod selected
+            if (modIndex < 0 || !mods[modIndex]) return; // No mod selected
             
-            if (!draftMods[modIndex]) {
-                draftMods[modIndex] = {};
+            const targetElement = isSubmod ? 
+                mods[modIndex].querySelectorAll('SubMod')[submodIndex] :
+                mods[modIndex];
+            
+            if (!targetElement) return;
+            
+            // Update XML element with current form values
+            updateElementText(targetElement, 'Name', $('#name').val());
+            updateElementText(targetElement, 'Version', $('#version').val());
+            updateElementText(targetElement, 'Description', $('#description').val());
+            updateElementText(targetElement, 'PatchNotes', $('#patchNotes').val());
+            updateElementText(targetElement, 'Priority', $('#priority').val());
+            updateElementText(targetElement, 'Category', $('#category').val());
+            updateElementText(targetElement, 'Website', $('#website').val());
+            updateElementText(targetElement, 'DownloadUrl', $('#downloadUrl').val());
+            updateElementText(targetElement, 'PreviewFileUrl', $('#previewFileUrl').val());
+            updateElementText(targetElement, 'IncompatibleWith', $('#incompatibleWith').val());
+            updateElementText(targetElement, 'MinimumMemoriaVersion', $('#minimumMemoriaVersion').val());
+            updateElementText(targetElement, 'ReleaseDate', $('#releaseDate').val());
+            if (!isSubmod) {
+                updateElementText(targetElement, 'InstallationPath', $('#path').val());
+                updateElementText(targetElement, 'Author', $('#author').val());
             }
-            
-            const key = isSubmod ? submodIndex : 'main';
-            draftMods[modIndex][key] = {
-                name: $('#name').val(),
-                version: $('#version').val(),
-                description: $('#description').val(),
-                patchNotes: $('#patchNotes').val(),
-                priority: $('#priority').val(),
-                category: $('#category').val(),
-                website: $('#website').val(),
-                downloadUrl: $('#downloadUrl').val(),
-                previewFileUrl: $('#previewFileUrl').val(),
-                incompatibleWith: $('#incompatibleWith').val(),
-                minimumMemoriaVersion: $('#minimumMemoriaVersion').val(),
-                releaseDate: $('#releaseDate').val(),
-                path: $('#path').val(),
-                author: $('#author').val()
-            };
-        }
-
-        function loadDraftState(modIndex, isSubmod, submodIndex) {
-            if (!draftMods[modIndex]) return null;
-            
-            const key = isSubmod ? submodIndex : 'main';
-            return draftMods[modIndex][key] || null;
-        }
-
-        function clearDraftState() {
-            draftMods = {};
         }
 
         function fillForm(modElement, isSubmod) {
-            const modIndex = modSelect.prop('selectedIndex');
-            const submodIndex = submodSelect.prop('selectedIndex') - 1;
-            
-            // Check if there's a draft state for this mod/submod
-            const draftState = loadDraftState(modIndex, isSubmod, submodIndex);
-            
-            if (draftState) {
-                // Load from draft state
-                $('#name').val(draftState.name || '');
-                $('#version').val(draftState.version || '');
-                $('#description').val(draftState.description || '');
-                $('#patchNotes').val(draftState.patchNotes || '');
-                $('#priority').val(draftState.priority || '');
-                $('#category').val(draftState.category || '');
-                $('#website').val(draftState.website || '');
-                $('#downloadUrl').val(draftState.downloadUrl || '');
-                $('#previewFileUrl').val(draftState.previewFileUrl || '');
-                $('#incompatibleWith').val(draftState.incompatibleWith || '');
-                $('#minimumMemoriaVersion').val(draftState.minimumMemoriaVersion || '');
-                $('#releaseDate').val(draftState.releaseDate || '');
-                $('#path').val(draftState.path || '');
-                $('#author').val(draftState.author || '');
-            } else {
-                // Load from XML element (original behavior)
-                $('#modForm input, #modForm textarea').val('');
-                $('#name').val(modElement.querySelector('Name')?.textContent || '');
-                $('#version').val(modElement.querySelector('Version')?.textContent || '');
-                $('#description').val(modElement.querySelector('Description')?.textContent || '');
-                $('#patchNotes').val(modElement.querySelector('PatchNotes')?.textContent || '');
-                $('#priority').val(modElement.querySelector('Priority')?.textContent || '');
-                $('#category').val(modElement.querySelector('Category')?.textContent || '');
-                $('#website').val(modElement.querySelector('Website')?.textContent || '');
-                $('#downloadUrl').val(modElement.querySelector('DownloadUrl')?.textContent || '');
-                $('#previewFileUrl').val(modElement.querySelector('PreviewFileUrl')?.textContent || '');
-                $('#incompatibleWith').val(modElement.querySelector('IncompatibleWith')?.textContent || '');
-                $('#minimumMemoriaVersion').val(modElement.querySelector('MinimumMemoriaVersion')?.textContent || '');
-                const releaseDate = modElement.querySelector('ReleaseDate')?.textContent;
-                if (releaseDate) {
-                    try {
-                        const date = new Date(releaseDate);
-                        if (!isNaN(date.getTime())) {
-                            $('#releaseDate').val(date.toISOString().split('T')[0]);
-                        }
-                    } catch (e) {
-                        $('#releaseDate').val('');
+            // Always load from XML element
+            $('#modForm input, #modForm textarea').val('');
+            $('#name').val(modElement.querySelector('Name')?.textContent || '');
+            $('#version').val(modElement.querySelector('Version')?.textContent || '');
+            $('#description').val(modElement.querySelector('Description')?.textContent || '');
+            $('#patchNotes').val(modElement.querySelector('PatchNotes')?.textContent || '');
+            $('#priority').val(modElement.querySelector('Priority')?.textContent || '');
+            $('#category').val(modElement.querySelector('Category')?.textContent || '');
+            $('#website').val(modElement.querySelector('Website')?.textContent || '');
+            $('#downloadUrl').val(modElement.querySelector('DownloadUrl')?.textContent || '');
+            $('#previewFileUrl').val(modElement.querySelector('PreviewFileUrl')?.textContent || '');
+            $('#incompatibleWith').val(modElement.querySelector('IncompatibleWith')?.textContent || '');
+            $('#minimumMemoriaVersion').val(modElement.querySelector('MinimumMemoriaVersion')?.textContent || '');
+            const releaseDate = modElement.querySelector('ReleaseDate')?.textContent;
+            if (releaseDate) {
+                try {
+                    const date = new Date(releaseDate);
+                    if (!isNaN(date.getTime())) {
+                        $('#releaseDate').val(date.toISOString().split('T')[0]);
                     }
+                } catch (e) {
+                    $('#releaseDate').val('');
                 }
-                if (!isSubmod) {
-                    $('#path').val(modElement.querySelector('InstallationPath')?.textContent || '');
-                    $('#author').val(modElement.querySelector('Author')?.textContent || '');
-                }
+            }
+            if (!isSubmod) {
+                $('#path').val(modElement.querySelector('InstallationPath')?.textContent || '');
+                $('#author').val(modElement.querySelector('Author')?.textContent || '');
             }
             
             $('#mainModFields').toggle(!isSubmod);
@@ -469,9 +435,6 @@
         }
 
         function updateSubmods() {
-            // Save current draft state before switching
-            saveDraftState();
-            
             submodSelect.empty().append(new Option('Main'));
             const mod = mods[modSelect.prop('selectedIndex')];
             const submods = mod.querySelectorAll('SubMod');
@@ -485,9 +448,6 @@
         updateSubmods();
 
         submodSelect.on('change', () => {
-            // Save current draft state before switching
-            saveDraftState();
-            
             const mod = mods[modSelect.prop('selectedIndex')];
             const submods = mod.querySelectorAll('SubMod');
             const submodIndex = submodSelect.prop('selectedIndex') - 1;
@@ -499,9 +459,9 @@
             autosizeTextarea(this);
         });
 
-        // Save draft state whenever form inputs change
+        // Save to XML element whenever form inputs change
         $('#modForm input, #modForm textarea').on('input change', function () {
-            saveDraftState();
+            saveToXmlElement();
         });
 
         function startButtonCooldown() {
@@ -519,70 +479,6 @@
             }
             
             updateButton();
-        }
-
-        function applyAllDraftChanges(xmlDoc) {
-            const modsInXml = Array.from(xmlDoc.querySelectorAll('ModCatalog > Mod'));
-            
-            // Apply all draft changes
-            Object.keys(draftMods).forEach(modIndex => {
-                const modChanges = draftMods[modIndex];
-                const targetMod = modsInXml[parseInt(modIndex)];
-                
-                if (!targetMod) return; // Mod doesn't exist
-                
-                Object.keys(modChanges).forEach(key => {
-                    const draftData = modChanges[key];
-                    
-                    if (key === 'main') {
-                        // Update main mod
-                        applyDraftToElement(targetMod, draftData, false);
-                    } else {
-                        // Update submod
-                        const submodIndex = parseInt(key);
-                        const submods = Array.from(targetMod.querySelectorAll('SubMod'));
-                        const targetSubmod = submods[submodIndex];
-                        
-                        if (targetSubmod) {
-                            applyDraftToElement(targetSubmod, draftData, true);
-                        }
-                    }
-                });
-            });
-        }
-
-        function applyDraftToElement(element, draftData, isSubmod) {
-            updateElementTextFromDraft(element, 'Name', draftData.name);
-            if (!isSubmod || draftData.version) {
-                updateElementTextFromDraft(element, 'Version', draftData.version);
-            }
-            updateElementTextFromDraft(element, 'InstallationPath', draftData.path);
-            if (!isSubmod) {
-                updateElementTextFromDraft(element, 'Author', draftData.author);
-            }
-            updateElementTextFromDraft(element, 'Description', draftData.description);
-            updateElementTextFromDraft(element, 'Priority', draftData.priority);
-            updateElementTextFromDraft(element, 'Category', draftData.category);
-            updateElementTextFromDraft(element, 'ReleaseDate', draftData.releaseDate);
-            updateElementTextFromDraft(element, 'Website', draftData.website);
-            updateElementTextFromDraft(element, 'DownloadUrl', draftData.downloadUrl);
-            updateElementTextFromDraft(element, 'PreviewFileUrl', draftData.previewFileUrl);
-            updateElementTextFromDraft(element, 'PatchNotes', draftData.patchNotes);
-            updateElementTextFromDraft(element, 'IncompatibleWith', draftData.incompatibleWith);
-            updateElementTextFromDraft(element, 'MinimumMemoriaVersion', draftData.minimumMemoriaVersion);
-        }
-
-        function updateElementTextFromDraft(parent, tagName, value) {
-            let element = parent.querySelector(tagName);
-            if (value) {
-                if (!element) {
-                    element = parent.ownerDocument.createElement(tagName);
-                    parent.appendChild(element);
-                }
-                element.textContent = value;
-            } else if (element) {
-                element.remove();
-            }
         }
 
         async function saveChanges() {
@@ -637,24 +533,31 @@
                 const currentXmlContent = new TextDecoder('utf-8').decode(
                     Uint8Array.from(atob(currentXmlData.content), c => c.charCodeAt(0))
                 );
-                // Save current form state to draft before processing
-                saveDraftState();
-                
+                // Parse the current XML and create a working copy
                 const currentXmlDoc = new DOMParser().parseFromString(currentXmlContent, 'application/xml');
                 const modifiedXmlDoc = currentXmlDoc.cloneNode(true);
+                
+                // Update the working copy with current mods state
+                const modsInXml = Array.from(modifiedXmlDoc.querySelectorAll('ModCatalog > Mod'));
+                mods.forEach((mod, index) => {
+                    if (modsInXml[index]) {
+                        // Replace the mod in the working copy with our current mod
+                        const serializer = new XMLSerializer();
+                        const modXmlString = serializer.serializeToString(mod);
+                        const tempDoc = new DOMParser().parseFromString(modXmlString, 'application/xml');
+                        const importedMod = modifiedXmlDoc.importNode(tempDoc.documentElement, true);
+                        modsInXml[index].parentNode.replaceChild(importedMod, modsInXml[index]);
+                    }
+                });
                 
                 if (isNewMod) {
                     const newMod = createModElement(modifiedXmlDoc, false);
                     modifiedXmlDoc.querySelector('ModCatalog').appendChild(newMod);
                 } else if (isNewSubmod) {
                     const selectedModIndex = modSelect.prop('selectedIndex');
-                    const modsInXml = Array.from(modifiedXmlDoc.querySelectorAll('ModCatalog > Mod'));
-                    const targetMod = modsInXml[selectedModIndex];
+                    const targetMod = Array.from(modifiedXmlDoc.querySelectorAll('ModCatalog > Mod'))[selectedModIndex];
                     const newSubmod = createModElement(modifiedXmlDoc, true);
                     targetMod.appendChild(newSubmod);
-                } else {
-                    // Apply all draft changes to the XML
-                    applyAllDraftChanges(modifiedXmlDoc);
                 }
                 const serializer = new XMLSerializer();
                 let newXmlContent = serializer.serializeToString(modifiedXmlDoc);
@@ -817,9 +720,6 @@
             $('#prLink').attr('href', prData.html_url).text(`Pull Request #${prData.number}`);
             $('#prLinkContainer').show();
             
-            // Clear draft state after successful save
-            clearDraftState();
-            
             alert(`Successfully created pull request #${prData.number}!`);
         }
 
@@ -830,7 +730,6 @@
 
         $('#newModBtn').click(() => {
             if (confirm('Create a new mod? This will clear the current form and all unsaved changes.')) {
-                clearDraftState(); // Clear all draft changes
                 $('#modForm input, #modForm textarea').val('');
                 $('#mainModFields').show();
                 $('#modSelect').val(null).trigger('change.select2');
@@ -846,8 +745,6 @@
                 return;
             }
             if (confirm('Create a new submod for the selected mod? This will clear the current form.')) {
-                // Save current draft state before creating new submod
-                saveDraftState();
                 $('#modForm input, #modForm textarea').val('');
                 $('#mainModFields').hide();
                 const newOption = new Option('(New SubMod)', 'new-submod');
