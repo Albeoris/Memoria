@@ -56,9 +56,65 @@
             background-color: #232323 !important;
             color: #e0e0e0 !important;
         }
+        #changedModsSidebar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 300px;
+            max-height: 80vh;
+            overflow-y: auto;
+            z-index: 1000;
+            background-color: #1e1e1e;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        #changedModsSidebar h5 {
+            margin-top: 0;
+            color: #e0e0e0;
+            border-bottom: 1px solid #555;
+            padding-bottom: 8px;
+        }
+        .changed-mod-item {
+            padding: 8px 12px;
+            margin: 4px 0;
+            background-color: #2d2d2d;
+            border: 1px solid #444;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            color: #e0e0e0;
+            font-size: 0.9em;
+        }
+        .changed-mod-item:hover {
+            background-color: #383838;
+            border-color: #666;
+        }
+        .changed-mod-item.submod {
+            margin-left: 16px;
+            font-size: 0.85em;
+            background-color: #252525;
+        }
+        .changed-mod-item.submod:before {
+            content: "└ ";
+            color: #888;
+        }
+        #changedModsSidebar.empty {
+            display: none;
+        }
     </style>
 </head>
 <body class="dark-theme">
+
+<!-- Changed Mods Sidebar -->
+<div id="changedModsSidebar" class="empty">
+    <h5>Changed Mods</h5>
+    <div id="changedModsList">
+        <div class="text-muted small">No changes yet</div>
+    </div>
+</div>
+
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2>Memoria Mod Catalog Editor</h2>
@@ -245,6 +301,9 @@
             <div id="prLinkContainer" class="d-inline-block ms-3" style="display:none;">
                 <a id="prLink" href="#" target="_blank" class="btn btn-outline-info btn-sm">View Pull Request</a>
             </div>
+            <div id="createPrContainer" class="d-inline-block ms-3" style="display:none;">
+                <span class="text-info small">Create Pull Request button will appear after first successful save</span>
+            </div>
         </div>
     </form>
 </div>
@@ -275,10 +334,112 @@
         let modifiedSubmods = new Set(); // Track which submods have been modified
         let xmlChunks = []; // Store XML as chunks (text, mod elements, etc.)
         let modToChunkIndex = new Map(); // Map mod element to its chunk index
+        let hasSuccessfulSave = localStorage.getItem('memoria_has_successful_save') === 'true'; // Track first successful save
         
         // Track original form values to detect actual changes
         let originalFormValues = {};
         let isLoadingFormData = false; // Flag to prevent modification tracking during form loading
+
+        // Function to update the changed mods sidebar
+        function updateChangedModsSidebar() {
+            const changedModsList = $('#changedModsList');
+            const sidebar = $('#changedModsSidebar');
+            
+            // Clear existing content
+            changedModsList.empty();
+            
+            const changedItems = [];
+            
+            // Add changed main mods
+            modifiedMods.forEach(mod => {
+                const modName = mod.querySelector('Name')?.textContent || 'Unknown Mod';
+                changedItems.push({
+                    name: modName,
+                    type: 'mod',
+                    element: mod,
+                    isSubmod: false
+                });
+            });
+            
+            // Add changed submods
+            modifiedSubmods.forEach(submod => {
+                const submodName = submod.querySelector('Name')?.textContent || 'Unknown SubMod';
+                const parentMod = submod.closest('Mod');
+                const parentName = parentMod?.querySelector('Name')?.textContent || 'Unknown Mod';
+                changedItems.push({
+                    name: `${parentName} → ${submodName}`,
+                    type: 'submod',
+                    element: submod,
+                    parentElement: parentMod,
+                    isSubmod: true
+                });
+            });
+            
+            if (changedItems.length === 0) {
+                changedModsList.append('<div class="text-muted small">No changes yet</div>');
+                sidebar.addClass('empty');
+            } else {
+                sidebar.removeClass('empty');
+                
+                // Sort items alphabetically
+                changedItems.sort((a, b) => a.name.localeCompare(b.name));
+                
+                changedItems.forEach(item => {
+                    const itemDiv = $(`<div class="changed-mod-item ${item.type}" data-mod-name="${item.element.querySelector('Name')?.textContent || ''}" data-is-submod="${item.isSubmod}">${item.name}</div>`);
+                    
+                    // Add click handler
+                    itemDiv.click(() => {
+                        selectModInUI(item.element, item.parentElement, item.isSubmod);
+                    });
+                    
+                    changedModsList.append(itemDiv);
+                });
+            }
+        }
+        
+        // Function to select a mod/submod in the UI
+        function selectModInUI(element, parentElement, isSubmod) {
+            if (isSubmod && parentElement) {
+                // Find parent mod in the sorted mods array
+                const parentName = parentElement.querySelector('Name')?.textContent;
+                const modIndex = mods.findIndex(mod => mod.querySelector('Name')?.textContent === parentName);
+                
+                if (modIndex !== -1) {
+                    // Select the parent mod first
+                    modSelect.val(modSelect.find('option').eq(modIndex).val()).trigger('change');
+                    
+                    // Then select the submod
+                    setTimeout(() => {
+                        const submodName = element.querySelector('Name')?.textContent;
+                        const submodOption = submodSelect.find('option').filter(function() {
+                            return $(this).text() === submodName;
+                        });
+                        if (submodOption.length > 0) {
+                            submodSelect.val(submodOption.val()).trigger('change');
+                        }
+                    }, 100);
+                }
+            } else {
+                // Select main mod
+                const modName = element.querySelector('Name')?.textContent;
+                const modIndex = mods.findIndex(mod => mod.querySelector('Name')?.textContent === modName);
+                
+                if (modIndex !== -1) {
+                    modSelect.val(modSelect.find('option').eq(modIndex).val()).trigger('change');
+                    // Select 'Main' for the submod
+                    setTimeout(() => {
+                        submodSelect.val(submodSelect.find('option').first().val()).trigger('change');
+                    }, 100);
+                }
+            }
+        }
+        
+        // Function to reset changed mods tracking
+        function resetChangedMods() {
+            modifiedMods.clear();
+            modifiedSubmods.clear();
+            updateChangedModsSidebar();
+        }
 
         // Check if access_token present in URL
         function extractTokenFromUrl() {
@@ -676,6 +837,18 @@
         }
 
         await validateToken();
+        
+        // Update PR button visibility based on save history
+        function updatePrButtonVisibility() {
+            if (hasSuccessfulSave) {
+                $('#createPrContainer').hide();
+            } else {
+                $('#createPrContainer').show();
+            }
+        }
+        
+        // Initialize PR button visibility
+        updatePrButtonVisibility();
 
         function showLoading(message = 'Loading...') {
             $('#loadingIndicator').text(message).show();
@@ -716,6 +889,9 @@
 
             modSelect.select2();
             submodSelect.select2();
+            
+            // Initialize the sidebar
+            updateChangedModsSidebar();
 
             hideLoading();
         } catch (error) {
@@ -788,6 +964,9 @@
             } else {
                 modifiedMods.add(targetElement);
             }
+            
+            // Update the sidebar to reflect changes
+            updateChangedModsSidebar();
         }
 
         function fillForm(modElement, isSubmod) {
@@ -1171,9 +1350,19 @@
             }
             const prData = await prResponse.json();
             
-            // Show the PR link instead of redirecting
+            // Mark first successful save and show appropriate UI
+            if (!hasSuccessfulSave) {
+                hasSuccessfulSave = true;
+                localStorage.setItem('memoria_has_successful_save', 'true');
+                $('#createPrContainer').hide();
+            }
+            
+            // Show the PR link
             $('#prLink').attr('href', prData.html_url).text(`Pull Request #${prData.number}`);
             $('#prLinkContainer').show();
+            
+            // Reset changed mods tracking after successful save
+            resetChangedMods();
             
             alert(`Successfully created pull request #${prData.number}!`);
         }
