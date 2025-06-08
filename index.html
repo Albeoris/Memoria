@@ -1327,7 +1327,7 @@
                 const commitMessage = isNewMod ? `Add new mod: ${name}` :
                     isNewSubmod ? `Add new submod: ${name}` :
                         `Update ${isSubmod ? 'submod' : 'mod'}: ${name}`;
-                await createPullRequest(branchName, commitMessage, newXmlContent, currentXmlData.sha);
+                await createPullRequest(branchName, commitMessage, newXmlContent);
                 
                 // Start cooldown timer
                 startButtonCooldown();
@@ -1417,7 +1417,8 @@
                 .replace(/<([^\/][^>]*)>([^<]+)<\/[^>]+>/g, '\n\t<$1>$2</$1>');
         }
 
-        async function createPullRequest(branchName, commitMessage, content, baseSha) {
+        async function createPullRequest(branchName, commitMessage, content) {
+            // Get the main branch reference to create a new branch from it
             const mainBranchResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/git/ref/heads/main`, {
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
@@ -1426,6 +1427,8 @@
             });
             const mainBranchData = await mainBranchResponse.json();
             const mainSha = mainBranchData.object.sha;
+            
+            // Create a new branch for the pull request
             await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/git/refs`, {
                 method: 'POST',
                 headers: {
@@ -1438,6 +1441,24 @@
                     sha: mainSha
                 })
             });
+            
+            // Always fetch the current file SHA to ensure we have the latest version
+            // This prevents errors from using uninitialized or stale SHA values
+            const currentFileResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CATALOG_PATH}`, {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+            
+            if (!currentFileResponse.ok) {
+                throw new Error('Failed to fetch current file information for SHA');
+            }
+            
+            const currentFileData = await currentFileResponse.json();
+            const currentFileSha = currentFileData.sha;
+            
+            // Update the file using the fresh SHA we just retrieved
             const updateResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CATALOG_PATH}`, {
                 method: 'PUT',
                 headers: {
@@ -1448,7 +1469,7 @@
                 body: JSON.stringify({
                     message: commitMessage,
                     content: btoa(new TextEncoder().encode(content).reduce((data, byte) => data + String.fromCharCode(byte), '')),
-                    sha: baseSha,
+                    sha: currentFileSha,
                     branch: branchName
                 })
             });
