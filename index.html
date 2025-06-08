@@ -62,10 +62,15 @@
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2>Memoria Mod Catalog Editor</h2>
-        <a href="https://github.com/Albeoris/Memoria/edit/main/Memoria.Launcher/Catalogs/MemoriaCatalog.xml" 
-           class="btn btn-outline-info btn-sm" target="_blank" rel="noopener noreferrer">
-            Raw Edit
-        </a>
+        <div>
+            <button id="testPreservationBtn" class="btn btn-outline-success btn-sm me-2" title="Test XML preservation system">
+                Test Preservation
+            </button>
+            <a href="https://github.com/Albeoris/Memoria/edit/main/Memoria.Launcher/Catalogs/MemoriaCatalog.xml" 
+               class="btn btn-outline-info btn-sm" target="_blank" rel="noopener noreferrer">
+                Raw Edit
+            </a>
+        </div>
     </div>
 
     <!-- Help Section -->
@@ -270,6 +275,10 @@
         let modifiedSubmods = new Set(); // Track which submods have been modified
         let xmlChunks = []; // Store XML as chunks (text, mod elements, etc.)
         let modToChunkIndex = new Map(); // Map mod element to its chunk index
+        
+        // Track original form values to detect actual changes
+        let originalFormValues = {};
+        let isLoadingFormData = false; // Flag to prevent modification tracking during form loading
 
         // Check if access_token present in URL
         function extractTokenFromUrl() {
@@ -611,6 +620,60 @@
                 });
             }
         }
+        
+        // Testing and validation functions for XML preservation
+        function testXmlPreservation() {
+            console.log('Testing XML preservation system...');
+            
+            // Test 1: Verify chunk reconstruction produces identical XML when no changes made
+            let reconstructedXml = '';
+            for (let i = 0; i < xmlChunks.length; i++) {
+                const chunk = xmlChunks[i];
+                if (chunk.type === 'text') {
+                    reconstructedXml += chunk.content;
+                } else if (chunk.type === 'mod') {
+                    reconstructedXml += chunk.originalContent;
+                }
+            }
+            
+            const isIdentical = reconstructedXml === originalXmlText;
+            console.log('Test 1 - Perfect reconstruction without changes:', isIdentical);
+            
+            if (!isIdentical) {
+                console.log('Original length:', originalXmlText.length);
+                console.log('Reconstructed length:', reconstructedXml.length);
+                // Find first difference
+                for (let i = 0; i < Math.min(originalXmlText.length, reconstructedXml.length); i++) {
+                    if (originalXmlText[i] !== reconstructedXml[i]) {
+                        console.log('First difference at position', i);
+                        console.log('Original:', originalXmlText.substring(i-10, i+10));
+                        console.log('Reconstructed:', reconstructedXml.substring(i-10, i+10));
+                        break;
+                    }
+                }
+            }
+            
+            // Test 2: Verify original order is preserved in chunks
+            const originalModOrder = originalModsOrder.map(mod => mod.querySelector('Name')?.textContent);
+            const chunkModOrder = xmlChunks
+                .filter(chunk => chunk.type === 'mod')
+                .map(chunk => chunk.element.querySelector('Name')?.textContent);
+            
+            const orderPreserved = JSON.stringify(originalModOrder) === JSON.stringify(chunkModOrder);
+            console.log('Test 2 - Original mod order preserved:', orderPreserved);
+            
+            // Test 3: Verify UI displays alphabetically
+            const uiModOrder = Array.from(mods).map(mod => mod.querySelector('Name')?.textContent);
+            const sortedOrder = [...originalModOrder].sort((a, b) => a.localeCompare(b));
+            const uiAlphabetical = JSON.stringify(uiModOrder) === JSON.stringify(sortedOrder);
+            console.log('Test 3 - UI displays alphabetically:', uiAlphabetical);
+            
+            return {
+                perfectReconstruction: isIdentical,
+                orderPreserved: orderPreserved,
+                uiAlphabetical: uiAlphabetical
+            };
+        }
 
         await validateToken();
 
@@ -639,6 +702,10 @@
             // Parse XML into chunks for preservation
             parseXmlIntoChunks(xmlText);
             
+            // Test the preservation system
+            const testResults = testXmlPreservation();
+            console.log('XML Preservation Test Results:', testResults);
+            
             // Sort mods alphabetically for UI display (originalModsOrder preserves original order)
             mods.sort((a, b) => a.querySelector('Name').textContent.localeCompare(b.querySelector('Name').textContent));
 
@@ -663,6 +730,9 @@
         }
 
         function saveToXmlElement() {
+            // Skip if currently loading form data
+            if (isLoadingFormData) return;
+            
             const modIndex = modSelect.prop('selectedIndex');
             const submodDisplayIndex = submodSelect.prop('selectedIndex') - 1; // -1 because 'Main' is at index 0
             const isSubmod = submodDisplayIndex >= 0;
@@ -680,6 +750,19 @@
             }
             
             if (!targetElement) return;
+            
+            // Check if any values actually changed
+            let hasChanges = false;
+            $('#modForm input, #modForm textarea').each(function() {
+                const currentValue = $(this).val();
+                const originalValue = originalFormValues[this.id] || '';
+                if (currentValue !== originalValue) {
+                    hasChanges = true;
+                    return false; // Break out of each loop
+                }
+            });
+            
+            if (!hasChanges) return; // No actual changes, don't mark as modified
             
             // Update XML element with current form values
             updateElementText(targetElement, 'Name', $('#name').val());
@@ -699,7 +782,7 @@
                 updateElementText(targetElement, 'Author', $('#author').val());
             }
             
-            // Mark as modified for preservation system
+            // Mark as modified for preservation system only when there are actual changes
             if (isSubmod) {
                 modifiedSubmods.add(targetElement);
             } else {
@@ -708,6 +791,9 @@
         }
 
         function fillForm(modElement, isSubmod) {
+            // Set loading flag to prevent modification tracking
+            isLoadingFormData = true;
+            
             // Always load from XML element
             $('#modForm input, #modForm textarea').val('');
             $('#name').val(modElement.querySelector('Name')?.textContent || '');
@@ -737,10 +823,19 @@
                 $('#author').val(modElement.querySelector('Author')?.textContent || '');
             }
             
+            // Capture original form values for change detection
+            originalFormValues = {};
+            $('#modForm input, #modForm textarea').each(function() {
+                originalFormValues[this.id] = $(this).val();
+            });
+            
             $('#mainModFields').toggle(!isSubmod);
             $('#version').prop('required', !isSubmod);
             autosizeTextarea(document.getElementById('description'));
             autosizeTextarea(document.getElementById('patchNotes'));
+            
+            // Clear loading flag
+            isLoadingFormData = false;
         }
 
         function updateSubmods() {
@@ -1090,10 +1185,19 @@
 
         $('#newModBtn').click(() => {
             if (confirm('Create a new mod? This will clear the current form and all unsaved changes.')) {
+                isLoadingFormData = true;
                 $('#modForm input, #modForm textarea').val('');
                 $('#mainModFields').show();
                 $('#modSelect').val(null).trigger('change.select2');
                 $('#submodSelect').empty().append(new Option('Main')).val(null).trigger('change.select2');
+                
+                // Clear original form values for new mod
+                originalFormValues = {};
+                $('#modForm input, #modForm textarea').each(function() {
+                    originalFormValues[this.id] = '';
+                });
+                
+                isLoadingFormData = false;
                 $('#name').focus();
             }
         });
@@ -1105,13 +1209,39 @@
                 return;
             }
             if (confirm('Create a new submod for the selected mod? This will clear the current form.')) {
+                isLoadingFormData = true;
                 $('#modForm input, #modForm textarea').val('');
                 $('#mainModFields').hide();
                 const newOption = new Option('(New SubMod)', 'new-submod');
                 submodSelect.append(newOption);
                 submodSelect.val('new-submod').trigger('change.select2');
+                
+                // Clear original form values for new submod
+                originalFormValues = {};
+                $('#modForm input, #modForm textarea').each(function() {
+                    originalFormValues[this.id] = '';
+                });
+                
+                isLoadingFormData = false;
                 $('#name').focus();
             }
+        });
+        
+        // Test preservation button handler
+        $('#testPreservationBtn').click(() => {
+            const results = testXmlPreservation();
+            let message = 'XML Preservation Test Results:\n\n';
+            message += `✅ Perfect reconstruction: ${results.perfectReconstruction ? 'PASS' : 'FAIL'}\n`;
+            message += `✅ Original order preserved: ${results.orderPreserved ? 'PASS' : 'FAIL'}\n`;
+            message += `✅ UI displays alphabetically: ${results.uiAlphabetical ? 'PASS' : 'FAIL'}\n`;
+            
+            if (results.perfectReconstruction && results.orderPreserved && results.uiAlphabetical) {
+                message += '\n🎉 All tests PASSED! XML preservation system is working correctly.';
+            } else {
+                message += '\n⚠️ Some tests FAILED. Check console for details.';
+            }
+            
+            alert(message);
         });
     })();
 </script>
