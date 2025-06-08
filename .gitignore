@@ -144,14 +144,22 @@ fabric.properties
 *.csr
 *.css
 *.htm
-*.html
-*.js
 *.jsp
 *.php
 *.rss
 *.wasm
 *.wat
 *.xhtml
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test files
+test_*.html
+MemoriaCatalog.xml
 
 ### WebStorm+all ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
