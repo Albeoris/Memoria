@@ -629,6 +629,18 @@
                     catalogElement.appendChild(importedMod);
                 });
                 
+                // Add any mods that were added during this session but aren't new mods
+                mods.forEach(mod => {
+                    if (!originalModsOrder.includes(mod) && !isNewMod) {
+                        // This is a mod that was added during the session
+                        const serializer = new XMLSerializer();
+                        const modXmlString = serializer.serializeToString(mod);
+                        const tempDoc = new DOMParser().parseFromString(modXmlString, 'application/xml');
+                        const importedMod = modifiedXmlDoc.importNode(tempDoc.documentElement, true);
+                        catalogElement.appendChild(importedMod);
+                    }
+                });
+                
                 if (isNewMod) {
                     const newMod = createModElement(modifiedXmlDoc, false);
                     catalogElement.appendChild(newMod);
