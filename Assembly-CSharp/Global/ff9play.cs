@@ -324,14 +324,7 @@ public static class ff9play
         play.maxDamageLimit = ff9play.FF9PLAY_DAMAGE_MAX;
         play.maxMpDamageLimit = ff9play.FF9PLAY_MPDAMAGE_MAX;
 
-        play.saForced.Clear();
-        play.saBanish.Clear();
-        play.saHidden.Clear();
-
-        foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledGlobalSA(play))
-            saFeature.TriggerForcedSA(play);
-
-        ff9abil.CalculateGemsPlayer(play);
+        FF9Play_SAFeature_Update(play);
 
         foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(play))
             saFeature.TriggerOnEnable(play);
@@ -344,6 +337,31 @@ public static class ff9play
             play.cur.hp = play.max.hp;
         if (play.cur.mp > play.max.mp)
             play.cur.mp = play.max.mp;
+    }
+
+    public static void FF9Play_SAFeature_Update(PLAYER play)
+    {
+        HashSet<SupportAbility> OldSAForced = new HashSet<SupportAbility>();
+        foreach (SupportAbility OldSA in play.saForced)
+            OldSAForced.Add(OldSA);
+
+        play.saForced.Clear();
+        play.saBanish.Clear();
+        play.saHidden.Clear();
+
+        foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledGlobalSA(play))
+            saFeature.TriggerForcedSA(play);
+
+        foreach (SupportAbility SaForcedToReset in OldSAForced)
+            if (!play.saForced.Contains(SaForcedToReset))
+                ff9abil.DisableAllHierarchyFromSA(play, SaForcedToReset);
+
+        foreach (SupportAbility SaForced in play.saBanish)
+            ff9abil.FF9Abil_SetEnableSA(play, SaForced, false);
+        foreach (SupportAbility SaForced in play.saForced)
+            ff9abil.FF9Abil_SetEnableSA(play, SaForced, true);
+
+        ff9abil.CalculateGemsPlayer(play);
     }
 
     public static CharacterId CharacterOldIndexToID(CharacterOldIndex characterIndex)

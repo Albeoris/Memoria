@@ -224,9 +224,10 @@ namespace FF9
 
         public static List<SupportAbility> GetHierarchyFromAnySA(SupportAbility baseAbil)
         {
-            List<SupportAbility> boostedList = ff9abil.GetBoostedAbilityList(baseAbil);
+            SupportAbility BaseSA = GetBaseAbilityFromBoostedAbility(baseAbil);
+            List<SupportAbility> boostedList = GetBoostedAbilityList(BaseSA);
             List<SupportAbility> SAFullHierarchy = new List<SupportAbility>();
-            SAFullHierarchy.Add(baseAbil);
+            SAFullHierarchy.Add(BaseSA);
             foreach (SupportAbility BoostedSA in boostedList)
                 SAFullHierarchy.Add(BoostedSA);
 
@@ -259,10 +260,22 @@ namespace FF9
         public static void CalculateGemsPlayer(PLAYER player)
         {
             player.cur.capa = player.max.capa;
+            HashSet<SupportAbility> CurrentSAEquipped = new HashSet<SupportAbility>();
+            foreach (SupportAbility SAInject in player.saExtended)
+                CurrentSAEquipped.Add(SAInject);
 
-            foreach (SupportAbility SA in player.saExtended)
-                if (!player.saForced.Contains(SA))
-                    player.cur.capa = (UInt32)(player.cur.capa - GetSAGemCostFromPlayer(player, SA));
+            if (Configuration.Battle.LockEquippedAbilities == 0 || Configuration.Battle.LockEquippedAbilities == 2)
+                foreach (SupportAbility SA in CurrentSAEquipped)
+                {
+                    if (player.cur.capa >= GetSAGemCostFromPlayer(player, SA))
+                        player.cur.capa -= (uint)GetSAGemCostFromPlayer(player, SA);
+                    else
+                    { // Not usefull i think but it's a safe check.
+                        FF9Abil_SetEnableSA(player, SA, false);
+                        Log.Message("Not enough gems, SA("+SA+") removed ");
+                        player.cur.capa = (uint)Math.Min(player.cur.capa + GetSAGemCostFromPlayer(player, SA), player.max.capa);
+                    }
+                }
         }
 
         public static Int32 GetBoostedAbilityMaxLevel(PLAYER player, SupportAbility baseAbil)

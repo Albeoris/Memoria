@@ -104,7 +104,7 @@ namespace Memoria.Data
                 {
                     if (PermanentEffect[i].Condition.Length > 0)
                     {
-                        if (!PermanentEffect[i].Formula.ContainsKey("HiddenSA") && !PermanentEffect[i].Formula.ContainsKey("ActivateSA") && !PermanentEffect[i].Formula.ContainsKey("BanishSA")
+                        if (!PermanentEffect[i].Formula.ContainsKey("ActivateSA") && !PermanentEffect[i].Formula.ContainsKey("BanishSA") && !PermanentEffect[i].Formula.ContainsKey("HiddenSA")
                             && !PermanentEffect[i].Formula.ContainsKey("ActivateSAByLvl") && !PermanentEffect[i].Formula.ContainsKey("BanishSAByLvl"))
                             continue;
                         Expression c = new Expression(PermanentEffect[i].Condition);
@@ -126,12 +126,7 @@ namespace Memoria.Data
                             SupportAbility SA = (SupportAbility)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)SupportAbility.Void);
                             if (SA == SupportAbility.Void)
                                 continue;
-                            if (String.Equals(formula.Key, "HiddenSA"))
-                            {
-                                foreach (SupportAbility SAtoHide in ff9abil.GetHierarchyFromAnySA(SA))
-                                    play.saHidden.Add(SAtoHide);
-                            }
-                            else if (String.Equals(formula.Key, "ActivateSA") && !play.saForced.Contains(SA))
+                            if (String.Equals(formula.Key, "ActivateSA") && !play.saForced.Contains(SA))
                             {
                                 play.saForced.Add(SA);
                             }
@@ -193,6 +188,11 @@ namespace Memoria.Data
                                     else
                                         break;
                                 }
+                            }
+                            else if (String.Equals(formula.Key, "HiddenSA"))
+                            {
+                                foreach (SupportAbility SAtoHide in ff9abil.GetHierarchyFromAnySA(SA))
+                                    play.saHidden.Add(SAtoHide);
                             }
                         }                           
                     }

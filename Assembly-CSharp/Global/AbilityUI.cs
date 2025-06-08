@@ -1240,7 +1240,7 @@ public class AbilityUI : UIScene
             return AbilityType.NoDraw;
 
         if (player.saBanish.Contains(ff9abil.GetSupportAbilityFromAbilityId(abilityId)))
-            return AbilityType.CantSpell;
+            return player.saForced.Contains(ff9abil.GetSupportAbilityFromAbilityId(abilityId)) ? AbilityType.CantDisable : AbilityType.CantSpell;
 
         if (Configuration.Battle.LockEquippedAbilities == 1 || Configuration.Battle.LockEquippedAbilities == 3)
         {
