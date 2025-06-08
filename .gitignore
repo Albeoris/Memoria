@@ -161,6 +161,30 @@ yarn-error.log*
 test_*.html
 MemoriaCatalog.xml
 
+# Visual Studio and build artifacts
+.idea/
+.vs/
+bin/
+obj/
+/packages/
+/Output/
+/ipch/
+/References
+*.suo
+*.user
+*.DotSettings*
+*.dgml
+*.VC.opendb
+*.VC.db
+*.idb
+*.sdf
+*.tlog
+*.meta
+*.log
+/Memoria.Injection/Debug/
+/Memoria.Injection/Release/
+/Memoria.Injection/x64/
+
 ### WebStorm+all ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
