@@ -7,10 +7,11 @@ namespace Global.Sound.SaXAudio
     {
         public static event OnFinishedDelegate OnVoiceFinished;
 
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct ReverbParameters
         {
             // ratio of wet (processed) signal to dry (original) signal
-            public Single WetDryMix = 100.0f;            // [0, 100] (percentage)
+            public Single WetDryMix = 100.0f;      // [0, 100] (percentage)
 
             // Delay times
             public UInt32 ReflectionsDelay = 5;    // [0, 300] in ms
@@ -41,31 +42,39 @@ namespace Global.Sound.SaXAudio
             public Single RoomSize = 100f;         // [1, 100] in feet
 
             // component control
-            public Boolean DisableLateField = false; // TRUE to disable late field reflections
+            public Boolean DisableLateField = false; // true to disable late field reflections
 
             public ReverbParameters() { }
-        };
+        }
 
-        // EQ parameters (4 bands), used with IXAPOParameters::SetParameters:
-        // The EQ supports only FLOAT32 audio formats.
-        // The framerate must be within [22000, 48000] Hz.
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct EqParameters
         {
-            public Single FrequencyCenter0 = 100f;   // center frequency in Hz, band 0
-            public Single Gain0 = 1f;                // [0.126f, 7.94f] boost/cut +/-18dB
-            public Single Bandwidth0 = 1f;           // [0.1f, 2f] bandwidth, region of EQ is center frequency +/- bandwidth/2
+            public Single FrequencyCenter0 = 100f;   // [20, 20000] center frequency in Hz, band 0
+            public Single Gain0 = 1f;                // [0.126, 7.94] boost/cut +/-18dB
+            public Single Bandwidth0 = 1f;           // [0.1, 2] bandwidth, region of EQ is center frequency +/- bandwidth/2
             public Single FrequencyCenter1 = 800f;   // band 1
-            public Single Gain1 = 1f;                    
-            public Single Bandwidth1 = 1f;               
+            public Single Gain1 = 1f;
+            public Single Bandwidth1 = 1f;
             public Single FrequencyCenter2 = 2000f;  // band 2
-            public Single Gain2 = 1f;                    
-            public Single Bandwidth2 = 1f;               
+            public Single Gain2 = 1f;
+            public Single Bandwidth2 = 1f;
             public Single FrequencyCenter3 = 10000f; // band 3
             public Single Gain3 = 1f;
             public Single Bandwidth3 = 1f;
 
             public EqParameters() { }
-        };
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct EchoParameters
+        {
+            public Single WetDryMix = 0.5f; // [0f, 1f] ratio of wet (processed) signal to dry (original) signal
+            public Single Feedback = 0.5f;  // [0f, 1f] amount of output fed back into input
+            public Single Delay = 500f;     // [1f, 2000f] delay (all channels) in milliseconds
+
+            public EchoParameters() { }
+        }
 
         public static Boolean Init()
         {
@@ -134,22 +143,19 @@ namespace Global.Sound.SaXAudio
         public static extern void SetLoopPoints(Int32 voiceID, UInt32 start, UInt32 end);
 
         [DllImport("SaXAudio")]
-        public static extern void SetReverb(Int32 voiceID, ReverbParameters reverbParams);
+        public static extern void SetReverb(Int32 voiceID, ReverbParameters reverbParams, Single fade, Boolean isBus);
         [DllImport("SaXAudio")]
-        public static extern void SetReverbBus(Int32 busID, ReverbParameters reverbParams);
-        [DllImport("SaXAudio")]
-        public static extern void RemoveReverb(Int32 voiceID);
-        [DllImport("SaXAudio")]
-        public static extern void RemoveReverbBus(Int32 busID);
+        public static extern void RemoveReverb(Int32 voiceID, Single fade, Boolean isBus);
 
         [DllImport("SaXAudio")]
-        public static extern void SetEq(Int32 voiceID, EqParameters eqParams);
+        public static extern void SetEq(Int32 voiceID, EqParameters eqParams, Single fade, Boolean isBus);
         [DllImport("SaXAudio")]
-        public static extern void SetEqBus(Int32 busID, EqParameters eqParams);
+        public static extern void RemoveEq(Int32 voiceID, Single fade, Boolean isBus);
+
         [DllImport("SaXAudio")]
-        public static extern void RemoveEq(Int32 voiceID);
+        public static extern void SetEcho(Int32 voiceID, EchoParameters echoParams, Single fade, Boolean isBus);
         [DllImport("SaXAudio")]
-        public static extern void RemoveEqBus(Int32 busID);
+        public static extern void RemoveEcho(Int32 voiceID, Single fade, Boolean isBus);
 
         [DllImport("SaXAudio")]
         public static extern Single GetVolume(Int32 voiceID);

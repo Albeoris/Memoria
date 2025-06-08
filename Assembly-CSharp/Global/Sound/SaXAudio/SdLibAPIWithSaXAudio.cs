@@ -89,13 +89,13 @@ namespace Global.Sound.SaXAudio
 
                 Int32 bankID = SaXAudio.BankAddOgg((IntPtr)((Byte*)akb + AkbHeaderSize), header.ContentSize, DeleteAkbBin);
                 bankData[bankID] = new BankData
-                    {
+                {
                     Profile = profile,
                     LoopStart = header.LoopStart,
                     LoopEnd = header.LoopEnd,
                     LoopStart2 = header.LoopStartAlternate,
                     LoopEnd2 = header.LoopEndAlternate
-                    };
+                };
                 Log.Message($"[SaXAudio] Added B{bankID} '{profile.ResourceID}'");
                 return bankID;
             }
@@ -121,7 +121,7 @@ namespace Global.Sound.SaXAudio
             BankData data = bankData[bankID];
             Int32 busID = -1;
 
-            if(data.Profile.SoundProfileType == SoundProfileType.Voice)
+            if (data.Profile.SoundProfileType == SoundProfileType.Voice)
             {
                 busID = busVoices;
             }
