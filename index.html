@@ -514,17 +514,33 @@
             // Get the original mod XML
             let modXml = originalModXml.get(mod);
             if (!modXml) {
-                // Fallback to serialization if no original XML
-                const serializer = new XMLSerializer();
-                return serializer.serializeToString(mod);
+                // Fallback: find original XML by mod name
+                const modName = mod.querySelector('Name')?.textContent;
+                for (const [originalMod, xml] of originalModXml.entries()) {
+                    if (originalMod.querySelector('Name')?.textContent === modName) {
+                        modXml = xml;
+                        break;
+                    }
+                }
+                
+                if (!modXml) {
+                    // Final fallback to serialization if no original XML found
+                    const serializer = new XMLSerializer();
+                    return serializer.serializeToString(mod);
+                }
             }
             
-            // Check if any submods were modified
+            // Check if any submods were modified by comparing names instead of object references
             const submods = mod.querySelectorAll('SubMod');
             let hasModifiedSubmods = false;
             
             submods.forEach(submod => {
-                if (modifiedSubmods.has(submod)) {
+                const submodName = submod.querySelector('Name')?.textContent;
+                const isSubmodModified = Array.from(modifiedSubmods).some(modifiedSubmod => 
+                    modifiedSubmod.querySelector('Name')?.textContent === submodName &&
+                    modifiedSubmod.closest('Mod').querySelector('Name')?.textContent === mod.querySelector('Name')?.textContent);
+                
+                if (isSubmodModified) {
                     hasModifiedSubmods = true;
                 }
             });
@@ -538,14 +554,27 @@
                 let reconstructedModXml = modXml;
                 
                 submods.forEach(submod => {
-                    if (modifiedSubmods.has(submod)) {
-                        const originalSubmodXml = originalSubmodXml.get(submod);
-                        if (originalSubmodXml) {
-                            // Create updated submod XML
-                            const updatedSubmodXml = updateSubmodFieldsInXmlText(originalSubmodXml, submod);
-                            
-                            // Replace in the mod XML
-                            reconstructedModXml = reconstructedModXml.replace(originalSubmodXml, updatedSubmodXml);
+                    const submodName = submod.querySelector('Name')?.textContent;
+                    const isSubmodModified = Array.from(modifiedSubmods).some(modifiedSubmod => 
+                        modifiedSubmod.querySelector('Name')?.textContent === submodName &&
+                        modifiedSubmod.closest('Mod').querySelector('Name')?.textContent === mod.querySelector('Name')?.textContent);
+                    
+                    if (isSubmodModified) {
+                        // Find the actual modified submod element
+                        const actualModifiedSubmod = Array.from(modifiedSubmods).find(modifiedSubmod => 
+                            modifiedSubmod.querySelector('Name')?.textContent === submodName &&
+                            modifiedSubmod.closest('Mod').querySelector('Name')?.textContent === mod.querySelector('Name')?.textContent);
+                        
+                        if (actualModifiedSubmod) {
+                            // Find original submod XML by name within this mod's XML
+                            const originalSubmodXml = findSubmodXmlInModXml(modXml, submodName);
+                            if (originalSubmodXml) {
+                                // Create updated submod XML
+                                const updatedSubmodXml = updateSubmodFieldsInXmlText(originalSubmodXml, actualModifiedSubmod);
+                                
+                                // Replace in the mod XML
+                                reconstructedModXml = reconstructedModXml.replace(originalSubmodXml, updatedSubmodXml);
+                            }
                         }
                     }
                 });
@@ -553,6 +582,20 @@
                 // Also update main mod fields
                 return updateModFieldsInXmlText(reconstructedModXml, mod);
             }
+        }
+        
+        // Helper function to find submod XML text within mod XML by submod name
+        function findSubmodXmlInModXml(modXmlText, submodName) {
+            const submodStart = modXmlText.indexOf(`<Name>${submodName}</Name>`);
+            if (submodStart > -1) {
+                // Find the enclosing SubMod tags
+                const beforeName = modXmlText.lastIndexOf('<SubMod>', submodStart);
+                const afterName = modXmlText.indexOf('</SubMod>', submodStart) + 9;
+                if (beforeName > -1 && afterName > -1) {
+                    return modXmlText.substring(beforeName, afterName);
+                }
+            }
+            return null;
         }
         
         function updateModFieldsInXmlText(xmlText, modElement) {
@@ -829,6 +872,22 @@
             const uiAlphabetical = JSON.stringify(uiModOrder) === JSON.stringify(sortedOrder);
             console.log('Test 3 - UI displays alphabetically:', uiAlphabetical);
             
+            // Test 4: Test mod name-based matching (new test)
+            console.log('Test 4 - Testing mod name-based matching...');
+            const testModName = mods[0]?.querySelector('Name')?.textContent;
+            if (testModName) {
+                // Find chunk with this mod name
+                const foundChunk = xmlChunks.find(chunk => 
+                    chunk.type === 'mod' && 
+                    chunk.element.querySelector('Name')?.textContent === testModName);
+                console.log('Found chunk for mod:', testModName, ':', !!foundChunk);
+                
+                // Test finding mod in sorted array
+                const foundInSorted = mods.find(mod => 
+                    mod.querySelector('Name')?.textContent === testModName);
+                console.log('Found in sorted array:', !!foundInSorted);
+            }
+            
             return {
                 perfectReconstruction: isIdentical,
                 orderPreserved: orderPreserved,
@@ -842,8 +901,10 @@
         function updatePrButtonVisibility() {
             if (hasSuccessfulSave) {
                 $('#createPrContainer').hide();
+                // Don't show PR link container here, only after successful save
             } else {
                 $('#createPrContainer').show();
+                $('#prLinkContainer').hide(); // Ensure PR link is hidden initially
             }
         }
         
@@ -1135,9 +1196,24 @@
                     } else if (chunk.type === 'mod') {
                         const mod = chunk.element;
                         
-                        if (modifiedMods.has(mod)) {
+                        // Check if this mod was modified by comparing the mod name instead of object reference
+                        // This fixes the issue where sorting mods for UI creates reference mismatches
+                        const modName = mod.querySelector('Name')?.textContent;
+                        const isModModified = Array.from(modifiedMods).some(modifiedMod => 
+                            modifiedMod.querySelector('Name')?.textContent === modName);
+                        
+                        if (isModModified) {
                             // Mod was modified - need to reconstruct it preserving submod formatting
-                            reconstructedXml += reconstructModWithSubmodPreservation(mod);
+                            // Find the actual modified mod element from the modified set
+                            const actualModifiedMod = Array.from(modifiedMods).find(modifiedMod => 
+                                modifiedMod.querySelector('Name')?.textContent === modName);
+                            
+                            if (actualModifiedMod) {
+                                reconstructedXml += reconstructModWithSubmodPreservation(actualModifiedMod);
+                            } else {
+                                // Fallback - use original content
+                                reconstructedXml += chunk.originalContent;
+                            }
                         } else {
                             // Mod unchanged - use original text
                             reconstructedXml += chunk.originalContent;
@@ -1161,9 +1237,22 @@
                     // Handle new submods by finding the target mod and inserting at the end
                     const selectedModIndex = modSelect.prop('selectedIndex');
                     const selectedMod = mods[selectedModIndex];
-                    if (modToChunkIndex.has(selectedMod)) {
-                        const chunkIndex = modToChunkIndex.get(selectedMod);
-                        const modChunk = xmlChunks[chunkIndex];
+                    const selectedModName = selectedMod.querySelector('Name')?.textContent;
+                    
+                    // Find the chunk containing this mod by name instead of object reference
+                    let targetChunkIndex = -1;
+                    for (let i = 0; i < xmlChunks.length; i++) {
+                        if (xmlChunks[i].type === 'mod') {
+                            const chunkModName = xmlChunks[i].element.querySelector('Name')?.textContent;
+                            if (chunkModName === selectedModName) {
+                                targetChunkIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (targetChunkIndex >= 0) {
+                        const modChunk = xmlChunks[targetChunkIndex];
                         
                         // Reconstruct this mod with the new submod
                         const newSubmodXml = createModElementAsXmlString(true);
@@ -1178,7 +1267,8 @@
                         }
                         
                         // Update the chunk content
-                        xmlChunks[chunkIndex].originalContent = modXml;
+                        xmlChunks[targetChunkIndex].originalContent = modXml;
+                        // Mark this mod as modified for proper handling
                         modifiedMods.add(selectedMod);
                         
                         // Rebuild the entire XML again
@@ -1188,10 +1278,24 @@
                             if (chunkItem.type === 'text') {
                                 reconstructedXml += chunkItem.content;
                             } else if (chunkItem.type === 'mod') {
-                                if (j === chunkIndex) {
+                                if (j === targetChunkIndex) {
                                     reconstructedXml += modXml;
                                 } else {
-                                    reconstructedXml += chunkItem.originalContent;
+                                    const chunkModName = chunkItem.element.querySelector('Name')?.textContent;
+                                    const isChunkModModified = Array.from(modifiedMods).some(modifiedMod => 
+                                        modifiedMod.querySelector('Name')?.textContent === chunkModName);
+                                    
+                                    if (isChunkModModified && j !== targetChunkIndex) {
+                                        const actualModifiedMod = Array.from(modifiedMods).find(modifiedMod => 
+                                            modifiedMod.querySelector('Name')?.textContent === chunkModName);
+                                        if (actualModifiedMod) {
+                                            reconstructedXml += reconstructModWithSubmodPreservation(actualModifiedMod);
+                                        } else {
+                                            reconstructedXml += chunkItem.originalContent;
+                                        }
+                                    } else {
+                                        reconstructedXml += chunkItem.originalContent;
+                                    }
                                 }
                             }
                         }
@@ -1199,6 +1303,28 @@
                 }
                 
                 const newXmlContent = reconstructedXml;
+                
+                // Debug: Log change information
+                console.log('=== Save Changes Debug ===');
+                console.log('Modified mods count:', modifiedMods.size);
+                console.log('Modified submods count:', modifiedSubmods.size);
+                console.log('Modified mod names:', Array.from(modifiedMods).map(mod => mod.querySelector('Name')?.textContent));
+                console.log('Modified submod names:', Array.from(modifiedSubmods).map(submod => {
+                    const parentMod = submod.closest('Mod');
+                    return `${parentMod?.querySelector('Name')?.textContent} -> ${submod.querySelector('Name')?.textContent}`;
+                }));
+                console.log('Original XML length:', originalXmlText.length);
+                console.log('New XML length:', newXmlContent.length);
+                console.log('XML content changed:', newXmlContent !== originalXmlText);
+                
+                // Verify that we actually have changes to commit
+                if (newXmlContent === originalXmlText && !isNewMod && !isNewSubmod) {
+                    alert('No changes detected. Please make some modifications before saving.');
+                    $('#saveBtn').prop('disabled', false).text('Save Changes');
+                    hideLoading();
+                    return;
+                }
+                
                 const branchName = `mod-edit-${Date.now()}`;
                 const commitMessage = isNewMod ? `Add new mod: ${name}` :
                     isNewSubmod ? `Add new submod: ${name}` :
@@ -1419,6 +1545,11 @@
         // Test preservation button handler
         $('#testPreservationBtn').click(() => {
             const results = testXmlPreservation();
+            
+            // Also test modification simulation
+            console.log('=== Testing modification simulation ===');
+            testModificationPreservation();
+            
             let message = 'XML Preservation Test Results:\n\n';
             message += `✅ Perfect reconstruction: ${results.perfectReconstruction ? 'PASS' : 'FAIL'}\n`;
             message += `✅ Original order preserved: ${results.orderPreserved ? 'PASS' : 'FAIL'}\n`;
@@ -1426,12 +1557,91 @@
             
             if (results.perfectReconstruction && results.orderPreserved && results.uiAlphabetical) {
                 message += '\n🎉 All tests PASSED! XML preservation system is working correctly.';
+                message += '\n\nCheck console for modification simulation test results.';
             } else {
                 message += '\n⚠️ Some tests FAILED. Check console for details.';
             }
             
             alert(message);
         });
+        
+        // Test function to simulate making modifications and verify preservation
+        function testModificationPreservation() {
+            console.log('Testing modification preservation...');
+            
+            if (mods.length === 0) {
+                console.log('No mods available for testing');
+                return;
+            }
+            
+            // Save original state
+            const originalModifiedMods = new Set(modifiedMods);
+            const originalModifiedSubmods = new Set(modifiedSubmods);
+            
+            try {
+                // Test 1: Modify first mod description
+                const testMod = mods[0];
+                const originalDescription = testMod.querySelector('Description')?.textContent || '';
+                const testDescription = 'TEST MODIFIED DESCRIPTION - ' + Date.now();
+                
+                // Update the DOM element
+                let descElement = testMod.querySelector('Description');
+                if (!descElement) {
+                    descElement = testMod.ownerDocument.createElement('Description');
+                    testMod.appendChild(descElement);
+                }
+                descElement.textContent = testDescription;
+                
+                // Mark as modified
+                modifiedMods.add(testMod);
+                
+                // Test reconstruction
+                const reconstructedModXml = reconstructModWithSubmodPreservation(testMod);
+                console.log('Test mod reconstruction includes new description:', 
+                    reconstructedModXml.includes(testDescription));
+                
+                // Test 2: Test full XML reconstruction
+                let reconstructedXml = '';
+                for (let i = 0; i < xmlChunks.length; i++) {
+                    const chunk = xmlChunks[i];
+                    if (chunk.type === 'text') {
+                        reconstructedXml += chunk.content;
+                    } else if (chunk.type === 'mod') {
+                        const mod = chunk.element;
+                        const modName = mod.querySelector('Name')?.textContent;
+                        const isModModified = Array.from(modifiedMods).some(modifiedMod => 
+                            modifiedMod.querySelector('Name')?.textContent === modName);
+                        
+                        if (isModModified) {
+                            const actualModifiedMod = Array.from(modifiedMods).find(modifiedMod => 
+                                modifiedMod.querySelector('Name')?.textContent === modName);
+                            if (actualModifiedMod) {
+                                reconstructedXml += reconstructModWithSubmodPreservation(actualModifiedMod);
+                            } else {
+                                reconstructedXml += chunk.originalContent;
+                            }
+                        } else {
+                            reconstructedXml += chunk.originalContent;
+                        }
+                    }
+                }
+                
+                console.log('Full reconstruction includes test description:', 
+                    reconstructedXml.includes(testDescription));
+                console.log('Full reconstruction differs from original:', 
+                    reconstructedXml !== originalXmlText);
+                
+                // Restore original description
+                descElement.textContent = originalDescription;
+                
+            } finally {
+                // Restore original modification state
+                modifiedMods.clear();
+                modifiedSubmods.clear();
+                originalModifiedMods.forEach(mod => modifiedMods.add(mod));
+                originalModifiedSubmods.forEach(submod => modifiedSubmods.add(submod));
+            }
+        }
     })();
 </script>
 </body>
