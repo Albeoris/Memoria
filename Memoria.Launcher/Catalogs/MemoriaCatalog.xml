@@ -2081,19 +2081,19 @@ Eredeti telepítő: Evin</Description>
 </Mod>
 
 <Mod>
-	<Name>Modern German</Name>
+	<Name>Russian Translation</Name>
+	<PatchNotes>текст</PatchNotes>
+	<Website>https://ff9.ffrtt.ru/viewtopic.php?f=14&t=38</Website>
 	<Version>1.0</Version>
-	<Priority>14</Priority>
-	<Author>Plasquar</Author>
-	<InstallationPath>ModernGerman</InstallationPath>
+	<Priority>17</Priority>
+	<Author>RGR Studio</Author>
+	<InstallationPath>TranslationRu</InstallationPath>
 	<Category>Translation</Category>
 	<ReleaseDateOriginal>12 Feb 2025</ReleaseDateOriginal>
-	<ReleaseDate>12 Feb 2025</ReleaseDate>
-	<MinimumMemoriaVersion>2024-08-18</MinimumMemoriaVersion>
-	<Description>Diese Mod behebt ein paar Rechtschreibfehler und aktualisiert die deutsche Übersetzung von FF9 auf die neue deutsche Rechtschreibung.
- Beispiel: "Wir müßen hier weg!" -> "Wir müssen hier weg!".
- Diese Mod ist NICHT notwendig, wenn ihr mit "Alternate Fantasy" spielt, dort ist "Modern German" bereits integriert.</Description>
-	<DownloadUrl>https://www.dropbox.com/scl/fi/br6xjl22auu284caaxd8n/PC_ModernGerman.zip?rlkey=2pl7a5cycqg4pgiy53u5lwewp&amp;dl=1</DownloadUrl>
+	<ReleaseDate>2024-11-22</ReleaseDate>
+	<MinimumMemoriaVersion>2024-11-17</MinimumMemoriaVersion>
+	<Description>Перевод игры на русский язык.</Description>
+	<DownloadUrl>https://ff9.ffrtt.ru/rus/RussianLocalization_MemoriaMod_mes.zip</DownloadUrl>
 </Mod>
 
 <!--
