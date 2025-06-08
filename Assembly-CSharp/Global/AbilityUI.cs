@@ -436,16 +436,24 @@ public class AbilityUI : UIScene
                         {
                             Int32 boostLevel = Math.Min(boostMaxLevel, ff9abil.GetBoostedAbilityLevel(player, supportId));
                             List<SupportAbility> boostedList = ff9abil.GetBoostedAbilityList(supportId);
-                            Boolean enableNext = (boostLevel < boostMaxLevel);
+                            Boolean enableNext = boostLevel < boostMaxLevel;
                             if (enableNext)
                             {
                                 CharacterAbilityGems nextBoost = ff9abil._FF9Abil_SaData[boostedList[boostLevel]];
-                                enableNext = this.CheckSAType(ff9abil.GetAbilityIdFromSupportAbility(nextBoost.Id), player) == AbilityType.Enable;
-                                if (enableNext)
+                                if (player.saBanish.Contains(nextBoost.Id))
                                 {
-                                    ff9abil.FF9Abil_SetEnableSA(player, nextBoost.Id, true);
-                                    player.cur.capa = (UInt32)(player.cur.capa - ff9abil.GetSAGemCostFromPlayer(player, nextBoost.Id));
+                                    enableNext = false;
                                 }
+                                else
+                                {
+                                    enableNext = this.CheckSAType(ff9abil.GetAbilityIdFromSupportAbility(nextBoost.Id), player) == AbilityType.Enable;
+                                    if (enableNext)
+                                    {
+                                        ff9abil.FF9Abil_SetEnableSA(player, nextBoost.Id, true);
+                                        player.cur.capa = (UInt32)(player.cur.capa - ff9abil.GetSAGemCostFromPlayer(player, nextBoost.Id));
+                                    }
+                                }
+
                             }
                             if (!enableNext)
                             {
@@ -1230,6 +1238,9 @@ public class AbilityUI : UIScene
 
         if (player.saHidden.Contains(ff9abil.GetSupportAbilityFromAbilityId(abilityId)))
             return AbilityType.NoDraw;
+
+        if (player.saBanish.Contains(ff9abil.GetSupportAbilityFromAbilityId(abilityId)))
+            return AbilityType.CantSpell;
 
         if (Configuration.Battle.LockEquippedAbilities == 1 || Configuration.Battle.LockEquippedAbilities == 3)
         {

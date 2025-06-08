@@ -21,6 +21,7 @@ public class PLAYER
         this.sa[1] = 0u;
         this.saExtended = new HashSet<SupportAbility>();
         this.saForced = new HashSet<SupportAbility>();
+        this.saBanish = new HashSet<SupportAbility>();
         this.saHidden = new HashSet<SupportAbility>();
         this.mpCostFactor = 100;
         this.maxHpLimit = ff9play.FF9PLAY_HP_MAX;
@@ -188,6 +189,7 @@ public class PLAYER
     public UInt32[] sa;
     public HashSet<SupportAbility> saExtended;
     public HashSet<SupportAbility> saForced;
+    public HashSet<SupportAbility> saBanish;
     public HashSet<SupportAbility> saHidden;
 
     // Custom fields

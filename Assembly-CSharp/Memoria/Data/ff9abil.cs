@@ -127,7 +127,7 @@ namespace FF9
                 else
                     player.sa[(Int32)saIndex >> 5] &= (UInt32)~(1 << (Int32)saIndex);
             }
-            if (GemCost)
+            if (GemCost && (Configuration.Battle.LockEquippedAbilities == 0 || Configuration.Battle.LockEquippedAbilities == 2))
             {
                 CharacterAbilityGems saData = GetSupportAbilityGem(GetAbilityIdFromSupportAbility(saIndex));
                 player.cur.capa += (uint)(enable ? -saData.GemsCount : saData.GemsCount);
@@ -220,6 +220,49 @@ namespace FF9
                 if (kvp.Value.Boosted.Contains(boostedAbil))
                     return kvp.Key;
             return boostedAbil;
+        }
+
+        public static List<SupportAbility> GetHierarchyFromAnySA(SupportAbility baseAbil)
+        {
+            List<SupportAbility> boostedList = ff9abil.GetBoostedAbilityList(baseAbil);
+            List<SupportAbility> SAFullHierarchy = new List<SupportAbility>();
+            SAFullHierarchy.Add(baseAbil);
+            foreach (SupportAbility BoostedSA in boostedList)
+                SAFullHierarchy.Add(BoostedSA);
+
+            return SAFullHierarchy;
+        }
+
+        public static void DisableAllHierarchyFromSA(PLAYER player, SupportAbility baseAbil)
+        {
+            foreach (SupportAbility SAtoReset in GetHierarchyFromAnySA(baseAbil))
+                if (FF9Abil_IsEnableSA(player.saExtended, SAtoReset))
+                    FF9Abil_SetEnableSA(player, SAtoReset, false);
+        }
+
+        public static void DisableHierarchyFromSA(PLAYER player, SupportAbility baseAbil)
+        {
+            Boolean Skip = true;
+            foreach (SupportAbility SAtoReset in GetHierarchyFromAnySA(baseAbil))
+            {
+                if (Skip && SAtoReset != baseAbil)
+                    continue;
+                else
+                {
+                    Skip = false;
+                    if (FF9Abil_IsEnableSA(player.saExtended, SAtoReset))
+                        FF9Abil_SetEnableSA(player, SAtoReset, false, SAtoReset != baseAbil);
+                }
+            }
+        }
+
+        public static void CalculateGemsPlayer(PLAYER player)
+        {
+            player.cur.capa = player.max.capa;
+
+            foreach (SupportAbility SA in player.saExtended)
+                if (!player.saForced.Contains(SA))
+                    player.cur.capa = (UInt32)(player.cur.capa - GetSAGemCostFromPlayer(player, SA));
         }
 
         public static Int32 GetBoostedAbilityMaxLevel(PLAYER player, SupportAbility baseAbil)

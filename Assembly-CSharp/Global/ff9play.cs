@@ -324,7 +324,14 @@ public static class ff9play
         play.maxDamageLimit = ff9play.FF9PLAY_DAMAGE_MAX;
         play.maxMpDamageLimit = ff9play.FF9PLAY_MPDAMAGE_MAX;
 
-        FF9Play_ForcedSA_Update(play);
+        play.saForced.Clear();
+        play.saBanish.Clear();
+        play.saHidden.Clear();
+
+        foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledGlobalSA(play))
+            saFeature.TriggerForcedSA(play);
+
+        ff9abil.CalculateGemsPlayer(play);
 
         foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(play))
             saFeature.TriggerOnEnable(play);
@@ -337,44 +344,6 @@ public static class ff9play
             play.cur.hp = play.max.hp;
         if (play.cur.mp > play.max.mp)
             play.cur.mp = play.max.mp;
-    }
-
-    public static void FF9Play_ForcedSA_Update(PLAYER play)
-    {
-        Boolean RetrieveGem = Configuration.Battle.LockEquippedAbilities == 0 || Configuration.Battle.LockEquippedAbilities == 2;
-        HashSet<SupportAbility> OldForcedSA = new HashSet<SupportAbility>();
-        foreach (SupportAbility forcedSA in play.saForced)
-            if (ff9abil.FF9Abil_IsEnableSA(play, forcedSA))
-            {
-                ff9abil.FF9Abil_SetEnableSA(play, forcedSA, false);
-                OldForcedSA.Add(forcedSA);
-            }
-
-        foreach (SupportAbility hiddenSA in play.saHidden)
-        {
-            SupportAbility BaseSA = ff9abil.GetBaseAbilityFromBoostedAbility(hiddenSA);
-            List<SupportAbility> boostedList = ff9abil.GetBoostedAbilityList(BaseSA);
-            foreach (SupportAbility boosted in boostedList)
-                if (ff9abil.FF9Abil_IsEnableSA(play.saExtended, boosted))
-                    ff9abil.FF9Abil_SetEnableSA(play, boosted, false, RetrieveGem);
-        }
-
-        play.saForced.Clear();
-        play.saHidden.Clear();
-
-        foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledGlobalSA(play))
-            saFeature.TriggerForcedSA(play);
-
-        foreach (SupportAbility BoostedSA in OldForcedSA)
-            if (!play.saForced.Contains(BoostedSA) || play.saHidden.Contains(BoostedSA))
-            {
-                SupportAbility BaseSA = ff9abil.GetBaseAbilityFromBoostedAbility(BoostedSA);
-                List<SupportAbility> boostedList = ff9abil.GetBoostedAbilityList(BaseSA);
-                foreach (SupportAbility boosted in boostedList)
-                    if (ff9abil.FF9Abil_IsEnableSA(play.saExtended, boosted))
-                        ff9abil.FF9Abil_SetEnableSA(play, boosted, false, RetrieveGem);
-
-            }
     }
 
     public static CharacterId CharacterOldIndexToID(CharacterOldIndex characterIndex)
