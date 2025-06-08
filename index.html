@@ -1168,22 +1168,7 @@
                 
                 $('#saveBtn').prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Saving...');
                 showLoading('Creating pull request...');
-                const currentXmlResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CATALOG_PATH}`, {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                });
-                if (!currentXmlResponse.ok) {
-                    throw new Error('Failed to fetch current XML content');
-                }
-                const currentXmlData = await currentXmlResponse.json();
-                const currentXmlContent = new TextDecoder('utf-8').decode(
-                    Uint8Array.from(atob(currentXmlData.content), c => c.charCodeAt(0))
-                );
-                // Parse the current XML and create a working copy using chunk preservation
-                const currentXmlDoc = new DOMParser().parseFromString(currentXmlContent, 'application/xml');
-                
+
                 // Reconstruct XML using chunk-based preservation
                 let reconstructedXml = '';
                 
