@@ -254,6 +254,7 @@
         let modSelect = null;
         let submodSelect = null;
         let mods = [];
+        let draftMods = {}; // Store draft changes: { modIndex: { 'main' | submodIndex: formData } }
 
         // Check if access_token present in URL
         function extractTokenFromUrl() {
@@ -366,41 +367,111 @@
             el.style.height = el.scrollHeight + 'px';
         }
 
+        function saveDraftState() {
+            const modIndex = modSelect.prop('selectedIndex');
+            const submodIndex = submodSelect.prop('selectedIndex') - 1; // -1 because 'Main' is at index 0
+            const isSubmod = submodIndex >= 0;
+            
+            if (modIndex < 0) return; // No mod selected
+            
+            if (!draftMods[modIndex]) {
+                draftMods[modIndex] = {};
+            }
+            
+            const key = isSubmod ? submodIndex : 'main';
+            draftMods[modIndex][key] = {
+                name: $('#name').val(),
+                version: $('#version').val(),
+                description: $('#description').val(),
+                patchNotes: $('#patchNotes').val(),
+                priority: $('#priority').val(),
+                category: $('#category').val(),
+                website: $('#website').val(),
+                downloadUrl: $('#downloadUrl').val(),
+                previewFileUrl: $('#previewFileUrl').val(),
+                incompatibleWith: $('#incompatibleWith').val(),
+                minimumMemoriaVersion: $('#minimumMemoriaVersion').val(),
+                releaseDate: $('#releaseDate').val(),
+                path: $('#path').val(),
+                author: $('#author').val()
+            };
+        }
+
+        function loadDraftState(modIndex, isSubmod, submodIndex) {
+            if (!draftMods[modIndex]) return null;
+            
+            const key = isSubmod ? submodIndex : 'main';
+            return draftMods[modIndex][key] || null;
+        }
+
+        function clearDraftState() {
+            draftMods = {};
+        }
+
         function fillForm(modElement, isSubmod) {
-            $('#modForm input, #modForm textarea').val('');
-            $('#name').val(modElement.querySelector('Name')?.textContent || '');
-            $('#version').val(modElement.querySelector('Version')?.textContent || '');
-            $('#description').val(modElement.querySelector('Description')?.textContent || '');
-            $('#patchNotes').val(modElement.querySelector('PatchNotes')?.textContent || '');
-            $('#priority').val(modElement.querySelector('Priority')?.textContent || '');
-            $('#category').val(modElement.querySelector('Category')?.textContent || '');
-            $('#website').val(modElement.querySelector('Website')?.textContent || '');
-            $('#downloadUrl').val(modElement.querySelector('DownloadUrl')?.textContent || '');
-            $('#previewFileUrl').val(modElement.querySelector('PreviewFileUrl')?.textContent || '');
-            $('#incompatibleWith').val(modElement.querySelector('IncompatibleWith')?.textContent || '');
-            $('#minimumMemoriaVersion').val(modElement.querySelector('MinimumMemoriaVersion')?.textContent || '');
-            const releaseDate = modElement.querySelector('ReleaseDate')?.textContent;
-            if (releaseDate) {
-                try {
-                    const date = new Date(releaseDate);
-                    if (!isNaN(date.getTime())) {
-                        $('#releaseDate').val(date.toISOString().split('T')[0]);
+            const modIndex = modSelect.prop('selectedIndex');
+            const submodIndex = submodSelect.prop('selectedIndex') - 1;
+            
+            // Check if there's a draft state for this mod/submod
+            const draftState = loadDraftState(modIndex, isSubmod, submodIndex);
+            
+            if (draftState) {
+                // Load from draft state
+                $('#name').val(draftState.name || '');
+                $('#version').val(draftState.version || '');
+                $('#description').val(draftState.description || '');
+                $('#patchNotes').val(draftState.patchNotes || '');
+                $('#priority').val(draftState.priority || '');
+                $('#category').val(draftState.category || '');
+                $('#website').val(draftState.website || '');
+                $('#downloadUrl').val(draftState.downloadUrl || '');
+                $('#previewFileUrl').val(draftState.previewFileUrl || '');
+                $('#incompatibleWith').val(draftState.incompatibleWith || '');
+                $('#minimumMemoriaVersion').val(draftState.minimumMemoriaVersion || '');
+                $('#releaseDate').val(draftState.releaseDate || '');
+                $('#path').val(draftState.path || '');
+                $('#author').val(draftState.author || '');
+            } else {
+                // Load from XML element (original behavior)
+                $('#modForm input, #modForm textarea').val('');
+                $('#name').val(modElement.querySelector('Name')?.textContent || '');
+                $('#version').val(modElement.querySelector('Version')?.textContent || '');
+                $('#description').val(modElement.querySelector('Description')?.textContent || '');
+                $('#patchNotes').val(modElement.querySelector('PatchNotes')?.textContent || '');
+                $('#priority').val(modElement.querySelector('Priority')?.textContent || '');
+                $('#category').val(modElement.querySelector('Category')?.textContent || '');
+                $('#website').val(modElement.querySelector('Website')?.textContent || '');
+                $('#downloadUrl').val(modElement.querySelector('DownloadUrl')?.textContent || '');
+                $('#previewFileUrl').val(modElement.querySelector('PreviewFileUrl')?.textContent || '');
+                $('#incompatibleWith').val(modElement.querySelector('IncompatibleWith')?.textContent || '');
+                $('#minimumMemoriaVersion').val(modElement.querySelector('MinimumMemoriaVersion')?.textContent || '');
+                const releaseDate = modElement.querySelector('ReleaseDate')?.textContent;
+                if (releaseDate) {
+                    try {
+                        const date = new Date(releaseDate);
+                        if (!isNaN(date.getTime())) {
+                            $('#releaseDate').val(date.toISOString().split('T')[0]);
+                        }
+                    } catch (e) {
+                        $('#releaseDate').val('');
                     }
-                } catch (e) {
-                    $('#releaseDate').val('');
+                }
+                if (!isSubmod) {
+                    $('#path').val(modElement.querySelector('InstallationPath')?.textContent || '');
+                    $('#author').val(modElement.querySelector('Author')?.textContent || '');
                 }
             }
+            
             $('#mainModFields').toggle(!isSubmod);
             $('#version').prop('required', !isSubmod);
-            if (!isSubmod) {
-                $('#path').val(modElement.querySelector('InstallationPath')?.textContent || '');
-                $('#author').val(modElement.querySelector('Author')?.textContent || '');
-            }
             autosizeTextarea(document.getElementById('description'));
             autosizeTextarea(document.getElementById('patchNotes'));
         }
 
         function updateSubmods() {
+            // Save current draft state before switching
+            saveDraftState();
+            
             submodSelect.empty().append(new Option('Main'));
             const mod = mods[modSelect.prop('selectedIndex')];
             const submods = mod.querySelectorAll('SubMod');
@@ -414,6 +485,9 @@
         updateSubmods();
 
         submodSelect.on('change', () => {
+            // Save current draft state before switching
+            saveDraftState();
+            
             const mod = mods[modSelect.prop('selectedIndex')];
             const submods = mod.querySelectorAll('SubMod');
             const submodIndex = submodSelect.prop('selectedIndex') - 1;
@@ -423,6 +497,11 @@
 
         $('textarea').on('input', function () {
             autosizeTextarea(this);
+        });
+
+        // Save draft state whenever form inputs change
+        $('#modForm input, #modForm textarea').on('input change', function () {
+            saveDraftState();
         });
 
         function startButtonCooldown() {
@@ -442,6 +521,70 @@
             updateButton();
         }
 
+        function applyAllDraftChanges(xmlDoc) {
+            const modsInXml = Array.from(xmlDoc.querySelectorAll('ModCatalog > Mod'));
+            
+            // Apply all draft changes
+            Object.keys(draftMods).forEach(modIndex => {
+                const modChanges = draftMods[modIndex];
+                const targetMod = modsInXml[parseInt(modIndex)];
+                
+                if (!targetMod) return; // Mod doesn't exist
+                
+                Object.keys(modChanges).forEach(key => {
+                    const draftData = modChanges[key];
+                    
+                    if (key === 'main') {
+                        // Update main mod
+                        applyDraftToElement(targetMod, draftData, false);
+                    } else {
+                        // Update submod
+                        const submodIndex = parseInt(key);
+                        const submods = Array.from(targetMod.querySelectorAll('SubMod'));
+                        const targetSubmod = submods[submodIndex];
+                        
+                        if (targetSubmod) {
+                            applyDraftToElement(targetSubmod, draftData, true);
+                        }
+                    }
+                });
+            });
+        }
+
+        function applyDraftToElement(element, draftData, isSubmod) {
+            updateElementTextFromDraft(element, 'Name', draftData.name);
+            if (!isSubmod || draftData.version) {
+                updateElementTextFromDraft(element, 'Version', draftData.version);
+            }
+            updateElementTextFromDraft(element, 'InstallationPath', draftData.path);
+            if (!isSubmod) {
+                updateElementTextFromDraft(element, 'Author', draftData.author);
+            }
+            updateElementTextFromDraft(element, 'Description', draftData.description);
+            updateElementTextFromDraft(element, 'Priority', draftData.priority);
+            updateElementTextFromDraft(element, 'Category', draftData.category);
+            updateElementTextFromDraft(element, 'ReleaseDate', draftData.releaseDate);
+            updateElementTextFromDraft(element, 'Website', draftData.website);
+            updateElementTextFromDraft(element, 'DownloadUrl', draftData.downloadUrl);
+            updateElementTextFromDraft(element, 'PreviewFileUrl', draftData.previewFileUrl);
+            updateElementTextFromDraft(element, 'PatchNotes', draftData.patchNotes);
+            updateElementTextFromDraft(element, 'IncompatibleWith', draftData.incompatibleWith);
+            updateElementTextFromDraft(element, 'MinimumMemoriaVersion', draftData.minimumMemoriaVersion);
+        }
+
+        function updateElementTextFromDraft(parent, tagName, value) {
+            let element = parent.querySelector(tagName);
+            if (value) {
+                if (!element) {
+                    element = parent.ownerDocument.createElement(tagName);
+                    parent.appendChild(element);
+                }
+                element.textContent = value;
+            } else if (element) {
+                element.remove();
+            }
+        }
+
         async function saveChanges() {
             if (!accessToken) {
                 alert('Please authenticate with GitHub first.');
@@ -452,9 +595,9 @@
                 form.reportValidity();
                 return;
             }
-            const name = $('#name').val().trim();
-            const version = $('#version').val().trim();
-            const description = $('#description').val().trim();
+            const name = $('#name').val();
+            const version = $('#version').val();
+            const description = $('#description').val();
 
             const isSubmod = submodSelect.prop('selectedIndex') > 0;
             if (!isSubmod && !version) {
@@ -462,14 +605,14 @@
                 return;
             }
             if (!name || !description) {
-                alert('Name and Description are required and cannot be empty or whitespace only.');
+                alert('Name and Description are required.');
                 return;
             }
             const isNewMod = modSelect.val() === null || modSelect.val() === '';
             const isNewSubmod = submodSelect.val() === 'new-submod';
             if (!isSubmod && !isNewSubmod) {
-                const path = $('#path').val().trim();
-                const author = $('#author').val().trim();
+                const path = $('#path').val();
+                const author = $('#author').val();
                 if (!path || !author) {
                     alert('Installation Path and Author are required for main mods.');
                     return;
@@ -491,9 +634,15 @@
                     throw new Error('Failed to fetch current XML content');
                 }
                 const currentXmlData = await currentXmlResponse.json();
-                const currentXmlContent = atob(currentXmlData.content);
+                const currentXmlContent = new TextDecoder('utf-8').decode(
+                    Uint8Array.from(atob(currentXmlData.content), c => c.charCodeAt(0))
+                );
+                // Save current form state to draft before processing
+                saveDraftState();
+                
                 const currentXmlDoc = new DOMParser().parseFromString(currentXmlContent, 'application/xml');
                 const modifiedXmlDoc = currentXmlDoc.cloneNode(true);
+                
                 if (isNewMod) {
                     const newMod = createModElement(modifiedXmlDoc, false);
                     modifiedXmlDoc.querySelector('ModCatalog').appendChild(newMod);
@@ -504,17 +653,8 @@
                     const newSubmod = createModElement(modifiedXmlDoc, true);
                     targetMod.appendChild(newSubmod);
                 } else {
-                    const selectedModIndex = modSelect.prop('selectedIndex');
-                    const modsInXml = Array.from(modifiedXmlDoc.querySelectorAll('ModCatalog > Mod'));
-                    const targetMod = modsInXml[selectedModIndex];
-                    if (isSubmod) {
-                        const submodIndex = submodSelect.prop('selectedIndex') - 1;
-                        const submods = Array.from(targetMod.querySelectorAll('SubMod'));
-                        const targetSubmod = submods[submodIndex];
-                        updateModElement(targetSubmod, true);
-                    } else {
-                        updateModElement(targetMod, false);
-                    }
+                    // Apply all draft changes to the XML
+                    applyAllDraftChanges(modifiedXmlDoc);
                 }
                 const serializer = new XMLSerializer();
                 let newXmlContent = serializer.serializeToString(modifiedXmlDoc);
@@ -540,46 +680,46 @@
 
         function createModElement(doc, isSubmod) {
             const element = doc.createElement(isSubmod ? 'SubMod' : 'Mod');
-            addElementIfValue(doc, element, 'Name', $('#name').val().trim());
-            if (!isSubmod || $('#version').val().trim()) {
-                addElementIfValue(doc, element, 'Version', $('#version').val().trim());
+            addElementIfValue(doc, element, 'Name', $('#name').val());
+            if (!isSubmod || $('#version').val()) {
+                addElementIfValue(doc, element, 'Version', $('#version').val());
             }
-            addElementIfValue(doc, element, 'InstallationPath', $('#path').val().trim());
+            addElementIfValue(doc, element, 'InstallationPath', $('#path').val());
             if (!isSubmod) {
-                addElementIfValue(doc, element, 'Author', $('#author').val().trim());
+                addElementIfValue(doc, element, 'Author', $('#author').val());
             }
-            addElementIfValue(doc, element, 'Description', $('#description').val().trim());
-            addElementIfValue(doc, element, 'Priority', $('#priority').val().trim());
-            addElementIfValue(doc, element, 'Category', $('#category').val().trim());
-            addElementIfValue(doc, element, 'ReleaseDate', $('#releaseDate').val().trim());
-            addElementIfValue(doc, element, 'Website', $('#website').val().trim());
-            addElementIfValue(doc, element, 'DownloadUrl', $('#downloadUrl').val().trim());
-            addElementIfValue(doc, element, 'PreviewFileUrl', $('#previewFileUrl').val().trim());
-            addElementIfValue(doc, element, 'PatchNotes', $('#patchNotes').val().trim());
-            addElementIfValue(doc, element, 'IncompatibleWith', $('#incompatibleWith').val().trim());
-            addElementIfValue(doc, element, 'MinimumMemoriaVersion', $('#minimumMemoriaVersion').val().trim());
+            addElementIfValue(doc, element, 'Description', $('#description').val());
+            addElementIfValue(doc, element, 'Priority', $('#priority').val());
+            addElementIfValue(doc, element, 'Category', $('#category').val());
+            addElementIfValue(doc, element, 'ReleaseDate', $('#releaseDate').val());
+            addElementIfValue(doc, element, 'Website', $('#website').val());
+            addElementIfValue(doc, element, 'DownloadUrl', $('#downloadUrl').val());
+            addElementIfValue(doc, element, 'PreviewFileUrl', $('#previewFileUrl').val());
+            addElementIfValue(doc, element, 'PatchNotes', $('#patchNotes').val());
+            addElementIfValue(doc, element, 'IncompatibleWith', $('#incompatibleWith').val());
+            addElementIfValue(doc, element, 'MinimumMemoriaVersion', $('#minimumMemoriaVersion').val());
             return element;
         }
 
         function updateModElement(element, isSubmod) {
-            updateElementText(element, 'Name', $('#name').val().trim());
-            if (!isSubmod || $('#version').val().trim()) {
-                updateElementText(element, 'Version', $('#version').val().trim());
+            updateElementText(element, 'Name', $('#name').val());
+            if (!isSubmod || $('#version').val()) {
+                updateElementText(element, 'Version', $('#version').val());
             }
-            updateElementText(element, 'InstallationPath', $('#path').val().trim());
+            updateElementText(element, 'InstallationPath', $('#path').val());
             if (!isSubmod) {
-                updateElementText(element, 'Author', $('#author').val().trim());
+                updateElementText(element, 'Author', $('#author').val());
             }
-            updateElementText(element, 'Description', $('#description').val().trim());
-            updateElementText(element, 'Priority', $('#priority').val().trim());
-            updateElementText(element, 'Category', $('#category').val().trim());
-            updateElementText(element, 'ReleaseDate', $('#releaseDate').val().trim());
-            updateElementText(element, 'Website', $('#website').val().trim());
-            updateElementText(element, 'DownloadUrl', $('#downloadUrl').val().trim());
-            updateElementText(element, 'PreviewFileUrl', $('#previewFileUrl').val().trim());
-            updateElementText(element, 'PatchNotes', $('#patchNotes').val().trim());
-            updateElementText(element, 'IncompatibleWith', $('#incompatibleWith').val().trim());
-            updateElementText(element, 'MinimumMemoriaVersion', $('#minimumMemoriaVersion').val().trim());
+            updateElementText(element, 'Description', $('#description').val());
+            updateElementText(element, 'Priority', $('#priority').val());
+            updateElementText(element, 'Category', $('#category').val());
+            updateElementText(element, 'ReleaseDate', $('#releaseDate').val());
+            updateElementText(element, 'Website', $('#website').val());
+            updateElementText(element, 'DownloadUrl', $('#downloadUrl').val());
+            updateElementText(element, 'PreviewFileUrl', $('#previewFileUrl').val());
+            updateElementText(element, 'PatchNotes', $('#patchNotes').val());
+            updateElementText(element, 'IncompatibleWith', $('#incompatibleWith').val());
+            updateElementText(element, 'MinimumMemoriaVersion', $('#minimumMemoriaVersion').val());
         }
 
         function addElementIfValue(doc, parent, tagName, value) {
@@ -677,6 +817,9 @@
             $('#prLink').attr('href', prData.html_url).text(`Pull Request #${prData.number}`);
             $('#prLinkContainer').show();
             
+            // Clear draft state after successful save
+            clearDraftState();
+            
             alert(`Successfully created pull request #${prData.number}!`);
         }
 
@@ -686,7 +829,8 @@
         });
 
         $('#newModBtn').click(() => {
-            if (confirm('Create a new mod? This will clear the current form.')) {
+            if (confirm('Create a new mod? This will clear the current form and all unsaved changes.')) {
+                clearDraftState(); // Clear all draft changes
                 $('#modForm input, #modForm textarea').val('');
                 $('#mainModFields').show();
                 $('#modSelect').val(null).trigger('change.select2');
@@ -702,6 +846,8 @@
                 return;
             }
             if (confirm('Create a new submod for the selected mod? This will clear the current form.')) {
+                // Save current draft state before creating new submod
+                saveDraftState();
                 $('#modForm input, #modForm textarea').val('');
                 $('#mainModFields').hide();
                 const newOption = new Option('(New SubMod)', 'new-submod');
