@@ -598,20 +598,29 @@
             return null;
         }
         
+        // Helper function to extract original value from XML text using regex
+        function getValueFromXmlText(xmlText, fieldName) {
+            const fieldRegex = new RegExp(`<${fieldName}>([^<]*)</${fieldName}>`, 'i');
+            const match = xmlText.match(fieldRegex);
+            return match ? match[1] : '';
+        }
+        
         function updateModFieldsInXmlText(xmlText, modElement) {
             // Update mod fields in the XML text while preserving formatting
             let updatedXml = xmlText;
             
             // Helper function to update a specific field
             function updateField(fieldName, newValue) {
-                const currentValue = modElement.querySelector(fieldName)?.textContent || '';
-                if (newValue !== currentValue) {
+                // Compare new value with ORIGINAL value from xmlText, not DOM element
+                const valueFromXmlText = getValueFromXmlText(xmlText, fieldName);
+                
+                if (newValue !== valueFromXmlText) {
                     const fieldRegex = new RegExp(`(<${fieldName}>)[^<]*(</\s*${fieldName}>)`, 'g');
                     if (newValue) {
                         if (xmlText.includes(`<${fieldName}>`)) {
                             updatedXml = updatedXml.replace(fieldRegex, `$1${newValue}$2`);
                         } else {
-                            // Field doesn't exist, need to add it
+                            // Field doesn't exist in original XML, need to add it
                             // Add after the Name field
                             const nameEndPos = updatedXml.indexOf('</Name>') + 7;
                             if (nameEndPos > 6) {
@@ -651,13 +660,16 @@
             let updatedXml = xmlText;
             
             function updateField(fieldName, newValue) {
-                const currentValue = submodElement.querySelector(fieldName)?.textContent || '';
-                if (newValue !== currentValue) {
+                // Compare new value with ORIGINAL value from xmlText, not DOM element
+                const valueFromXmlText = getValueFromXmlText(xmlText, fieldName);
+                
+                if (newValue !== valueFromXmlText) {
                     const fieldRegex = new RegExp(`(<${fieldName}>)[^<]*(</\s*${fieldName}>)`, 'g');
                     if (newValue) {
                         if (xmlText.includes(`<${fieldName}>`)) {
                             updatedXml = updatedXml.replace(fieldRegex, `$1${newValue}$2`);
                         } else {
+                            // Field doesn't exist in original XML, need to add it
                             const nameEndPos = updatedXml.indexOf('</Name>') + 7;
                             if (nameEndPos > 6) {
                                 updatedXml = updatedXml.substring(0, nameEndPos) + 
@@ -666,6 +678,7 @@
                             }
                         }
                     } else {
+                        // Remove field if empty
                         updatedXml = updatedXml.replace(fieldRegex, '');
                     }
                 }
@@ -1531,6 +1544,10 @@
         $('#testPreservationBtn').click(() => {
             const results = testXmlPreservation();
             
+            // Test the serialization fix by verifying DOM modifications produce XML changes
+            console.log('=== Testing serialization fix ===');
+            const serializationResults = testSerializationFix();
+            
             // Also test modification simulation
             console.log('=== Testing modification simulation ===');
             testModificationPreservation();
@@ -1539,16 +1556,149 @@
             message += `✅ Perfect reconstruction: ${results.perfectReconstruction ? 'PASS' : 'FAIL'}\n`;
             message += `✅ Original order preserved: ${results.orderPreserved ? 'PASS' : 'FAIL'}\n`;
             message += `✅ UI displays alphabetically: ${results.uiAlphabetical ? 'PASS' : 'FAIL'}\n`;
+            message += `✅ Serialization fix works: ${serializationResults.serializationWorks ? 'PASS' : 'FAIL'}\n`;
             
-            if (results.perfectReconstruction && results.orderPreserved && results.uiAlphabetical) {
+            if (results.perfectReconstruction && results.orderPreserved && results.uiAlphabetical && serializationResults.serializationWorks) {
                 message += '\n🎉 All tests PASSED! XML preservation system is working correctly.';
-                message += '\n\nCheck console for modification simulation test results.';
+                message += '\n\nCheck console for detailed test results and diff output.';
             } else {
                 message += '\n⚠️ Some tests FAILED. Check console for details.';
             }
             
             alert(message);
         });
+        
+        // Test function to verify the serialization fix works correctly
+        function testSerializationFix() {
+            console.log('Testing serialization fix: DOM modifications should produce XML changes...');
+            
+            if (mods.length === 0) {
+                console.log('No mods available for testing');
+                return { serializationWorks: false };
+            }
+            
+            // Save original state
+            const originalModifiedMods = new Set(modifiedMods);
+            const originalModifiedSubmods = new Set(modifiedSubmods);
+            
+            try {
+                // Test 1: Modify a field and verify XML changes
+                const testMod = mods[0];
+                const modName = testMod.querySelector('Name')?.textContent || '';
+                console.log(`Testing with mod: ${modName}`);
+                
+                // Get original XML for this mod
+                const originalModXml = originalModXml.get(testMod);
+                if (!originalModXml) {
+                    console.log('Could not find original XML for test mod');
+                    return { serializationWorks: false };
+                }
+                
+                // Extract original description value from XML
+                const originalDescription = getValueFromXmlText(originalModXml, 'Description');
+                console.log(`Original description: "${originalDescription}"`);
+                
+                // Modify the DOM element with a new description
+                const testDescription = 'TEST SERIALIZATION FIX - ' + Date.now();
+                let descElement = testMod.querySelector('Description');
+                if (!descElement) {
+                    descElement = testMod.ownerDocument.createElement('Description');
+                    testMod.appendChild(descElement);
+                }
+                descElement.textContent = testDescription;
+                
+                console.log(`Modified description to: "${testDescription}"`);
+                
+                // Mark as modified
+                modifiedMods.add(testMod);
+                
+                // Test the updateModFieldsInXmlText function
+                const updatedModXml = updateModFieldsInXmlText(originalModXml, testMod);
+                
+                // Verify the XML actually changed
+                const xmlChanged = updatedModXml !== originalModXml;
+                console.log(`XML changed after modification: ${xmlChanged}`);
+                
+                // Verify the new description is in the updated XML
+                const containsNewDescription = updatedModXml.includes(testDescription);
+                console.log(`Updated XML contains new description: ${containsNewDescription}`);
+                
+                // Show a diff-like comparison
+                if (xmlChanged) {
+                    console.log('=== XML DIFF ===');
+                    console.log('BEFORE:');
+                    const beforeLines = originalModXml.split('\n');
+                    beforeLines.forEach((line, i) => {
+                        if (line.includes('<Description>')) {
+                            console.log(`${i + 1}: ${line}`);
+                        }
+                    });
+                    
+                    console.log('AFTER:');
+                    const afterLines = updatedModXml.split('\n');
+                    afterLines.forEach((line, i) => {
+                        if (line.includes('<Description>')) {
+                            console.log(`${i + 1}: ${line}`);
+                        }
+                    });
+                    console.log('=== END DIFF ===');
+                }
+                
+                // Test 2: Test with submod if available
+                let submodTestPassed = true;
+                const submods = testMod.querySelectorAll('SubMod');
+                if (submods.length > 0) {
+                    const testSubmod = submods[0];
+                    const submodName = testSubmod.querySelector('Name')?.textContent || '';
+                    console.log(`Testing submod: ${submodName}`);
+                    
+                    // Get original submod XML
+                    const originalSubmodXmlText = originalSubmodXml.get(testSubmod);
+                    if (originalSubmodXmlText) {
+                        // Modify submod description
+                        const testSubmodDescription = 'TEST SUBMOD SERIALIZATION - ' + Date.now();
+                        let submodDescElement = testSubmod.querySelector('Description');
+                        if (!submodDescElement) {
+                            submodDescElement = testSubmod.ownerDocument.createElement('Description');
+                            testSubmod.appendChild(submodDescElement);
+                        }
+                        submodDescElement.textContent = testSubmodDescription;
+                        
+                        // Mark as modified
+                        modifiedSubmods.add(testSubmod);
+                        
+                        // Test the updateSubmodFieldsInXmlText function
+                        const updatedSubmodXml = updateSubmodFieldsInXmlText(originalSubmodXmlText, testSubmod);
+                        
+                        const submodXmlChanged = updatedSubmodXml !== originalSubmodXmlText;
+                        const containsNewSubmodDescription = updatedSubmodXml.includes(testSubmodDescription);
+                        
+                        console.log(`Submod XML changed: ${submodXmlChanged}`);
+                        console.log(`Submod XML contains new description: ${containsNewSubmodDescription}`);
+                        
+                        submodTestPassed = submodXmlChanged && containsNewSubmodDescription;
+                    }
+                }
+                
+                // Restore original description
+                descElement.textContent = originalDescription;
+                
+                const testPassed = xmlChanged && containsNewDescription && submodTestPassed;
+                console.log(`Serialization fix test result: ${testPassed ? 'PASS' : 'FAIL'}`);
+                
+                return { serializationWorks: testPassed };
+                
+            } catch (error) {
+                console.error('Error during serialization test:', error);
+                return { serializationWorks: false };
+            } finally {
+                // Restore original modification state
+                modifiedMods.clear();
+                modifiedSubmods.clear();
+                originalModifiedMods.forEach(mod => modifiedMods.add(mod));
+                originalModifiedSubmods.forEach(submod => modifiedSubmods.add(submod));
+            }
+        }
         
         // Test function to simulate making modifications and verify preservation
         function testModificationPreservation() {
