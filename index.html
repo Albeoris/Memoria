@@ -255,12 +255,15 @@
         let submodSelect = null;
         let mods = [];
         
-        // XML preservation system
+        // Enhanced XML preservation system
+        let originalXmlText = ''; // Store the complete original XML text
         let originalModsOrder = []; // Store original order of mods
         let originalModXml = new Map(); // mod DOM element -> original XML text
         let originalSubmodXml = new Map(); // submod DOM element -> original XML text  
         let modifiedMods = new Set(); // Track which mods have been modified
         let modifiedSubmods = new Set(); // Track which submods have been modified
+        let xmlChunks = []; // Store XML as chunks (text, mod elements, etc.)
+        let modToChunkIndex = new Map(); // Map mod element to its chunk index
 
         // Check if access_token present in URL
         function extractTokenFromUrl() {
@@ -331,6 +334,278 @@
             updateAuthUI();
         });
 
+        function reconstructModWithSubmodPreservation(mod) {
+            // Get the original mod XML
+            let modXml = originalModXml.get(mod);
+            if (!modXml) {
+                // Fallback to serialization if no original XML
+                const serializer = new XMLSerializer();
+                return serializer.serializeToString(mod);
+            }
+            
+            // Check if any submods were modified
+            const submods = mod.querySelectorAll('SubMod');
+            let hasModifiedSubmods = false;
+            
+            submods.forEach(submod => {
+                if (modifiedSubmods.has(submod)) {
+                    hasModifiedSubmods = true;
+                }
+            });
+            
+            if (!hasModifiedSubmods) {
+                // No submods modified, but main mod fields might be modified
+                // We need to update the mod fields while preserving submod structure
+                return updateModFieldsInXmlText(modXml, mod);
+            } else {
+                // Some submods modified - need to replace individual submods
+                let reconstructedModXml = modXml;
+                
+                submods.forEach(submod => {
+                    if (modifiedSubmods.has(submod)) {
+                        const originalSubmodXml = originalSubmodXml.get(submod);
+                        if (originalSubmodXml) {
+                            // Create updated submod XML
+                            const updatedSubmodXml = updateSubmodFieldsInXmlText(originalSubmodXml, submod);
+                            
+                            // Replace in the mod XML
+                            reconstructedModXml = reconstructedModXml.replace(originalSubmodXml, updatedSubmodXml);
+                        }
+                    }
+                });
+                
+                // Also update main mod fields
+                return updateModFieldsInXmlText(reconstructedModXml, mod);
+            }
+        }
+        
+        function updateModFieldsInXmlText(xmlText, modElement) {
+            // Update mod fields in the XML text while preserving formatting
+            let updatedXml = xmlText;
+            
+            // Helper function to update a specific field
+            function updateField(fieldName, newValue) {
+                const currentValue = modElement.querySelector(fieldName)?.textContent || '';
+                if (newValue !== currentValue) {
+                    const fieldRegex = new RegExp(`(<${fieldName}>)[^<]*(</\s*${fieldName}>)`, 'g');
+                    if (newValue) {
+                        if (xmlText.includes(`<${fieldName}>`)) {
+                            updatedXml = updatedXml.replace(fieldRegex, `$1${newValue}$2`);
+                        } else {
+                            // Field doesn't exist, need to add it
+                            // Add after the Name field
+                            const nameEndPos = updatedXml.indexOf('</Name>') + 7;
+                            if (nameEndPos > 6) {
+                                updatedXml = updatedXml.substring(0, nameEndPos) + 
+                                    `\n\t<${fieldName}>${newValue}</${fieldName}>` +
+                                    updatedXml.substring(nameEndPos);
+                            }
+                        }
+                    } else {
+                        // Remove field if empty
+                        updatedXml = updatedXml.replace(fieldRegex, '');
+                    }
+                }
+            }
+            
+            // Update all possible mod fields
+            updateField('Name', modElement.querySelector('Name')?.textContent || '');
+            updateField('Version', modElement.querySelector('Version')?.textContent || '');
+            updateField('InstallationPath', modElement.querySelector('InstallationPath')?.textContent || '');
+            updateField('Author', modElement.querySelector('Author')?.textContent || '');
+            updateField('Description', modElement.querySelector('Description')?.textContent || '');
+            updateField('Priority', modElement.querySelector('Priority')?.textContent || '');
+            updateField('Category', modElement.querySelector('Category')?.textContent || '');
+            updateField('ReleaseDate', modElement.querySelector('ReleaseDate')?.textContent || '');
+            updateField('Website', modElement.querySelector('Website')?.textContent || '');
+            updateField('DownloadUrl', modElement.querySelector('DownloadUrl')?.textContent || '');
+            updateField('PreviewFileUrl', modElement.querySelector('PreviewFileUrl')?.textContent || '');
+            updateField('PatchNotes', modElement.querySelector('PatchNotes')?.textContent || '');
+            updateField('IncompatibleWith', modElement.querySelector('IncompatibleWith')?.textContent || '');
+            updateField('MinimumMemoriaVersion', modElement.querySelector('MinimumMemoriaVersion')?.textContent || '');
+            
+            return updatedXml;
+        }
+        
+        function updateSubmodFieldsInXmlText(xmlText, submodElement) {
+            // Similar to updateModFieldsInXmlText but for submods
+            let updatedXml = xmlText;
+            
+            function updateField(fieldName, newValue) {
+                const currentValue = submodElement.querySelector(fieldName)?.textContent || '';
+                if (newValue !== currentValue) {
+                    const fieldRegex = new RegExp(`(<${fieldName}>)[^<]*(</\s*${fieldName}>)`, 'g');
+                    if (newValue) {
+                        if (xmlText.includes(`<${fieldName}>`)) {
+                            updatedXml = updatedXml.replace(fieldRegex, `$1${newValue}$2`);
+                        } else {
+                            const nameEndPos = updatedXml.indexOf('</Name>') + 7;
+                            if (nameEndPos > 6) {
+                                updatedXml = updatedXml.substring(0, nameEndPos) + 
+                                    `\n\t\t<${fieldName}>${newValue}</${fieldName}>` +
+                                    updatedXml.substring(nameEndPos);
+                            }
+                        }
+                    } else {
+                        updatedXml = updatedXml.replace(fieldRegex, '');
+                    }
+                }
+            }
+            
+            // Update submod fields
+            updateField('Name', submodElement.querySelector('Name')?.textContent || '');
+            updateField('Version', submodElement.querySelector('Version')?.textContent || '');
+            updateField('InstallationPath', submodElement.querySelector('InstallationPath')?.textContent || '');
+            updateField('Description', submodElement.querySelector('Description')?.textContent || '');
+            updateField('Priority', submodElement.querySelector('Priority')?.textContent || '');
+            updateField('Category', submodElement.querySelector('Category')?.textContent || '');
+            updateField('ReleaseDate', submodElement.querySelector('ReleaseDate')?.textContent || '');
+            updateField('Website', submodElement.querySelector('Website')?.textContent || '');
+            updateField('DownloadUrl', submodElement.querySelector('DownloadUrl')?.textContent || '');
+            updateField('PreviewFileUrl', submodElement.querySelector('PreviewFileUrl')?.textContent || '');
+            updateField('PatchNotes', submodElement.querySelector('PatchNotes')?.textContent || '');
+            updateField('IncompatibleWith', submodElement.querySelector('IncompatibleWith')?.textContent || '');
+            updateField('MinimumMemoriaVersion', submodElement.querySelector('MinimumMemoriaVersion')?.textContent || '');
+            
+            return updatedXml;
+        }
+        
+        function createModElementAsXmlString(isSubmod) {
+            const tagName = isSubmod ? 'SubMod' : 'Mod';
+            const indent = isSubmod ? '\t\t' : '\t';
+            
+            let xml = `<${tagName}>`;
+            
+            function addField(fieldName, value) {
+                if (value) {
+                    xml += `\n${indent}<${fieldName}>${value}</${fieldName}>`;
+                }
+            }
+            
+            addField('Name', $('#name').val());
+            if (!isSubmod || $('#version').val()) {
+                addField('Version', $('#version').val());
+            }
+            if (!isSubmod) {
+                addField('Priority', $('#priority').val());
+                addField('InstallationPath', $('#path').val());
+                addField('ReleaseDate', $('#releaseDate').val());
+                addField('Author', $('#author').val());
+            } else {
+                addField('InstallationPath', $('#path').val());
+            }
+            addField('Description', $('#description').val());
+            addField('PatchNotes', $('#patchNotes').val());
+            addField('Category', $('#category').val());
+            addField('Website', $('#website').val());
+            addField('DownloadUrl', $('#downloadUrl').val());
+            addField('PreviewFileUrl', $('#previewFileUrl').val());
+            addField('IncompatibleWith', $('#incompatibleWith').val());
+            addField('MinimumMemoriaVersion', $('#minimumMemoriaVersion').val());
+            
+            xml += `\n${isSubmod ? '\t' : ''}</${tagName}>`;
+            return xml;
+        }
+
+        function parseXmlIntoChunks(xmlText) {
+            xmlChunks = [];
+            modToChunkIndex.clear();
+            
+            const xmlDoc = new DOMParser().parseFromString(xmlText, 'application/xml');
+            const catalogElement = xmlDoc.querySelector('ModCatalog');
+            
+            if (!catalogElement) {
+                throw new Error('Invalid catalog XML - no ModCatalog element found');
+            }
+            
+            // Track position in original text
+            let currentPos = 0;
+            
+            // Add opening tag and any content before first mod
+            const firstModStart = xmlText.indexOf('<Mod>');
+            if (firstModStart > 0) {
+                xmlChunks.push({
+                    type: 'text',
+                    content: xmlText.substring(0, firstModStart)
+                });
+                currentPos = firstModStart;
+            }
+            
+            // Process each mod element
+            const mods = Array.from(catalogElement.querySelectorAll('Mod'));
+            originalModsOrder = [...mods];
+            
+            for (let i = 0; i < mods.length; i++) {
+                const mod = mods[i];
+                
+                // Find the complete mod text in original XML
+                const modStartPos = xmlText.indexOf('<Mod>', currentPos);
+                const modEndPos = xmlText.indexOf('</Mod>', modStartPos) + 6; // +6 for '</Mod>'
+                
+                if (modStartPos === -1 || modEndPos === -1) {
+                    throw new Error(`Could not find mod boundaries for mod ${i}`);
+                }
+                
+                const modXmlText = xmlText.substring(modStartPos, modEndPos);
+                
+                // Store original XML for this mod
+                originalModXml.set(mod, modXmlText);
+                
+                // Store submods original XML
+                const submods = mod.querySelectorAll('SubMod');
+                submods.forEach(submod => {
+                    // Find submod text within the mod text
+                    const submodName = submod.querySelector('Name')?.textContent || '';
+                    if (submodName) {
+                        // Look for this submod in the mod XML text
+                        const submodStart = modXmlText.indexOf(`<Name>${submodName}</Name>`);
+                        if (submodStart > -1) {
+                            // Find the enclosing SubMod tags
+                            const beforeName = modXmlText.lastIndexOf('<SubMod>', submodStart);
+                            const afterName = modXmlText.indexOf('</SubMod>', submodStart) + 9;
+                            if (beforeName > -1 && afterName > -1) {
+                                const submodXmlText = modXmlText.substring(beforeName, afterName);
+                                originalSubmodXml.set(submod, submodXmlText);
+                            }
+                        }
+                    }
+                });
+                
+                // Add mod chunk
+                const chunkIndex = xmlChunks.length;
+                xmlChunks.push({
+                    type: 'mod',
+                    element: mod,
+                    originalContent: modXmlText
+                });
+                modToChunkIndex.set(mod, chunkIndex);
+                
+                currentPos = modEndPos;
+                
+                // Add any text between this mod and the next one
+                const nextModStart = i < mods.length - 1 ? 
+                    xmlText.indexOf('<Mod>', currentPos) : 
+                    xmlText.indexOf('</ModCatalog>', currentPos);
+                    
+                if (nextModStart > currentPos) {
+                    xmlChunks.push({
+                        type: 'text',
+                        content: xmlText.substring(currentPos, nextModStart)
+                    });
+                    currentPos = nextModStart;
+                }
+            }
+            
+            // Add closing tag and any remaining content
+            const closingPos = xmlText.indexOf('</ModCatalog>', currentPos);
+            if (closingPos > -1) {
+                xmlChunks.push({
+                    type: 'text',
+                    content: xmlText.substring(currentPos)  // Include everything from current position to end
+                });
+            }
+        }
+
         await validateToken();
 
         function showLoading(message = 'Loading...') {
@@ -348,25 +623,17 @@
                 ? "MemoriaCatalog.xml"
                 : "https://raw.githubusercontent.com/Albeoris/Memoria/main/Memoria.Launcher/Catalogs/MemoriaCatalog.xml";
             const xmlText = await fetch(xmlUrl).then(r => r.text());
+            
+            // Store original XML text
+            originalXmlText = xmlText;
+            
             const xmlDoc = new DOMParser().parseFromString(xmlText, 'application/xml');
-
             mods = Array.from(xmlDoc.querySelectorAll('ModCatalog > Mod'));
             
-            // Store original order and XML for preservation system
-            originalModsOrder = [...mods]; // Store original order before sorting
-            const serializer = new XMLSerializer();
-            mods.forEach(mod => {
-                // Store original XML for the mod
-                originalModXml.set(mod, serializer.serializeToString(mod));
-                
-                // Store original XML for each submod
-                const submods = mod.querySelectorAll('SubMod');
-                submods.forEach(submod => {
-                    originalSubmodXml.set(submod, serializer.serializeToString(submod));
-                });
-            });
+            // Parse XML into chunks for preservation
+            parseXmlIntoChunks(xmlText);
             
-            // Sort mods alphabetically for UI display
+            // Sort mods alphabetically for UI display (originalModsOrder preserves original order)
             mods.sort((a, b) => a.querySelector('Name').textContent.localeCompare(b.querySelector('Name').textContent));
 
             modSelect = $('#modSelect');
@@ -573,93 +840,85 @@
                 const currentXmlContent = new TextDecoder('utf-8').decode(
                     Uint8Array.from(atob(currentXmlData.content), c => c.charCodeAt(0))
                 );
-                // Parse the current XML and create a working copy
+                // Parse the current XML and create a working copy using chunk preservation
                 const currentXmlDoc = new DOMParser().parseFromString(currentXmlContent, 'application/xml');
-                const modifiedXmlDoc = currentXmlDoc.cloneNode(true);
                 
-                // Clear the catalog and rebuild with preservation system
-                const catalogElement = modifiedXmlDoc.querySelector('ModCatalog');
-                catalogElement.innerHTML = ''; // Clear existing content
+                // Reconstruct XML using chunk-based preservation
+                let reconstructedXml = '';
                 
-                // Process mods in original order to preserve formatting
-                originalModsOrder.forEach(originalMod => {
-                    let modXmlToAdd;
+                for (let i = 0; i < xmlChunks.length; i++) {
+                    const chunk = xmlChunks[i];
                     
-                    if (modifiedMods.has(originalMod)) {
-                        // Mod was modified - serialize the current state
-                        const serializer = new XMLSerializer();
-                        modXmlToAdd = serializer.serializeToString(originalMod);
-                    } else {
-                        // Mod unchanged - use original XML
-                        modXmlToAdd = originalModXml.get(originalMod);
-                    }
-                    
-                    // Parse and import the mod XML
-                    const tempDoc = new DOMParser().parseFromString(modXmlToAdd, 'application/xml');
-                    const importedMod = modifiedXmlDoc.importNode(tempDoc.documentElement, true);
-                    
-                    // Handle submods preservation within this mod
-                    if (modifiedMods.has(originalMod)) {
-                        // If mod was modified, we need to check submods individually
-                        const modSubmods = Array.from(originalMod.querySelectorAll('SubMod'));
-                        const importedSubmods = Array.from(importedMod.querySelectorAll('SubMod'));
+                    if (chunk.type === 'text') {
+                        // Preserve text chunks (whitespace, comments, etc.) exactly
+                        reconstructedXml += chunk.content;
+                    } else if (chunk.type === 'mod') {
+                        const mod = chunk.element;
                         
-                        // Clear submods from imported mod and rebuild with preservation
-                        importedSubmods.forEach(submod => submod.remove());
-                        
-                        modSubmods.forEach(originalSubmod => {
-                            let submodXmlToAdd;
-                            
-                            if (modifiedSubmods.has(originalSubmod)) {
-                                // Submod was modified - serialize current state
-                                const serializer = new XMLSerializer();
-                                submodXmlToAdd = serializer.serializeToString(originalSubmod);
-                            } else {
-                                // Submod unchanged - use original XML
-                                submodXmlToAdd = originalSubmodXml.get(originalSubmod);
-                            }
-                            
-                            // Parse and import the submod XML
-                            const tempSubmodDoc = new DOMParser().parseFromString(submodXmlToAdd, 'application/xml');
-                            const importedSubmod = modifiedXmlDoc.importNode(tempSubmodDoc.documentElement, true);
-                            importedMod.appendChild(importedSubmod);
-                        });
-                    }
-                    
-                    catalogElement.appendChild(importedMod);
-                });
-                
-                // Add any mods that were added during this session but aren't new mods
-                mods.forEach(mod => {
-                    if (!originalModsOrder.includes(mod) && !isNewMod) {
-                        // This is a mod that was added during the session
-                        const serializer = new XMLSerializer();
-                        const modXmlString = serializer.serializeToString(mod);
-                        const tempDoc = new DOMParser().parseFromString(modXmlString, 'application/xml');
-                        const importedMod = modifiedXmlDoc.importNode(tempDoc.documentElement, true);
-                        catalogElement.appendChild(importedMod);
-                    }
-                });
-                
-                if (isNewMod) {
-                    const newMod = createModElement(modifiedXmlDoc, false);
-                    catalogElement.appendChild(newMod);
-                } else if (isNewSubmod) {
-                    const selectedModIndex = modSelect.prop('selectedIndex');
-                    // Find the target mod in the original order (not the alphabetically sorted display)
-                    const selectedModName = mods[selectedModIndex].querySelector('Name').textContent;
-                    const targetMod = Array.from(catalogElement.querySelectorAll('Mod')).find(mod => 
-                        mod.querySelector('Name').textContent === selectedModName
-                    );
-                    if (targetMod) {
-                        const newSubmod = createModElement(modifiedXmlDoc, true);
-                        targetMod.appendChild(newSubmod);
+                        if (modifiedMods.has(mod)) {
+                            // Mod was modified - need to reconstruct it preserving submod formatting
+                            reconstructedXml += reconstructModWithSubmodPreservation(mod);
+                        } else {
+                            // Mod unchanged - use original text
+                            reconstructedXml += chunk.originalContent;
+                        }
                     }
                 }
-                const serializer = new XMLSerializer();
-                let newXmlContent = serializer.serializeToString(modifiedXmlDoc);
-                newXmlContent = newXmlContent.replace(/>\s+</g, '><');
-                newXmlContent = formatXmlForCatalog(newXmlContent);
+                
+                // Handle new mods - add them at the end before closing tag
+                if (isNewMod) {
+                    const newModXml = createModElementAsXmlString(false);
+                    // Insert before the closing </ModCatalog> tag
+                    const closingTagPos = reconstructedXml.lastIndexOf('</ModCatalog>');
+                    if (closingTagPos > -1) {
+                        reconstructedXml = reconstructedXml.substring(0, closingTagPos) + 
+                            '\n\n' + newModXml + '\n' +
+                            reconstructedXml.substring(closingTagPos);
+                    } else {
+                        reconstructedXml += '\n\n' + newModXml;
+                    }
+                } else if (isNewSubmod) {
+                    // Handle new submods by finding the target mod and inserting at the end
+                    const selectedModIndex = modSelect.prop('selectedIndex');
+                    const selectedMod = mods[selectedModIndex];
+                    if (modToChunkIndex.has(selectedMod)) {
+                        const chunkIndex = modToChunkIndex.get(selectedMod);
+                        const modChunk = xmlChunks[chunkIndex];
+                        
+                        // Reconstruct this mod with the new submod
+                        const newSubmodXml = createModElementAsXmlString(true);
+                        let modXml = modChunk.originalContent;
+                        
+                        // Insert new submod before closing </Mod> tag
+                        const closingModPos = modXml.lastIndexOf('</Mod>');
+                        if (closingModPos > -1) {
+                            modXml = modXml.substring(0, closingModPos) + 
+                                '\n\t' + newSubmodXml.replace(/\n/g, '\n\t') + '\n' +
+                                modXml.substring(closingModPos);
+                        }
+                        
+                        // Update the chunk content
+                        xmlChunks[chunkIndex].originalContent = modXml;
+                        modifiedMods.add(selectedMod);
+                        
+                        // Rebuild the entire XML again
+                        reconstructedXml = '';
+                        for (let j = 0; j < xmlChunks.length; j++) {
+                            const chunkItem = xmlChunks[j];
+                            if (chunkItem.type === 'text') {
+                                reconstructedXml += chunkItem.content;
+                            } else if (chunkItem.type === 'mod') {
+                                if (j === chunkIndex) {
+                                    reconstructedXml += modXml;
+                                } else {
+                                    reconstructedXml += chunkItem.originalContent;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                const newXmlContent = reconstructedXml;
                 const branchName = `mod-edit-${Date.now()}`;
                 const commitMessage = isNewMod ? `Add new mod: ${name}` :
                     isNewSubmod ? `Add new submod: ${name}` :
