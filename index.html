@@ -785,97 +785,139 @@
                 throw new Error('Invalid catalog XML - no ModCatalog element found');
             }
             
-            // Track position in original text
-            let currentPos = 0;
-            
-            // Add opening tag and any content before first mod
-            const firstModStart = xmlText.indexOf('<Mod>');
-            if (firstModStart > 0) {
-                xmlChunks.push({
-                    type: 'text',
-                    content: xmlText.substring(0, firstModStart)
-                });
-                currentPos = firstModStart;
-            }
-            
-            // Process each mod element
+            // Get only actual mod elements (excludes those inside comments)
             const mods = Array.from(catalogElement.querySelectorAll('Mod'));
             originalModsOrder = [...mods];
             
-            for (let i = 0; i < mods.length; i++) {
-                const mod = mods[i];
+            // First, find all <Mod> positions that are outside comments
+            const validModPositions = [];
+            let searchStart = 0;
+            
+            while (true) {
+                const pos = xmlText.indexOf('<Mod>', searchStart);
+                if (pos === -1) break;
                 
-                // Assign originalIndex to track position in XML document
-                // This ensures consistent mod targeting regardless of UI sort order
-                mod.originalIndex = i;
+                // Check if this position is inside a comment
+                const beforePos = xmlText.substring(0, pos);
+                const lastCommentStart = beforePos.lastIndexOf('<!--');
+                const lastCommentEnd = beforePos.lastIndexOf('-->');
                 
-                // Find the complete mod text in original XML
-                const modStartPos = xmlText.indexOf('<Mod>', currentPos);
-                const modEndPos = xmlText.indexOf('</Mod>', modStartPos) + 6; // +6 for '</Mod>'
+                const insideComment = lastCommentStart > lastCommentEnd;
                 
-                if (modStartPos === -1 || modEndPos === -1) {
-                    throw new Error(`Could not find mod boundaries for mod ${i}`);
+                if (!insideComment) {
+                    // Find the corresponding </Mod>
+                    const modEndPos = xmlText.indexOf('</Mod>', pos);
+                    if (modEndPos > pos) {
+                        const modContent = xmlText.substring(pos, modEndPos + 6);
+                        validModPositions.push({
+                            startPos: pos,
+                            endPos: modEndPos + 6,
+                            content: modContent
+                        });
+                    }
                 }
                 
-                const modXmlText = xmlText.substring(modStartPos, modEndPos);
+                searchStart = pos + 1;
+            }
+            
+            // Now match each DOM mod element to a position based on content
+            const modPositions = [];
+            const usedPositions = new Set();
+            
+            for (let i = 0; i < mods.length; i++) {
+                const mod = mods[i];
+                mod.originalIndex = i;
+                
+                const modName = mod.querySelector('Name')?.textContent || '';
+                const modVersion = mod.querySelector('Version')?.textContent || '';
+                const modAuthor = mod.querySelector('Author')?.textContent || '';
+                
+                const namePattern = `<Name>${modName}</Name>`;
+                
+                // Find a matching position that hasn't been used yet
+                let matchedPosition = null;
+                for (let j = 0; j < validModPositions.length; j++) {
+                    if (usedPositions.has(j)) continue;
+                    
+                    const position = validModPositions[j];
+                    if (position.content.includes(namePattern)) {
+                        // Additional verification with author if available
+                        if (!modAuthor || position.content.includes(`<Author>${modAuthor}</Author>`)) {
+                            matchedPosition = position;
+                            usedPositions.add(j);
+                            break;
+                        }
+                    }
+                }
+                
+                if (!matchedPosition) {
+                    throw new Error(`Could not find position for mod ${i}: ${modName}`);
+                }
+                
+                modPositions.push({
+                    mod: mod,
+                    startPos: matchedPosition.startPos,
+                    endPos: matchedPosition.endPos,
+                    xmlText: matchedPosition.content
+                });
                 
                 // Store original XML for this mod
-                originalModXml.set(mod, modXmlText);
+                originalModXml.set(mod, matchedPosition.content);
                 
                 // Store submods original XML and assign originalIndex
                 const submods = mod.querySelectorAll('SubMod');
                 submods.forEach((submod, submodIndex) => {
-                    // Assign originalIndex to track position within parent mod
-                    // This maintains consistent submod targeting during operations
                     submod.originalIndex = submodIndex;
-                    // Find submod text within the mod text
                     const submodName = submod.querySelector('Name')?.textContent || '';
                     if (submodName) {
-                        // Look for this submod in the mod XML text
-                        const submodStart = modXmlText.indexOf(`<Name>${submodName}</Name>`);
+                        const submodNamePattern = `<Name>${submodName}</Name>`;
+                        const submodStart = matchedPosition.content.indexOf(submodNamePattern);
                         if (submodStart > -1) {
-                            // Find the enclosing SubMod tags
-                            const beforeName = modXmlText.lastIndexOf('<SubMod>', submodStart);
-                            const afterName = modXmlText.indexOf('</SubMod>', submodStart) + 9;
+                            const beforeName = matchedPosition.content.lastIndexOf('<SubMod>', submodStart);
+                            const afterName = matchedPosition.content.indexOf('</SubMod>', submodStart) + 9;
                             if (beforeName > -1 && afterName > -1) {
-                                const submodXmlText = modXmlText.substring(beforeName, afterName);
+                                const submodXmlText = matchedPosition.content.substring(beforeName, afterName);
                                 originalSubmodXml.set(submod, submodXmlText);
                             }
                         }
                     }
                 });
+            }
+            
+            // Sort mod positions by their start position to ensure correct order
+            modPositions.sort((a, b) => a.startPos - b.startPos);
+            
+            // Build chunks by processing text segments and mod segments
+            let currentPos = 0;
+            
+            for (let i = 0; i < modPositions.length; i++) {
+                const modPos = modPositions[i];
+                
+                // Add text chunk before this mod (includes comments, whitespace, etc.)
+                if (modPos.startPos > currentPos) {
+                    xmlChunks.push({
+                        type: 'text',
+                        content: xmlText.substring(currentPos, modPos.startPos)
+                    });
+                }
                 
                 // Add mod chunk
                 const chunkIndex = xmlChunks.length;
                 xmlChunks.push({
                     type: 'mod',
-                    element: mod,
-                    originalContent: modXmlText
+                    element: modPos.mod,
+                    originalContent: modPos.xmlText
                 });
-                modToChunkIndex.set(mod, chunkIndex);
+                modToChunkIndex.set(modPos.mod, chunkIndex);
                 
-                currentPos = modEndPos;
-                
-                // Add any text between this mod and the next one
-                const nextModStart = i < mods.length - 1 ? 
-                    xmlText.indexOf('<Mod>', currentPos) : 
-                    xmlText.indexOf('</ModCatalog>', currentPos);
-                    
-                if (nextModStart > currentPos) {
-                    xmlChunks.push({
-                        type: 'text',
-                        content: xmlText.substring(currentPos, nextModStart)
-                    });
-                    currentPos = nextModStart;
-                }
+                currentPos = modPos.endPos;
             }
             
-            // Add closing tag and any remaining content
-            const closingPos = xmlText.indexOf('</ModCatalog>', currentPos);
-            if (closingPos > -1) {
+            // Add remaining text after the last mod (includes closing tags, comments, etc.)
+            if (currentPos < xmlText.length) {
                 xmlChunks.push({
                     type: 'text',
-                    content: xmlText.substring(currentPos)  // Include everything from current position to end
+                    content: xmlText.substring(currentPos)
                 });
             }
         }
@@ -1633,13 +1675,19 @@
             console.log('=== Testing modification simulation ===');
             testModificationPreservation();
             
+            // Test XML comment handling
+            console.log('=== Testing XML comment handling ===');
+            const commentResults = testXmlCommentHandling();
+            
             let message = 'XML Preservation Test Results:\n\n';
             message += `✅ Perfect reconstruction: ${results.perfectReconstruction ? 'PASS' : 'FAIL'}\n`;
             message += `✅ Original order preserved: ${results.orderPreserved ? 'PASS' : 'FAIL'}\n`;
             message += `✅ UI displays alphabetically: ${results.uiAlphabetical ? 'PASS' : 'FAIL'}\n`;
             message += `✅ Serialization fix works: ${serializationResults.serializationWorks ? 'PASS' : 'FAIL'}\n`;
+            message += `✅ XML comments handled correctly: ${commentResults.commentsHandledCorrectly ? 'PASS' : 'FAIL'}\n`;
             
-            if (results.perfectReconstruction && results.orderPreserved && results.uiAlphabetical && serializationResults.serializationWorks) {
+            if (results.perfectReconstruction && results.orderPreserved && results.uiAlphabetical && 
+                serializationResults.serializationWorks && commentResults.commentsHandledCorrectly) {
                 message += '\n🎉 All tests PASSED! XML preservation system is working correctly.';
                 message += '\n\nCheck console for detailed test results and diff output.';
             } else {
@@ -1856,6 +1904,127 @@
                 modifiedSubmods.clear();
                 originalModifiedMods.forEach(mod => modifiedMods.add(mod));
                 originalModifiedSubmods.forEach(submod => modifiedSubmods.add(submod));
+            }
+        }
+        
+        // Test function to verify XML comment handling
+        function testXmlCommentHandling() {
+            console.log('Testing XML comment handling...');
+            
+            // Create test XML with comments containing <mod> tags
+            const testXmlWithComments = `<?xml version="1.0" encoding="utf-8"?>
+<ModCatalog>
+    
+    <!-- This comment contains a <mod> tag that should be ignored:
+         <Mod>
+             <Name>CommentedMod</Name>
+             <Version>1.0</Version>
+             <Description>This mod is inside a comment</Description>
+         </Mod>
+    -->
+    
+    <Mod>
+        <Name>RealMod1</Name>
+        <Version>1.0</Version>
+        <InstallationPath>RealMod1</InstallationPath>
+        <Author>TestAuthor</Author>
+        <Description>This is a real mod</Description>
+    </Mod>
+    
+    <!-- Another comment with <mod> tags:
+         Some text <Mod><Name>AnotherCommentedMod</Name></Mod> more text
+    -->
+    
+    <Mod>
+        <Name>RealMod2</Name>
+        <Version>2.0</Version>
+        <InstallationPath>RealMod2</InstallationPath>
+        <Author>TestAuthor2</Author>
+        <Description>This is another real mod</Description>
+    </Mod>
+    
+    <!-- Final comment -->
+    
+</ModCatalog>`;
+            
+            try {
+                // Save original state
+                const originalXmlBackup = originalXmlText;
+                const originalChunksBackup = [...xmlChunks];
+                const originalModsOrderBackup = [...originalModsOrder];
+                const originalModXmlBackup = new Map(originalModXml);
+                const originalSubmodXmlBackup = new Map(originalSubmodXml);
+                
+                // Test parsing the XML with comments
+                originalXmlText = testXmlWithComments;
+                parseXmlIntoChunks(testXmlWithComments);
+                
+                // Parse with DOM to get actual mods (should only be 2, not 4)
+                const xmlDoc = new DOMParser().parseFromString(testXmlWithComments, 'application/xml');
+                const actualMods = xmlDoc.querySelectorAll('Mod');
+                
+                console.log(`DOM parser found ${actualMods.length} actual mod elements`);
+                console.log('Actual mod names:', Array.from(actualMods).map(mod => mod.querySelector('Name')?.textContent));
+                
+                // Check that we found exactly 2 real mods (not the ones in comments)
+                const correctModCount = actualMods.length === 2;
+                console.log('Correct mod count (should be 2):', correctModCount);
+                
+                // Check that the chunks include the comments as text chunks
+                let hasCommentChunks = false;
+                let commentsPreserved = true;
+                
+                console.log('Chunks found:', xmlChunks.length);
+                xmlChunks.forEach((chunk, index) => {
+                    console.log(`Chunk ${index}: type=${chunk.type}, content preview=${chunk.content ? chunk.content.substring(0, 50).replace(/\n/g, '\\n') + '...' : 'N/A'}`);
+                    
+                    if (chunk.type === 'text' && chunk.content.includes('<!--')) {
+                        hasCommentChunks = true;
+                        
+                        // Verify the comment contains the <mod> tags
+                        if (chunk.content.includes('CommentedMod') || chunk.content.includes('AnotherCommentedMod')) {
+                            console.log('Found comment chunk containing <mod> tags');
+                        }
+                    }
+                });
+                
+                console.log('Comments preserved as text chunks:', hasCommentChunks);
+                
+                // Test reconstruction
+                let reconstructed = '';
+                xmlChunks.forEach(chunk => {
+                    if (chunk.type === 'text') {
+                        reconstructed += chunk.content;
+                    } else if (chunk.type === 'mod') {
+                        reconstructed += chunk.originalContent;
+                    }
+                });
+                
+                const perfectReconstruction = reconstructed === testXmlWithComments;
+                console.log('Perfect reconstruction:', perfectReconstruction);
+                
+                // Check that commented mods were not processed as real mods
+                const modNames = Array.from(actualMods).map(mod => mod.querySelector('Name')?.textContent);
+                const noCommentedMods = !modNames.includes('CommentedMod') && !modNames.includes('AnotherCommentedMod');
+                console.log('Commented mods correctly ignored:', noCommentedMods);
+                
+                const testPassed = correctModCount && hasCommentChunks && perfectReconstruction && noCommentedMods;
+                console.log(`XML comment handling test result: ${testPassed ? 'PASS' : 'FAIL'}`);
+                
+                // Restore original state
+                originalXmlText = originalXmlBackup;
+                xmlChunks = originalChunksBackup;
+                originalModsOrder = originalModsOrderBackup;
+                originalModXml.clear();
+                originalModXmlBackup.forEach((value, key) => originalModXml.set(key, value));
+                originalSubmodXml.clear();
+                originalSubmodXmlBackup.forEach((value, key) => originalSubmodXml.set(key, value));
+                
+                return { commentsHandledCorrectly: testPassed };
+                
+            } catch (error) {
+                console.error('Error during XML comment test:', error);
+                return { commentsHandledCorrectly: false };
             }
         }
     })();
