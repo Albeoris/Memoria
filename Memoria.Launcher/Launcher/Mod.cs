@@ -751,34 +751,41 @@ namespace Memoria.Launcher
                 // Test case 1: Basic mod parsing
                 String xml1 = "<root><mod>content1</mod>text<mod>content2</mod></root>";
                 var chunks1 = ParseXmlIntoChunks(xml1);
-                if (chunks1.Count != 3 || !chunks1[1].IsMod || !chunks1[2].IsMod)
+                if (chunks1.Count != 5) // root, mod, text, mod, /root
+                    return false;
+                
+                Int32 modCount1 = 0;
+                foreach (var chunk in chunks1)
+                {
+                    if (chunk.IsMod) modCount1++;
+                }
+                if (modCount1 != 2)
                     return false;
 
                 // Test case 2: Mod tags inside comments should be ignored
                 String xml2 = "<root><!-- <mod>ignore this</mod> -->text<mod>real mod</mod></root>";
                 var chunks2 = ParseXmlIntoChunks(xml2);
                 
-                // Should have: text chunk with root and comment, text chunk, mod chunk, text chunk with closing root
-                Int32 modCount = 0;
+                Int32 modCount2 = 0;
                 foreach (var chunk in chunks2)
                 {
-                    if (chunk.IsMod) modCount++;
+                    if (chunk.IsMod) modCount2++;
                 }
                 
-                if (modCount != 1) // Only one real mod should be found
+                if (modCount2 != 1) // Only one real mod should be found
                     return false;
 
                 // Test case 3: Nested comments and mods
                 String xml3 = "<!-- comment with <mod>fake</mod> --><mod><!-- comment inside mod -->real</mod>";
                 var chunks3 = ParseXmlIntoChunks(xml3);
                 
-                modCount = 0;
+                Int32 modCount3 = 0;
                 foreach (var chunk in chunks3)
                 {
-                    if (chunk.IsMod) modCount++;
+                    if (chunk.IsMod) modCount3++;
                 }
                 
-                if (modCount != 1) // Only one real mod should be found
+                if (modCount3 != 1) // Only one real mod should be found
                     return false;
 
                 // Test case 4: Empty XML
@@ -791,13 +798,13 @@ namespace Memoria.Launcher
                 String xml5 = "<root>text<!-- comment -->more text</root>";
                 var chunks5 = ParseXmlIntoChunks(xml5);
                 
-                modCount = 0;
+                Int32 modCount5 = 0;
                 foreach (var chunk in chunks5)
                 {
-                    if (chunk.IsMod) modCount++;
+                    if (chunk.IsMod) modCount5++;
                 }
                 
-                if (modCount != 0) // No mods should be found
+                if (modCount5 != 0) // No mods should be found
                     return false;
 
                 return true;
@@ -806,6 +813,39 @@ namespace Memoria.Launcher
             {
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Example method demonstrating how to use ParseXmlIntoChunks for processing mod-aware XML.
+        /// This shows how the function can be integrated into XML processing workflows where 
+        /// mod elements need special handling while ignoring those in comments.
+        /// </summary>
+        /// <param name="xmlContent">The XML content to process</param>
+        /// <returns>Number of real mod elements found (excluding those in comments)</returns>
+        public static Int32 ProcessModAwareXml(String xmlContent)
+        {
+            var chunks = ParseXmlIntoChunks(xmlContent);
+            Int32 realModCount = 0;
+            
+            foreach (var chunk in chunks)
+            {
+                if (chunk.IsMod)
+                {
+                    realModCount++;
+                    // Here you could process the mod element, for example:
+                    // - Parse the mod XML content
+                    // - Extract mod attributes or content
+                    // - Apply mod-specific logic
+                    // Console.WriteLine($"Found real mod at index {chunk.OriginalIndex}: {chunk.Content}");
+                }
+                else
+                {
+                    // Process text content (including comments, which are preserved as text)
+                    // This ensures that comments and other XML content are maintained
+                }
+            }
+            
+            return realModCount;
         }
 
         public class CompatibilityNoteClass
