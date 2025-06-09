@@ -669,6 +669,142 @@ namespace Memoria.Launcher
             return parentMod.SubMod.Any() ? parentMod.SubMod.Max(subMod => subMod.OriginalIndex) + 1 : 0;
         }
 
+        /// <summary>
+        /// Represents a mod chunk found in XML outside of comments
+        /// </summary>
+        public class ModChunk
+        {
+            public String Content { get; set; }
+            public Int32 StartIndex { get; set; }
+            public Int32 EndIndex { get; set; }
+        }
+
+        /// <summary>
+        /// Result of parsing XML into chunks, separating mod content from surrounding text
+        /// </summary>
+        public class ParseResult
+        {
+            public List<String> Chunks { get; set; } = new List<String>();
+            public List<ModChunk> ModChunks { get; set; } = new List<ModChunk>();
+        }
+
+        /// <summary>
+        /// Parses XML text into chunks, correctly ignoring &lt;mod&gt; tags inside XML comments.
+        /// This function finds all comment ranges (&lt;!-- ... --&gt;) and only processes 
+        /// &lt;mod&gt;...&lt;/mod&gt; tags that are outside those ranges.
+        /// </summary>
+        /// <param name="xmlText">The XML text to parse</param>
+        /// <returns>ParseResult containing text chunks and mod chunks found outside comments</returns>
+        public static ParseResult ParseXmlIntoChunks(String xmlText)
+        {
+            if (String.IsNullOrEmpty(xmlText))
+                return new ParseResult();
+
+            var result = new ParseResult();
+            
+            // Find all comment ranges <!-- ... -->
+            var commentRanges = FindCommentRanges(xmlText);
+            
+            // Find all <mod>...</mod> tags that are NOT inside comments
+            var modRanges = FindModRangesOutsideComments(xmlText, commentRanges);
+            
+            // Create chunks: before first mod, between mods, after last mod
+            result.Chunks = CreateChunks(xmlText, modRanges);
+            result.ModChunks = modRanges;
+            
+            return result;
+        }
+
+        /// <summary>
+        /// Finds all XML comment ranges in the text
+        /// </summary>
+        private static List<(Int32 start, Int32 end)> FindCommentRanges(String xmlText)
+        {
+            var ranges = new List<(Int32 start, Int32 end)>();
+            var regex = new Regex(@"<!--.*?-->", RegexOptions.Singleline);
+            
+            foreach (Match match in regex.Matches(xmlText))
+            {
+                ranges.Add((match.Index, match.Index + match.Length - 1));
+            }
+            
+            return ranges;
+        }
+
+        /// <summary>
+        /// Finds all &lt;mod&gt;...&lt;/mod&gt; tags that are outside comment ranges
+        /// </summary>
+        private static List<ModChunk> FindModRangesOutsideComments(String xmlText, List<(Int32 start, Int32 end)> commentRanges)
+        {
+            var modChunks = new List<ModChunk>();
+            var regex = new Regex(@"<mod\b[^>]*>.*?</mod>", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            
+            foreach (Match match in regex.Matches(xmlText))
+            {
+                Boolean insideComment = false;
+                
+                // Check if this mod tag is inside any comment
+                foreach (var commentRange in commentRanges)
+                {
+                    if (match.Index >= commentRange.start && match.Index + match.Length - 1 <= commentRange.end)
+                    {
+                        insideComment = true;
+                        break;
+                    }
+                }
+                
+                if (!insideComment)
+                {
+                    modChunks.Add(new ModChunk
+                    {
+                        Content = match.Value,
+                        StartIndex = match.Index,
+                        EndIndex = match.Index + match.Length - 1
+                    });
+                }
+            }
+            
+            return modChunks;
+        }
+
+        /// <summary>
+        /// Creates text chunks from the original XML, excluding mod content
+        /// </summary>
+        private static List<String> CreateChunks(String xmlText, List<ModChunk> modChunks)
+        {
+            var chunks = new List<String>();
+            
+            if (modChunks.Count == 0)
+            {
+                chunks.Add(xmlText);
+                return chunks;
+            }
+            
+            // Sort mod chunks by start index
+            modChunks.Sort((a, b) => a.StartIndex.CompareTo(b.StartIndex));
+            
+            Int32 currentIndex = 0;
+            
+            foreach (var modChunk in modChunks)
+            {
+                // Add chunk before this mod
+                if (modChunk.StartIndex > currentIndex)
+                {
+                    chunks.Add(xmlText.Substring(currentIndex, modChunk.StartIndex - currentIndex));
+                }
+                
+                currentIndex = modChunk.EndIndex + 1;
+            }
+            
+            // Add chunk after last mod
+            if (currentIndex < xmlText.Length)
+            {
+                chunks.Add(xmlText.Substring(currentIndex));
+            }
+            
+            return chunks;
+        }
+
         public const String DESCRIPTION_FILE = "ModDescription.xml";
         public const String MOD_CONTENT_FILE = "ModFileList.txt";
         public const String INSTALLATION_TMP = "MemoriaInstallTmp";
