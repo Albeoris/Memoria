@@ -187,6 +187,181 @@ namespace Memoria.Launcher
             return doc;
         }
 
+        /// <summary>
+        /// Represents a chunk of XML content - either a mod element or text content
+        /// </summary>
+        public class XmlChunk
+        {
+            public String Content { get; set; }
+            public Boolean IsMod { get; set; }
+            public Int32 OriginalIndex { get; set; }
+            
+            public XmlChunk(String content, Boolean isMod, Int32 originalIndex)
+            {
+                Content = content;
+                IsMod = isMod;
+                OriginalIndex = originalIndex;
+            }
+        }
+
+        /// <summary>
+        /// Parses XML text into chunks, correctly ignoring &lt;mod&gt; tags inside XML comments.
+        /// 
+        /// This function implements character-by-character parsing to track whether the current 
+        /// position is inside an XML comment (&lt;!-- ... --&gt;). Only &lt;mod&gt; and &lt;/mod&gt; tags 
+        /// that are outside comments are considered real mod elements.
+        /// 
+        /// The function was implemented to fix the issue where mod tags inside comments
+        /// were being incorrectly processed as actual mod elements, which could cause
+        /// parsing errors and incorrect mod detection.
+        /// </summary>
+        /// <param name="xmlText">The source XML text to parse</param>
+        /// <returns>List of XmlChunk objects representing text blocks and mod elements</returns>
+        public static List<XmlChunk> ParseXmlIntoChunks(String xmlText)
+        {
+            var chunks = new List<XmlChunk>();
+            var currentContent = new StringBuilder();
+            Boolean inComment = false;
+            Int32 i = 0;
+
+            while (i < xmlText.Length)
+            {
+                // Check if we're entering a comment
+                if (!inComment && i + 4 <= xmlText.Length && xmlText.Substring(i, 4) == "<!--")
+                {
+                    // If we have accumulated content, add it as a text chunk
+                    if (currentContent.Length > 0)
+                    {
+                        chunks.Add(new XmlChunk(currentContent.ToString(), false, i - currentContent.Length));
+                        currentContent.Clear();
+                    }
+                    
+                    inComment = true;
+                    currentContent.Append("<!--");
+                    i += 4;
+                    continue;
+                }
+
+                // Check if we're exiting a comment
+                if (inComment && i + 3 <= xmlText.Length && xmlText.Substring(i, 3) == "-->")
+                {
+                    currentContent.Append("-->");
+                    
+                    // Add the comment as a text chunk (not a mod)
+                    chunks.Add(new XmlChunk(currentContent.ToString(), false, i - currentContent.Length + 1));
+                    currentContent.Clear();
+                    
+                    inComment = false;
+                    i += 3;
+                    continue;
+                }
+
+                // Only process mod tags if we're NOT inside a comment
+                if (!inComment)
+                {
+                    // Check for opening <mod> tag (case insensitive)
+                    if (i + 5 <= xmlText.Length && 
+                        String.Compare(xmlText.Substring(i, 5), "<mod>", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        // If we have accumulated content, add it as a text chunk
+                        if (currentContent.Length > 0)
+                        {
+                            chunks.Add(new XmlChunk(currentContent.ToString(), false, i - currentContent.Length));
+                            currentContent.Clear();
+                        }
+
+                        // Find the matching </mod> tag
+                        Int32 modStart = i;
+                        Int32 modContentStart = i + 5;
+                        Int32 modEnd = FindMatchingClosingModTag(xmlText, modContentStart);
+                        
+                        if (modEnd != -1)
+                        {
+                            // Extract the complete mod element including tags
+                            String modContent = xmlText.Substring(modStart, modEnd - modStart + 6); // +6 for "</mod>"
+                            chunks.Add(new XmlChunk(modContent, true, modStart));
+                            i = modEnd + 6; // Move past the closing </mod>
+                            continue;
+                        }
+                    }
+                }
+
+                // Add current character to content buffer
+                currentContent.Append(xmlText[i]);
+                i++;
+            }
+
+            // Add any remaining content as a text chunk
+            if (currentContent.Length > 0)
+            {
+                chunks.Add(new XmlChunk(currentContent.ToString(), false, xmlText.Length - currentContent.Length));
+            }
+
+            return chunks;
+        }
+
+        /// <summary>
+        /// Finds the matching closing &lt;/mod&gt; tag for an opening &lt;mod&gt; tag, properly handling nested mods.
+        /// This helper function ensures that mod tags are correctly paired even when nested.
+        /// </summary>
+        /// <param name="xmlText">The XML text to search</param>
+        /// <param name="startPos">Position to start searching from (after the opening &lt;mod&gt;)</param>
+        /// <returns>The index of the start of the matching &lt;/mod&gt; tag, or -1 if not found</returns>
+        private static Int32 FindMatchingClosingModTag(String xmlText, Int32 startPos)
+        {
+            Int32 nestLevel = 1; // We're already inside one <mod>
+            Int32 i = startPos;
+            Boolean inComment = false;
+
+            while (i < xmlText.Length && nestLevel > 0)
+            {
+                // Track comment state to ignore mod tags inside comments
+                if (!inComment && i + 4 <= xmlText.Length && xmlText.Substring(i, 4) == "<!--")
+                {
+                    inComment = true;
+                    i += 4;
+                    continue;
+                }
+
+                if (inComment && i + 3 <= xmlText.Length && xmlText.Substring(i, 3) == "-->")
+                {
+                    inComment = false;
+                    i += 3;
+                    continue;
+                }
+
+                // Only process mod tags if not in comment
+                if (!inComment)
+                {
+                    // Check for nested opening <mod> tag
+                    if (i + 5 <= xmlText.Length && 
+                        String.Compare(xmlText.Substring(i, 5), "<mod>", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        nestLevel++;
+                        i += 5;
+                        continue;
+                    }
+
+                    // Check for closing </mod> tag
+                    if (i + 6 <= xmlText.Length && 
+                        String.Compare(xmlText.Substring(i, 6), "</mod>", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        nestLevel--;
+                        if (nestLevel == 0)
+                        {
+                            return i; // Return the start position of the closing tag
+                        }
+                        i += 6;
+                        continue;
+                    }
+                }
+
+                i++;
+            }
+
+            return -1; // No matching closing tag found
+        }
+
         public Boolean ReadDescription(XmlNode modNode)
         {
             XmlElement elName = modNode["Name"];
@@ -563,6 +738,74 @@ namespace Memoria.Launcher
             if (Directory.Exists(path + "/FF9_Data") || Directory.Exists(path + "/StreamingAssets"))
                 return true;
             return false;
+        }
+
+        /// <summary>
+        /// Test method to validate the ParseXmlIntoChunks functionality.
+        /// This method tests that mod tags inside XML comments are correctly ignored.
+        /// </summary>
+        public static Boolean TestParseXmlIntoChunks()
+        {
+            try
+            {
+                // Test case 1: Basic mod parsing
+                String xml1 = "<root><mod>content1</mod>text<mod>content2</mod></root>";
+                var chunks1 = ParseXmlIntoChunks(xml1);
+                if (chunks1.Count != 3 || !chunks1[1].IsMod || !chunks1[2].IsMod)
+                    return false;
+
+                // Test case 2: Mod tags inside comments should be ignored
+                String xml2 = "<root><!-- <mod>ignore this</mod> -->text<mod>real mod</mod></root>";
+                var chunks2 = ParseXmlIntoChunks(xml2);
+                
+                // Should have: text chunk with root and comment, text chunk, mod chunk, text chunk with closing root
+                Int32 modCount = 0;
+                foreach (var chunk in chunks2)
+                {
+                    if (chunk.IsMod) modCount++;
+                }
+                
+                if (modCount != 1) // Only one real mod should be found
+                    return false;
+
+                // Test case 3: Nested comments and mods
+                String xml3 = "<!-- comment with <mod>fake</mod> --><mod><!-- comment inside mod -->real</mod>";
+                var chunks3 = ParseXmlIntoChunks(xml3);
+                
+                modCount = 0;
+                foreach (var chunk in chunks3)
+                {
+                    if (chunk.IsMod) modCount++;
+                }
+                
+                if (modCount != 1) // Only one real mod should be found
+                    return false;
+
+                // Test case 4: Empty XML
+                String xml4 = "";
+                var chunks4 = ParseXmlIntoChunks(xml4);
+                if (chunks4.Count != 0)
+                    return false;
+
+                // Test case 5: No mods
+                String xml5 = "<root>text<!-- comment -->more text</root>";
+                var chunks5 = ParseXmlIntoChunks(xml5);
+                
+                modCount = 0;
+                foreach (var chunk in chunks5)
+                {
+                    if (chunk.IsMod) modCount++;
+                }
+                
+                if (modCount != 0) // No mods should be found
+                    return false;
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public class CompatibilityNoteClass
