@@ -1723,10 +1723,12 @@ Changelog: Added support for new characters and costumes. Classic upscaled versi
 Mod Order: Place above Playable Character Pack, Beatrix Mod, Tantalus Mod, and Kupo UI Suite.
 Part of Kupo Mods formerly Mog Add-ons.
 	</Description>
-	<PatchNotes>Added PSX like Pluto Knight costume for Zidane</PatchNotes>
+	<PatchNotes>Added PSX like Pluto Knight costume for Zidane
+
+тест</PatchNotes>
 	<Category>Visual</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/80</Website>
-	<DownloadUrl>https://www.dropbox.com/scl/fi/80dpdv5kn378cw27fay0q/KupoPortraits.zip?rlkey=dnb8htsnmqzoehuibij9tarxd&amp;dl=1</DownloadUrl>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/80dpdv5kn378cw27fay0q/KupoPortraits.zip?rlkey=dnb8htsnmqzoehuibij9tarxd&dl=1</DownloadUrl>
 	<PreviewFile>preview/kupo-portraits.png</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313903-663823797.png</PreviewFileUrl>
 	<MinimumMemoriaVersion>2024.05.19</MinimumMemoriaVersion>
