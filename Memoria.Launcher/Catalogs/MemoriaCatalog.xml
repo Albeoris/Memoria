@@ -2140,6 +2140,7 @@ Note: this mod doesn't support automatic installation yet. Download it from its 
 <!-- Note to Albeoris: you know better about the genesis of it (to fix/correct/contact the author)-->
 <Mod>
 	<Name>Russian Translation</Name>
+	<PatchNotes>тест</PatchNotes>
 	<Version>1.0</Version>
 	<Priority>17</Priority>
 	<InstallationPath>TranslationRu</InstallationPath>
@@ -2148,7 +2149,7 @@ Note: this mod doesn't support automatic installation yet. Download it from its 
 	<Author>RGR Studio</Author>
 	<Description>Перевод игры на русский язык.</Description>
 	<Category>Translation</Category>
-	<Website>https://ff9.ffrtt.ru/viewtopic.php?f=14&amp;t=38</Website>
+	<Website>https://ff9.ffrtt.ru/viewtopic.php?f=14&t=38</Website>
 	<DownloadUrl>https://ff9.ffrtt.ru/rus/RussianLocalization_MemoriaMod_mes.zip</DownloadUrl>
 	<MinimumMemoriaVersion>2024-11-17</MinimumMemoriaVersion>
 </Mod>
