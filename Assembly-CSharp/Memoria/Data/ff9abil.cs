@@ -259,24 +259,41 @@ namespace FF9
 
         public static void CalculateGemsPlayer(PLAYER player)
         {
-            player.cur.capa = player.max.capa;
+            if (Configuration.Battle.LockEquippedAbilities == 1 || Configuration.Battle.LockEquippedAbilities == 3)
+                return;
+
+            String NotEnoughGemsLog = null;
+            int GemsUsed = 0;
+            //Boolean RemoveCurrentSA = false;
+
             HashSet<SupportAbility> CurrentSAEquipped = new HashSet<SupportAbility>();
             foreach (SupportAbility SAInject in player.saExtended)
                 CurrentSAEquipped.Add(SAInject);
-            String NotEnoughGemsLog = null;
 
-            if (Configuration.Battle.LockEquippedAbilities == 0 || Configuration.Battle.LockEquippedAbilities == 2)
-                foreach (SupportAbility SA in CurrentSAEquipped)
+            player.cur.capa = player.max.capa;
+            if (player.PresetId == CharacterPresetId.Amarant)
+            {
+                Log.Message("#######################################");
+                Log.Message("player.cur.capa = " + player.cur.capa);
+            }
+
+            foreach (SupportAbility SA in CurrentSAEquipped)
+            {
+                Log.Message("SA = " + SA + " / Gems : " + GetSAGemCostFromPlayer(player, SA));
+                if (player.cur.capa >= GetSAGemCostFromPlayer(player, SA) && GemsUsed < player.max.capa)
                 {
-                    if (player.cur.capa >= GetSAGemCostFromPlayer(player, SA))
-                        player.cur.capa -= (uint)GetSAGemCostFromPlayer(player, SA);
-                    else
-                    {
-                        FF9Abil_SetEnableSA(player, SA, false);
-                        NotEnoughGemsLog += $"{SA} ";
-                        player.cur.capa = (uint)Math.Min(player.cur.capa + GetSAGemCostFromPlayer(player, SA), player.max.capa);
-                    }
+                    Log.Message("GemsUsed = " + GemsUsed);
+                    GemsUsed += GetSAGemCostFromPlayer(player, SA);
+                    player.cur.capa -= (uint)GetSAGemCostFromPlayer(player, SA);
                 }
+                else
+                {
+                    Log.Message($"{SA} removed ! Earn {GetSAGemCostFromPlayer(player, SA)}");
+                    FF9Abil_SetEnableSA(player, SA, false);
+                    NotEnoughGemsLog += $"{SA} ";
+                    player.cur.capa = (uint)Math.Min(player.cur.capa + GetSAGemCostFromPlayer(player, SA), player.max.capa);
+                }
+            }
 
             if (!String.IsNullOrEmpty(NotEnoughGemsLog))
                 Log.Message($"[CalculateGemsPlayer] Not enough gems for {player.Name}, these SA are removed => {NotEnoughGemsLog}");
