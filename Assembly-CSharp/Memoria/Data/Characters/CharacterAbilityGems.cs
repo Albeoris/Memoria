@@ -227,6 +227,8 @@ namespace Memoria.Data
                         e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                         if (String.Equals(formula.Key, "MaxHP")) play.max.hp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.max.hp);
                         else if (String.Equals(formula.Key, "MaxMP")) play.max.mp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.max.mp);
+                        else if (String.Equals(formula.Key, "MaxGems")) play.max.capa = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.max.capa);
+                        else if (String.Equals(formula.Key, "Gems")) play.cur.capa = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.cur.capa);
                         else if (String.Equals(formula.Key, "Speed")) play.elem.dex = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.elem.dex);
                         else if (String.Equals(formula.Key, "Strength")) play.elem.str = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.elem.str);
                         else if (String.Equals(formula.Key, "Magic")) play.elem.mgc = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.elem.mgc);

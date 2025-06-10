@@ -263,6 +263,7 @@ namespace FF9
             HashSet<SupportAbility> CurrentSAEquipped = new HashSet<SupportAbility>();
             foreach (SupportAbility SAInject in player.saExtended)
                 CurrentSAEquipped.Add(SAInject);
+            String NotEnoughGemsLog = null;
 
             if (Configuration.Battle.LockEquippedAbilities == 0 || Configuration.Battle.LockEquippedAbilities == 2)
                 foreach (SupportAbility SA in CurrentSAEquipped)
@@ -270,12 +271,15 @@ namespace FF9
                     if (player.cur.capa >= GetSAGemCostFromPlayer(player, SA))
                         player.cur.capa -= (uint)GetSAGemCostFromPlayer(player, SA);
                     else
-                    { // Not usefull i think but it's a safe check.
+                    {
                         FF9Abil_SetEnableSA(player, SA, false);
-                        Log.Message("Not enough gems, SA("+SA+") removed ");
+                        NotEnoughGemsLog += $"{SA} ";
                         player.cur.capa = (uint)Math.Min(player.cur.capa + GetSAGemCostFromPlayer(player, SA), player.max.capa);
                     }
                 }
+
+            if (!String.IsNullOrEmpty(NotEnoughGemsLog))
+                Log.Message($"[CalculateGemsPlayer] Not enough gems for {player.Name}, these SA are removed => {NotEnoughGemsLog}");
         }
 
         public static Int32 GetBoostedAbilityMaxLevel(PLAYER player, SupportAbility baseAbil)

@@ -265,6 +265,8 @@ public static class ff9play
             play.cur.capa = (UInt32)oldStoneCapa;
             play.max.capa = (UInt32)oldStoneMax;
         }
+        play.basis.capa = play.cur.capa;
+        play.basis.max_capa = play.max.capa;
         if (oldStoneUse <= play.max.capa)
             return;
         FF9Play_UpdateSA(play);
@@ -274,6 +276,8 @@ public static class ff9play
     {
         play.max.hp = play.basis.max_hp;
         play.max.mp = play.basis.max_mp;
+        play.max.capa = play.basis.max_capa;
+        play.cur.capa = play.basis.capa;
         play.elem.dex = play.basis.dex;
         play.elem.str = play.basis.str;
         play.elem.mgc = play.basis.mgc;
@@ -329,6 +333,8 @@ public static class ff9play
         foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(play))
             saFeature.TriggerOnEnable(play);
 
+        ff9abil.CalculateGemsPlayer(play);
+
         if (play.max.hp > play.maxHpLimit)
             play.max.hp = play.maxHpLimit;
         if (play.max.mp > play.maxMpLimit)
@@ -360,8 +366,6 @@ public static class ff9play
             ff9abil.FF9Abil_SetEnableSA(play, SaForced, false);
         foreach (SupportAbility SaForced in play.saForced)
             ff9abil.FF9Abil_SetEnableSA(play, SaForced, true);
-
-        ff9abil.CalculateGemsPlayer(play);
     }
 
     public static CharacterId CharacterOldIndexToID(CharacterOldIndex characterIndex)
