@@ -554,18 +554,20 @@
                                                                             Width="100"
                                                                             Height="10"
                                                                             Opacity="1"
+                                                                            Margin="0,5,0,0"
+                                                                            Foreground="{DynamicResource BrushAccentColor}"
                                                                             Value="{Binding PercentComplete}" />
                                                                     </DataTemplate>
                                                                 </GridViewColumn.CellTemplate>
                                                             </GridViewColumn>
                                                             <GridViewColumn
                                                                 x:Name="colDownloadSpeed"
-                                                                Width="70"
+                                                                Width="100"
                                                                 DisplayMemberBinding="{Binding DownloadSpeed}"
                                                                 Header="Speed" />
                                                             <GridViewColumn
                                                                 x:Name="colDownloadTimeLeft"
-                                                                Width="80"
+                                                                Width="75"
                                                                 DisplayMemberBinding="{Binding RemainingTime}"
                                                                 Header="Time Left" />
                                                         </GridView>

@@ -611,8 +611,16 @@ namespace Memoria.Launcher
                 try
                 {
                     downloadingMod.PercentComplete = e.ProgressPercentage;
-                    downloadingMod.DownloadSpeed = $"{(Int64)(e.BytesReceived / 1024.0 / timeSpan)} {(String)Lang.Res["Measurement.KByteAbbr"]}/{(String)Lang.Res["Measurement.SecondAbbr"]}";
-                    downloadingMod.RemainingTime = $"{TimeSpan.FromSeconds((e.TotalBytesToReceive - e.BytesReceived) * timeSpan / e.BytesReceived):g}";
+                    Int64 dlSpeed = (Int64)(e.BytesReceived / 1024.0 / timeSpan);
+                    String measurement = (String)Lang.Res["Measurement.KByteAbbr"];
+                    if (dlSpeed > 1024)
+                    {
+                        dlSpeed /= 1024;
+                        measurement = (String)Lang.Res["Measurement.MByteAbbr"];
+                    }
+
+                    downloadingMod.DownloadSpeed = $"{dlSpeed} {measurement}/{(String)Lang.Res["Measurement.SecondAbbr"]}";
+                    downloadingMod.RemainingTime = $"{TimeSpan.FromSeconds(Math.Round((e.TotalBytesToReceive - e.BytesReceived) * timeSpan / e.BytesReceived)):g}";
                 }
                 catch (NullReferenceException) // added to catch a race condition that sometimes occures where Ui tries to update but download has finished
                 {
@@ -646,9 +654,35 @@ namespace Memoria.Launcher
                 downloadingPath = "";
                 return;
             }
-            downloadingPath = "";
+
             Dispatcher.BeginInvoke((MethodInvoker)async delegate
             {
+                Thread extractingThread = new Thread(() =>
+                {
+                    downloadingMod.PercentComplete = 0;
+                    downloadingMod.DownloadSpeed = $"{WaitingEmoji} {(String)Lang.Res["ModEditor.Extracting"]}";
+                    downloadingMod.RemainingTime = "";
+                    String dots = "";
+                    while (true)
+                    {
+                        try
+                        {
+                            dots = dots == "..." ? "" : dots + ".";
+                            Dispatcher.BeginInvoke((MethodInvoker)delegate
+                            {
+                                downloadingMod.RemainingTime = dots;
+                                lstDownloads.Items.Refresh();
+                            });
+                            Thread.Sleep(500);
+                        }
+                        catch
+                        {
+                            downloadingMod.DownloadSpeed = "";
+                            downloadingMod.RemainingTime = "";
+                        }
+                    }
+                });
+
                 String downloadingModName = downloadingMod.Name;
                 String path = Mod.INSTALLATION_TMP + "/" + (downloadingMod.InstallationPath ?? downloadingModName);
                 Boolean success = false;
@@ -664,7 +698,9 @@ namespace Memoria.Launcher
                         Boolean moveDesc = false;
                         String sourcePath = "";
                         String destPath = "";
+                        extractingThread.Start();
                         await ExtractAllFileFromArchive(path + downloadFormatExtLower, path);
+                        extractingThread.Abort();
                         File.Delete(path + downloadFormatExtLower);
 
                         String descPath = null;
