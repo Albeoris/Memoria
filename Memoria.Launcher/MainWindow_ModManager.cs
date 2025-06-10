@@ -239,12 +239,6 @@ namespace Memoria.Launcher
             }
         }
 
-        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            lstMods.Items.Refresh();
-            lstCatalogMods.Items.Refresh();
-        }
-
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
             Mod mod = (sender as CheckBox)?.DataContext as Mod;

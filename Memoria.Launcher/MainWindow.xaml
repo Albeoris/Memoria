@@ -240,7 +240,6 @@
                                     Padding="0,6,0,10"
                                     BorderThickness="0"
                                     Background="Transparent"
-                                    SelectionChanged="TabControl_SelectionChanged"
                                     SelectedIndex="0"
                                     Grid.ColumnSpan="2" >
                                     <TabItem x:Name="tabCtrlMods"
@@ -313,8 +312,7 @@
                                                     Grid.Column="1"
                                                     ItemsSource="{Binding ModListInstalled}"
                                                     ScrollViewer.CanContentScroll="False"
-                                                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                                    VirtualizingStackPanel.IsVirtualizing="False">
+                                                    ScrollViewer.HorizontalScrollBarVisibility="Auto">
                                                     <ListView.View>
                                                         <GridView>
                                                             <GridViewColumn
@@ -459,8 +457,7 @@
                                                     Grid.Column="1"
                                                     ItemsSource="{Binding ModListCatalog}"
                                                     ScrollViewer.CanContentScroll="False"
-                                                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                                    VirtualizingStackPanel.IsVirtualizing="False">
+                                                    ScrollViewer.HorizontalScrollBarVisibility="Auto">
                                                     <ListView.ItemContainerStyle>
                                                         <Style TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
                                                             <EventSetter Event="MouseDoubleClick" Handler="OnCatalogListDoubleClick"/>
