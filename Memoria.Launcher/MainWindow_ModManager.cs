@@ -114,13 +114,15 @@ namespace Memoria.Launcher
 
                 foreach (Mod mod in ModListInstalled)
                 {
+                    if (mod == null || mod.Name == null)
+                        continue;
+
+                    // reset state
                     mod.UpdateIcon = null;
                     mod.UpdateTooltip = null;
                     mod.IncompIcon = null;
                     mod.ActiveIncompatibleMods = null;
 
-                    if (mod == null || mod.Name == null)
-                        continue;
                     if (((mod.Name == "Moguri Mod" || mod.Name == "MoguriFiles") && mod.InstallationPath.Contains("MoguriFiles")) || (mod.Name == "Moguri - 3D textures" && mod.InstallationPath.Contains("Moguri_3Dtextures")))
                     {
                         mod.UpdateIcon = UpdateEmoji;
@@ -252,8 +254,9 @@ namespace Memoria.Launcher
         private void UpdateIcon_Click(object sender, RoutedEventArgs e)
         {
             Mod installedMod = (sender as Button)?.DataContext as Mod;
-            foreach (Mod mod in ModListCatalog) // check updates
+            foreach (Mod mod in ModListCatalog)
             {
+                // Find the mod in the catalog
                 if (mod != null && mod.Name != null && mod.Name == installedMod.Name)
                 {
                     tabCtrlMain.SelectedIndex = 1;
