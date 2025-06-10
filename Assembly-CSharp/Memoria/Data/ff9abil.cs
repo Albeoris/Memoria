@@ -264,31 +264,21 @@ namespace FF9
 
             String NotEnoughGemsLog = null;
             int GemsUsed = 0;
-            //Boolean RemoveCurrentSA = false;
 
             HashSet<SupportAbility> CurrentSAEquipped = new HashSet<SupportAbility>();
             foreach (SupportAbility SAInject in player.saExtended)
                 CurrentSAEquipped.Add(SAInject);
 
             player.cur.capa = player.max.capa;
-            if (player.PresetId == CharacterPresetId.Amarant)
-            {
-                Log.Message("#######################################");
-                Log.Message("player.cur.capa = " + player.cur.capa);
-            }
-
             foreach (SupportAbility SA in CurrentSAEquipped)
             {
-                Log.Message("SA = " + SA + " / Gems : " + GetSAGemCostFromPlayer(player, SA));
                 if (player.cur.capa >= GetSAGemCostFromPlayer(player, SA) && GemsUsed < player.max.capa)
                 {
-                    Log.Message("GemsUsed = " + GemsUsed);
-                    GemsUsed += GetSAGemCostFromPlayer(player, SA);
+                    GemsUsed += GetSAGemCostFromPlayer(player, SA); // GemUsed is a check when using [code=MaxGems] : in some case, currents Gems can't be enough.
                     player.cur.capa -= (uint)GetSAGemCostFromPlayer(player, SA);
                 }
                 else
                 {
-                    Log.Message($"{SA} removed ! Earn {GetSAGemCostFromPlayer(player, SA)}");
                     FF9Abil_SetEnableSA(player, SA, false);
                     NotEnoughGemsLog += $"{SA} ";
                     player.cur.capa = (uint)Math.Min(player.cur.capa + GetSAGemCostFromPlayer(player, SA), player.max.capa);

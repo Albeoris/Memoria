@@ -4,7 +4,6 @@ using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
-using Memoria.Prime.PsdFile;
 using System;
 using System.Collections.Generic;
 using System.IO;
