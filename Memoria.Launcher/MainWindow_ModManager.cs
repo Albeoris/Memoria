@@ -254,18 +254,18 @@ namespace Memoria.Launcher
         private void UpdateIcon_Click(object sender, RoutedEventArgs e)
         {
             Mod installedMod = (sender as Button)?.DataContext as Mod;
-            foreach (Mod mod in ModListCatalog)
+            if (installedMod == null || installedMod.Name == null)
+                return;
+
+            Mod mod = Mod.SearchWithName(ModListCatalog, installedMod.Name);
+            if (mod != null)
             {
-                // Find the mod in the catalog
-                if (mod != null && mod.Name != null && mod.Name == installedMod.Name)
-                {
-                    tabCtrlMain.SelectedIndex = 1;
-                    DownloadList.Add(mod);
-                    DownloadStart(mod);
-                    mod.Installed = WaitingEmoji;
-                    lstCatalogMods.SelectedItem = mod;
-                    lstCatalogMods.ScrollIntoView(mod);
-                }
+                tabCtrlMain.SelectedIndex = 1;
+                DownloadList.Add(mod);
+                DownloadStart(mod);
+                mod.Installed = WaitingEmoji;
+                lstCatalogMods.SelectedItem = mod;
+                lstCatalogMods.ScrollIntoView(mod);
             }
         }
 
@@ -876,7 +876,6 @@ namespace Memoria.Launcher
                 if (activateTheNewMod)
                 {
                     Mod newMod = Mod.SearchWithName(ModListInstalled, downloadingModName);
-                    if (newMod != null)
                     {
                         newMod.IsActive = true;
                         foreach (Mod submod in newMod.SubMod)
@@ -1383,7 +1382,8 @@ namespace Memoria.Launcher
             for (Int32 i = 0; i < ModListInstalled.Count; i++)
             {
                 Mod mod = Mod.SearchWithName(ModListCatalog, ModListInstalled[i].Name);
-                ModListInstalled[i].Priority = mod != null ? mod.Priority : 0;
+                if(mod != null)
+                    ModListInstalled[i].Priority = mod.Priority;
             }
             lstMods.Items.Refresh();
             UpdateModSettings();
