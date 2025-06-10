@@ -356,19 +356,22 @@
                                                                 <GridViewColumn.CellTemplate>
                                                                     <DataTemplate>
                                                                         <StackPanel Orientation="Horizontal">
-                                                                            <TextBlock x:Name="colMyModsUpdateText"
+                                                                            <Button x:Name="colMyModsUpdateText"
                                                                             Padding="0,3,0,0"
                                                                                 FontFamily="{StaticResource NotoEmoji}"
-                                                                                Text="{Binding UpdateIcon}"
+                                                                                Content="{Binding UpdateIcon}"
                                                                                 FontWeight="Black"
                                                                                 ToolTip="{Binding UpdateTooltip}"
                                                                                 ToolTipService.InitialShowDelay="10"
                                                                                 Effect="{StaticResource ButtondropShadowEffect}"
-                                                                                Foreground="#efd525" />
-                                                                            <TextBlock x:Name="colMyModsIncompText"
+                                                                                Style="{StaticResource ButtonStyleLabel}"
+                                                                                Foreground="#efd525"
+                                                                                Cursor="Hand"
+                                                                                Click="UpdateIcon_Click"/>
+                                                                            <Label x:Name="colMyModsIncompText"
                                                                                 Padding="0,3,0,0"
                                                                                 FontFamily="{StaticResource NotoEmoji}"
-                                                                                Text="{Binding IncompIcon}"
+                                                                                Content="{Binding IncompIcon}"
                                                                                 ToolTip="{Binding ActiveIncompatibleMods}"
                                                                                 ToolTipService.InitialShowDelay="10"
                                                                                 ToolTipService.BetweenShowDelay="0"

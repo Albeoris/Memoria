@@ -112,16 +112,13 @@ namespace Memoria.Launcher
                 AreThereModUpdates = false;
                 AreThereModIncompatibilies = false;
 
-                foreach (Mod mod in ModListInstalled) // reset state
+                foreach (Mod mod in ModListInstalled)
                 {
                     mod.UpdateIcon = null;
                     mod.UpdateTooltip = null;
                     mod.IncompIcon = null;
                     mod.ActiveIncompatibleMods = null;
-                }
 
-                foreach (Mod mod in ModListInstalled)
-                {
                     if (mod == null || mod.Name == null)
                         continue;
                     if (((mod.Name == "Moguri Mod" || mod.Name == "MoguriFiles") && mod.InstallationPath.Contains("MoguriFiles")) || (mod.Name == "Moguri - 3D textures" && mod.InstallationPath.Contains("Moguri_3Dtextures")))
@@ -256,6 +253,23 @@ namespace Memoria.Launcher
             CheckOutdatedAndIncompatibleMods();
             UpdateModSettings();
             RefreshModOptions();
+        }
+
+        private void UpdateIcon_Click(object sender, RoutedEventArgs e)
+        {
+            Mod installedMod = (sender as Button)?.DataContext as Mod;
+            foreach (Mod mod in ModListCatalog) // check updates
+            {
+                if (mod != null && mod.Name != null && mod.Name == installedMod.Name)
+                {
+                    tabCtrlMain.SelectedIndex = 1;
+                    DownloadList.Add(mod);
+                    DownloadStart(mod);
+                    mod.Installed = WaitingEmoji;
+                    lstCatalogMods.SelectedItem = mod;
+                    lstCatalogMods.ScrollIntoView(mod);
+                }
+            }
         }
 
         private void OnClosing(Object sender, CancelEventArgs e)
