@@ -1,6 +1,7 @@
 ﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.Common;
 using Global.Sound.SaXAudio;
+using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,85 +24,100 @@ namespace SoundDebugRoom
 
         private void OnGUI()
         {
-            Rect fullscreenRect = DebugGuiSkin.GetFullscreenRect();
+            try
+            {
+                Rect fullscreenRect = DebugGuiSkin.GetFullscreenRect();
 
-            GUI.skin.label.alignment = TextAnchor.MiddleCenter;
-            GUI.skin.font = font;
-            GUI.skin.horizontalSlider.margin = new RectOffset(font.lineHeight / 2, font.lineHeight / 2, font.lineHeight - (Int32)GUI.skin.horizontalSlider.fixedHeight / 2, 0);
+                GUI.skin.label.alignment = TextAnchor.MiddleCenter;
+                GUI.skin.font = font;
+                GUI.skin.horizontalSlider.margin = new RectOffset(font.lineHeight / 2, font.lineHeight / 2, font.lineHeight - (Int32)GUI.skin.horizontalSlider.fixedHeight / 2, 0);
 
-            GUILayout.BeginArea(fullscreenRect);
-            GUILayout.BeginVertical(new GUILayoutOption[0]);
-            GUILayout.BeginVertical(new GUILayoutOption[0]);
-            GUILayout.BeginHorizontal(new GUILayoutOption[0]);
-            GUILayout.BeginHorizontal(new GUILayoutOption[0]);
-            GUILayout.BeginVertical(new GUILayoutOption[0]);
+                GUILayout.BeginArea(fullscreenRect);
+                GUILayout.BeginVertical(new GUILayoutOption[0]);
+                GUILayout.BeginVertical(new GUILayoutOption[0]);
+                GUILayout.BeginHorizontal(new GUILayoutOption[0]);
+                GUILayout.BeginHorizontal(new GUILayoutOption[0]);
+                GUILayout.BeginVertical(new GUILayoutOption[0]);
 
-            GUILayout.BeginVertical("box", new GUILayoutOption[0]);
-            this.BuildSoundName();
-            this.BuildPlayer();
-            this.BuildAdjustment(fullscreenRect.width / 4f);
-            GUILayout.EndVertical();
+                GUILayout.BeginVertical("box", new GUILayoutOption[0]);
+                this.BuildSoundName();
+                this.BuildPlayer();
+                this.BuildAdjustment(fullscreenRect.width / 4f);
+                GUILayout.EndVertical();
 
-            BuildAudioEffects();
+                BuildAudioEffects();
 
-            GUILayout.EndVertical();
-            GUILayout.EndHorizontal();
-            GUILayout.EndHorizontal();
-            GUILayout.EndVertical();
-            GUILayout.FlexibleSpace();
-            GUILayout.BeginHorizontal(new GUILayoutOption[] { GUILayout.Width(fullscreenRect.width / 2f) });
-            GUILayout.BeginVertical(new GUILayoutOption[] { GUILayout.Width(fullscreenRect.width / 4f) });
-            if (GUILayout.Button("Sound Effect", new GUILayoutOption[0]))
-            {
-                this.soundViewController.SetActiveSoundType(SoundProfileType.SoundEffect);
+                GUILayout.EndVertical();
+                GUILayout.EndHorizontal();
+                GUILayout.EndHorizontal();
+                GUILayout.EndVertical();
+                GUILayout.FlexibleSpace();
+                GUILayout.BeginHorizontal(new GUILayoutOption[] { GUILayout.Width(fullscreenRect.width / 2f) });
+                GUILayout.BeginVertical(new GUILayoutOption[] { GUILayout.Width(fullscreenRect.width / 4f) });
+                if (GUILayout.Button("Sound Effect", new GUILayoutOption[0]))
+                {
+                    this.soundViewController.SetActiveSoundType(SoundProfileType.SoundEffect);
+                }
+                if (GUILayout.Button("BGM", new GUILayoutOption[0]))
+                {
+                    this.soundViewController.SetActiveSoundType(SoundProfileType.Music);
+                    this.soundViewController.SetMusicPanning(this.PanningPosition);
+                    this.soundViewController.SetMusicPitch(this.PitchPosition);
+                    this.soundViewController.SetMusicVolume(this.SoundVolume);
+                }
+                if (GUILayout.Button("Song", new GUILayoutOption[0]))
+                {
+                    this.soundViewController.SetActiveSoundType(SoundProfileType.Song);
+                }
+                if (GUILayout.Button("Sfx Sound", new GUILayoutOption[0]))
+                {
+                    this.soundViewController.SetActiveSoundType(SoundProfileType.Sfx);
+                }
+                if (GUILayout.Button("Movie Audio", new GUILayoutOption[0]))
+                {
+                    this.soundViewController.SetActiveSoundType(SoundProfileType.MovieAudio);
+                }
+                if (soundViewController.ModVoiceDictionary.Count > 0 && GUILayout.Button("Mod Voices", new GUILayoutOption[0]))
+                {
+                    this.soundViewController.SetActiveSoundType(SoundProfileType.Voice);
+                }
+                GUILayout.BeginVertical("Box", new GUILayoutOption[0]);
+                GUILayout.BeginHorizontal(new GUILayoutOption[0]);
+                if (GUILayout.Button("<", new GUILayoutOption[0]))
+                {
+                    this.soundViewController.PreviousPlayList();
+                }
+                GUILayout.Label(this.soundViewController.PlaylistInfo, new GUILayoutOption[0]);
+                if (GUILayout.Button(">", new GUILayoutOption[0]))
+                {
+                    this.soundViewController.NextPlayList();
+                }
+                GUILayout.EndHorizontal();
+                GUILayout.Label(this.soundViewController.PlaylistDetail, new GUILayoutOption[0]);
+                GUILayout.EndVertical();
+                GUILayout.EndVertical();
+                GUILayout.BeginHorizontal("box", new GUILayoutOption[] { GUILayout.Width(fullscreenRect.width / 4f) });
+                if (this.soundViewController.GetActiveSoundType() == SoundProfileType.Sfx)
+                {
+                    this.BuildSfxSoundSelector();
+                }
+                else if (this.soundViewController.GetActiveSoundType() == SoundProfileType.Voice)
+                {
+                    BuildVoiceSoundSelectot();
+                }
+                else
+                {
+                    this.BuildSoundSelector();
+                }
+                GUILayout.EndHorizontal();
+                GUILayout.EndHorizontal();
+                GUILayout.EndVertical();
+                GUILayout.EndArea();
             }
-            if (GUILayout.Button("BGM", new GUILayoutOption[0]))
+            catch (Exception e)
             {
-                this.soundViewController.SetActiveSoundType(SoundProfileType.Music);
-                this.soundViewController.SetMusicPanning(this.PanningPosition);
-                this.soundViewController.SetMusicPitch(this.PitchPosition);
-                this.soundViewController.SetMusicVolume(this.SoundVolume);
+                Log.Error(e);
             }
-            if (GUILayout.Button("Song", new GUILayoutOption[0]))
-            {
-                this.soundViewController.SetActiveSoundType(SoundProfileType.Song);
-            }
-            if (GUILayout.Button("Sfx Sound", new GUILayoutOption[0]))
-            {
-                this.soundViewController.SetActiveSoundType(SoundProfileType.Sfx);
-            }
-            if (GUILayout.Button("Movie Audio", new GUILayoutOption[0]))
-            {
-                this.soundViewController.SetActiveSoundType(SoundProfileType.MovieAudio);
-            }
-            GUILayout.BeginVertical("Box", new GUILayoutOption[0]);
-            GUILayout.BeginHorizontal(new GUILayoutOption[0]);
-            if (GUILayout.Button("<", new GUILayoutOption[0]))
-            {
-                this.soundViewController.PreviousPlayList();
-            }
-            GUILayout.Label(this.soundViewController.PlaylistInfo, new GUILayoutOption[0]);
-            if (GUILayout.Button(">", new GUILayoutOption[0]))
-            {
-                this.soundViewController.NextPlayList();
-            }
-            GUILayout.EndHorizontal();
-            GUILayout.Label(this.soundViewController.PlaylistDetail, new GUILayoutOption[0]);
-            GUILayout.EndVertical();
-            GUILayout.EndVertical();
-            GUILayout.BeginHorizontal("box", new GUILayoutOption[] { GUILayout.Width(fullscreenRect.width / 4f) });
-            if (this.soundViewController.GetActiveSoundType() == SoundProfileType.Sfx)
-            {
-                this.BuildSfxSoundSelector();
-            }
-            else
-            {
-                this.BuildSoundSelector();
-            }
-            GUILayout.EndHorizontal();
-            GUILayout.EndHorizontal();
-            GUILayout.EndVertical();
-            GUILayout.EndArea();
         }
 
         private void BuildSoundName()
@@ -733,6 +749,57 @@ namespace SoundDebugRoom
             GUILayout.EndVertical();
         }
 
+        private void BuildVoiceSoundSelectot()
+        {
+            Rect fullscreenRect = DebugGuiSkin.GetFullscreenRect();
+            GUILayout.BeginVertical(new GUILayoutOption[0]);
+            List<SoundProfile> voices = soundViewController.GetPlaylist();
+            if (voices == null || voices.Count == 0)
+            {
+                soundSelectorScrollPosition = GUILayout.BeginScrollView(soundSelectorScrollPosition, new GUILayoutOption[0]);
+                foreach (String mod in soundViewController.ModVoiceDictionary.Keys)
+                {
+                    GUILayout.BeginHorizontal(new GUILayoutOption[0]);
+                    if (GUILayout.Button(mod, new GUILayoutOption[0]))
+                    {
+                        soundViewController.GenerateVoiceList(mod);
+                    }
+                    GUILayout.EndHorizontal();
+                }
+            }
+            else
+            {
+                String search = GUILayout.TextField(searchString);
+                if (search != searchString && search.Length > 0)
+                {
+                    soundViewController.FilterVoiceList(search);
+                }
+                searchString = search;
+
+                if (GUILayout.Button("Back", new GUILayoutOption[0]))
+                {
+                    searchString = "";
+                    voices.Clear();
+                }
+                soundSelectorScrollPosition = GUILayout.BeginScrollView(soundSelectorScrollPosition, new GUILayoutOption[0]);
+                List<SoundProfile> playlist = soundViewController.GetPlaylist();
+                if (playlist != null)
+                {
+                    foreach (SoundProfile soundProfile in playlist)
+                    {
+                        GUILayout.BeginHorizontal(new GUILayoutOption[0]);
+                        if (GUILayout.Button(soundProfile.Name, new GUILayoutOption[0]))
+                        {
+                            soundViewController.SelectSound(soundProfile);
+                        }
+                        GUILayout.EndHorizontal();
+                    }
+                }
+            }
+            GUILayout.EndScrollView();
+            GUILayout.EndVertical();
+        }
+
         private void BuildSoundSelector()
         {
             Rect fullscreenRect = DebugGuiSkin.GetFullscreenRect();
@@ -762,7 +829,7 @@ namespace SoundDebugRoom
 
         private const Int32 SFX_SOUND_UI_STATE_PLAYER = 1;
 
-        private static readonly Font font = Font.CreateDynamicFontFromOSFont(["Segoe UI", "Arial"], 14);
+        private static readonly Font font = Font.CreateDynamicFontFromOSFont(["Segoe UI", "Helvetica", " Geneva", "Verdana", "Arial"], 14);
 
         public Single SoundVolume = 1f;
 
@@ -787,5 +854,7 @@ namespace SoundDebugRoom
         private Int32 sfxSoundUIState;
 
         private Int32 CurrentSpecialEffectID;
+
+        private String searchString = "";
     }
 }

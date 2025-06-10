@@ -1,6 +1,9 @@
 ﻿using Global.Sound.SaXAudio;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace SoundDebugRoom
 {
@@ -18,6 +21,7 @@ namespace SoundDebugRoom
             this.GenerateAllSongIndex();
             this.currentPlaylist = 0;
             this.GeneratePlaylistData(this.currentPlaylist);
+            LoadVoiceModList();
         }
 
         public void SetActiveSoundType(SoundProfileType type)
@@ -98,6 +102,11 @@ namespace SoundDebugRoom
                     '/'
                 });
                 SoundLib.PlayMovieMusic(array[(Int32)array.Length - 1], 0);
+            }
+            else if (this.activeSound.SoundProfileType == SoundProfileType.Voice)
+            {
+                this.IsPlay = false;
+                VoicePlayer.CreateLoadThenPlayVoice(activeSound.SoundIndex, activeSound.ResourceID);
             }
             else
             {
@@ -205,52 +214,31 @@ namespace SoundDebugRoom
 
         public void NextSound()
         {
-            Boolean flag = true;
             this.IsPlay = false;
             List<SoundProfile> list = this.playlist;
-            Int32 count = list.Count;
-            Int32 num = 0;
-            Int32 num2 = Int32.MaxValue;
-            foreach (SoundProfile soundProfile in list)
+            for (Int32 i = 0; i < list.Count - 1; i++)
             {
-                if (num2 == num)
+                if (list[i].Code == this.activeSound.Code)
                 {
-                    this.activeSound = soundProfile;
-                    break;
+                    this.activeSound = list[i + 1];
+                    this.PlayActiveSound();
+                    return;
                 }
-                if (soundProfile.Code == this.activeSound.Code && num < count - 1)
-                {
-                    num2 = num + 1;
-                }
-                num++;
-            }
-            if (flag)
-            {
-                this.PlayActiveSound();
             }
         }
 
         public void PreviousSound()
         {
-            Boolean isPlay = this.IsPlay;
-            this.IsPlay = false;
             List<SoundProfile> list = this.playlist;
-            Int32 count = list.Count;
-            Int32 num = 0;
-            SoundProfile soundProfile = (SoundProfile)null;
-            foreach (SoundProfile soundProfile2 in list)
+            this.IsPlay = false;
+            for (Int32 i = 1; i < list?.Count; i++)
             {
-                if (soundProfile2.Code == this.activeSound.Code && num != 0)
+                if (list[i].Code == this.activeSound.Code)
                 {
-                    this.activeSound = soundProfile;
-                    break;
+                    this.activeSound = list[i - 1];
+                    this.PlayActiveSound();
+                    return;
                 }
-                soundProfile = soundProfile2;
-                num++;
-            }
-            if (isPlay)
-            {
-                this.PlayActiveSound();
             }
         }
 
@@ -264,20 +252,138 @@ namespace SoundDebugRoom
             SoundLib.LoadMusic(SoundMetaData.MusicMetaData);
         }
 
+        private void LoadVoiceModList()
+        {
+            foreach (var folder in AssetManager.FolderHighToLow)
+            {
+                String path = Path.Combine(folder.FolderPath, @"StreamingAssets\Assets\Resources\Sounds\Voices");
+                if (!Directory.Exists(path)) continue;
+
+                HashSet<String> voicesSet = new HashSet<String>();
+
+                DirectoryInfo dir = new DirectoryInfo(path);
+                var files = dir.GetFiles("*.akb.bytes", SearchOption.AllDirectories);
+                foreach (FileInfo file in files)
+                {
+                    String resourceID = Regex.Replace(file.FullName, @".*?StreamingAssets\\Assets\\Resources\\Sounds\\", "");
+                    resourceID = Regex.Replace(resourceID, @"\.akb\.bytes", "");
+                    voicesSet.Add(resourceID);
+                }
+                files = dir.GetFiles("*.ogg", SearchOption.AllDirectories);
+                foreach (FileInfo file in files)
+                {
+                    String resourceID = Regex.Replace(file.FullName, @".*?StreamingAssets\\Assets\\Resources\\Sounds\\", "");
+                    resourceID = Regex.Replace(resourceID, @"\.ogg", "");
+                    voicesSet.Add(resourceID);
+                }
+
+                List<SoundProfile> soundProfiles = new List<SoundProfile>();
+                foreach (String resourceID in voicesSet)
+                {
+                    Int32 soundIndex = resourceID.GetHashCode();
+                    soundProfiles.Add(new SoundProfile()
+                    {
+                        Code = soundIndex.ToString(),
+                        Name = resourceID,
+                        SoundIndex = soundIndex,
+                        ResourceID = resourceID,
+                        SoundProfileType = SoundProfileType.Voice,
+                        SoundVolume = 1f,
+                        Panning = 0f,
+                        Pitch = 1f
+                    });
+                }
+
+                if (soundProfiles.Count > 0)
+                {
+                    soundProfiles.Sort((a, b) => ComparePaths(a.ResourceID, b.ResourceID));
+                    ModVoiceDictionary.Add(folder.FolderPath, soundProfiles);
+                }
+            }
+        }
+        private int ComparePaths(string x, string y)
+        {
+            if (x == y) return 0;
+            if (x == null) return -1;
+            if (y == null) return 1;
+
+            // Split strings into parts (text and numbers)
+            var xParts = SplitIntoNaturalParts(x);
+            var yParts = SplitIntoNaturalParts(y);
+
+            int minLength = Math.Min(xParts.Count, yParts.Count);
+
+            for (int i = 0; i < minLength; i++)
+            {
+                var xPart = xParts[i];
+                var yPart = yParts[i];
+
+                // Check if both parts are numeric
+                bool xIsNumeric = long.TryParse(xPart, out long xNum);
+                bool yIsNumeric = long.TryParse(yPart, out long yNum);
+
+                if (xIsNumeric && yIsNumeric)
+                {
+                    // Compare as numbers
+                    int numComparison = xNum.CompareTo(yNum);
+                    if (numComparison != 0)
+                        return numComparison;
+                }
+                else
+                {
+                    // Compare as strings
+                    int strComparison = string.Compare(xPart, yPart, StringComparison.OrdinalIgnoreCase);
+                    if (strComparison != 0)
+                        return strComparison;
+                }
+            }
+
+            // If all compared parts are equal, the shorter string comes first
+            return xParts.Count.CompareTo(yParts.Count);
+        }
+        private List<string> SplitIntoNaturalParts(string input)
+        {
+            // Split on transitions between digits and non-digits
+            var parts = new List<string>();
+            var regex = new Regex(@"(\d+|\D+)");
+            var matches = regex.Matches(input);
+
+            foreach (Match match in matches)
+            {
+                parts.Add(match.Value);
+            }
+
+            return parts;
+        }
+
+        public void GenerateVoiceList(String modLocation)
+        {
+            currentVoiceMod = modLocation;
+            currentPlaylist = 0;
+            GeneratePlaylistData(currentPlaylist);
+        }
+
+        public void FilterVoiceList(String filter)
+        {
+            voiceFilter = filter;
+            currentPlaylist = 0;
+            GeneratePlaylistData(currentPlaylist);
+        }
+
         public void NextPlayList()
         {
-            List<Int32> list = null;
+            Int32 count = 0;
             if (this.activeType == SoundProfileType.Music)
             {
-                list = this.allMusicIndex;
+                count = this.allMusicIndex.Count;
             }
             else if (this.activeType == SoundProfileType.SoundEffect)
             {
-                list = this.allSoundEffectIndex;
+                count = this.allSoundEffectIndex.Count;
             }
             else if (this.activeType == SoundProfileType.Song)
             {
-                list = this.allSongIndex;
+                count = this.allSongIndex.Count;
             }
             else if (this.activeType == SoundProfileType.Sfx)
             {
@@ -285,10 +391,14 @@ namespace SoundDebugRoom
             }
             else if (this.activeType == SoundProfileType.MovieAudio)
             {
-                list = this.allMovieAudioIndex;
+                count = this.allMovieAudioIndex.Count;
             }
-            Int32 num = (Int32)((list.Count % 100 != 0) ? 1 : 0);
-            Int32 num2 = list.Count / 100 + num;
+            else if (this.activeType == SoundProfileType.Voice)
+            {
+                count = ModVoiceDictionary.Count;
+            }
+            Int32 num = (Int32)((count % 100 != 0) ? 1 : 0);
+            Int32 num2 = count / 100 + num;
             if (this.currentPlaylist < num2 - 1)
             {
                 this.currentPlaylist++;
@@ -391,6 +501,18 @@ namespace SoundDebugRoom
             {
                 list = this.allMovieAudioIndex;
             }
+            else if (this.activeType == SoundProfileType.Voice && ModVoiceDictionary.ContainsKey(currentVoiceMod))
+            {
+                List<SoundProfile> voicelist = ModVoiceDictionary[currentVoiceMod];
+                if (voiceFilter.Length > 0)
+                {
+                    voicelist = voicelist.Where((p) => p.ResourceID.Contains(voiceFilter)).ToList();
+                }
+
+                Int32 index = Math.Min(currentPlaylist * 100, voicelist.Count - 1);
+                Int32 count = (100 + index) > voicelist.Count ? voicelist.Count - index : 100;
+                return voicelist.GetRange(index, count);
+            }
             if (list == null)
             {
                 return null;
@@ -416,18 +538,18 @@ namespace SoundDebugRoom
 
         private void SetPlaylistInfo(List<SoundProfile> allSoundProfile)
         {
-            List<Int32> list = null;
+            Int32 count = 0;
             if (this.activeType == SoundProfileType.Music)
             {
-                list = this.allMusicIndex;
+                count = this.allMusicIndex.Count;
             }
             else if (this.activeType == SoundProfileType.SoundEffect)
             {
-                list = this.allSoundEffectIndex;
+                count = this.allSoundEffectIndex.Count;
             }
             else if (this.activeType == SoundProfileType.Song)
             {
-                list = this.allSongIndex;
+                count = this.allSongIndex.Count;
             }
             else if (this.activeType == SoundProfileType.Sfx)
             {
@@ -435,9 +557,13 @@ namespace SoundDebugRoom
             }
             else if (this.activeType == SoundProfileType.MovieAudio)
             {
-                list = this.allMovieAudioIndex;
+                count = this.allMovieAudioIndex.Count;
             }
-            this.PlaylistInfo = this.currentPlaylist + 1 + "/" + (list.Count / 100 + 1);
+            else if (activeType == SoundProfileType.Voice)
+            {
+                count = ModVoiceDictionary[currentVoiceMod].Where((p) => p.ResourceID.Contains(voiceFilter)).Count();
+            }
+            this.PlaylistInfo = this.currentPlaylist + 1 + "/" + (count / 100 + 1);
             Int32 num = this.currentPlaylist * 100;
             this.PlaylistDetail = String.Concat(new Object[]
             {
@@ -445,7 +571,7 @@ namespace SoundDebugRoom
                 "-",
                 num + allSoundProfile.Count,
                 " of ",
-                list.Count
+                count
             });
         }
 
@@ -503,6 +629,12 @@ namespace SoundDebugRoom
         public Boolean IsEqEnabled = false;
 
         public Boolean IsEchoEnabled = false;
+
+        public Dictionary<String, List<SoundProfile>> ModVoiceDictionary = new Dictionary<String, List<SoundProfile>>();
+
+        private String currentVoiceMod = "";
+
+        private String voiceFilter = "";
 
         private SoundProfileType activeType = SoundProfileType.SoundEffect;
 
