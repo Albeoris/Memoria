@@ -18,6 +18,8 @@ namespace Global.Sound.SoLoud
         private static Bus sfxBus = null;
         private static Bus voiceBus = null;
 
+        public override Int32 LastSoundID { get; protected set; } = -1;
+
         private class StreamInfo
         {
             public AKB2Header akbHeader;
@@ -180,6 +182,7 @@ namespace Global.Sound.SoLoud
                 soloud.setLoopEndPoint((uint)soundID, end);
             }
 
+            LastSoundID = soundID;
             return soundID;
         }
 

@@ -2,6 +2,8 @@
 
 public class ISdLibAPI
 {
+    public virtual Int32 LastSoundID { get; protected set; }
+
     public virtual Int32 SdSoundSystem_Create(String config)
     {
         SoundLib.Log("No Implementation");

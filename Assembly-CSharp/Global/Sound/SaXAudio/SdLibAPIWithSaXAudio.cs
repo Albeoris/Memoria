@@ -26,7 +26,7 @@ namespace Global.Sound.SaXAudio
         private Int32 busSoundEffects;
         private Int32 busVoices;
 
-        public Int32 LastSoundID { get; private set; } = -1;
+        public override Int32 LastSoundID { get; protected set; } = -1;
 
         public override Int32 SdSoundSystem_Create(String config)
         {
