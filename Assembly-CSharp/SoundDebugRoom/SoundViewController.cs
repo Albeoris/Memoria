@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
+using static Global.Sound.SaXAudio.AudioEffectManager;
 
 namespace SoundDebugRoom
 {
@@ -86,6 +87,7 @@ namespace SoundDebugRoom
             }
             else if (activeSound.SoundProfileType == SoundProfileType.Music)
             {
+                SoundLib.StopMusic();
                 SoundLib.PlayMusic(activeSound.SoundIndex);
             }
             else if (activeSound.SoundProfileType == SoundProfileType.Sfx)
@@ -122,6 +124,7 @@ namespace SoundDebugRoom
                 if (IsReverbEnabled) SetReverb(ref Reverb);
                 if (IsEqEnabled) SetEq(ref Eq);
                 if (IsEchoEnabled) SetEcho(ref Echo);
+                IsLooping = SaXAudio.GetLooping(activeSound.SoundID);
             }
         }
 
@@ -170,18 +173,13 @@ namespace SoundDebugRoom
             ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(activeSound.SoundID, pitch, 0);
         }
 
-        public void Loop(Boolean toggle)
+        public void SetLooping(Boolean looping)
         {
-            Boolean current = SaXAudio.GetLooping(activeSound.SoundID);
+            if (!IsPlay) PlayActiveSound();
+            if (IsLooping == looping || activeSound == null) return;
 
-            if (toggle)
-            {
-                SaXAudio.SetLooping(activeSound.SoundID, !current);
-            }
-            else
-            {
-                SaXAudio.SetLooping(activeSound.SoundID, true);
-            }
+            SaXAudio.SetLooping(activeSound.SoundID, looping);
+            IsLooping = SaXAudio.GetLooping(activeSound.SoundID);
         }
 
         public void SetReverb(ref SaXAudio.ReverbParameters parameters)
@@ -220,12 +218,13 @@ namespace SoundDebugRoom
         {
             if (activeSound == null) return;
             ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(activeSound.SoundID, 0);
+            IsLooping = false;
+            IsPlay = false;
         }
 
         public void NextSound()
         {
             StopActiveSound();
-            IsPlay = false;
             List<SoundProfile> list = playlist;
             for (Int32 i = 0; i < list.Count - 1; i++)
             {
@@ -263,7 +262,7 @@ namespace SoundDebugRoom
             ParseSoundList();
             SoundLib.UnloadSoundEffect();
             SoundLib.UnloadMusic();
-            // This loads every sounds which is dumb
+            // This loads every sounds which is slow and very unnecessary
             /*SoundLib.LoadGameSoundEffect(SoundMetaData.SoundEffectMetaData);
             SoundLib.LoadMusic(SoundMetaData.MusicMetaData);*/
         }
@@ -387,6 +386,62 @@ namespace SoundDebugRoom
             voiceFilter = filter;
             currentPlaylist = 0;
             GeneratePlaylistData(currentPlaylist);
+        }
+
+        public void SaveEffectPresets(String modLocation, Boolean backup = false)
+        {
+            SavePresets(EffectPresetDictionary, modLocation, backup);
+        }
+
+        public void LoadEffectPresets(String modLocation, Boolean backup = false)
+        {
+            EffectPresetDictionary = LoadPresets(modLocation, backup);
+        }
+
+        public void SaveEffectPreset(String name, String modLocation)
+        {
+            if (String.IsNullOrEmpty(name)) return;
+            try
+            {
+                EffectPreset preset = new EffectPreset();
+                preset.Name = name;
+                preset.Flags = (IsReverbEnabled ? EffectPreset.Flag.Reverb : 0) | (IsEqEnabled ? EffectPreset.Flag.Eq : 0) | (IsEchoEnabled ? EffectPreset.Flag.Echo : 0);
+                preset.Reverb = Reverb;
+                preset.Eq = Eq;
+                preset.Echo = Echo;
+
+                EffectPresetDictionary[name] = preset;
+            }
+            catch (Exception e)
+            {
+                SoundLib.LogError(e);
+                return;
+            }
+            SavePresets(EffectPresetDictionary, modLocation);
+        }
+
+        public void DeleteEffectPreset(String name, String modLocation)
+        {
+            if (String.IsNullOrEmpty(name) || !EffectPresetDictionary.ContainsKey(name)) return;
+
+            EffectPresetDictionary.Remove(name);
+            SavePresets(EffectPresetDictionary, modLocation);
+        }
+
+        public void ApplyEffectPreset(String name)
+        {
+            if (!EffectPresetDictionary.ContainsKey(name)) return;
+
+            EffectPreset preset = EffectPresetDictionary[name];
+            IsReverbEnabled = (preset.Flags & EffectPreset.Flag.Reverb) != 0;
+            IsEqEnabled = (preset.Flags & EffectPreset.Flag.Eq) != 0;
+            IsEchoEnabled = (preset.Flags & EffectPreset.Flag.Echo) != 0;
+            Reverb = preset.Reverb;
+            Eq = preset.Eq;
+            Echo = preset.Echo;
+            if (IsReverbEnabled) SetReverb(ref Reverb);
+            if (IsEqEnabled) SetEq(ref Eq);
+            if (IsEchoEnabled) SetEcho(ref Echo);
         }
 
         public void NextPlayList()
@@ -514,15 +569,15 @@ namespace SoundDebugRoom
             }
             else if (activeType == SoundProfileType.Voice && ModVoiceDictionary.ContainsKey(currentVoiceMod))
             {
-                List<SoundProfile> voicelist = ModVoiceDictionary[currentVoiceMod];
+                List<SoundProfile> voiceList = ModVoiceDictionary[currentVoiceMod];
                 if (voiceFilter.Length > 0)
                 {
-                    voicelist = voicelist.Where((p) => p.ResourceID.Contains(voiceFilter)).ToList();
+                    voiceList = voiceList.Where((p) => p.ResourceID.Contains(voiceFilter)).ToList();
                 }
 
-                Int32 index = Math.Min(currentPlaylist * 100, voicelist.Count - 1);
-                Int32 count = (100 + index) > voicelist.Count ? voicelist.Count - index : 100;
-                return voicelist.GetRange(index, count);
+                Int32 index = Math.Min(currentPlaylist * 100, voiceList.Count - 1);
+                Int32 count = (100 + index) > voiceList.Count ? voiceList.Count - index : 100;
+                return voiceList.GetRange(index, count);
             }
             if (list == null)
             {
@@ -639,6 +694,10 @@ namespace SoundDebugRoom
         public Boolean IsEqEnabled = false;
 
         public Boolean IsEchoEnabled = false;
+
+        public Boolean IsLooping = false;
+
+        public SortedDictionary<String, AudioEffectManager.EffectPreset> EffectPresetDictionary = new SortedDictionary<String, AudioEffectManager.EffectPreset>();
 
         public Dictionary<String, List<SoundProfile>> ModVoiceDictionary = new Dictionary<String, List<SoundProfile>>();
 
