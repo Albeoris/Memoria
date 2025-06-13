@@ -513,7 +513,8 @@ public class UIKeyTrigger : MonoBehaviour
 
     private static void OnSoundDebugRoomCommandDetected()
     {
-        SceneDirector.Replace("SoundDebugRoom", SceneTransition.FadeOutToBlack_FadeIn, true);
+        var instance = PersistenSingleton<SoundDebugRoom.SoundView>.Instance;
+        instance.enabled = !instance.enabled;
     }
 
     private void OnMemoriaMenuCommandDetected()

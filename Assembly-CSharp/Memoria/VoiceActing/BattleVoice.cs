@@ -241,9 +241,9 @@ namespace Memoria.Data
         }
 
         //--- Helping methods for scripting
-        public static void PlayVoice(BattleUnit speaker, String audioPath, Int32 priority = 0, Action onFinished = null)
+        public static Int32 PlayVoice(BattleUnit speaker, String audioPath, Int32 priority = 0, Action onFinished = null)
         {
-            PlayVoice([speaker.Data], audioPath, priority, onFinished: onFinished);
+            return PlayVoice([speaker.Data], audioPath, priority, onFinished: onFinished);
         }
 
         public static void StopVoice(BattleUnit unit)
@@ -269,34 +269,32 @@ namespace Memoria.Data
         }
         //---
 
-        private static void PlayVoice(List<BTL_DATA> speakerBtlList, String audioPath, Int32 priority = 0, String type = "Script", Action onFinished = null)
+        private static Int32 PlayVoice(List<BTL_DATA> speakerBtlList, String audioPath, Int32 priority = 0, String type = "Script", Action onFinished = null)
         {
-            new Thread(() =>
+            String soundPath = $"Voices/{Localization.CurrentSymbol}/{audioPath}";
+            Boolean soundExists = AssetManager.HasAssetOnDisc("Sounds/" + soundPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + soundPath + ".ogg", true, false);
+            SoundLib.VALog($"battlevoice:{type} character:{(speakerBtlList.Count > 0 ? new BattleUnit(speakerBtlList[0]).Name : "no speaker")} path:{soundPath}" + (soundExists ? "" : " (not found)"));
+            if (!soundExists)
             {
-                String soundPath = $"Voices/{Localization.CurrentSymbol}/{audioPath}";
-                Boolean soundExists = AssetManager.HasAssetOnDisc("Sounds/" + soundPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + soundPath + ".ogg", true, false);
-                SoundLib.VALog($"battlevoice:{type} character:{(speakerBtlList.Count > 0 ? new BattleUnit(speakerBtlList[0]).Name : "no speaker")} path:{soundPath}" + (soundExists ? "" : " (not found)"));
-                if (!soundExists)
-                {
-                    onFinished?.Invoke();
-                    return;
-                }
+                onFinished?.Invoke();
+                return -1;
+            }
 
-                SoundProfile audioProfile = VoicePlayer.CreateLoadThenPlayVoice(soundPath.GetHashCode(), soundPath,
-                () =>
-                {
-                    foreach (BTL_DATA btl in speakerBtlList)
-                        _currentVoicePlay.Remove(btl);
-                    onFinished?.Invoke();
-                });
-                KeyValuePair<Int32, SoundProfile> playingVoice;
+            SoundProfile audioProfile = VoicePlayer.CreateLoadThenPlayVoice(soundPath.GetHashCode(), soundPath,
+            () =>
+            {
                 foreach (BTL_DATA btl in speakerBtlList)
-                {
-                    if (_currentVoicePlay.TryGetValue(btl, out playingVoice))
-                        SoundLib.VoicePlayer.StopSound(playingVoice.Value);
-                    _currentVoicePlay[btl] = new KeyValuePair<Int32, SoundProfile>(priority, audioProfile);
-                }
-            }).Start();
+                    _currentVoicePlay.Remove(btl);
+                onFinished?.Invoke();
+            });
+            KeyValuePair<Int32, SoundProfile> playingVoice;
+            foreach (BTL_DATA btl in speakerBtlList)
+            {
+                if (_currentVoicePlay.TryGetValue(btl, out playingVoice))
+                    SoundLib.VoicePlayer.StopSound(playingVoice.Value);
+                _currentVoicePlay[btl] = new KeyValuePair<Int32, SoundProfile>(priority, audioProfile);
+            }
+            return audioProfile.SoundID;
         }
 
         private static void PlayVoiceEffect(GenericVoiceEffect voiceEffect)
