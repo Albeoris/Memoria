@@ -12,6 +12,11 @@ namespace Memoria
         private Boolean _movieVolumeChanged;
         private Boolean _voiceVolumeChanged;
 
+        MemoriaConfigurationMenu()
+        {
+            enabled = false;
+        }
+
         private void OnEnable()
         {
             _soundVolumeChanged = false;
@@ -76,10 +81,10 @@ namespace Memoria
             GUI.color = new Color(0.1f, 0.1f, 0.1f, 0.8f);
 
             DebugGuiSkin.ApplySkin();
-            GUI.skin.box.padding = new RectOffset(10, 10, 0, 10);
 
             GUILayout.BeginArea(fullscreenRect);
             {
+                GUILayout.Space(5);
                 GUILayout.BeginHorizontal();
                 GUILayout.FlexibleSpace();
                 GUILayout.BeginVertical("Box", GUILayout.Width(Mathf.Round(fullscreenRect.width / 4f)));
@@ -90,10 +95,12 @@ namespace Memoria
 
                     GUILayout.BeginHorizontal();
                     GUILayout.Label("Volume");
+                    GUI.backgroundColor = Color.red;
                     if (GUILayout.Button("X", GUILayout.Width(lineHeight * 1.5f)))
                     {
                         enabled = false;
                     }
+                    GUI.backgroundColor = Color.white;
                     GUILayout.EndHorizontal();
 
 
@@ -102,6 +109,7 @@ namespace Memoria
                     BuildMovieSlider(width);
                     if (Configuration.VoiceActing.Enabled)
                         BuildVoiceSlider(width);
+                    GUILayout.Space(5);
                 }
                 GUILayout.EndVertical();
                 GUILayout.FlexibleSpace();
@@ -113,11 +121,12 @@ namespace Memoria
         private void BuildSoundSlider(Int32 width)
         {
             GUILayout.BeginHorizontal();
+            GUILayout.Space(10);
             GUILayout.Label("Sound");
             GUILayout.FlexibleSpace();
             Int32 oldValue = Configuration.Audio.SoundVolume;
             GUILayout.Label(oldValue.ToString());
-            Int32 newValue = Mathf.RoundToInt(GUILayout.HorizontalSlider(oldValue, 0, 100, GUILayout.Width(width)) / 5f) * 5;
+            Int32 newValue = Mathf.RoundToInt(GUILayout.HorizontalSlider(oldValue, 0, 100, GUILayout.Width(width)));
             if (oldValue != newValue)
             {
                 _soundVolumeChanged = true;
@@ -130,11 +139,12 @@ namespace Memoria
         private void BuildMusicSlider(Int32 width)
         {
             GUILayout.BeginHorizontal();
+            GUILayout.Space(10);
             GUILayout.Label("Music");
             GUILayout.FlexibleSpace();
             Int32 oldValue = Configuration.Audio.MusicVolume;
             GUILayout.Label(oldValue.ToString());
-            Int32 newValue = Mathf.RoundToInt(GUILayout.HorizontalSlider(oldValue, 0, 100, GUILayout.Width(width)) / 5f) * 5;
+            Int32 newValue = Mathf.RoundToInt(GUILayout.HorizontalSlider(oldValue, 0, 100, GUILayout.Width(width)));
             if (oldValue != newValue)
             {
                 _musicVolumeChanged = true;
@@ -147,11 +157,12 @@ namespace Memoria
         private void BuildMovieSlider(Int32 width)
         {
             GUILayout.BeginHorizontal();
+            GUILayout.Space(10);
             GUILayout.Label("Movie");
             GUILayout.FlexibleSpace();
             Int32 oldValue = Configuration.Audio.MovieVolume;
             GUILayout.Label(oldValue.ToString());
-            Int32 newValue = Mathf.RoundToInt(GUILayout.HorizontalSlider(oldValue, 0, 100, GUILayout.Width(width)) / 5f) * 5;
+            Int32 newValue = Mathf.RoundToInt(GUILayout.HorizontalSlider(oldValue, 0, 100, GUILayout.Width(width)));
             if (oldValue != newValue)
             {
                 _movieVolumeChanged = true;
@@ -164,11 +175,12 @@ namespace Memoria
         private void BuildVoiceSlider(Int32 width)
         {
             GUILayout.BeginHorizontal();
+            GUILayout.Space(10);
             GUILayout.Label("Voice");
             GUILayout.FlexibleSpace();
             Int32 oldValue = Configuration.VoiceActing.Volume;
             GUILayout.Label(oldValue.ToString());
-            Int32 newValue = Mathf.RoundToInt(GUILayout.HorizontalSlider(oldValue, 0, 100, GUILayout.Width(width)) / 5f) * 5;
+            Int32 newValue = Mathf.RoundToInt(GUILayout.HorizontalSlider(oldValue, 0, 100, GUILayout.Width(width)));
             if (oldValue != newValue)
             {
                 _voiceVolumeChanged = true;

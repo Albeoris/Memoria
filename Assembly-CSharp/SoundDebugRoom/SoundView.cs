@@ -1,5 +1,4 @@
-﻿using Assets.Scripts.Common;
-using Assets.Sources.Scripts.Common;
+﻿using Assets.Sources.Scripts.Common;
 using Global.Sound.SaXAudio;
 using Memoria.Prime;
 using System;
@@ -10,18 +9,34 @@ namespace SoundDebugRoom
 {
     public class SoundView : MonoBehaviour
     {
-        private void Start()
+        SoundView()
         {
-            UIManager.Instance.UnityScene = UIManager.Scene.Bundle;
-            SoundLib.SuspendSoundSystem();
+            enabled = false;
             soundViewController = new SoundViewController(this);
         }
 
-        private void Exit()
+        private void OnEnable()
+        {
+            var state = PersistenSingleton<UIManager>.Instance.State;
+            if (state != UIManager.UIState.Pause)
+                PersistenSingleton<UIManager>.Instance.GetSceneFromState(state).OnKeyPause(null);
+
+            previousState = PersistenSingleton<UIManager>.Instance.State;
+            PersistenSingleton<UIManager>.Instance.State = UIManager.UIState.Quit;
+        }
+
+        private void OnDisable()
         {
             soundViewController.StopActiveSound();
-            SoundLib.ResumeSoundSystem();
-            SceneDirector.Replace(PersistenSingleton<SceneDirector>.Instance.LastScene, SceneTransition.FadeOutToBlack_FadeIn, false);
+
+            PersistenSingleton<UIManager>.Instance.State = previousState;
+            if (previousState == UIManager.UIState.Pause)
+                PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State).OnKeyPause(null);
+        }
+
+        private void OnApplicationQuit()
+        {
+            enabled = false;
         }
 
         private void OnGUI()
@@ -35,16 +50,22 @@ namespace SoundDebugRoom
                 Int32 lineHeight = DebugGuiSkin.font.lineHeight;
                 GUI.skin.horizontalSlider.margin = new RectOffset(lineHeight / 2, lineHeight / 2, lineHeight - (Int32)GUI.skin.horizontalSlider.fixedHeight / 2, 0);
 
+                GUISkin guiSkin = GUI.skin;
+                DebugGuiSkin.ApplySkin();
+                GUI.color = new Color(0.2314f, 0.2588f, 0.2314f, 0.9f);
+
                 GUILayout.BeginArea(fullscreenRect);
-                GUILayout.BeginVertical();
+                GUILayout.BeginVertical("box");
                 {
+                    GUI.skin = guiSkin;
+                    GUI.color = Color.white;
                     Single width = (fullscreenRect.width - 20) / 4f;
                     GUILayout.Space(4);
                     GUILayout.BeginVertical("box");
                     {
-                        BuildSoundName();
+                        BuildHeader();
                         GUILayout.Space(4);
-                        BuildPlayer();
+                        //BuildPlayer();
                         BuildAdjustment(width);
                     }
                     GUILayout.EndVertical();
@@ -70,54 +91,25 @@ namespace SoundDebugRoom
             }
         }
 
-        private void BuildSoundName()
+        private void BuildHeader()
         {
             GUILayout.BeginHorizontal();
             {
-                if (GUILayout.Button("Back"))
+                GUILayout.Space(DebugGuiSkin.font.lineHeight * 1.5f);
+                GUILayout.Label("Sound View");
+                GUI.backgroundColor = Color.red;
+                if (GUILayout.Button("X", GUILayout.Width(DebugGuiSkin.font.lineHeight * 1.5f)))
                 {
-                    Exit();
+                    enabled = false;
                 }
-                GUILayout.BeginHorizontal();
-                {
-                    if (soundViewController != null && soundViewController.GetActiveSound() != null)
-                    {
-                        GUILayout.Label(soundViewController.GetActiveSound().Name);
-                    }
-                }
-                GUILayout.EndHorizontal();
-                if (isEnableSound)
-                {
-                    if (GUILayout.Button("Suspend SEAD"))
-                    {
-                        if (ISdLibAPIProxy.Instance.SdSoundSystem_Suspend() == 0)
-                        {
-                            isEnableSound = false;
-                        }
-                        else
-                        {
-                            SoundLib.LogWarning("SdSoundSystem_Suspend failure");
-                        }
-                    }
-                }
-                else if (GUILayout.Button("Resume SEAD"))
-                {
-                    if (ISdLibAPIProxy.Instance.SdSoundSystem_Resume() == 0)
-                    {
-                        isEnableSound = true;
-                    }
-                    else
-                    {
-                        SoundLib.LogWarning("SdSoundSystem_Resume failure");
-                    }
-                }
+                GUI.backgroundColor = Color.white;
             }
             GUILayout.EndHorizontal();
         }
 
         private void BuildPlayer()
         {
-            GUILayoutOption[] btnOption = new GUILayoutOption[] { GUILayout.Width((DebugGuiSkin.GetFullscreenRect().width - 36) / (soundViewController.IsSaXAudio ? 6 : 5)) };
+            GUILayoutOption btnOption = GUILayout.Width((DebugGuiSkin.GetFullscreenRect().width - 36) / (soundViewController.IsSaXAudio ? 6 : 5));
 
             GUILayout.BeginHorizontal();
             {
@@ -138,14 +130,14 @@ namespace SoundDebugRoom
                     {
                         if (GUILayout.Button("Stop Looping", btnOption))
                         {
-                            soundViewController.SetLooping(false);
+                            soundViewController.IsLooping = false;
                         }
                     }
                     else
                     {
                         if (GUILayout.Button("Start Looping", btnOption))
                         {
-                            soundViewController.SetLooping(true);
+                            soundViewController.IsLooping = true;
                         }
                     }
                 }
@@ -167,15 +159,18 @@ namespace SoundDebugRoom
 
         private void BuildAdjustment(Single width)
         {
+            width -= 4;
             GUILayout.BeginHorizontal();
             {
-                GUILayout.BeginVertical(new GUILayoutOption[] { GUILayout.Width(width) });
+                GUILayout.BeginVertical(GUILayout.Width(width));
                 {
-                    GUILayout.BeginHorizontal(new GUILayoutOption[] { GUILayout.Width(width) });
+                    GUILayout.BeginHorizontal(GUILayout.Width(width));
                     {
-                        GUILayout.Label("Volume");
+                        GUILayout.Space(5);
+                        GUILayout.Label("Volume", GUILayout.ExpandWidth(false));
+                        GUILayout.FlexibleSpace();
                         Single soundVolume = SoundVolume;
-                        SoundVolume = GUILayout.HorizontalSlider(SoundVolume, 0f, 1f, new GUILayoutOption[] { GUILayout.Width(width * 0.75f) });
+                        SoundVolume = GUILayout.HorizontalSlider(SoundVolume, 0f, 1f, GUILayout.Width(width * 0.8f));
                         if (soundVolume != SoundVolume)
                         {
                             soundViewController.SetVolume(SoundVolume);
@@ -184,9 +179,11 @@ namespace SoundDebugRoom
                     GUILayout.EndHorizontal();
                     GUILayout.BeginHorizontal();
                     {
-                        GUILayout.Label("Panning");
+                        GUILayout.Space(5);
+                        GUILayout.Label("Panning", GUILayout.ExpandWidth(false));
+                        GUILayout.FlexibleSpace();
                         Single panningPosition = PanningPosition;
-                        PanningPosition = GUILayout.HorizontalSlider(PanningPosition, -1f, 1f, new GUILayoutOption[] { GUILayout.Width(width * 0.75f) });
+                        PanningPosition = GUILayout.HorizontalSlider(PanningPosition, -1f, 1f, GUILayout.Width(width * 0.8f));
                         if (panningPosition != PanningPosition)
                         {
                             soundViewController.SetPanning(PanningPosition);
@@ -195,9 +192,11 @@ namespace SoundDebugRoom
                     GUILayout.EndHorizontal();
                     GUILayout.BeginHorizontal();
                     {
-                        GUILayout.Label("Pitch");
+                        GUILayout.Space(5);
+                        GUILayout.Label("Pitch", GUILayout.ExpandWidth(false));
+                        GUILayout.FlexibleSpace();
                         Single pitchPosition = PitchPosition;
-                        PitchPosition = GUILayout.HorizontalSlider(PitchPosition, 0f, 2f, new GUILayoutOption[] { GUILayout.Width(width * 0.75f) });
+                        PitchPosition = GUILayout.HorizontalSlider(PitchPosition, 0f, 2f, GUILayout.Width(width * 0.8f));
                         if (pitchPosition != PitchPosition)
                         {
                             soundViewController.SetPitch(PitchPosition);
@@ -207,39 +206,121 @@ namespace SoundDebugRoom
                 }
                 GUILayout.EndVertical();
 
-                GUILayout.BeginVertical(new GUILayoutOption[] { GUILayout.Width(width) });
+                GUILayout.BeginVertical(GUILayout.Width(width));
                 {
                     if (soundViewController.IsSaXAudio)
                     {
+                        SoundProfile active = soundViewController?.GetActiveSound();
+                        GUILayout.Space(4);
+                        GUILayout.Label(active != null ? active.Name : "---");
                         GUILayout.BeginHorizontal();
                         {
-                            GUILayout.Label("Position", new GUILayoutOption[] { GUILayout.Width(0) });
+                            GUILayout.Label("", GUILayout.Width(0));
+
                             Single currentPosition = soundViewController.GetActivePosition();
-                            Single newPostision = GUILayout.HorizontalSlider(currentPosition, 0, soundViewController.GetActiveLength());
-                            if (Math.Abs(newPostision - currentPosition) > 0.1f)
+                            Single length = soundViewController.GetActiveLength();
+
+                            // Draw loop markers
+                            if (length > 1 && SaXAudio.GetLooping(active.SoundID))
                             {
-                                soundViewController.SeekActive(newPostision);
+                                UInt32 loopStart = SaXAudio.GetLoopStart(active.SoundID);
+                                UInt32 loopEnd = SaXAudio.GetLoopEnd(active.SoundID);
+
+                                Rect sliderRect = GUILayoutUtility.GetLastRect();
+                                float startMarker = (sliderRect.x + 10) + (width - 26) * loopStart / length;
+                                GUI.Label(new Rect(startMarker, sliderRect.y + 8, 10, 11), "┃");
+
+                                float endMarker = (sliderRect.x + 10) + (width - 26) * loopEnd / length;
+                                GUI.Label(new Rect(endMarker, sliderRect.y + 8, 10, 11), "┃");
                             }
+
+                            Single newPosition = GUILayout.HorizontalSlider(currentPosition, 0, length);
+                            if (Math.Abs(newPosition - currentPosition) > 100f)
+                            {
+                                soundViewController.SeekActive(newPosition);
+                            }
+
                         }
                         GUILayout.EndHorizontal();
-                    }
-                    if (GUILayout.Button("Reset"))
-                    {
-                        SoundVolume = 1f;
-                        PitchPosition = 1f;
-                        PanningPosition = 0f;
-                        soundViewController.SetVolume(SoundVolume);
-                        soundViewController.SetPitch(PitchPosition);
-                        soundViewController.SetPanning(PanningPosition);
                     }
 
                     GUILayout.BeginHorizontal();
                     {
-                        GUILayout.FlexibleSpace();
+                        if (GUILayout.Button("Reset"))
+                        {
+                            SoundVolume = 1f;
+                            PitchPosition = 1f;
+                            PanningPosition = 0f;
+                            soundViewController.SetVolume(SoundVolume);
+                            soundViewController.SetPitch(PitchPosition);
+                            soundViewController.SetPanning(PanningPosition);
+                        }
                         if (soundViewController.GetActiveSound()?.ResourceID == "Sounds01/BGM_/music101"
-                            && GUILayout.Button("Next Loop Region", new GUILayoutOption[] { GUILayout.Width(width * 0.5f) }))
+                            && GUILayout.Button("Next Loop Region", GUILayout.Width(width * 0.5f)))
                         {
                             SoundLib.SetNextLoopRegion(71);
+                        }
+                    }
+                    GUILayout.EndHorizontal();
+                }
+                GUILayout.EndVertical();
+
+                GUILayout.BeginVertical(GUILayout.Width(width));
+                {
+                    GUILayout.Space(4);
+                    GUILayoutOption btnWidth = GUILayout.Width(width / 2f);
+
+                    GUILayout.BeginHorizontal();
+                    {
+                        if (GUILayout.Button("Previous", btnWidth))
+                        {
+                            soundViewController.PreviousSound();
+                        }
+                        if (GUILayout.Button("Next", btnWidth))
+                        {
+                            soundViewController.NextSound();
+                        }
+                    }
+                    GUILayout.EndHorizontal();
+
+                    GUILayout.BeginHorizontal();
+                    {
+                        if (GUILayout.Button(soundViewController.IsPlay ? "Pause" : "Play", btnWidth))
+                        {
+                            if (soundViewController.IsPlay)
+                                soundViewController.PauseActiveSound();
+                            else
+                                soundViewController.PlayActiveSound();
+                        }
+                        if (GUILayout.Button("Stop", btnWidth))
+                        {
+                            soundViewController.StopActiveSound();
+                        }
+                    }
+                    GUILayout.EndHorizontal();
+
+                    GUILayout.BeginHorizontal();
+                    {
+                        if (soundViewController.IsSaXAudio)
+                        {
+                            if (soundViewController.IsLooping)
+                            {
+                                if (GUILayout.Button("Stop Looping", btnWidth))
+                                {
+                                    soundViewController.IsLooping = false;
+                                }
+                            }
+                            else
+                            {
+                                if (GUILayout.Button("Start Looping", btnWidth))
+                                {
+                                    soundViewController.IsLooping = true;
+                                }
+                            }
+                        }
+                        if (GUILayout.Button("Reload", btnWidth))
+                        {
+                            soundViewController.ReloadSoundMetaData();
                         }
                     }
                     GUILayout.EndHorizontal();
@@ -251,7 +332,7 @@ namespace SoundDebugRoom
 
         private void BuildSelectorManager(Single width)
         {
-            GUILayout.BeginVertical("Box", new GUILayoutOption[] { GUILayout.Width(width) });
+            GUILayout.BeginVertical("Box", GUILayout.Width(width));
             {
                 if (GUILayout.Button("Sound Effect"))
                 {
@@ -292,7 +373,7 @@ namespace SoundDebugRoom
                     {
                         soundViewController.PreviousPlayList();
                     }
-                    GUILayout.Label(soundViewController.PlaylistInfo);
+                    GUILayout.Label(soundViewController.PlaylistInfo, GUILayout.Width(width / 3f));
                     if (GUILayout.Button(">"))
                     {
                         soundViewController.NextPlayList();
@@ -306,7 +387,7 @@ namespace SoundDebugRoom
 
         private void BuildSelector(Single width)
         {
-            GUILayout.BeginVertical("Box", new GUILayoutOption[] { GUILayout.Width(width) });
+            GUILayout.BeginVertical("Box", GUILayout.Width(width));
             {
                 if (soundViewController.GetActiveSoundType() == SoundProfileType.Sfx)
                 {
@@ -314,7 +395,7 @@ namespace SoundDebugRoom
                 }
                 else if (soundViewController.GetActiveSoundType() == SoundProfileType.Voice)
                 {
-                    BuildVoiceSoundSelectot();
+                    BuildVoiceSoundSelector();
                 }
                 else
                 {
@@ -328,13 +409,13 @@ namespace SoundDebugRoom
         {
             if (soundViewController.IsSaXAudio)
             {
-                GUILayout.BeginHorizontal(new GUILayoutOption[] { GUILayout.Height(1) });
+                GUILayout.BeginHorizontal(GUILayout.Height(1));
                 {
                     Single sliderWidth = width / 2f;
                     Single buttonWidth = width / 2.5f;
 
                     GUILayout.Space(4);
-                    BuildRevebParameters(width, sliderWidth, buttonWidth);
+                    BuildReverbParameters(width, sliderWidth, buttonWidth);
                     BuildEqParameters(width, sliderWidth, buttonWidth);
                     BuildEchoParameters(width, sliderWidth, buttonWidth);
                 }
@@ -342,22 +423,22 @@ namespace SoundDebugRoom
             }
         }
 
-        private void BuildRevebParameters(Single width, Single sliderWidth, Single buttonWidth)
+        private void BuildReverbParameters(Single width, Single sliderWidth, Single buttonWidth)
         {
             width -= 4;
             Boolean update = false;
-            GUILayout.BeginVertical("box", new GUILayoutOption[] { GUILayout.Width(1) });
+            GUILayout.BeginVertical("box", GUILayout.Width(1));
             {
                 GUILayout.BeginHorizontal();
                 {
-                    GUILayout.BeginVertical(new GUILayoutOption[] { GUILayout.Width(width) });
+                    GUILayout.BeginVertical(GUILayout.Width(width));
                     {
                         GUILayout.BeginHorizontal();
                         {
                             GUILayout.Space(5);
                             GUILayout.Label("Reverb");
                             GUILayout.FlexibleSpace();
-                            if (GUILayout.Button(soundViewController.IsReverbEnabled ? "Disable" : "Enable", new GUILayoutOption[] { GUILayout.Width(buttonWidth) }))
+                            if (GUILayout.Button(soundViewController.IsReverbEnabled ? "Disable" : "Enable", GUILayout.Width(buttonWidth)))
                             {
                                 soundViewController.IsReverbEnabled = !soundViewController.IsReverbEnabled;
                                 if (soundViewController.IsReverbEnabled)
@@ -365,16 +446,23 @@ namespace SoundDebugRoom
                                 else
                                     soundViewController.RemoveReverb();
                             }
-                            if (GUILayout.Button("Reset", new GUILayoutOption[] { GUILayout.Width(buttonWidth) }))
+                            if (GUILayout.Button("Reset", GUILayout.Width(buttonWidth)))
                             {
                                 soundViewController.Reverb = new SaXAudio.ReverbParameters();
                                 update = true;
                             }
                         }
                         GUILayout.EndHorizontal();
+                        Single result = BuildEffectParam("WetDryMix", soundViewController.Reverb.WetDryMix, 0, 100, 0.5f, sliderWidth, "F1");
+                        if (soundViewController.Reverb.WetDryMix != result)
+                        {
+                            soundViewController.Reverb.WetDryMix = result;
+                            update = true;
+                        }
+
                         GUILayout.Label("Indexed parameters (no units)");
 
-                        Single result = BuildEffectParam("PositionLeft", soundViewController.Reverb.PositionLeft, 0, 30, 1, sliderWidth);
+                        result = BuildEffectParam("PositionLeft", soundViewController.Reverb.PositionLeft, 0, 30, 1, sliderWidth);
                         if (soundViewController.Reverb.PositionLeft != result)
                         {
                             soundViewController.Reverb.PositionLeft = (Byte)result;
@@ -445,18 +533,11 @@ namespace SoundDebugRoom
                         }
                     }
                     GUILayout.EndVertical();
-                    GUILayout.BeginVertical(new GUILayoutOption[] { GUILayout.Width(width) });
+                    GUILayout.BeginVertical(GUILayout.Width(width));
                     {
-                        Single result = BuildEffectParam("WetDryMix", soundViewController.Reverb.WetDryMix, 0, 100, 0.5f, sliderWidth, "F1");
-                        if (soundViewController.Reverb.WetDryMix != result)
-                        {
-                            soundViewController.Reverb.WetDryMix = result;
-                            update = true;
-                        }
-
                         GUILayout.Label("Delay times (ms)");
 
-                        result = BuildEffectParam("ReflectionsDelay", soundViewController.Reverb.ReflectionsDelay, 0, 300, 1, sliderWidth);
+                        Single result = BuildEffectParam("ReflectionsDelay", soundViewController.Reverb.ReflectionsDelay, 0, 300, 1, sliderWidth);
                         if (soundViewController.Reverb.ReflectionsDelay != result)
                         {
                             soundViewController.Reverb.ReflectionsDelay = (UInt32)result;
@@ -558,14 +639,14 @@ namespace SoundDebugRoom
         {
             Boolean update = false;
 
-            GUILayout.BeginVertical("box", new GUILayoutOption[] { GUILayout.Width(width) });
+            GUILayout.BeginVertical("box", GUILayout.Width(width));
             {
                 GUILayout.BeginHorizontal();
                 {
                     GUILayout.Space(5);
                     GUILayout.Label("Eq");
                     GUILayout.FlexibleSpace();
-                    if (GUILayout.Button(soundViewController.IsEqEnabled ? "Disable" : "Enable", new GUILayoutOption[] { GUILayout.Width(buttonWidth) }))
+                    if (GUILayout.Button(soundViewController.IsEqEnabled ? "Disable" : "Enable", GUILayout.Width(buttonWidth)))
                     {
                         soundViewController.IsEqEnabled = !soundViewController.IsEqEnabled;
                         if (soundViewController.IsEqEnabled)
@@ -573,7 +654,7 @@ namespace SoundDebugRoom
                         else
                             soundViewController.RemoveEq();
                     }
-                    if (GUILayout.Button("Reset", new GUILayoutOption[] { GUILayout.Width(buttonWidth) }))
+                    if (GUILayout.Button("Reset", GUILayout.Width(buttonWidth)))
                     {
                         soundViewController.Eq = new SaXAudio.EqParameters();
                         update = true;
@@ -581,7 +662,7 @@ namespace SoundDebugRoom
                 }
                 GUILayout.EndHorizontal();
 
-                GUILayout.Label("Band 0");
+                GUILayout.Label("Band 1");
 
                 Single result = BuildEffectParam("FrequencyCenter", soundViewController.Eq.FrequencyCenter0, 20, 20000, 10f, sliderWidth);
                 if (soundViewController.Eq.FrequencyCenter0 != result)
@@ -604,7 +685,7 @@ namespace SoundDebugRoom
                     update = true;
                 }
 
-                GUILayout.Label("Band 1");
+                GUILayout.Label("Band 2");
 
                 result = BuildEffectParam("FrequencyCenter", soundViewController.Eq.FrequencyCenter1, 20, 20000, 10f, sliderWidth);
                 if (soundViewController.Eq.FrequencyCenter1 != result)
@@ -627,7 +708,7 @@ namespace SoundDebugRoom
                     update = true;
                 }
 
-                GUILayout.Label("Band 2");
+                GUILayout.Label("Band 3");
 
                 result = BuildEffectParam("FrequencyCenter", soundViewController.Eq.FrequencyCenter2, 20, 20000, 10f, sliderWidth);
                 if (soundViewController.Eq.FrequencyCenter2 != result)
@@ -650,7 +731,7 @@ namespace SoundDebugRoom
                     update = true;
                 }
 
-                GUILayout.Label("Band 3");
+                GUILayout.Label("Band 4");
 
                 result = BuildEffectParam("FrequencyCenter", soundViewController.Eq.FrequencyCenter3, 20, 20000, 10f, sliderWidth);
                 if (soundViewController.Eq.FrequencyCenter3 != result)
@@ -685,14 +766,14 @@ namespace SoundDebugRoom
         {
             Boolean update = false;
 
-            GUILayout.BeginVertical("box", new GUILayoutOption[] { GUILayout.Width(width) });
+            GUILayout.BeginVertical("box", GUILayout.Width(width));
             {
                 GUILayout.BeginHorizontal();
                 {
                     GUILayout.Space(5);
                     GUILayout.Label("Echo");
                     GUILayout.FlexibleSpace();
-                    if (GUILayout.Button(soundViewController.IsEchoEnabled ? "Disable" : "Enable", new GUILayoutOption[] { GUILayout.Width(buttonWidth) }))
+                    if (GUILayout.Button(soundViewController.IsEchoEnabled ? "Disable" : "Enable", GUILayout.Width(buttonWidth)))
                     {
                         soundViewController.IsEchoEnabled = !soundViewController.IsEchoEnabled;
                         if (soundViewController.IsEchoEnabled)
@@ -700,7 +781,7 @@ namespace SoundDebugRoom
                         else
                             soundViewController.RemoveEcho();
                     }
-                    if (GUILayout.Button("Reset", new GUILayoutOption[] { GUILayout.Width(buttonWidth) }))
+                    if (GUILayout.Button("Reset", GUILayout.Width(buttonWidth)))
                     {
                         soundViewController.Echo = new SaXAudio.EchoParameters();
                         update = true;
@@ -735,30 +816,6 @@ namespace SoundDebugRoom
                 }
 
                 GUILayout.FlexibleSpace();
-                GUILayout.BeginVertical();
-                {
-                    GUILayout.BeginHorizontal();
-                    {
-                        if (GUILayout.Button("Enable all effects"))
-                        {
-                            soundViewController.IsEchoEnabled = soundViewController.IsEqEnabled = soundViewController.IsReverbEnabled = true;
-
-                            soundViewController.SetReverb(ref soundViewController.Reverb);
-                            soundViewController.SetEq(ref soundViewController.Eq);
-                            soundViewController.SetEcho(ref soundViewController.Echo);
-                        }
-                        if (GUILayout.Button("Disable all effects"))
-                        {
-                            soundViewController.IsEchoEnabled = soundViewController.IsEqEnabled = soundViewController.IsReverbEnabled = false;
-
-                            soundViewController.RemoveReverb();
-                            soundViewController.RemoveEq();
-                            soundViewController.RemoveEcho();
-                        }
-                    }
-                    GUILayout.EndHorizontal();
-                }
-                GUILayout.EndVertical();
             }
             GUILayout.EndVertical();
         }
@@ -772,7 +829,7 @@ namespace SoundDebugRoom
                 GUILayout.Label(name);
                 GUILayout.FlexibleSpace();
                 GUILayout.Label(value.ToString(format));
-                result = GUILayout.HorizontalSlider(value, min, max, new GUILayoutOption[] { GUILayout.Width(width) });
+                result = GUILayout.HorizontalSlider(value, min, max, GUILayout.Width(width));
                 result = Mathf.Round(result / step) * step;
             }
             GUILayout.EndHorizontal();
@@ -781,7 +838,7 @@ namespace SoundDebugRoom
 
         private void BuildSfxSoundSelector()
         {
-            soundSelectorScrollPosition = GUILayout.BeginScrollView(soundSelectorScrollPosition);
+            soundSelectorScrollPosition = GUILayout.BeginScrollView(soundSelectorScrollPosition, GUILayout.ExpandHeight(true));
             if (sfxSoundUIState == 0)
             {
                 foreach (Int32 num in soundViewController.AllSfxGroupSongIndex)
@@ -833,7 +890,7 @@ namespace SoundDebugRoom
             GUILayout.EndScrollView();
         }
 
-        private void BuildVoiceSoundSelectot()
+        private void BuildVoiceSoundSelector()
         {
             List<SoundProfile> voices = soundViewController.GetPlaylist();
             if (voices == null || voices.Count == 0)
@@ -862,8 +919,7 @@ namespace SoundDebugRoom
 
                 if (GUILayout.Button("Back"))
                 {
-                    searchString = "";
-                    voices.Clear();
+                    soundViewController.GenerateVoiceList("");
                 }
                 soundSelectorScrollPosition = GUILayout.BeginScrollView(soundSelectorScrollPosition);
                 List<SoundProfile> playlist = soundViewController.GetPlaylist();
@@ -907,45 +963,75 @@ namespace SoundDebugRoom
         private void BuildPresetManager(Single width)
         {
 
-            GUILayout.BeginVertical("box", new GUILayoutOption[] { GUILayout.Width(width) });
+            GUILayout.BeginVertical("box", GUILayout.Width(width));
             {
-                GUILayout.Label("Preset Manager");
-                if (GUILayout.Button("Select Mod"))
+                GUILayout.Label("Effect Manager");
+                GUILayout.BeginHorizontal();
+                {
+                    if (GUILayout.Button("Enable All"))
+                    {
+                        soundViewController.IsEchoEnabled = soundViewController.IsEqEnabled = soundViewController.IsReverbEnabled = true;
+
+                        soundViewController.SetReverb(ref soundViewController.Reverb);
+                        soundViewController.SetEq(ref soundViewController.Eq);
+                        soundViewController.SetEcho(ref soundViewController.Echo);
+                    }
+                    if (GUILayout.Button("Disable All"))
+                    {
+                        soundViewController.IsEchoEnabled = soundViewController.IsEqEnabled = soundViewController.IsReverbEnabled = false;
+
+                        soundViewController.RemoveReverb();
+                        soundViewController.RemoveEq();
+                        soundViewController.RemoveEcho();
+                    }
+                }
+                GUILayout.EndHorizontal();
+                if (GUILayout.Button(presetManagerMod == null ? "  Select Mod ➔" : "Select Mod"))
                 {
                     presetManagerMod = null;
                 }
 
                 if (presetManagerMod != null)
                 {
+                    GUILayout.Label("Backup");
+                    GUILayout.BeginHorizontal();
+                    {
+                        if (GUILayout.Button("Create"))
+                        {
+                            soundViewController.SaveEffectPresets(presetManagerMod, true);
+                        }
+                        if (GUILayout.Button("Restore"))
+                        {
+                            soundViewController.LoadEffectPresets(presetManagerMod, true);
+                            soundViewController.SaveEffectPresets(presetManagerMod, false);
+                        }
+                    }
+                    GUILayout.EndHorizontal();
+                    GUILayout.Label($"Editing Preset '{presetName}'");
                     String name = presetName;
                     presetName = GUILayout.TextField(name);
-                    if (name != presetName)
+                    GUILayout.BeginHorizontal();
                     {
-                        presetName = presetName.Replace(";", "");
+                        if (name != presetName)
+                        {
+                            presetName = presetName.Replace(";", "");
+                        }
+                        if (GUILayout.Button("Save"))
+                        {
+                            soundViewController.SaveEffectPreset(presetName, presetManagerMod);
+                        }
+                        if (GUILayout.Button(" Delete ", GUILayout.ExpandWidth(false)))
+                        {
+                            soundViewController.DeleteEffectPreset(presetName, presetManagerMod);
+                        }
                     }
-                    if (GUILayout.Button("Save"))
-                    {
-                        soundViewController.SaveEffectPreset(presetName, presetManagerMod);
-                    }
-                    if (GUILayout.Button("Delete"))
-                    {
-                        soundViewController.DeleteEffectPreset(presetName, presetManagerMod);
-                    }
-                    GUILayout.Label("Backup");
-                    if (GUILayout.Button("Create"))
-                    {
-                        soundViewController.SaveEffectPresets(presetManagerMod, true);
-                    }
-                    if (GUILayout.Button("Restore"))
-                    {
-                        soundViewController.LoadEffectPresets(presetManagerMod, true);
-                        soundViewController.SaveEffectPresets(presetManagerMod, false);
-                    }
+                    GUILayout.EndHorizontal();
+                    GUILayout.Label($"Applying Preset '{presetName}'");
                 }
             }
             GUILayout.EndVertical();
 
-            GUILayout.BeginVertical("box", new GUILayoutOption[] { GUILayout.Width(width) });
+            GUILayout.BeginVertical("box", GUILayout.Width(width));
             {
                 if (presetManagerMod == null)
                     BuildPresetModList();
@@ -973,7 +1059,7 @@ namespace SoundDebugRoom
 
         private void BuildPresetList()
         {
-            GUILayout.Label($"{presetManagerMod} presets");
+            GUILayout.Label($"{presetManagerMod} Presets");
             soundPresetManagerScrollPosition = GUILayout.BeginScrollView(soundPresetManagerScrollPosition);
             foreach (String preset in soundViewController.EffectPresetDictionary.Keys)
             {
@@ -986,10 +1072,6 @@ namespace SoundDebugRoom
             GUILayout.EndScrollView();
         }
 
-        private const Int32 SFX_SOUND_UI_STATE_LOADER = 0;
-
-        private const Int32 SFX_SOUND_UI_STATE_PLAYER = 1;
-
         public Single SoundVolume = 1f;
 
         public Single SeekerPosition;
@@ -998,17 +1080,11 @@ namespace SoundDebugRoom
 
         public Single PanningPosition;
 
-        private Vector2 soundPanelScrollPosition = new Vector2(0f, 0f);
-
         private Vector2 soundSelectorScrollPosition = new Vector2(0f, 0f);
 
+        private Vector2 soundPresetManagerScrollPosition = new Vector2(0f, 0f);
+
         private SoundViewController soundViewController;
-
-        private Boolean isEnableSound = true;
-
-        private Boolean isSfxEnabled = true;
-
-        private Boolean isMusicEnabled = true;
 
         private Int32 sfxSoundUIState;
 
@@ -1020,6 +1096,6 @@ namespace SoundDebugRoom
 
         private String presetName = "My preset";
 
-        private Vector2 soundPresetManagerScrollPosition;
+        private UIManager.UIState previousState;
     }
 }

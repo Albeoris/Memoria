@@ -165,6 +165,10 @@ namespace Global.Sound.SaXAudio
         public static extern Single GetPanning(Int32 voiceID);
         [DllImport("SaXAudio")]
         public static extern Boolean GetLooping(Int32 voiceID);
+        [DllImport("SaXAudio")]
+        public static extern UInt32 GetLoopStart(Int32 voiceID);
+        [DllImport("SaXAudio")]
+        public static extern UInt32 GetLoopEnd(Int32 voiceID);
 
         [DllImport("SaXAudio")]
         public static extern UInt32 GetPositionSample(Int32 voiceID);

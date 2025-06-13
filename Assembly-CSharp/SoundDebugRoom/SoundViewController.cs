@@ -25,14 +25,15 @@ namespace SoundDebugRoom
 
         private void OnFinished(Int32 soundId)
         {
-            IsPlay = false;
+            if (activeSound?.SoundID == soundId)
+                IsPlay = false;
         }
 
         private void ParseSoundList()
         {
             GenerateAllSongIndex();
             currentPlaylist = 0;
-            GeneratePlaylistData(currentPlaylist);
+            GeneratePlaylistData();
             LoadVoiceModList();
         }
 
@@ -40,7 +41,10 @@ namespace SoundDebugRoom
         {
             activeType = type;
             currentPlaylist = 0;
-            GeneratePlaylistData(currentPlaylist);
+            PlaylistInfo = "";
+            PlaylistDetail = "";
+            filteredPlaylist = null;
+            GeneratePlaylistData();
         }
 
         public SoundProfileType GetActiveSoundType()
@@ -96,10 +100,7 @@ namespace SoundDebugRoom
             }
             else if (activeSound.SoundProfileType == SoundProfileType.MovieAudio)
             {
-                String[] array = activeSound.Name.Split(new Char[]
-                {
-                    '/'
-                });
+                String[] array = activeSound.Name.Split(['/']);
                 SoundLib.PlayMovieMusic(array[(Int32)array.Length - 1], 0);
             }
             else if (activeSound.SoundProfileType == SoundProfileType.Voice)
@@ -115,6 +116,11 @@ namespace SoundDebugRoom
 
             IsPlay = true;
             activeSound.SoundID = ISdLibAPIProxy.Instance.LastSoundID;
+            ApplySettings();
+        }
+
+        private void ApplySettings()
+        {
             SetVolume(soundView.SoundVolume);
             SetPanning(soundView.PanningPosition);
             SetPitch(soundView.PitchPosition);
@@ -124,7 +130,6 @@ namespace SoundDebugRoom
                 if (IsReverbEnabled) SetReverb(ref Reverb);
                 if (IsEqEnabled) SetEq(ref Eq);
                 if (IsEchoEnabled) SetEcho(ref Echo);
-                IsLooping = SaXAudio.GetLooping(activeSound.SoundID);
             }
         }
 
@@ -138,20 +143,20 @@ namespace SoundDebugRoom
         public Single GetActivePosition()
         {
             if (activeSound == null || !IsSaXAudio) return 0;
-            return SaXAudio.GetPositionTime(activeSound.SoundID);
+            return SaXAudio.GetPositionSample(activeSound.SoundID);
         }
 
         public Single GetActiveLength()
         {
             if (activeSound == null || !IsSaXAudio) return 0.0001f;
-            return Math.Max(0.0001f, SaXAudio.GetTotalTime(activeSound.SoundID));
+            return Math.Max(0.0001f, SaXAudio.GetTotalSample(activeSound.SoundID));
         }
 
         public void SeekActive(Single position)
         {
             if (activeSound == null || !IsSaXAudio || !IsPlay) return;
             SaXAudio.SetVolume(activeSound.SoundID, soundView.SoundVolume * 0.25f, 0f);
-            SaXAudio.StartAtTime(activeSound.SoundID, position);
+            SaXAudio.StartAtSample(activeSound.SoundID, (UInt32)position);
             SaXAudio.SetVolume(activeSound.SoundID, soundView.SoundVolume);
         }
 
@@ -171,15 +176,6 @@ namespace SoundDebugRoom
         {
             if (activeSound == null) return;
             ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(activeSound.SoundID, pitch, 0);
-        }
-
-        public void SetLooping(Boolean looping)
-        {
-            if (!IsPlay) PlayActiveSound();
-            if (IsLooping == looping || activeSound == null) return;
-
-            SaXAudio.SetLooping(activeSound.SoundID, looping);
-            IsLooping = SaXAudio.GetLooping(activeSound.SoundID);
         }
 
         public void SetReverb(ref SaXAudio.ReverbParameters parameters)
@@ -218,7 +214,6 @@ namespace SoundDebugRoom
         {
             if (activeSound == null) return;
             ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(activeSound.SoundID, 0);
-            IsLooping = false;
             IsPlay = false;
         }
 
@@ -377,15 +372,27 @@ namespace SoundDebugRoom
         public void GenerateVoiceList(String modLocation)
         {
             currentVoiceMod = modLocation;
+            PlaylistInfo = "";
+            PlaylistDetail = "";
             currentPlaylist = 0;
-            GeneratePlaylistData(currentPlaylist);
+            filteredPlaylist = null;
+            GeneratePlaylistData();
         }
 
         public void FilterVoiceList(String filter)
         {
             voiceFilter = filter;
             currentPlaylist = 0;
-            GeneratePlaylistData(currentPlaylist);
+
+            if (!ModVoiceDictionary.ContainsKey(currentVoiceMod))
+                return;
+
+            filteredPlaylist = ModVoiceDictionary[currentVoiceMod];
+            if (voiceFilter.Length > 0)
+            {
+                filteredPlaylist = filteredPlaylist.Where((p) => p.ResourceID.Contains(voiceFilter)).ToList();
+            }
+            GeneratePlaylistData();
         }
 
         public void SaveEffectPresets(String modLocation, Boolean backup = false)
@@ -403,12 +410,14 @@ namespace SoundDebugRoom
             if (String.IsNullOrEmpty(name)) return;
             try
             {
-                EffectPreset preset = new EffectPreset();
-                preset.Name = name;
-                preset.Flags = (IsReverbEnabled ? EffectPreset.Flag.Reverb : 0) | (IsEqEnabled ? EffectPreset.Flag.Eq : 0) | (IsEchoEnabled ? EffectPreset.Flag.Echo : 0);
-                preset.Reverb = Reverb;
-                preset.Eq = Eq;
-                preset.Echo = Echo;
+                EffectPreset preset = new EffectPreset
+                {
+                    Name = name,
+                    Flags = (IsReverbEnabled ? EffectPreset.Flag.Reverb : 0) | (IsEqEnabled ? EffectPreset.Flag.Eq : 0) | (IsEchoEnabled ? EffectPreset.Flag.Echo : 0),
+                    Reverb = Reverb,
+                    Eq = Eq,
+                    Echo = Echo
+                };
 
                 EffectPresetDictionary[name] = preset;
             }
@@ -467,9 +476,9 @@ namespace SoundDebugRoom
             {
                 count = allMovieAudioIndex.Count;
             }
-            else if (activeType == SoundProfileType.Voice)
+            else if (activeType == SoundProfileType.Voice && filteredPlaylist != null)
             {
-                count = ModVoiceDictionary.Count;
+                count = filteredPlaylist.Count;
             }
             Int32 num = (Int32)((count % 100 != 0) ? 1 : 0);
             Int32 num2 = count / 100 + num;
@@ -477,7 +486,7 @@ namespace SoundDebugRoom
             {
                 currentPlaylist++;
             }
-            GeneratePlaylistData(currentPlaylist);
+            GeneratePlaylistData();
         }
 
         public void PreviousPlayList()
@@ -486,7 +495,7 @@ namespace SoundDebugRoom
             {
                 currentPlaylist--;
             }
-            GeneratePlaylistData(currentPlaylist);
+            GeneratePlaylistData();
         }
 
         private void GenerateAllSongIndex()
@@ -533,9 +542,9 @@ namespace SoundDebugRoom
             }
         }
 
-        private void GeneratePlaylistData(Int32 playlistIndex)
+        private void GeneratePlaylistData()
         {
-            playlist = GetPlaylist(currentPlaylist);
+            playlist = GetActiveTypePlaylist();
             if (playlist == null)
             {
                 SoundLib.LogWarning("GeneratePlaylistData, playlist is null!");
@@ -544,7 +553,7 @@ namespace SoundDebugRoom
             SetPlaylistInfo(playlist);
         }
 
-        private List<SoundProfile> GetPlaylist(Int32 playListIndex)
+        private List<SoundProfile> GetActiveTypePlaylist()
         {
             List<Int32> list = null;
             if (activeType == SoundProfileType.Music)
@@ -569,15 +578,12 @@ namespace SoundDebugRoom
             }
             else if (activeType == SoundProfileType.Voice && ModVoiceDictionary.ContainsKey(currentVoiceMod))
             {
-                List<SoundProfile> voiceList = ModVoiceDictionary[currentVoiceMod];
-                if (voiceFilter.Length > 0)
-                {
-                    voiceList = voiceList.Where((p) => p.ResourceID.Contains(voiceFilter)).ToList();
-                }
+                if (filteredPlaylist == null)
+                    FilterVoiceList(voiceFilter);
 
-                Int32 index = Math.Min(currentPlaylist * 100, voiceList.Count - 1);
-                Int32 count = (100 + index) > voiceList.Count ? voiceList.Count - index : 100;
-                return voiceList.GetRange(index, count);
+                Int32 index = Math.Min(currentPlaylist * 100, filteredPlaylist.Count - 1);
+                Int32 count = (100 + index) > filteredPlaylist.Count ? filteredPlaylist.Count - index : 100;
+                return filteredPlaylist.GetRange(index, count);
             }
             if (list == null)
             {
@@ -670,14 +676,15 @@ namespace SoundDebugRoom
 
         public void SelectSound(Int32 soundIndexInSpecialEffect)
         {
-            SoundProfile soundProfile = SoundLib.PlaySfxSound(soundIndexInSpecialEffect, soundView.SoundVolume, soundView.PanningPosition, soundView.PitchPosition);
-            activeSound = soundProfile;
-            activeSound.SoundID = -1;
+            activeSound = SoundLib.PlaySfxSound(soundIndexInSpecialEffect, soundView.SoundVolume, soundView.PanningPosition, soundView.PitchPosition);
+            if (activeSound == null) return;
+
+            IsPlay = true;
+            activeSound.SoundID = ISdLibAPIProxy.Instance.LastSoundID;
+            ApplySettings();
         }
 
-        private const Int32 playlistSoundCount = 100;
-
-        private SoundView soundView;
+        private readonly SoundView soundView;
 
         public Boolean IsPlay;
 
@@ -695,7 +702,20 @@ namespace SoundDebugRoom
 
         public Boolean IsEchoEnabled = false;
 
-        public Boolean IsLooping = false;
+        public Boolean IsLooping
+        {
+            get
+            {
+                return activeSound != null && SaXAudio.GetLooping(activeSound.SoundID);
+            }
+
+            set
+            {
+                if (!IsPlay) PlayActiveSound();
+                if (IsLooping == value || activeSound == null) return;
+                SaXAudio.SetLooping(activeSound.SoundID, value);
+            }
+        }
 
         public SortedDictionary<String, AudioEffectManager.EffectPreset> EffectPresetDictionary = new SortedDictionary<String, AudioEffectManager.EffectPreset>();
 
@@ -714,6 +734,8 @@ namespace SoundDebugRoom
         public String PlaylistDetail = String.Empty;
 
         private List<SoundProfile> playlist = new List<SoundProfile>();
+
+        private List<SoundProfile> filteredPlaylist = null;
 
         private Int32 currentPlaylist;
 

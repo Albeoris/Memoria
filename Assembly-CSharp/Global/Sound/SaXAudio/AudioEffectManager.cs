@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Global.Sound.SaXAudio
 {
     public class AudioEffectManager
     {
-        public const String PRESETS_FILE = "AudioEffectPresets.txt";
+        private const String FILENAME = "AudioEffects.txt";
 
         public struct EffectPreset
         {
@@ -96,7 +97,7 @@ namespace Global.Sound.SaXAudio
         public static SortedDictionary<String, EffectPreset> LoadPresets(String modLocation, Boolean backup = false)
         {
             SortedDictionary<String, EffectPreset> presets = new SortedDictionary<String, EffectPreset>();
-            String path = Path.Combine(modLocation, $"{PRESETS_FILE}{(backup ? ".bak" : "")}");
+            String path = Path.Combine(modLocation, $"{FILENAME}{(backup ? ".bak" : "")}");
             if (File.Exists(path))
             {
                 try
@@ -104,9 +105,11 @@ namespace Global.Sound.SaXAudio
                     String[] lines = File.ReadAllLines(path);
                     foreach (String line in lines)
                     {
-                        if (line.Length == 0 || line.StartsWith("#"))
+                        String decryptedLine = Decrypt(line, modLocation);
+                        Log.Message(decryptedLine);
+                        if (decryptedLine.Length == 0 || decryptedLine.StartsWith("#"))
                             continue;
-                        EffectPreset preset = new EffectPreset(line);
+                        EffectPreset preset = new EffectPreset(decryptedLine);
                         presets.Add(preset.Name, preset);
                     }
                 }
@@ -125,15 +128,47 @@ namespace Global.Sound.SaXAudio
                 List<String> lines = new List<String>();
                 foreach (EffectPreset effectPreset in presets.Values)
                 {
-                    lines.Add(effectPreset.ToString());
+                    lines.Add(Encrypt(effectPreset.ToString(), modLocation));
                 }
-                String path = Path.Combine(modLocation, $"{PRESETS_FILE}{(backup ? ".bak" : "")}");
+                String path = Path.Combine(modLocation, $"{FILENAME}{(backup ? ".bak" : "")}");
                 File.WriteAllLines(path, lines.ToArray());
             }
             catch (Exception e)
             {
                 Log.Error(e);
             }
+        }
+
+        public static string Encrypt(string plainText, string password)
+        {
+            using Aes aes = Aes.Create();
+            var key = new Rfc2898DeriveBytes(password, Encoding.UTF8.GetBytes("AlexandriaCastle"), 10000);
+            aes.Key = key.GetBytes(32);
+            aes.IV = key.GetBytes(16);
+            using var encryptor = aes.CreateEncryptor();
+            using var ms = new MemoryStream();
+            using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
+            {
+                var plainBytes = Encoding.UTF8.GetBytes(plainText);
+                cs.Write(plainBytes, 0, plainBytes.Length);
+                cs.FlushFinalBlock(); // This is crucial!
+            }
+            return Convert.ToBase64String(ms.ToArray());
+        }
+
+        public static string Decrypt(string cipherText, string password)
+        {
+            using Aes aes = Aes.Create();
+            var key = new Rfc2898DeriveBytes(password, Encoding.UTF8.GetBytes("AlexandriaCastle"), 10000);
+            aes.Key = key.GetBytes(32);
+            aes.IV = key.GetBytes(16);
+
+            using var decryptor = aes.CreateDecryptor();
+            using var ms = new MemoryStream(Convert.FromBase64String(cipherText));
+            using var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
+            using var reader = new StreamReader(cs);
+
+            return reader.ReadToEnd();
         }
     }
 
