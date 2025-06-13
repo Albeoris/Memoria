@@ -1205,10 +1205,10 @@ https://github.com/Albeoris/Memoria/wiki/Supporting-ability-features</Descriptio
 
 <Mod>
 	<Name>FernyDifficultyTweaks</Name>
-	<Version>3.0</Version>
+	<Version>3.1</Version>
 	<Author>FernyFer</Author>
 	<InstallationPath>FernyDifficultyTweaks</InstallationPath>
-	<ReleaseDate>June 7, 2025</ReleaseDate>
+	<ReleaseDate>June 13, 2025</ReleaseDate>
 	<ReleaseDateOriginal>June 2, 2025</ReleaseDateOriginal>
 	<MinimumMemoriaVersion>2025-05-11</MinimumMemoriaVersion>
 	<Description>Increase or Decrease game difficulty!
@@ -1219,7 +1219,7 @@ Player Damage Dealt:
 
 Player Damage Taken:
 - Modular scaling allowing the player to take anywhere from 20% less damage all the way up to 180% more damage from enemies.</Description>
-	<PatchNotes>v3.0: Added more incremental options for your fine-tuning pleasure. ULTIMATE CUSTOMIZATION BABY!</PatchNotes>
+	<PatchNotes>v3.1: Damage DEALT was not properly calculating and has been fixed. Enjoy nerfing yourself!</PatchNotes>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/101</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/xjer5n2fw39h5kyapyoza/FernyDifficultyTweaks.zip?rlkey=jlt9wczd4irv8qeljd9xj1zbn&amp;st=0xfgnplu&amp;dl=1</DownloadUrl>
 	<PreviewFileUrl>https://i.imgur.com/t3GdBdB.jpeg</PreviewFileUrl>
