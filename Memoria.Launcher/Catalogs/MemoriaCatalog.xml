@@ -165,12 +165,129 @@ Not supported language : Japanese (a lot of things get deleted... need to wait u
 	<IncompatibleWith>AlternateFantasy, Trance Seek, David Bowie Edition</IncompatibleWith>
 	<Category>Gameplay</Category>
 	<Description>
-		A tiny mod to remove some "hardcoded" scripts in battles.
-		The goal is to make these fights compatible with any characters in battle, in order to avoid any softlocks.
+A tiny mod to remove some "hardcoded" scripts in battles.
+The goal is to make these fights compatible with any characters in battle, in order to avoid any softlocks.
 	</Description>
 	<PreviewFileUrl>https://i.imgur.com/KL9DWPk.jpeg</PreviewFileUrl>
 	<PreviewFile>Thumbnail/NoHardcodedBattles.jpg</PreviewFile>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/9nj3r6ph66soi94pokpqt/NoHardcodedBattles.zip?rlkey=nkbi7dxzstozytuxsykqcgejv&amp;dl=1</DownloadUrl>
+</Mod>
+
+<Mod>
+	<Name>Quality Of L'Ifa</Name>
+	<Version>1.0</Version>
+	<InstallationPath>Quality Of L'Ifa</InstallationPath>
+	<ReleaseDate>14 June 2025</ReleaseDate>
+	<ReleaseDateOriginal>14 June 2025</ReleaseDateOriginal>
+	<Author>DV</Author>
+	<Category>Gameplay</Category>
+	<PreviewFileUrl>https://i.ibb.co/20DxpHXN/Quality-Of-Lifa.jpg</PreviewFileUrl>
+	<PreviewFile>Thumbnail/QualityOfLifa.jpg</PreviewFile>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/je4hdj96ngxv7ogjep9tx/Quality-Of-L-Ifa.zip?rlkey=0jmnwa9svspqazb4olrk53qtb&amp;dl=1</DownloadUrl>
+	<Description>
+A very lightweight mod that allows you to modify minor elements of the game while keeping as much of the OG experience as possible.
+All options are independent and can be activated as desired.
+More options will be added over time.
+Note : To avoid compatibility issues, Quality of the Ifa should be sorted to the lowest priority in the mod list.
+	</Description>
+	<Header>Safe with any Mods</Header>
+	<SubMod>
+		<Name>Elixir Show HP/MP Healed</Name>
+		<InstallationPath>ElixirShowHPMP</InstallationPath>
+		<Description>Items using Elixir script show HP/MP heals on players (feature from Trance Seek).</Description>
+		<PreviewFile>ElixirShowHPMP/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>MP Heal in Blue</Name>
+		<InstallationPath>MPInBlue</InstallationPath>
+		<Description>MP Healing are displayed in Blue (feature from Trance Seek).</Description>
+		<PreviewFile>MPInBlue/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Colored Text from Element Attack</Name>
+		<InstallationPath>ColoredTextElementAttack</InstallationPath>
+		<Description>Texts from attack are colored, depending of his element</Description>
+		<PreviewFile>ColoredTextElementAttack/Thumbnail.jpg</PreviewFile>
+		<Group>cmd-text-color</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Counter Text colored in Cyan</Name>
+		<InstallationPath>CounterCyan</InstallationPath>
+		<Description>Counters (player or monster) are displayed in Cyan (feature from Trance Seek).</Description>
+		<PreviewFile>CounterCyan/Thumbnail.jpg</PreviewFile>
+		<Group>cmd-text-color</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Counter Text colored in Fuchsia</Name>
+		<InstallationPath>CounterFuchsia</InstallationPath>
+		<Description>Counters (player or monster) are displayed in Fuchsia.</Description>
+		<PreviewFile>CounterFuchsia/Thumbnail.jpg</PreviewFile>
+		<Group>cmd-text-color</Group>
+	</SubMod>
+	<Header>For OG Experience only</Header>
+	<SubMod>
+		<Name>Thunder Slash (OG Version)</Name>
+		<InstallationPath>ThunderSlashOG</InstallationPath>
+		<Description>Revert the Thunder Slash spell into his OG form (Gravity/Thunder Spell with 0% accuracy)</Description>
+		<PreviewFile>ThunderSlashOG/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Better Gravity Spell</Name>
+		<InstallationPath>BetterGravity</InstallationPath>
+		<Description>
+Make Gravity more usefull.
+- Gravity Spell never miss, like a Magic Attack.
+- Can work now on boss but the formula is based on their current HP + less power.
+		</Description>
+		<PreviewFile>BetterGravity/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Better Healer (SA)</Name>
+		<InstallationPath>BetterHealer</InstallationPath>
+		<Description>
+			The attack never miss on an ally + ignore defence of the target
+			(only player), making the heal much powerful (feature from Trance Seek).
+		</Description>
+		<PreviewFile>BetterHealer/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Better Mug (SA)</Name>
+		<InstallationPath>BetterMug</InstallationPath>
+		<Description>Better animation for Mug + deals 75% of a basic attack.</Description>
+		<PreviewFile>BetterMug/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Adjust StoneKiller (SA) Cost</Name>
+		<InstallationPath>StoneKiller</InstallationPath>
+		<Description>Adjust Gem Cost from StoneKiller : 4 -> 1</Description>
+		<PreviewFile>StoneKiller/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Float Weakness to Wind</Name>
+		<InstallationPath>FloatWeakness</InstallationPath>
+		<Description>Float status gives weakness to Wind.</Description>
+		<PreviewFile>FloatWeakness/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Better Stats When Character Joins</Name>
+		<InstallationPath>BetterStatsJoining</InstallationPath>
+		<Description>
+Better formula on stats when Freya/Quina/Eiko/Amarant joins the team (feature from Trance Seek).
+More explanations in the .txt file in the mod (BetterStatsJoining folder)
+		</Description>
+		<PreviewFile>BetterStatsJoining/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<Header>[WIP] Experimental</Header>
+	<SubMod>
+		<Name>Better Garland Model NPC</Name>
+		<InstallationPath>BetterGarlandModel</InstallationPath>
+		<Description>
+Unfinished, replace Garland Model in field from his battle version.
+Experimental: i need to improve the animation on his cape...
+More models to come later when i get time.
+		</Description>
+		<PreviewFile>BetterGarlandModel/Thumbnail.jpg</PreviewFile>
+	</SubMod>
 </Mod>
 
 <Mod>
