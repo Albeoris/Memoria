@@ -165,12 +165,129 @@ Not supported language : Japanese (a lot of things get deleted... need to wait u
 	<IncompatibleWith>AlternateFantasy, Trance Seek, David Bowie Edition</IncompatibleWith>
 	<Category>Gameplay</Category>
 	<Description>
-		A tiny mod to remove some "hardcoded" scripts in battles.
-		The goal is to make these fights compatible with any characters in battle, in order to avoid any softlocks.
+A tiny mod to remove some "hardcoded" scripts in battles.
+The goal is to make these fights compatible with any characters in battle, in order to avoid any softlocks.
 	</Description>
 	<PreviewFileUrl>https://i.imgur.com/KL9DWPk.jpeg</PreviewFileUrl>
 	<PreviewFile>Thumbnail/NoHardcodedBattles.jpg</PreviewFile>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/9nj3r6ph66soi94pokpqt/NoHardcodedBattles.zip?rlkey=nkbi7dxzstozytuxsykqcgejv&amp;dl=1</DownloadUrl>
+</Mod>
+
+<Mod>
+	<Name>Quality Of L'Ifa</Name>
+	<Version>1.0</Version>
+	<InstallationPath>Quality Of L'Ifa</InstallationPath>
+	<ReleaseDate>14 June 2025</ReleaseDate>
+	<ReleaseDateOriginal>14 June 2025</ReleaseDateOriginal>
+	<Author>DV</Author>
+	<Category>Gameplay</Category>
+	<PreviewFileUrl>https://i.ibb.co/20DxpHXN/Quality-Of-Lifa.jpg</PreviewFileUrl>
+	<PreviewFile>Thumbnail/QualityOfLifa.jpg</PreviewFile>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/je4hdj96ngxv7ogjep9tx/Quality-Of-L-Ifa.zip?rlkey=0jmnwa9svspqazb4olrk53qtb&amp;dl=1</DownloadUrl>
+	<Description>
+A very lightweight mod that allows you to modify minor elements of the game while keeping as much of the OG experience as possible.
+All options are independent and can be activated as desired.
+More options will be added over time.
+Note : To avoid compatibility issues, Quality of the Ifa should be sorted to the lowest priority in the mod list.
+	</Description>
+	<Header>Safe with any Mods</Header>
+	<SubMod>
+		<Name>Elixir Show HP/MP Healed</Name>
+		<InstallationPath>ElixirShowHPMP</InstallationPath>
+		<Description>Items using Elixir script show HP/MP heals on players (feature from Trance Seek).</Description>
+		<PreviewFile>ElixirShowHPMP/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>MP Heal in Blue</Name>
+		<InstallationPath>MPInBlue</InstallationPath>
+		<Description>MP Healing are displayed in Blue (feature from Trance Seek).</Description>
+		<PreviewFile>MPInBlue/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Colored Text from Element Attack</Name>
+		<InstallationPath>ColoredTextElementAttack</InstallationPath>
+		<Description>Texts from attack are colored, depending of his element</Description>
+		<PreviewFile>ColoredTextElementAttack/Thumbnail.jpg</PreviewFile>
+		<Group>cmd-text-color</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Counter Text colored in Cyan</Name>
+		<InstallationPath>CounterCyan</InstallationPath>
+		<Description>Counters (player or monster) are displayed in Cyan (feature from Trance Seek).</Description>
+		<PreviewFile>CounterCyan/Thumbnail.jpg</PreviewFile>
+		<Group>cmd-text-color</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Counter Text colored in Fuchsia</Name>
+		<InstallationPath>CounterFuchsia</InstallationPath>
+		<Description>Counters (player or monster) are displayed in Fuchsia.</Description>
+		<PreviewFile>CounterFuchsia/Thumbnail.jpg</PreviewFile>
+		<Group>cmd-text-color</Group>
+	</SubMod>
+	<Header>For OG Experience only</Header>
+	<SubMod>
+		<Name>Thunder Slash (OG Version)</Name>
+		<InstallationPath>ThunderSlashOG</InstallationPath>
+		<Description>Revert the Thunder Slash spell into his OG form (Gravity/Thunder Spell with 0% accuracy)</Description>
+		<PreviewFile>ThunderSlashOG/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Better Gravity Spell</Name>
+		<InstallationPath>BetterGravity</InstallationPath>
+		<Description>
+Make Gravity more usefull.
+- Gravity Spell never miss, like a Magic Attack.
+- Can work now on boss but the formula is based on their current HP + less power.
+		</Description>
+		<PreviewFile>BetterGravity/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Better Healer (SA)</Name>
+		<InstallationPath>BetterHealer</InstallationPath>
+		<Description>
+			The attack never miss on an ally + ignore defence of the target
+			(only player), making the heal much powerful (feature from Trance Seek).
+		</Description>
+		<PreviewFile>BetterHealer/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Better Mug (SA)</Name>
+		<InstallationPath>BetterMug</InstallationPath>
+		<Description>Better animation for Mug + deals 75% of a basic attack.</Description>
+		<PreviewFile>BetterMug/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Adjust StoneKiller (SA) Cost</Name>
+		<InstallationPath>StoneKiller</InstallationPath>
+		<Description>Adjust Gem Cost from StoneKiller : 4 -> 1</Description>
+		<PreviewFile>StoneKiller/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Float Weakness to Wind</Name>
+		<InstallationPath>FloatWeakness</InstallationPath>
+		<Description>Float status gives weakness to Wind.</Description>
+		<PreviewFile>FloatWeakness/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Better Stats When Character Joins</Name>
+		<InstallationPath>BetterStatsJoining</InstallationPath>
+		<Description>
+Better formula on stats when Freya/Quina/Eiko/Amarant joins the team (feature from Trance Seek).
+More explanations in the .txt file in the mod (BetterStatsJoining folder)
+		</Description>
+		<PreviewFile>BetterStatsJoining/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<Header>[WIP] Experimental</Header>
+	<SubMod>
+		<Name>Better Garland Model NPC</Name>
+		<InstallationPath>BetterGarlandModel</InstallationPath>
+		<Description>
+Unfinished, replace Garland Model in field from his battle version.
+Experimental: i need to improve the animation on his cape...
+More models to come later when i get time.
+		</Description>
+		<PreviewFile>BetterGarlandModel/Thumbnail.jpg</PreviewFile>
+	</SubMod>
 </Mod>
 
 <Mod>
@@ -941,12 +1058,12 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 	
 <Mod>
 	<Name>Amazing Quina</Name>
-	<Version>2.1</Version>
+	<Version>2.2</Version>
 	<Priority>-9</Priority>
 	<InstallationPath>AmazingQuina</InstallationPath>
 	<ReleaseDateOriginal>2024-08-18</ReleaseDateOriginal>
-	<ReleaseDate>2024-12-09</ReleaseDate>
-	<MinimumMemoriaVersion>v2024.12.04</MinimumMemoriaVersion>
+	<ReleaseDate>2025-05-29</ReleaseDate>
+	<MinimumMemoriaVersion>v2025.05.12</MinimumMemoriaVersion>
 	<Author>Emeiru</Author>
 <Description>Amazing tweaks and improvement for the quirky Quina
 - Forks deal more consistent random damage
@@ -955,7 +1072,7 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 - Quina now learns Scan, Return Magic, and others
 - Tweaks to abilities like Goblin Punch, White Wind, and more
 
-Compatible with Alternate Fantasy</Description>
+Compatible with Alternate Fantasy v6.8 only</Description>
 	<PatchNotes>Complete changes can be found on the mod page.</PatchNotes>
 	<Category>Gameplay</Category>
 	<PreviewFile>AmazingQuina.jpg</PreviewFile>
@@ -971,7 +1088,7 @@ Compatible with Alternate Fantasy</Description>
 		<Group>GameMode</Group>
 		<ActivateWithoutMod>Alternate Fantasy</ActivateWithoutMod>
 		<Default/>
-		</SubMod>
+	</SubMod>
 	<SubMod>
 		<Name>Alternate Fantasy</Name>
 		<InstallationPath>AlternateFantasy</InstallationPath>
@@ -979,7 +1096,7 @@ Compatible with Alternate Fantasy</Description>
 		<Priority>2</Priority>
 		<Group>GameMode</Group>
 		<ActivateWithMod>Alternate Fantasy</ActivateWithMod>
-		</SubMod>
+	</SubMod>
 </Mod>
 
 <Mod>
@@ -1017,7 +1134,7 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 		<Group>GameMode</Group>
 		<ActivateWithoutMod>Alternate Fantasy</ActivateWithoutMod>
 		<Default/>
-		</SubMod>
+	</SubMod>
 	<SubMod>
 		<Name>Alternate Fantasy</Name>
 		<InstallationPath>AlternateFantasy</InstallationPath>
@@ -1025,7 +1142,7 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 		<Priority>2</Priority>
 		<Group>GameMode</Group>
 		<ActivateWithMod>Alternate Fantasy</ActivateWithMod>
-		</SubMod>
+	</SubMod>
 </Mod>
 
 <Mod>
@@ -1063,7 +1180,7 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 		<Group>GameMode</Group>
 		<ActivateWithoutMod>Alternate Fantasy</ActivateWithoutMod>
 		<Default/>
-		</SubMod>
+	</SubMod>
 	<SubMod>
 		<Name>Alternate Fantasy</Name>
 		<InstallationPath>AlternateFantasy</InstallationPath>
@@ -1071,9 +1188,248 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 		<Priority>2</Priority>
 		<Group>GameMode</Group>
 		<ActivateWithMod>Alternate Fantasy</ActivateWithMod>
-		</SubMod>
+	</SubMod>
 </Mod>
-	
+
+<Mod>
+	<Name>FernySupportTweaks</Name>
+	<Version>1.4.3</Version>
+	<Author>FernyFer</Author>
+	<InstallationPath>FernySupportTweaks</InstallationPath>
+	<ReleaseDate>June 4, 2025</ReleaseDate>
+	<ReleaseDateOriginal>June 2, 2025</ReleaseDateOriginal>
+	<MinimumMemoriaVersion>2025-05-11</MinimumMemoriaVersion>
+	<Description>Changes some Support Abilities to be "subjectively" more useful! You can enable as many as you want. 
+
+Divine Light - (Replaces "Auto-Reflect" Support Ability)
+- Completely drains the Trance bar to stop a character from being KO'd and returning them to 25% of their MaxHP if the Trance bar is at least 50% full.
+
+Trancer - (Replaces "Ability Up" Support Ability)
+- All attacks now slightly increase the Trance gauge.
+- High Tide increases the amount of Trance gained.
+- HIGHLY suggested you use this option with "Kupo Tweaks or Exp , AP, Gil , Rewards Modifier" mod to alter AP gains from losing the Ability Up support ability.
+
+Gambling Strikes - (Replaces Zidane's "Bandit" Support Ability)
+- Zidane's damage output randomly ranges from 50% to 200%.
+- HIGHLY suggested you enable "100% Steal Rate" cheat in Memoria engine to offset losing the Bandit support ability.
+
+Glass Cannon - (Replaces "Auto-Float" Support Ability)
+- Increases all damage dealt by 60%, but reduces MaxHP by 40%.
+
+Dyne Booster - (Zidane Only)
+- All of Zidane's Trance abilities deals 2x damage when his HP falls below 20%.
+- Damage at endgame will easily hit 9,999 damage cap when this triggers.
+- (OPTIONAL) Enable "Break Damage Limit" cheat in Memoria Engine to allow damage to break 9,999 cap.
+
+Defence+ - (Replaces "Gambler Defense" Support Ability)
+- Gambler Defense was an abysmally useless Special Ability.
+- Now increases Defence and Magic Defence by 5%.
+
+Lucky! - (Replaces "Level Up" Support Ability)
+- There are a few mods out there that allow you that alter your EXP gain... so, I figured the "Level Up" support ability could get a facelift. 
+- Now increases Critical Strike Chance by 10!
+
+HP Leech - (Replaces "Add Status" Support Ability)
+- Attacks will now leech a small amount of HP from the target to heal the user.
+- The "Add Status" is now a global passive - no longer needing to be equipped for the effect to be active. Always found it kinda pointless to add Status Effects to weapons and then making them moot if you didn't have this Support Ability equipped. 
+
+MP Leech - (Replaces "MP Attack" Support Ability)
+- Attacks will now leech a small amount of MP from the target to heal the user.
+- This ability makes sense in my game because I'm playing the Alternate Fantasy mod and almost all my characters now have skills that deal damage and use MP, so there is no reason to drain my MP to use a regular attack when I could just use one of my skills and do the same thing.
+
+Speed+ - (Replaces "Flee-Gil" Support Ability)
+- Flee-Gil is actual doodoo, now it's actually useful!
+- Now increases Speed by 10%.
+
+Note/Credit: "Divine Light" idea and code adapted from the Memoria Engine wiki:
+https://github.com/Albeoris/Memoria/wiki/Supporting-ability-features</Description>
+	<PatchNotes>v1.4.3 - "LUCKY!"- had a typo in the code making it not work - this has been fixed. Enjoy your 10 Crit!.</PatchNotes>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/102</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/32n1c5svgac8qlll3k5ez/FernySupportTweaks.zip?rlkey=3bxlf6cefiuwtuc30bueqlsb7&amp;st=qf88pwn4&amp;dl=1</DownloadUrl>
+	<PreviewFileUrl>https://i.imgur.com/SNFuHb9.jpeg</PreviewFileUrl>
+	<PreviewFile>TweaksImage.jpg</PreviewFile>
+	<Category>Gameplay</Category>
+	<SubMod>
+		<Name>[Divine Light]</Name>
+		<InstallationPath>Divine Light</InstallationPath>
+		<Description>Survive being KO'd with enough Trance bar filled.</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>[Glass Cannon]</Name>
+		<InstallationPath>Glass Cannon</InstallationPath>
+		<Description>More damage but less MaxHP.</Description>
+		<Priority>2</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>[MP Leech]</Name>
+		<InstallationPath>MPLeech</InstallationPath>
+		<Description>Restores MP when attacking enemies.</Description>
+		<Priority>3</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>[HP Leech]</Name>
+		<InstallationPath>HPLeech</InstallationPath>
+		<Description>Restores HP when attacking enemies.</Description>
+		<Priority>4</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>[Defense+]</Name>
+		<InstallationPath>Defense+</InstallationPath>
+		<Description>Increases Defence and Magic Defence by 5%.</Description>
+		<Group>g-def+</Group>
+		<Priority>5</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>[Defense+ - AF]</Name>
+		<InstallationPath>Defense+ - AF</InstallationPath>
+		<Description>Increases Defence and Magic Defence by 5% - for Alternate Fantasy.</Description>
+		<Group>g-def+</Group>
+		<ActivateWithMod>Alternate Fantasy</ActivateWithMod>
+		<Priority>6</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>[Lucky!]</Name>
+		<InstallationPath>Lucky!</InstallationPath>
+		<Description>Increases Critical Chance!</Description>
+		<Priority>7</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>[Trancer]</Name>
+		<InstallationPath>Trancer</InstallationPath>
+		<Description>All attacks now slightly increase the Trance gauge.</Description>
+		<Priority>8</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>[Speed+]</Name>
+		<InstallationPath>Speed+</InstallationPath>
+		<Description>Increases Speed by 10%.</Description>
+		<Priority>9</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>[Gambling Strikes]</Name>
+		<InstallationPath>Gambling Strikes</InstallationPath>
+		<Description>Varies Zidane's damage output.</Description>
+		<Priority>10</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>[Dyne Booster]</Name>
+		<InstallationPath>Dyne Booster</InstallationPath>
+		<Description>Zidance Trance damage boosted.</Description>
+		<Priority>11</Priority>
+	</SubMod>
+</Mod>
+
+<Mod>
+	<Name>FernyDifficultyTweaks</Name>
+	<Version>3.1</Version>
+	<Author>FernyFer</Author>
+	<InstallationPath>FernyDifficultyTweaks</InstallationPath>
+	<ReleaseDate>June 13, 2025</ReleaseDate>
+	<ReleaseDateOriginal>June 2, 2025</ReleaseDateOriginal>
+	<MinimumMemoriaVersion>2025-05-11</MinimumMemoriaVersion>
+	<Description>Increase or Decrease game difficulty!
+Allows the player to select all damage dealt and taken in a modular fashion! Fine-tune the balance of the game to your liking, all in one mod!
+
+Player Damage Dealt:
+- Modular scaling allowing the player to deal anywhere from 25% less damage all the way up to 150% more damage to enemies.
+
+Player Damage Taken:
+- Modular scaling allowing the player to take anywhere from 20% less damage all the way up to 180% more damage from enemies.</Description>
+	<PatchNotes>v3.1: Damage DEALT was not properly calculating and has been fixed. Enjoy nerfing yourself!</PatchNotes>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/101</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/xjer5n2fw39h5kyapyoza/FernyDifficultyTweaks.zip?rlkey=jlt9wczd4irv8qeljd9xj1zbn&amp;st=0xfgnplu&amp;dl=1</DownloadUrl>
+	<PreviewFileUrl>https://i.imgur.com/t3GdBdB.jpeg</PreviewFileUrl>
+	<PreviewFile>TweaksImage.jpg</PreviewFile>
+	<Category>Gameplay</Category>
+	<Header>Player Damage Dealt</Header>
+	<SubMod>
+		<Name>[Easy Mode+]</Name>
+		<InstallationPath>DMG150</InstallationPath>
+		<Description>All player damage DEALT increased to 150%.</Description>
+		<Group>g-dmg</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[Easy Mode]</Name>
+		<InstallationPath>DMG125</InstallationPath>
+		<Description>All player damage DEALT increased to 125%.</Description>
+		<Group>g-dmg</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[Default Mode]</Name>
+		<InstallationPath>DMG100</InstallationPath>
+		<Description>Default player damage DEALT.</Description>
+		<Group>g-dmg</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[Hard Mode]</Name>
+		<InstallationPath>DMG80</InstallationPath>
+		<Description>All player damage DEALT reduced to 80%.</Description>
+		<Group>g-dmg</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[Hard Mode+]</Name>
+		<InstallationPath>DMG60</InstallationPath>
+		<Description>All player damage DEALT reduced to 60%.</Description>
+		<Group>g-dmg</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[Hard Mode++]</Name>
+		<InstallationPath>DMG40</InstallationPath>
+		<Description>All player damage DEALT reduced to 40%.</Description>
+		<Group>g-dmg</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[DarkSouls]</Name>
+		<InstallationPath>DarkSouls</InstallationPath>
+		<Description>All player damage DEALT reduced to 20%.</Description>
+		<Group>g-dmg</Group>
+	</SubMod>
+	<Header>Player Damage Taken</Header>
+	<SubMod>
+		<Name>[Easy Mode]</Name>
+		<InstallationPath>TKN080</InstallationPath>
+		<Description>All player damage TAKEN reduced to 80%.</Description>
+		<Group>g-tkn</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[Default Mode]</Name>
+		<InstallationPath>TKN100</InstallationPath>
+		<Description>Default player damage TAKEN.</Description>
+		<Group>g-tkn</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[Hard Mode]</Name>
+		<InstallationPath>TKN120</InstallationPath>
+		<Description>All player damage TAKEN increased to 120%.</Description>
+		<Group>g-tkn</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[Hard Mode+]</Name>
+		<InstallationPath>TKN140</InstallationPath>
+		<Description>All player damage TAKEN increased to 140%.</Description>
+		<Group>g-tkn</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[Hard Mode++]</Name>
+		<InstallationPath>TKN160</InstallationPath>
+		<Description>All player damage TAKEN increased to 160%.</Description>
+		<Group>g-tkn</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[Hard Mode+++]</Name>
+		<InstallationPath>TKN180</InstallationPath>
+		<Description>All player damage TAKEN increased to 180%.</Description>
+		<Group>g-tkn</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[DarkSoulz]</Name>
+		<InstallationPath>DarkSoulz</InstallationPath>
+		<Description>All player damage TAKEN increased to 200%.</Description>
+		<Group>g-tkn</Group>
+	</SubMod>
+</Mod>
+
 <Mod>
 	<Name>David Bowie Edition</Name>
 	<Version>2.0</Version>
@@ -1784,31 +2140,22 @@ Part of Kupo Mods formerly Mog Add-ons.
 
 <Mod>
 	<Name>Anniversary Portraits</Name>
-	<Version>0.9.2</Version>
+	<Version>0.9.3</Version>
 	<Priority>11</Priority>
 	<InstallationPath>AnniversaryPortraits</InstallationPath>
-	<ReleaseDate>2025-05-31</ReleaseDate>
+	<ReleaseDate>2025-06-10</ReleaseDate>
 	<ReleaseDateOriginal>2025-05-21</ReleaseDateOriginal>
 	<Author>Saro</Author>
 	<Description>Currently replaces the main party's character portraits with the 25th anniversary art.
 
-Placeholder art - Beatrix by Mugi, Marcus by nanpou0406.</Description>
-	<PatchNotes>- Remade all portraits using a higher resolution source and a much better upscaling technique
-	
-- Replaced Blank's portrait with the 23rd Anniversary art
-
-- Added black background option for black borders
-
-- Fixed alignment issues with borders
-
-- Updated preview images to align with changes
-
-- Reduced overall file size with better image compression
+Placeholder art - Marcus by nanpou0406 &amp; Cinna Concept Art.
+	</Description>
+	<PatchNotes>- Replaced Beatrix art with official FFTCG Art.
 	</PatchNotes>
 	<Category>Visual</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/99</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/ag6nzmsf30jehl5lqyy5q/AnniversaryPortraits.zip?rlkey=ppy9gsz3zk3zdaqksneeyzkpa&amp;st=frs31i1m&amp;dl=1</DownloadUrl>
-	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/99/99-1748676885-1006456053.png</PreviewFileUrl>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/99/99-1749532880-1472911301.png</PreviewFileUrl>
 </Mod>
 
 <Mod>
