@@ -103,8 +103,8 @@ namespace Memoria.Data
                 {
                     if (PermanentEffect[i].Condition.Length > 0)
                     {
-                        if (!PermanentEffect[i].Formula.ContainsKey("ActivateSA") && !PermanentEffect[i].Formula.ContainsKey("BanishSA") && !PermanentEffect[i].Formula.ContainsKey("HiddenSA")
-                            && !PermanentEffect[i].Formula.ContainsKey("ActivateSAByLvl") && !PermanentEffect[i].Formula.ContainsKey("BanishSAByLvl"))
+                        if (!PermanentEffect[i].Formula.ContainsKey("ActivateFreeSA") && !PermanentEffect[i].Formula.ContainsKey("BanishSA") && !PermanentEffect[i].Formula.ContainsKey("HiddenSA")
+                            && !PermanentEffect[i].Formula.ContainsKey("ActivateFreeSAByLvl") && !PermanentEffect[i].Formula.ContainsKey("BanishSAByLvl"))
                             continue;
                         Expression c = new Expression(PermanentEffect[i].Condition);
                         NCalcUtility.InitializeExpressionPlayer(ref c, play);
@@ -125,7 +125,7 @@ namespace Memoria.Data
                             SupportAbility SA = (SupportAbility)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)SupportAbility.Void);
                             if (SA == SupportAbility.Void)
                                 continue;
-                            if (String.Equals(formula.Key, "ActivateSA") && !play.saForced.Contains(SA))
+                            if (String.Equals(formula.Key, "ActivateFreeSA") && !play.saForced.Contains(SA))
                             {
                                 play.saForced.Add(SA);
                             }
@@ -134,7 +134,7 @@ namespace Memoria.Data
                                 ff9abil.DisableHierarchyFromSA(play, SA);
                                 play.saBanish.Add(SA);
                             }
-                            else if (String.Equals(formula.Key, "ActivateSAByLvl") && j == 0)
+                            else if (String.Equals(formula.Key, "ActivateFreeSAByLvl") && j == 0)
                             {
                                 SupportAbility BaseSA = ff9abil.GetBaseAbilityFromBoostedAbility(SA);
                                 int LevelSA = 0;

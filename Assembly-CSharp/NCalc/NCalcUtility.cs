@@ -349,6 +349,21 @@ namespace NCalc
                     Int32 saId = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)SupportAbility.Void);
                     args.Result = ff9abil.FF9Abil_IsEnableSA(play.saExtended, (SupportAbility)saId);
                 }
+                else if (name == "HasActivateFreeSA" && args.Parameters.Length == 1)
+                {
+                    Int32 saId = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)SupportAbility.Void);
+                    args.Result = play.saForced.Contains((SupportAbility)saId);
+                }
+                else if (name == "HasBanishSA" && args.Parameters.Length == 1)
+                {
+                    Int32 saId = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)SupportAbility.Void);
+                    args.Result = play.saBanish.Contains((SupportAbility)saId);
+                }
+                else if (name == "HasHiddenSA" && args.Parameters.Length == 1)
+                {
+                    Int32 saId = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)SupportAbility.Void);
+                    args.Result = play.saHidden.Contains((SupportAbility)saId);
+                }
                 else if (name == "HasLearntAbility" && args.Parameters.Length == 1)
                 {
                     Int32 aaId = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)BattleAbilityId.Void);
@@ -452,6 +467,21 @@ namespace NCalc
                     Int32 saIndex = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)SupportAbility.Void);
                     args.Result = unit.HasSupportAbilityByIndex((SupportAbility)saIndex);
                 }
+                else if (name == prefix + "HasActivateFreeSA" && args.Parameters.Length == 1)
+                {
+                    Int32 saIndex = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)SupportAbility.Void);
+                    args.Result = unit.Player.saForced.Contains((SupportAbility)saIndex);
+                }
+                else if(name == prefix + "HasBanishSA" && args.Parameters.Length == 1)
+                {
+                    Int32 saIndex = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)SupportAbility.Void);
+                    args.Result = unit.Player.saBanish.Contains((SupportAbility)saIndex);
+                }
+                else if(name == prefix + "HasHiddenSA" && args.Parameters.Length == 1)
+                {
+                    Int32 saIndex = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)SupportAbility.Void);
+                    args.Result = unit.Player.saHidden.Contains((SupportAbility)saIndex);
+                }
                 else if (name == prefix + "CanUseAbility" && args.Parameters.Length == 1)
                 {
                     Int32 aaIndex = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)BattleAbilityId.Void);
@@ -543,6 +573,12 @@ namespace NCalc
             expr.EvaluateFunction += delegate (String name, FunctionArgs args)
             {
                 if (name == prefix + "HasSA" && args.Parameters.Length == 1)
+                    args.Result = false;
+                else if (name == prefix + "HasActivateFreeSA" && args.Parameters.Length == 1)
+                    args.Result = false;
+                else if (name == prefix + "HasBanishSA" && args.Parameters.Length == 1)
+                    args.Result = false;
+                else if (name == prefix + "HasHiddenSA" && args.Parameters.Length == 1)
                     args.Result = false;
                 else if (name == prefix + "CanUseAbility" && args.Parameters.Length == 1)
                     args.Result = false;
