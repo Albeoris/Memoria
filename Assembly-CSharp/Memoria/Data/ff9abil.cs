@@ -272,7 +272,7 @@ namespace FF9
             player.cur.capa = player.max.capa;
             foreach (SupportAbility SA in CurrentSAEquipped)
             {
-                if (player.cur.capa >= GetSAGemCostFromPlayer(player, SA) && GemsUsed < player.max.capa)
+                if (player.cur.capa >= GetSAGemCostFromPlayer(player, SA) && (GemsUsed + GetSAGemCostFromPlayer(player, SA)) <= player.max.capa)
                 {
                     GemsUsed += GetSAGemCostFromPlayer(player, SA); // GemUsed is a check when using [code=MaxGems] : in some case, currents Gems can't be enough.
                     player.cur.capa -= (uint)GetSAGemCostFromPlayer(player, SA);
