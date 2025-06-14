@@ -20,6 +20,9 @@ public class PLAYER
         this.sa[0] = 0u;
         this.sa[1] = 0u;
         this.saExtended = new HashSet<SupportAbility>();
+        this.saForced = new HashSet<SupportAbility>();
+        this.saBanish = new HashSet<SupportAbility>();
+        this.saHidden = new HashSet<SupportAbility>();
         this.mpCostFactor = 100;
         this.maxHpLimit = ff9play.FF9PLAY_HP_MAX;
         this.maxMpLimit = ff9play.FF9PLAY_MP_MAX;
@@ -91,7 +94,7 @@ public class PLAYER
     {
         Int32 gemCount = 0;
         foreach (SupportAbility saIndex in saExtended)
-            gemCount += ff9abil._FF9Abil_SaData[saIndex].GemsCount;
+            gemCount += (saForced.Contains(saIndex) ? 0 : ff9abil._FF9Abil_SaData[saIndex].GemsCount);
         return gemCount;
     }
 
@@ -185,6 +188,9 @@ public class PLAYER
 
     public UInt32[] sa;
     public HashSet<SupportAbility> saExtended;
+    public HashSet<SupportAbility> saForced;
+    public HashSet<SupportAbility> saBanish;
+    public HashSet<SupportAbility> saHidden;
 
     // Custom fields
     public Int16 mpCostFactor;

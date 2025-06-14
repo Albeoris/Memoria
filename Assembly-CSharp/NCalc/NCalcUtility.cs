@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 
 // NCalc source code embedded in Assembly-CSharp.dll for avoiding a DLL dependency
 // Original author of NCalc: sebastienros, https://archive.codeplex.com/?p=ncalc
@@ -312,8 +311,10 @@ namespace NCalc
             expr.Parameters["Name"] = play.Name;
             expr.Parameters["HP"] = play.cur.hp;
             expr.Parameters["MP"] = play.cur.mp;
+            expr.Parameters["Gems"] = play.cur.capa;
             expr.Parameters["MaxHP"] = play.max.hp;
             expr.Parameters["MaxMP"] = play.max.mp;
+            expr.Parameters["MaxGems"] = play.max.capa;
             expr.Parameters["Level"] = (Int32)play.level;
             expr.Parameters["Exp"] = play.exp;
             expr.Parameters["Speed"] = (Int32)play.elem.dex;
@@ -322,11 +323,11 @@ namespace NCalc
             expr.Parameters["Spirit"] = (Int32)play.elem.wpr;
             expr.Parameters["Defence"] = play.defence.PhysicalDefence;
             expr.Parameters["Evade"] = play.defence.PhysicalEvade;
+            expr.Parameters["MagicDefence"] = play.defence.MagicalDefence;
+            expr.Parameters["MagicEvade"] = play.defence.MagicalEvade;
             expr.Parameters["Trance"] = play.trance;
             expr.Parameters["PlayerStatus"] = (UInt64)play.status;
             expr.Parameters["PlayerPermanentStatus"] = (UInt64)play.permanent_status;
-            expr.Parameters["MagicDefence"] = play.defence.MagicalDefence;
-            expr.Parameters["MagicEvade"] = play.defence.MagicalEvade;
             expr.Parameters["MaxHPLimit"] = play.maxHpLimit;
             expr.Parameters["MaxMPLimit"] = play.maxMpLimit;
             expr.Parameters["MaxDamageLimit"] = play.maxDamageLimit;
