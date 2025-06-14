@@ -112,18 +112,17 @@ namespace Memoria.Launcher
                 AreThereModUpdates = false;
                 AreThereModIncompatibilies = false;
 
-                foreach (Mod mod in ModListInstalled) // reset state
-                {
-                    mod.UpdateIcon = null;
-                    mod.UpdateTooltip = null;
-                    mod.IncompIcon = null;
-                    mod.ActiveIncompatibleMods = null;
-                }
-
                 foreach (Mod mod in ModListInstalled)
                 {
                     if (mod == null || mod.Name == null)
                         continue;
+
+                    // reset state
+                    mod.UpdateIcon = null;
+                    mod.UpdateTooltip = null;
+                    mod.IncompIcon = null;
+                    mod.ActiveIncompatibleMods = null;
+
                     if (((mod.Name == "Moguri Mod" || mod.Name == "MoguriFiles") && mod.InstallationPath.Contains("MoguriFiles")) || (mod.Name == "Moguri - 3D textures" && mod.InstallationPath.Contains("Moguri_3Dtextures")))
                     {
                         mod.UpdateIcon = UpdateEmoji;
@@ -137,8 +136,7 @@ namespace Memoria.Launcher
                     {
                         if (catalog_mod != null && catalog_mod.Name != null && mod.Name == catalog_mod.Name)
                         {
-                            Boolean versionCorresponds = mod.CurrentVersion == catalog_mod.CurrentVersion;
-                            mod.IsOutdated = catalog_mod.IsOutdated = !versionCorresponds;
+                            mod.IsOutdated = catalog_mod.IsOutdated = mod.CurrentVersion < catalog_mod.CurrentVersion;
                             if (mod.IsOutdated)
                             {
                                 mod.UpdateIcon = UpdateEmoji;
@@ -243,12 +241,6 @@ namespace Memoria.Launcher
             }
         }
 
-        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            lstMods.Items.Refresh();
-            lstCatalogMods.Items.Refresh();
-        }
-
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
             Mod mod = (sender as CheckBox)?.DataContext as Mod;
@@ -257,6 +249,24 @@ namespace Memoria.Launcher
             CheckOutdatedAndIncompatibleMods();
             UpdateModSettings();
             RefreshModOptions();
+        }
+
+        private void UpdateIcon_Click(object sender, RoutedEventArgs e)
+        {
+            Mod installedMod = (sender as Button)?.DataContext as Mod;
+            if (installedMod == null || installedMod.Name == null)
+                return;
+
+            Mod mod = Mod.SearchWithName(ModListCatalog, installedMod.Name);
+            if (mod != null)
+            {
+                tabCtrlMain.SelectedIndex = 1;
+                DownloadList.Add(mod);
+                DownloadStart(mod);
+                mod.Installed = WaitingEmoji;
+                lstCatalogMods.SelectedItem = mod;
+                lstCatalogMods.ScrollIntoView(mod);
+            }
         }
 
         private void OnClosing(Object sender, CancelEventArgs e)
@@ -604,8 +614,16 @@ namespace Memoria.Launcher
                 try
                 {
                     downloadingMod.PercentComplete = e.ProgressPercentage;
-                    downloadingMod.DownloadSpeed = $"{(Int64)(e.BytesReceived / 1024.0 / timeSpan)} {(String)Lang.Res["Measurement.KByteAbbr"]}/{(String)Lang.Res["Measurement.SecondAbbr"]}";
-                    downloadingMod.RemainingTime = $"{TimeSpan.FromSeconds((e.TotalBytesToReceive - e.BytesReceived) * timeSpan / e.BytesReceived):g}";
+                    Int64 dlSpeed = (Int64)(e.BytesReceived / 1024.0 / timeSpan);
+                    String measurement = (String)Lang.Res["Measurement.KByteAbbr"];
+                    if (dlSpeed > 1024)
+                    {
+                        dlSpeed /= 1024;
+                        measurement = (String)Lang.Res["Measurement.MByteAbbr"];
+                    }
+
+                    downloadingMod.DownloadSpeed = $"{dlSpeed} {measurement}/{(String)Lang.Res["Measurement.SecondAbbr"]}";
+                    downloadingMod.RemainingTime = $"{TimeSpan.FromSeconds(Math.Round((e.TotalBytesToReceive - e.BytesReceived) * timeSpan / e.BytesReceived)):g}";
                 }
                 catch (NullReferenceException) // added to catch a race condition that sometimes occures where Ui tries to update but download has finished
                 {
@@ -639,9 +657,35 @@ namespace Memoria.Launcher
                 downloadingPath = "";
                 return;
             }
-            downloadingPath = "";
+
             Dispatcher.BeginInvoke((MethodInvoker)async delegate
             {
+                Thread extractingThread = new Thread(() =>
+                {
+                    downloadingMod.PercentComplete = 0;
+                    downloadingMod.DownloadSpeed = $"{WaitingEmoji} {(String)Lang.Res["ModEditor.Extracting"]}";
+                    downloadingMod.RemainingTime = "";
+                    String dots = "";
+                    while (true)
+                    {
+                        try
+                        {
+                            dots = dots == "..." ? "" : dots + ".";
+                            Dispatcher.BeginInvoke((MethodInvoker)delegate
+                            {
+                                downloadingMod.RemainingTime = dots;
+                                lstDownloads.Items.Refresh();
+                            });
+                            Thread.Sleep(500);
+                        }
+                        catch
+                        {
+                            downloadingMod.DownloadSpeed = "";
+                            downloadingMod.RemainingTime = "";
+                        }
+                    }
+                });
+
                 String downloadingModName = downloadingMod.Name;
                 String path = Mod.INSTALLATION_TMP + "/" + (downloadingMod.InstallationPath ?? downloadingModName);
                 Boolean success = false;
@@ -657,7 +701,9 @@ namespace Memoria.Launcher
                         Boolean moveDesc = false;
                         String sourcePath = "";
                         String destPath = "";
+                        extractingThread.Start();
                         await ExtractAllFileFromArchive(path + downloadFormatExtLower, path);
+                        extractingThread.Abort();
                         File.Delete(path + downloadFormatExtLower);
 
                         String descPath = null;
@@ -830,7 +876,6 @@ namespace Memoria.Launcher
                 if (activateTheNewMod)
                 {
                     Mod newMod = Mod.SearchWithName(ModListInstalled, downloadingModName);
-                    if (newMod != null)
                     {
                         newMod.IsActive = true;
                         foreach (Mod submod in newMod.SubMod)
@@ -1253,7 +1298,7 @@ namespace Memoria.Launcher
                         previewPath = $"./{submod.ParentMod.InstallationPath}/{submod.PreviewFile}";
                     if (!String.IsNullOrEmpty(submod.PreviewFileUrl) && (String.IsNullOrEmpty(submod.PreviewFile) || !File.Exists(previewPath)))
                         previewPath = submod.PreviewFileUrl;
-                    UiGrid.MakeTooltip(grid, submod.Description, previewPath, "");
+                    UiGrid.MakeTooltip(grid, submod.Description, previewPath, "", placement: System.Windows.Controls.Primitives.PlacementMode.Left);
                 }
                 count++;
             }
@@ -1335,7 +1380,11 @@ namespace Memoria.Launcher
         private void UpdateInstalledPriorityValue()
         {
             for (Int32 i = 0; i < ModListInstalled.Count; i++)
-                ModListInstalled[i].Priority = i + 1;
+            {
+                Mod mod = Mod.SearchWithName(ModListCatalog, ModListInstalled[i].Name);
+                if(mod != null)
+                    ModListInstalled[i].Priority = mod.Priority;
+            }
             lstMods.Items.Refresh();
             UpdateModSettings();
         }

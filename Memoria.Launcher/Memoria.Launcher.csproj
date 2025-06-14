@@ -263,11 +263,6 @@
   <ItemGroup>
     <PackageReference Include="SharpCompress" Version="0.38.0" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\ChangeLog.txt">
-      <TargetPath>ChangeLog.txt</TargetPath>
-    </EmbeddedResource>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterResolveReferences">
     <ItemGroup>
