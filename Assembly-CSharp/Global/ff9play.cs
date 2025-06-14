@@ -247,6 +247,8 @@ public static class ff9play
         play.cur.hp = ccommon.min((UInt32)oldHP, play.max.hp);
         play.cur.mp = ccommon.min((UInt32)oldMP, play.max.mp);
         play.cur.capa = play.max.capa - oldStoneUse;
+        play.basis.capa = play.cur.capa;
+        play.basis.max_capa = play.max.capa;
         if (init)
         {
             play.cur.hp = play.max.hp;
@@ -264,8 +266,6 @@ public static class ff9play
             play.cur.capa = (UInt32)oldStoneCapa;
             play.max.capa = (UInt32)oldStoneMax;
         }
-        play.basis.capa = play.cur.capa;
-        play.basis.max_capa = play.max.capa;
         if (oldStoneUse <= play.max.capa)
             return;
         FF9Play_UpdateSA(play);

@@ -6,7 +6,7 @@
     <ProjectGuid>{95BC3C2C-0C8B-41B6-92E8-49D301119BE8}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AssemblyName>Memoria.Launcher</AssemblyName>
-    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <IsWebBootstrapper>false</IsWebBootstrapper>
