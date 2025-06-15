@@ -3,8 +3,6 @@ using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
 using Memoria.Prime;
-using Memoria.Prime.Collections;
-using Memoria.Prime.CSV;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -101,7 +99,22 @@ namespace FF9
             return result;
         }
 
-        public static void FF9Abil_SetEnableSA(PLAYER player, SupportAbility saIndex, Boolean enable)
+        public static List<SupportingAbilityFeature> GetEnabledGlobalSA(PLAYER player)
+        {
+            return GetEnabledGlobalSA(player.saExtended);
+        }
+
+        public static List<SupportingAbilityFeature> GetEnabledGlobalSA(HashSet<SupportAbility> saExtended)
+        {
+            List<SupportingAbilityFeature> result = new List<SupportingAbilityFeature>();
+            if (_FF9Abil_SaFeature.ContainsKey((SupportAbility)(-1))) // Global
+                result.Add(_FF9Abil_SaFeature[(SupportAbility)(-1)]);
+            if (_FF9Abil_SaFeature.ContainsKey((SupportAbility)(-2))) // GlobalLast
+                result.Add(_FF9Abil_SaFeature[(SupportAbility)(-2)]);
+            return result;
+        }
+
+        public static void FF9Abil_SetEnableSA(PLAYER player, SupportAbility saIndex, Boolean enable, Boolean GemCost = false)
         {
             if (enable)
                 player.saExtended.Add(saIndex);
@@ -113,6 +126,11 @@ namespace FF9
                     player.sa[(Int32)saIndex >> 5] |= (UInt32)(1 << (Int32)saIndex);
                 else
                     player.sa[(Int32)saIndex >> 5] &= (UInt32)~(1 << (Int32)saIndex);
+            }
+            if (GemCost && (Configuration.Battle.LockEquippedAbilities == 0 || Configuration.Battle.LockEquippedAbilities == 2))
+            {
+                CharacterAbilityGems saData = GetSupportAbilityGem(GetAbilityIdFromSupportAbility(saIndex));
+                player.cur.capa += (uint)(enable ? -saData.GemsCount : saData.GemsCount);
             }
         }
 
@@ -193,7 +211,93 @@ namespace FF9
 
         public static List<SupportAbility> GetBoostedAbilityList(SupportAbility baseAbil)
         {
-            return ff9abil._FF9Abil_SaData[baseAbil].Boosted;
+            return _FF9Abil_SaData[baseAbil].Boosted;
+        }
+
+        public static SupportAbility GetBaseAbilityFromBoostedAbility(SupportAbility boostedAbil)
+        {
+            foreach (var kvp in _FF9Abil_SaData)
+                if (kvp.Value.Boosted.Contains(boostedAbil))
+                    return kvp.Key;
+            return boostedAbil;
+        }
+
+        public static List<SupportAbility> GetHierarchyFromAnySA(SupportAbility baseAbil)
+        {
+            SupportAbility BaseSA = GetBaseAbilityFromBoostedAbility(baseAbil);
+            List<SupportAbility> boostedList = GetBoostedAbilityList(BaseSA);
+            List<SupportAbility> SAFullHierarchy = new List<SupportAbility>();
+            SAFullHierarchy.Add(BaseSA);
+            foreach (SupportAbility BoostedSA in boostedList)
+                SAFullHierarchy.Add(BoostedSA);
+
+            return SAFullHierarchy;
+        }
+
+        public static void DisableAllHierarchyFromSA(PLAYER player, SupportAbility baseAbil)
+        {
+            foreach (SupportAbility SAtoReset in GetHierarchyFromAnySA(baseAbil))
+                if (FF9Abil_IsEnableSA(player.saExtended, SAtoReset))
+                    FF9Abil_SetEnableSA(player, SAtoReset, false);
+        }
+
+        public static void DisableHierarchyFromSA(PLAYER player, SupportAbility baseAbil)
+        {
+            Boolean Skip = true;
+            foreach (SupportAbility SAtoReset in GetHierarchyFromAnySA(baseAbil))
+            {
+                if (Skip && SAtoReset != baseAbil)
+                    continue;
+                else
+                {
+                    Skip = false;
+                    if (FF9Abil_IsEnableSA(player.saExtended, SAtoReset))
+                        FF9Abil_SetEnableSA(player, SAtoReset, false, SAtoReset != baseAbil);
+                }
+            }
+        }
+
+        public static List<SupportAbility> GetNonForcedSAInHierarchy(PLAYER player, SupportAbility baseAbil)
+        {
+            List<SupportAbility> SAFullHierarchy = GetHierarchyFromAnySA(baseAbil);
+            List<SupportAbility> SAHierarchyWithoutForced = new List<SupportAbility>();
+            foreach (SupportAbility NoForcedSA in SAFullHierarchy)
+                if (!player.saForced.Contains(NoForcedSA))
+                    SAHierarchyWithoutForced.Add(NoForcedSA);
+
+            return SAHierarchyWithoutForced;
+        }
+
+        public static void CalculateGemsPlayer(PLAYER player)
+        {
+            if (Configuration.Battle.LockEquippedAbilities == 1 || Configuration.Battle.LockEquippedAbilities == 3)
+                return;
+
+            String NotEnoughGemsLog = null;
+            int GemsUsed = 0;
+
+            HashSet<SupportAbility> CurrentSAEquipped = new HashSet<SupportAbility>();
+            foreach (SupportAbility SAInject in player.saExtended)
+                CurrentSAEquipped.Add(SAInject);
+
+            player.cur.capa = player.max.capa;
+            foreach (SupportAbility SA in CurrentSAEquipped)
+            {
+                if (player.cur.capa >= GetSAGemCostFromPlayer(player, SA) && (GemsUsed + GetSAGemCostFromPlayer(player, SA)) <= player.max.capa)
+                {
+                    GemsUsed += GetSAGemCostFromPlayer(player, SA); // GemUsed is a check when using [code=MaxGems] : in some case, currents Gems can't be enough.
+                    player.cur.capa -= (uint)GetSAGemCostFromPlayer(player, SA);
+                }
+                else
+                {
+                    FF9Abil_SetEnableSA(player, SA, false);
+                    NotEnoughGemsLog += $"{SA} ";
+                    player.cur.capa = (uint)Math.Min(player.cur.capa + GetSAGemCostFromPlayer(player, SA), player.max.capa);
+                }
+            }
+
+            if (!String.IsNullOrEmpty(NotEnoughGemsLog))
+                Log.Message($"[CalculateGemsPlayer] Not enough gems for {player.Name}, these SA are removed => {NotEnoughGemsLog}");
         }
 
         public static Int32 GetBoostedAbilityMaxLevel(PLAYER player, SupportAbility baseAbil)
@@ -215,6 +319,13 @@ namespace FF9
                 if (!FF9Abil_IsEnableSA(player.saExtended, boosted[level]))
                     return level;
             return boosted.Count;
+        }
+
+        public static Int32 GetSAGemCostFromPlayer(PLAYER player, SupportAbility baseAbil)
+        {
+            if (player.saForced.Contains(baseAbil))
+                return 0;
+            return _FF9Abil_SaData[baseAbil].GemsCount;
         }
 
         // The followings are also used by CsvParser and CsvWriter, so any change of behaviour should be reflected there as well
