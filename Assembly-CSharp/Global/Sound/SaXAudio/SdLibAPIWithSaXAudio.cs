@@ -23,6 +23,8 @@ namespace Global.Sound.SaXAudio
 
         private static readonly Dictionary<Int32, BankData> bankData = new Dictionary<Int32, BankData>();
 
+        private Int32 busMusic;
+        private Int32 busAmbient;
         private Int32 busSoundEffects;
         private Int32 busVoices;
 
@@ -33,6 +35,8 @@ namespace Global.Sound.SaXAudio
             SoundLib.Log("Create");
             if (SaXAudio.Init())
             {
+                busMusic = SaXAudio.CreateBus();
+                busAmbient = SaXAudio.CreateBus();
                 busSoundEffects = SaXAudio.CreateBus();
                 busVoices = SaXAudio.CreateBus();
                 Log.Message($"[SaXAudio] Initialized");
@@ -123,17 +127,23 @@ namespace Global.Sound.SaXAudio
             BankData data = bankData[bankID];
             Int32 busID = -1;
 
-            if (data.Profile.SoundProfileType == SoundProfileType.Voice)
+            switch (data.Profile.SoundProfileType)
             {
-                busID = busVoices;
+                case SoundProfileType.Music:
+                    busID = busMusic;
+                    break;
+                case SoundProfileType.Voice:
+                    busID = busVoices;
+                    break;
+                case SoundProfileType.SoundEffect:
+                case SoundProfileType.Sfx:
+                case SoundProfileType.Song:
+                    if (data.LoopEnd != 0)
+                        busID = busAmbient;
+                    else if(!data.Profile.ResourceID.StartsWith("Sounds02/SE00"))
+                        busID = busSoundEffects;
+                    break;
             }
-            else if ((data.Profile.SoundProfileType == SoundProfileType.SoundEffect || data.Profile.SoundProfileType == SoundProfileType.Sfx)
-                && data.LoopEnd == 0
-                && !data.Profile.ResourceID.StartsWith("Sounds02/SE00"))
-            {
-                busID = busSoundEffects;
-            }
-
             Int32 soundID = SaXAudio.CreateVoice(bankID, busID);
             if (soundID >= 0)
             {

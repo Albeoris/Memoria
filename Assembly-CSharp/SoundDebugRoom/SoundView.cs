@@ -1,4 +1,5 @@
-﻿using Assets.Sources.Scripts.Common;
+﻿using Assets.Scripts.Common;
+using Assets.Sources.Scripts.Common;
 using Global.Sound.SaXAudio;
 using Memoria.Prime;
 using System;
@@ -17,25 +18,35 @@ namespace SoundDebugRoom
 
         private void OnEnable()
         {
+            Log.Message(SceneDirector.Instance.CurrentScene);
+
             var state = PersistenSingleton<UIManager>.Instance.State;
             if (state != UIManager.UIState.Pause)
                 PersistenSingleton<UIManager>.Instance.GetSceneFromState(state).OnKeyPause(null);
 
             previousState = PersistenSingleton<UIManager>.Instance.State;
             PersistenSingleton<UIManager>.Instance.State = UIManager.UIState.Quit;
+
+            if (SceneDirector.Instance.CurrentScene == "Title")
+                PersistenSingleton<UIManager>.Instance.TitleScene?.gameObject?.SetActive(false);
         }
 
         private void OnDisable()
         {
             soundViewController.StopActiveSound();
+            soundViewController.SetActiveSoundType(SoundProfileType.Default);
 
             PersistenSingleton<UIManager>.Instance.State = previousState;
             if (previousState == UIManager.UIState.Pause)
                 PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State).OnKeyPause(null);
+
+            if (SceneDirector.Instance.CurrentScene == "Title")
+                PersistenSingleton<UIManager>.Instance.TitleScene?.gameObject?.SetActive(true);
         }
 
         private void OnApplicationQuit()
         {
+            // Disabling so we don't hide the confirm window
             enabled = false;
         }
 
@@ -416,8 +427,18 @@ namespace SoundDebugRoom
 
                     GUILayout.Space(4);
                     BuildReverbParameters(width, sliderWidth, buttonWidth);
-                    BuildEqParameters(width, sliderWidth, buttonWidth);
-                    BuildEchoParameters(width, sliderWidth, buttonWidth);
+                    GUILayout.BeginVertical();
+                    {
+                        BuildEqParameters(width, sliderWidth, buttonWidth);
+
+                        GUILayout.BeginHorizontal();
+                        {
+                            BuildEchoParameters(width, sliderWidth, buttonWidth);
+                            BuildVolumeParameter(width, sliderWidth, buttonWidth);
+                        }
+                        GUILayout.EndHorizontal();
+                    }
+                    GUILayout.EndVertical();
                 }
                 GUILayout.EndHorizontal();
             }
@@ -442,93 +463,93 @@ namespace SoundDebugRoom
                             {
                                 soundViewController.IsReverbEnabled = !soundViewController.IsReverbEnabled;
                                 if (soundViewController.IsReverbEnabled)
-                                    soundViewController.SetReverb(ref soundViewController.Reverb);
+                                    soundViewController.SetReverb();
                                 else
                                     soundViewController.RemoveReverb();
                             }
                             if (GUILayout.Button("Reset", GUILayout.Width(buttonWidth)))
                             {
-                                soundViewController.Reverb = new SaXAudio.ReverbParameters();
+                                soundViewController.CurrentEffect.Reverb = new SaXAudio.ReverbParameters();
                                 update = true;
                             }
                         }
                         GUILayout.EndHorizontal();
-                        Single result = BuildEffectParam("WetDryMix", soundViewController.Reverb.WetDryMix, 0, 100, 0.5f, sliderWidth, "F1");
-                        if (soundViewController.Reverb.WetDryMix != result)
+                        Single result = BuildEffectParam("WetDryMix", soundViewController.CurrentEffect.Reverb.WetDryMix, 0, 100, 0.5f, sliderWidth, "F1");
+                        if (soundViewController.CurrentEffect.Reverb.WetDryMix != result)
                         {
-                            soundViewController.Reverb.WetDryMix = result;
+                            soundViewController.CurrentEffect.Reverb.WetDryMix = result;
                             update = true;
                         }
 
                         GUILayout.Label("Indexed parameters (no units)");
 
-                        result = BuildEffectParam("PositionLeft", soundViewController.Reverb.PositionLeft, 0, 30, 1, sliderWidth);
-                        if (soundViewController.Reverb.PositionLeft != result)
+                        result = BuildEffectParam("PositionLeft", soundViewController.CurrentEffect.Reverb.PositionLeft, 0, 30, 1, sliderWidth);
+                        if (soundViewController.CurrentEffect.Reverb.PositionLeft != result)
                         {
-                            soundViewController.Reverb.PositionLeft = (Byte)result;
+                            soundViewController.CurrentEffect.Reverb.PositionLeft = (Byte)result;
                             update = true;
                         }
 
-                        result = BuildEffectParam("PositionRight", soundViewController.Reverb.PositionRight, 0, 30, 1, sliderWidth);
-                        if (soundViewController.Reverb.PositionRight != result)
+                        result = BuildEffectParam("PositionRight", soundViewController.CurrentEffect.Reverb.PositionRight, 0, 30, 1, sliderWidth);
+                        if (soundViewController.CurrentEffect.Reverb.PositionRight != result)
                         {
-                            soundViewController.Reverb.PositionRight = (Byte)result;
+                            soundViewController.CurrentEffect.Reverb.PositionRight = (Byte)result;
                             update = true;
                         }
 
-                        result = BuildEffectParam("PositionMatrixLeft", soundViewController.Reverb.PositionMatrixLeft, 0, 30, 1, sliderWidth);
-                        if (soundViewController.Reverb.PositionMatrixLeft != result)
+                        result = BuildEffectParam("PositionMatrixLeft", soundViewController.CurrentEffect.Reverb.PositionMatrixLeft, 0, 30, 1, sliderWidth);
+                        if (soundViewController.CurrentEffect.Reverb.PositionMatrixLeft != result)
                         {
-                            soundViewController.Reverb.PositionMatrixLeft = (Byte)result;
+                            soundViewController.CurrentEffect.Reverb.PositionMatrixLeft = (Byte)result;
                             update = true;
                         }
 
-                        result = BuildEffectParam("PositionMatrixRight", soundViewController.Reverb.PositionMatrixRight, 0, 30, 1, sliderWidth);
-                        if (soundViewController.Reverb.PositionMatrixRight != result)
+                        result = BuildEffectParam("PositionMatrixRight", soundViewController.CurrentEffect.Reverb.PositionMatrixRight, 0, 30, 1, sliderWidth);
+                        if (soundViewController.CurrentEffect.Reverb.PositionMatrixRight != result)
                         {
-                            soundViewController.Reverb.PositionMatrixRight = (Byte)result;
+                            soundViewController.CurrentEffect.Reverb.PositionMatrixRight = (Byte)result;
                             update = true;
                         }
 
-                        result = BuildEffectParam("EarlyDiffusion", soundViewController.Reverb.EarlyDiffusion, 0, 15, 1, sliderWidth);
-                        if (soundViewController.Reverb.EarlyDiffusion != result)
+                        result = BuildEffectParam("EarlyDiffusion", soundViewController.CurrentEffect.Reverb.EarlyDiffusion, 0, 15, 1, sliderWidth);
+                        if (soundViewController.CurrentEffect.Reverb.EarlyDiffusion != result)
                         {
-                            soundViewController.Reverb.EarlyDiffusion = (Byte)result;
+                            soundViewController.CurrentEffect.Reverb.EarlyDiffusion = (Byte)result;
                             update = true;
                         }
 
-                        result = BuildEffectParam("LateDiffusion", soundViewController.Reverb.LateDiffusion, 0, 15, 1, sliderWidth);
-                        if (soundViewController.Reverb.LateDiffusion != result)
+                        result = BuildEffectParam("LateDiffusion", soundViewController.CurrentEffect.Reverb.LateDiffusion, 0, 15, 1, sliderWidth);
+                        if (soundViewController.CurrentEffect.Reverb.LateDiffusion != result)
                         {
-                            soundViewController.Reverb.LateDiffusion = (Byte)result;
+                            soundViewController.CurrentEffect.Reverb.LateDiffusion = (Byte)result;
                             update = true;
                         }
 
-                        result = BuildEffectParam("LowEQGain", soundViewController.Reverb.LowEQGain, 0, 12, 1, sliderWidth);
-                        if (soundViewController.Reverb.LowEQGain != result)
+                        result = BuildEffectParam("LowEQGain", soundViewController.CurrentEffect.Reverb.LowEQGain, 0, 12, 1, sliderWidth);
+                        if (soundViewController.CurrentEffect.Reverb.LowEQGain != result)
                         {
-                            soundViewController.Reverb.LowEQGain = (Byte)result;
+                            soundViewController.CurrentEffect.Reverb.LowEQGain = (Byte)result;
                             update = true;
                         }
 
-                        result = BuildEffectParam("LowEQCutoff", soundViewController.Reverb.LowEQCutoff, 0, 9, 1, sliderWidth);
-                        if (soundViewController.Reverb.LowEQCutoff != result)
+                        result = BuildEffectParam("LowEQCutoff", soundViewController.CurrentEffect.Reverb.LowEQCutoff, 0, 9, 1, sliderWidth);
+                        if (soundViewController.CurrentEffect.Reverb.LowEQCutoff != result)
                         {
-                            soundViewController.Reverb.LowEQCutoff = (Byte)result;
+                            soundViewController.CurrentEffect.Reverb.LowEQCutoff = (Byte)result;
                             update = true;
                         }
 
-                        result = BuildEffectParam("HighEQGain", soundViewController.Reverb.HighEQGain, 0, 8, 1, sliderWidth);
-                        if (soundViewController.Reverb.HighEQGain != result)
+                        result = BuildEffectParam("HighEQGain", soundViewController.CurrentEffect.Reverb.HighEQGain, 0, 8, 1, sliderWidth);
+                        if (soundViewController.CurrentEffect.Reverb.HighEQGain != result)
                         {
-                            soundViewController.Reverb.HighEQGain = (Byte)result;
+                            soundViewController.CurrentEffect.Reverb.HighEQGain = (Byte)result;
                             update = true;
                         }
 
-                        result = BuildEffectParam("HighEQCutoff", soundViewController.Reverb.HighEQCutoff, 0, 14, 1, sliderWidth);
-                        if (soundViewController.Reverb.HighEQCutoff != result)
+                        result = BuildEffectParam("HighEQCutoff", soundViewController.CurrentEffect.Reverb.HighEQCutoff, 0, 14, 1, sliderWidth);
+                        if (soundViewController.CurrentEffect.Reverb.HighEQCutoff != result)
                         {
-                            soundViewController.Reverb.HighEQCutoff = (Byte)result;
+                            soundViewController.CurrentEffect.Reverb.HighEQCutoff = (Byte)result;
                             update = true;
                         }
                     }
@@ -537,88 +558,88 @@ namespace SoundDebugRoom
                     {
                         GUILayout.Label("Delay times (ms)");
 
-                        Single result = BuildEffectParam("ReflectionsDelay", soundViewController.Reverb.ReflectionsDelay, 0, 300, 1, sliderWidth);
-                        if (soundViewController.Reverb.ReflectionsDelay != result)
+                        Single result = BuildEffectParam("ReflectionsDelay", soundViewController.CurrentEffect.Reverb.ReflectionsDelay, 0, 300, 1, sliderWidth);
+                        if (soundViewController.CurrentEffect.Reverb.ReflectionsDelay != result)
                         {
-                            soundViewController.Reverb.ReflectionsDelay = (UInt32)result;
+                            soundViewController.CurrentEffect.Reverb.ReflectionsDelay = (UInt32)result;
                             update = true;
                         }
 
-                        result = BuildEffectParam("ReverbDelay", soundViewController.Reverb.ReverbDelay, 0, 85, 1, sliderWidth);
-                        if (soundViewController.Reverb.ReverbDelay != result)
+                        result = BuildEffectParam("ReverbDelay", soundViewController.CurrentEffect.Reverb.ReverbDelay, 0, 85, 1, sliderWidth);
+                        if (soundViewController.CurrentEffect.Reverb.ReverbDelay != result)
                         {
-                            soundViewController.Reverb.ReverbDelay = (Byte)result;
+                            soundViewController.CurrentEffect.Reverb.ReverbDelay = (Byte)result;
                             update = true;
                         }
 
-                        result = BuildEffectParam("RearDelay", soundViewController.Reverb.RearDelay, 0, 5, 1, sliderWidth);
-                        if (soundViewController.Reverb.RearDelay != result)
+                        result = BuildEffectParam("RearDelay", soundViewController.CurrentEffect.Reverb.RearDelay, 0, 5, 1, sliderWidth);
+                        if (soundViewController.CurrentEffect.Reverb.RearDelay != result)
                         {
-                            soundViewController.Reverb.RearDelay = (Byte)result;
+                            soundViewController.CurrentEffect.Reverb.RearDelay = (Byte)result;
                             update = true;
                         }
 
-                        result = BuildEffectParam("SideDelay", soundViewController.Reverb.SideDelay, 0, 5, 1, sliderWidth);
-                        if (soundViewController.Reverb.SideDelay != result)
+                        result = BuildEffectParam("SideDelay", soundViewController.CurrentEffect.Reverb.SideDelay, 0, 5, 1, sliderWidth);
+                        if (soundViewController.CurrentEffect.Reverb.SideDelay != result)
                         {
-                            soundViewController.Reverb.SideDelay = (Byte)result;
+                            soundViewController.CurrentEffect.Reverb.SideDelay = (Byte)result;
                             update = true;
                         }
 
                         GUILayout.Label("Direct parameters");
 
-                        result = BuildEffectParam("RoomFilterFreq", soundViewController.Reverb.RoomFilterFreq, 20, 20000, 10, sliderWidth);
-                        if (soundViewController.Reverb.RoomFilterFreq != result)
+                        result = BuildEffectParam("RoomFilterFreq", soundViewController.CurrentEffect.Reverb.RoomFilterFreq, 20, 20000, 10, sliderWidth);
+                        if (soundViewController.CurrentEffect.Reverb.RoomFilterFreq != result)
                         {
-                            soundViewController.Reverb.RoomFilterFreq = (UInt32)result;
+                            soundViewController.CurrentEffect.Reverb.RoomFilterFreq = (UInt32)result;
                             update = true;
                         }
 
-                        result = BuildEffectParam("RoomFilterMain", soundViewController.Reverb.RoomFilterMain, -100f, 0, 0.5f, sliderWidth, "F1");
-                        if (soundViewController.Reverb.RoomFilterMain != result)
+                        result = BuildEffectParam("RoomFilterMain", soundViewController.CurrentEffect.Reverb.RoomFilterMain, -100f, 0, 0.5f, sliderWidth, "F1");
+                        if (soundViewController.CurrentEffect.Reverb.RoomFilterMain != result)
                         {
-                            soundViewController.Reverb.RoomFilterMain = result;
+                            soundViewController.CurrentEffect.Reverb.RoomFilterMain = result;
                             update = true;
                         }
 
-                        result = BuildEffectParam("RoomFilterHF", soundViewController.Reverb.RoomFilterHF, -100f, 0, 0.5f, sliderWidth, "F1");
-                        if (soundViewController.Reverb.RoomFilterHF != result)
+                        result = BuildEffectParam("RoomFilterHF", soundViewController.CurrentEffect.Reverb.RoomFilterHF, -100f, 0, 0.5f, sliderWidth, "F1");
+                        if (soundViewController.CurrentEffect.Reverb.RoomFilterHF != result)
                         {
-                            soundViewController.Reverb.RoomFilterHF = result;
+                            soundViewController.CurrentEffect.Reverb.RoomFilterHF = result;
                             update = true;
                         }
 
-                        result = BuildEffectParam("ReflectionsGain", soundViewController.Reverb.ReflectionsGain, -100f, 20, 0.5f, sliderWidth, "F1");
-                        if (soundViewController.Reverb.ReflectionsGain != result)
+                        result = BuildEffectParam("ReflectionsGain", soundViewController.CurrentEffect.Reverb.ReflectionsGain, -100f, 20, 0.5f, sliderWidth, "F1");
+                        if (soundViewController.CurrentEffect.Reverb.ReflectionsGain != result)
                         {
-                            soundViewController.Reverb.ReflectionsGain = result;
+                            soundViewController.CurrentEffect.Reverb.ReflectionsGain = result;
                             update = true;
                         }
 
-                        result = BuildEffectParam("ReverbGain", soundViewController.Reverb.ReverbGain, -100f, 20, 0.5f, sliderWidth, "F1");
-                        if (soundViewController.Reverb.ReverbGain != result)
+                        result = BuildEffectParam("ReverbGain", soundViewController.CurrentEffect.Reverb.ReverbGain, -100f, 20, 0.5f, sliderWidth, "F1");
+                        if (soundViewController.CurrentEffect.Reverb.ReverbGain != result)
                         {
-                            soundViewController.Reverb.ReverbGain = result;
+                            soundViewController.CurrentEffect.Reverb.ReverbGain = result;
                             update = true;
                         }
 
-                        result = BuildEffectParam("DecayTime", soundViewController.Reverb.DecayTime * 1000f, 100f, 5000f, 10f, sliderWidth, "F1") / 1000f;
-                        if (soundViewController.Reverb.DecayTime != result)
+                        result = BuildEffectParam("DecayTime", soundViewController.CurrentEffect.Reverb.DecayTime * 1000f, 100f, 5000f, 10f, sliderWidth, "F1") / 1000f;
+                        if (soundViewController.CurrentEffect.Reverb.DecayTime != result)
                         {
-                            soundViewController.Reverb.DecayTime = result;
+                            soundViewController.CurrentEffect.Reverb.DecayTime = result;
                             update = true;
                         }
 
-                        result = BuildEffectParam("Density", soundViewController.Reverb.Density, 0, 100, 0.5f, sliderWidth, "F1");
-                        if (soundViewController.Reverb.Density != result)
+                        result = BuildEffectParam("Density", soundViewController.CurrentEffect.Reverb.Density, 0, 100, 0.5f, sliderWidth, "F1");
+                        if (soundViewController.CurrentEffect.Reverb.Density != result)
                         {
-                            soundViewController.Reverb.Density = result;
+                            soundViewController.CurrentEffect.Reverb.Density = result;
                             update = true;
                         }
-                        result = BuildEffectParam("RoomSize", soundViewController.Reverb.RoomSize, 0, 100, 0.5f, sliderWidth, "F1");
-                        if (soundViewController.Reverb.RoomSize != result)
+                        result = BuildEffectParam("RoomSize", soundViewController.CurrentEffect.Reverb.RoomSize, 0, 100, 0.5f, sliderWidth, "F1");
+                        if (soundViewController.CurrentEffect.Reverb.RoomSize != result)
                         {
-                            soundViewController.Reverb.RoomSize = result;
+                            soundViewController.CurrentEffect.Reverb.RoomSize = result;
                             update = true;
                         }
                     }
@@ -631,134 +652,144 @@ namespace SoundDebugRoom
 
             if (soundViewController.IsReverbEnabled && update)
             {
-                soundViewController.SetReverb(ref soundViewController.Reverb);
+                soundViewController.SetReverb();
             }
         }
 
         private void BuildEqParameters(Single width, Single sliderWidth, Single buttonWidth)
         {
+            width -= 4;
             Boolean update = false;
-
-            GUILayout.BeginVertical("box", GUILayout.Width(width));
+            GUILayout.BeginVertical("box", GUILayout.Width(1));
             {
                 GUILayout.BeginHorizontal();
                 {
-                    GUILayout.Space(5);
-                    GUILayout.Label("Eq");
+                    GUILayout.BeginVertical(GUILayout.Width(width));
+                    {
+                        GUILayout.BeginHorizontal();
+                        {
+                            GUILayout.Space(5);
+                            GUILayout.Label("Eq");
+                            GUILayout.FlexibleSpace();
+                            if (GUILayout.Button(soundViewController.IsEqEnabled ? "Disable" : "Enable", GUILayout.Width(buttonWidth)))
+                            {
+                                soundViewController.IsEqEnabled = !soundViewController.IsEqEnabled;
+                                if (soundViewController.IsEqEnabled)
+                                    soundViewController.SetEq();
+                                else
+                                    soundViewController.RemoveEq();
+                            }
+                            if (GUILayout.Button("Reset", GUILayout.Width(buttonWidth)))
+                            {
+                                soundViewController.CurrentEffect.Eq = new SaXAudio.EqParameters();
+                                update = true;
+                            }
+                        }
+                        GUILayout.EndHorizontal();
+
+                        GUILayout.Label("Band 1");
+                        Single result = BuildEffectParam("FrequencyCenter", soundViewController.CurrentEffect.Eq.FrequencyCenter0, 20, 20000, 10f, sliderWidth);
+                        if (soundViewController.CurrentEffect.Eq.FrequencyCenter0 != result)
+                        {
+                            soundViewController.CurrentEffect.Eq.FrequencyCenter0 = result;
+                            update = true;
+                        }
+
+                        result = BuildEffectParam("Gain", soundViewController.CurrentEffect.Eq.Gain0, 0.126f, 7.94f, 0.01f, sliderWidth, "F2");
+                        if (soundViewController.CurrentEffect.Eq.Gain0 != result)
+                        {
+                            soundViewController.CurrentEffect.Eq.Gain0 = result;
+                            update = true;
+                        }
+
+                        result = BuildEffectParam("Bandwidth", soundViewController.CurrentEffect.Eq.Bandwidth0, 0.1f, 2f, 0.01f, sliderWidth, "F2");
+                        if (soundViewController.CurrentEffect.Eq.Bandwidth0 != result)
+                        {
+                            soundViewController.CurrentEffect.Eq.Bandwidth0 = result;
+                            update = true;
+                        }
+
+                        GUILayout.Label("Band 3");
+                        result = BuildEffectParam("FrequencyCenter", soundViewController.CurrentEffect.Eq.FrequencyCenter2, 20, 20000, 10f, sliderWidth);
+                        if (soundViewController.CurrentEffect.Eq.FrequencyCenter2 != result)
+                        {
+                            soundViewController.CurrentEffect.Eq.FrequencyCenter2 = result;
+                            update = true;
+                        }
+
+                        result = BuildEffectParam("Gain", soundViewController.CurrentEffect.Eq.Gain2, 0.126f, 7.94f, 0.01f, sliderWidth, "F2");
+                        if (soundViewController.CurrentEffect.Eq.Gain2 != result)
+                        {
+                            soundViewController.CurrentEffect.Eq.Gain2 = result;
+                            update = true;
+                        }
+
+                        result = BuildEffectParam("Bandwidth", soundViewController.CurrentEffect.Eq.Bandwidth2, 0.1f, 2f, 0.01f, sliderWidth, "F2");
+                        if (soundViewController.CurrentEffect.Eq.Bandwidth2 != result)
+                        {
+                            soundViewController.CurrentEffect.Eq.Bandwidth2 = result;
+                            update = true;
+                        }
+                    }
+                    GUILayout.EndVertical();
+
+                    GUILayout.BeginVertical(GUILayout.Width(width));
+                    {
+                        GUILayout.Label("");
+                        GUILayout.Label("Band 2");
+                        Single result = BuildEffectParam("FrequencyCenter", soundViewController.CurrentEffect.Eq.FrequencyCenter1, 20, 20000, 10f, sliderWidth);
+                        if (soundViewController.CurrentEffect.Eq.FrequencyCenter1 != result)
+                        {
+                            soundViewController.CurrentEffect.Eq.FrequencyCenter1 = result;
+                            update = true;
+                        }
+
+                        result = BuildEffectParam("Gain", soundViewController.CurrentEffect.Eq.Gain1, 0.126f, 7.94f, 0.01f, sliderWidth, "F2");
+                        if (soundViewController.CurrentEffect.Eq.Gain1 != result)
+                        {
+                            soundViewController.CurrentEffect.Eq.Gain1 = result;
+                            update = true;
+                        }
+
+                        result = BuildEffectParam("Bandwidth", soundViewController.CurrentEffect.Eq.Bandwidth1, 0.1f, 2f, 0.01f, sliderWidth, "F2");
+                        if (soundViewController.CurrentEffect.Eq.Bandwidth1 != result)
+                        {
+                            soundViewController.CurrentEffect.Eq.Bandwidth1 = result;
+                            update = true;
+                        }
+
+                        GUILayout.Label("Band 4");
+                        result = BuildEffectParam("FrequencyCenter", soundViewController.CurrentEffect.Eq.FrequencyCenter3, 20, 20000, 10f, sliderWidth);
+                        if (soundViewController.CurrentEffect.Eq.FrequencyCenter3 != result)
+                        {
+                            soundViewController.CurrentEffect.Eq.FrequencyCenter3 = result;
+                            update = true;
+                        }
+
+                        result = BuildEffectParam("Gain", soundViewController.CurrentEffect.Eq.Gain3, 0.126f, 7.94f, 0.01f, sliderWidth, "F2");
+                        if (soundViewController.CurrentEffect.Eq.Gain3 != result)
+                        {
+                            soundViewController.CurrentEffect.Eq.Gain3 = result;
+                            update = true;
+                        }
+
+                        result = BuildEffectParam("Bandwidth", soundViewController.CurrentEffect.Eq.Bandwidth3, 0.1f, 2f, 0.01f, sliderWidth, "F2");
+                        if (soundViewController.CurrentEffect.Eq.Bandwidth3 != result)
+                        {
+                            soundViewController.CurrentEffect.Eq.Bandwidth3 = result;
+                            update = true;
+                        }
+                    }
+                    GUILayout.EndVertical();
                     GUILayout.FlexibleSpace();
-                    if (GUILayout.Button(soundViewController.IsEqEnabled ? "Disable" : "Enable", GUILayout.Width(buttonWidth)))
-                    {
-                        soundViewController.IsEqEnabled = !soundViewController.IsEqEnabled;
-                        if (soundViewController.IsEqEnabled)
-                            soundViewController.SetEq(ref soundViewController.Eq);
-                        else
-                            soundViewController.RemoveEq();
-                    }
-                    if (GUILayout.Button("Reset", GUILayout.Width(buttonWidth)))
-                    {
-                        soundViewController.Eq = new SaXAudio.EqParameters();
-                        update = true;
-                    }
                 }
                 GUILayout.EndHorizontal();
-
-                GUILayout.Label("Band 1");
-
-                Single result = BuildEffectParam("FrequencyCenter", soundViewController.Eq.FrequencyCenter0, 20, 20000, 10f, sliderWidth);
-                if (soundViewController.Eq.FrequencyCenter0 != result)
-                {
-                    soundViewController.Eq.FrequencyCenter0 = result;
-                    update = true;
-                }
-
-                result = BuildEffectParam("Gain", soundViewController.Eq.Gain0, 0.126f, 7.94f, 0.01f, sliderWidth, "F2");
-                if (soundViewController.Eq.Gain0 != result)
-                {
-                    soundViewController.Eq.Gain0 = result;
-                    update = true;
-                }
-
-                result = BuildEffectParam("Bandwidth", soundViewController.Eq.Bandwidth0, 0.1f, 2f, 0.01f, sliderWidth, "F2");
-                if (soundViewController.Eq.Bandwidth0 != result)
-                {
-                    soundViewController.Eq.Bandwidth0 = result;
-                    update = true;
-                }
-
-                GUILayout.Label("Band 2");
-
-                result = BuildEffectParam("FrequencyCenter", soundViewController.Eq.FrequencyCenter1, 20, 20000, 10f, sliderWidth);
-                if (soundViewController.Eq.FrequencyCenter1 != result)
-                {
-                    soundViewController.Eq.FrequencyCenter1 = result;
-                    update = true;
-                }
-
-                result = BuildEffectParam("Gain", soundViewController.Eq.Gain1, 0.126f, 7.94f, 0.01f, sliderWidth, "F2");
-                if (soundViewController.Eq.Gain1 != result)
-                {
-                    soundViewController.Eq.Gain1 = result;
-                    update = true;
-                }
-
-                result = BuildEffectParam("Bandwidth", soundViewController.Eq.Bandwidth1, 0.1f, 2f, 0.01f, sliderWidth, "F2");
-                if (soundViewController.Eq.Bandwidth1 != result)
-                {
-                    soundViewController.Eq.Bandwidth1 = result;
-                    update = true;
-                }
-
-                GUILayout.Label("Band 3");
-
-                result = BuildEffectParam("FrequencyCenter", soundViewController.Eq.FrequencyCenter2, 20, 20000, 10f, sliderWidth);
-                if (soundViewController.Eq.FrequencyCenter2 != result)
-                {
-                    soundViewController.Eq.FrequencyCenter2 = result;
-                    update = true;
-                }
-
-                result = BuildEffectParam("Gain", soundViewController.Eq.Gain2, 0.126f, 7.94f, 0.01f, sliderWidth, "F2");
-                if (soundViewController.Eq.Gain2 != result)
-                {
-                    soundViewController.Eq.Gain2 = result;
-                    update = true;
-                }
-
-                result = BuildEffectParam("Bandwidth", soundViewController.Eq.Bandwidth2, 0.1f, 2f, 0.01f, sliderWidth, "F2");
-                if (soundViewController.Eq.Bandwidth2 != result)
-                {
-                    soundViewController.Eq.Bandwidth2 = result;
-                    update = true;
-                }
-
-                GUILayout.Label("Band 4");
-
-                result = BuildEffectParam("FrequencyCenter", soundViewController.Eq.FrequencyCenter3, 20, 20000, 10f, sliderWidth);
-                if (soundViewController.Eq.FrequencyCenter3 != result)
-                {
-                    soundViewController.Eq.FrequencyCenter3 = result;
-                    update = true;
-                }
-
-                result = BuildEffectParam("Gain", soundViewController.Eq.Gain3, 0.126f, 7.94f, 0.01f, sliderWidth, "F2");
-                if (soundViewController.Eq.Gain3 != result)
-                {
-                    soundViewController.Eq.Gain3 = result;
-                    update = true;
-                }
-
-                result = BuildEffectParam("Bandwidth", soundViewController.Eq.Bandwidth3, 0.1f, 2f, 0.01f, sliderWidth, "F2");
-                if (soundViewController.Eq.Bandwidth3 != result)
-                {
-                    soundViewController.Eq.Bandwidth3 = result;
-                    update = true;
-                }
             }
             GUILayout.EndVertical();
 
             if (soundViewController.IsEqEnabled && update)
             {
-                soundViewController.SetEq(ref soundViewController.Eq);
+                soundViewController.SetEq();
             }
         }
 
@@ -777,43 +808,85 @@ namespace SoundDebugRoom
                     {
                         soundViewController.IsEchoEnabled = !soundViewController.IsEchoEnabled;
                         if (soundViewController.IsEchoEnabled)
-                            soundViewController.SetEcho(ref soundViewController.Echo);
+                            soundViewController.SetEcho();
                         else
                             soundViewController.RemoveEcho();
                     }
                     if (GUILayout.Button("Reset", GUILayout.Width(buttonWidth)))
                     {
-                        soundViewController.Echo = new SaXAudio.EchoParameters();
+                        soundViewController.CurrentEffect.Echo = new SaXAudio.EchoParameters();
                         update = true;
                     }
                 }
                 GUILayout.EndHorizontal();
 
-                Single result = BuildEffectParam("WetDryMix", soundViewController.Echo.WetDryMix * 100f, 0, 100f, 0.5f, sliderWidth, "F1") / 100f;
-                if (soundViewController.Echo.WetDryMix != result)
+                Single result = BuildEffectParam("WetDryMix", soundViewController.CurrentEffect.Echo.WetDryMix * 100f, 0, 100f, 0.5f, sliderWidth, "F1") / 100f;
+                if (soundViewController.CurrentEffect.Echo.WetDryMix != result)
                 {
-                    soundViewController.Echo.WetDryMix = result;
+                    soundViewController.CurrentEffect.Echo.WetDryMix = result;
                     update = true;
                 }
 
-                result = BuildEffectParam("Feedback", soundViewController.Echo.Feedback * 100f, 0, 100f, 0.5f, sliderWidth, "F1") / 100f;
-                if (soundViewController.Echo.Feedback != result)
+                result = BuildEffectParam("Feedback", soundViewController.CurrentEffect.Echo.Feedback * 100f, 0, 100f, 0.5f, sliderWidth, "F1") / 100f;
+                if (soundViewController.CurrentEffect.Echo.Feedback != result)
                 {
-                    soundViewController.Echo.Feedback = result;
+                    soundViewController.CurrentEffect.Echo.Feedback = result;
                     update = true;
                 }
 
-                result = BuildEffectParam("Delay", soundViewController.Echo.Delay, 1f, 2000f, 1, sliderWidth);
-                if (soundViewController.Echo.Delay != result)
+                result = BuildEffectParam("Delay", soundViewController.CurrentEffect.Echo.Delay, 1f, 2000f, 1, sliderWidth);
+                if (soundViewController.CurrentEffect.Echo.Delay != result)
                 {
-                    soundViewController.Echo.Delay = result;
+                    soundViewController.CurrentEffect.Echo.Delay = result;
                     update = true;
                 }
 
                 if (soundViewController.IsEchoEnabled && update)
                 {
-                    soundViewController.SetEcho(ref soundViewController.Echo);
+                    soundViewController.SetEcho();
                 }
+
+                GUILayout.FlexibleSpace();
+            }
+            GUILayout.EndVertical();
+        }
+
+        private void BuildVolumeParameter(Single width, Single sliderWidth, Single buttonWidth)
+        {
+            GUILayout.BeginVertical("box", GUILayout.Width(width));
+            {
+                GUILayout.BeginHorizontal();
+                {
+                    GUILayout.Space(5);
+                    GUILayout.Label("Volume");
+                    GUILayout.FlexibleSpace();
+                    if (GUILayout.Button(soundViewController.IsEffectVolumeEnabled ? "Disable" : "Enable", GUILayout.Width(buttonWidth)))
+                    {
+                        soundViewController.IsEffectVolumeEnabled = !soundViewController.IsEffectVolumeEnabled;
+                        soundViewController.SetEffectVolume();
+                    }
+                    if (GUILayout.Button("Reset", GUILayout.Width(buttonWidth)))
+                    {
+                        soundViewController.CurrentEffect.Volume = 1f;
+                        soundViewController.SetEffectVolume();
+                    }
+                }
+                GUILayout.EndHorizontal();
+                GUILayout.BeginHorizontal();
+                {
+                    Single volume = soundViewController.CurrentEffect.Volume * 100f;
+                    GUILayout.Space(5);
+                    GUILayout.Label(volume.ToString());
+                    GUILayout.FlexibleSpace();
+                    Single result = GUILayout.HorizontalSlider(volume, 0, 300f, GUILayout.Width(width - 60));
+                    result = Mathf.Round(result) / 100f;
+                    if (soundViewController.CurrentEffect.Volume != result)
+                    {
+                        soundViewController.CurrentEffect.Volume = result;
+                        soundViewController.SetEffectVolume();
+                    }
+                }
+                GUILayout.EndHorizontal();
 
                 GUILayout.FlexibleSpace();
             }
@@ -970,19 +1043,21 @@ namespace SoundDebugRoom
                 {
                     if (GUILayout.Button("Enable All"))
                     {
-                        soundViewController.IsEchoEnabled = soundViewController.IsEqEnabled = soundViewController.IsReverbEnabled = true;
+                        soundViewController.CurrentEffect.Flags = AudioEffectManager.EffectPreset.Flag.All;
 
-                        soundViewController.SetReverb(ref soundViewController.Reverb);
-                        soundViewController.SetEq(ref soundViewController.Eq);
-                        soundViewController.SetEcho(ref soundViewController.Echo);
+                        soundViewController.SetReverb();
+                        soundViewController.SetEq();
+                        soundViewController.SetEcho();
+                        soundViewController.SetEffectVolume();
                     }
                     if (GUILayout.Button("Disable All"))
                     {
-                        soundViewController.IsEchoEnabled = soundViewController.IsEqEnabled = soundViewController.IsReverbEnabled = false;
+                        soundViewController.CurrentEffect.Flags = 0;
 
                         soundViewController.RemoveReverb();
                         soundViewController.RemoveEq();
                         soundViewController.RemoveEcho();
+                        soundViewController.RemoveEffectVolume();
                     }
                 }
                 GUILayout.EndHorizontal();
@@ -1043,6 +1118,7 @@ namespace SoundDebugRoom
 
         private void BuildPresetModList()
         {
+            GUILayout.Label("Select Mod");
             soundPresetManagerScrollPosition = GUILayout.BeginScrollView(soundPresetManagerScrollPosition);
             foreach (AssetManager.AssetFolder folder in AssetManager.FolderHighToLow)
             {

@@ -20,13 +20,16 @@ namespace Global.Sound.SaXAudio
                 None = 0,
                 Reverb = 1,
                 Eq = 1 << 1,
-                Echo = 1 << 2
+                Echo = 1 << 2,
+                Volume = 1 << 3,
+                All = Reverb | Eq | Echo | Volume
             }
             public String Name = "";
-            public Flag Flags;
-            public SaXAudio.ReverbParameters Reverb;
-            public SaXAudio.EqParameters Eq;
-            public SaXAudio.EchoParameters Echo;
+            public Flag Flags = Flag.None;
+            public SaXAudio.ReverbParameters Reverb = new SaXAudio.ReverbParameters();
+            public SaXAudio.EqParameters Eq = new SaXAudio.EqParameters();
+            public SaXAudio.EchoParameters Echo = new SaXAudio.EchoParameters();
+            public Single Volume = 1f;
 
             public EffectPreset() { }
             public EffectPreset(String str)
@@ -59,6 +62,8 @@ namespace Global.Sound.SaXAudio
                     field.SetValue(echo, Convert.ChangeType(tokens[i++], field.FieldType, CultureInfo.InvariantCulture));
                 }
                 Echo = (SaXAudio.EchoParameters)echo;
+
+                Volume = Single.Parse(tokens[i++]);
             }
 
             public override String ToString()
@@ -90,6 +95,9 @@ namespace Global.Sound.SaXAudio
                     builder.Append((String)Convert.ChangeType(field.GetValue(Echo), typeof(String), CultureInfo.InvariantCulture));
                 }
 
+                builder.Append(separator);
+                builder.Append(Volume);
+
                 return builder.ToString();
             }
         }
@@ -106,7 +114,6 @@ namespace Global.Sound.SaXAudio
                     foreach (String line in lines)
                     {
                         String decryptedLine = Decrypt(line, modLocation);
-                        Log.Message(decryptedLine);
                         if (decryptedLine.Length == 0 || decryptedLine.StartsWith("#"))
                             continue;
                         EffectPreset preset = new EffectPreset(decryptedLine);
@@ -151,7 +158,7 @@ namespace Global.Sound.SaXAudio
             {
                 var plainBytes = Encoding.UTF8.GetBytes(plainText);
                 cs.Write(plainBytes, 0, plainBytes.Length);
-                cs.FlushFinalBlock(); // This is crucial!
+                cs.FlushFinalBlock();
             }
             return Convert.ToBase64String(ms.ToArray());
         }

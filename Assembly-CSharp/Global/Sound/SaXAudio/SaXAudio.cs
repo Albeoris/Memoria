@@ -132,7 +132,7 @@ namespace Global.Sound.SaXAudio
         public static extern UInt32 GetPauseStack(Int32 voiceID);
 
         [DllImport("SaXAudio")]
-        public static extern void SetVolume(Int32 voiceID, Single volume, Single fade = 0.1f);
+        public static extern void SetVolume(Int32 voiceID, Single volume, Single fade = 0.1f, Boolean isBus = false);
         [DllImport("SaXAudio")]
         public static extern void SetSpeed(Int32 voiceID, Single speed, Single fade = 0.1f);
         [DllImport("SaXAudio")]
@@ -143,19 +143,19 @@ namespace Global.Sound.SaXAudio
         public static extern void SetLoopPoints(Int32 voiceID, UInt32 start, UInt32 end);
 
         [DllImport("SaXAudio")]
-        public static extern void SetReverb(Int32 voiceID, ReverbParameters reverbParams, Single fade, Boolean isBus);
+        public static extern void SetReverb(Int32 voiceID, ReverbParameters reverbParams, Single fade = 0, Boolean isBus = false);
         [DllImport("SaXAudio")]
-        public static extern void RemoveReverb(Int32 voiceID, Single fade, Boolean isBus);
+        public static extern void RemoveReverb(Int32 voiceID, Single fade = 0, Boolean isBus = false);
 
         [DllImport("SaXAudio")]
-        public static extern void SetEq(Int32 voiceID, EqParameters eqParams, Single fade, Boolean isBus);
+        public static extern void SetEq(Int32 voiceID, EqParameters eqParams, Single fade = 0, Boolean isBus = false);
         [DllImport("SaXAudio")]
-        public static extern void RemoveEq(Int32 voiceID, Single fade, Boolean isBus);
+        public static extern void RemoveEq(Int32 voiceID, Single fade = 0, Boolean isBus = false);
 
         [DllImport("SaXAudio")]
-        public static extern void SetEcho(Int32 voiceID, EchoParameters echoParams, Single fade, Boolean isBus);
+        public static extern void SetEcho(Int32 voiceID, EchoParameters echoParams, Single fade = 0, Boolean isBus = false);
         [DllImport("SaXAudio")]
-        public static extern void RemoveEcho(Int32 voiceID, Single fade, Boolean isBus);
+        public static extern void RemoveEcho(Int32 voiceID, Single fade = 0, Boolean isBus = false);
 
         [DllImport("SaXAudio")]
         public static extern Single GetVolume(Int32 voiceID);

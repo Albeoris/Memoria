@@ -39,11 +39,16 @@ namespace SoundDebugRoom
 
         public void SetActiveSoundType(SoundProfileType type)
         {
-            activeType = type;
+            if (type == SoundProfileType.Default)
+            {
+                activeSound = null;
+                return;
+            }
             currentPlaylist = 0;
             PlaylistInfo = "";
             PlaylistDetail = "";
             filteredPlaylist = null;
+            activeType = type;
             GeneratePlaylistData();
         }
 
@@ -127,9 +132,10 @@ namespace SoundDebugRoom
 
             if (IsSaXAudio)
             {
-                if (IsReverbEnabled) SetReverb(ref Reverb);
-                if (IsEqEnabled) SetEq(ref Eq);
-                if (IsEchoEnabled) SetEcho(ref Echo);
+                if (IsReverbEnabled) SetReverb();
+                if (IsEqEnabled) SetEq();
+                if (IsEchoEnabled) SetEcho();
+                SetEffectVolume();
             }
         }
 
@@ -178,36 +184,46 @@ namespace SoundDebugRoom
             ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(activeSound.SoundID, pitch, 0);
         }
 
-        public void SetReverb(ref SaXAudio.ReverbParameters parameters)
+        public void SetReverb()
         {
             if (activeSound != null)
-                SaXAudio.SetReverb(activeSound.SoundID, parameters, 0, false);
+                SaXAudio.SetReverb(activeSound.SoundID, CurrentEffect.Reverb);
         }
         public void RemoveReverb()
         {
             if (activeSound != null)
-                SaXAudio.RemoveReverb(activeSound.SoundID, 0, false);
+                SaXAudio.RemoveReverb(activeSound.SoundID);
         }
 
-        public void SetEq(ref SaXAudio.EqParameters parameters)
+        public void SetEq()
         {
             if (activeSound != null)
-                SaXAudio.SetEq(activeSound.SoundID, parameters, 0, false);
+                SaXAudio.SetEq(activeSound.SoundID, CurrentEffect.Eq);
         }
         public void RemoveEq()
         {
             if (activeSound != null)
-                SaXAudio.RemoveEq(activeSound.SoundID, 0, false);
+                SaXAudio.RemoveEq(activeSound.SoundID);
         }
-        public void SetEcho(ref SaXAudio.EchoParameters parameters)
+        public void SetEcho()
         {
             if (activeSound != null)
-                SaXAudio.SetEcho(activeSound.SoundID, parameters, 0, false);
+                SaXAudio.SetEcho(activeSound.SoundID, CurrentEffect.Echo);
         }
         public void RemoveEcho()
         {
             if (activeSound != null)
-                SaXAudio.RemoveEcho(activeSound.SoundID, 0, false);
+                SaXAudio.RemoveEcho(activeSound.SoundID);
+        }
+        public void SetEffectVolume()
+        {
+            if (activeSound != null)
+                SaXAudio.SetVolume(activeSound.SoundID, IsEffectVolumeEnabled ? soundView.SoundVolume * CurrentEffect.Volume : soundView.SoundVolume, 0);
+        }
+        public void RemoveEffectVolume()
+        {
+            if (activeSound != null)
+                SaXAudio.SetVolume(activeSound.SoundID, soundView.SoundVolume, 0);
         }
 
         public void StopActiveSound()
@@ -231,6 +247,15 @@ namespace SoundDebugRoom
                     return;
                 }
             }
+            // We reach the end of the list, going next page
+            Int32 page = currentPlaylist;
+            NextPlayList();
+            if (page != currentPlaylist)
+            {
+                activeSound = playlist.First();
+                activeSound.SoundID = -1;
+                PlayActiveSound();
+            }
         }
 
         public void PreviousSound()
@@ -247,6 +272,15 @@ namespace SoundDebugRoom
                     PlayActiveSound();
                     return;
                 }
+            }
+            // We reach the start of the list, going previous page
+            Int32 page = currentPlaylist;
+            PreviousPlayList();
+            if (page != currentPlaylist)
+            {
+                activeSound = playlist.Last();
+                activeSound.SoundID = -1;
+                PlayActiveSound();
             }
         }
 
@@ -410,16 +444,8 @@ namespace SoundDebugRoom
             if (String.IsNullOrEmpty(name)) return;
             try
             {
-                EffectPreset preset = new EffectPreset
-                {
-                    Name = name,
-                    Flags = (IsReverbEnabled ? EffectPreset.Flag.Reverb : 0) | (IsEqEnabled ? EffectPreset.Flag.Eq : 0) | (IsEchoEnabled ? EffectPreset.Flag.Echo : 0),
-                    Reverb = Reverb,
-                    Eq = Eq,
-                    Echo = Echo
-                };
-
-                EffectPresetDictionary[name] = preset;
+                CurrentEffect.Name = name;
+                EffectPresetDictionary[name] = CurrentEffect;
             }
             catch (Exception e)
             {
@@ -441,16 +467,11 @@ namespace SoundDebugRoom
         {
             if (!EffectPresetDictionary.ContainsKey(name)) return;
 
-            EffectPreset preset = EffectPresetDictionary[name];
-            IsReverbEnabled = (preset.Flags & EffectPreset.Flag.Reverb) != 0;
-            IsEqEnabled = (preset.Flags & EffectPreset.Flag.Eq) != 0;
-            IsEchoEnabled = (preset.Flags & EffectPreset.Flag.Echo) != 0;
-            Reverb = preset.Reverb;
-            Eq = preset.Eq;
-            Echo = preset.Echo;
-            if (IsReverbEnabled) SetReverb(ref Reverb);
-            if (IsEqEnabled) SetEq(ref Eq);
-            if (IsEchoEnabled) SetEcho(ref Echo);
+            CurrentEffect = EffectPresetDictionary[name];
+            if (IsReverbEnabled) SetReverb();
+            if (IsEqEnabled) SetEq();
+            if (IsEchoEnabled) SetEcho();
+            SetEffectVolume();
         }
 
         public void NextPlayList()
@@ -485,8 +506,8 @@ namespace SoundDebugRoom
             if (currentPlaylist < num2 - 1)
             {
                 currentPlaylist++;
+                GeneratePlaylistData();
             }
-            GeneratePlaylistData();
         }
 
         public void PreviousPlayList()
@@ -494,8 +515,8 @@ namespace SoundDebugRoom
             if (currentPlaylist > 0)
             {
                 currentPlaylist--;
+                GeneratePlaylistData();
             }
-            GeneratePlaylistData();
         }
 
         private void GenerateAllSongIndex()
@@ -690,18 +711,6 @@ namespace SoundDebugRoom
 
         public Boolean IsSaXAudio = ISdLibAPIProxy.Instance is SdLibAPIWithSaXAudio;
 
-        public SaXAudio.EqParameters Eq = new SaXAudio.EqParameters();
-
-        public SaXAudio.ReverbParameters Reverb = new SaXAudio.ReverbParameters();
-
-        public SaXAudio.EchoParameters Echo = new SaXAudio.EchoParameters();
-
-        public Boolean IsReverbEnabled = false;
-
-        public Boolean IsEqEnabled = false;
-
-        public Boolean IsEchoEnabled = false;
-
         public Boolean IsLooping
         {
             get
@@ -717,7 +726,46 @@ namespace SoundDebugRoom
             }
         }
 
-        public SortedDictionary<String, AudioEffectManager.EffectPreset> EffectPresetDictionary = new SortedDictionary<String, AudioEffectManager.EffectPreset>();
+        public EffectPreset CurrentEffect = new EffectPreset();
+
+        public Boolean IsReverbEnabled
+        {
+            get => (CurrentEffect.Flags & EffectPreset.Flag.Reverb) != 0;
+            set
+            {
+                if (value) CurrentEffect.Flags |= EffectPreset.Flag.Reverb;
+                else CurrentEffect.Flags &= ~EffectPreset.Flag.Reverb;
+            }
+        }
+        public Boolean IsEqEnabled
+        {
+            get => (CurrentEffect.Flags & EffectPreset.Flag.Eq) != 0;
+            set
+            {
+                if (value) CurrentEffect.Flags |= EffectPreset.Flag.Eq;
+                else CurrentEffect.Flags &= ~EffectPreset.Flag.Eq;
+            }
+        }
+        public Boolean IsEchoEnabled
+        {
+            get => (CurrentEffect.Flags & EffectPreset.Flag.Echo) != 0;
+            set
+            {
+                if (value) CurrentEffect.Flags |= EffectPreset.Flag.Echo;
+                else CurrentEffect.Flags &= ~EffectPreset.Flag.Echo;
+            }
+        }
+        public Boolean IsEffectVolumeEnabled
+        {
+            get => (CurrentEffect.Flags & EffectPreset.Flag.Volume) != 0;
+            set
+            {
+                if (value) CurrentEffect.Flags |= EffectPreset.Flag.Volume;
+                else CurrentEffect.Flags &= ~EffectPreset.Flag.Volume;
+            }
+        }
+
+        public SortedDictionary<String, EffectPreset> EffectPresetDictionary = new SortedDictionary<String, EffectPreset>();
 
         public Dictionary<String, List<SoundProfile>> ModVoiceDictionary = new Dictionary<String, List<SoundProfile>>();
 
