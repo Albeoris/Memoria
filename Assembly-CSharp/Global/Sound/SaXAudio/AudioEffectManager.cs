@@ -15,7 +15,7 @@ namespace Global.Sound.SaXAudio
 
         public struct EffectPreset
         {
-            public enum Flag : Byte
+            public enum Effect : Byte
             {
                 None = 0,
                 Reverb = 1,
@@ -24,12 +24,30 @@ namespace Global.Sound.SaXAudio
                 Volume = 1 << 3,
                 All = Reverb | Eq | Echo | Volume
             }
+
+            public enum Layer : Byte
+            {
+                None = 0,
+                Music = 1,
+                Ambient = 1 << 1,
+                SoundEffect = 1 << 2,
+                Voice = 1 << 3,
+                All = Music | Ambient | SoundEffect | Voice
+            }
+
             public String Name = "";
-            public Flag Flags = Flag.None;
+            public Effect Effects = Effect.None;
             public SaXAudio.ReverbParameters Reverb = new SaXAudio.ReverbParameters();
             public SaXAudio.EqParameters Eq = new SaXAudio.EqParameters();
             public SaXAudio.EchoParameters Echo = new SaXAudio.EchoParameters();
             public Single Volume = 1f;
+
+            public Layer Layers = Layer.None;
+            public Int32 FieldID = Int32.MinValue;
+            public Int32 BattleID = Int32.MinValue;
+            public Int32 BattleBgID = Int32.MinValue;
+
+            public String Condition = "";
 
             public EffectPreset() { }
             public EffectPreset(String str)
@@ -37,7 +55,7 @@ namespace Global.Sound.SaXAudio
                 String[] tokens = str.Split(';');
                 Int32 i = 0;
                 Name = tokens[i++];
-                Flags = (Flag)Byte.Parse(tokens[i++]);
+                Effects = (Effect)Byte.Parse(tokens[i++]);
 
                 FieldInfo[] fields = typeof(SaXAudio.ReverbParameters).GetFields();
                 object reverb = Reverb;
@@ -64,15 +82,28 @@ namespace Global.Sound.SaXAudio
                 Echo = (SaXAudio.EchoParameters)echo;
 
                 Volume = Single.Parse(tokens[i++]);
+
+                if (i == tokens.Length) return;
+
+                Condition = tokens[i++];
+                if (Condition.Length == 0)
+                    Condition = null;
+
+                Layers = (Layer)Byte.Parse(tokens[i++]);
+
+                Int32.TryParse(tokens[i++], out FieldID);
+                Int32.TryParse(tokens[i++], out BattleID);
+                Int32.TryParse(tokens[i++], out BattleBgID);
+                Condition = tokens[i++].Replace('\x0A', ';');
             }
 
-            public override String ToString()
+            public override readonly String ToString()
             {
                 StringBuilder builder = new StringBuilder();
                 const Char separator = ';';
                 builder.Append(Name);
                 builder.Append(separator);
-                builder.Append((Byte)Flags);
+                builder.Append((Byte)Effects);
 
                 FieldInfo[] fields = typeof(SaXAudio.ReverbParameters).GetFields();
                 foreach (FieldInfo field in fields)
@@ -97,6 +128,21 @@ namespace Global.Sound.SaXAudio
 
                 builder.Append(separator);
                 builder.Append(Volume);
+
+                builder.Append(separator);
+                builder.Append((Byte)Layers);
+
+                builder.Append(separator);
+                builder.Append(FieldID);
+
+                builder.Append(separator);
+                builder.Append(BattleID);
+
+                builder.Append(separator);
+                builder.Append(BattleBgID);
+
+                builder.Append(separator);
+                builder.Append(Condition.Replace(';', '\x0A'));
 
                 return builder.ToString();
             }

@@ -4,7 +4,9 @@ using Global.Sound.SaXAudio;
 using Memoria.Prime;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
+using static Global.Sound.SaXAudio.AudioEffectManager;
 
 namespace SoundDebugRoom
 {
@@ -18,8 +20,6 @@ namespace SoundDebugRoom
 
         private void OnEnable()
         {
-            Log.Message(SceneDirector.Instance.CurrentScene);
-
             var state = PersistenSingleton<UIManager>.Instance.State;
             if (state != UIManager.UIState.Pause)
                 PersistenSingleton<UIManager>.Instance.GetSceneFromState(state).OnKeyPause(null);
@@ -60,6 +60,9 @@ namespace SoundDebugRoom
                 GUI.skin.font = DebugGuiSkin.font;
                 Int32 lineHeight = DebugGuiSkin.font.lineHeight;
                 GUI.skin.horizontalSlider.margin = new RectOffset(lineHeight / 2, lineHeight / 2, lineHeight - (Int32)GUI.skin.horizontalSlider.fixedHeight / 2, 0);
+                GUI.skin.toggle.alignment = TextAnchor.MiddleLeft;
+                GUI.skin.toggle.padding.left = 20;
+                GUI.skin.toggle.contentOffset = new Vector2(0, -3f);
 
                 GUISkin guiSkin = GUI.skin;
                 DebugGuiSkin.ApplySkin();
@@ -72,12 +75,10 @@ namespace SoundDebugRoom
                     GUI.color = Color.white;
                     Single width = (fullscreenRect.width - 20) / 4f;
                     GUILayout.Space(4);
-                    GUILayout.BeginVertical("box");
+                    GUILayout.BeginVertical();
                     {
                         BuildHeader();
-                        GUILayout.Space(4);
-                        //BuildPlayer();
-                        BuildAdjustment(width);
+                        BuildPlayer(width);
                     }
                     GUILayout.EndVertical();
 
@@ -118,60 +119,10 @@ namespace SoundDebugRoom
             GUILayout.EndHorizontal();
         }
 
-        private void BuildPlayer()
-        {
-            GUILayoutOption btnOption = GUILayout.Width((DebugGuiSkin.GetFullscreenRect().width - 36) / (soundViewController.IsSaXAudio ? 6 : 5));
-
-            GUILayout.BeginHorizontal();
-            {
-                if (GUILayout.Button("Previous", btnOption))
-                {
-                    soundViewController.PreviousSound();
-                }
-                if (GUILayout.Button(soundViewController.IsPlay ? "Pause" : "Play", btnOption))
-                {
-                    if (soundViewController.IsPlay)
-                        soundViewController.PauseActiveSound();
-                    else
-                        soundViewController.PlayActiveSound();
-                }
-                if (soundViewController.IsSaXAudio)
-                {
-                    if (soundViewController.IsLooping)
-                    {
-                        if (GUILayout.Button("Stop Looping", btnOption))
-                        {
-                            soundViewController.IsLooping = false;
-                        }
-                    }
-                    else
-                    {
-                        if (GUILayout.Button("Start Looping", btnOption))
-                        {
-                            soundViewController.IsLooping = true;
-                        }
-                    }
-                }
-                if (GUILayout.Button("Stop", btnOption))
-                {
-                    soundViewController.StopActiveSound();
-                }
-                if (GUILayout.Button("Next", btnOption))
-                {
-                    soundViewController.NextSound();
-                }
-                if (GUILayout.Button("Reload", btnOption))
-                {
-                    soundViewController.ReloadSoundMetaData();
-                }
-            }
-            GUILayout.EndHorizontal();
-        }
-
-        private void BuildAdjustment(Single width)
+        private void BuildPlayer(Single width)
         {
             width -= 4;
-            GUILayout.BeginHorizontal();
+            GUILayout.BeginHorizontal("Box");
             {
                 GUILayout.BeginVertical(GUILayout.Width(width));
                 {
@@ -230,6 +181,7 @@ namespace SoundDebugRoom
 
                             Single currentPosition = soundViewController.GetActivePosition();
                             Single length = soundViewController.GetActiveLength();
+                            Rect sliderRect = GUILayoutUtility.GetLastRect();
 
                             // Draw loop markers
                             if (length > 1 && SaXAudio.GetLooping(active.SoundID))
@@ -237,15 +189,14 @@ namespace SoundDebugRoom
                                 UInt32 loopStart = SaXAudio.GetLoopStart(active.SoundID);
                                 UInt32 loopEnd = SaXAudio.GetLoopEnd(active.SoundID);
 
-                                Rect sliderRect = GUILayoutUtility.GetLastRect();
-                                float startMarker = (sliderRect.x + 10) + (width - 26) * loopStart / length;
+                                float startMarker = (sliderRect.x + 10) + (width - 30) * loopStart / length;
                                 GUI.Label(new Rect(startMarker, sliderRect.y + 8, 10, 11), "┃");
 
-                                float endMarker = (sliderRect.x + 10) + (width - 26) * loopEnd / length;
+                                float endMarker = (sliderRect.x + 10) + (width - 30) * loopEnd / length;
                                 GUI.Label(new Rect(endMarker, sliderRect.y + 8, 10, 11), "┃");
                             }
 
-                            Single newPosition = GUILayout.HorizontalSlider(currentPosition, 0, length);
+                            Single newPosition = GUI.HorizontalSlider(new Rect(sliderRect.x + 9, sliderRect.y + 8, width - 18, GUI.skin.horizontalSlider.fixedHeight), currentPosition, 0, length);
                             if (Math.Abs(newPosition - currentPosition) > 100f)
                             {
                                 soundViewController.SeekActive(newPosition);
@@ -1022,7 +973,7 @@ namespace SoundDebugRoom
                 {
                     GUILayout.BeginHorizontal();
                     {
-                        if (GUILayout.Button(soundProfile.Name))
+                        if (GUILayout.Button($"{soundProfile.Name} - {soundProfile.SoundIndex}"))
                         {
                             soundViewController.SelectSound(soundProfile);
                         }
@@ -1043,7 +994,7 @@ namespace SoundDebugRoom
                 {
                     if (GUILayout.Button("Enable All"))
                     {
-                        soundViewController.CurrentEffect.Flags = AudioEffectManager.EffectPreset.Flag.All;
+                        soundViewController.CurrentEffect.Effects = AudioEffectManager.EffectPreset.Effect.All;
 
                         soundViewController.SetReverb();
                         soundViewController.SetEq();
@@ -1052,7 +1003,7 @@ namespace SoundDebugRoom
                     }
                     if (GUILayout.Button("Disable All"))
                     {
-                        soundViewController.CurrentEffect.Flags = 0;
+                        soundViewController.CurrentEffect.Effects = 0;
 
                         soundViewController.RemoveReverb();
                         soundViewController.RemoveEq();
@@ -1068,30 +1019,87 @@ namespace SoundDebugRoom
 
                 if (presetManagerMod != null)
                 {
-                    GUILayout.Label("Backup");
+                    GUILayout.Space(5);
                     GUILayout.BeginHorizontal();
                     {
-                        if (GUILayout.Button("Create"))
+                        GUILayout.Space(5);
+                        GUILayout.Label("Backup");
+                        GUILayout.FlexibleSpace();
+                        if (GUILayout.Button("Create", GUILayout.Width(7f * width / 20f)))
                         {
                             soundViewController.SaveEffectPresets(presetManagerMod, true);
                         }
-                        if (GUILayout.Button("Restore"))
+                        if (GUILayout.Button("Restore", GUILayout.Width(7f * width / 20f)))
                         {
                             soundViewController.LoadEffectPresets(presetManagerMod, true);
                             soundViewController.SaveEffectPresets(presetManagerMod, false);
                         }
                     }
                     GUILayout.EndHorizontal();
-                    GUILayout.Label($"Editing Preset '{presetName}'");
-                    String name = presetName;
-                    presetName = GUILayout.TextField(name);
+                    GUILayout.Space(5);
+                    GUILayout.Label($"Editing '{presetName}'");
+
                     GUILayout.BeginHorizontal();
                     {
+                        GUILayout.Space(5);
+                        GUILayout.Label("Preset Name");
+                        GUILayout.FlexibleSpace();
+                        String name = presetName;
+                        presetName = GUILayout.TextField(name, GUILayout.Width(4 + width / 2f + width / 5f));
                         if (name != presetName)
                         {
                             presetName = presetName.Replace(";", "");
                         }
-                        if (GUILayout.Button("Save"))
+                    }
+                    GUILayout.EndHorizontal();
+
+                    GUILayout.Space(5);
+                    GUILayout.Label("Applies to");
+                    ref EffectPreset preset = ref soundViewController.CurrentEffect;
+
+                    GUILayout.BeginHorizontal();
+                    {
+                        Boolean music = (preset.Layers & EffectPreset.Layer.Music) != 0;
+                        music = GUILayout.Toggle(music, "Music", GUILayout.Width(width / 5f));
+                        preset.Layers = music ? preset.Layers | EffectPreset.Layer.Music : preset.Layers & ~EffectPreset.Layer.Music;
+                        GUILayout.FlexibleSpace();
+                        Boolean ambient = (preset.Layers & EffectPreset.Layer.Ambient) != 0;
+                        ambient = GUILayout.Toggle(ambient, "Ambient", GUILayout.Width(width / 5f));
+                        preset.Layers = ambient ? preset.Layers | EffectPreset.Layer.Ambient : preset.Layers & ~EffectPreset.Layer.Ambient;
+                        GUILayout.FlexibleSpace();
+                        Boolean sounds = (preset.Layers & EffectPreset.Layer.SoundEffect) != 0;
+                        sounds = GUILayout.Toggle(sounds, "Sounds", GUILayout.Width(width / 5f));
+                        preset.Layers = sounds ? preset.Layers | EffectPreset.Layer.SoundEffect : preset.Layers & ~EffectPreset.Layer.SoundEffect;
+                        GUILayout.FlexibleSpace();
+                        Boolean voice = (preset.Layers & EffectPreset.Layer.Voice) != 0;
+                        voice = GUILayout.Toggle(voice, "Voice", GUILayout.Width(width / 5f));
+                        preset.Layers = voice ? preset.Layers | EffectPreset.Layer.Voice : preset.Layers & ~EffectPreset.Layer.Voice;
+                    }
+                    GUILayout.EndHorizontal();
+
+                    GUILayout.Space(5);
+                    GUILayout.Label("Filters");
+
+                    GUI.skin.textField.alignment = TextAnchor.MiddleRight;
+                    preset.FieldID = BuildEffectFilter(preset.FieldID, "FieldID", width, FF9StateSystem.Common.FF9.fldMapNo);
+                    preset.BattleID = BuildEffectFilter(preset.BattleID, "BattleID", width, FF9StateSystem.Battle.battleMapIndex);
+                    preset.BattleBgID = BuildEffectFilter(preset.BattleBgID, "BattleBgID", width, battlebg.nf_BbgNumber);
+                    GUI.skin.textField.alignment = TextAnchor.MiddleLeft;
+
+                    GUILayout.BeginHorizontal();
+                    {
+                        GUILayout.Space(5);
+                        GUILayout.Label("NCalc Condition");
+                        GUILayout.FlexibleSpace();
+                        preset.Condition = GUILayout.TextField(preset.Condition, GUILayout.Width(4 + width / 2f + width / 5f));
+                    }
+                    GUILayout.EndHorizontal();
+
+
+                    GUILayout.Space(5);
+                    GUILayout.BeginHorizontal();
+                    {
+                        if (GUILayout.Button("Save Preset"))
                         {
                             soundViewController.SaveEffectPreset(presetName, presetManagerMod);
                         }
@@ -1101,7 +1109,6 @@ namespace SoundDebugRoom
                         }
                     }
                     GUILayout.EndHorizontal();
-                    GUILayout.Label($"Applying Preset '{presetName}'");
                 }
             }
             GUILayout.EndVertical();
@@ -1114,6 +1121,38 @@ namespace SoundDebugRoom
                     BuildPresetList();
             }
             GUILayout.EndVertical();
+        }
+
+        private Int32 BuildEffectFilter(Int32 filterID, String label, Single width, Int32 current)
+        {
+            if (filterID == Int32.MinValue)
+                filterID = -current - 1;
+            GUILayout.BeginHorizontal();
+            {
+                Boolean enabled = filterID > 0;
+                if (GUILayout.Toggle(enabled, label) != enabled)
+                    filterID = -filterID;
+
+                GUILayout.FlexibleSpace();
+
+                String value = $"{Math.Abs(filterID) - 1}";
+                String result = GUILayout.TextField(value, GUILayout.Width(width / 5f));
+                if (result != value)
+                {
+                    value = Regex.Replace(value, @"[^\d]", "");
+                    if (Int32.TryParse(value, out Int32 id))
+                    {
+                        id++;
+                        filterID = filterID < 0 ? -id : id;
+                    }
+                }
+                if (GUILayout.Button($"Use current {label} ({current})", GUILayout.Width(width / 2f)))
+                {
+                    filterID = current + 1;
+                }
+            }
+            GUILayout.EndHorizontal();
+            return filterID;
         }
 
         private void BuildPresetModList()

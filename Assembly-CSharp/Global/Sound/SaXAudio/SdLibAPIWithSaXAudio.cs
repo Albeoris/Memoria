@@ -23,10 +23,10 @@ namespace Global.Sound.SaXAudio
 
         private static readonly Dictionary<Int32, BankData> bankData = new Dictionary<Int32, BankData>();
 
-        private Int32 busMusic;
-        private Int32 busAmbient;
-        private Int32 busSoundEffects;
-        private Int32 busVoices;
+        public Int32 BusMusic { get; private set; }
+        public Int32 BusAmbient { get; private set; }
+        public Int32 BusSoundEffect { get; private set; }
+        public Int32 BusVoice { get; private set; }
 
         public override Int32 LastSoundID { get; protected set; } = -1;
 
@@ -35,10 +35,10 @@ namespace Global.Sound.SaXAudio
             SoundLib.Log("Create");
             if (SaXAudio.Init())
             {
-                busMusic = SaXAudio.CreateBus();
-                busAmbient = SaXAudio.CreateBus();
-                busSoundEffects = SaXAudio.CreateBus();
-                busVoices = SaXAudio.CreateBus();
+                BusMusic = SaXAudio.CreateBus();
+                BusAmbient = SaXAudio.CreateBus();
+                BusSoundEffect = SaXAudio.CreateBus();
+                BusVoice = SaXAudio.CreateBus();
                 Log.Message($"[SaXAudio] Initialized");
                 return 0;
             }
@@ -130,18 +130,18 @@ namespace Global.Sound.SaXAudio
             switch (data.Profile.SoundProfileType)
             {
                 case SoundProfileType.Music:
-                    busID = busMusic;
+                    busID = BusMusic;
                     break;
                 case SoundProfileType.Voice:
-                    busID = busVoices;
+                    busID = BusVoice;
                     break;
                 case SoundProfileType.SoundEffect:
                 case SoundProfileType.Sfx:
                 case SoundProfileType.Song:
                     if (data.LoopEnd != 0)
-                        busID = busAmbient;
+                        busID = BusAmbient;
                     else if(!data.Profile.ResourceID.StartsWith("Sounds02/SE00"))
-                        busID = busSoundEffects;
+                        busID = BusSoundEffect;
                     break;
             }
             Int32 soundID = SaXAudio.CreateVoice(bankID, busID);

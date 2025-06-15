@@ -730,38 +730,38 @@ namespace SoundDebugRoom
 
         public Boolean IsReverbEnabled
         {
-            get => (CurrentEffect.Flags & EffectPreset.Flag.Reverb) != 0;
+            get => (CurrentEffect.Effects & EffectPreset.Effect.Reverb) != 0;
             set
             {
-                if (value) CurrentEffect.Flags |= EffectPreset.Flag.Reverb;
-                else CurrentEffect.Flags &= ~EffectPreset.Flag.Reverb;
+                if (value) CurrentEffect.Effects |= EffectPreset.Effect.Reverb;
+                else CurrentEffect.Effects &= ~EffectPreset.Effect.Reverb;
             }
         }
         public Boolean IsEqEnabled
         {
-            get => (CurrentEffect.Flags & EffectPreset.Flag.Eq) != 0;
+            get => (CurrentEffect.Effects & EffectPreset.Effect.Eq) != 0;
             set
             {
-                if (value) CurrentEffect.Flags |= EffectPreset.Flag.Eq;
-                else CurrentEffect.Flags &= ~EffectPreset.Flag.Eq;
+                if (value) CurrentEffect.Effects |= EffectPreset.Effect.Eq;
+                else CurrentEffect.Effects &= ~EffectPreset.Effect.Eq;
             }
         }
         public Boolean IsEchoEnabled
         {
-            get => (CurrentEffect.Flags & EffectPreset.Flag.Echo) != 0;
+            get => (CurrentEffect.Effects & EffectPreset.Effect.Echo) != 0;
             set
             {
-                if (value) CurrentEffect.Flags |= EffectPreset.Flag.Echo;
-                else CurrentEffect.Flags &= ~EffectPreset.Flag.Echo;
+                if (value) CurrentEffect.Effects |= EffectPreset.Effect.Echo;
+                else CurrentEffect.Effects &= ~EffectPreset.Effect.Echo;
             }
         }
         public Boolean IsEffectVolumeEnabled
         {
-            get => (CurrentEffect.Flags & EffectPreset.Flag.Volume) != 0;
+            get => (CurrentEffect.Effects & EffectPreset.Effect.Volume) != 0;
             set
             {
-                if (value) CurrentEffect.Flags |= EffectPreset.Flag.Volume;
-                else CurrentEffect.Flags &= ~EffectPreset.Flag.Volume;
+                if (value) CurrentEffect.Effects |= EffectPreset.Effect.Volume;
+                else CurrentEffect.Effects &= ~EffectPreset.Effect.Volume;
             }
         }
 
