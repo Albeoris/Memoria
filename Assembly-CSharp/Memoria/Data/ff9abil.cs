@@ -257,6 +257,17 @@ namespace FF9
             }
         }
 
+        public static List<SupportAbility> GetNonForcedSAInHierarchy(PLAYER player, SupportAbility baseAbil)
+        {
+            List<SupportAbility> SAFullHierarchy = GetHierarchyFromAnySA(baseAbil);
+            List<SupportAbility> SAHierarchyWithoutForced = new List<SupportAbility>();
+            foreach (SupportAbility NoForcedSA in SAFullHierarchy)
+                if (!player.saForced.Contains(NoForcedSA))
+                    SAHierarchyWithoutForced.Add(NoForcedSA);
+
+            return SAHierarchyWithoutForced;
+        }
+
         public static void CalculateGemsPlayer(PLAYER player)
         {
             if (Configuration.Battle.LockEquippedAbilities == 1 || Configuration.Battle.LockEquippedAbilities == 3)

@@ -428,6 +428,12 @@ public class AbilityUI : UIScene
                     }
                     else if (abilityType == AbilityType.Selected)
                     {
+                        List<SupportAbility> NonForcedSAList = ff9abil.GetNonForcedSAInHierarchy(player, supportId);
+                        if (NonForcedSAList.Count == 0) // If all SA in the hierarchy are forced, do nothing.
+                        {
+                            FF9Sfx.FF9SFX_Play(102);
+                            return true;
+                        }
                         PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
                         FF9Sfx.FF9SFX_Play(107);
                         Int32 boostMaxLevel = ff9abil.GetBoostedAbilityMaxLevel(player, supportId);
@@ -631,7 +637,8 @@ public class AbilityUI : UIScene
                             List<SupportAbility> boostedList = ff9abil.GetBoostedAbilityList(supportId);
                             foreach (SupportAbility boosted in boostedList)
                             {
-                                if (this.CheckSAType(ff9abil.GetAbilityIdFromSupportAbility(boosted), player) == AbilityType.Enable)
+                                AbilityType SaType = this.CheckSAType(ff9abil.GetAbilityIdFromSupportAbility(boosted), player);
+                                if (SaType == AbilityType.Enable || (player.saForced.Contains(boosted) && SaType == AbilityType.Selected))
                                 {
                                     CharacterAbilityGems boostedGem = ff9abil._FF9Abil_SaData[boosted];
                                     ff9abil.FF9Abil_SetEnableSA(player, boosted, true);
@@ -649,6 +656,12 @@ public class AbilityUI : UIScene
                     }
                     else if (abilityType == AbilityType.Selected)
                     {
+                        List<SupportAbility> NonForcedSAList = ff9abil.GetNonForcedSAInHierarchy(player, supportId);
+                        if (NonForcedSAList.Count == 0) // If all SA in the hierarchy are forced, do nothing.
+                        {
+                            FF9Sfx.FF9SFX_Play(102);
+                            return true;
+                        }
                         PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
                         FF9Sfx.FF9SFX_Play(107);
                         Int32 boostMaxLevel = ff9abil.GetBoostedAbilityMaxLevel(player, supportId);
@@ -656,10 +669,35 @@ public class AbilityUI : UIScene
                         {
                             Int32 boostLevel = Math.Min(boostMaxLevel, ff9abil.GetBoostedAbilityLevel(player, supportId));
                             List<SupportAbility> boostedList = ff9abil.GetBoostedAbilityList(supportId);
-                            if (boostLevel > 0)
+                            Boolean PreviousSAAvailable = false;
+                            while (!PreviousSAAvailable)
                             {
-                                supportId = boostedList[boostLevel - 1];
-                                saData = ff9abil._FF9Abil_SaData[supportId];
+                                if (boostLevel > 0)
+                                {
+                                    if (!player.saForced.Contains(boostedList[boostLevel - 1]))
+                                    {
+                                        supportId = boostedList[boostLevel - 1];
+                                        PreviousSAAvailable = true;
+                                    }
+                                }
+                                boostLevel--;
+                                if (player.saForced.Contains(supportId) && boostLevel < 0)
+                                {
+                                    foreach (SupportAbility boosted in boostedList)
+                                    {
+                                        AbilityType SaType = this.CheckSAType(ff9abil.GetAbilityIdFromSupportAbility(boosted), player);
+                                        if (SaType == AbilityType.Enable || (player.saForced.Contains(boosted) && SaType == AbilityType.Selected))
+                                        {
+                                            CharacterAbilityGems boostedGem = ff9abil._FF9Abil_SaData[boosted];
+                                            ff9abil.FF9Abil_SetEnableSA(player, boosted, true);
+                                            player.cur.capa = (UInt32)(player.cur.capa - ff9abil.GetSAGemCostFromPlayer(player, boosted));
+                                        }
+                                        else
+                                            PreviousSAAvailable = true;
+                                    }
+                                }
+                                else
+                                    PreviousSAAvailable = true;
                             }
                         }
                         ff9abil.FF9Abil_SetEnableSA(player, supportId, false);

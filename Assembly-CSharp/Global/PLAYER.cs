@@ -47,6 +47,7 @@ public class PLAYER
 
     public void ValidateSupportAbility()
     {
+        ff9play.FF9Play_SAFeature_Update(this);
         Int32 activeSupportAbilityPoint = this.GetActiveSupportAbilityPoint();
         if (this.cur.capa != this.max.capa - activeSupportAbilityPoint)
         {

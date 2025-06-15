@@ -355,14 +355,14 @@ public static class ff9play
         play.saHidden.Clear();
 
         foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledGlobalSA(play))
-            saFeature.TriggerForcedSA(play);
+            saFeature.TriggerSpecialSA(play);
 
         foreach (SupportAbility SaForcedToReset in OldSAForced)
             if (!play.saForced.Contains(SaForcedToReset))
                 ff9abil.DisableAllHierarchyFromSA(play, SaForcedToReset);
 
-        foreach (SupportAbility SaForced in play.saBanish)
-            ff9abil.FF9Abil_SetEnableSA(play, SaForced, false);
+        foreach (SupportAbility SaBanish in play.saBanish)
+            ff9abil.FF9Abil_SetEnableSA(play, SaBanish, false);
         foreach (SupportAbility SaForced in play.saForced)
             ff9abil.FF9Abil_SetEnableSA(play, SaForced, true);
     }

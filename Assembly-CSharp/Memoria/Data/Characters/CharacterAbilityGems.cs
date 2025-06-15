@@ -95,7 +95,7 @@ namespace Memoria.Data
         public Boolean EnableAsMonsterTransform = false;
         public Boolean EnableAsEnemy = false;
 
-        public void TriggerForcedSA(PLAYER play)
+        public void TriggerSpecialSA(PLAYER play)
         {
             try
             {
