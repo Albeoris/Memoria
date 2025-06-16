@@ -33,17 +33,17 @@ namespace Global.Sound.SaXAudio
         public override Int32 SdSoundSystem_Create(String config)
         {
             SoundLib.Log("Create");
-            if (SaXAudio.Init())
+            if (!SaXAudio.Init())
             {
-                BusMusic = SaXAudio.CreateBus();
-                BusAmbient = SaXAudio.CreateBus();
-                BusSoundEffect = SaXAudio.CreateBus();
-                BusVoice = SaXAudio.CreateBus();
-                Log.Message($"[SaXAudio] Initialized");
-                return 0;
+                Log.Warning($"[SaXAudio] Initialization failed");
+                return -1;
             }
-            Log.Warning($"[SaXAudio] Initialization failed");
-            return -1;
+            BusMusic = SaXAudio.CreateBus();
+            BusAmbient = SaXAudio.CreateBus();
+            BusSoundEffect = SaXAudio.CreateBus();
+            BusVoice = SaXAudio.CreateBus();
+            Log.Message($"[SaXAudio] Initialized");
+            return 0;
         }
 
         public override void SdSoundSystem_Release()
@@ -87,7 +87,6 @@ namespace Global.Sound.SaXAudio
                     IntPtr akbBin = bankData[bankID].Profile.AkbBin;
                     if (akbBin != IntPtr.Zero)
                     {
-                        Log.Message($"[SaXAudio] Deleting B{bankID}");
                         Marshal.FreeHGlobal(akbBin);
                         bankData[bankID].Profile.AkbBin = IntPtr.Zero;
                     }
@@ -102,7 +101,6 @@ namespace Global.Sound.SaXAudio
                     LoopStart2 = header.LoopStartAlternate,
                     LoopEnd2 = header.LoopEndAlternate
                 };
-                Log.Message($"[SaXAudio] Added B{bankID} '{profile.ResourceID}'");
                 return bankID;
             }
         }
@@ -116,7 +114,6 @@ namespace Global.Sound.SaXAudio
 
         public override Int32 SdSoundSystem_RemoveData(Int32 bankID)
         {
-            SoundLib.Log($"RemoveData({bankID})");
             SaXAudio.BankRemove(bankID);
             bankData.Remove(bankID);
             return 0;
@@ -124,6 +121,10 @@ namespace Global.Sound.SaXAudio
 
         public override Int32 SdSoundSystem_CreateSound(Int32 bankID)
         {
+            if(!bankData.ContainsKey(bankID))
+            {
+                Log.Warning($"The BankID {bankID} was not found");
+            }
             BankData data = bankData[bankID];
             Int32 busID = -1;
 

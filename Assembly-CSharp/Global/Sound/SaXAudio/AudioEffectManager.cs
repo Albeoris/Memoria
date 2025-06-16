@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
@@ -43,9 +44,9 @@ namespace Global.Sound.SaXAudio
             public Single Volume = 1f;
 
             public Layer Layers = Layer.None;
-            public Int32 FieldID = Int32.MinValue;
-            public Int32 BattleID = Int32.MinValue;
-            public Int32 BattleBgID = Int32.MinValue;
+            public HashSet<Int32> FieldIDs = new HashSet<Int32>();
+            public HashSet<Int32> BattleIDs = new HashSet<Int32>();
+            public HashSet<Int32> BattleBgIDs = new HashSet<Int32>();
 
             public String Condition = "";
 
@@ -85,15 +86,41 @@ namespace Global.Sound.SaXAudio
 
                 if (i == tokens.Length) return;
 
-                Condition = tokens[i++];
-                if (Condition.Length == 0)
-                    Condition = null;
-
                 Layers = (Layer)Byte.Parse(tokens[i++]);
 
-                Int32.TryParse(tokens[i++], out FieldID);
-                Int32.TryParse(tokens[i++], out BattleID);
-                Int32.TryParse(tokens[i++], out BattleBgID);
+                String[] ids = tokens[i++].Split('|');
+                if (ids.Length > 0)
+                {
+                    FieldIDs.Clear();
+                    foreach (String id in ids)
+                    {
+                        if (id.Length > 0)
+                            FieldIDs.Add(Int32.Parse(id));
+                    }
+                }
+
+                ids = tokens[i++].Split('|');
+                if (ids.Length > 0)
+                {
+                    BattleIDs.Clear();
+                    foreach (String id in ids)
+                    {
+                        if (id.Length > 0)
+                            BattleIDs.Add(Int32.Parse(id));
+                    }
+                }
+
+                ids = tokens[i++].Split('|');
+                if (ids.Length > 0)
+                {
+                    BattleBgIDs.Clear();
+                    foreach (String id in ids)
+                    {
+                        if (id.Length > 0)
+                            BattleBgIDs.Add(Int32.Parse(id));
+                    }
+                }
+
                 Condition = tokens[i++].Replace('\x0A', ';');
             }
 
@@ -133,13 +160,13 @@ namespace Global.Sound.SaXAudio
                 builder.Append((Byte)Layers);
 
                 builder.Append(separator);
-                builder.Append(FieldID);
+                builder.Append(String.Join("|", FieldIDs.Select(x => x.ToString()).ToArray()));
 
                 builder.Append(separator);
-                builder.Append(BattleID);
+                builder.Append(String.Join("|", BattleIDs.Select(x => x.ToString()).ToArray()));
 
                 builder.Append(separator);
-                builder.Append(BattleBgID);
+                builder.Append(String.Join("|", BattleBgIDs.Select(x => x.ToString()).ToArray()));
 
                 builder.Append(separator);
                 builder.Append(Condition.Replace(';', '\x0A'));

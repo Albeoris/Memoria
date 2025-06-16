@@ -468,6 +468,9 @@ namespace SoundDebugRoom
             if (!EffectPresetDictionary.ContainsKey(name)) return;
 
             CurrentEffect = EffectPresetDictionary[name];
+            CurrentEffect.FieldIDs = new HashSet<int>(CurrentEffect.FieldIDs);
+            CurrentEffect.BattleIDs = new HashSet<int>(CurrentEffect.BattleIDs);
+            CurrentEffect.BattleBgIDs = new HashSet<int>(CurrentEffect.BattleBgIDs);
             if (IsReverbEnabled) SetReverb();
             if (IsEqEnabled) SetEq();
             if (IsEchoEnabled) SetEcho();
