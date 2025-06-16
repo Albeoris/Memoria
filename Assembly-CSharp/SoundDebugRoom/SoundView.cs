@@ -30,6 +30,9 @@ namespace SoundDebugRoom
 
             if (SceneDirector.Instance.CurrentScene == "Title")
                 PersistenSingleton<UIManager>.Instance.TitleScene?.gameObject?.SetActive(false);
+
+            presetFilterIds = null;
+            ResetEffects();
         }
 
         private void OnDisable()
@@ -43,6 +46,16 @@ namespace SoundDebugRoom
 
             if (SceneDirector.Instance.CurrentScene == "Title")
                 PersistenSingleton<UIManager>.Instance.TitleScene?.gameObject?.SetActive(true);
+
+            if (SceneDirector.IsFieldScene())
+            {
+                ApplyFieldEffects(FF9StateSystem.Common.FF9.fldMapNo);
+            }
+            else if (SceneDirector.IsBattleScene())
+            {
+                ApplyBattleEffects(FF9StateSystem.Battle.battleMapIndex);
+                ApplyBattleBgEffects(battlebg.nf_BbgNumber);
+            }
         }
 
         private void OnApplicationQuit()
@@ -171,7 +184,7 @@ namespace SoundDebugRoom
 
                 GUILayout.BeginVertical(GUILayout.Width(width));
                 {
-                    if (soundViewController.IsSaXAudio)
+                    if (IsSaXAudio)
                     {
                         SoundProfile active = soundViewController?.GetActiveSound();
                         GUILayout.Space(4);
@@ -264,7 +277,7 @@ namespace SoundDebugRoom
 
                     GUILayout.BeginHorizontal();
                     {
-                        if (soundViewController.IsSaXAudio)
+                        if (IsSaXAudio)
                         {
                             if (soundViewController.IsLooping)
                             {
@@ -370,30 +383,28 @@ namespace SoundDebugRoom
 
         private void BuildAudioEffects(Single width)
         {
-            if (soundViewController.IsSaXAudio)
+            if (!IsSaXAudio) return;
+            GUILayout.BeginHorizontal(GUILayout.Height(1));
             {
-                GUILayout.BeginHorizontal(GUILayout.Height(1));
+                Single sliderWidth = width / 2f;
+                Single buttonWidth = width / 2.5f;
+
+                GUILayout.Space(4);
+                BuildReverbParameters(width, sliderWidth, buttonWidth);
+                GUILayout.BeginVertical();
                 {
-                    Single sliderWidth = width / 2f;
-                    Single buttonWidth = width / 2.5f;
+                    BuildEqParameters(width, sliderWidth, buttonWidth);
 
-                    GUILayout.Space(4);
-                    BuildReverbParameters(width, sliderWidth, buttonWidth);
-                    GUILayout.BeginVertical();
+                    GUILayout.BeginHorizontal();
                     {
-                        BuildEqParameters(width, sliderWidth, buttonWidth);
-
-                        GUILayout.BeginHorizontal();
-                        {
-                            BuildEchoParameters(width, sliderWidth, buttonWidth);
-                            BuildVolumeParameter(width, sliderWidth, buttonWidth);
-                        }
-                        GUILayout.EndHorizontal();
+                        BuildEchoParameters(width, sliderWidth, buttonWidth);
+                        BuildVolumeParameter(width, sliderWidth, buttonWidth);
                     }
-                    GUILayout.EndVertical();
+                    GUILayout.EndHorizontal();
                 }
-                GUILayout.EndHorizontal();
+                GUILayout.EndVertical();
             }
+            GUILayout.EndHorizontal();
         }
 
         private void BuildReverbParameters(Single width, Single sliderWidth, Single buttonWidth)
@@ -992,6 +1003,7 @@ namespace SoundDebugRoom
 
         private void BuildPresetManager(Single width)
         {
+            if (!IsSaXAudio) return;
             GUILayout.BeginVertical("box", GUILayout.Width(width));
             {
                 GUILayout.Label("Effect Manager");

@@ -712,8 +712,6 @@ namespace SoundDebugRoom
 
         public Boolean IsPlay;
 
-        public Boolean IsSaXAudio = ISdLibAPIProxy.Instance is SdLibAPIWithSaXAudio;
-
         public Boolean IsLooping
         {
             get

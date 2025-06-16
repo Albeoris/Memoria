@@ -3,6 +3,7 @@ using System.Linq;
 using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
+using Global.Sound.SaXAudio;
 using Memoria;
 using Memoria.Data;
 using Memoria.Scripts;
@@ -74,6 +75,9 @@ public static class battle
         SceneDirector.FF9Wipe_FadeInEx(32);
         ff9Battle.btl_phase = FF9StateBattleSystem.PHASE_ENTER;
         battle.isSpecialTutorialWindow = false;
+        
+        AudioEffectManager.ApplyBattleEffects(FF9StateSystem.Battle.battleMapIndex);
+        AudioEffectManager.ApplyBattleBgEffects(battlebg.nf_BbgNumber);
     }
 
     public static UInt32 BattleMain()

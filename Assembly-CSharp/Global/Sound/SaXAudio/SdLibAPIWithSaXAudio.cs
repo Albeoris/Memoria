@@ -121,7 +121,7 @@ namespace Global.Sound.SaXAudio
 
         public override Int32 SdSoundSystem_CreateSound(Int32 bankID)
         {
-            if(!bankData.ContainsKey(bankID))
+            if (!bankData.ContainsKey(bankID))
             {
                 Log.Warning($"The BankID {bankID} was not found");
             }
@@ -139,10 +139,8 @@ namespace Global.Sound.SaXAudio
                 case SoundProfileType.SoundEffect:
                 case SoundProfileType.Sfx:
                 case SoundProfileType.Song:
-                    if (data.LoopEnd != 0)
-                        busID = BusAmbient;
-                    else if(!data.Profile.ResourceID.StartsWith("Sounds02/SE00"))
-                        busID = BusSoundEffect;
+                    if (!data.Profile.ResourceID.StartsWith("Sounds02/SE00"))
+                        busID = data.LoopEnd != 0 ? BusAmbient : BusSoundEffect;
                     break;
             }
             Int32 soundID = SaXAudio.CreateVoice(bankID, busID);
