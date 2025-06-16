@@ -257,7 +257,7 @@ namespace NCalc
             else if (name == "GameTime") args.Result = (Int32)GameState.GameTime;
             else if (name == "BattleId") args.Result = (Int32)FF9StateSystem.Battle.battleMapIndex;
             else if (name == "FieldId") args.Result = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
-            else if (name == "BBGId") args.Result = (Int32)(FF9StateSystem.Battle?.FF9Battle?.btl_scene?.Info != null ? battlebg.nf_BbgNumber : -1);
+            else if (name == "BattleBackgroundId") args.Result = (Int32)(FF9StateSystem.Battle?.FF9Battle?.btl_scene?.Info != null ? battlebg.nf_BbgNumber : -1);
             else if (name == "IsRandomBattle") args.Result = BattleState.IsRandomBattle;
             else if (name == "IsFriendlyBattle") args.Result = BattleState.IsFriendlyBattle;
             else if (name == "IsRagtimeBattle") args.Result = BattleState.IsRagtimeBattle;
