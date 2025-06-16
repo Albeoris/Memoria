@@ -243,7 +243,7 @@ namespace Memoria.Data
                         else if (String.Equals(formula.Key, "PlayerPermanentStatus")) play.SetPermanentStatus((BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int64)play.permanent_status));
                         else if (String.Equals(formula.Key, "MaxGems"))
                         {
-                            uint BonusGems = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), 0);
+                            uint BonusGems = (UInt32)Math.Max(0, NCalcUtility.ConvertNCalcResult(e.Evaluate(), 0));
                             play.max.capa = BonusGems;
                             play.cur.capa = (BonusGems - play.cur.capa);
                         }

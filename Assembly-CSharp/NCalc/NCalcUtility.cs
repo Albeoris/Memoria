@@ -634,6 +634,7 @@ namespace NCalc
             expr.Parameters["AbilityCastingName"] = (String)command.AbilityCastingName; // /!\ Language dependent, use of AbilityRawId instead is recommended
             expr.Parameters["ScriptId"] = command.ScriptId;
             expr.Parameters["Power"] = command.Power;
+            expr.Parameters["Accuracy"] = command.HitRate;
             expr.Parameters["AbilityStatus"] = (UInt64)command.AbilityStatus;
             expr.Parameters["AbilityElement"] = (Int32)command.Element;
             expr.Parameters["AbilityElementForBonus"] = (Int32)command.ElementForBonus;
@@ -668,6 +669,7 @@ namespace NCalc
             expr.Parameters["AbilityId"] = (Int32)abilId;
             expr.Parameters["ScriptId"] = aa.Ref.ScriptId;
             expr.Parameters["Power"] = aa.Ref.Power;
+            expr.Parameters["Accuracy"] = aa.Ref.Rate;
             expr.Parameters["AbilityStatus"] = (UInt32)(FF9BattleDB.StatusSets.TryGetValue(aa.AddStatusNo, out BattleStatusEntry stat) ? stat.Value : 0);
             expr.Parameters["AbilityElement"] = (Int32)aa.Ref.Elements;
             expr.Parameters["AbilityElementForBonus"] = (Int32)aa.Ref.Elements;
