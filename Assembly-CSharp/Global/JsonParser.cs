@@ -831,7 +831,7 @@ public class JsonParser : ISharedDataParser
                 { "dex", p.basis.dex.ToString() },
                 { "str", p.basis.str.ToString() },
                 { "mgc", p.basis.mgc.ToString() },
-                { "wpr", p.basis.wpr.ToString() },
+                { "wpr", p.basis.wpr.ToString() }
             });
             playerClass.Add("info", oldSaveFormat ? new JSONClass
             {
