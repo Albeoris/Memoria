@@ -445,6 +445,9 @@ namespace SoundDebugRoom
             try
             {
                 CurrentEffect.Name = name;
+                CurrentEffect.FieldIDs = new HashSet<int>(CurrentEffect.FieldIDs);
+                CurrentEffect.BattleIDs = new HashSet<int>(CurrentEffect.BattleIDs);
+                CurrentEffect.BattleBgIDs = new HashSet<int>(CurrentEffect.BattleBgIDs);
                 EffectPresetDictionary[name] = CurrentEffect;
             }
             catch (Exception e)

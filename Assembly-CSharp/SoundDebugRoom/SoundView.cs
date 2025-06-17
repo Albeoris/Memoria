@@ -31,7 +31,12 @@ namespace SoundDebugRoom
             if (SceneDirector.Instance.CurrentScene == "Title")
                 PersistenSingleton<UIManager>.Instance.TitleScene?.gameObject?.SetActive(false);
 
-            presetFilterIds = null;
+            if (presetFilterCaption == "FieldID")
+                presetFilterIndex = presetFilterCurrent = FF9StateSystem.Common.FF9.fldMapNo;
+            else if (presetFilterCaption == "BattleID")
+                presetFilterIndex = presetFilterCurrent = FF9StateSystem.Battle.battleMapIndex;
+            else if (presetFilterCaption == "BattleBgID")
+                presetFilterIndex = presetFilterCurrent = battlebg.nf_BbgNumber;
             ResetEffects();
         }
 
@@ -1109,21 +1114,18 @@ namespace SoundDebugRoom
                         if (GUILayout.Button($"FieldID ({preset.FieldIDs.Count})", GUILayout.Width((width - 20) / 3f)))
                         {
                             presetFilterCaption = "FieldID";
-                            presetFilterIds = preset.FieldIDs;
                             presetFilterIndex = presetFilterCurrent = FF9StateSystem.Common.FF9.fldMapNo;
                         }
                         GUILayout.FlexibleSpace();
                         if (GUILayout.Button($"BattleID ({preset.BattleIDs.Count})", GUILayout.Width((width - 20) / 3f)))
                         {
                             presetFilterCaption = "BattleID";
-                            presetFilterIds = preset.BattleIDs;
                             presetFilterIndex = presetFilterCurrent = FF9StateSystem.Battle.battleMapIndex;
                         }
                         GUILayout.FlexibleSpace();
                         if (GUILayout.Button($"BattleBgID ({preset.BattleBgIDs.Count})", GUILayout.Width((width - 20) / 3f)))
                         {
                             presetFilterCaption = "BattleBgID";
-                            presetFilterIds = preset.BattleBgIDs;
                             presetFilterIndex = presetFilterCurrent = battlebg.nf_BbgNumber;
                         }
                     }
@@ -1150,7 +1152,7 @@ namespace SoundDebugRoom
 
             GUILayout.BeginVertical("box", GUILayout.Width(width));
             {
-                if (presetFilterIds != null)
+                if (presetFilterCaption != null)
                 {
                     BuildPresetFilterList(width);
                 }
@@ -1198,13 +1200,13 @@ namespace SoundDebugRoom
 
                     if (GUILayout.Button(" Delete ", GUILayout.ExpandWidth(false)))
                     {
-                        toDelete = presetName;
+                        toDelete = preset;
                     }
                 }
                 GUILayout.EndHorizontal();
             }
             if (toDelete != null)
-                soundViewController.DeleteEffectPreset(presetName, presetManagerMod);
+                soundViewController.DeleteEffectPreset(toDelete, presetManagerMod);
             GUILayout.EndScrollView();
         }
 
@@ -1214,9 +1216,20 @@ namespace SoundDebugRoom
 
             if (GUILayout.Button("Back"))
             {
-                presetFilterIds = null;
+                presetFilterCaption = null;
                 return;
             }
+
+            HashSet<Int32> presetFilterIds;
+            if (presetFilterCaption == "FieldID")
+                presetFilterIds = soundViewController.CurrentEffect.FieldIDs;
+            else if (presetFilterCaption == "BattleID")
+                presetFilterIds = soundViewController.CurrentEffect.BattleIDs;
+            else if (presetFilterCaption == "BattleBgID")
+                presetFilterIds = soundViewController.CurrentEffect.BattleBgIDs;
+            else
+                return;
+
             GUILayout.BeginHorizontal();
             {
                 GUILayout.Label(presetFilterCaption);
@@ -1294,9 +1307,7 @@ namespace SoundDebugRoom
 
         private String presetName = "My preset";
 
-        private String presetFilterCaption = "";
-
-        private HashSet<Int32> presetFilterIds = null;
+        private String presetFilterCaption = null;
 
         private Int32 presetFilterIndex = Int32.MinValue;
 

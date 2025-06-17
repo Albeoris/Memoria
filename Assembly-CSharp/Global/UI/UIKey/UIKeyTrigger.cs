@@ -783,14 +783,14 @@ public class UIKeyTrigger : MonoBehaviour
             keyCommand = Control.None;
             if (!PersistenSingleton<UIManager>.Instance.IsPauseControlEnable)
                 return;
-            PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State).OnKeyPause(activeButton);
+            PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State)?.OnKeyPause(activeButton);
         }
         else if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Menu) || keyCommand == Control.Menu)
         {
             keyCommand = Control.None;
             if (!PersistenSingleton<UIManager>.Instance.IsMenuControlEnable)
                 return;
-            PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State).OnKeyMenu(activeButton);
+            PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State)?.OnKeyMenu(activeButton);
         }
     }
 

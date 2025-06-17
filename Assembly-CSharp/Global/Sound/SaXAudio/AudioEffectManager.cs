@@ -6,8 +6,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 
 namespace Global.Sound.SaXAudio
 {
@@ -20,53 +20,77 @@ namespace Global.Sound.SaXAudio
         private static Dictionary<Int32, EffectPreset> battleBgIDPresets = new Dictionary<Int32, EffectPreset>();
         private static List<EffectPreset> conditionalPresets = new List<EffectPreset>();
 
-        public static Boolean Initialized = false;
+        private static Boolean initialized = false;
+        private static FileSystemWatcher watcher = null;
 
         public static Boolean IsSaXAudio { get; private set; } = ISdLibAPIProxy.Instance is SdLibAPIWithSaXAudio;
 
         public static void ApplyFieldEffects(Int32 fieldID)
         {
             if (!IsSaXAudio) return;
-            if (!Initialized) Init();
 
-            Log.Message($"[ApplyFieldEffects] {fieldID}");
-            ResetEffects();
-            if (ApplyConditionalEffects()) return;
-
-            if (fieldIDPresets.TryGetValue(fieldID, out EffectPreset preset))
+            new Thread(() =>
             {
-                ApplyPreset(ref preset);
-            }
+                lock (battleBgIDPresets)
+                {
+                    if (!initialized) Init();
+                }
+
+                if (ApplyConditionalEffects()) return;
+
+                if (fieldIDPresets.TryGetValue(fieldID, out EffectPreset preset))
+                {
+                    ApplyPreset(ref preset);
+                    Log.Message($"[AudioEffectManager] Applied preset '{preset.Name}' to field {fieldID}");
+                    return;
+                }
+                ResetEffects();
+            }).Start();
         }
 
         public static void ApplyBattleEffects(Int32 battleID)
         {
             if (!IsSaXAudio) return;
-            if (!Initialized) Init();
-
-            Log.Message($"[ApplyBattleEffects] {battleID}");
-            ResetEffects();
-            if (ApplyConditionalEffects()) return;
-
-            if (battleIDPresets.TryGetValue(battleID, out EffectPreset preset))
+            new Thread(() =>
             {
-                ApplyPreset(ref preset);
-            }
+                lock (battleBgIDPresets)
+                {
+                    if (!initialized) Init();
+                }
+                if (ApplyConditionalEffects()) return;
+
+                if (battleIDPresets.TryGetValue(battleID, out EffectPreset preset))
+                {
+                    ApplyPreset(ref preset);
+                    Log.Message($"[AudioEffectManager] Applied preset '{preset.Name}' to battle {battleID}");
+                    return;
+                }
+                ResetEffects();
+            }).Start();
         }
 
         public static void ApplyBattleBgEffects(Int32 battleBgID)
         {
             if (!IsSaXAudio) return;
-            if (!Initialized) Init();
-
-            Log.Message($"[ApplyBattleBgEffects] {battleBgID}");
-
-            if (ApplyConditionalEffects()) return;
-
-            if (battleBgIDPresets.TryGetValue(battleBgID, out EffectPreset preset))
+            new Thread(() =>
             {
-                ApplyPreset(ref preset);
-            }
+                Log.Message($"{battleBgID} {battleBgIDPresets.ContainsKey(battleBgID)} {initialized}");
+
+                lock (battleBgIDPresets)
+                {
+                    if (!initialized) Init();
+                }
+
+                if (ApplyConditionalEffects()) return;
+
+                if (battleBgIDPresets.TryGetValue(battleBgID, out EffectPreset preset))
+                {
+                    ApplyPreset(ref preset);
+                    Log.Message($"[AudioEffectManager] Applied preset '{preset.Name}' to battle background {battleBgID}");
+                    return;
+                }
+                ResetEffects();
+            }).Start();
         }
 
         private static Boolean ApplyConditionalEffects()
@@ -84,6 +108,7 @@ namespace Global.Sound.SaXAudio
                     if (NCalcUtility.EvaluateNCalcCondition(c.Evaluate()))
                     {
                         ApplyPreset(ref preset);
+                        Log.Message($"[AudioEffectManager] Applied conditional preset '{preset.Name}'");
                         return true;
                     }
                 }
@@ -123,8 +148,6 @@ namespace Global.Sound.SaXAudio
 
         private static void Init()
         {
-            Initialized = true;
-
             fieldIDPresets.Clear();
             battleIDPresets.Clear();
             battleBgIDPresets.Clear();
@@ -165,16 +188,20 @@ namespace Global.Sound.SaXAudio
                 }
             }
 
-            FileSystemWatcher watcher = new FileSystemWatcher("./", $"*{FILENAME}");
-            watcher.IncludeSubdirectories = true;
-            watcher.NotifyFilter = NotifyFilters.LastWrite;
-            watcher.Changed += (sender, e) =>
+            if (watcher == null)
             {
-                if (e.ChangeType != WatcherChangeTypes.Changed) return;
-                Log.Message($"[AudioEffectManager] File changed {e.FullPath}");
-                Init();
-            };
-            watcher.EnableRaisingEvents = true;
+                watcher = new FileSystemWatcher("./", $"*{FILENAME}");
+                watcher.IncludeSubdirectories = true;
+                watcher.NotifyFilter = NotifyFilters.LastWrite;
+                watcher.Changed += (sender, e) =>
+                {
+                    if (e.ChangeType != WatcherChangeTypes.Changed) return;
+                    initialized = false;
+                    Log.Message($"'{e.FullPath}' changed");
+                };
+                watcher.EnableRaisingEvents = true;
+            }
+            initialized = true;
         }
 
         private static void ApplyPreset(ref EffectPreset preset)
@@ -198,43 +225,30 @@ namespace Global.Sound.SaXAudio
                     return;
                 }
             }
+
             SdLibAPIWithSaXAudio saXAudio = ISdLibAPIProxy.Instance as SdLibAPIWithSaXAudio;
 
+            if ((preset.Layers & EffectPreset.Layer.Music) != 0) ApplyPresetOnBus(ref preset, saXAudio.BusMusic);
+            if ((preset.Layers & EffectPreset.Layer.Ambient) != 0) ApplyPresetOnBus(ref preset, saXAudio.BusAmbient);
+            if ((preset.Layers & EffectPreset.Layer.SoundEffect) != 0) ApplyPresetOnBus(ref preset, saXAudio.BusSoundEffect);
+            if ((preset.Layers & EffectPreset.Layer.Voice) != 0) ApplyPresetOnBus(ref preset, saXAudio.BusVoice);
+        }
+
+        private static void ApplyPresetOnBus(ref EffectPreset preset, Int32 bus)
+        {
             Boolean reverb = (preset.Effects & EffectPreset.Effect.Reverb) != 0;
             Boolean eq = (preset.Effects & EffectPreset.Effect.Eq) != 0;
             Boolean echo = (preset.Effects & EffectPreset.Effect.Echo) != 0;
             Boolean volume = (preset.Effects & EffectPreset.Effect.Volume) != 0;
 
-            if ((preset.Layers & EffectPreset.Layer.Music) != 0)
-            {
-                if (reverb) SaXAudio.SetReverb(saXAudio.BusMusic, preset.Reverb, 0, true);
-                if (eq) SaXAudio.SetEq(saXAudio.BusMusic, preset.Eq, 0, true);
-                if (echo) SaXAudio.SetEcho(saXAudio.BusMusic, preset.Echo, 0, true);
-                if (volume) SaXAudio.SetVolume(saXAudio.BusMusic, preset.Volume, 0, true);
-            }
-            if ((preset.Layers & EffectPreset.Layer.Ambient) != 0)
-            {
-                if (reverb) SaXAudio.SetReverb(saXAudio.BusAmbient, preset.Reverb, 0, true);
-                if (eq) SaXAudio.SetEq(saXAudio.BusAmbient, preset.Eq, 0, true);
-                if (echo) SaXAudio.SetEcho(saXAudio.BusAmbient, preset.Echo, 0, true);
-                if (volume) SaXAudio.SetVolume(saXAudio.BusAmbient, preset.Volume, 0, true);
-            }
-            if ((preset.Layers & EffectPreset.Layer.SoundEffect) != 0)
-            {
-                if (reverb) SaXAudio.SetReverb(saXAudio.BusSoundEffect, preset.Reverb, 0, true);
-                if (eq) SaXAudio.SetEq(saXAudio.BusSoundEffect, preset.Eq, 0, true);
-                if (echo) SaXAudio.SetEcho(saXAudio.BusSoundEffect, preset.Echo, 0, true);
-                if (volume) SaXAudio.SetVolume(saXAudio.BusSoundEffect, preset.Volume, 0, true);
-            }
-            if ((preset.Layers & EffectPreset.Layer.Voice) != 0)
-            {
-                if (reverb) SaXAudio.SetReverb(saXAudio.BusVoice, preset.Reverb, 0, true);
-                if (eq) SaXAudio.SetEq(saXAudio.BusVoice, preset.Eq, 0, true);
-                if (echo) SaXAudio.SetEcho(saXAudio.BusVoice, preset.Echo, 0, true);
-                if (volume) SaXAudio.SetVolume(saXAudio.BusVoice, preset.Volume, 0, true);
-            }
-
-            Log.Message($"[AudioEffectManager] Applied '{preset.Name}' effect preset");
+            if (reverb) SaXAudio.SetReverb(bus, preset.Reverb, 0, true);
+            else SaXAudio.RemoveReverb(bus, 0, true);
+            if (eq) SaXAudio.SetEq(bus, preset.Eq, 0, true);
+            else SaXAudio.RemoveEq(bus, 0, true);
+            if (echo) SaXAudio.SetEcho(bus, preset.Echo, 0, true);
+            else SaXAudio.RemoveEcho(bus, 0, true);
+            if (volume) SaXAudio.SetVolume(bus, preset.Volume, 0, true);
+            else SaXAudio.SetVolume(bus, 1f, 0, true);
         }
 
         public struct EffectPreset
@@ -414,16 +428,15 @@ namespace Global.Sound.SaXAudio
                 try
                 {
                     String mod = Path.GetDirectoryName(modLocation);
-                    Log.Message($"[AudioEffectManager] Load {mod} presets");
                     String[] lines = File.ReadAllLines(path);
                     foreach (String line in lines)
                     {
-                        String decryptedLine = Decrypt(line, mod);
-                        if (decryptedLine.Length == 0 || decryptedLine.StartsWith("#"))
+                        if (line.Length == 0 || line.StartsWith("#"))
                             continue;
-                        EffectPreset preset = new EffectPreset(decryptedLine);
+                        EffectPreset preset = new EffectPreset(line);
                         presets.Add(preset.Name, preset);
                     }
+                    Log.Message($"[AudioEffectManager] Loaded {mod} presets");
                 }
                 catch (Exception e)
                 {
@@ -438,52 +451,19 @@ namespace Global.Sound.SaXAudio
             try
             {
                 String mod = Path.GetDirectoryName(modLocation);
-                Log.Message($"[AudioEffectManager] Save {mod} presets");
                 List<String> lines = new List<String>();
                 foreach (EffectPreset effectPreset in presets.Values)
                 {
-                    lines.Add(Encrypt(effectPreset.ToString(), mod));
+                    lines.Add(effectPreset.ToString());
                 }
                 String path = Path.Combine(modLocation, $"{FILENAME}{(backup ? ".bak" : "")}");
                 File.WriteAllLines(path, lines.ToArray());
+                Log.Message($"[AudioEffectManager] Saved {mod} presets");
             }
             catch (Exception e)
             {
                 Log.Error(e);
             }
         }
-
-        public static string Encrypt(string plainText, string password)
-        {
-            using Aes aes = Aes.Create();
-            var key = new Rfc2898DeriveBytes(password, Encoding.UTF8.GetBytes("AlexandriaCastle"), 10000);
-            aes.Key = key.GetBytes(32);
-            aes.IV = key.GetBytes(16);
-            using var encryptor = aes.CreateEncryptor();
-            using var ms = new MemoryStream();
-            using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
-            {
-                var plainBytes = Encoding.UTF8.GetBytes(plainText);
-                cs.Write(plainBytes, 0, plainBytes.Length);
-                cs.FlushFinalBlock();
-            }
-            return Convert.ToBase64String(ms.ToArray());
-        }
-
-        public static string Decrypt(string cipherText, string password)
-        {
-            using Aes aes = Aes.Create();
-            var key = new Rfc2898DeriveBytes(password, Encoding.UTF8.GetBytes("AlexandriaCastle"), 10000);
-            aes.Key = key.GetBytes(32);
-            aes.IV = key.GetBytes(16);
-
-            using var decryptor = aes.CreateDecryptor();
-            using var ms = new MemoryStream(Convert.FromBase64String(cipherText));
-            using var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
-            using var reader = new StreamReader(cs);
-
-            return reader.ReadToEnd();
-        }
     }
-
 }
