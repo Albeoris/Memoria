@@ -71,7 +71,7 @@ namespace Global.Sound.SaXAudio
         {
             public Single WetDryMix = 0.5f; // [0f, 1f] ratio of wet (processed) signal to dry (original) signal
             public Single Feedback = 0.5f;  // [0f, 1f] amount of output fed back into input
-            public Single Delay = 500f;     // [1f, 2000f] delay (all channels) in milliseconds
+            public Single Delay = 500f;     // [1f, 3000f] delay (all channels) in milliseconds
 
             public EchoParameters() { }
         }

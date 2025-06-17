@@ -318,6 +318,7 @@ namespace SoundDebugRoom
                 if (GUILayout.Button("Sound Effect"))
                 {
                     soundViewController.SetActiveSoundType(SoundProfileType.SoundEffect);
+                    soundSelectorScrollPosition = Vector2.zero;
                 }
                 if (GUILayout.Button("BGM"))
                 {
@@ -325,23 +326,30 @@ namespace SoundDebugRoom
                     soundViewController.SetPanning(PanningPosition);
                     soundViewController.SetPitch(PitchPosition);
                     soundViewController.SetVolume(SoundVolume);
+                    soundSelectorScrollPosition = Vector2.zero;
                 }
                 if (GUILayout.Button("Song"))
                 {
                     soundViewController.SetActiveSoundType(SoundProfileType.Song);
+                    soundSelectorScrollPosition = Vector2.zero;
                 }
                 if (GUILayout.Button("Sfx Sound"))
                 {
                     soundViewController.SetActiveSoundType(SoundProfileType.Sfx);
+                    soundSelectorScrollPosition = Vector2.zero;
                 }
                 if (GUILayout.Button("Movie Audio"))
                 {
                     soundViewController.SetActiveSoundType(SoundProfileType.MovieAudio);
+                    soundSelectorScrollPosition = Vector2.zero;
                 }
                 if (soundViewController.ModVoiceDictionary.Count > 0)
                 {
                     if (GUILayout.Button("Mod Voices"))
+                    {
                         soundViewController.SetActiveSoundType(SoundProfileType.Voice);
+                        soundSelectorScrollPosition = Vector2.zero;
+                    }
                 }
                 else
                 {
@@ -353,11 +361,13 @@ namespace SoundDebugRoom
                     if (GUILayout.Button("<"))
                     {
                         soundViewController.PreviousPlayList();
+                        soundSelectorScrollPosition = Vector2.zero;
                     }
                     GUILayout.Label(soundViewController.PlaylistInfo, GUILayout.Width(width / 3f));
                     if (GUILayout.Button(">"))
                     {
                         soundViewController.NextPlayList();
+                        soundSelectorScrollPosition = Vector2.zero;
                     }
                 }
                 GUILayout.EndHorizontal();
@@ -995,7 +1005,7 @@ namespace SoundDebugRoom
                 {
                     GUILayout.BeginHorizontal();
                     {
-                        if (GUILayout.Button($"{soundProfile.Name} - {soundProfile.SoundIndex}"))
+                        if (GUILayout.Button($"{soundProfile.Name} ({soundProfile.SoundIndex})"))
                         {
                             soundViewController.SelectSound(soundProfile);
                         }
