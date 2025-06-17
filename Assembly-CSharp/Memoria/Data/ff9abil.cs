@@ -469,7 +469,7 @@ namespace FF9
                 Dictionary<SupportAbility, SupportingAbilityFeature> result = new Dictionary<SupportAbility, SupportingAbilityFeature>();
                 foreach (AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
                     if (folder.TryFindAssetInModOnDisc(inputPath, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
-                        LoadAbilityFeatureFile(ref result, File.ReadAllText(fullPath));
+                        LoadAbilityFeatureFile(ref result, File.ReadAllText(fullPath), fullPath);
                 inputPath = DataResources.Characters.Abilities.Directory + DataResources.Characters.Abilities.SAFeaturesFile;
                 if (result.Count == 0)
                     throw new FileNotFoundException($"File with ability features not found: [{inputPath}]");
@@ -526,7 +526,7 @@ namespace FF9
             }
         }
 
-        public static void LoadAbilityFeatureFile(ref Dictionary<SupportAbility, SupportingAbilityFeature> entries, String input)
+        public static void LoadAbilityFeatureFile(ref Dictionary<SupportAbility, SupportingAbilityFeature> entries, String input, String modFilePath)
         {
             MatchCollection abilMatches = new Regex(@"^(>SA|>AA|>CMD)\s+(\d+|GlobalEnemyLast|GlobalEnemy|GlobalLast|Global)(\+?).*()", RegexOptions.Multiline).Matches(input);
             for (Int32 i = 0; i < abilMatches.Count; i++)
@@ -548,11 +548,12 @@ namespace FF9
                     endPos = input.Length;
                 else
                     endPos = abilMatches[i + 1].Groups[1].Captures[0].Index;
+                Int32 lineNumber = Regex.Matches(input.Substring(0, abilMatches[i].Index), @"\n", RegexOptions.Singleline).Count + 1;
                 if (String.Equals(abilMatches[i].Groups[1].Value, ">SA"))
                 {
                     if (!cumulate || !entries.ContainsKey((SupportAbility)abilIndex))
                         entries[(SupportAbility)abilIndex] = new SupportingAbilityFeature();
-                    entries[(SupportAbility)abilIndex].ParseFeatures((SupportAbility)abilIndex, input.Substring(startPos, endPos - startPos));
+                    entries[(SupportAbility)abilIndex].ParseFeatures((SupportAbility)abilIndex, input.Substring(startPos, endPos - startPos), modFilePath, lineNumber);
                 }
                 else if (String.Equals(abilMatches[i].Groups[1].Value, ">AA"))
                 {
