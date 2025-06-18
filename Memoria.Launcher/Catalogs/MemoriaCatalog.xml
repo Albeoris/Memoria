@@ -2080,10 +2080,10 @@ Available Themes:
 
 <Mod>
 	<Name>Portraits Pack</Name>
-	<Version>4.2.5</Version>
+	<Version>4.2.6</Version>
 	<Priority>10</Priority>	
 	<InstallationPath>KupoPortraits</InstallationPath>
-	<ReleaseDate>2025-05-31</ReleaseDate>
+	<ReleaseDate>2025-06-19</ReleaseDate>
 	<ReleaseDateOriginal>2021-10-18</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>DFFOO portraits are included here. All presets support released and some planned Playable Character Pack characters. 
@@ -2092,7 +2092,7 @@ Changelog: Added support for new characters and costumes. Classic upscaled versi
 Mod Order: Place above Playable Character Pack, Beatrix Mod, Tantalus Mod, and Kupo UI Suite.
 Part of Kupo Mods formerly Mog Add-ons.
 	</Description>
-	<PatchNotes>Added PSX like Pluto Knight costume for Zidane</PatchNotes>
+	<PatchNotes>Added Support for new version of PCP</PatchNotes>
 	<Category>Visual</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/80</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/80dpdv5kn378cw27fay0q/KupoPortraits.zip?rlkey=dnb8htsnmqzoehuibij9tarxd&amp;dl=1</DownloadUrl>
@@ -2103,7 +2103,7 @@ Part of Kupo Mods formerly Mog Add-ons.
 	<SubMod>
 		<Name>Default Extended Cast</Name>
 		<InstallationPath>Features/PortraitDefault</InstallationPath>
-		<Description>Default Portraits</Description>
+		<Description>Default Portraits with extended support</Description>
 		<Group>g-port</Group>
 		<PreviewFile>preview/ext.jpg</PreviewFile>
 	</SubMod>
@@ -2137,7 +2137,6 @@ Part of Kupo Mods formerly Mog Add-ons.
 		<Name>PSX Like</Name>
 		<InstallationPath>Features/PortraitPSXLike</InstallationPath>
 		<Description>PSX Like Portraits</Description>
-		<Default/>
 		<Group>g-port</Group>
 		<PreviewFile>preview/psxlike.jpg</PreviewFile>
 	</SubMod>
@@ -2145,7 +2144,6 @@ Part of Kupo Mods formerly Mog Add-ons.
 		<Name>PSX Like Pluto Knights / White Mage </Name>
 		<InstallationPath>Features/PortraitPSXLikePCP</InstallationPath>
 		<Description>PSX Like Portraits</Description>
-		<Default/>
 		<Group>g-port-extra</Group>
 		<PreviewFile>preview/psxlike.jpg</PreviewFile>
 	</SubMod>	
