@@ -102,8 +102,8 @@ namespace Memoria.Launcher
                 using (Stream input = File.OpenRead(folderPath + "/" + DESCRIPTION_FILE))
                 using (StreamReader reader = new StreamReader(input))
                     ReadDescription(reader);
-                if (InstallationPath == null)
-                    InstallationPath = folderPath;
+                if (InstallationPath == null || Path.GetFullPath(InstallationPath) != Path.GetFullPath(folderPath))
+                    InstallationPath = folderPath.Replace(@".\", "");
             }
             catch (Exception)
             {
@@ -142,10 +142,9 @@ namespace Memoria.Launcher
             }
         }
 
-        public static void LoadModDescriptions(StreamReader reader, ref ObservableCollection<Mod> modList)
+        public static void LoadModDescriptions(StreamReader reader, ObservableCollection<Mod> modList)
         {
-            XmlDocument doc = new XmlDocument();
-            doc.Load(reader);
+            XmlDocument doc = LoadDocument(reader);
             XmlNodeList rootNode = doc.SelectNodes("/ModCatalog");
             if (rootNode.Count != 1)
                 return;
@@ -156,16 +155,36 @@ namespace Memoria.Launcher
                 if (mod.ReadDescription(node))
                     modList.Add(mod);
             }
+            // This is here to help updating the priorities in the catalog
+            // Create priority list file from the current catalog
+            if (false)
+            {
+                String list = "";
+                foreach (Mod mod in modList)
+                {
+                    list += $"{mod.Name}\t{mod.Priority}\r\n";
+                }
+                File.WriteAllText("PriorityList.txt", list);
+            }
         }
 
         public Boolean ReadDescription(StreamReader reader)
         {
-            XmlDocument doc = new XmlDocument();
-            doc.Load(reader);
+            XmlDocument doc = LoadDocument(reader);
             XmlNodeList modList = doc.SelectNodes("/Mod");
             if (modList.Count != 1)
                 return false;
             return ReadDescription(modList[0]);
+        }
+
+        public static XmlDocument LoadDocument(StreamReader reader)
+        {
+            String fullText = reader.ReadToEnd();
+            // Fixes issue when '&' is in the url instead of '&amp;'
+            fullText = Regex.Replace(fullText, "&(?!amp;)", "&amp;");
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(fullText);
+            return doc;
         }
 
         public Boolean ReadDescription(XmlNode modNode)
@@ -178,7 +197,8 @@ namespace Memoria.Launcher
             Int64 outParse;
             Name = elName.InnerText;
             InstallationPath = elInstPath.InnerText;
-            CurrentVersion = elVer != null ? new Version(elVer.InnerText) : null;
+            if (elVer != null && Version.TryParse(Regex.Replace(elVer.InnerText, @"[^\d\.]", ""), out Version version))
+                CurrentVersion = version;
             ReleaseDate = modNode["ReleaseDate"]?.InnerText;
             ReleaseDateOriginal = modNode["ReleaseDateOriginal"]?.InnerText;
             Author = modNode["Author"]?.InnerText;
@@ -391,7 +411,7 @@ namespace Memoria.Launcher
             {
                 foreach (Mod sub in SubMod)
                 {
-                    if(String.IsNullOrEmpty(sub.InstallationPath))
+                    if (String.IsNullOrEmpty(sub.InstallationPath))
                     {
                         el = doc.CreateElement("Header");
                         el.InnerText = sub.Name;
@@ -449,7 +469,7 @@ namespace Memoria.Launcher
                     if (sub.ActivateWithoutMod != null)
                     {
                         subEl = doc.CreateElement("ActivateWithoutMod");
-                        subEl.InnerText = String.Join(", ", sub.ActivateWithMod);
+                        subEl.InnerText = String.Join(", ", sub.ActivateWithoutMod);
                         el.AppendChild(subEl);
                     }
                     if (sub.Priority != 0)

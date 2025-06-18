@@ -1,14 +1,15 @@
-﻿using Assets.Scripts.Common;
-using Assets.Sources.Scripts.UI.Common;
-using Memoria;
-using Memoria.Prime;
-using Memoria.Scenes;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Assets.Scripts.Common;
+using Assets.Sources.Scripts.UI.Common;
+using Memoria;
+using Memoria.Prime;
+using Memoria.Scenes;
+using Memoria.Assets;
 using UnityEngine;
 
 #pragma warning disable 169
@@ -1584,6 +1585,11 @@ public class ConfigUI : UIScene
                 configField.IsSlider = false;
                 UIEventListener.Get(configField.ConfigChoice[0]).onSelect += OnSelectValue;
                 UIEventListener.Get(configField.ConfigChoice[1]).onSelect += OnSelectValue;
+                if (configField.Configurator == Configurator.WindowColor && Localization.Get("NormalColor") != "NormalColor")
+                {
+                    // Split the label "Normal" into a separated label
+                    trans.GetChild(1).GetChild(0).GetComponent<UILocalize>().key = "NormalColor";
+                }
             }
             UIEventListener.Get(trans.gameObject).onNavigate += OnKeyChoice;
             ConfigFieldList.Add(configField);

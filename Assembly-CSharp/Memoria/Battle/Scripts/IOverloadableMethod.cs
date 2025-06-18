@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Memoria.Data;
+using System;
 using UnityEngine;
-using Memoria.Data;
 
 namespace Memoria
 {
@@ -36,6 +36,12 @@ namespace Memoria
         public Boolean OnBattleScriptStart(BattleCalculator calc);
     }
 
+    public interface IOverloadOnBattleScriptEndScript
+    {
+        /// <summary>Run a code at the end of a battle script, at the end of SBattleCalculator.CalcResult(v)</summary>
+        public void OnBattleScriptEnd(BattleCalculator v);
+    }
+
     public interface IOverloadOnCommandRunScript
     {
         /// <summary>Run a code when a command starts (typically handles killing acting characters with Heat)</summary>
@@ -67,5 +73,11 @@ namespace Memoria
 
         /// <summary>The last modifications applied to target HPDamage, between WhenBattleScriptEnd and WhenEffectDone</summary>
         public void OnDamageFinalChanges(BattleCalculator v);
+    }
+
+    public interface IOverloadVABattleScript
+    {
+        /// <summary>Called to initialize the voice acting battle script (subscribe to BattleVoice events there)</summary>
+        public void Initialize();
     }
 }

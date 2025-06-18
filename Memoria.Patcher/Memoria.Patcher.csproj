@@ -3803,11 +3803,11 @@
   </Target>
 
   -->
-  <Target Name="AfterBuild">
-    <MSBuild Projects="..\Memoria.Debugger\Memoria.Debugger.csproj" Properties="Platform=x86;PlatFormTarget=x86" RunEachTargetSeparately="true" />
-    <MSBuild Projects="..\Memoria.Debugger\Memoria.Debugger.csproj" Properties="Platform=x64;PlatFormTarget=x64" RunEachTargetSeparately="true" />
-    <MSBuild Projects="..\Memoria.Injection\Memoria.Injection.vcxproj" Properties="Platform=Win32;PlatFormTarget=Win32" RunEachTargetSeparately="true" />
-    <MSBuild Projects="..\Memoria.Injection\Memoria.Injection.vcxproj" Properties="Platform=x64;PlatFormTarget=x64" RunEachTargetSeparately="true" />
+  <Target Name="BeforeBuild">
+    <MSBuild Projects="..\Memoria.Debugger\Memoria.Debugger.csproj" Properties="Platform=x86" RunEachTargetSeparately="true" />
+    <MSBuild Projects="..\Memoria.Debugger\Memoria.Debugger.csproj" Properties="Platform=x64" RunEachTargetSeparately="true" />
+    <MSBuild Projects="..\Memoria.Injection\Memoria.Injection.vcxproj" Properties="Platform=Win32" RunEachTargetSeparately="true" />
+    <MSBuild Projects="..\Memoria.Injection\Memoria.Injection.vcxproj" Properties="Platform=x64" RunEachTargetSeparately="true" />
   </Target>
   <Target Name="AfterBuild">
     <Pack SolutionDir="$(SolutionDir)" TargetPath="$(TargetPath)" TargetDir="$(TargetDir)" TargetName="$(TargetName)" />

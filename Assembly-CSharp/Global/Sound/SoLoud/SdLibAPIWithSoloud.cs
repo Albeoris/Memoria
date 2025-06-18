@@ -80,7 +80,7 @@ namespace Global.Sound.SoLoud
             SoundLib.Log("Release");
 
             soloud.stopAll();
-            streams.Clear();
+            lock (streams) streams.Clear();
             soloud.deinit();
         }
 
@@ -116,7 +116,7 @@ namespace Global.Sound.SoLoud
                 stream.profile = profile;
 
                 Int32 bankID = (Int32)stream.data.objhandle;
-                streams.Add(bankID, stream);
+                lock (streams) streams.Add(bankID, stream);
                 return bankID;
             }
         }
@@ -131,29 +131,29 @@ namespace Global.Sound.SoLoud
         public override Int32 SdSoundSystem_RemoveData(Int32 bankID)
         {
             SoundLib.Log($"RemoveData({bankID})");
-            return streams.Remove(bankID) ? 1 : 0;
+            lock (streams) return streams.Remove(bankID) ? 1 : 0;
         }
 
         public override Int32 SdSoundSystem_CreateSound(Int32 bankID)
         {
             if (!streams.ContainsKey(bankID)) return 0;
-            SoundLib.Log($"CreateSound({streams[bankID].profile.ResourceID})");
-            CleanUpSounds();
-
             StreamInfo stream = streams[bankID];
+
+            SoundLib.Log($"CreateSound({stream.profile.ResourceID})");
+            CleanUpSounds();
 
             Int32 soundID;
             switch (stream.profile.SoundProfileType)
             {
                 case SoundProfileType.SoundEffect:
                 case SoundProfileType.Sfx:
-                    soundID = (Int32)sfxBus.play(streams[bankID].data, 1, 0, 1);
+                    soundID = (Int32)sfxBus.play(stream.data, 1, 0, 1);
                     break;
                 case SoundProfileType.Voice:
-                    soundID = (Int32)voiceBus.play(streams[bankID].data, 1, 0, 1);
+                    soundID = (Int32)voiceBus.play(stream.data, 1, 0, 1);
                     break;
                 default:
-                    soundID = (Int32)soloud.play(streams[bankID].data, 1, 0, 1);
+                    soundID = (Int32)soloud.play(stream.data, 1, 0, 1);
                     break;
             }
 
@@ -166,9 +166,9 @@ namespace Global.Sound.SoLoud
                 double start = stream.akbHeader.LoopStart / (double)stream.akbHeader.SampleRate;
                 double end = stream.akbHeader.LoopEnd / (double)stream.akbHeader.SampleRate;
 
-                // Adjustement for looping sound at the top of Alexendria Castle (A. Castle/Altar)
+                // Adjustment for looping sound at the top of Alexendria Castle (A. Castle/Altar)
                 // It still pops after a while, Soloud just isn't precise enough with the looping
-                if (streams[bankID].profile.ResourceID == "Sounds03/SE12/se120018")
+                if (stream.profile.ResourceID == "Sounds03/SE12/se120018")
                 {
                     start = 104120 / (double)stream.akbHeader.SampleRate;
                     end = 216632 / (double)stream.akbHeader.SampleRate;
@@ -199,9 +199,11 @@ namespace Global.Sound.SoLoud
         public override Int32 SdSoundSystem_SoundCtrl_Start(Int32 soundID, Int32 offsetTimeMSec)
         {
             if (!sounds.ContainsKey(soundID)) return 0;
-            SoundLib.Log($"SoundCtrl_Start({streams[sounds[soundID].bankID].profile.ResourceID}({soundID}), {offsetTimeMSec})");
 
             Int32 bankID = sounds[soundID].bankID;
+            StreamInfo stream = streams[bankID];
+            SoundLib.Log($"SoundCtrl_Start({stream.profile.ResourceID}({soundID}), {offsetTimeMSec})");
+
             Int32 count = 0;
             Int32 stopSoundID = 0;
             Double maxPos = 0d;
@@ -213,12 +215,12 @@ namespace Global.Sound.SoLoud
                     if (pos < 0.01d)
                     {
                         // Prevent same sound to play more than once at very close interval (<10ms)
-                        SoundLib.Log($"Sound already playing ({streams[bankID].profile.ResourceID}). Stopping {sound.Key} pos {(Int32)(pos * 1000)}ms");
+                        SoundLib.Log($"Sound already playing ({stream.profile.ResourceID}). Stopping {sound.Key} pos {(Int32)(pos * 1000)}ms");
                         soloud.stop((uint)sound.Key);
                     }
                     else
                     {
-                        SoundLib.Log($"Sound already playing ({streams[bankID].profile.ResourceID}). Id {sound.Key} pos {(Int32)(pos * 1000)}ms");
+                        SoundLib.Log($"Sound already playing ({stream.profile.ResourceID}). Id {sound.Key} pos {(Int32)(pos * 1000)}ms");
                         count++;
                         if (pos > maxPos)
                         {
@@ -260,7 +262,7 @@ namespace Global.Sound.SoLoud
 
         public override Int32 SdSoundSystem_SoundCtrl_IsExist(Int32 soundID)
         {
-            return soloud.isValidVoiceHandle((uint)soundID); ;
+            return soloud.isValidVoiceHandle((uint)soundID);
         }
 
         public override void SdSoundSystem_SoundCtrl_SetPause(Int32 soundID, Int32 pauseOn, Int32 transTimeMSec)

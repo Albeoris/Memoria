@@ -73,16 +73,16 @@ namespace Memoria.Launcher
             LoadModSettings();
             CheckForValidModFolder();
             UpdateModListInstalled();
-            lstCatalogMods.ItemsSource = modListCatalog;
-            lstMods.ItemsSource = modListInstalled;
-            lstDownloads.ItemsSource = downloadList;
+            lstCatalogMods.ItemsSource = ModListCatalog;
+            lstMods.ItemsSource = ModListInstalled;
+            lstDownloads.ItemsSource = DownloadList;
             UpdateCatalogInstallationState();
 
             lstCatalogMods.SelectionChanged += OnModListSelect;
             lstMods.SelectionChanged += OnModListSelect;
             tabCtrlMain.SelectionChanged += OnModListSelect;
             ModOptionsHeaderButton.MouseUp += ModOptionsHeaderButton_MouseUp;
-            if (modListInstalled.Count == 0)
+            if (ModListInstalled.Count == 0)
                 tabCtrlMain.SelectedIndex = 1;
             UpdateModDetails((Mod)null);
             CheckOutdatedAndIncompatibleMods();
@@ -109,6 +109,11 @@ namespace Memoria.Launcher
                     // Set AntiAliasing to 0
                     IniFile.MemoriaIni.SetSetting("Graphics", "AntiAliasing", "0");
                 }
+                else if (date < new DateTime(2025, 05, 19))
+                {
+                    // Set FPS to auto
+                    FPSDropboxChoice = 0;
+                }
                 // Set windows mode to 0 if it can't be parsed
                 if (!Int32.TryParse(IniFile.SettingsIni.GetSetting("Settings", "WindowMode", "null"), NumberStyles.Integer, CultureInfo.InvariantCulture, out _))
                     IniFile.SettingsIni.SetSetting("Settings", "WindowMode", "0");
@@ -120,7 +125,7 @@ namespace Memoria.Launcher
                 PlayButton.Click();
 
             String checkUpdates = IniFile.SettingsIni.GetSetting("Memoria", "CheckUpdates", "True");
-            if (checkUpdates == "True")
+            if (!Boolean.TryParse(checkUpdates, out Boolean result) || result)
             {
                 await UiLauncherPlayButton.CheckUpdates((Window)this.GetRootElement(), new ManualResetEvent(false), GameSettings);
             }
@@ -216,7 +221,7 @@ namespace Memoria.Launcher
                     }
 
                     // Check if it's a Mod
-                    if (!supportedArchives.Contains(ext))
+                    if (!SupportedArchives.Contains(ext))
                         continue;
 
                     IArchive archive = ArchiveFactory.Open(filename);
@@ -314,7 +319,7 @@ namespace Memoria.Launcher
                         continue;
                     }
 
-                    if (!supportedArchives.Contains(ext))
+                    if (!SupportedArchives.Contains(ext))
                         continue;
                     // Find if it is a mod
                     IArchive archive = ArchiveFactory.Open(filename);
@@ -358,7 +363,7 @@ namespace Memoria.Launcher
                     // Refresh mods list and activate the mod
                     UpdateModListInstalled();
                     UpdateCatalogInstallationState();
-                    Mod newMod = Mod.SearchWithName(modListInstalled, modInfo.Name);
+                    Mod newMod = Mod.SearchWithName(ModListInstalled, modInfo.Name);
                     if (newMod != null)
                     {
                         newMod.IsActive = true;

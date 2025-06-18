@@ -27,9 +27,11 @@ namespace Memoria.Assets
         private static Boolean KeepCoordinates = true;
         private static Boolean UseModdedTextures = true;
         private static Boolean IsMouseOverWindow = true;
-        private static Boolean LoadingWeaponConfig = true;
+        private static Boolean LoadingWeaponConfig;
+        private static Boolean LoadingFloorConfig;
         private static List<ModelObject> geoList;
         private static List<ModelObject> weapongeoList;
+        private static List<ModelObject> floorgeoList;
         private static List<KeyValuePair<Int32, String>> animList;
         private static HashSet<Int32> geoArchetype;
         private static Int32 currentGeoIndex;
@@ -41,15 +43,20 @@ namespace Memoria.Assets
         private static String currentAnimName;
         private static GameObject currentModel;
         private static GameObject currentModelWrapper; // [Model] parent transform for vertical rotation and position
-        private static Vector3 model_Position = new Vector3(0f, 0f, 0f);
+        private static Vector3 model_Position = Vector3.zero;
         private static float model_Horizontal_Rotation = 0f;
         private static float model_Vertical_Rotation = 0f;
         private static Vector3 scaleFactor;
         private static GameObject currentWeaponModel;
-        private static Vector3 weaponmodel_Position = new Vector3(0f, 0f, 0f);
+        private static Vector3 weaponmodel_Position = Vector3.zero;
         private static Quaternion weaponmodel_Rotation = Quaternion.identity;
         private static Vector3 weaponmodel_scaleFactor = Vector3.one;
         private static Vector3 boneselected_scaleFactor = Vector3.one;
+        private static GameObject currentFloorModel;
+        private static Int32 currentFloorIndex;
+        private static Vector3 floor_Position = Vector3.zero;
+        private static Quaternion floor_Rotation = Quaternion.identity;
+        private static Vector3 floor_Scale = Vector3.one;
         public static Dictionary<Int32, Vector3> OffsetBonesPos = new Dictionary<Int32, Vector3>();
         public static Dictionary<Int32, Vector3> OffsetBonesRot = new Dictionary<Int32, Vector3>();
         public static Dictionary<Int32, Vector3> OffsetBonesScale = new Dictionary<Int32, Vector3>();
@@ -59,6 +66,7 @@ namespace Memoria.Assets
         private static String savedAnimationPath;
         private static Boolean isLoadingModel;
         private static Boolean isLoadingWeaponModel;
+        private static Boolean isLoadingFloorModel;
         //private static Int32 replaceOnce = 0;
         private static Int32 postRefresh = 0;
         private static Boolean mouseLeftPressed;
@@ -91,12 +99,14 @@ namespace Memoria.Assets
             Camera camera = GetCamera();
             if (camera == null)
                 return;
+            camera.backgroundColor = Color.black;
             isLoadingModel = false;
             isLoadingWeaponModel = false;
             currentBoneIndex = 0;
             scaleFactor = new Vector3(0.5f, 0.5f, 0.5f);
             geoList = new List<ModelObject>();
             weapongeoList = new List<ModelObject>();
+            floorgeoList = new List<ModelObject>();
             geoArchetype = new HashSet<Int32>();
             currentBonesID = new List<Int32>();
             currentHiddenBonesID = new List<Int32>();
@@ -112,7 +122,7 @@ namespace Memoria.Assets
             spsEffect.spsTransform = spsGo.transform;
             spsEffect.meshRenderer = meshRenderer;
             spsEffect.meshFilter = meshFilter;
-            
+
             // Model Viewer UI
             if (infoPanel != null) // For Soft Reset
                 UnityEngine.Object.Destroy(infoPanel.BasePanel.gameObject);
@@ -240,6 +250,7 @@ namespace Memoria.Assets
                 if (!Int32.TryParse(bbgName.Substring(5), out Int32 bbgId))
                     continue;
                 geoList.Add(new ModelObject() { Id = bbgId, Name = bbgName, Kind = MODEL_KIND_BBG });
+                floorgeoList.Add(new ModelObject() { Id = bbgId, Name = bbgName, Kind = MODEL_KIND_BBG });
                 BBGINFO bbgInfo = new BBGINFO();
                 bbgInfo.ReadBattleInfo(bbgName);
                 for (Int32 i = 0; i < bbgInfo.objanim; i++)
@@ -318,10 +329,11 @@ namespace Memoria.Assets
                 {
                     UpdateModelCoordinates();
                     UpdateWeaponModelCoordinates();
+                    UpdateFloorModelCoordinates();
                     postRefresh--;
                 }
 
-                if (isLoadingModel || isLoadingWeaponModel)
+                if (isLoadingModel || isLoadingWeaponModel || isLoadingFloorModel)
                     return;
 
                 if (InsertText)
@@ -353,7 +365,7 @@ namespace Memoria.Assets
                         }
 
                         InsertTextGUI.SetActive(false);
-                        backgroundGo.SetActive(false);                       
+                        backgroundGo.SetActive(false);
                         InsertText = false;
                         if (CustomTexture != null)
                         {
@@ -363,7 +375,7 @@ namespace Memoria.Assets
                             else
                                 modelselected = currentModel;
 
-                            Log.Message("LOAD NEW TEXTURES on " + (modelselected == currentModel ? geoList[currentGeoIndex].Name : weapongeoList[currentWeaponGeoIndex].Name));                                                    
+                            Log.Message("LOAD NEW TEXTURES on " + (modelselected == currentModel ? geoList[currentGeoIndex].Name : weapongeoList[currentWeaponGeoIndex].Name));
                             for (Int32 t = 0; t < CustomTexture.Length; t++)
                                 Log.Message("                └> n°" + t + " = " + CustomTexture[t]);
 
@@ -387,7 +399,7 @@ namespace Memoria.Assets
                                 }
                                 else
                                     ModelFactory.ChangeModelTexture(modelselected, CustomTexture);
-                            }                     
+                            }
                         }
                     }
                     return;
@@ -572,10 +584,10 @@ namespace Memoria.Assets
                     UseModdedTextures = !UseModdedTextures;
                     ChangeModel(currentGeoIndex);
                 }
-          
+
                 Transform BoneSelected = currentModel.transform.GetChildByName("bone" + currentBoneIndex.ToString("D3"));
 
-                if (ctrl)
+                if (ctrl) // Rotation (keyboard)
                 {
                     Vector3 KeyPadDelta = Vector3.zero;
                     if (partcontrolled == PartControlled.MODEL)
@@ -643,8 +655,27 @@ namespace Memoria.Assets
 
                         OffsetBonesRot[currentBoneIndex] += (BoneSelected.localRotation.eulerAngles - PreviousRot);
                     }
+                    else if (partcontrolled == PartControlled.FLOOR)
+                    {
+                        floor_Rotation = currentFloorModel.transform.localRotation;
+
+                        if (Input.GetKey(KeyCode.Keypad6))
+                            floor_Rotation *= Quaternion.Euler(0f, 1f, 0f);
+                        if (Input.GetKey(KeyCode.Keypad4))
+                            floor_Rotation *= Quaternion.Euler(0f, -1f, 0f);
+                        if (Input.GetKey(KeyCode.Keypad8))
+                            floor_Rotation *= Quaternion.Euler(-1f, 0f, 0f);
+                        if (Input.GetKey(KeyCode.Keypad2))
+                            floor_Rotation *= Quaternion.Euler(1f, 0f, 0f);
+                        if (Input.GetKey(KeyCode.Keypad7) || Input.GetKey(KeyCode.Keypad9))
+                            floor_Rotation *= Quaternion.Euler(0f, 0f, 1f);
+                        if (Input.GetKey(KeyCode.Keypad1) || Input.GetKey(KeyCode.Keypad3))
+                            floor_Rotation *= Quaternion.Euler(0f, 0f, -1f);
+
+                        currentFloorModel.transform.localRotation = floor_Rotation;
+                    }
                 }
-                else
+                else // Position (keyboard)
                 {
                     Single moveSpeed = 0.5f;
                     if (partcontrolled == PartControlled.MODEL)
@@ -732,24 +763,48 @@ namespace Memoria.Assets
                                 OffsetBonesPos.Add(currentBoneIndex, moveSpeed * Vector3.forward);
                         }
                     }
-                }
-                if (Input.GetKey(KeyCode.KeypadPlus)) // Zoom in ; Increase Size
-                {
-                    if (partcontrolled == PartControlled.MODEL && scaleFactor.x < 2.1f)
+                    else if (partcontrolled == PartControlled.FLOOR)
                     {
-                        scaleFactor += new Vector3(0.01f, 0.01f, 0.01f);
+                        moveSpeed *= 10;
+                        if (Input.GetKey(KeyCode.Keypad6))
+                            floor_Position += moveSpeed * Vector3.left;
+                        if (Input.GetKey(KeyCode.Keypad4))
+                            floor_Position += moveSpeed * Vector3.right;
+                        if (Input.GetKey(KeyCode.Keypad8))
+                            floor_Position += moveSpeed * Vector3.down;
+                        if (Input.GetKey(KeyCode.Keypad2))
+                            floor_Position += moveSpeed * Vector3.up;
+                        if (Input.GetKey(KeyCode.Keypad7) || Input.GetKey(KeyCode.Keypad9))
+                            floor_Position += moveSpeed * Vector3.back;
+                        if (Input.GetKey(KeyCode.Keypad1) || Input.GetKey(KeyCode.Keypad3))
+                            floor_Position += moveSpeed * Vector3.forward;
+
+                        currentFloorModel.transform.localPosition = floor_Position;
+                    }
+                }
+
+                if (Input.GetKey(KeyCode.KeypadPlus) || Input.GetKey(KeyCode.KeypadMinus)) // Zoom in/out ; Increase/Reduce Size
+                {
+                    if (partcontrolled == PartControlled.MODEL)
+                    {
+                        if (scaleFactor.x < 2.1f && Input.GetKey(KeyCode.KeypadPlus))
+                            scaleFactor += new Vector3(0.01f, 0.01f, 0.01f);
+                        else if (scaleFactor.x > 0.1f && Input.GetKey(KeyCode.KeypadMinus))
+                            scaleFactor -= new Vector3(0.01f, 0.01f, 0.01f);
+
                         currentModel.transform.localScale = scaleFactor;
+
                     }
                     else if (partcontrolled == PartControlled.WEAPON)
                     {
                         if (ctrl)
-                            weaponmodel_scaleFactor += new Vector3(0.01f, 0.0f, 0.0f);
+                            weaponmodel_scaleFactor += Input.GetKey(KeyCode.KeypadPlus) ? new Vector3(0.01f, 0.0f, 0.0f) : -new Vector3(0.01f, 0.0f, 0.0f);
                         else if (alt)
-                            weaponmodel_scaleFactor += new Vector3(0.0f, 0.01f, 0.0f);
+                            weaponmodel_scaleFactor += Input.GetKey(KeyCode.KeypadPlus) ? new Vector3(0.0f, 0.01f, 0.0f) : -new Vector3(0.0f, 0.01f, 0.0f);
                         else if (shift)
-                            weaponmodel_scaleFactor += new Vector3(0.0f, 0.0f, 0.01f);
+                            weaponmodel_scaleFactor += Input.GetKey(KeyCode.KeypadPlus) ? new Vector3(0.0f, 0.0f, 0.01f) : -new Vector3(0.0f, 0.0f, 0.01f);
                         else
-                            weaponmodel_scaleFactor += new Vector3(0.01f, 0.01f, 0.01f);
+                            weaponmodel_scaleFactor += Input.GetKey(KeyCode.KeypadPlus) ? new Vector3(0.01f, 0.01f, 0.01f) : -new Vector3(0.01f, 0.01f, 0.01f);
 
                         currentWeaponModel.transform.localScale = weaponmodel_scaleFactor;
                     }
@@ -759,51 +814,28 @@ namespace Memoria.Assets
                             OffsetBonesScale.Add(currentBoneIndex, Vector3.zero);
 
                         if (ctrl)
-                            BoneSelected.localScale += new Vector3(0.01f, 0.0f, 0.0f);
+                            BoneSelected.localScale += Input.GetKey(KeyCode.KeypadPlus) ? new Vector3(0.01f, 0.0f, 0.0f) : -new Vector3(0.01f, 0.0f, 0.0f);
                         else if (alt)
-                            BoneSelected.localScale += new Vector3(0.0f, 0.01f, 0.0f);
+                            BoneSelected.localScale += Input.GetKey(KeyCode.KeypadPlus) ? new Vector3(0.0f, 0.01f, 0.0f) : -new Vector3(0.0f, 0.01f, 0.0f);
                         else if (shift)
-                            BoneSelected.localScale += new Vector3(0.0f, 0.0f, 0.01f);
+                            BoneSelected.localScale += Input.GetKey(KeyCode.KeypadPlus) ? new Vector3(0.0f, 0.0f, 0.01f) : -new Vector3(0.0f, 0.0f, 0.01f);
                         else
-                            BoneSelected.localScale += new Vector3(0.01f, 0.01f, 0.01f);
+                            BoneSelected.localScale += Input.GetKey(KeyCode.KeypadPlus) ? new Vector3(0.01f, 0.01f, 0.01f) : -new Vector3(0.01f, 0.01f, 0.01f);
 
                         OffsetBonesScale[currentBoneIndex] = BoneSelected.localScale;
                     }
-                }
-                else if (Input.GetKey(KeyCode.KeypadMinus)) // Zoom out ; Reduce Size
-                {
-                    if (partcontrolled == PartControlled.MODEL && scaleFactor.x > 0.1f)
-                    {
-                        scaleFactor -= new Vector3(0.01f, 0.01f, 0.01f);
-                        currentModel.transform.localScale = scaleFactor;
-                    }
-                    else if (partcontrolled == PartControlled.WEAPON)
+                    else if (partcontrolled == PartControlled.FLOOR)
                     {
                         if (ctrl)
-                            weaponmodel_scaleFactor -= new Vector3(0.01f, 0.0f, 0.0f);
+                            floor_Scale += Input.GetKey(KeyCode.KeypadPlus) ? new Vector3(0.01f, 0.0f, 0.0f) : -new Vector3(0.01f, 0.0f, 0.0f);
                         else if (alt)
-                            weaponmodel_scaleFactor -= new Vector3(0.0f, 0.01f, 0.0f);
+                            floor_Scale += Input.GetKey(KeyCode.KeypadPlus) ? new Vector3(0.0f, 0.01f, 0.0f) : -new Vector3(0.0f, 0.01f, 0.0f);
                         else if (shift)
-                            weaponmodel_scaleFactor -= new Vector3(0.0f, 0.0f, 0.01f);
+                            floor_Scale += Input.GetKey(KeyCode.KeypadPlus) ? new Vector3(0.0f, 0.0f, 0.01f) : -new Vector3(0.0f, 0.0f, 0.01f);
                         else
-                            weaponmodel_scaleFactor -= new Vector3(0.01f, 0.01f, 0.01f);
-                        currentWeaponModel.transform.localScale = weaponmodel_scaleFactor;
-                    }
-                    else if (partcontrolled == PartControlled.BONE)
-                    {
-                        if (!OffsetBonesScale.ContainsKey(currentBoneIndex))
-                            OffsetBonesScale.Add(currentBoneIndex, Vector3.zero);
+                            floor_Scale += Input.GetKey(KeyCode.KeypadPlus) ? new Vector3(0.01f, 0.01f, 0.01f) : -new Vector3(0.01f, 0.01f, 0.01f);
 
-                        if (ctrl)
-                            BoneSelected.localScale -= new Vector3(0.01f, 0.0f, 0.0f);
-                        else if (alt)
-                            BoneSelected.localScale -= new Vector3(0.0f, 0.01f, 0.0f);
-                        else if (shift)
-                            BoneSelected.localScale -= new Vector3(0.0f, 0.0f, 0.01f);
-                        else
-                            BoneSelected.localScale -= new Vector3(0.01f, 0.01f, 0.01f);
-
-                        OffsetBonesScale[currentBoneIndex] = BoneSelected.localScale;
+                        currentFloorModel.transform.localScale = floor_Scale;
                     }
                 }
 
@@ -830,17 +862,17 @@ namespace Memoria.Assets
                     Log.Message("[MODEL] => " + geoList[currentGeoIndex].Name + ".offset = " + ModelTargetPos.Remove(ModelTargetPos.Length - 1) + ", " + ModelTargetRot.Remove(0, 1));
                     if (currentWeaponModel != null)
                         Log.Message("[WEAPON] => " + weapongeoList[currentWeaponGeoIndex].Name + ".offset = " + WeaponTargetScale.Trim(['(', ')']) + ";" + WeaponTargetPos.Trim(['(', ')']) + ";" + WeaponTargetRotEuler.Trim(['(', ')']));
-                        Log.Message("       └> => " + weapongeoList[currentWeaponGeoIndex].Name + ".pos = " + WeaponTargetPos);
-                        Log.Message("       └> => " + weapongeoList[currentWeaponGeoIndex].Name + ".rot(Quaternion) = " + WeaponTargetRotQuaternion);
-                        Log.Message("       └> => " + weapongeoList[currentWeaponGeoIndex].Name + ".rot(Euler) = " + WeaponTargetRotEuler);
-                        Log.Message("       └> => " + weapongeoList[currentWeaponGeoIndex].Name + ".scale = " + WeaponTargetScale);
+                    Log.Message("       └> => " + weapongeoList[currentWeaponGeoIndex].Name + ".pos = " + WeaponTargetPos);
+                    Log.Message("       └> => " + weapongeoList[currentWeaponGeoIndex].Name + ".rot(Quaternion) = " + WeaponTargetRotQuaternion);
+                    Log.Message("       └> => " + weapongeoList[currentWeaponGeoIndex].Name + ".rot(Euler) = " + WeaponTargetRotEuler);
+                    Log.Message("       └> => " + weapongeoList[currentWeaponGeoIndex].Name + ".scale = " + WeaponTargetScale);
                     if (OffsetBonesPos.Count > 0 || OffsetBonesRot.Count > 0 || OffsetBonesScale.Count > 0)
                     {
                         Log.Message("[BONES] ");
                         if (OffsetBonesPos.Count > 0)
                             foreach (int BoneID in OffsetBonesPos.Keys)
                             {
-                                Log.Message("   └> Bone n°"+ BoneID +" / Position / " + OffsetBonesPos[BoneID]);
+                                Log.Message("   └> Bone n°" + BoneID + " / Position / " + OffsetBonesPos[BoneID]);
                             }
                         if (OffsetBonesRot.Count > 0)
                             foreach (int BoneID in OffsetBonesRot.Keys)
@@ -893,10 +925,19 @@ namespace Memoria.Assets
                 {
                     ChangeModel(GetFirstModelOfCategory(8));
                 }
+                else if (Input.GetKeyDown(KeyCode.Alpha0))
+                {
+                    ChangeModel(GetFirstModelOfCategory(9));
+                }
                 if (Input.GetKeyDown(KeyCode.R)) // Reset position/rotation
                 {
                     if (shift) // Reset Model + Weapon + modified Bone(s)
                     {
+                        if (currentFloorModel != null)
+                        {
+                            UnityEngine.Object.Destroy(currentFloorModel);
+                            currentFloorModel = null;
+                        }
                         ChangeModel(currentGeoIndex);
                     }
                     else if (partcontrolled == PartControlled.WEAPON)
@@ -913,17 +954,38 @@ namespace Memoria.Assets
                         model_Position = new Vector3(0f, 60f, 0f);
                         scaleFactor = new Vector3(0.3f, 0.3f, 0.3f);
                         UpdateModelCoordinates();
+                        if (currentFloorModel != null && currentFloorModel.activeSelf)
+                        {
+                            floor_Position = Vector3.zero;
+                            floor_Rotation = Quaternion.identity;
+                            floor_Scale = Vector3.one;
+                            String BBGName = floorgeoList[currentFloorIndex].Name;
+                            currentFloorModel.transform.SetParent(currentModel.transform);
+                            currentFloorModel.transform.position = model_Position + floor_Position;
+                            currentFloorModel.transform.localScale = floor_Scale;
+                            Boolean SpecialBBG = (BBGName == "BBG_B010" || BBGName == "BBG_B045" || BBGName == "BBG_B111" || BBGName == "BBG_B144");
+                            if (floor_Rotation == Quaternion.identity)
+                                floor_Rotation = Quaternion.Euler(currentModel.transform.localRotation.eulerAngles + new Vector3(180f, 0f, 0f));
+                            if (SpecialBBG)
+                                floor_Rotation = new Quaternion(-1f, 0f, 0f, 0f);
+
+                            currentFloorModel.transform.localRotation = floor_Rotation;
+                        }
                     }
                 }
-                if (Input.GetKeyDown(KeyCode.P) && currentBonesID.Count > 0)
+                if (Input.GetKeyDown(KeyCode.P))
                 {
                     if (shift)
                     {
-                        partcontrolled += 1;
-                        if (currentWeaponModel == null)
-                            partcontrolled += 1;
+                        partcontrolled++;
+                        if (currentWeaponModel == null && partcontrolled == PartControlled.WEAPON)
+                            partcontrolled++;
+                        if (currentBonesID.Count == 0 && partcontrolled == PartControlled.BONE)
+                            partcontrolled++;
+                        if ((currentFloorModel == null || !currentFloorModel.activeSelf) && partcontrolled == PartControlled.FLOOR)
+                            partcontrolled++;
 
-                        if (partcontrolled > PartControlled.BONE)
+                        if (partcontrolled > PartControlled.FLOOR)
                             partcontrolled = PartControlled.MODEL;
                     }
                     else
@@ -961,6 +1023,11 @@ namespace Memoria.Assets
                                 OffsetBonesPos[currentBoneIndex] -= mouseSensibility * new Vector3(mouseDelta.x, mouseDelta.y, mouseDelta.z);
                             else
                                 OffsetBonesPos.Add(currentBoneIndex, mouseSensibility * new Vector3(mouseDelta.x, mouseDelta.y, mouseDelta.z));
+                        }
+                        else if (partcontrolled == PartControlled.FLOOR)
+                        {
+                            floor_Position += mouseSensibility * new Vector3(mouseDelta.x, mouseDelta.y, mouseDelta.z);
+                            currentFloorModel.transform.localPosition = floor_Position;
                         }
                         if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS)
                             spsEffect.pos = currentModel.transform.localPosition;
@@ -1048,6 +1115,29 @@ namespace Memoria.Assets
 
                             OffsetBonesRot[currentBoneIndex] += (BoneSelected.localRotation.eulerAngles - PreviousRot);
                         }
+                        else if (partcontrolled == PartControlled.FLOOR)
+                        {
+                            mouseDelta.x = -mouseDelta.x;
+                            mouseDelta.y = -mouseDelta.y;
+                            if (Math.Abs(mouseDelta.x) >= Math.Abs(mouseDelta.y))
+                            {
+                                currentFloorModel.transform.localRotation *= Quaternion.Euler(0f, mouseDelta.x, 0f);
+                            }
+                            else
+                            {
+                                Quaternion angles = currentFloorModel.transform.localRotation;
+                                Single angley = angles.eulerAngles[1];
+                                Single factorx = -(Single)Math.Cos(Math.PI * angley / 180f);
+                                Single factorz = -(Single)Math.Sin(Math.PI * angley / 180f);
+                                Quaternion performedRot = Quaternion.Euler(factorx * mouseDelta.y, 0f, factorz * mouseDelta.y);
+                                Single horizontalFactor = (angles * performedRot * Vector3.up).y;
+                                Log.Message("horizontalFactor = " + horizontalFactor);
+                                if (horizontalFactor < -0.5f)
+                                    currentFloorModel.transform.localRotation *= performedRot;
+
+                                floor_Rotation = currentFloorModel.transform.localRotation;
+                            }
+                        }
                     }
                     mouseLeftPressed = true;
                 }
@@ -1125,6 +1215,17 @@ namespace Memoria.Assets
                             BoneSelected.localScale = boneselected_scaleFactor;
                             OffsetBonesScale[currentBoneIndex] = boneselected_scaleFactor;
                         }
+                        else if (partcontrolled == PartControlled.FLOOR)
+                        {
+                            Single scrollMax = 2.1f;
+                            if (Input.mouseScrollDelta.y > 0f)
+                                floor_Scale *= 1f + scrollSpeed * Input.mouseScrollDelta.y;
+                            else
+                                floor_Scale /= 1f - scrollSpeed * Input.mouseScrollDelta.y;
+                            floor_Scale.x = Mathf.Clamp(floor_Scale.x, scrollMin, scrollMax);
+                            floor_Scale.y = floor_Scale.z = floor_Scale.x;
+                            currentFloorModel.transform.localScale = floor_Scale;
+                        }
                     }
                 }
                 if (Input.GetKeyDown(KeyCode.E))
@@ -1183,11 +1284,43 @@ namespace Memoria.Assets
                 }
                 if (Input.GetKeyDown(KeyCode.C))
                 {
-                    Camera camera = GetCamera();
-                    if (camera.backgroundColor == Color.grey) camera.backgroundColor = Color.black;
-                    else if (camera.backgroundColor == Color.black) camera.backgroundColor = Color.green;
-                    else camera.backgroundColor = Color.grey;
-                }                       
+                    if (shift)
+                    {
+                        if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS || geoList[currentGeoIndex].Kind == MODEL_KIND_BBG || geoList[currentGeoIndex].Kind == MODEL_KIND_BBG_OBJ)
+                        {
+                            if (currentFloorModel != null)
+                                UnityEngine.Object.Destroy(currentFloorModel);
+                            FF9Sfx.FF9SFX_Play(102);
+                        }
+                        else
+                        {
+                            if (currentFloorModel == null)
+                                ChangeFloorModel(currentFloorIndex);
+                            else
+                                currentFloorModel.SetActive(!currentFloorModel.activeSelf);
+                        }
+                    }
+                    else if (ctrl || alt)
+                    {
+                        Int32 nextIndex = currentFloorIndex;
+                        nextIndex += ctrl ? -1 : 1;
+                        if (nextIndex < 0)
+                            nextIndex = (floorgeoList.Count - 1);
+                        else if (nextIndex > floorgeoList.Count)
+                            nextIndex = 0;
+                        if (nextIndex == floorgeoList.Count)
+                            nextIndex -= floorgeoList.Count;
+                        ChangeFloorModel(nextIndex);
+                    }
+                    else
+                    {
+                        Camera camera = GetCamera();
+                        if (camera.backgroundColor == Color.black) camera.backgroundColor = Color.grey;
+                        else if (camera.backgroundColor == Color.grey) camera.backgroundColor = Color.green;
+                        else if (camera.backgroundColor == Color.green) camera.backgroundColor = Color.blue;
+                        else camera.backgroundColor = Color.black;
+                    }
+                }
                 Animation animation = currentModel.GetComponent<Animation>();
                 if (animation != null && !animation.IsPlaying(currentAnimName) && toggleAnim) // make animation a loop by default
                 {
@@ -1201,10 +1334,15 @@ namespace Memoria.Assets
                 }
                 UpdateRender();
                 ProcessBuiltInWeapon();
-                if (LoadingWeaponConfig)
+                if (!LoadingWeaponConfig)
                 {
                     LoadWeaponConfig();
-                    LoadingWeaponConfig = false;
+                    LoadingWeaponConfig = true;
+                }
+                if (!LoadingFloorConfig)
+                {
+                    LoadFloorConfig();
+                    LoadingFloorConfig = true;
                 }
                 SaveModelViewerConfigFile();
                 mousePreviousPosition = Input.mousePosition;
@@ -1307,10 +1445,20 @@ namespace Memoria.Assets
                 boneDialogs.RemoveRange(boneDialogCount, boneDialogs.Count - boneDialogCount);
             if (displayUI)
             {
-                String label = $"[FFFF00][⇧↔/1-8][E5E5FF] {GetCategoryEnumeration(currentGeoIndex, true)}[FFFFFF]"; //[222222]{GetCategoryEnumeration(currentGeoIndex, true, -1)} [FFFFFF]{GetCategoryEnumeration(currentGeoIndex, true)} [222222]{GetCategoryEnumeration(currentGeoIndex, true, 1)}[FFFFFF]
+                String label = $"\n\n[FFFF00][⇧↔/1-0][E5E5FF] {GetCategoryEnumeration(currentGeoIndex, true)}[FFFFFF]"; //[222222]{GetCategoryEnumeration(currentGeoIndex, true, -1)} [FFFFFF]{GetCategoryEnumeration(currentGeoIndex, true)} [222222]{GetCategoryEnumeration(currentGeoIndex, true, 1)}[FFFFFF]
                 label += "\n";
                 label += $"[FFFF00][↔][FFFFFF] Model {GetCategoryEnumeration(currentGeoIndex)}: {geoList[currentGeoIndex].Name} ({geoList[currentGeoIndex].Id})";
                 label += "\n";
+
+                if (partcontrolled == PartControlled.MODEL)
+                    label += $"[FFFF00][⇧P][FFFFFF] Selected: [00FF00]Model\n";
+                else if (partcontrolled == PartControlled.WEAPON)
+                    label += $"[FFFF00][⇧P][FFFFFF] Selected: [2BFAFA]Weapon\n";
+                else if (partcontrolled == PartControlled.BONE)
+                    label += $"[FFFF00][⇧P][FFFFFF] Selected: [FF007F]Bone\n";
+                else if (partcontrolled == PartControlled.FLOOR)
+                    label += $"[FFFF00][⇧P][FFFFFF] Selected: [FFAA00]Floor\n";
+
                 if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS)
                 {
                     label += $"[FFFF00][␣][FFFFFF] {currentAnimName}";
@@ -1328,27 +1476,18 @@ namespace Memoria.Assets
                         label += $"[FFFF00][^Scroll][FFFFFF] Weapon: {weapongeoList[currentWeaponGeoIndex].Name} ({geoList[currentWeaponGeoIndex].Id})\n";
 
                     label += $"[FFFF00][⇧Scroll][FFFFFF] Bone: {currentBoneIndex}\n";
-                    if (partcontrolled == PartControlled.MODEL)
-                        label += $"[FFFF00][⇧P][FFFFFF] Selected: [00FF00]Model\n";
-                    else if (partcontrolled == PartControlled.WEAPON)
-                        label += $"[FFFF00][⇧P][FFFFFF] Selected: [2BFAFA]Weapon\n";
-                    else if (partcontrolled == PartControlled.BONE)
-                        label += $"[FFFF00][⇧P][FFFFFF] Selected: [FF007F]Bone\n";
-
                     label += $"[FFFF00][^B][FFFFFF] BoneHidden: ";
                     if (currentHiddenBonesID.Count > 0)
                     {
                         for (Int32 i = 0; i < currentHiddenBonesID.Count; i++)
                             label += $"{currentHiddenBonesID[i]} ";
-                        label += $"\n";
                     }
-                    else
-                        label += "\n\n\n";
+                    label += "\n";
                 }
-                else
-                {
-                    label += "\n\n\n\n\n\n\n";
-                }
+                if (currentFloorModel != null && currentFloorModel.activeSelf)
+                    label += $"[FFFF00][^C][Alt.C][FFFFFF]Floor: {floorgeoList[currentFloorIndex].Name}\n";
+
+                label += "\n\n\n\n\n\n\n\n\n\n";
 
                 if (!String.Equals(infoLabel.Parser.InitialText, label))
                     infoLabel.rawText = label;
@@ -1369,9 +1508,10 @@ namespace Memoria.Assets
                     currentModel.transform.SetParent(currentModelWrapper.transform);
                     extraInfo += "[MODEL] ¤ ";
                     extraInfo += UseModdedTextures ? "text_mod" : "text_orig";
-                    extraInfo += $" / x : {Math.Round(currentModelWrapper.transform.localPosition.x, 2)} y : {Math.Round(currentModelWrapper.transform.localPosition.y, 2)}";
-                    extraInfo += $" / ↔ {Math.Round(model_Horizontal_Rotation, 0)} ↕ {Math.Round(model_Vertical_Rotation, 0)}";
-                    extraInfo += $" / ▣ {Math.Round(scaleFactor.x, 2)}";
+                    extraInfo += $"Pos: [x]{currentModelWrapper.transform.localPosition.x} [y]{currentModelWrapper.transform.localPosition.y} [z]{currentModelWrapper.transform.localPosition.z}";
+                    extraInfo += $" Rot(Quat): [x]{Math.Round(currentModelWrapper.transform.localRotation.x, 2)} [y]{Math.Round(currentModelWrapper.transform.localRotation.y, 2)} [z]{Math.Round(currentModelWrapper.transform.localRotation.z, 2)} [w]{Math.Round(currentModelWrapper.transform.localRotation.w, 2)}";
+                    extraInfo += $" Rot(Eul): {Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.x, 0)}/{Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.y, 0)}/{Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.z, 0)}";
+                    extraInfo += $" Scale: {Math.Round(currentModelWrapper.transform.localScale.x, 2)}/{Math.Round(currentModelWrapper.transform.localScale.y, 2)}/{Math.Round(currentModelWrapper.transform.localScale.z, 2)}";
                     extraInfoLabel.color = Color.green;
                     //extraInfo += $" | Rot(Eul): {Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.x,0)}/{Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.y, 0)}/{Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.z, 0)}";
                 }
@@ -1395,6 +1535,16 @@ namespace Memoria.Assets
                     extraInfo += $" Rot(Eul): {Math.Round(BoneSelected.localRotation.eulerAngles.x, 0)}/{Math.Round(BoneSelected.localRotation.eulerAngles.y, 0)}/{Math.Round(BoneSelected.localRotation.eulerAngles.z, 0)}";
                     extraInfo += $" Scale: {Math.Round(BoneSelected.localScale.x, 2)}/{Math.Round(BoneSelected.localScale.y, 2)}/{Math.Round(BoneSelected.localScale.z, 2)}";
                     extraInfoLabel.color = new Color(0.85865f, 0.00327f, 0.48478f, 1f); // Deep Red
+                }
+                else if (partcontrolled == PartControlled.FLOOR && currentFloorModel != null)
+                {
+                    extraInfo += "[FLOOR] ¤ ";
+                    extraInfo += UseModdedTextures ? "text_mod | " : "text_orig | ";
+                    extraInfo += $"Pos: [x]{currentFloorModel.transform.localPosition.x} [y]{currentFloorModel.transform.localPosition.y} [z]{currentFloorModel.transform.localPosition.z}";
+                    extraInfo += $" Rot(Quat): [x]{Math.Round(currentFloorModel.transform.localRotation.x, 2)} [y]{Math.Round(currentFloorModel.transform.localRotation.y, 2)} [z]{Math.Round(currentFloorModel.transform.localRotation.z, 2)} [w]{Math.Round(currentFloorModel.transform.localRotation.w, 2)}";
+                    extraInfo += $" Rot(Eul): {Math.Round(currentFloorModel.transform.localRotation.eulerAngles.x, 0)}/{Math.Round(currentFloorModel.transform.localRotation.eulerAngles.y, 0)}/{Math.Round(currentFloorModel.transform.localRotation.eulerAngles.z, 0)}";
+                    extraInfo += $" Scale: {Math.Round(currentFloorModel.transform.localScale.x, 2)}/{Math.Round(currentFloorModel.transform.localScale.y, 2)}/{Math.Round(currentFloorModel.transform.localScale.z, 2)}";
+                    extraInfoLabel.color = new Color(0.91864f, 0.66073f, 0.15488f, 1f); // Orange
                 }
                 extraInfoLabel.rawText = extraInfo;
                 extraInfoLabel.fontSize = 16;
@@ -1469,6 +1619,7 @@ namespace Memoria.Assets
             "ACTORS",
             "WORLD",
             "WEAPONS",
+            "CUSTOM FBX",
             "BATTLE MAPS",
             "SPS (11)",
             "SPS (12)",
@@ -1490,6 +1641,7 @@ namespace Memoria.Assets
             {"P", "Attach weapon"},
             {"O", "Ortho view"},
             {"C", "BG color"},
+            {"⇧C", "Show Floor"},
             {"◐", "Angle"},
             {"◑", "Position"},
             {"Scroll", "Zoom"},
@@ -1498,8 +1650,9 @@ namespace Memoria.Assets
             {"L", "Read last exp."},
             {"F 1", "Keep coord."},
             {"F 5", "Refresh"},
-            {"R", "Reset position"},
             {"W", "Mod/orig textures"},
+            {"R", "Reset position"},
+            {"⇧R", "Full Reset"}
         };
 
         private static Camera GetCamera()
@@ -1539,9 +1692,16 @@ namespace Memoria.Assets
 
         private static void ChangeModel(Int32 index)
         {
+            Boolean FloorPresent = false;
             Int32 previousIndex = currentGeoIndex;
             currentAnimIndex = 0;
             isLoadingModel = true;
+            if (currentFloorModel != null)
+            {
+                if (currentFloorModel.activeSelf)
+                    FloorPresent = true;
+                UnityEngine.Object.Destroy(currentFloorModel);
+            }
             if (currentModel != null && geoList[currentGeoIndex].Kind != MODEL_KIND_SPS)
                 UnityEngine.Object.Destroy(currentModel);
             if (currentWeaponModel != null)
@@ -1695,6 +1855,9 @@ namespace Memoria.Assets
 
             UpdateModelCoordinates();
             UpdateRender();
+            if (FloorPresent && (geoList[currentGeoIndex].Kind != MODEL_KIND_SPS && geoList[currentGeoIndex].Kind != MODEL_KIND_BBG && geoList[currentGeoIndex].Kind != MODEL_KIND_BBG_OBJ))
+                ChangeFloorModel(currentFloorIndex);
+
             isLoadingModel = false;
         }
 
@@ -1718,8 +1881,27 @@ namespace Memoria.Assets
                         index -= weapongeoList.Count;
                     currentWeaponGeoIndex = index;
                     Log.Message($"[ModelViewerScene] Change weapon model: {weapongeoList[index].Name}");
-                    currentWeaponModel = ModelFactory.CreateModel(weapongeoList[index].Name, false, true, Configuration.Graphics.ElementsSmoothTexture);
-                    WeaponAttach(currentWeaponModel, currentModel, currentBonesID[currentBoneIndex]);
+                    try
+                    {
+                        currentWeaponModel = ModelFactory.CreateModel(weapongeoList[index].Name, false, true, Configuration.Graphics.ElementsSmoothTexture);
+                        WeaponAttach(currentWeaponModel, currentModel, currentBonesID[currentBoneIndex]);
+                    }
+                    catch (Exception err)
+                    {
+                        FF9Sfx.FF9SFX_Play(102);
+                        Log.Message($"[ERROR][ModelViewerScene] Weapon {weapongeoList[index].Name} can't be loaded !");
+                        Log.Error(err);
+
+                        Int32 nextIndex = currentWeaponGeoIndex;
+                        nextIndex += Input.mouseScrollDelta.y < 0f ? -1 : 1;
+                        if (nextIndex < 0)
+                            nextIndex = (weapongeoList.Count - 1);
+                        else if (nextIndex > weapongeoList.Count)
+                            nextIndex = 0;
+                        if (nextIndex == weapongeoList.Count)
+                            nextIndex -= weapongeoList.Count;
+                        ChangeWeaponModel(nextIndex);
+                    }
                     isLoadingWeaponModel = false;
                 }
             }
@@ -1734,6 +1916,41 @@ namespace Memoria.Assets
             sourceObject.transform.localPosition = Vector3.zero;
             sourceObject.transform.localRotation = Quaternion.identity;
             sourceObject.transform.localScale = Vector3.one;
+        }
+
+        private static void ChangeFloorModel(Int32 index)
+        {
+            isLoadingFloorModel = true;
+            if (currentFloorModel != null)
+                UnityEngine.Object.Destroy(currentFloorModel);
+            while (index < 0)
+                index += floorgeoList.Count;
+            while (index >= floorgeoList.Count)
+                index -= floorgeoList.Count;
+            currentFloorIndex = index;
+            String BBGName = floorgeoList[index].Name;
+            Log.Message($"[ModelViewerScene] Change floor model: {BBGName}");
+            currentFloorModel = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{BBGName}/{BBGName}", floorgeoList[index].Kind == MODEL_KIND_BBG, UseModdedTextures, Configuration.Graphics.BattleSmoothTexture);
+            if (currentFloorModel != null)
+            {
+                Int32.TryParse(BBGName.Replace("BBG_B", ""), out battlebg.nf_BbgNumber);
+                battlebg.SetDefaultShader(currentFloorModel);
+                if (String.Equals(BBGName, "BBG_B171_OBJ2")) // Crystal World, Crystal
+                    battlebg.SetMaterialShader(currentFloorModel, "PSX/BattleMap_Cystal");
+            }
+            currentFloorModel.transform.SetParent(currentModel.transform);
+            currentFloorModel.transform.localPosition = currentModel.transform.localPosition + floor_Position;
+            currentFloorModel.transform.localScale = floor_Scale;
+            Boolean SpecialBBG = (BBGName == "BBG_B010" || BBGName == "BBG_B045" || BBGName == "BBG_B111" || BBGName == "BBG_B144");
+            if (floor_Rotation == Quaternion.identity)
+                floor_Rotation = Quaternion.Euler(currentModel.transform.localRotation.eulerAngles + new Vector3(180f, 0f, 0f));
+            if (SpecialBBG)
+                floor_Rotation = new Quaternion(-1f, 0f, 0f, 0f);
+
+            currentFloorModel.transform.localRotation = floor_Rotation;
+            isLoadingFloorModel = false;
+            postRefresh = 6;
+
         }
 
         public static void ProcessBuiltInWeapon()
@@ -2171,6 +2388,61 @@ namespace Memoria.Assets
             }
         }
 
+        public static void LoadFloorConfig()
+        {
+            // FLOOR
+            ReadModelViewerConfigFile(ParamIni.FLOOR_MODEL, out string FloorModel);
+            if (!String.IsNullOrEmpty(FloorModel))
+            {
+                ReadModelViewerConfigFile(ParamIni.FLOOR_GEOINDEX, out string FloorGeoIndex);
+                if (!String.IsNullOrEmpty(FloorGeoIndex))
+                {
+                    Int32.TryParse(FloorGeoIndex, out currentFloorIndex);
+                    ChangeFloorModel(currentFloorIndex);
+                }
+                ReadModelViewerConfigFile(ParamIni.FLOOR_POSITION, out string FloorModelPosition);
+                if (!String.IsNullOrEmpty(FloorModelPosition))
+                {
+                    string[] VectorFloorModelPosition = FloorModelPosition.Split(',');
+                    if (VectorFloorModelPosition.Length == 3)
+                    {
+                        Single.TryParse(VectorFloorModelPosition[0], out floor_Position.x);
+                        Single.TryParse(VectorFloorModelPosition[1], out floor_Position.y);
+                        Single.TryParse(VectorFloorModelPosition[2], out floor_Position.z);
+                    }
+                }
+                ReadModelViewerConfigFile(ParamIni.FLOOR_ROTATION, out string FloorModelRotation);
+                if (!String.IsNullOrEmpty(FloorModelRotation))
+                {
+                    string[] VectorFloorModelRotationEuler = FloorModelRotation.Split(',');
+                    Vector3 Floormodel_RotationEuler = Vector3.zero;
+                    if (VectorFloorModelRotationEuler.Length >= 3)
+                    {
+                        Single.TryParse(VectorFloorModelRotationEuler[0], out Floormodel_RotationEuler.x);
+                        Single.TryParse(VectorFloorModelRotationEuler[1], out Floormodel_RotationEuler.y);
+                        Single.TryParse(VectorFloorModelRotationEuler[2], out Floormodel_RotationEuler.z);
+                    }
+                    floor_Rotation.eulerAngles = Floormodel_RotationEuler;
+                }
+                ReadModelViewerConfigFile(ParamIni.FLOOR_SCALE, out string FloorModelScale);
+                if (!String.IsNullOrEmpty(FloorModelScale))
+                {
+                    string[] VectorFloorModelScale = FloorModelScale.Split(',');
+                    if (VectorFloorModelScale.Length >= 3)
+                    {
+                        Single.TryParse(VectorFloorModelScale[0], out floor_Scale.x);
+                        Single.TryParse(VectorFloorModelScale[1], out floor_Scale.y);
+                        Single.TryParse(VectorFloorModelScale[2], out floor_Scale.z);
+                    }
+                }
+                currentFloorModel.transform.position = currentModel.transform.position + floor_Position;
+                if (floor_Rotation == Quaternion.identity)
+                    floor_Rotation = Quaternion.Euler(currentModel.transform.localRotation.eulerAngles + new Vector3(180f, 0f, 0f));
+                currentFloorModel.transform.localRotation = floor_Rotation;
+                currentFloorModel.transform.localScale = floor_Scale;
+            }
+        }
+
         public static void UpdateModelCoordinates()
         {
             if (currentModel != null)
@@ -2195,6 +2467,16 @@ namespace Memoria.Assets
                 currentWeaponModel.transform.localPosition = weaponmodel_Position;
                 currentWeaponModel.transform.localRotation = weaponmodel_Rotation;
                 currentWeaponModel.transform.localScale = weaponmodel_scaleFactor;
+            }
+        }
+
+        public static void UpdateFloorModelCoordinates()
+        {
+            if (currentModel != null && currentFloorModel != null)
+            {
+                currentFloorModel.transform.localPosition = currentModel.transform.localPosition + floor_Position;
+                currentFloorModel.transform.localRotation = floor_Rotation;
+                currentFloorModel.transform.localScale = floor_Scale;
             }
         }
 
@@ -2224,6 +2506,16 @@ namespace Memoria.Assets
                 config += $"Weapon_Rotation_Quaternion = {weaponmodel_Rotation}\n";
                 config += $"Weapon_Rotation_Euler = {weaponmodel_Rotation.eulerAngles}\n";
                 config += $"Weapon_Scale = {weaponmodel_scaleFactor}\n";
+            }
+            if (currentFloorModel != null)
+            {
+                config += $"\n;=== FLOOR ===;\n";
+                config += $"Floor_Model = {floorgeoList[currentFloorIndex].Name}\n";
+                config += $"Floor_GeoIndex = {currentFloorIndex}\n";
+                config += $"Floor_Position = {floor_Position}\n";
+                config += $"Floor_Rotation_Quaternion = {floor_Rotation}\n";
+                config += $"Floor_Rotation_Euler = {floor_Rotation.eulerAngles}\n";
+                config += $"Floor_Scale = {floor_Scale}\n";
             }
 
             File.WriteAllText(ModelViewerConfigPath, config);
@@ -2373,6 +2665,62 @@ namespace Memoria.Assets
                             return;
                         }
                         break;
+                    case ParamIni.FLOOR_MODEL:
+                        if (Line.Contains("Floor_Model"))
+                        {
+                            Line = Line.Substring(Line.IndexOf('=') + 2);
+                            return;
+                        }
+                        break;
+                    case ParamIni.FLOOR_GEOINDEX:
+                        if (Line.Contains("Floor_GeoIndex"))
+                        {
+                            Line = Line.Substring(Line.IndexOf('=') + 2);
+                            return;
+                        }
+                        break;
+                    case ParamIni.FLOOR_POSITION:
+                        if (Line.Contains("Floor_Position"))
+                        {
+                            if (new Regex(".*\\(-?\\d{1,}.\\d{1,}, -?\\d{1,}.\\d{1,}, -?\\d{1,}.\\d{1,}\\)").Match(Line).Success)
+                            {
+                                Line = Line.Substring(Line.IndexOf('=') + 2);
+                                Line = Line.Substring(1);
+                                Line = Line.Remove(Line.Length - 1);
+                            }
+                            else
+                                Line = "(0.0, 0.0, 0.0)";
+                            return;
+                        }
+                        break;
+                    case ParamIni.FLOOR_ROTATION:
+                        if (Line.Contains("Floor_Rotation_Euler"))
+                        {
+                            if (new Regex(".*\\(-?\\d{1,}.\\d{1,}, -?\\d{1,}.\\d{1,}, -?\\d{1,}.\\d{1,}\\)").Match(Line).Success)
+                            {
+                                Line = Line.Substring(Line.IndexOf('=') + 2);
+                                Line = Line.Substring(1);
+                                Line = Line.Remove(Line.Length - 1);
+                            }
+                            else
+                                Line = "(0.0, 0.0, 0.0, 1.0)";
+                            return;
+                        }
+                        break;
+                    case ParamIni.FLOOR_SCALE:
+                        if (Line.Contains("Floor_Scale"))
+                        {
+                            if (new Regex(".*\\(-?\\d{1,}.\\d{1,}, -?\\d{1,}.\\d{1,}, -?\\d{1,}.\\d{1,}\\)").Match(Line).Success)
+                            {
+                                Line = Line.Substring(Line.IndexOf('=') + 2);
+                                Line = Line.Substring(1);
+                                Line = Line.Remove(Line.Length - 1);
+                            }
+                            else
+                                Line = "(1.0, 1.0, 1.0)";
+                            return;
+                        }
+                        break;
                 }
             }
             Line = "";
@@ -2438,14 +2786,20 @@ namespace Memoria.Assets
             WEAPON_BONEINDEX,
             WEAPON_POSITION,
             WEAPON_ROTATION,
-            WEAPON_SCALE
+            WEAPON_SCALE,
+            FLOOR_MODEL,
+            FLOOR_GEOINDEX,
+            FLOOR_POSITION,
+            FLOOR_ROTATION,
+            FLOOR_SCALE
         }
 
         public enum PartControlled
         {
             MODEL,
             WEAPON,
-            BONE
+            BONE,
+            FLOOR
         }
 
         private const Int32 MODEL_KIND_NORMAL = 0;

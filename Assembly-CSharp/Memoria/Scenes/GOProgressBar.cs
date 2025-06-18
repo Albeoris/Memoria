@@ -32,7 +32,7 @@ namespace Memoria.Scenes
             else if (previous != value)
             {
                 // Smooths the progress bar
-                step = (value - previous) * (Single)Configuration.Graphics.BattleTPS / (Single)Configuration.Graphics.BattleFPS;
+                step = (value - previous) * (Single)Configuration.Graphics.BattleTPS / FPSManager.GetEstimatedFps();
             }
             ProgressBar.value = Mathf.Min(ProgressBar.value + step, value);
             previous = value;

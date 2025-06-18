@@ -345,6 +345,8 @@ namespace Memoria.Scripts
                     result.OverloadableMethodScripts[interf] = type;
                 if (interf == typeof(IOverloadOnBattleScriptStartScript))
                     result.OverloadableMethodScripts[interf] = type;
+                if (interf == typeof(IOverloadOnBattleScriptEndScript))
+                    result.OverloadableMethodScripts[interf] = type;
                 if (interf == typeof(IOverloadOnCommandRunScript))
                     result.OverloadableMethodScripts[interf] = type;
                 if (interf == typeof(IOverloadOnGameOverScript))
@@ -354,6 +356,8 @@ namespace Memoria.Scripts
                 if (interf == typeof(IOverloadDamageModifierScript))
                     result.OverloadableMethodScripts[interf] = type;
                 if (interf == typeof(IOverloadOnBattleInitScript))
+                    result.OverloadableMethodScripts[interf] = type;
+                if (interf == typeof(IOverloadVABattleScript))
                     result.OverloadableMethodScripts[interf] = type;
             }
         }
