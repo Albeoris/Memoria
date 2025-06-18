@@ -160,7 +160,6 @@ namespace Global.Sound.SaXAudio
 
         public override Int32 SdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(Int32 soundID)
         {
-            //SoundLib.Log($"SoundCtrl_GetElapsedPlaybackTime({soundID})");
             return (Int32)(SaXAudio.GetPositionTime(soundID) * 1000f);
         }
 
