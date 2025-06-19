@@ -93,6 +93,8 @@ namespace Memoria.Assets
         private static GameObject backgroundGo;
         private static GameObject labelGo;
         private static UISprite background;
+        private static Boolean isAnimStopped;
+        private static float animStoppedTime;
 
         public static void Init()
         {
@@ -529,6 +531,11 @@ namespace Memoria.Assets
                             speedFactor = 0.1f;
                         else if (speedFactor == 0.1f)
                             speedFactor = 1f;
+                    }
+
+                    if (toggleAnim && (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.X))) // frame advance
+                    {
+                        toggleAnim = false;
                     }
                 }
                 if (!downUpProcessed) // Browse anims
@@ -1322,16 +1329,41 @@ namespace Memoria.Assets
                     }
                 }
                 Animation animation = currentModel.GetComponent<Animation>();
-                if (animation != null && !animation.IsPlaying(currentAnimName) && toggleAnim) // make animation a loop by default
+                if (animation != null && (!animation.IsPlaying(currentAnimName) || isAnimStopped) && toggleAnim) // make animation a loop by default
                 {
+                    isAnimStopped = false;
                     animation.Play(currentAnimName);
                     if (animation[currentAnimName] != null)
                         animation[currentAnimName].speed = speedFactor;
                 }
-                else if (animation != null && animation.IsPlaying(currentAnimName) && (!toggleAnim || Input.GetKeyDown(KeyCode.S)))
+                else if (animation != null && !isAnimStopped && (!toggleAnim || Input.GetKeyDown(KeyCode.S)))
                 {
-                    animation.Stop();
+                    //animation.Stop();
+                    isAnimStopped = true;
+                    if (animation[currentAnimName] != null)
+                    {
+                        animation[currentAnimName].speed = 0;
+                        animStoppedTime = animation[currentAnimName].time;
+                    }
                 }
+
+                if (animation != null && isAnimStopped)
+                {
+                    if (Input.GetKeyDown(KeyCode.Z))
+                    {
+                        AdvanceAnimationByFrames(animation, -1);
+                    }
+                    else if (Input.GetKeyDown(KeyCode.X))
+                    {
+                        AdvanceAnimationByFrames(animation, 1);
+                    }
+                    else
+                    {
+                        // Pause animation
+                        animation[currentAnimName].time = animStoppedTime;
+                    }
+                }
+
                 UpdateRender();
                 ProcessBuiltInWeapon();
                 if (!LoadingWeaponConfig)
@@ -1503,6 +1535,7 @@ namespace Memoria.Assets
                 String extraInfo = "";
                 if (partcontrolled == PartControlled.MODEL && currentModel != null)
                 {
+                    Animation animation = currentModel.GetComponent<Animation>();
                     if (currentModelWrapper == null)
                         currentModelWrapper = new GameObject("CurrentModelWrapper");
                     currentModel.transform.SetParent(currentModelWrapper.transform);
@@ -1512,6 +1545,10 @@ namespace Memoria.Assets
                     extraInfo += $" Rot(Quat): [x]{Math.Round(currentModelWrapper.transform.localRotation.x, 2)} [y]{Math.Round(currentModelWrapper.transform.localRotation.y, 2)} [z]{Math.Round(currentModelWrapper.transform.localRotation.z, 2)} [w]{Math.Round(currentModelWrapper.transform.localRotation.w, 2)}";
                     extraInfo += $" Rot(Eul): {Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.x, 0)}/{Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.y, 0)}/{Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.z, 0)}";
                     extraInfo += $" Scale: {Math.Round(currentModelWrapper.transform.localScale.x, 2)}/{Math.Round(currentModelWrapper.transform.localScale.y, 2)}/{Math.Round(currentModelWrapper.transform.localScale.z, 2)}";
+
+                    int currentKeyFrame = (int)Math.Round(animation[currentAnimName].clip.length * (animation[currentAnimName].time % 1) * animation[currentAnimName].clip.frameRate);
+                    int maxKeyFrame = (int)Math.Round(animation[currentAnimName].clip.length * (animation[currentAnimName].length % 1) * animation[currentAnimName].clip.frameRate);
+                    extraInfo += $" Frame: {currentKeyFrame}/{maxKeyFrame}";
                     extraInfoLabel.color = Color.green;
                     //extraInfo += $" | Rot(Eul): {Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.x,0)}/{Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.y, 0)}/{Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.z, 0)}";
                 }
@@ -1652,7 +1689,9 @@ namespace Memoria.Assets
             {"F 5", "Refresh"},
             {"W", "Mod/orig textures"},
             {"R", "Reset position"},
-            {"⇧R", "Full Reset"}
+            {"⇧R", "Full Reset"},
+            {"Z", "Decrement Keyframe"},
+            {"X", "Increment Keyframe"},
         };
 
         private static Camera GetCamera()
@@ -1994,6 +2033,12 @@ namespace Memoria.Assets
                 {
                     anim.Play(currentAnimName);
                     anim[currentAnimName].speed = speedFactor;
+                    if (isAnimStopped)
+                    {
+                        anim[currentAnimName].time = 0;
+                        anim[currentAnimName].speed = 0;
+                        animStoppedTime = 0;
+                    }
                 }
             }
         }
@@ -2724,6 +2769,34 @@ namespace Memoria.Assets
                 }
             }
             Line = "";
+        }
+
+        public static void AdvanceAnimationByFrames(Animation animation, int frames)
+        {
+            AnimationState animationState = animation[currentAnimName];
+            if (animationState)
+            {
+                AnimationClip clip = animationState.clip;
+                if (clip != null)
+                {
+                    int currentKeyFrame = (int)Math.Round(clip.length * (animationState.time % 1) * clip.frameRate);
+                    int maxKeyFrame = (int)Math.Round(clip.length * animationState.length * clip.frameRate);
+                    int nextKeyFrame = ((currentKeyFrame + frames) % (maxKeyFrame + 1));
+                    if (nextKeyFrame < 0)
+                    {
+                        nextKeyFrame += maxKeyFrame + 1;
+                    }
+
+                    float nextAnimTime = nextKeyFrame / (clip.length * clip.frameRate);
+                    if (nextAnimTime > animationState.length)
+                    {
+                        nextAnimTime = animationState.length;
+                    }
+
+                    animationState.time = nextAnimTime;
+                    animStoppedTime = animationState.time;
+                }
+            }
         }
 
         // TODO: maybe add that kind of API somewhere else (ExtensionMethodsVector3?)
