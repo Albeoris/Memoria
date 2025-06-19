@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Threading;
 
 namespace Memoria.Data
 {
@@ -61,6 +60,8 @@ namespace Memoria.Data
                 Log.Error(ex);
             }
         }
+
+        public static void Initialize() { }
 
         public static void InitBattle()
         {

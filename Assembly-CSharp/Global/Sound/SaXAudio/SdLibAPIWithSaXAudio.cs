@@ -42,6 +42,7 @@ namespace Global.Sound.SaXAudio
             BusAmbient = SaXAudio.CreateBus();
             BusSoundEffect = SaXAudio.CreateBus();
             BusVoice = SaXAudio.CreateBus();
+            AudioEffectManager.Initialize();
             Log.Message($"[SaXAudio] Initialized");
             return 0;
         }

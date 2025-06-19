@@ -26,6 +26,17 @@ namespace Global.Sound.SaXAudio
 
         public static Boolean IsSaXAudio { get; private set; } = ISdLibAPIProxy.Instance is SdLibAPIWithSaXAudio;
 
+        public static void Initialize()
+        {
+            new Thread(() =>
+            {
+                lock (battleBgIDPresets)
+                {
+                    if (!initialized) Init();
+                }
+            }).Start();
+        }
+
         public static void ApplyFieldEffects(Int32 fieldID)
         {
             if (!IsSaXAudio) return;
