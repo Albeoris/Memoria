@@ -126,7 +126,7 @@ namespace Global.Sound.SaXAudio
                 Log.Warning($"The BankID {bankID} was not found");
             }
             BankData data = bankData[bankID];
-            Int32 busID = -1;
+            Int32 busID = 0;
 
             switch (data.Profile.SoundProfileType)
             {
@@ -143,6 +143,13 @@ namespace Global.Sound.SaXAudio
                         busID = data.LoopEnd != 0 ? BusAmbient : BusSoundEffect;
                     break;
             }
+
+            if (busID > 0 && !AudioEffectManager.FilterCurrentPreset(data.Profile, busID))
+            {
+                Log.Message($"[AudioEffectManager] Filtered '{data.Profile.ResourceID}' from bus {busID}");
+                busID = 0;
+            }
+
             Int32 soundID = SaXAudio.CreateVoice(bankID, busID);
             if (soundID >= 0)
             {
@@ -154,6 +161,9 @@ namespace Global.Sound.SaXAudio
                     bankData[bankID] = data;
                 }
             }
+
+            AudioEffectManager.ApplyConditionalEffects(soundID, data.Profile, busID);
+
             LastSoundID = soundID;
             return soundID;
         }

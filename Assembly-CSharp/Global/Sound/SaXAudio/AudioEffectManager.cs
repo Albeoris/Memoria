@@ -19,6 +19,7 @@ namespace Global.Sound.SaXAudio
         private static Dictionary<Int32, EffectPreset> battleIDPresets = new Dictionary<Int32, EffectPreset>();
         private static Dictionary<Int32, EffectPreset> battleBgIDPresets = new Dictionary<Int32, EffectPreset>();
         private static List<EffectPreset> conditionalPresets = new List<EffectPreset>();
+        private static EffectPreset? currentPreset = null;
 
         private static Boolean initialized = false;
         private static FileSystemWatcher watcher = null;
@@ -36,11 +37,9 @@ namespace Global.Sound.SaXAudio
                     if (!initialized) Init();
                 }
 
-                if (ApplyConditionalEffects()) return;
-
-                if (fieldIDPresets.TryGetValue(fieldID, out EffectPreset preset))
+                if (fieldIDPresets.TryGetValue(fieldID, out EffectPreset preset) && ApplyPreset(ref preset))
                 {
-                    ApplyPreset(ref preset);
+                    currentPreset = preset;
                     Log.Message($"[AudioEffectManager] Applied preset '{preset.Name}' to field {fieldID}");
                     return;
                 }
@@ -57,11 +56,10 @@ namespace Global.Sound.SaXAudio
                 {
                     if (!initialized) Init();
                 }
-                if (ApplyConditionalEffects()) return;
 
-                if (battleIDPresets.TryGetValue(battleID, out EffectPreset preset))
+                if (battleIDPresets.TryGetValue(battleID, out EffectPreset preset) && ApplyPreset(ref preset))
                 {
-                    ApplyPreset(ref preset);
+                    currentPreset = preset;
                     Log.Message($"[AudioEffectManager] Applied preset '{preset.Name}' to battle {battleID}");
                     return;
                 }
@@ -74,18 +72,14 @@ namespace Global.Sound.SaXAudio
             if (!IsSaXAudio) return;
             new Thread(() =>
             {
-                Log.Message($"{battleBgID} {battleBgIDPresets.ContainsKey(battleBgID)} {initialized}");
-
                 lock (battleBgIDPresets)
                 {
                     if (!initialized) Init();
                 }
 
-                if (ApplyConditionalEffects()) return;
-
-                if (battleBgIDPresets.TryGetValue(battleBgID, out EffectPreset preset))
+                if (battleBgIDPresets.TryGetValue(battleBgID, out EffectPreset preset) && ApplyPreset(ref preset))
                 {
-                    ApplyPreset(ref preset);
+                    currentPreset = preset;
                     Log.Message($"[AudioEffectManager] Applied preset '{preset.Name}' to battle background {battleBgID}");
                     return;
                 }
@@ -93,32 +87,60 @@ namespace Global.Sound.SaXAudio
             }).Start();
         }
 
-        private static Boolean ApplyConditionalEffects()
+        public static void ApplyConditionalEffects(Int32 soundID, SoundProfile profile, Int32 bus)
         {
+            if (!IsSaXAudio || !initialized || conditionalPresets.Count == 0) return;
+
             for (Int32 i = 0; i < conditionalPresets.Count; i++)
             {
                 EffectPreset preset = conditionalPresets[i];
-                Expression c = new Expression(preset.Condition);
-                c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-                c.EvaluateParameter += NCalcUtility.worldNCalcParameters;
-
-                try
+                if ((preset.Layers == EffectPreset.Layer.None || preset.IsBusInLayers(bus)) && EvaluatePresetCondition(profile, ref preset))
                 {
-                    if (NCalcUtility.EvaluateNCalcCondition(c.Evaluate()))
-                    {
-                        ApplyPreset(ref preset);
-                        Log.Message($"[AudioEffectManager] Applied conditional preset '{preset.Name}'");
-                        return true;
-                    }
-                }
-                catch (Exception err)
-                {
-                    Log.Error($"[AudioEffectManager] Couldn't evaluate condition: '{preset.Condition.Trim()}' in preset '{preset.Name}'");
-                    Log.Error(err);
-                    continue;
+                    ApplyPresetSound(ref preset, soundID);
+                    Log.Message($"[AudioEffectManager] Applied preset '{preset.Name}' to sound '{profile.ResourceID}'");
                 }
             }
+        }
+
+        public static Boolean FilterCurrentPreset(SoundProfile profile, Int32 bus)
+        {
+            if (!IsSaXAudio || !initialized || currentPreset == null)
+                return true;
+            EffectPreset preset = currentPreset.Value;
+            if (String.IsNullOrEmpty(preset.Condition) || !preset.IsBusInLayers(bus))
+                return true; // We only return false if the actual evaluation fails
+
+            return EvaluatePresetCondition(profile, ref preset);
+        }
+
+        public static Boolean EvaluatePresetCondition(SoundProfile profile, ref EffectPreset preset)
+        {
+            Expression c = new Expression(preset.Condition);
+            c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+            c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+            c.EvaluateParameter += NCalcUtility.worldNCalcParameters;
+            c.Parameters["SoundIndex"] = profile.SoundIndex;
+            c.Parameters["ResourceID"] = profile.ResourceID;
+            c.Parameters["SoundProfileType"] = profile.SoundProfileType;
+            c.Parameters["SoundProfileType_Default"] = SoundProfileType.Default;
+            c.Parameters["SoundProfileType_Music"] = SoundProfileType.Music;
+            c.Parameters["SoundProfileType_SoundEffect"] = (Byte)SoundProfileType.SoundEffect;
+            c.Parameters["SoundProfileType_MovieAudio"] = SoundProfileType.MovieAudio;
+            c.Parameters["SoundProfileType_Song"] = SoundProfileType.Song;
+            c.Parameters["SoundProfileType_Sfx"] = SoundProfileType.Sfx;
+            c.Parameters["SoundProfileType_Voice"] = SoundProfileType.Voice;
+
+            try
+            {
+                if (NCalcUtility.EvaluateNCalcCondition(c.Evaluate()))
+                    return true;
+            }
+            catch (Exception e)
+            {
+                Log.Error($"[AudioEffectManager] Couldn't evaluate condition: '{preset.Condition.Trim()}' in preset '{preset.Name}'");
+                Log.Error(e);
+            }
+
             return false;
         }
 
@@ -204,34 +226,16 @@ namespace Global.Sound.SaXAudio
             initialized = true;
         }
 
-        private static void ApplyPreset(ref EffectPreset preset)
+        private static Boolean ApplyPreset(ref EffectPreset preset)
         {
-            if (!String.IsNullOrEmpty(preset.Condition))
-            {
-                Expression c = new Expression(preset.Condition);
-                c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-                c.EvaluateParameter += NCalcUtility.worldNCalcParameters;
-
-                try
-                {
-                    if (!NCalcUtility.EvaluateNCalcCondition(c.Evaluate()))
-                        return;
-                }
-                catch (Exception e)
-                {
-                    Log.Error($"[AudioEffectManager] Couldn't evaluate condition: '{preset.Condition.Trim()}' in preset '{preset.Name}'");
-                    Log.Error(e);
-                    return;
-                }
-            }
-
             SdLibAPIWithSaXAudio saXAudio = ISdLibAPIProxy.Instance as SdLibAPIWithSaXAudio;
 
             if ((preset.Layers & EffectPreset.Layer.Music) != 0) ApplyPresetOnBus(ref preset, saXAudio.BusMusic);
             if ((preset.Layers & EffectPreset.Layer.Ambient) != 0) ApplyPresetOnBus(ref preset, saXAudio.BusAmbient);
             if ((preset.Layers & EffectPreset.Layer.SoundEffect) != 0) ApplyPresetOnBus(ref preset, saXAudio.BusSoundEffect);
             if ((preset.Layers & EffectPreset.Layer.Voice) != 0) ApplyPresetOnBus(ref preset, saXAudio.BusVoice);
+
+            return true;
         }
 
         private static void ApplyPresetOnBus(ref EffectPreset preset, Int32 bus)
@@ -249,6 +253,19 @@ namespace Global.Sound.SaXAudio
             else SaXAudio.RemoveEcho(bus, 0, true);
             if (volume) SaXAudio.SetVolume(bus, preset.Volume, 0, true);
             else SaXAudio.SetVolume(bus, 1f, 0, true);
+        }
+
+        private static void ApplyPresetSound(ref EffectPreset preset, Int32 soundID)
+        {
+            Boolean reverb = (preset.Effects & EffectPreset.Effect.Reverb) != 0;
+            Boolean eq = (preset.Effects & EffectPreset.Effect.Eq) != 0;
+            Boolean echo = (preset.Effects & EffectPreset.Effect.Echo) != 0;
+            Boolean volume = (preset.Effects & EffectPreset.Effect.Volume) != 0;
+
+            if (reverb) SaXAudio.SetReverb(soundID, preset.Reverb);
+            if (eq) SaXAudio.SetEq(soundID, preset.Eq);
+            if (echo) SaXAudio.SetEcho(soundID, preset.Echo);
+            if (volume) SaXAudio.SetVolume(soundID, preset.Volume);
         }
 
         public struct EffectPreset
@@ -271,6 +288,24 @@ namespace Global.Sound.SaXAudio
                 SoundEffect = 1 << 2,
                 Voice = 1 << 3,
                 All = Music | Ambient | SoundEffect | Voice
+            }
+
+            public Boolean IsBusInLayers(Int32 bus)
+            {
+                if (!IsSaXAudio || Layers == Layer.None)
+                    return false;
+
+                SdLibAPIWithSaXAudio saXAudio = ISdLibAPIProxy.Instance as SdLibAPIWithSaXAudio;
+
+                if ((Layers & Layer.Music) != 0 && bus == saXAudio.BusMusic)
+                    return true;
+                if ((Layers & Layer.Ambient) != 0 && bus == saXAudio.BusAmbient)
+                    return true;
+                if ((Layers & Layer.SoundEffect) != 0 && bus == saXAudio.BusSoundEffect)
+                    return true;
+                if ((Layers & Layer.Voice) != 0 && bus == saXAudio.BusVoice)
+                    return true;
+                return false;
             }
 
             public String Name = "";

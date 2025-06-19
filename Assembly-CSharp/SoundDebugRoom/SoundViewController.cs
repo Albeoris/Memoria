@@ -133,8 +133,11 @@ namespace SoundDebugRoom
             if (IsSaXAudio)
             {
                 if (IsReverbEnabled) SetReverb();
+                else RemoveReverb();
                 if (IsEqEnabled) SetEq();
+                else RemoveEq();
                 if (IsEchoEnabled) SetEcho();
+                else RemoveEcho();
                 SetEffectVolume();
             }
         }
@@ -154,8 +157,8 @@ namespace SoundDebugRoom
 
         public Single GetActiveLength()
         {
-            if (activeSound == null || !IsSaXAudio) return 0.0001f;
-            return Math.Max(0.0001f, SaXAudio.GetTotalSample(activeSound.SoundID));
+            if (activeSound == null || !IsSaXAudio) return 1f;
+            return Math.Max(1f, SaXAudio.GetTotalSample(activeSound.SoundID));
         }
 
         public void SeekActive(Single position)
@@ -313,14 +316,14 @@ namespace SoundDebugRoom
                     {
                         String resourceID = Regex.Replace(file, @".*?StreamingAssets\\Assets\\Resources\\Sounds\\", "");
                         resourceID = Regex.Replace(resourceID, @"\.akb\.bytes", "");
-                        voicesSet.Add(resourceID);
+                        voicesSet.Add(resourceID.Replace(@"\", "/"));
                     }
                     files = Directory.GetFiles(path, "*.ogg", SearchOption.AllDirectories);
                     foreach (String file in files)
                     {
                         String resourceID = Regex.Replace(file, @".*?StreamingAssets\\Assets\\Resources\\Sounds\\", "");
                         resourceID = Regex.Replace(resourceID, @"\.ogg", "");
-                        voicesSet.Add(resourceID);
+                        voicesSet.Add(resourceID.Replace(@"\", "/"));
                     }
 
                     List<SoundProfile> soundProfiles = new List<SoundProfile>();
@@ -343,7 +346,7 @@ namespace SoundDebugRoom
                     if (soundProfiles.Count > 0)
                     {
                         soundProfiles.Sort((a, b) => ComparePaths(a.ResourceID, b.ResourceID));
-                        ModVoiceDictionary.Add(folder.FolderPath, soundProfiles);
+                        ModVoiceDictionary.Add(folder.FolderPath.TrimEnd('/'), soundProfiles);
                     }
                 }
             }).Start();

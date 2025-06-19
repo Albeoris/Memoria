@@ -150,10 +150,24 @@ namespace SoundDebugRoom
                         GUILayout.Space(5);
                         GUILayout.Label("Volume", GUILayout.ExpandWidth(false));
                         GUILayout.FlexibleSpace();
+                        GUILayout.Label($"{Mathf.Round(SoundVolume * 100)}", GUILayout.ExpandWidth(false));
                         Single soundVolume = SoundVolume;
-                        SoundVolume = GUILayout.HorizontalSlider(SoundVolume, 0f, 1f, GUILayout.Width(width * 0.8f));
+                        SoundVolume = GUILayout.HorizontalSlider(SoundVolume, 0f, 1f, GUILayout.Width(width * 0.75f));
+
+                        Rect sliderRect = GUILayoutUtility.GetLastRect();
+                        sliderRect.y -= 8;
+                        sliderRect.height += 16;
+                        Event e = Event.current;
+                        if (sliderRect.Contains(e.mousePosition) && e.type == EventType.ScrollWheel)
+                        {
+                            SoundVolume -= Mathf.Sign(e.delta.y) * 0.01f;
+                            SoundVolume = Mathf.Clamp(SoundVolume, 0, 1f);
+                            e.Use();
+                        }
+
                         if (soundVolume != SoundVolume)
                         {
+                            SoundVolume = Mathf.Round(SoundVolume * 100) / 100f;
                             soundViewController.SetVolume(SoundVolume);
                         }
                     }
@@ -163,10 +177,24 @@ namespace SoundDebugRoom
                         GUILayout.Space(5);
                         GUILayout.Label("Panning", GUILayout.ExpandWidth(false));
                         GUILayout.FlexibleSpace();
+                        GUILayout.Label($"{Mathf.Round(PanningPosition * 100)}", GUILayout.ExpandWidth(false));
                         Single panningPosition = PanningPosition;
-                        PanningPosition = GUILayout.HorizontalSlider(PanningPosition, -1f, 1f, GUILayout.Width(width * 0.8f));
+                        PanningPosition = GUILayout.HorizontalSlider(PanningPosition, -1f, 1f, GUILayout.Width(width * 0.75f));
+
+                        Rect sliderRect = GUILayoutUtility.GetLastRect();
+                        sliderRect.y -= 8;
+                        sliderRect.height += 16;
+                        Event e = Event.current;
+                        if (sliderRect.Contains(e.mousePosition) && e.type == EventType.ScrollWheel)
+                        {
+                            PanningPosition -= Mathf.Sign(e.delta.y) * 0.01f;
+                            PanningPosition = Mathf.Clamp(PanningPosition, -1f, 1f);
+                            e.Use();
+                        }
+
                         if (panningPosition != PanningPosition)
                         {
+                            PanningPosition = Mathf.Round(PanningPosition * 100) / 100f;
                             soundViewController.SetPanning(PanningPosition);
                         }
                     }
@@ -176,10 +204,24 @@ namespace SoundDebugRoom
                         GUILayout.Space(5);
                         GUILayout.Label("Pitch", GUILayout.ExpandWidth(false));
                         GUILayout.FlexibleSpace();
+                        GUILayout.Label($"{Mathf.Round(PitchPosition * 100)}", GUILayout.ExpandWidth(false));
                         Single pitchPosition = PitchPosition;
-                        PitchPosition = GUILayout.HorizontalSlider(PitchPosition, 0f, 2f, GUILayout.Width(width * 0.8f));
+                        PitchPosition = GUILayout.HorizontalSlider(PitchPosition, 0f, 2f, GUILayout.Width(width * 0.75f));
+
+                        Rect sliderRect = GUILayoutUtility.GetLastRect();
+                        sliderRect.y -= 8;
+                        sliderRect.height += 16;
+                        Event e = Event.current;
+                        if (sliderRect.Contains(e.mousePosition) && e.type == EventType.ScrollWheel)
+                        {
+                            PitchPosition -= Mathf.Sign(e.delta.y) * 0.01f;
+                            PitchPosition = Mathf.Clamp(PitchPosition, 0, 2f);
+                            e.Use();
+                        }
+
                         if (pitchPosition != PitchPosition)
                         {
+                            PitchPosition = Mathf.Round(PitchPosition * 100) / 100f;
                             soundViewController.SetPitch(PitchPosition);
                         }
                     }
@@ -452,7 +494,7 @@ namespace SoundDebugRoom
                             }
                         }
                         GUILayout.EndHorizontal();
-                        Single result = BuildEffectParam("WetDryMix", soundViewController.CurrentEffect.Reverb.WetDryMix, 0, 100, 0.5f, sliderWidth, "F1");
+                        Single result = BuildEffectParam("WetDryMix", soundViewController.CurrentEffect.Reverb.WetDryMix, 0, 100, 0.1f, sliderWidth, "F1");
                         if (soundViewController.CurrentEffect.Reverb.WetDryMix != result)
                         {
                             soundViewController.CurrentEffect.Reverb.WetDryMix = result;
@@ -573,28 +615,28 @@ namespace SoundDebugRoom
                             update = true;
                         }
 
-                        result = BuildEffectParam("RoomFilterMain", soundViewController.CurrentEffect.Reverb.RoomFilterMain, -100f, 0, 0.5f, sliderWidth, "F1");
+                        result = BuildEffectParam("RoomFilterMain", soundViewController.CurrentEffect.Reverb.RoomFilterMain, -100f, 0, 0.1f, sliderWidth, "F1");
                         if (soundViewController.CurrentEffect.Reverb.RoomFilterMain != result)
                         {
                             soundViewController.CurrentEffect.Reverb.RoomFilterMain = result;
                             update = true;
                         }
 
-                        result = BuildEffectParam("RoomFilterHF", soundViewController.CurrentEffect.Reverb.RoomFilterHF, -100f, 0, 0.5f, sliderWidth, "F1");
+                        result = BuildEffectParam("RoomFilterHF", soundViewController.CurrentEffect.Reverb.RoomFilterHF, -100f, 0, 0.1f, sliderWidth, "F1");
                         if (soundViewController.CurrentEffect.Reverb.RoomFilterHF != result)
                         {
                             soundViewController.CurrentEffect.Reverb.RoomFilterHF = result;
                             update = true;
                         }
 
-                        result = BuildEffectParam("ReflectionsGain", soundViewController.CurrentEffect.Reverb.ReflectionsGain, -100f, 20, 0.5f, sliderWidth, "F1");
+                        result = BuildEffectParam("ReflectionsGain", soundViewController.CurrentEffect.Reverb.ReflectionsGain, -100f, 20, 0.1f, sliderWidth, "F1");
                         if (soundViewController.CurrentEffect.Reverb.ReflectionsGain != result)
                         {
                             soundViewController.CurrentEffect.Reverb.ReflectionsGain = result;
                             update = true;
                         }
 
-                        result = BuildEffectParam("ReverbGain", soundViewController.CurrentEffect.Reverb.ReverbGain, -100f, 20, 0.5f, sliderWidth, "F1");
+                        result = BuildEffectParam("ReverbGain", soundViewController.CurrentEffect.Reverb.ReverbGain, -100f, 20, 0.1f, sliderWidth, "F1");
                         if (soundViewController.CurrentEffect.Reverb.ReverbGain != result)
                         {
                             soundViewController.CurrentEffect.Reverb.ReverbGain = result;
@@ -608,13 +650,13 @@ namespace SoundDebugRoom
                             update = true;
                         }
 
-                        result = BuildEffectParam("Density", soundViewController.CurrentEffect.Reverb.Density, 0, 100, 0.5f, sliderWidth, "F1");
+                        result = BuildEffectParam("Density", soundViewController.CurrentEffect.Reverb.Density, 0, 100, 0.1f, sliderWidth, "F1");
                         if (soundViewController.CurrentEffect.Reverb.Density != result)
                         {
                             soundViewController.CurrentEffect.Reverb.Density = result;
                             update = true;
                         }
-                        result = BuildEffectParam("RoomSize", soundViewController.CurrentEffect.Reverb.RoomSize, 0, 100, 0.5f, sliderWidth, "F1");
+                        result = BuildEffectParam("RoomSize", soundViewController.CurrentEffect.Reverb.RoomSize, 0, 100, 0.1f, sliderWidth, "F1");
                         if (soundViewController.CurrentEffect.Reverb.RoomSize != result)
                         {
                             soundViewController.CurrentEffect.Reverb.RoomSize = result;
@@ -800,14 +842,14 @@ namespace SoundDebugRoom
                 }
                 GUILayout.EndHorizontal();
 
-                Single result = BuildEffectParam("WetDryMix", soundViewController.CurrentEffect.Echo.WetDryMix * 100f, 0, 100f, 0.5f, sliderWidth, "F1") / 100f;
+                Single result = BuildEffectParam("WetDryMix", soundViewController.CurrentEffect.Echo.WetDryMix * 100f, 0, 100f, 0.1f, sliderWidth, "F1") / 100f;
                 if (soundViewController.CurrentEffect.Echo.WetDryMix != result)
                 {
                     soundViewController.CurrentEffect.Echo.WetDryMix = result;
                     update = true;
                 }
 
-                result = BuildEffectParam("Feedback", soundViewController.CurrentEffect.Echo.Feedback * 100f, 0, 100f, 0.5f, sliderWidth, "F1") / 100f;
+                result = BuildEffectParam("Feedback", soundViewController.CurrentEffect.Echo.Feedback * 100f, 0, 100f, 0.1f, sliderWidth, "F1") / 100f;
                 if (soundViewController.CurrentEffect.Echo.Feedback != result)
                 {
                     soundViewController.CurrentEffect.Echo.Feedback = result;
@@ -862,6 +904,17 @@ namespace SoundDebugRoom
                     GUILayout.FlexibleSpace();
                     Single result = GUILayout.HorizontalSlider(volume, 0, 500f, GUILayout.Width(width - 60));
                     result = Mathf.Round(result) / 100f;
+
+                    Rect sliderRect = GUILayoutUtility.GetLastRect();
+                    sliderRect.y -= 8;
+                    sliderRect.height += 16;
+                    Event e = Event.current;
+                    if (sliderRect.Contains(e.mousePosition) && e.type == EventType.ScrollWheel)
+                    {
+                        result -= Mathf.Sign(e.delta.y) * 0.01f;
+                        result = Mathf.Clamp(result, 0, 5f);
+                        e.Use();
+                    }
                     if (soundViewController.CurrentEffect.Volume != result)
                     {
                         presetChanged = true;
@@ -887,6 +940,17 @@ namespace SoundDebugRoom
                 GUILayout.Label(value.ToString(format));
                 result = GUILayout.HorizontalSlider(value, min, max, GUILayout.Width(width));
                 result = Mathf.Round(result / step) * step;
+
+                Rect sliderRect = GUILayoutUtility.GetLastRect();
+                sliderRect.y -= 8;
+                sliderRect.height += 16;
+                Event e = Event.current;
+                if (sliderRect.Contains(e.mousePosition) && e.type == EventType.ScrollWheel)
+                {
+                    result -= Mathf.Sign(e.delta.y) * step;
+                    result = Mathf.Clamp(result, min, max);
+                    e.Use();
+                }
             }
             GUILayout.EndHorizontal();
             return result;
@@ -1182,7 +1246,7 @@ namespace SoundDebugRoom
             {
                 if (String.IsNullOrEmpty(folder.FolderPath))
                     continue;
-                if (GUILayout.Button(folder.FolderPath))
+                if (GUILayout.Button(folder.FolderPath.TrimEnd('/')))
                 {
                     presetManagerMod = folder.FolderPath;
                     soundViewController.LoadEffectPresets(folder.FolderPath);
@@ -1194,7 +1258,7 @@ namespace SoundDebugRoom
 
         private void BuildPresetList()
         {
-            GUILayout.Label($"{presetManagerMod} Presets");
+            GUILayout.Label($"{presetManagerMod.TrimEnd('/')} Presets");
             soundPresetManagerScrollPosition = GUILayout.BeginScrollView(soundPresetManagerScrollPosition);
             String toDelete = null;
             foreach (String preset in soundViewController.EffectPresetDictionary.Keys)
