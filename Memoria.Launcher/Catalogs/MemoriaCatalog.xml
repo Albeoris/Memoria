@@ -302,9 +302,9 @@ More models to come later when i get time.
 	<Description>Adds new playable characters to the roster.
 
 Please Note: 
-	- Still only playable in US Language only (will be fixed in a later release)
-	- Requires Memoria v2025.05.11 or later
-	- Currently this mod is not compatible with Trance Seek, but I plan on getting it to eventually
+- Still only playable in US Language only (will be fixed in a later release)
+- Requires Memoria v2025.05.11 or later
+- Currently this mod is not compatible with Trance Seek, but I plan on getting it to eventually
 
 Currently, these characters are added:
 - Kuja
@@ -337,10 +337,10 @@ You should set the priority of this mod to be higher than the priority of the Mo
 	<PatchNotes>
 ------[1.6.1]------
 
-	- Fixed major bug causing custom status' to inflict negative ones instead
-	- adjusted item priority of axes
-	- added items to shops that were missable in disc 4
-	- fixed Baku's sneeze accuracy
+- Fixed major bug causing custom status' to inflict negative ones instead
+- adjusted item priority of axes
+- added items to shops that were missable in disc 4
+- fixed Baku's sneeze accuracy
 
 Bug Fixes:
 - Aria Thunderstrike stuck to Thunder gloves when she cannot equip them (Now moved to Mythril Armlet)
