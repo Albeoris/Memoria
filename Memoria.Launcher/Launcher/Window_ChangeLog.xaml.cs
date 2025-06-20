@@ -29,6 +29,7 @@ namespace Memoria.Launcher
             Paragraph loading = new Paragraph(new Run($"Loading changelog..."))
             {
                 Margin = new Thickness(0, 20, 0, 20),
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aeee"))
             };
             Document.Blocks.Add(loading);
             try
@@ -111,7 +112,10 @@ namespace Memoria.Launcher
                                 if (trimmed.StartsWith("<li>"))
                                 {
                                     Paragraph p = new Paragraph(new Run(plainText));
-                                    ListItem item = new ListItem(p);
+                                    ListItem item = new ListItem(p)
+                                    {
+                                        Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aeee"))
+                                    };
                                     item.Margin = new Thickness(20 + indent * 20, 0, 0, 0);
                                     if (list == null)
                                     {
@@ -134,6 +138,7 @@ namespace Memoria.Launcher
                                     Paragraph p = new Paragraph(new Run(plainText))
                                     {
                                         Margin = new Thickness(0, 10, 0, 10),
+                                        Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aeee"))
                                     };
                                     Document.Blocks.Add(p);
                                     continue;
@@ -149,6 +154,7 @@ namespace Memoria.Launcher
                 Paragraph p = new Paragraph(new Run($"Couldn't load the changelog."))
                 {
                     Margin = new Thickness(0, 20, 0, 20),
+                    Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aeee"))
                 };
                 Document.Blocks.Add(p);
             }

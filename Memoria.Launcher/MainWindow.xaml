@@ -764,7 +764,9 @@
                                                                             x:Name="PreviewModDescription"
                                                                             Style="{StaticResource ModDescriptionStyle}"
                                                                             Margin="10,0,6,0"
-                                                                            Text="No description" />
+                                                                            Text="No description"
+                                                                            Cursor="Hand"
+                                                                            MouseLeftButtonUp="OnClickDescription"/>
                                                                     </Grid>
                                                                 </WrapPanel>
                                                                 <Grid x:Name="ReleaseNotesBlock"
@@ -773,7 +775,9 @@
                                                                     <WrapPanel
                                                                         Background="{StaticResource DarkGreyUI}"
                                                                         Margin="0,10,6,0"
-                                                                        Visibility="Visible">
+                                                                        Visibility="Visible"
+                                                                        Cursor="Hand"
+                                                                        MouseLeftButtonUp="OnClickDescription">
                                                                         <DockPanel>
                                                                             <TextBlock x:Name="CaptionModReleaseNotes"
                                                                                 Style="{StaticResource ModInfoLabelStyle}"

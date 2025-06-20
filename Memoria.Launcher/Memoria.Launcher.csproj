@@ -74,6 +74,9 @@
     <Compile Include="Languages\XmlDocumentExm.cs" />
     <Compile Include="Languages\XmlHelper.cs" />
     <Compile Include="Launcher\ALChColor.cs" />
+    <Compile Include="Launcher\Window_ModDescription.xaml.cs">
+      <DependentUpon>Window_ModDescription.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Launcher\Window_NewPreset.xaml.cs">
       <DependentUpon>Window_NewPreset.xaml</DependentUpon>
     </Compile>
@@ -110,6 +113,10 @@
   <ItemGroup>
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Launcher\Window_ModDescription.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Launcher\Window_NewPreset.xaml">
       <SubType>Designer</SubType>

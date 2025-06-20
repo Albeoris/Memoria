@@ -498,6 +498,11 @@ namespace Memoria.Launcher
             if (!String.IsNullOrEmpty(currentMod.Website))
                 Process.Start(currentMod.Website);
         }
+        private void OnClickDescription(Object sender, RoutedEventArgs e)
+        {
+            MainWindowGrid.Children.Add(new Window_ModDescription(currentMod));
+        }
+
         private void OnClickCatalogHeader(Object sender, EventArgs e)
         {
             MethodInfo[] accessors = null;
