@@ -13,6 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
@@ -281,6 +282,9 @@ namespace Memoria.Launcher
 
         private void ListView_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (tabCtrlMain.SelectedIndex == 1 && priorityColumn == null) return;
+            ObservableCollection<Mod> mods = tabCtrlMain.SelectedIndex == 0 ? ModListInstalled : ModListCatalog;
+
             _startPoint = e.GetPosition(null);
 
             // Find the ListViewItem that was clicked
@@ -289,7 +293,7 @@ namespace Memoria.Launcher
             {
                 _draggedItem = item;
                 _draggedData = item.Content as Mod;
-                _draggedIndex = ModListInstalled.IndexOf(_draggedData);
+                _draggedIndex = mods.IndexOf(_draggedData);
 
                 // Change cursor to indicate vertical movement
                 var listView = FindAncestor<ListView>(_draggedItem);
@@ -299,6 +303,7 @@ namespace Memoria.Launcher
 
         private void ListView_PreviewMouseMove(object sender, MouseEventArgs e)
         {
+            if (tabCtrlMain.SelectedIndex == 1 && priorityColumn == null) return;
             if (e.LeftButton == MouseButtonState.Pressed && !_isDragging && _draggedItem != null)
             {
                 Point position = e.GetPosition(null);
@@ -313,6 +318,7 @@ namespace Memoria.Launcher
 
         private void StartDrag()
         {
+            if (tabCtrlMain.SelectedIndex == 1 && priorityColumn == null) return;
             if (_draggedItem != null && _draggedData != null)
             {
                 _isDragging = true;
@@ -325,6 +331,9 @@ namespace Memoria.Launcher
 
         private void ListView_MouseMove(object sender, MouseEventArgs e)
         {
+            if (tabCtrlMain.SelectedIndex == 1 && priorityColumn == null) return;
+            ObservableCollection<Mod> mods = tabCtrlMain.SelectedIndex == 0 ? ModListInstalled : ModListCatalog;
+
             if (_isDragging && e.LeftButton == MouseButtonState.Pressed)
             {
                 var listView = sender as ListView;
@@ -340,13 +349,13 @@ namespace Memoria.Launcher
                         var targetData = targetItem.Content as Mod;
                         if (targetData != null)
                         {
-                            int newIndex = ModListInstalled.IndexOf(targetData);
-                            int currentIndex = ModListInstalled.IndexOf(_draggedData);
+                            int newIndex = mods.IndexOf(targetData);
+                            int currentIndex = mods.IndexOf(_draggedData);
 
                             if (newIndex >= 0 && currentIndex >= 0 && newIndex != currentIndex)
                             {
                                 // Move the item in real-time
-                                ModListInstalled.Move(currentIndex, newIndex);
+                                mods.Move(currentIndex, newIndex);
                             }
                         }
                     }
@@ -366,6 +375,9 @@ namespace Memoria.Launcher
 
         private void EndDrag(ListView listView)
         {
+            if (tabCtrlMain.SelectedIndex == 1 && priorityColumn == null) return;
+            ObservableCollection<Mod> mods = tabCtrlMain.SelectedIndex == 0 ? ModListInstalled : ModListCatalog;
+
             if (_isDragging)
             {
                 _isDragging = false;
@@ -378,7 +390,13 @@ namespace Memoria.Launcher
                 _draggedData = null;
                 _draggedIndex = -1;
 
-                UpdateInstalledPriorityValue();
+                if (tabCtrlMain.SelectedIndex == 0)
+                    UpdateInstalledPriorityValue();
+                else
+                {
+                    UpdateCatalogPriorities();
+                    SaveCatalogPriorities();
+                }
             }
 
             // Restore cursor
@@ -584,6 +602,72 @@ namespace Memoria.Launcher
             }
             lstCatalogMods.Items.Refresh();
             CheckOutdatedAndIncompatibleMods();
+        }
+
+        private GridViewColumn priorityColumn = null;
+
+        private void OnClickPriority(Object sender, RoutedEventArgs e)
+        {
+            if (priorityColumn != null) return;
+
+            GridView gridView = lstCatalogMods.View as GridView;
+
+            priorityColumn = new GridViewColumn();
+            priorityColumn.Header = "";
+            priorityColumn.DisplayMemberBinding = new Binding("Priority");
+
+            // Insert at index 0 to make it the first column
+            gridView.Columns.Insert(0, priorityColumn);
+
+            priorityColumn.Width = Double.NaN;
+            lstCatalogMods.UpdateLayout();
+            priorityColumn.Width = priorityColumn.ActualWidth;
+
+            var sortedMods = ModListCatalog.OrderByDescending((mod) => mod.Priority).ToList();
+            ModListCatalog.Clear();
+            foreach (var mod in sortedMods)
+            {
+                ModListCatalog.Add(mod);
+                if (mod.Priority == 1)
+                {
+                    Mod separator = new Mod();
+                    separator.Name = "---------------------------";
+                    ModListCatalog.Add(separator);
+                }
+            }
+            UpdateCatalogPriorities();
+        }
+
+        private void UpdateCatalogPriorities()
+        {
+            Int32 count;
+            for (count = 0; count < ModListCatalog.Count; count++)
+            {
+                if (ModListCatalog[count].Name == "---------------------------")
+                    break;
+            }
+            for (Int32 i = 0; i < ModListCatalog.Count; i++)
+            {
+                ModListCatalog[i].Priority = count--;
+            }
+            CollectionViewSource.GetDefaultView(lstCatalogMods.ItemsSource).Refresh();
+        }
+
+        private void SaveCatalogPriorities()
+        {
+            String catalog = File.ReadAllText(CATALOG_PATH); ;
+            Dictionary<String, Int32> priorities = new Dictionary<String, Int32>();
+
+            foreach (Mod mod in ModListCatalog)
+            {
+                String search1 = @"(<Name>" + Regex.Escape(mod.Name) + @"((?!<\/Mod>).)*<\/Version>\s*<Priority>)((?!<\/Priority>).)*";
+                String search2 = @"(<Name>" + Regex.Escape(mod.Name) + @"((?!<\/Mod>).)*<\/Version>)(?!\s*<Priority>)";
+                Match m = Regex.Match(catalog, search2, RegexOptions.Singleline);
+                catalog = Regex.Replace(catalog, search1, "${1}" + mod.Priority, RegexOptions.Singleline);
+                catalog = Regex.Replace(catalog, search2, $"$1\r\n\t<Priority>{mod.Priority}</Priority>", RegexOptions.Singleline);
+            }
+
+            File.WriteAllText(CATALOG_PATH, catalog);
         }
 
         public static bool IsDate1EqualOrMoreRecent(string date1, string date2)
@@ -1073,27 +1157,6 @@ namespace Memoria.Launcher
             try
             {
                 ModListCatalog.Clear();
-
-                // Add/update priorities from PriorityList.txt to the catalog
-                if (false)
-                {
-                    String catalog = File.ReadAllText(CATALOG_PATH); ;
-                    Dictionary<String, Int32> priorities = new Dictionary<String, Int32>();
-                    String[] lines = File.ReadAllLines("PriorityList.txt");
-
-                    foreach (String line in lines)
-                    {
-                        String[] tokens = line.Split('\t');
-                        String search1 = @"(<Name>" + tokens[0] + @"((?!<\/Mod>).)*<\/Version>\s*<Priority>)((?!<\/Priority>).)*";
-                        String search2 = @"(<Name>" + tokens[0] + @"((?!<\/Mod>).)*<\/Version>)(?!\s*<Priority>)";
-                        Match m = Regex.Match(catalog, search2, RegexOptions.Singleline);
-                        catalog = Regex.Replace(catalog, search1, $"$1\r\n{tokens[1]}", RegexOptions.Singleline);
-                        catalog = Regex.Replace(catalog, search2, $"$1\r\n\t<Priority>{tokens[1]}</Priority>", RegexOptions.Singleline);
-                    }
-
-                    File.WriteAllText(CATALOG_PATH, catalog);
-                }
-
                 using (Stream input = File.OpenRead(CATALOG_PATH))
                 using (StreamReader reader = new StreamReader(input))
                     Mod.LoadModDescriptions(reader, ModListCatalog);

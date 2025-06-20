@@ -456,13 +456,27 @@
                                                         ToolTip="Download/Update Selected Mod(s)" >
                                                         <Image Source="/images/btnDownloadimg.png" />
                                                     </Button>
+                                                    <Button x:Name="btnPriority"
+                                                        Margin="0,3,0,3"
+                                                        MouseRightButtonDown="OnClickPriority"
+                                                        TabIndex="12"
+                                                        IsEnabled="true"
+                                                        Style="{StaticResource ToolButtonStyle}"
+                                                        Cursor="Arrow"
+                                                        Opacity="0" >
+                                                    </Button>
                                                 </StackPanel>
                                                 <ListView x:Name="lstCatalogMods"
                                                     Margin="6,0,0,0"
                                                     Grid.Column="1"
                                                     ItemsSource="{Binding ModListCatalog}"
                                                     ScrollViewer.CanContentScroll="False"
-                                                    ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                                                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                                    PreviewMouseLeftButtonDown="ListView_PreviewMouseLeftButtonDown"
+                                                    PreviewMouseMove="ListView_PreviewMouseMove"
+                                                    MouseMove="ListView_MouseMove"
+                                                    PreviewMouseLeftButtonUp="ListView_PreviewMouseLeftButtonUp"
+                                                    MouseLeave="ListView_MouseLeave">
                                                     <ListView.ItemContainerStyle>
                                                         <Style TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
                                                             <EventSetter Event="MouseDoubleClick" Handler="OnCatalogListDoubleClick"/>

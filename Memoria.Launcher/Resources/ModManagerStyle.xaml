@@ -109,7 +109,7 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="0"
                         CornerRadius="5"
-                        Cursor="Hand">
+                        Cursor="{TemplateBinding Cursor}">
                         <ContentPresenter
                             HorizontalAlignment="Center" 
                             VerticalAlignment="Center" 
