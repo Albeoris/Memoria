@@ -188,6 +188,7 @@ namespace Memoria.Launcher
 
         public Boolean ReadDescription(XmlNode modNode)
         {
+            Regex indentRegex = new Regex(@"^[\t ]+", RegexOptions.Multiline);
             XmlElement elName = modNode["Name"];
             XmlElement elInstPath = modNode["InstallationPath"];
             if (elName == null || elInstPath == null)
@@ -201,8 +202,8 @@ namespace Memoria.Launcher
             ReleaseDate = modNode["ReleaseDate"]?.InnerText;
             ReleaseDateOriginal = modNode["ReleaseDateOriginal"]?.InnerText;
             Author = modNode["Author"]?.InnerText;
-            Description = modNode["Description"]?.InnerText;
-            PatchNotes = modNode["PatchNotes"]?.InnerText;
+            Description = modNode["Description"] != null ? indentRegex.Replace(modNode["Description"].InnerText, "") : null;
+            PatchNotes = modNode["PatchNotes"] != null ? indentRegex.Replace(modNode["PatchNotes"].InnerText, "") : null;
             foreach (XmlElement elComp in modNode.SelectNodes("CompatibilityNotes"))
             {
                 if (elComp.HasAttribute("OtherModLow") || elComp.HasAttribute("OtherModHigh"))
@@ -259,7 +260,7 @@ namespace Memoria.Launcher
                     continue;
                 sub.Name = elName.InnerText?.Trim();
                 sub.InstallationPath = elInstPath.InnerText;
-                sub.Description = subNode["Description"]?.InnerText;
+                sub.Description = subNode["Description"] != null ? indentRegex.Replace(subNode["Description"].InnerText, "") : null;
                 sub.Category = subNode["Category"]?.InnerText;
                 sub.PreviewFile = subNode["PreviewFile"]?.InnerText;
                 sub.PreviewFileUrl = subNode["PreviewFileUrl"]?.InnerText;
