@@ -1546,8 +1546,8 @@ namespace Memoria.Assets
                     extraInfo += $" Rot(Eul): {Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.x, 0)}/{Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.y, 0)}/{Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.z, 0)}";
                     extraInfo += $" Scale: {Math.Round(currentModelWrapper.transform.localScale.x, 2)}/{Math.Round(currentModelWrapper.transform.localScale.y, 2)}/{Math.Round(currentModelWrapper.transform.localScale.z, 2)}";
 
-                    int currentKeyFrame = (int)Math.Round(animation[currentAnimName].clip.length * (animation[currentAnimName].time % 1) * animation[currentAnimName].clip.frameRate);
-                    int maxKeyFrame = (int)Math.Round(animation[currentAnimName].clip.length * (animation[currentAnimName].length % 1) * animation[currentAnimName].clip.frameRate);
+                    int currentKeyFrame = (int)Math.Round((animation[currentAnimName].time % 1) * animation[currentAnimName].clip.frameRate);
+                    int maxKeyFrame = (int)Math.Round(animation[currentAnimName].clip.length * animation[currentAnimName].clip.frameRate);
                     extraInfo += $" Frame: {currentKeyFrame}/{maxKeyFrame}";
                     extraInfoLabel.color = Color.green;
                     //extraInfo += $" | Rot(Eul): {Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.x,0)}/{Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.y, 0)}/{Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.z, 0)}";
@@ -2779,15 +2779,15 @@ namespace Memoria.Assets
                 AnimationClip clip = animationState.clip;
                 if (clip != null)
                 {
-                    int currentKeyFrame = (int)Math.Round(clip.length * (animationState.time % 1) * clip.frameRate);
-                    int maxKeyFrame = (int)Math.Round(clip.length * animationState.length * clip.frameRate);
+                    int currentKeyFrame = (int)Math.Round((animationState.time % 1) * clip.frameRate);
+                    int maxKeyFrame = (int)Math.Round(clip.length * clip.frameRate);
                     int nextKeyFrame = ((currentKeyFrame + frames) % (maxKeyFrame + 1));
                     if (nextKeyFrame < 0)
                     {
                         nextKeyFrame += maxKeyFrame + 1;
                     }
 
-                    float nextAnimTime = nextKeyFrame / (clip.length * clip.frameRate);
+                    float nextAnimTime = nextKeyFrame / clip.frameRate;
                     if (nextAnimTime > animationState.length)
                     {
                         nextAnimTime = animationState.length;
