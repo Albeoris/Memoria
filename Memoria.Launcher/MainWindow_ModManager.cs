@@ -269,6 +269,140 @@ namespace Memoria.Launcher
             }
         }
 
+        //---------------------------
+        // ListView Drag & Drop
+        //---------------------------
+
+        private Point _startPoint;
+        private bool _isDragging = false;
+        private ListViewItem _draggedItem;
+        private int _draggedIndex = -1;
+        private Mod _draggedData;
+
+        private void ListView_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            _startPoint = e.GetPosition(null);
+
+            // Find the ListViewItem that was clicked
+            var item = FindAncestor<ListViewItem>((DependencyObject)e.OriginalSource);
+            if (item != null)
+            {
+                _draggedItem = item;
+                _draggedData = item.Content as Mod;
+                _draggedIndex = ModListInstalled.IndexOf(_draggedData);
+
+                // Change cursor to indicate vertical movement
+                var listView = FindAncestor<ListView>(_draggedItem);
+                listView.Cursor = Cursors.SizeAll;
+            }
+        }
+
+        private void ListView_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed && !_isDragging && _draggedItem != null)
+            {
+                Point position = e.GetPosition(null);
+
+                if (Math.Abs(position.X - _startPoint.X) > SystemParameters.MinimumHorizontalDragDistance ||
+                    Math.Abs(position.Y - _startPoint.Y) > SystemParameters.MinimumVerticalDragDistance)
+                {
+                    StartDrag();
+                }
+            }
+        }
+
+        private void StartDrag()
+        {
+            if (_draggedItem != null && _draggedData != null)
+            {
+                _isDragging = true;
+
+                // Capture mouse to continue receiving events even when outside the control
+                var listView = FindAncestor<ListView>(_draggedItem);
+                listView?.CaptureMouse();
+            }
+        }
+
+        private void ListView_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (_isDragging && e.LeftButton == MouseButtonState.Pressed)
+            {
+                var listView = sender as ListView;
+                Point position = e.GetPosition(listView);
+
+                // Find which item we're hovering over
+                var hitTest = VisualTreeHelper.HitTest(listView, position);
+                if (hitTest != null)
+                {
+                    var targetItem = FindAncestor<ListViewItem>(hitTest.VisualHit);
+                    if (targetItem != null && targetItem != _draggedItem)
+                    {
+                        var targetData = targetItem.Content as Mod;
+                        if (targetData != null)
+                        {
+                            int newIndex = ModListInstalled.IndexOf(targetData);
+                            int currentIndex = ModListInstalled.IndexOf(_draggedData);
+
+                            if (newIndex >= 0 && currentIndex >= 0 && newIndex != currentIndex)
+                            {
+                                // Move the item in real-time
+                                ModListInstalled.Move(currentIndex, newIndex);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void ListView_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            EndDrag(sender as ListView);
+        }
+
+        private void ListView_MouseLeave(object sender, MouseEventArgs e)
+        {
+            EndDrag(sender as ListView);
+        }
+
+        private void EndDrag(ListView listView)
+        {
+            if (_isDragging)
+            {
+                _isDragging = false;
+
+                // Release mouse capture
+                listView?.ReleaseMouseCapture();
+
+                // Clear drag state
+                _draggedItem = null;
+                _draggedData = null;
+                _draggedIndex = -1;
+
+                UpdateInstalledPriorityValue();
+            }
+
+            // Restore cursor
+            if (listView != null)
+                listView.Cursor = Cursors.Arrow;
+        }
+
+        // Helper method to find ancestor of specific type
+        private static T FindAncestor<T>(DependencyObject current) where T : DependencyObject
+        {
+            do
+            {
+                if (current is T)
+                {
+                    return (T)current;
+                }
+                current = VisualTreeHelper.GetParent(current);
+            }
+            while (current != null);
+            return null;
+        }
+
+        //---------------------------
+
         private void OnClosing(Object sender, CancelEventArgs e)
         {
             if (DownloadList.Count > 0 || downloadingMod != null)
@@ -1387,7 +1521,7 @@ namespace Memoria.Launcher
             for (Int32 i = 0; i < ModListInstalled.Count; i++)
             {
                 Mod mod = Mod.SearchWithName(ModListCatalog, ModListInstalled[i].Name);
-                if(mod != null)
+                if (mod != null)
                     ModListInstalled[i].Priority = mod.Priority;
             }
             lstMods.Items.Refresh();

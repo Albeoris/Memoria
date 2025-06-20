@@ -312,7 +312,12 @@
                                                     Grid.Column="1"
                                                     ItemsSource="{Binding ModListInstalled}"
                                                     ScrollViewer.CanContentScroll="False"
-                                                    ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                                                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                                    PreviewMouseLeftButtonDown="ListView_PreviewMouseLeftButtonDown"
+                                                    PreviewMouseMove="ListView_PreviewMouseMove"
+                                                    MouseMove="ListView_MouseMove"
+                                                    PreviewMouseLeftButtonUp="ListView_PreviewMouseLeftButtonUp"
+                                                    MouseLeave="ListView_MouseLeave">
                                                     <ListView.View>
                                                         <GridView>
                                                             <GridViewColumn
