@@ -1116,7 +1116,17 @@ namespace Memoria.Launcher
                     Mod previousMod = Mod.SearchWithName(ModListInstalled, updatedMod.Name);
                     if (previousMod == null)
                     {
-                        ModListInstalled.Insert(0, updatedMod);
+                        Mod modCatalog = Mod.SearchWithName(ModListCatalog, updatedMod.Name);
+                        if (modCatalog != null) updatedMod.Priority = modCatalog.Priority;
+
+                        Int32 at = 0;
+                        for (at = 0; at < ModListInstalled.Count; at++)
+                        {
+                            if (ModListInstalled[at].Priority < updatedMod.Priority)
+                                break;
+                        }
+
+                        ModListInstalled.Insert(at, updatedMod);
                         hasChanged = true;
                     }
                     else if ((updatedMod.CurrentVersion != null && previousMod.CurrentVersion == null) || (previousMod.CurrentVersion != null && updatedMod.CurrentVersion != null && previousMod.CurrentVersion < updatedMod.CurrentVersion))
@@ -1131,6 +1141,8 @@ namespace Memoria.Launcher
                         ModListInstalled.RemoveAt(index);
                         ModListInstalled.Insert(index, updatedMod);
                         updatedMod.IsActive = previousMod.IsActive;
+                        updatedMod.Priority = previousMod.Priority;
+
                         hasChanged = true;
                     }
                 }
