@@ -174,7 +174,7 @@ public class BTL_SCENE
                 if (abilText != null)
                 {
                     Dictionary<SupportAbility, SupportingAbilityFeature> saAsDictionary = new Dictionary<SupportAbility, SupportingAbilityFeature>();
-                    ff9abil.LoadAbilityFeatureFile(ref saAsDictionary, abilText);
+                    ff9abil.LoadAbilityFeatureFile(ref saAsDictionary, abilText, monParam.SupportingAbilityFile);
                     monParam.SupportingAbilityFeatures = new List<SupportingAbilityFeature>(saAsDictionary.Values);
                 }
             }
