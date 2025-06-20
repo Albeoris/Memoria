@@ -240,7 +240,6 @@
                                     Padding="0,6,0,10"
                                     BorderThickness="0"
                                     Background="Transparent"
-                                    SelectionChanged="TabControl_SelectionChanged"
                                     SelectedIndex="0"
                                     Grid.ColumnSpan="2" >
                                     <TabItem x:Name="tabCtrlMods"
@@ -314,7 +313,11 @@
                                                     ItemsSource="{Binding ModListInstalled}"
                                                     ScrollViewer.CanContentScroll="False"
                                                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                                    VirtualizingStackPanel.IsVirtualizing="False">
+                                                    PreviewMouseLeftButtonDown="ListView_PreviewMouseLeftButtonDown"
+                                                    PreviewMouseMove="ListView_PreviewMouseMove"
+                                                    MouseMove="ListView_MouseMove"
+                                                    PreviewMouseLeftButtonUp="ListView_PreviewMouseLeftButtonUp"
+                                                    MouseLeave="ListView_MouseLeave">
                                                     <ListView.View>
                                                         <GridView>
                                                             <GridViewColumn
@@ -356,19 +359,22 @@
                                                                 <GridViewColumn.CellTemplate>
                                                                     <DataTemplate>
                                                                         <StackPanel Orientation="Horizontal">
-                                                                            <TextBlock x:Name="colMyModsUpdateText"
+                                                                            <Button x:Name="colMyModsUpdateText"
                                                                             Padding="0,3,0,0"
                                                                                 FontFamily="{StaticResource NotoEmoji}"
-                                                                                Text="{Binding UpdateIcon}"
+                                                                                Content="{Binding UpdateIcon}"
                                                                                 FontWeight="Black"
                                                                                 ToolTip="{Binding UpdateTooltip}"
                                                                                 ToolTipService.InitialShowDelay="10"
                                                                                 Effect="{StaticResource ButtondropShadowEffect}"
-                                                                                Foreground="#efd525" />
-                                                                            <TextBlock x:Name="colMyModsIncompText"
+                                                                                Style="{StaticResource ButtonStyleLabel}"
+                                                                                Foreground="#efd525"
+                                                                                Cursor="Hand"
+                                                                                Click="UpdateIcon_Click"/>
+                                                                            <Label x:Name="colMyModsIncompText"
                                                                                 Padding="0,3,0,0"
                                                                                 FontFamily="{StaticResource NotoEmoji}"
-                                                                                Text="{Binding IncompIcon}"
+                                                                                Content="{Binding IncompIcon}"
                                                                                 ToolTip="{Binding ActiveIncompatibleMods}"
                                                                                 ToolTipService.InitialShowDelay="10"
                                                                                 ToolTipService.BetweenShowDelay="0"
@@ -456,8 +462,7 @@
                                                     Grid.Column="1"
                                                     ItemsSource="{Binding ModListCatalog}"
                                                     ScrollViewer.CanContentScroll="False"
-                                                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                                    VirtualizingStackPanel.IsVirtualizing="False">
+                                                    ScrollViewer.HorizontalScrollBarVisibility="Auto">
                                                     <ListView.ItemContainerStyle>
                                                         <Style TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
                                                             <EventSetter Event="MouseDoubleClick" Handler="OnCatalogListDoubleClick"/>
@@ -554,18 +559,20 @@
                                                                             Width="100"
                                                                             Height="10"
                                                                             Opacity="1"
+                                                                            Margin="0,5,0,0"
+                                                                            Foreground="{DynamicResource BrushAccentColor}"
                                                                             Value="{Binding PercentComplete}" />
                                                                     </DataTemplate>
                                                                 </GridViewColumn.CellTemplate>
                                                             </GridViewColumn>
                                                             <GridViewColumn
                                                                 x:Name="colDownloadSpeed"
-                                                                Width="70"
+                                                                Width="100"
                                                                 DisplayMemberBinding="{Binding DownloadSpeed}"
                                                                 Header="Speed" />
                                                             <GridViewColumn
                                                                 x:Name="colDownloadTimeLeft"
-                                                                Width="80"
+                                                                Width="75"
                                                                 DisplayMemberBinding="{Binding RemainingTime}"
                                                                 Header="Time Left" />
                                                         </GridView>
@@ -762,7 +769,9 @@
                                                                             x:Name="PreviewModDescription"
                                                                             Style="{StaticResource ModDescriptionStyle}"
                                                                             Margin="10,0,6,0"
-                                                                            Text="No description" />
+                                                                            Text="No description"
+                                                                            Cursor="Hand"
+                                                                            MouseLeftButtonUp="OnClickDescription"/>
                                                                     </Grid>
                                                                 </WrapPanel>
                                                                 <Grid x:Name="ReleaseNotesBlock"
@@ -771,7 +780,9 @@
                                                                     <WrapPanel
                                                                         Background="{StaticResource DarkGreyUI}"
                                                                         Margin="0,10,6,0"
-                                                                        Visibility="Visible">
+                                                                        Visibility="Visible"
+                                                                        Cursor="Hand"
+                                                                        MouseLeftButtonUp="OnClickDescription">
                                                                         <DockPanel>
                                                                             <TextBlock x:Name="CaptionModReleaseNotes"
                                                                                 Style="{StaticResource ModInfoLabelStyle}"
