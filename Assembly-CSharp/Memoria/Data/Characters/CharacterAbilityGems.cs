@@ -102,11 +102,11 @@ namespace Memoria.Data
             {
                 try
                 {
+                    if (!PermanentEffect[i].Formula.ContainsKey("ActivateFreeSA") && !PermanentEffect[i].Formula.ContainsKey("BanishSA") && !PermanentEffect[i].Formula.ContainsKey("HiddenSA")
+                        && !PermanentEffect[i].Formula.ContainsKey("ActivateFreeSAByLvl") && !PermanentEffect[i].Formula.ContainsKey("BanishSAByLvl"))
+                        continue;
                     if (PermanentEffect[i].Condition.Length > 0)
                     {
-                        if (!PermanentEffect[i].Formula.ContainsKey("ActivateFreeSA") && !PermanentEffect[i].Formula.ContainsKey("BanishSA") && !PermanentEffect[i].Formula.ContainsKey("HiddenSA")
-                            && !PermanentEffect[i].Formula.ContainsKey("ActivateFreeSAByLvl") && !PermanentEffect[i].Formula.ContainsKey("BanishSAByLvl"))
-                            continue;
                         Expression c = new Expression(PermanentEffect[i].Condition);
                         NCalcUtility.InitializeExpressionPlayer(ref c, play);
                         c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
@@ -123,78 +123,77 @@ namespace Memoria.Data
                             NCalcUtility.InitializeExpressionPlayer(ref e, play);
                             e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                             e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-                            SupportAbility SA = (SupportAbility)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)SupportAbility.Void);
-                            if (SA == SupportAbility.Void)
+                            SupportAbility sa = (SupportAbility)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)SupportAbility.Void);
+                            if (sa == SupportAbility.Void)
                                 continue;
-                            if (String.Equals(formula.Key, "ActivateFreeSA") && !play.saForced.Contains(SA))
+                            if (String.Equals(formula.Key, "ActivateFreeSA"))
                             {
-                                play.saForced.Add(SA);
+                                play.saForced.Add(sa);
                             }
-                            else if (String.Equals(formula.Key, "BanishSA") && !play.saBanish.Contains(SA))
+                            else if (String.Equals(formula.Key, "BanishSA"))
                             {
-                                ff9abil.DisableHierarchyFromSA(play, SA);
-                                play.saBanish.Add(SA);
-                            }
-                            else if (String.Equals(formula.Key, "ActivateFreeSAByLvl") && j == 0)
-                            {
-                                SupportAbility BaseSA = ff9abil.GetBaseAbilityFromBoostedAbility(SA);
-                                int LevelSA = 0;
-                                if (featureSplit[1] != null)
+                                if (!play.saBanish.Contains(sa))
                                 {
-                                    Expression ExpL = new Expression(featureSplit[1]);
-                                    NCalcUtility.InitializeExpressionPlayer(ref ExpL, play);
-                                    ExpL.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                                    ExpL.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-                                    LevelSA = Math.Min((Int32)NCalcUtility.ConvertNCalcResult(ExpL.Evaluate(), 0), ff9abil.GetBoostedAbilityMaxLevel(play, BaseSA));
-                                }
-                                Boolean AllSA = LevelSA == -1;
-                                Boolean Skip = true;
-                                foreach (SupportAbility SAtoForce in ff9abil.GetHierarchyFromAnySA(BaseSA))
-                                {
-                                    if (Skip && SAtoForce != SA && !AllSA)
-                                        continue;
-                                    else
-                                    {
-                                        if (LevelSA < 0 && !AllSA)
-                                            break;
-                                        Skip = false;
-                                        play.saForced.Add(SAtoForce);
-                                        LevelSA--;
-                                    }
-                                }
-                            }
-                            else if (String.Equals(formula.Key, "BanishSAByLvl") && j == 0)
-                            {
-                                SupportAbility BaseSA = ff9abil.GetBaseAbilityFromBoostedAbility(SA);
-                                int LevelSA = 0;
-                                if (featureSplit[1] != null)
-                                {
-                                    Expression ExpL = new Expression(featureSplit[1]);
-                                    NCalcUtility.InitializeExpressionPlayer(ref ExpL, play);
-                                    ExpL.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                                    ExpL.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-                                    LevelSA = (Int32)NCalcUtility.ConvertNCalcResult(ExpL.Evaluate(), 0);
-                                }
-                                Boolean AllSA = LevelSA == -1;
-                                List<SupportAbility> ListSAToBanish = ff9abil.GetHierarchyFromAnySA(BaseSA);
-                                ListSAToBanish.Reverse(); // Start with the maximum boosted one, if it exist.
-                                foreach (SupportAbility SAtoForce in ListSAToBanish)
-                                {
-                                    if (LevelSA > 0 || AllSA)
-                                    {
-                                        LevelSA--;
-                                        play.saBanish.Add(SAtoForce);
-                                    }
-                                    else
-                                        break;
+                                    ff9abil.DisableHierarchyFromSA(play, sa);
+                                    play.saBanish.Add(sa);
                                 }
                             }
                             else if (String.Equals(formula.Key, "HiddenSA"))
                             {
-                                foreach (SupportAbility SAtoHide in ff9abil.GetHierarchyFromAnySA(SA))
-                                    play.saHidden.Add(SAtoHide);
+                                foreach (SupportAbility saToHide in ff9abil.GetHierarchyFromAnySA(sa))
+                                    play.saHidden.Add(saToHide);
                             }
-                        }                           
+                            else if (String.Equals(formula.Key, "ActivateFreeSAByLvl"))
+                            {
+                                SupportAbility baseSA = ff9abil.GetBaseAbilityFromBoostedAbility(sa);
+                                Int32 levelSA = 0;
+                                if (featureSplit.Length > j + 1)
+                                {
+                                    Expression elvl = new Expression(featureSplit[j + 1]);
+                                    NCalcUtility.InitializeExpressionPlayer(ref elvl, play);
+                                    elvl.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                                    elvl.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                                    levelSA = Math.Min((Int32)NCalcUtility.ConvertNCalcResult(elvl.Evaluate(), 0), ff9abil.GetBoostedAbilityMaxLevel(play, baseSA));
+                                    j++;
+                                }
+                                Boolean allSA = levelSA == -1;
+                                Boolean skip = true;
+                                foreach (SupportAbility saToForce in ff9abil.GetHierarchyFromAnySA(baseSA))
+                                {
+                                    if (skip && saToForce != sa && !allSA)
+                                        continue;
+                                    if (levelSA < 0 && !allSA)
+                                        break;
+                                    skip = false;
+                                    play.saForced.Add(saToForce);
+                                    levelSA--;
+                                }
+                            }
+                            else if (String.Equals(formula.Key, "BanishSAByLvl"))
+                            {
+                                SupportAbility baseSA = ff9abil.GetBaseAbilityFromBoostedAbility(sa);
+                                Int32 levelSA = 0;
+                                if (featureSplit.Length > j + 1)
+                                {
+                                    Expression elvl = new Expression(featureSplit[j + 1]);
+                                    NCalcUtility.InitializeExpressionPlayer(ref elvl, play);
+                                    elvl.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                                    elvl.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                                    levelSA = (Int32)NCalcUtility.ConvertNCalcResult(elvl.Evaluate(), 0);
+                                    j++;
+                                }
+                                Boolean allSA = levelSA == -1;
+                                List<SupportAbility> listSAToBanish = ff9abil.GetHierarchyFromAnySA(baseSA);
+                                listSAToBanish.Reverse(); // Start with the maximum boosted one, if it exist.
+                                foreach (SupportAbility saToForce in listSAToBanish)
+                                {
+                                    if (levelSA <= 0 && !allSA)
+                                        break;
+                                    levelSA--;
+                                    play.saBanish.Add(saToForce);
+                                }
+                            }
+                        }
                     }
                 }
                 catch (Exception err)
@@ -252,9 +251,30 @@ namespace Memoria.Data
                         else if (String.Equals(formula.Key, "PlayerPermanentStatus")) play.SetPermanentStatus((BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int64)play.permanent_status));
                         else if (String.Equals(formula.Key, "MaxGems"))
                         {
-                            uint BonusGems = (UInt32)Math.Max(0, NCalcUtility.ConvertNCalcResult(e.Evaluate(), 0));
-                            play.max.capa = BonusGems;
-                            play.cur.capa = (BonusGems - play.cur.capa);
+                            UInt32 newCapa = (UInt32)Math.Max(0, NCalcUtility.ConvertNCalcResult(e.Evaluate(), 0));
+                            if (newCapa == UInt32.MaxValue)
+                            {
+                                play.cur.capa = UInt32.MaxValue;
+                            }
+                            else if (play.cur.capa + newCapa - play.max.capa >= 0)
+                            {
+                                play.cur.capa += newCapa - play.max.capa;
+                            }
+                            else
+                            {
+                                // Not enough magic stones anymore: let ff9abil.CalculateGemsPlayer handle the situation
+                                play.cur.capa = 0;
+                                /* Alternative method: disable all the SA and re-launch FF9Play_Update
+                                play.cur.capa = newCapa;
+                                play.max.capa = newCapa;
+                                play.sa[0] = 0u;
+                                play.sa[1] = 0u;
+                                play.saExtended.Clear();
+                                ff9play.FF9Play_Update(play);
+                                return;
+                                */
+                            }
+                            play.max.capa = newCapa;
                         }
                     }
                 }
