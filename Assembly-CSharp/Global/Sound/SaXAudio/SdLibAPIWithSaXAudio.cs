@@ -81,15 +81,15 @@ namespace Global.Sound.SaXAudio
                 AKB2Header header = new AKB2Header();
                 header.ReadFromBytes(akbBin);
 
-                static void DeleteAkbBin(Int32 bankID)
+                static void DeleteAkbBin(Int32 bankID, IntPtr buffer)
                 {
                     if (!bankData.ContainsKey(bankID))
                         return;
                     IntPtr akbBin = bankData[bankID].Profile.AkbBin;
                     if (akbBin != IntPtr.Zero)
                     {
-                        Marshal.FreeHGlobal(akbBin);
                         bankData[bankID].Profile.AkbBin = IntPtr.Zero;
+                        Marshal.FreeHGlobal(akbBin);
                     }
                 }
 

@@ -94,19 +94,28 @@ namespace Global.Sound.SaXAudio
         public static extern void StopEngine();
 
         [DllImport("SaXAudio")]
-        public static extern void PauseAll(Single fade = 0.1f);
+        public static extern Int32 PlayOggFile(string filePath, Int32 busID = 0);
+
         [DllImport("SaXAudio")]
-        public static extern void ResumeAll(Single fade = 0.1f);
+        public static extern void PauseAll(Single fade = 0.1f, Int32 busID = 0);
+        [DllImport("SaXAudio")]
+        public static extern void ResumeAll(Single fade = 0.1f, Int32 busID = 0);
+        [DllImport("SaXAudio")]
+        public static extern void StopAll(Single fade = 0.1f, Int32 busID = 0);
         [DllImport("SaXAudio")]
         public static extern void Protect(Int32 voiceID);
 
         [DllImport("SaXAudio")]
         public static extern Int32 BankAddOgg(IntPtr buffer, UInt32 length, OnDecodedDelegate callback);
         [DllImport("SaXAudio")]
+        public static extern Int32 BankLoadOggFile(string filePath);
+        [DllImport("SaXAudio")]
         public static extern void BankRemove(Int32 bankID);
+        [DllImport("SaXAudio")]
+        public static extern void BankAutoRemove(Int32 bankID);
 
         [DllImport("SaXAudio")]
-        public static extern Int32 CreateVoice(Int32 bankID, Int32 bus = -1, Boolean paused = true);
+        public static extern Int32 CreateVoice(Int32 bankID, Int32 busID = 0, Boolean paused = true);
         [DllImport("SaXAudio")]
         public static extern Boolean VoiceExist(Int32 voiceID);
 
@@ -132,6 +141,8 @@ namespace Global.Sound.SaXAudio
         public static extern UInt32 GetPauseStack(Int32 voiceID);
 
         [DllImport("SaXAudio")]
+        public static extern void SetMasterVolume(Single volume, Single fade = 0.1f);
+        [DllImport("SaXAudio")]
         public static extern void SetVolume(Int32 voiceID, Single volume, Single fade = 0.1f, Boolean isBus = false);
         [DllImport("SaXAudio")]
         public static extern void SetSpeed(Int32 voiceID, Single speed, Single fade = 0.1f);
@@ -141,6 +152,21 @@ namespace Global.Sound.SaXAudio
         public static extern void SetLooping(Int32 voiceID, Boolean looping);
         [DllImport("SaXAudio")]
         public static extern void SetLoopPoints(Int32 voiceID, UInt32 start, UInt32 end);
+
+        [DllImport("SaXAudio")]
+        public static extern Single GetMasterVolume();
+        [DllImport("SaXAudio")]
+        public static extern Single GetVolume(Int32 voiceID);
+        [DllImport("SaXAudio")]
+        public static extern Single GetSpeed(Int32 voiceID);
+        [DllImport("SaXAudio")]
+        public static extern Single GetPanning(Int32 voiceID);
+        [DllImport("SaXAudio")]
+        public static extern Boolean GetLooping(Int32 voiceID);
+        [DllImport("SaXAudio")]
+        public static extern UInt32 GetLoopStart(Int32 voiceID);
+        [DllImport("SaXAudio")]
+        public static extern UInt32 GetLoopEnd(Int32 voiceID);
 
         [DllImport("SaXAudio")]
         public static extern void SetReverb(Int32 voiceID, ReverbParameters reverbParams, Single fade = 0, Boolean isBus = false);
@@ -158,19 +184,6 @@ namespace Global.Sound.SaXAudio
         public static extern void RemoveEcho(Int32 voiceID, Single fade = 0, Boolean isBus = false);
 
         [DllImport("SaXAudio")]
-        public static extern Single GetVolume(Int32 voiceID);
-        [DllImport("SaXAudio")]
-        public static extern Single GetSpeed(Int32 voiceID);
-        [DllImport("SaXAudio")]
-        public static extern Single GetPanning(Int32 voiceID);
-        [DllImport("SaXAudio")]
-        public static extern Boolean GetLooping(Int32 voiceID);
-        [DllImport("SaXAudio")]
-        public static extern UInt32 GetLoopStart(Int32 voiceID);
-        [DllImport("SaXAudio")]
-        public static extern UInt32 GetLoopEnd(Int32 voiceID);
-
-        [DllImport("SaXAudio")]
         public static extern UInt32 GetPositionSample(Int32 voiceID);
         [DllImport("SaXAudio")]
         public static extern Single GetPositionTime(Int32 voiceID);
@@ -180,8 +193,18 @@ namespace Global.Sound.SaXAudio
         [DllImport("SaXAudio")]
         public static extern Single GetTotalTime(Int32 voiceID);
 
+        [DllImport("SaXAudio")]
+        public static extern UInt32 GetSampleRate(Int32 voiceID);
+        [DllImport("SaXAudio")]
+        public static extern UInt32 GetChannelCount(Int32 voiceID);
+
+        [DllImport("SaXAudio")]
+        public static extern UInt32 GetVoiceCount();
+        [DllImport("SaXAudio")]
+        public static extern UInt32 GetBankCount();
+
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate void OnDecodedDelegate(Int32 bankID);
+        public delegate void OnDecodedDelegate(Int32 bankID, IntPtr buffer);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void OnFinishedDelegate(Int32 voiceID);
@@ -191,7 +214,7 @@ namespace Global.Sound.SaXAudio
 
         private static void TriggerOnFinished(Int32 voiceID)
         {
-            OnVoiceFinished(voiceID);
+            OnVoiceFinished?.Invoke(voiceID);
         }
     }
 }
