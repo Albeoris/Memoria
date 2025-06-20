@@ -198,6 +198,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
                 if (ff9.w_friendlyBattles.Contains(encountData.scene[i]))
                     return encountData.scene[i];
             }
+            return 0;
         }
         else if (SettingsState.IsFriendlyBattleOnly == 2)
         {
