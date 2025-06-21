@@ -16,6 +16,8 @@ public class VoicePlayer : SoundPlayer
     private static Int32 specialLastPlayed;
     private static Int32 specialCount = 0;
 
+    public static Boolean closeDialogOnFinish = false;
+
     public VoicePlayer()
     {
         this.playerPitch = 1f;
@@ -187,9 +189,15 @@ public class VoicePlayer : SoundPlayer
 
         if (hasChoices)
         {
+            soundOfDialog.TryGetValue(dialog, out SoundProfile dialogProfile);
             dialog.OnOptionChange = (Int32 msg, Int32 optionIndex) =>
             {
                 if (dialog.CurrentState != Dialog.State.CompleteAnimation || !dialog.IsChoiceReady)
+                    return;
+
+                // We don't want to interrupt the main dialog voice line
+                soundOfDialog.TryGetValue(dialog, out SoundProfile attachedVoice);
+                if (attachedVoice != null && attachedVoice == dialogProfile && ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(attachedVoice.SoundID) == 1)
                     return;
 
                 Boolean found = false;
@@ -214,6 +222,11 @@ public class VoicePlayer : SoundPlayer
 
                 if (!found)
                 {
+                    if (closeDialogOnFinish)
+                    {
+                        dialog.OnKeyConfirm(null);
+                        closeDialogOnFinish = false;
+                    }
                     SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, text:{optString}, path(s):'{String.Join("', '", choiceCandidates.ToArray().Reverse().ToArray())}' (not found)");
                 }
             };
@@ -254,6 +267,12 @@ public class VoicePlayer : SoundPlayer
     {
         if (dialog == specialDialog) specialDialog = null;
         soundOfDialog.Remove(dialog);
+
+        if(closeDialogOnFinish)
+        {
+            dialog.OnKeyConfirm(null);
+            closeDialogOnFinish = false;
+        }
     }
 
     private static void AfterSoundFinished_Battle(Int32 va_id, String text)
@@ -351,7 +370,7 @@ public class VoicePlayer : SoundPlayer
             FieldZoneReleaseVoice(dialog, Configuration.VoiceActing.StopVoiceWhenDialogDismissed && !dialog.IsClosedByScript);
     }
 
-    private static void FieldZoneReleaseVoice(Dialog dialog, Boolean stopSound)
+    public static void FieldZoneReleaseVoice(Dialog dialog, Boolean stopSound)
     {
         if (soundOfDialog.TryGetValue(dialog, out SoundProfile attachedVoice))
         {
