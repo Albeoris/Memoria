@@ -234,8 +234,7 @@ Note : To avoid compatibility issues, Quality of the Ifa should be sorted to the
 	<SubMod>
 		<Name>Better Gravity Spell</Name>
 		<InstallationPath>BetterGravity</InstallationPath>
-		<Description>
-Make Gravity more usefull.
+		<Description>Make Gravity more usefull.
 - Gravity Spell never miss, like a Magic Attack.
 - Can work now on boss but the formula is based on their current HP + less power.
 		</Description>
@@ -245,8 +244,8 @@ Make Gravity more usefull.
 		<Name>Better Healer (SA)</Name>
 		<InstallationPath>BetterHealer</InstallationPath>
 		<Description>
-			The attack never miss on an ally + ignore defence of the target
-			(only player), making the heal much powerful (feature from Trance Seek).
+The attack never miss on an ally + ignore defence of the target
+(only player), making the heal much powerful (feature from Trance Seek).
 		</Description>
 		<PreviewFile>BetterHealer/Thumbnail.jpg</PreviewFile>
 	</SubMod>
