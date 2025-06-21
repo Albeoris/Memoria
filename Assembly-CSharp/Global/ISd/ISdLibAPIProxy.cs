@@ -1,4 +1,5 @@
-﻿using Global.Sound.SoLoud;
+﻿using Global.Sound.SaXAudio;
+using Global.Sound.SoLoud;
 using Memoria;
 using UnityEngine;
 
@@ -25,18 +26,22 @@ public class ISdLibAPIProxy
     {
         if (Application.HasProLicense())
         {
-            if (Configuration.Audio.Backend == 0)
+            switch (Configuration.Audio.Backend)
             {
-                ISdLibAPIProxy.instance = new SdLibAPIWithProLicense();
-            }
-            else
-            {
-                ISdLibAPIProxy.instance = new SdLibAPIWithSoloud();
+                case 0:
+                    ISdLibAPIProxy.instance = new SdLibAPIWithProLicense();
+                    break;
+                case 1:
+                    ISdLibAPIProxy.instance = new SdLibAPIWithSaXAudio();
+                    break;
+                case 2:
+                    ISdLibAPIProxy.instance = new SdLibAPIWithSoloud();
+                    break;
             }
         }
         else
         {
-            ISdLibAPIProxy.instance = new SdLibAPIWithSoloud();
+            ISdLibAPIProxy.instance = new SdLibAPIWithSaXAudio();
         }
     }
 

@@ -1,8 +1,9 @@
 ﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
+using Global.Sound.SaXAudio;
 using Memoria;
-using Memoria.Assets;
 using System;
+using System.Collections;
 using UnityEngine;
 using Object = System.Object;
 
@@ -158,6 +159,15 @@ public class HonoluluFieldMain : HonoBehavior
         String camIdxIfCam = (PersistenSingleton<EventEngine>.Instance?.fieldmap?.scene?.cameraList.Count > 1 && PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx != -1) ? "-" + PersistenSingleton<EventEngine>.Instance.fieldmap.camIdx : "";
         PlayerWindow.Instance.SetTitle($"Map: {FF9StateSystem.Common.FF9.fldMapNo}{camIdxIfCam} ({FF9StateSystem.Common.FF9.mapNameStr}) | Index/Counter: {PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR)}/{PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR)} | Loc: {FF9StateSystem.Common.FF9.fldLocNo}");
         FPSManager.DelayMainLoop(Time.realtimeSinceStartup - loadStartTime);
+
+        // We use a coroutine here otherwise the game crashes frequently during the autosave for some reason
+        StartCoroutine("ApplyAudioEffects");
+    }
+
+    private IEnumerator ApplyAudioEffects()
+    {
+        AudioEffectManager.ApplyFieldEffects(FF9StateSystem.Common.FF9.fldMapNo);
+        yield return null;
     }
 
     public override void HonoUpdate()
@@ -205,7 +215,7 @@ public class HonoluluFieldMain : HonoBehavior
         // e.g. Depends on different stage
         Vector3 _FieldMainLightDirection = new Vector3(0.2f, 1.0f, 0);
         Shader.SetGlobalVector("_FieldMainLightDirection", _FieldMainLightDirection);
-        
+
         if ((this.FF9.attr & 256u) == 0u)
         {
             if (!MBG.IsNull)

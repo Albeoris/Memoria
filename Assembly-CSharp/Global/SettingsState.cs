@@ -1,6 +1,5 @@
 ﻿using Assets.Scripts.Common;
 using Assets.SiliconSocial;
-using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria;
 using Memoria.Assets;
@@ -58,7 +57,10 @@ public class SettingsState : MonoBehaviour
     public Boolean IsPerspectCamera => IsBoosterButtonActive[5];
     public Boolean IsFastTrophyMode => false;
     public static Int32 FastForwardGameSpeed => Configuration.Cheats.SpeedFactor;
-    public static Boolean IsRapidEncounter;
+
+    public static Boolean IsRapidEncounter = false;
+
+    public static Int32 IsFriendlyBattleOnly = 0;
 
     public Int32 FastForwardFactor
     {

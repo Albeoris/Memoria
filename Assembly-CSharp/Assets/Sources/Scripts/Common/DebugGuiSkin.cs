@@ -50,5 +50,7 @@ namespace Assets.Sources.Scripts.Common
         private Rect guiAreaRect;
 
         private Rect fullscreenRect;
+
+        public static readonly Font font = Font.CreateDynamicFontFromOSFont(["Segoe UI", "Helvetica", " Geneva", "Verdana", "Arial"], 14);
     }
 }
