@@ -4,7 +4,6 @@ using Memoria.Assets;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(UIPanel))]
@@ -100,7 +99,6 @@ public class Dialog : MonoBehaviour
         ETb.sChoose = this.SelectChoice;
         if (this.startChoiceRow >= 0)
         {
-            this.isMuteSelectSound = true;
             base.StartCoroutine(InitializeChoiceProcess(waitEndOfFrame));
         }
     }
@@ -161,7 +159,6 @@ public class Dialog : MonoBehaviour
         ButtonGroupState.SetPointerDepthToGroup(this.phrasePanel.depth + 1, Dialog.DialogGroupButton);
         ButtonGroupState.UpdatePointerPropertyForGroup(Dialog.DialogGroupButton);
         ButtonGroupState.ActiveGroup = Dialog.DialogGroupButton;
-        this.isMuteSelectSound = true;
         this.SetCurrentChoice(this.defaultChoice);
         yield return new WaitForEndOfFrame();
         this.isChoiceReady = true;
