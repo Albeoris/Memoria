@@ -92,7 +92,7 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 <Mod>
 	<Name>Trance Seek</Name>
 	<Version>0.3.35</Version>
-	<Priority>1</Priority>
+	<Priority>2</Priority>
 	<InstallationPath>TranceSeek</InstallationPath>
 	<ReleaseDateOriginal>28 Jan 2022</ReleaseDateOriginal>
 	<ReleaseDate>30 May 2025</ReleaseDate>
@@ -157,6 +157,7 @@ Not supported language : Japanese (a lot of things get deleted... need to wait u
 <Mod>
 	<Name>NoHardcodedBattles</Name>
 	<Version>1.0</Version>
+	<Priority>1</Priority>
 	<Author>DV</Author>
 	<ReleaseDateOriginal>29 May 2025</ReleaseDateOriginal>
 	<ReleaseDate>29 May 2025</ReleaseDate>
@@ -164,8 +165,8 @@ Not supported language : Japanese (a lot of things get deleted... need to wait u
 	<IncompatibleWith>AlternateFantasy, Trance Seek, David Bowie Edition</IncompatibleWith>
 	<Category>Gameplay</Category>
 	<Description>
-		A tiny mod to remove some "hardcoded" scripts in battles.
-		The goal is to make these fights compatible with any characters in battle, in order to avoid any softlocks.
+A tiny mod to remove some "hardcoded" scripts in battles.
+The goal is to make these fights compatible with any characters in battle, in order to avoid any softlocks.
 	</Description>
 	<PreviewFileUrl>https://i.imgur.com/KL9DWPk.jpeg</PreviewFileUrl>
 	<PreviewFile>Thumbnail/NoHardcodedBattles.jpg</PreviewFile>
@@ -173,16 +174,259 @@ Not supported language : Japanese (a lot of things get deleted... need to wait u
 </Mod>
 
 <Mod>
+	<Name>Quality Of L'Ifa</Name>
+	<Version>1.0</Version>
+	<InstallationPath>Quality Of L'Ifa</InstallationPath>
+	<ReleaseDate>14 June 2025</ReleaseDate>
+	<ReleaseDateOriginal>14 June 2025</ReleaseDateOriginal>
+	<Author>DV</Author>
+	<Category>Gameplay</Category>
+	<PreviewFileUrl>https://i.ibb.co/20DxpHXN/Quality-Of-Lifa.jpg</PreviewFileUrl>
+	<PreviewFile>Thumbnail/QualityOfLifa.jpg</PreviewFile>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/je4hdj96ngxv7ogjep9tx/Quality-Of-L-Ifa.zip?rlkey=0jmnwa9svspqazb4olrk53qtb&amp;dl=1</DownloadUrl>
+	<Description>
+A very lightweight mod that allows you to modify minor elements of the game while keeping as much of the OG experience as possible.
+All options are independent and can be activated as desired.
+More options will be added over time.
+Note : To avoid compatibility issues, Quality of the Ifa should be sorted to the lowest priority in the mod list.
+	</Description>
+	<Header>Safe with any Mods</Header>
+	<SubMod>
+		<Name>Elixir Show HP/MP Healed</Name>
+		<InstallationPath>ElixirShowHPMP</InstallationPath>
+		<Description>Items using Elixir script show HP/MP heals on players (feature from Trance Seek).</Description>
+		<PreviewFile>ElixirShowHPMP/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>MP Heal in Blue</Name>
+		<InstallationPath>MPInBlue</InstallationPath>
+		<Description>MP Healing are displayed in Blue (feature from Trance Seek).</Description>
+		<PreviewFile>MPInBlue/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Colored Text from Element Attack</Name>
+		<InstallationPath>ColoredTextElementAttack</InstallationPath>
+		<Description>Texts from attack are colored, depending of his element</Description>
+		<PreviewFile>ColoredTextElementAttack/Thumbnail.jpg</PreviewFile>
+		<Group>cmd-text-color</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Counter Text colored in Cyan</Name>
+		<InstallationPath>CounterCyan</InstallationPath>
+		<Description>Counters (player or monster) are displayed in Cyan (feature from Trance Seek).</Description>
+		<PreviewFile>CounterCyan/Thumbnail.jpg</PreviewFile>
+		<Group>cmd-text-color</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Counter Text colored in Fuchsia</Name>
+		<InstallationPath>CounterFuchsia</InstallationPath>
+		<Description>Counters (player or monster) are displayed in Fuchsia.</Description>
+		<PreviewFile>CounterFuchsia/Thumbnail.jpg</PreviewFile>
+		<Group>cmd-text-color</Group>
+	</SubMod>
+	<Header>For OG Experience only</Header>
+	<SubMod>
+		<Name>Thunder Slash (OG Version)</Name>
+		<InstallationPath>ThunderSlashOG</InstallationPath>
+		<Description>Revert the Thunder Slash spell into his OG form (Gravity/Thunder Spell with 0% accuracy)</Description>
+		<PreviewFile>ThunderSlashOG/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Better Gravity Spell</Name>
+		<InstallationPath>BetterGravity</InstallationPath>
+		<Description>Make Gravity more usefull.
+- Gravity Spell never miss, like a Magic Attack.
+- Can work now on boss but the formula is based on their current HP + less power.
+		</Description>
+		<PreviewFile>BetterGravity/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Better Healer (SA)</Name>
+		<InstallationPath>BetterHealer</InstallationPath>
+		<Description>
+The attack never miss on an ally + ignore defence of the target
+(only player), making the heal much powerful (feature from Trance Seek).
+		</Description>
+		<PreviewFile>BetterHealer/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Better Mug (SA)</Name>
+		<InstallationPath>BetterMug</InstallationPath>
+		<Description>Better animation for Mug + deals 75% of a basic attack.</Description>
+		<PreviewFile>BetterMug/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Adjust StoneKiller (SA) Cost</Name>
+		<InstallationPath>StoneKiller</InstallationPath>
+		<Description>Adjust Gem Cost from StoneKiller : 4 -> 1</Description>
+		<PreviewFile>StoneKiller/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Float Weakness to Wind</Name>
+		<InstallationPath>FloatWeakness</InstallationPath>
+		<Description>Float status gives weakness to Wind.</Description>
+		<PreviewFile>FloatWeakness/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Better Stats When Character Joins</Name>
+		<InstallationPath>BetterStatsJoining</InstallationPath>
+		<Description>
+Better formula on stats when Freya/Quina/Eiko/Amarant joins the team (feature from Trance Seek).
+More explanations in the .txt file in the mod (BetterStatsJoining folder)
+		</Description>
+		<PreviewFile>BetterStatsJoining/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<Header>[WIP] Experimental</Header>
+	<SubMod>
+		<Name>Better Garland Model NPC</Name>
+		<InstallationPath>BetterGarlandModel</InstallationPath>
+		<Description>
+Unfinished, replace Garland Model in field from his battle version.
+Experimental: i need to improve the animation on his cape...
+More models to come later when i get time.
+		</Description>
+		<PreviewFile>BetterGarlandModel/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+</Mod>
+
+<Mod>
+	<Name>Doppelgängers</Name>
+	<Version>1.0</Version>
+	<InstallationPath>Doppelgängers</InstallationPath>
+	<ReleaseDate>21 Jun 2025</ReleaseDate>
+	<ReleaseDateOriginal>21 Jun 2025</ReleaseDateOriginal>
+	<Author>Tetra Gomez, NocturnalHanna and DV</Author>
+	<Category>Gameplay</Category>
+	<PreviewFileUrl>https://i.ibb.co/ccc19T9S/Doppelgangers.jpg</PreviewFileUrl>
+	<PreviewFile>Thumbnail/Doppelgängers.jpg</PreviewFile>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/pdoz5xvtdrfefsdlu48y9/Doppelgangers.zip?rlkey=0b3cim4hiuqgi3jn9um0rhbtb&amp;dl=1</DownloadUrl>
+	<IncompatibleWith>AlternateFantasy, Trance Seek, David Bowie Edition, Beatrix Mod</IncompatibleWith>
+	<Description>
+A mod that simply consists of changing all your characters into a specific one... have you always dreamed of having four Vivis burning everything? A rain of spears from the sky with your Freyas? Or an army of Quina eating monsters by dozens?
+
+Inspired by the AllQuinaMod mod by Tetra Gomez (aka 8bitmissingno), based on an idea from the Twitch streamer NocturnalHanna.
+So why just settle for Quina and do this for all the characters... that's what DV offers in this mod!
+
+NoHardcodedBattles mod already included !
+Compatible with the OG version only.
+
+Coming soon : For the next version, I will try to make a mini .dll file so that the mod is compatible with PCP for example.
+	</Description>
+	<SubMod>
+		<Name>All Zidane</Name>
+		<InstallationPath>All Zidane</InstallationPath>
+		<Description>Replace all characters by Zidane !</Description>
+		<Group>allcharacters</Group>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Name>All Vivi</Name>
+		<InstallationPath>All Vivi</InstallationPath>
+		<Description>Replace all characters by Vivi !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Dagger</Name>
+		<InstallationPath>All Dagger</InstallationPath>
+		<Description>Replace all characters by Dagger !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Steiner</Name>
+		<InstallationPath>All Steiner</InstallationPath>
+		<Description>Replace all characters by Steiner !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Freya</Name>
+		<InstallationPath>All Freya</InstallationPath>
+		<Description>Replace all characters by Freya !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Quina</Name>
+		<InstallationPath>All Quina</InstallationPath>
+		<Description>Replace all characters by Quina !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Eiko</Name>
+		<InstallationPath>All Eiko</InstallationPath>
+		<Description>Replace all characters by Eiko !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Amarant</Name>
+		<InstallationPath>All Amarant</InstallationPath>
+		<Description>Replace all characters by Amarant !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Cinna</Name>
+		<InstallationPath>All Cinna</InstallationPath>
+		<Description>Replace all characters by Cinna !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Cinna (with Zidane skills)</Name>
+		<InstallationPath>All Cinna (with Zidane skills)</InstallationPath>
+		<Description>Replace all characters by Cinna (with Zidane's AA/SA) !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Marcus</Name>
+		<InstallationPath>All Marcus</InstallationPath>
+		<Description>Replace all characters by Marcus !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Marcus (with Zidane skills)</Name>
+		<InstallationPath>All Marcus (with Zidane skills)</InstallationPath>
+		<Description>Replace all characters by Marcus (with Zidane's AA/SA) !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Blank</Name>
+		<InstallationPath>All Blank</InstallationPath>
+		<Description>Replace all characters by Blank !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Blank (with Zidane skills)</Name>
+		<InstallationPath>All Blank (with Zidane skills)</InstallationPath>
+		<Description>Replace all characters by Blank (with Zidane's AA/SA) !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Beatrix</Name>
+		<InstallationPath>All Beatrix</InstallationPath>
+		<Description>Replace all characters by Beatrix !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Beatrix (with Steiner stuff/SA)</Name>
+		<InstallationPath>All Beatrix (with Steiner stuff)</InstallationPath>
+		<Description>Replace all characters by Beatrix (with Steiner's stuff and SA) !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+</Mod>
+
+<Mod>
 	<Name>Playable Character Pack</Name>
-	<Version>1.5.1</Version>
+	<Version>1.6.1</Version>
 	<Priority>-20</Priority>
 	<InstallationPath>PlayableCharacterPack</InstallationPath>
-	<Author>Tirlititi / WarpedEdge</Author>
 	<ReleaseDateOriginal>9 Nov 2022</ReleaseDateOriginal>
-	<ReleaseDate>23 May 2025</ReleaseDate>
-	<PatchNotes>Requires Memoria v2025-05-11</PatchNotes>
+	<ReleaseDate>19 June 2025</ReleaseDate>
 	<MinimumMemoriaVersion>2025-05-11</MinimumMemoriaVersion>
+	<Author>Tirlititi / WarpedEdge</Author>
 	<Description>Adds new playable characters to the roster.
+
+Please Note: 
+- Still only playable in US Language only (will be fixed in a later release)
+- Requires Memoria v2025.05.11 or later
+- Currently this mod is not compatible with Trance Seek, but I plan on getting it to eventually
+
 Currently, these characters are added:
 - Kuja
 - Fratley
@@ -194,28 +438,44 @@ Currently, these characters are added:
 - Dan
 - Jeame (Cleyra dancer)
 - Puck
-These characters will be available soon:
-- Mikoto
-- Gerome (Genome)
-- Ruby
-- Baku
+- Mikoto *NEW*
+- Gerome (Genome) *NEW*
+- Ruby *NEW*
+- Baku *NEW*
 
 You can press Alt+F2 or Ctrl+Alt+Shift+F2 if on Linux in-game to access the party menu (changing the party at any time is a feature of Memoria, not related to this mod).
 
 Special Thanks for their important help:
+- LucyHale00 for bug reporting
+- HsienkoMegatonDrop for bug reporting
 - Emeiru (support)
 - Hope (scripting)
 - faospark (concept art)
 - samtoki (character portraits)
 - DV (ability sequences and features)
 
-You should set the priority of this mod to be higher than the priority of the Moguri mod but lower than other mods.</Description>
-	<PatchNotes>Requires Memoria v2025.05.11 or later Currently this mod is not compatible with Trance Seek, but I plan on getting it to eventually</PatchNotes>
+You should set the priority of this mod to be higher than the priority of the Moguri mod but lower than other mods, but until Alternate Fantasy's next update, put this mod's priority above it</Description>
+	<PatchNotes>
+------[1.6.1]------
+
+- Fixed major bug causing custom status' to inflict negative ones instead
+- adjusted item priority of axes
+- added items to shops that were missable in disc 4
+- fixed Baku's sneeze accuracy
+
+Bug Fixes:
+- Aria Thunderstrike stuck to Thunder gloves when she cannot equip them (Now moved to Mythril Armlet)
+- Jeame's Debilitation description fixed as well as the effect correctly lowering ATK/MATK
+- Jeame's dance text added when casted
+- Jeame's Dance of Life not targeting KO
+- Dan's main attack is now Mug like originally intended
+- Puck not being able to learn Stona due to it being stuck to rackets/flutes (Healing Rod now teaches it)
+- Puck not being able to learn Aero/Aera; Added to Stardust and Asura's Rod</PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://steamcommunity.com/app/377840/discussions/0/3497635791229563331/</Website>
-	<DownloadUrl>https://github.com/WarpedEdge/ffix-mod-projects/releases/download/PCP-v1.5.1/PlayableCharacterPack.zip</DownloadUrl>
+	<DownloadUrl>https://github.com/WarpedEdge/ffix-mod-projects/releases/download/PCP-v1.6.1/PlayableCharacterPack.zip</DownloadUrl>
 	<PreviewFile>Preview.png</PreviewFile>
-	<PreviewFileUrl>https://i.imgur.com/oxSjSIE.png</PreviewFileUrl>
+	<PreviewFileUrl>https://i.imgur.com/LdMuKh1.png</PreviewFileUrl>
 	<Header>Costumes</Header>
 	<SubMod>
 		<Name>Zidane Pluto outfit</Name>
@@ -441,10 +701,10 @@ This mod was initially introduced as the Exp challenge tweaks within Kupo Mods, 
 
 <Mod>
 	<Name>Kupo Heroes Pack</Name>
-	<Version>4.1.7</Version>
+	<Version>4.1.8</Version>
 	<Priority>-13</Priority>
 	<InstallationPath>KupoHeroPack</InstallationPath>
-	<ReleaseDate>2025-05-31</ReleaseDate>
+	<ReleaseDate>2025-06-03</ReleaseDate>
 	<ReleaseDateOriginal>2024-05-10</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>A set of Character enhancements that powers up characters and reduces grind. Ideal for players seeking 
@@ -455,7 +715,9 @@ Mod Order:
 
 Part of Kupo Mods formerly Mog Add-ons.
 	</Description>
-	<PatchNotes>Added Compatibility with Alternate Fantasy and playable character pack </PatchNotes>
+	<PatchNotes>
+	- Fixed mod group issue to ensure modularity. 
+	- Added Compatibility with Alternate fantasy and playable character pack </PatchNotes>
 	<Category>Gameplay</Category>
 	<IncompatibleWith>Trance Seek</IncompatibleWith>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/78</Website>
@@ -511,63 +773,54 @@ Part of Kupo Mods formerly Mog Add-ons.
 		<InstallationPath>Features/Eiko</InstallationPath>
 		<Description>Splits Titan and Fenrir as their won independent summon</Description>
 		<Group>g-eiko</Group>
-		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Freya] The Dragoon  </Name>
 		<InstallationPath>Features/Freya</InstallationPath>
 		<Description>Make Freya's High Jump do 3x damage, Early Access to High Jump and Taharka drops Kain Lance </Description>
 		<Group>g-freya</Group>
-		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Quina] The Chef </Name>
 		<InstallationPath>Features/Quina</InstallationPath>
 		<Description>Better Eat at 50% Cook at 100% </Description>
 		<Group>g-quina</Group>
-		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Steiner] The Queens Knight</Name>
 		<InstallationPath>Features/Steiner</InstallationPath>
 		<Description>Steiner can Equip Save the Queen, has access to all Vivi's additional spell </Description>
 		<Group>g-steiner</Group>
-		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Vivi] The Warlock</Name>
 		<InstallationPath>Features/Vivi</InstallationPath>
 		<Description>Vivi and Steiner can Cast Aero,Quake,Water to RA to AGA spells </Description>
 		<Group>g-vivi</Group>
-		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Garnet] The White Mage</Name>
 		<InstallationPath>Features/Garnet</InstallationPath>
 		<Description>Adds A White Magic Ability to Garnet that causes damage</Description>
 		<Group>g-garnet</Group>		
-		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Amaranth] The Genius Nomad </Name>
 		<InstallationPath>Features/Amaranth</InstallationPath>
 		<Description>Amaranth learns the Passive Tensai which makes him Learn and Level UP fast</Description>
 		<Group>g-amaranth</Group>
-		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Zidane] The Pillager</Name>
 		<InstallationPath>Features/Zidane</InstallationPath>
 		<Description>Boosts damage of thievery, Doubles items received after battle</Description>
 		<Group>g-zidane</Group>
-		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Beatrix] The Paladin </Name>
 		<InstallationPath>Features/Beatrix</InstallationPath>
 		<Description>Add Basic stat Support for Beatrix based of the Beatrix mod  </Description>
 		<Group>g-beatrix</Group>
-		<Default/>
 	</SubMod>
 	<Header>Compatability for Alternate Fantasy</Header>
 	<SubMod>
@@ -671,8 +924,8 @@ Compatible with Alternate Fantasy v6.8 only.</Description>
 </Mod>
 
 <Mod>
-    <Name>Perfect Stats</Name>
-    <Version>1.1</Version>
+	<Name>Perfect Stats</Name>
+	<Version>1.1</Version>
 	<Priority>-1</Priority>
 	<Author>Emeiru</Author>
 	<InstallationPath>PerfectStats</InstallationPath>
@@ -799,8 +1052,8 @@ Alternate Fantasy
 </Mod>
 	
 <Mod>
-    <Name>Amazing Abilities</Name>
-    <Version>1.0</Version>
+	<Name>Amazing Abilities</Name>
+	<Version>1.0</Version>
 	<Priority>-6</Priority>
 	<Author>Emeiru</Author>
 	<ReleaseDateOriginal>2025-01-21</ReleaseDateOriginal>
@@ -839,16 +1092,16 @@ Flee-Gil - Now only costs 1 magic stone
 </Mod>
 	
 <Mod>
-    <Name>Amazing Freya</Name>
-    <Version>1.0</Version>
+	<Name>Amazing Freya</Name>
+	<Version>1.0</Version>
 	<Priority>-7</Priority>
 	<Author>Emeiru</Author>
 	<Category>Gameplay</Category>
 	<ReleaseDateOriginal>2024-10-04</ReleaseDateOriginal>
 	<ReleaseDate>2025-05-02</ReleaseDate>
 	<MinimumMemoriaVersion>v2024.12.06</MinimumMemoriaVersion>
-    <InstallationPath>AmazingFreya</InstallationPath>
-    <Description>Amazing tweaks and improvement for the valiant Freya
+	<InstallationPath>AmazingFreya</InstallationPath>
+	<Description>Amazing tweaks and improvement for the valiant Freya
 - Jump is now a priority command, and increases Trance
 - Dragon consumes less Trance
 - Six Dragons have significantly less MP use
@@ -947,12 +1200,12 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 	
 <Mod>
 	<Name>Amazing Quina</Name>
-	<Version>2.1</Version>
+	<Version>2.2</Version>
 	<Priority>-9</Priority>
 	<InstallationPath>AmazingQuina</InstallationPath>
 	<ReleaseDateOriginal>2024-08-18</ReleaseDateOriginal>
-	<ReleaseDate>2024-12-09</ReleaseDate>
-	<MinimumMemoriaVersion>v2024.12.04</MinimumMemoriaVersion>
+	<ReleaseDate>2025-05-29</ReleaseDate>
+	<MinimumMemoriaVersion>v2025.05.12</MinimumMemoriaVersion>
 	<Author>Emeiru</Author>
 <Description>Amazing tweaks and improvement for the quirky Quina
 - Forks deal more consistent random damage
@@ -961,7 +1214,7 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 - Quina now learns Scan, Return Magic, and others
 - Tweaks to abilities like Goblin Punch, White Wind, and more
 
-Compatible with Alternate Fantasy</Description>
+Compatible with Alternate Fantasy v6.8 only</Description>
 	<PatchNotes>Complete changes can be found on the mod page.</PatchNotes>
 	<Category>Gameplay</Category>
 	<PreviewFile>AmazingQuina.jpg</PreviewFile>
@@ -977,7 +1230,7 @@ Compatible with Alternate Fantasy</Description>
 		<Group>GameMode</Group>
 		<ActivateWithoutMod>Alternate Fantasy</ActivateWithoutMod>
 		<Default/>
-		</SubMod>
+	</SubMod>
 	<SubMod>
 		<Name>Alternate Fantasy</Name>
 		<InstallationPath>AlternateFantasy</InstallationPath>
@@ -985,7 +1238,7 @@ Compatible with Alternate Fantasy</Description>
 		<Priority>2</Priority>
 		<Group>GameMode</Group>
 		<ActivateWithMod>Alternate Fantasy</ActivateWithMod>
-		</SubMod>
+	</SubMod>
 </Mod>
 
 <Mod>
@@ -1023,7 +1276,7 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 		<Group>GameMode</Group>
 		<ActivateWithoutMod>Alternate Fantasy</ActivateWithoutMod>
 		<Default/>
-		</SubMod>
+	</SubMod>
 	<SubMod>
 		<Name>Alternate Fantasy</Name>
 		<InstallationPath>AlternateFantasy</InstallationPath>
@@ -1031,7 +1284,7 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 		<Priority>2</Priority>
 		<Group>GameMode</Group>
 		<ActivateWithMod>Alternate Fantasy</ActivateWithMod>
-		</SubMod>
+	</SubMod>
 </Mod>
 
 <Mod>
@@ -1069,7 +1322,7 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 		<Group>GameMode</Group>
 		<ActivateWithoutMod>Alternate Fantasy</ActivateWithoutMod>
 		<Default/>
-		</SubMod>
+	</SubMod>
 	<SubMod>
 		<Name>Alternate Fantasy</Name>
 		<InstallationPath>AlternateFantasy</InstallationPath>
@@ -1077,9 +1330,248 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 		<Priority>2</Priority>
 		<Group>GameMode</Group>
 		<ActivateWithMod>Alternate Fantasy</ActivateWithMod>
-		</SubMod>
+	</SubMod>
 </Mod>
-	
+
+<Mod>
+	<Name>FernySupportTweaks</Name>
+	<Version>1.4.3</Version>
+	<Author>FernyFer</Author>
+	<InstallationPath>FernySupportTweaks</InstallationPath>
+	<ReleaseDate>June 4, 2025</ReleaseDate>
+	<ReleaseDateOriginal>June 2, 2025</ReleaseDateOriginal>
+	<MinimumMemoriaVersion>2025-05-11</MinimumMemoriaVersion>
+	<Description>Changes some Support Abilities to be "subjectively" more useful! You can enable as many as you want. 
+
+Divine Light - (Replaces "Auto-Reflect" Support Ability)
+- Completely drains the Trance bar to stop a character from being KO'd and returning them to 25% of their MaxHP if the Trance bar is at least 50% full.
+
+Trancer - (Replaces "Ability Up" Support Ability)
+- All attacks now slightly increase the Trance gauge.
+- High Tide increases the amount of Trance gained.
+- HIGHLY suggested you use this option with "Kupo Tweaks or Exp , AP, Gil , Rewards Modifier" mod to alter AP gains from losing the Ability Up support ability.
+
+Gambling Strikes - (Replaces Zidane's "Bandit" Support Ability)
+- Zidane's damage output randomly ranges from 50% to 200%.
+- HIGHLY suggested you enable "100% Steal Rate" cheat in Memoria engine to offset losing the Bandit support ability.
+
+Glass Cannon - (Replaces "Auto-Float" Support Ability)
+- Increases all damage dealt by 60%, but reduces MaxHP by 40%.
+
+Dyne Booster - (Zidane Only)
+- All of Zidane's Trance abilities deals 2x damage when his HP falls below 20%.
+- Damage at endgame will easily hit 9,999 damage cap when this triggers.
+- (OPTIONAL) Enable "Break Damage Limit" cheat in Memoria Engine to allow damage to break 9,999 cap.
+
+Defence+ - (Replaces "Gambler Defense" Support Ability)
+- Gambler Defense was an abysmally useless Special Ability.
+- Now increases Defence and Magic Defence by 5%.
+
+Lucky! - (Replaces "Level Up" Support Ability)
+- There are a few mods out there that allow you that alter your EXP gain... so, I figured the "Level Up" support ability could get a facelift. 
+- Now increases Critical Strike Chance by 10!
+
+HP Leech - (Replaces "Add Status" Support Ability)
+- Attacks will now leech a small amount of HP from the target to heal the user.
+- The "Add Status" is now a global passive - no longer needing to be equipped for the effect to be active. Always found it kinda pointless to add Status Effects to weapons and then making them moot if you didn't have this Support Ability equipped. 
+
+MP Leech - (Replaces "MP Attack" Support Ability)
+- Attacks will now leech a small amount of MP from the target to heal the user.
+- This ability makes sense in my game because I'm playing the Alternate Fantasy mod and almost all my characters now have skills that deal damage and use MP, so there is no reason to drain my MP to use a regular attack when I could just use one of my skills and do the same thing.
+
+Speed+ - (Replaces "Flee-Gil" Support Ability)
+- Flee-Gil is actual doodoo, now it's actually useful!
+- Now increases Speed by 10%.
+
+Note/Credit: "Divine Light" idea and code adapted from the Memoria Engine wiki:
+https://github.com/Albeoris/Memoria/wiki/Supporting-ability-features</Description>
+	<PatchNotes>v1.4.3 - "LUCKY!"- had a typo in the code making it not work - this has been fixed. Enjoy your 10 Crit!.</PatchNotes>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/102</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/32n1c5svgac8qlll3k5ez/FernySupportTweaks.zip?rlkey=3bxlf6cefiuwtuc30bueqlsb7&amp;st=qf88pwn4&amp;dl=1</DownloadUrl>
+	<PreviewFileUrl>https://i.imgur.com/SNFuHb9.jpeg</PreviewFileUrl>
+	<PreviewFile>TweaksImage.jpg</PreviewFile>
+	<Category>Gameplay</Category>
+	<SubMod>
+		<Name>[Divine Light]</Name>
+		<InstallationPath>Divine Light</InstallationPath>
+		<Description>Survive being KO'd with enough Trance bar filled.</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>[Glass Cannon]</Name>
+		<InstallationPath>Glass Cannon</InstallationPath>
+		<Description>More damage but less MaxHP.</Description>
+		<Priority>2</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>[MP Leech]</Name>
+		<InstallationPath>MPLeech</InstallationPath>
+		<Description>Restores MP when attacking enemies.</Description>
+		<Priority>3</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>[HP Leech]</Name>
+		<InstallationPath>HPLeech</InstallationPath>
+		<Description>Restores HP when attacking enemies.</Description>
+		<Priority>4</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>[Defense+]</Name>
+		<InstallationPath>Defense+</InstallationPath>
+		<Description>Increases Defence and Magic Defence by 5%.</Description>
+		<Group>g-def+</Group>
+		<Priority>5</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>[Defense+ - AF]</Name>
+		<InstallationPath>Defense+ - AF</InstallationPath>
+		<Description>Increases Defence and Magic Defence by 5% - for Alternate Fantasy.</Description>
+		<Group>g-def+</Group>
+		<ActivateWithMod>Alternate Fantasy</ActivateWithMod>
+		<Priority>6</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>[Lucky!]</Name>
+		<InstallationPath>Lucky!</InstallationPath>
+		<Description>Increases Critical Chance!</Description>
+		<Priority>7</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>[Trancer]</Name>
+		<InstallationPath>Trancer</InstallationPath>
+		<Description>All attacks now slightly increase the Trance gauge.</Description>
+		<Priority>8</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>[Speed+]</Name>
+		<InstallationPath>Speed+</InstallationPath>
+		<Description>Increases Speed by 10%.</Description>
+		<Priority>9</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>[Gambling Strikes]</Name>
+		<InstallationPath>Gambling Strikes</InstallationPath>
+		<Description>Varies Zidane's damage output.</Description>
+		<Priority>10</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>[Dyne Booster]</Name>
+		<InstallationPath>Dyne Booster</InstallationPath>
+		<Description>Zidance Trance damage boosted.</Description>
+		<Priority>11</Priority>
+	</SubMod>
+</Mod>
+
+<Mod>
+	<Name>FernyDifficultyTweaks</Name>
+	<Version>3.1</Version>
+	<Author>FernyFer</Author>
+	<InstallationPath>FernyDifficultyTweaks</InstallationPath>
+	<ReleaseDate>June 13, 2025</ReleaseDate>
+	<ReleaseDateOriginal>June 2, 2025</ReleaseDateOriginal>
+	<MinimumMemoriaVersion>2025-05-11</MinimumMemoriaVersion>
+	<Description>Increase or Decrease game difficulty!
+Allows the player to select all damage dealt and taken in a modular fashion! Fine-tune the balance of the game to your liking, all in one mod!
+
+Player Damage Dealt:
+- Modular scaling allowing the player to deal anywhere from 25% less damage all the way up to 150% more damage to enemies.
+
+Player Damage Taken:
+- Modular scaling allowing the player to take anywhere from 20% less damage all the way up to 180% more damage from enemies.</Description>
+	<PatchNotes>v3.1: Damage DEALT was not properly calculating and has been fixed. Enjoy nerfing yourself!</PatchNotes>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/101</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/xjer5n2fw39h5kyapyoza/FernyDifficultyTweaks.zip?rlkey=jlt9wczd4irv8qeljd9xj1zbn&amp;st=0xfgnplu&amp;dl=1</DownloadUrl>
+	<PreviewFileUrl>https://i.imgur.com/t3GdBdB.jpeg</PreviewFileUrl>
+	<PreviewFile>TweaksImage.jpg</PreviewFile>
+	<Category>Gameplay</Category>
+	<Header>Player Damage Dealt</Header>
+	<SubMod>
+		<Name>[Easy Mode+]</Name>
+		<InstallationPath>DMG150</InstallationPath>
+		<Description>All player damage DEALT increased to 150%.</Description>
+		<Group>g-dmg</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[Easy Mode]</Name>
+		<InstallationPath>DMG125</InstallationPath>
+		<Description>All player damage DEALT increased to 125%.</Description>
+		<Group>g-dmg</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[Default Mode]</Name>
+		<InstallationPath>DMG100</InstallationPath>
+		<Description>Default player damage DEALT.</Description>
+		<Group>g-dmg</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[Hard Mode]</Name>
+		<InstallationPath>DMG80</InstallationPath>
+		<Description>All player damage DEALT reduced to 80%.</Description>
+		<Group>g-dmg</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[Hard Mode+]</Name>
+		<InstallationPath>DMG60</InstallationPath>
+		<Description>All player damage DEALT reduced to 60%.</Description>
+		<Group>g-dmg</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[Hard Mode++]</Name>
+		<InstallationPath>DMG40</InstallationPath>
+		<Description>All player damage DEALT reduced to 40%.</Description>
+		<Group>g-dmg</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[DarkSouls]</Name>
+		<InstallationPath>DarkSouls</InstallationPath>
+		<Description>All player damage DEALT reduced to 20%.</Description>
+		<Group>g-dmg</Group>
+	</SubMod>
+	<Header>Player Damage Taken</Header>
+	<SubMod>
+		<Name>[Easy Mode]</Name>
+		<InstallationPath>TKN080</InstallationPath>
+		<Description>All player damage TAKEN reduced to 80%.</Description>
+		<Group>g-tkn</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[Default Mode]</Name>
+		<InstallationPath>TKN100</InstallationPath>
+		<Description>Default player damage TAKEN.</Description>
+		<Group>g-tkn</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[Hard Mode]</Name>
+		<InstallationPath>TKN120</InstallationPath>
+		<Description>All player damage TAKEN increased to 120%.</Description>
+		<Group>g-tkn</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[Hard Mode+]</Name>
+		<InstallationPath>TKN140</InstallationPath>
+		<Description>All player damage TAKEN increased to 140%.</Description>
+		<Group>g-tkn</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[Hard Mode++]</Name>
+		<InstallationPath>TKN160</InstallationPath>
+		<Description>All player damage TAKEN increased to 160%.</Description>
+		<Group>g-tkn</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[Hard Mode+++]</Name>
+		<InstallationPath>TKN180</InstallationPath>
+		<Description>All player damage TAKEN increased to 180%.</Description>
+		<Group>g-tkn</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[DarkSoulz]</Name>
+		<InstallationPath>DarkSoulz</InstallationPath>
+		<Description>All player damage TAKEN increased to 200%.</Description>
+		<Group>g-tkn</Group>
+	</SubMod>
+</Mod>
+
 <Mod>
 	<Name>David Bowie Edition</Name>
 	<Version>2.0</Version>
@@ -1178,7 +1670,7 @@ You should better use the Playable Characters Pack instead. This later one doesn
 <Mod>
 	<Name>Kupo UI Suite</Name>
 	<Version>4.2.1</Version>
-	<Priority>2</Priority>
+	<Priority>3</Priority>
 	<InstallationPath>KupoUISuite</InstallationPath>
 	<ReleaseDate>2025-05-31</ReleaseDate>
 	<ReleaseDateOriginal>2021-08-14</ReleaseDateOriginal>
@@ -1451,7 +1943,7 @@ added another frame option	</PatchNotes>
 <Mod>
 	<Name>Moguri Mod (2020)</Name>
 	<Version>8.4</Version>
-	<Priority>-25</Priority>
+	<Priority>-26</Priority>
 	<InstallationPath>MoguriMain8</InstallationPath>
 	<ReleaseDateOriginal>2019-01-01</ReleaseDateOriginal>
 	<ReleaseDate>2024-08-12</ReleaseDate>
@@ -1481,7 +1973,7 @@ Note: 30fps videos and the alternative soundtrack are now separate mods</Descrip
 <Mod>
 	<Name>Cursors Mod</Name>
 	<Version>4.1.4</Version>
-	<Priority>3</Priority>	
+	<Priority>4</Priority>	
 	<InstallationPath>KupoCursors</InstallationPath>
 	<ReleaseDate>2025-05-31</ReleaseDate>
 	<ReleaseDateOriginal>2024-10-01</ReleaseDateOriginal>
@@ -1566,7 +2058,7 @@ Defaults to smaller cursor but has several options Dagger, Ultima Blade, Staff
 <Mod>
 	<Name>PSX Buttons</Name>
 	<Version>1.0</Version>
-	<Priority>6</Priority>
+	<Priority>7</Priority>
 	<InstallationPath>PSXButtons</InstallationPath>
 	<Author>gdi</Author>
 	<ReleaseDate>2017-05-22</ReleaseDate>
@@ -1581,7 +2073,7 @@ Defaults to smaller cursor but has several options Dagger, Ultima Blade, Staff
 <Mod>
 	<Name>Kupo Controller Pack</Name>
 	<Version>4.1.3</Version>
-	<Priority>7</Priority>	
+	<Priority>8</Priority>	
 	<InstallationPath>KupoButtonsPack</InstallationPath>
 	<ReleaseDate>2024-12-06</ReleaseDate>
 	<ReleaseDateOriginal>2021-08-27</ReleaseDateOriginal>
@@ -1653,27 +2145,31 @@ Available Themes:
 
 <Mod>
 	<Name>Dualsense Buttons</Name>
-	<Version>1.0</Version>
-	<Priority>5</Priority>
+	<Version>1.1</Version>
+	<Priority>6</Priority>
 	<InstallationPath>DualsenseButtons</InstallationPath>
-	<ReleaseDate>2023-07-19</ReleaseDate>
+	<ReleaseDate>2025-06-04</ReleaseDate>
+	<ReleaseDateOriginal>2023-07-19</ReleaseDateOriginal>
 	<Author>SamsamTS</Author>
 	<Description>Replace Xbox buttons with the Playstation Dualsense buttons.</Description>
+	<PatchNotes>Won't replace the whole icon atlas anymore</PatchNotes>
 	<Category>Visual</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/52</Website>
 	<DownloadUrl>https://github.com/SamsamTS/FF9-DualsenseButtons/releases/download/Main/DualsenseButtons.zip</DownloadUrl>
-	<PreviewFileUrl>https://raw.githubusercontent.com/SamsamTS/FF9-DualsenseButtons/main/PreviewImage.jpg</PreviewFileUrl>
 	<PreviewFile>PreviewImage.jpg</PreviewFile>
+	<PreviewFileUrl>https://raw.githubusercontent.com/SamsamTS/FF9-DualsenseButtons/main/PreviewImage.jpg</PreviewFileUrl>
 </Mod>
 
 <Mod>
 	<Name>Switch Buttons</Name>
-	<Version>1.0</Version>
-	<Priority>4</Priority>
+	<Version>1.1</Version>
+	<Priority>5</Priority>
 	<InstallationPath>SwitchButtons</InstallationPath>
-	<ReleaseDate>28 April 2024</ReleaseDate>
+	<ReleaseDate>2025-06-04</ReleaseDate>
+	<ReleaseDateOriginal>2024-04-28</ReleaseDateOriginal>
 	<Author>SamsamTS</Author>
 	<Description>Replace Xbox buttons with the Nintendo Switch buttons.</Description>
+	<PatchNotes>Won't replace the whole icon atlas anymore</PatchNotes>
 	<Category>Visual</Category>
 	<Website>https://github.com/SamsamTS/FF9-SwitchButtons/</Website>
 	<DownloadUrl>https://github.com/SamsamTS/FF9-SwitchButtons/releases/download/Main/SwitchButtons.zip</DownloadUrl>
@@ -1700,7 +2196,7 @@ Available Themes:
 	<Name>Tweaked Portraits</Name>
 	<InstallationPath>TweakedPortraits</InstallationPath>
 	<Version>1.0</Version>
-	<Priority>8</Priority>
+	<Priority>9</Priority>
 	<Author>Lykon</Author>
 	<ReleaseDateOriginal>2020-05-16</ReleaseDateOriginal>
 	<Description>This is a simple mod that slightly tweaks the portrait shown in the main menu.</Description>
@@ -1713,10 +2209,10 @@ Available Themes:
 
 <Mod>
 	<Name>Portraits Pack</Name>
-	<Version>4.2.5</Version>
-	<Priority>9</Priority>	
+	<Version>4.2.6</Version>
+	<Priority>10</Priority>	
 	<InstallationPath>KupoPortraits</InstallationPath>
-	<ReleaseDate>2025-05-31</ReleaseDate>
+	<ReleaseDate>2025-06-19</ReleaseDate>
 	<ReleaseDateOriginal>2021-10-18</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>DFFOO portraits are included here. All presets support released and some planned Playable Character Pack characters. 
@@ -1725,7 +2221,7 @@ Changelog: Added support for new characters and costumes. Classic upscaled versi
 Mod Order: Place above Playable Character Pack, Beatrix Mod, Tantalus Mod, and Kupo UI Suite.
 Part of Kupo Mods formerly Mog Add-ons.
 	</Description>
-	<PatchNotes>Added PSX like Pluto Knight costume for Zidane</PatchNotes>
+	<PatchNotes>Added Support for new version of PCP</PatchNotes>
 	<Category>Visual</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/80</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/80dpdv5kn378cw27fay0q/KupoPortraits.zip?rlkey=dnb8htsnmqzoehuibij9tarxd&amp;dl=1</DownloadUrl>
@@ -1736,7 +2232,7 @@ Part of Kupo Mods formerly Mog Add-ons.
 	<SubMod>
 		<Name>Default Extended Cast</Name>
 		<InstallationPath>Features/PortraitDefault</InstallationPath>
-		<Description>Default Portraits</Description>
+		<Description>Default Portraits with extended support</Description>
 		<Group>g-port</Group>
 		<PreviewFile>preview/ext.jpg</PreviewFile>
 	</SubMod>
@@ -1770,7 +2266,6 @@ Part of Kupo Mods formerly Mog Add-ons.
 		<Name>PSX Like</Name>
 		<InstallationPath>Features/PortraitPSXLike</InstallationPath>
 		<Description>PSX Like Portraits</Description>
-		<Default/>
 		<Group>g-port</Group>
 		<PreviewFile>preview/psxlike.jpg</PreviewFile>
 	</SubMod>
@@ -1778,7 +2273,6 @@ Part of Kupo Mods formerly Mog Add-ons.
 		<Name>PSX Like Pluto Knights / White Mage </Name>
 		<InstallationPath>Features/PortraitPSXLikePCP</InstallationPath>
 		<Description>PSX Like Portraits</Description>
-		<Default/>
 		<Group>g-port-extra</Group>
 		<PreviewFile>preview/psxlike.jpg</PreviewFile>
 	</SubMod>	
@@ -1786,30 +2280,22 @@ Part of Kupo Mods formerly Mog Add-ons.
 
 <Mod>
 	<Name>Anniversary Portraits</Name>
-	<Version>0.9.2</Version>
+	<Version>0.9.3</Version>
+	<Priority>11</Priority>
 	<InstallationPath>AnniversaryPortraits</InstallationPath>
-	<ReleaseDate>2025-05-31</ReleaseDate>
+	<ReleaseDate>2025-06-10</ReleaseDate>
 	<ReleaseDateOriginal>2025-05-21</ReleaseDateOriginal>
 	<Author>Saro</Author>
 	<Description>Currently replaces the main party's character portraits with the 25th anniversary art.
 
-Placeholder art - Beatrix by Mugi, Marcus by nanpou0406.</Description>
-	<PatchNotes>- Remade all portraits using a higher resolution source and a much better upscaling technique
-	
-- Replaced Blank's portrait with the 23rd Anniversary art
-
-- Added black background option for black borders
-
-- Fixed alignment issues with borders
-
-- Updated preview images to align with changes
-
-- Reduced overall file size with better image compression
+Placeholder art - Marcus by nanpou0406 &amp; Cinna Concept Art.
+	</Description>
+	<PatchNotes>- Replaced Beatrix art with official FFTCG Art.
 	</PatchNotes>
 	<Category>Visual</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/99</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/ag6nzmsf30jehl5lqyy5q/AnniversaryPortraits.zip?rlkey=ppy9gsz3zk3zdaqksneeyzkpa&amp;st=frs31i1m&amp;dl=1</DownloadUrl>
-	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/99/99-1748676885-1006456053.png</PreviewFileUrl>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/99/99-1749532880-1472911301.png</PreviewFileUrl>
 </Mod>
 
 <Mod>
@@ -1826,7 +2312,7 @@ Placeholder art - Beatrix by Mugi, Marcus by nanpou0406.</Description>
 <Mod>
 	<Name>Triple Triad</Name>
 	<Version>1.0</Version>
-	<Priority>11</Priority>
+	<Priority>13</Priority>
 	<InstallationPath>TripleTriad</InstallationPath>
 	<ReleaseDateOriginal>25 Jul 2023</ReleaseDateOriginal>
 	<Author>DV</Author>
@@ -1841,7 +2327,7 @@ Change some card textures (add boss + characters)</Description>
 <Mod>
 	<Name>Launcher Themes</Name>
 	<Version>1.0.1</Version>
-	<Priority>19</Priority>
+	<Priority>21</Priority>
 	<InstallationPath>MemoriaLauncherThemes</InstallationPath>
 	<ReleaseDate>2025-5-12</ReleaseDate>
 	<ReleaseDateOriginal>2024-12-07</ReleaseDateOriginal>
@@ -1931,7 +2417,7 @@ Special citation to SamsamTS  for making this possible	</PatchNotes>
 <Mod>
 	<Name>Better Card Drops</Name>
 	<Version>1.1</Version>
-	<Priority>10</Priority>
+	<Priority>12</Priority>
 	<InstallationPath>BetterCardDrop</InstallationPath>
 	<ReleaseDateOriginal>2024-06-27</ReleaseDateOriginal>
 	<Author>DV</Author>
@@ -1979,7 +2465,7 @@ Idea by Snouz and made by DV.</Description>
 <Mod>
 	<Name>Modern Labels + </Name>
 	<Version>4.1.7</Version>
-	<Priority>13</Priority>	
+	<Priority>15</Priority>	
 	<InstallationPath>KupoModernLabels</InstallationPath>
 	<ReleaseDate>2025-05-31</ReleaseDate>
 	<ReleaseDateOriginal>2024-10-01</ReleaseDateOriginal>
@@ -2008,7 +2494,7 @@ Language of choice.
 <Mod>
 	<Name>Ukrainian Translation</Name>
 	<Version>1.0</Version>
-	<Priority>18</Priority>
+	<Priority>20</Priority>
 	<Author>Дракон Сходу (DragonOfTheEast)</Author>
 	<InstallationPath>TranslationUkr</InstallationPath>
 	<ReleaseDateOriginal>2024-05-02</ReleaseDateOriginal>
@@ -2025,7 +2511,7 @@ Language of choice.
 <Mod>
 	<Name>Hungarian Translation</Name>
 	<Version>1.0</Version>
-	<Priority>17</Priority>
+	<Priority>19</Priority>
 	<InstallationPath>TranslationHun</InstallationPath>
 	<ReleaseDate>2025-01-23</ReleaseDate>
 	<ReleaseDateOriginal>2016-09-21</ReleaseDateOriginal>
@@ -2042,9 +2528,49 @@ Eredeti telepítő: Evin</Description>
 </Mod>
 
 <Mod>
+	<Name>Tradução Português Brasil</Name>
+	<Version>3.0</Version>
+	<Priority>18</Priority>
+	<PreviewFile>preview/pt1.png</PreviewFile>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/82/82-1748996941-950777641.png</PreviewFileUrl>
+	<Author>dkPsycho/Brtraducoes</Author>
+	<ReleaseDate>01/06/2025</ReleaseDate>
+	<ReleaseDateOriginal>02/09/2022</ReleaseDateOriginal>
+	<InstallationPath>Tradução Português Brasil</InstallationPath>
+	<Category>Translation</Category>
+	<Website>https://steamcommunity.com/sharedfiles/filedetails/?id=2111796362</Website>
+	<MinimumMemoriaVersion>2024.05.19</MinimumMemoriaVersion>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/kyeir22qipyd7zm2mag8y/Tradu-o-Portugu-s-Brasil.rar?rlkey=ebsepmranfzogp6zobsezpc9m&amp;st=3tkt8qsg&amp;dl=1</DownloadUrl>
+	<Description>Tradução Completa para Português Brasil
+
+- Adicionada a opção de baixar a tradução diretamente no gerenciador de mods automaticamente.
+- Adicionada a opção de escolher entre itens, magias e habilidades em inglês ou português.
+- Adicionada a função de usar novos ícones de elementos nos status elementais como: Fogo, Raio, Gelo, etc...
+- Adicionada a opção de usar novos ícones curativos diretamente do idioma original. (Recomendado)
+- Adicionada a tradução das imagens das trocas de discos assim como era no PS1.
+- Adicionada a tradução das texturas dos nomes das cidades assim que entra no local.</Description>
+	<PatchNotes>A tradução é parcialmente compatível com os mods Beatrix, Alternate Fantasy e Trance Seek. Para usar junto com a tradução recomendo apagar os arquivos de textos/diálogos dos mods. Para mais detalhes acompanhe o Discord ou canal do Youtube(dkPsycho).</PatchNotes>
+	<Header>Opcionais</Header>
+	<SubMod>
+		<Default/>
+		<Name>Ícones: Novos Ícones Curativos</Name>
+		<InstallationPath>Opcionais/Novos Ícones Curativos</InstallationPath>
+		<Description>Novos ícones curativos para fazer mais sentido com a tradução apartir do idioma original.</Description>
+		<PreviewFile>preview/i1.png</PreviewFile>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Name>Tradução: Itens e Magias em Inglês</Name>
+		<InstallationPath>Opcionais/Tradução Itens e Magias em Inglês</InstallationPath>
+		<Description>Itens, Magias e Habilidades em Inglês</Description>
+		<PreviewFile>preview/it1.png</PreviewFile>
+	</SubMod>
+</Mod>
+
+<Mod>
 	<Name>Modern German</Name>
 	<Version>1.0</Version>
-	<Priority>12</Priority>
+	<Priority>14</Priority>
 	<Author>Plasquar</Author>
 	<InstallationPath>ModernGerman</InstallationPath>
 	<Category>Translation</Category>
@@ -2058,9 +2584,7 @@ Eredeti telepítő: Evin</Description>
 </Mod>
 
 <!--
-TODO: manage translation mods
-many download links should be changed and several ones use the "[Import] Text" feature of Memoria instead of "[Mod] FolderNames"
--->
+This mod is outdated and has never been compatible with the Mod Manager (it uses the [Import] feature of Memoria.ini)
 <Mod>
 	<Name>Brazilian-Portuguese Translation</Name>
 	<InstallationPath>BrazilianTranslation</InstallationPath>
@@ -2086,7 +2610,7 @@ Note: this mod doesn't support automatic installation yet. Download it from its 
 	<Website>https://steamcommunity.com/sharedfiles/filedetails/?id=2111796362</Website>
 	<PreviewFileUrl>https://i.imgur.com/Zpi8Nc6.png</PreviewFileUrl>
 </Mod>
-	 
+-->
 <!-- DEAD LINK 
 <Mod>
 	<Name>Polish Translation</Name>
@@ -2104,7 +2628,7 @@ Note: this mod doesn't support automatic installation yet. Download it from its 
 <Mod>
 	<Name>Russian Translation</Name>
 	<Version>1.0</Version>
-	<Priority>15</Priority>
+	<Priority>17</Priority>
 	<InstallationPath>TranslationRu</InstallationPath>
 	<ReleaseDate>2024-11-22</ReleaseDate>
 	<ReleaseDateOriginal>2013-12-27</ReleaseDateOriginal>
@@ -2144,7 +2668,7 @@ Check them out at https://www.nexusmods.com/finalfantasy9/mods/</Description>
 <Mod>
 	<Name>Chinese (FFSky Rebirth)</Name>
 	<Version>0.9</Version>
-	<Priority>14</Priority>
+	<Priority>16</Priority>
 	<InstallationPath>Chinese (FFSky Rebirth)</InstallationPath>
 	<ReleaseDate>2025-03-24</ReleaseDate>
 	<ReleaseDateOriginal>2025-03-24</ReleaseDateOriginal>
