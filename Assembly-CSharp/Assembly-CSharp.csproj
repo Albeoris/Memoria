@@ -1166,6 +1166,7 @@
     <Compile Include="Global\XInputTestCS.cs" />
     <Compile Include="Global\ZidaneAnimationController.cs" />
     <Compile Include="Memoria\Assets\EncryptFontManager.cs" />
+    <Compile Include="Memoria\BattleCommands\Integration\CommandDataAdapter.cs" />
     <Compile Include="Memoria\Characters\ActorFlags.cs" />
     <Compile Include="Memoria\Characters\CharacterAnimation.cs" />
     <Compile Include="Memoria\Characters\CharacterBuilder.cs" />
@@ -1436,6 +1437,10 @@
     <Compile Include="Unity\IO\Compression\SR.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Memoria.BattleCommands\Memoria.BattleCommands.csproj">
+      <Project>{A9F5B8C7-1D6E-4A8B-9E2C-3F7D9A5E8B1C}</Project>
+      <Name>Memoria.BattleCommands</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Memoria.Prime\Memoria.Prime.csproj">
       <Project>{110f557e-abff-44c5-886a-c7c7f0614558}</Project>
       <Name>Memoria.Prime</Name>
