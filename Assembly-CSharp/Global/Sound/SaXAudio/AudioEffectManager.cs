@@ -18,6 +18,7 @@ namespace Global.Sound.SaXAudio
         private static Dictionary<Int32, EffectPreset> fieldIDPresets = new Dictionary<Int32, EffectPreset>();
         private static Dictionary<Int32, EffectPreset> battleIDPresets = new Dictionary<Int32, EffectPreset>();
         private static Dictionary<Int32, EffectPreset> battleBgIDPresets = new Dictionary<Int32, EffectPreset>();
+        private static Dictionary<String, EffectPreset> resourceIDPresets = new Dictionary<String, EffectPreset>();
         private static List<EffectPreset> conditionalPresets = new List<EffectPreset>();
         private static EffectPreset? currentPreset = null;
 
@@ -98,35 +99,38 @@ namespace Global.Sound.SaXAudio
             }).Start();
         }
 
-        public static void ApplyConditionalEffects(Int32 soundID, SoundProfile profile, Int32 bus)
+        public static EffectPreset? GetPreset(SoundProfile profile, Int32 bus)
         {
-            if (!IsSaXAudio || !initialized || conditionalPresets.Count == 0) return;
+            if (!IsSaXAudio || !initialized)
+                return null;
 
+            EffectPreset? preset = null;
+            if (resourceIDPresets.ContainsKey(profile.ResourceID))
+                preset  = resourceIDPresets[profile.ResourceID];
+
+            // resourceIDs gets priority
+            if (preset != null && (String.IsNullOrEmpty(preset.Value.Condition) || EvaluatePresetCondition(profile, preset.Value.Condition, preset.Value.Name)))
+                return preset;
+
+            // then conditional
             for (Int32 i = 0; i < conditionalPresets.Count; i++)
             {
-                EffectPreset preset = conditionalPresets[i];
-                if ((preset.Layers == EffectPreset.Layer.None || preset.IsBusInLayers(bus)) && EvaluatePresetCondition(profile, ref preset))
-                {
-                    ApplyPresetSound(ref preset, soundID);
-                    Log.Message($"[AudioEffectManager] Applied preset '{preset.Name}' to sound '{profile.ResourceID}'");
-                }
+                preset = conditionalPresets[i];
+                if ((preset.Value.Layers == EffectPreset.Layer.None || preset.Value.IsBusInLayers(bus)) && EvaluatePresetCondition(profile, preset.Value.Condition, preset.Value.Name))
+                    return preset;
             }
+
+            // then filter current preset
+            preset = currentPreset;
+            if (preset != null && preset.Value.IsBusInLayers(bus) && !String.IsNullOrEmpty(preset.Value.Condition) && !EvaluatePresetCondition(profile, preset.Value.Condition, preset.Value.Name))
+                return new EffectPreset(); // empty preset because we want to exclude that particular sound
+
+            return null;
         }
 
-        public static Boolean FilterCurrentPreset(SoundProfile profile, Int32 bus)
+        public static Boolean EvaluatePresetCondition(SoundProfile profile, String condition, String presetName)
         {
-            if (!IsSaXAudio || !initialized || currentPreset == null)
-                return true;
-            EffectPreset preset = currentPreset.Value;
-            if (String.IsNullOrEmpty(preset.Condition) || !preset.IsBusInLayers(bus))
-                return true; // We only return false if the actual evaluation fails
-
-            return EvaluatePresetCondition(profile, ref preset);
-        }
-
-        public static Boolean EvaluatePresetCondition(SoundProfile profile, ref EffectPreset preset)
-        {
-            Expression c = new Expression(preset.Condition);
+            Expression c = new Expression(condition);
             c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
             c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
             c.EvaluateParameter += NCalcUtility.worldNCalcParameters;
@@ -148,11 +152,28 @@ namespace Global.Sound.SaXAudio
             }
             catch (Exception e)
             {
-                Log.Error($"[AudioEffectManager] Couldn't evaluate condition: '{preset.Condition.Trim()}' in preset '{preset.Name}'");
+                Log.Error($"[AudioEffectManager] Couldn't evaluate condition: '{condition.Trim()}' in preset '{presetName}'");
                 Log.Error(e);
             }
 
             return false;
+        }
+
+        public static void ApplyPresetOnSound(EffectPreset preset, Int32 soundID, String soundName)
+        {
+            if (preset.Effects == EffectPreset.Effect.None) return;
+
+            Boolean reverb = (preset.Effects & EffectPreset.Effect.Reverb) != 0;
+            Boolean eq = (preset.Effects & EffectPreset.Effect.Eq) != 0;
+            Boolean echo = (preset.Effects & EffectPreset.Effect.Echo) != 0;
+            Boolean volume = (preset.Effects & EffectPreset.Effect.Volume) != 0;
+
+            if (reverb) SaXAudio.SetReverb(soundID, preset.Reverb);
+            if (eq) SaXAudio.SetEq(soundID, preset.Eq);
+            if (echo) SaXAudio.SetEcho(soundID, preset.Echo);
+            if (volume) SaXAudio.SetVolume(soundID, preset.Volume);
+
+            Log.Message($"[AudioEffectManager] Applied preset '{preset.Name}' on sound '{soundName}'");
         }
 
         public static void ResetEffects()
@@ -212,6 +233,12 @@ namespace Global.Sound.SaXAudio
                             battleBgIDPresets[battleBgID].RemoveIDs();
                             listed = true;
                         }
+                        foreach (String resourceID in preset.ResourceIDs)
+                        {
+                            resourceIDPresets[resourceID] = preset;
+                            resourceIDPresets[resourceID].RemoveIDs();
+                            listed = true;
+                        }
                         if (!listed && !String.IsNullOrEmpty(preset.Condition))
                         {
                             conditionalPresets.Add(preset);
@@ -266,19 +293,6 @@ namespace Global.Sound.SaXAudio
             else SaXAudio.SetVolume(bus, 1f, 0, true);
         }
 
-        private static void ApplyPresetSound(ref EffectPreset preset, Int32 soundID)
-        {
-            Boolean reverb = (preset.Effects & EffectPreset.Effect.Reverb) != 0;
-            Boolean eq = (preset.Effects & EffectPreset.Effect.Eq) != 0;
-            Boolean echo = (preset.Effects & EffectPreset.Effect.Echo) != 0;
-            Boolean volume = (preset.Effects & EffectPreset.Effect.Volume) != 0;
-
-            if (reverb) SaXAudio.SetReverb(soundID, preset.Reverb);
-            if (eq) SaXAudio.SetEq(soundID, preset.Eq);
-            if (echo) SaXAudio.SetEcho(soundID, preset.Echo);
-            if (volume) SaXAudio.SetVolume(soundID, preset.Volume);
-        }
-
         public struct EffectPreset
         {
             public enum Effect : Byte
@@ -328,6 +342,7 @@ namespace Global.Sound.SaXAudio
 
             public Layer Layers = Layer.None;
             public HashSet<Int32> FieldIDs = new HashSet<Int32>();
+            public HashSet<String> ResourceIDs = new HashSet<String>();
             public HashSet<Int32> BattleIDs = new HashSet<Int32>();
             public HashSet<Int32> BattleBgIDs = new HashSet<Int32>();
 
@@ -404,6 +419,17 @@ namespace Global.Sound.SaXAudio
                     }
                 }
 
+                ids = tokens[i++].Split('|');
+                if (ids.Length > 0)
+                {
+                    ResourceIDs.Clear();
+                    foreach (String id in ids)
+                    {
+                        if (id.Length > 0)
+                            ResourceIDs.Add(id);
+                    }
+                }
+
                 Condition = tokens[i++].Replace('\x0A', ';');
             }
 
@@ -452,6 +478,9 @@ namespace Global.Sound.SaXAudio
                 builder.Append(String.Join("|", BattleBgIDs.Select(x => x.ToString()).ToArray()));
 
                 builder.Append(separator);
+                builder.Append(String.Join("|", ResourceIDs.ToArray()));
+
+                builder.Append(separator);
                 builder.Append(Condition.Trim().Replace(';', '\x0A'));
 
                 return builder.ToString();
@@ -462,6 +491,7 @@ namespace Global.Sound.SaXAudio
                 FieldIDs = null;
                 BattleIDs = null;
                 BattleBgIDs = null;
+                ResourceIDs = null;
             }
         }
 

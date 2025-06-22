@@ -481,6 +481,7 @@ namespace SoundDebugRoom
                             GUILayout.FlexibleSpace();
                             if (GUILayout.Button(soundViewController.IsReverbEnabled ? "Disable" : "Enable", GUILayout.Width(buttonWidth)))
                             {
+                                presetChanged = true;
                                 soundViewController.IsReverbEnabled = !soundViewController.IsReverbEnabled;
                                 if (soundViewController.IsReverbEnabled)
                                     soundViewController.SetReverb();
@@ -694,6 +695,7 @@ namespace SoundDebugRoom
                             GUILayout.FlexibleSpace();
                             if (GUILayout.Button(soundViewController.IsEqEnabled ? "Disable" : "Enable", GUILayout.Width(buttonWidth)))
                             {
+                                presetChanged = true;
                                 soundViewController.IsEqEnabled = !soundViewController.IsEqEnabled;
                                 if (soundViewController.IsEqEnabled)
                                     soundViewController.SetEq();
@@ -828,6 +830,7 @@ namespace SoundDebugRoom
                     GUILayout.FlexibleSpace();
                     if (GUILayout.Button(soundViewController.IsEchoEnabled ? "Disable" : "Enable", GUILayout.Width(buttonWidth)))
                     {
+                        presetChanged = true;
                         soundViewController.IsEchoEnabled = !soundViewController.IsEchoEnabled;
                         if (soundViewController.IsEchoEnabled)
                             soundViewController.SetEcho();
@@ -885,6 +888,7 @@ namespace SoundDebugRoom
                     GUILayout.FlexibleSpace();
                     if (GUILayout.Button(soundViewController.IsEffectVolumeEnabled ? "Disable" : "Enable", GUILayout.Width(buttonWidth)))
                     {
+                        presetChanged = true;
                         soundViewController.IsEffectVolumeEnabled = !soundViewController.IsEffectVolumeEnabled;
                         soundViewController.SetEffectVolume();
                     }
@@ -1185,27 +1189,36 @@ namespace SoundDebugRoom
 
                     GUILayout.BeginHorizontal();
                     {
-                        if (GUILayout.Button($"FieldID ({preset.FieldIDs.Count})", GUILayout.Width((width - 20) / 3f)))
+                        if (GUILayout.Button($"FieldID ({preset.FieldIDs.Count})", GUILayout.Width((width - 20) / 2f)))
                         {
                             presetFilterCaption = "FieldID";
                             presetFilterIndex = presetFilterCurrent = FF9StateSystem.Common.FF9.fldMapNo;
                         }
                         GUILayout.FlexibleSpace();
-                        if (GUILayout.Button($"BattleID ({preset.BattleIDs.Count})", GUILayout.Width((width - 20) / 3f)))
+                        if (GUILayout.Button($"ResourceID ({preset.ResourceIDs.Count})", GUILayout.Width((width - 20) / 2f)))
                         {
-                            presetFilterCaption = "BattleID";
-                            presetFilterIndex = presetFilterCurrent = FF9StateSystem.Battle.battleMapIndex;
-                        }
-                        GUILayout.FlexibleSpace();
-                        if (GUILayout.Button($"BattleBgID ({preset.BattleBgIDs.Count})", GUILayout.Width((width - 20) / 3f)))
-                        {
-                            presetFilterCaption = "BattleBgID";
-                            presetFilterIndex = presetFilterCurrent = battlebg.nf_BbgNumber;
+                            presetFilterCaption = "ResourceID";
                         }
                     }
                     GUILayout.EndHorizontal();
 
-                    GUILayout.Space(5);
+                    GUILayout.BeginHorizontal();
+                    {
+                        if (GUILayout.Button($"BattleBgID ({preset.BattleBgIDs.Count})", GUILayout.Width((width - 20) / 2f)))
+                        {
+                            presetFilterCaption = "BattleBgID";
+                            presetFilterIndex = presetFilterCurrent = battlebg.nf_BbgNumber;
+                        }
+                        GUILayout.FlexibleSpace();
+                        if (GUILayout.Button($"BattleID ({preset.BattleIDs.Count})", GUILayout.Width((width - 20) / 2f)))
+                        {
+                            presetFilterCaption = "BattleID";
+                            presetFilterIndex = presetFilterCurrent = FF9StateSystem.Battle.battleMapIndex;
+                        }
+                    }
+                GUILayout.EndHorizontal();
+
+                GUILayout.Space(5);
                     GUILayout.Label("NCalc Condition");
                     String condition = preset.Condition;
                     preset.Condition = GUILayout.TextField(preset.Condition);
@@ -1294,6 +1307,12 @@ namespace SoundDebugRoom
                 return;
             }
 
+            if(presetFilterCaption == "ResourceID")
+            {
+                BuildPresetFilterResourceIDList(width);
+                return;
+            }
+
             HashSet<Int32> presetFilterIds;
             if (presetFilterCaption == "FieldID")
                 presetFilterIds = soundViewController.CurrentEffect.FieldIDs;
@@ -1355,6 +1374,52 @@ namespace SoundDebugRoom
             GUILayout.EndScrollView();
         }
 
+        private void BuildPresetFilterResourceIDList(Single width)
+        {
+            HashSet<String> presetFilterIds = soundViewController.CurrentEffect.ResourceIDs;
+
+            GUILayout.BeginHorizontal();
+            {
+                GUILayout.Label(presetFilterCaption);
+                GUILayout.FlexibleSpace();
+
+                String value = presetFilterResourceIndex;
+                String result = GUILayout.TextField(value, GUILayout.Width(width / 2f));
+                if (result != value)
+                {
+                    presetFilterResourceIndex = Regex.Replace(result, @"[;|]", "");
+                }
+                if (GUILayout.Button("Add", GUILayout.ExpandWidth(false)) && !String.IsNullOrEmpty(presetFilterResourceIndex))
+                {
+                    presetChanged = true;
+                    presetFilterIds.Add(presetFilterResourceIndex);
+                }
+            }
+            GUILayout.EndHorizontal();
+
+            soundPresetManagerScrollPosition = GUILayout.BeginScrollView(soundPresetManagerScrollPosition);
+            String toDelete = null;
+            foreach (String id in presetFilterIds.OrderBy(x => x))
+            {
+                GUILayout.BeginHorizontal();
+                {
+                    GUILayout.Button($"{id}");
+
+                    if (GUILayout.Button(" Delete ", GUILayout.ExpandWidth(false)))
+                    {
+                        toDelete = id;
+                    }
+                }
+                GUILayout.EndHorizontal();
+            }
+            if (toDelete != null)
+            {
+                presetChanged = true;
+                presetFilterIds.Remove(toDelete);
+            }
+            GUILayout.EndScrollView();
+        }
+
         public Single SoundVolume = 1f;
 
         public Single SeekerPosition;
@@ -1384,6 +1449,8 @@ namespace SoundDebugRoom
         private String presetFilterCaption = null;
 
         private Int32 presetFilterIndex = Int32.MinValue;
+
+        public String presetFilterResourceIndex = "";
 
         private Int32 presetFilterCurrent = Int32.MinValue;
 

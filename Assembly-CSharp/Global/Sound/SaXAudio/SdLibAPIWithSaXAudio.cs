@@ -145,7 +145,8 @@ namespace Global.Sound.SaXAudio
                     break;
             }
 
-            if (busID > 0 && !AudioEffectManager.FilterCurrentPreset(data.Profile, busID))
+            AudioEffectManager.EffectPreset? preset = AudioEffectManager.GetPreset(data.Profile, busID);
+            if (preset != null && busID != 0)
             {
                 Log.Message($"[AudioEffectManager] Filtered '{data.Profile.ResourceID}' from bus {busID}");
                 busID = 0;
@@ -163,7 +164,8 @@ namespace Global.Sound.SaXAudio
                 }
             }
 
-            AudioEffectManager.ApplyConditionalEffects(soundID, data.Profile, busID);
+            if (preset != null)
+                AudioEffectManager.ApplyPresetOnSound(preset.Value, soundID, data.Profile.Name);
 
             LastSoundID = soundID;
             return soundID;

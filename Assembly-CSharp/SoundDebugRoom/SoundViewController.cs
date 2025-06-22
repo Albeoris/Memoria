@@ -114,6 +114,7 @@ namespace SoundDebugRoom
             }
             else
             {
+                soundView.presetFilterResourceIndex = "";
                 activeSound = null;
                 IsPlay = false;
                 return;
@@ -121,6 +122,7 @@ namespace SoundDebugRoom
 
             IsPlay = true;
             activeSound.SoundID = ISdLibAPIProxy.Instance.LastSoundID;
+            soundView.presetFilterResourceIndex = activeSound.ResourceID;
             ApplySettings();
         }
 
@@ -427,8 +429,10 @@ namespace SoundDebugRoom
             filteredPlaylist = ModVoiceDictionary[currentVoiceMod];
             if (voiceFilter.Length > 0)
             {
-                filteredPlaylist = filteredPlaylist.Where((p) => p.ResourceID.Contains(voiceFilter)).ToList();
+                filteredPlaylist = filteredPlaylist.Where((p) => p.ResourceID.ToLower().Contains(voiceFilter.ToLower())).ToList();
             }
+            if (filteredPlaylist.Count == 0)
+                filteredPlaylist = ModVoiceDictionary[currentVoiceMod];
             GeneratePlaylistData();
         }
 
@@ -451,6 +455,7 @@ namespace SoundDebugRoom
                 CurrentEffect.FieldIDs = new HashSet<int>(CurrentEffect.FieldIDs);
                 CurrentEffect.BattleIDs = new HashSet<int>(CurrentEffect.BattleIDs);
                 CurrentEffect.BattleBgIDs = new HashSet<int>(CurrentEffect.BattleBgIDs);
+                CurrentEffect.ResourceIDs = new HashSet<String>(CurrentEffect.ResourceIDs);
                 EffectPresetDictionary[name] = CurrentEffect;
             }
             catch (Exception e)
@@ -477,6 +482,7 @@ namespace SoundDebugRoom
             CurrentEffect.FieldIDs = new HashSet<int>(CurrentEffect.FieldIDs);
             CurrentEffect.BattleIDs = new HashSet<int>(CurrentEffect.BattleIDs);
             CurrentEffect.BattleBgIDs = new HashSet<int>(CurrentEffect.BattleBgIDs);
+            CurrentEffect.ResourceIDs = new HashSet<String>(CurrentEffect.ResourceIDs);
             if (IsReverbEnabled) SetReverb();
             if (IsEqEnabled) SetEq();
             if (IsEchoEnabled) SetEcho();
