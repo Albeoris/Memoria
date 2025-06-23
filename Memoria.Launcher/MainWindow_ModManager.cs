@@ -889,7 +889,7 @@ namespace Memoria.Launcher
                     downloadingMod.DownloadSpeed = $"{WaitingEmoji} {(String)Lang.Res["ModEditor.Extracting"]}";
                     downloadingMod.RemainingTime = "";
                     String dots = "";
-                    while (true)
+                    while (downloadingMod != null)
                     {
                         try
                         {
@@ -903,8 +903,11 @@ namespace Memoria.Launcher
                         }
                         catch
                         {
-                            downloadingMod.DownloadSpeed = "";
-                            downloadingMod.RemainingTime = "";
+                            if (downloadingMod != null)
+                            {
+                                downloadingMod.DownloadSpeed = "";
+                                downloadingMod.RemainingTime = "";
+                            }
                         }
                     }
                 });
@@ -1037,77 +1040,93 @@ namespace Memoria.Launcher
                 }
                 else if (downloadingMod.DownloadFormat.StartsWith("SingleFileWithPath:"))
                 {
-                    Boolean proceedNext = true;
-                    String modInstallPath = downloadingMod.InstallationPath ?? downloadingModName;
-                    if (Directory.Exists(modInstallPath))
+                    try
+                    {
+                        Boolean proceedNext = true;
+                        String modInstallPath = downloadingMod.InstallationPath ?? downloadingModName;
+                        if (Directory.Exists(modInstallPath))
+                        {
+                            // TODO language:
+                            if (MessageBox.Show($"The current version of the mod folder, {modInstallPath}, will be deleted before moving the new version.\nProceed?", "Updating", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                            {
+                                Directory.Delete(modInstallPath, true);
+                            }
+                            else
+                            {
+                                Process.Start(Path.GetFullPath(Path.GetDirectoryName(path)));
+                                proceedNext = false;
+                            }
+                        }
+                        if (proceedNext)
+                        {
+                            String filePath = downloadingMod.DownloadFormat.Substring("SingleFileWithPath:".Length);
+                            String destPath = modInstallPath + "/" + filePath;
+                            Directory.CreateDirectory(destPath.Substring(0, destPath.LastIndexOf('/')));
+                            File.Move(path + ".zip", destPath);
+                            downloadingMod.GenerateDescription(modInstallPath);
+                            String singleFileList = null;
+                            if (filePath.StartsWith("StreamingAssets/", StringComparison.OrdinalIgnoreCase))
+                                singleFileList = filePath.Substring("StreamingAssets/".Length).ToLower();
+                            else if (filePath.StartsWith("FF9_Data/", StringComparison.OrdinalIgnoreCase))
+                                singleFileList = filePath.Substring("FF9_Data/".Length).ToLower();
+                            else if (Mod.MEMORIA_ROOT_FILES.Any(str => String.Compare(filePath, str, StringComparison.OrdinalIgnoreCase) == 0))
+                                singleFileList = filePath.ToLower();
+                            if (!String.IsNullOrEmpty(singleFileList) && !Mod.ARCHIVE_BUNDLE_FILES.Contains(singleFileList))
+                                File.WriteAllText(modInstallPath + "/" + Mod.MOD_CONTENT_FILE, singleFileList + "\n");
+                            success = true;
+                        }
+                    }
+                    catch (Exception err)
                     {
                         // TODO language:
-                        if (MessageBox.Show($"The current version of the mod folder, {modInstallPath}, will be deleted before moving the new version.\nProceed?", "Updating", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                        MessageBox.Show($"Error while installing the mod {path} (SingleFileWithPath)\n\n{err.Message}", "Error", MessageBoxButton.OK);
+                    }
+                }
+                try
+                {
+                    Boolean activateTheNewMod = success;
+                    if (success)
+                    {
+                        if (!Directory.EnumerateFileSystemEntries(Mod.INSTALLATION_TMP).GetEnumerator().MoveNext())
+                            Directory.Delete(Mod.INSTALLATION_TMP);
+                        Mod previousMod = Mod.SearchWithName(ModListInstalled, downloadingModName);
+                        if (previousMod != null)
                         {
-                            Directory.Delete(modInstallPath, true);
+                            previousMod.CurrentVersion = null;
+                            activateTheNewMod = false;
                         }
-                        else
+                    }
+                    DownloadList.Remove(downloadingMod);
+                    downloadingMod = null;
+                    if (DownloadList.Count > 0)
+                        DownloadStart(DownloadList[0]);
+                    else
+                    {
+                        lstDownloads.MinHeight = 0;
+                        lstDownloads.Height = 0;
+                        btnCancelStackpanel.Height = 0;
+                    }
+                    UpdateModListInstalled();
+                    CheckForValidModFolder();
+                    UpdateCatalogInstallationState();
+                    if (activateTheNewMod)
+                    {
+                        Mod newMod = Mod.SearchWithName(ModListInstalled, downloadingModName);
                         {
-                            Process.Start(Path.GetFullPath(Path.GetDirectoryName(path)));
-                            proceedNext = false;
+                            newMod.IsActive = true;
+                            foreach (Mod submod in newMod.SubMod)
+                                submod.IsActive = submod.IsDefault;
+                            newMod.TryApplyPreset();
                         }
                     }
-                    if (proceedNext)
-                    {
-                        String filePath = downloadingMod.DownloadFormat.Substring("SingleFileWithPath:".Length);
-                        String destPath = modInstallPath + "/" + filePath;
-                        Directory.CreateDirectory(destPath.Substring(0, destPath.LastIndexOf('/')));
-                        File.Move(path + ".zip", destPath);
-                        downloadingMod.GenerateDescription(modInstallPath);
-                        String singleFileList = null;
-                        if (filePath.StartsWith("StreamingAssets/", StringComparison.OrdinalIgnoreCase))
-                            singleFileList = filePath.Substring("StreamingAssets/".Length).ToLower();
-                        else if (filePath.StartsWith("FF9_Data/", StringComparison.OrdinalIgnoreCase))
-                            singleFileList = filePath.Substring("FF9_Data/".Length).ToLower();
-                        else if (Mod.MEMORIA_ROOT_FILES.Any(str => String.Compare(filePath, str, StringComparison.OrdinalIgnoreCase) == 0))
-                            singleFileList = filePath.ToLower();
-                        if (!String.IsNullOrEmpty(singleFileList) && !Mod.ARCHIVE_BUNDLE_FILES.Contains(singleFileList))
-                            File.WriteAllText(modInstallPath + "/" + Mod.MOD_CONTENT_FILE, singleFileList + "\n");
-                        success = true;
-                    }
+                    CheckOutdatedAndIncompatibleMods();
+                    UpdateModSettings();
                 }
-                Boolean activateTheNewMod = success;
-                if (success)
+                catch (Exception err)
                 {
-                    if (!Directory.EnumerateFileSystemEntries(Mod.INSTALLATION_TMP).GetEnumerator().MoveNext())
-                        Directory.Delete(Mod.INSTALLATION_TMP);
-                    Mod previousMod = Mod.SearchWithName(ModListInstalled, downloadingModName);
-                    if (previousMod != null)
-                    {
-                        previousMod.CurrentVersion = null;
-                        activateTheNewMod = false;
-                    }
+                    // TODO language:
+                    MessageBox.Show($"Error while activating the mod {path}\n\n{err.Message}", "Error", MessageBoxButton.OK);
                 }
-                DownloadList.Remove(downloadingMod);
-                downloadingMod = null;
-                if (DownloadList.Count > 0)
-                    DownloadStart(DownloadList[0]);
-                else
-                {
-                    lstDownloads.MinHeight = 0;
-                    lstDownloads.Height = 0;
-                    btnCancelStackpanel.Height = 0;
-                }
-                UpdateModListInstalled();
-                CheckForValidModFolder();
-                UpdateCatalogInstallationState();
-                if (activateTheNewMod)
-                {
-                    Mod newMod = Mod.SearchWithName(ModListInstalled, downloadingModName);
-                    {
-                        newMod.IsActive = true;
-                        foreach (Mod submod in newMod.SubMod)
-                            submod.IsActive = submod.IsDefault;
-                        newMod.TryApplyPreset();
-                    }
-                }
-                CheckOutdatedAndIncompatibleMods();
-                UpdateModSettings();
             });
         }
         private void DownloadCatalogEnd(Object sender, AsyncCompletedEventArgs e)
