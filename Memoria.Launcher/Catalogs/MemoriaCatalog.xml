@@ -1910,6 +1910,74 @@ added another frame option	</PatchNotes>
 </Mod>
 
 <Mod>
+	<Name>Mistwake UI</Name>
+	<Version>1.0</Version>
+	<InstallationPath>MistwakeUI</InstallationPath>
+	<Author>Daniel Vilela / dkPsycho</Author>
+	<ReleaseDate>2025-06-22</ReleaseDate>
+	<ReleaseDateOriginal>2025-06-22</ReleaseDateOriginal>
+	<Description>Mistwake UI é mais do que uma repaginação visual de Final Fantasy IX — é uma homenagem.
+Criado por fãs que cresceram encantados com cada detalhe dessa obra-prima, o mod nasceu do desejo de retribuir o impacto que o jogo teve em nossas vidas. Com uma releitura respeitosa e detalhista, buscamos valorizar tudo o que fez de FFIX um clássico dos anos 2000, exaltando sua beleza com um novo olhar.
+
+Esta versão inclui:
+Novo visual para menus, interface, caixa de diálogo e outros elementos refinados
+Novos retratos para todos os personagens, incluindo secundários e extras
+Novas artes exclusivas para cada um dos 8 protagonistas no momento em que são recrutados
+Novas artes de fundo, para a tela inicial, Game Over e transições de disco
+Novas apresentações dos nomes de mapas, agora acompanhadas por ícones que representam cada local
+
+Mistwake é uma carta de amor ao mundo de Gaia — e um presente para todos que, como nós, se emocionaram com ele.
+
+English US
+
+Mistwake UI is more than just a visual overhaul of Final Fantasy IX — it’s a tribute.
+Created by fans who grew up mesmerized by every detail of this masterpiece, the mod was born out of a desire to give back for the impact the game had on our lives. With a respectful and meticulous reinterpretation, we aimed to honor everything that made FFIX a classic of the 2000s, enhancing its beauty through a fresh perspective.
+
+This version includes:
+
+A redesigned look for menus, interface, dialogue boxes, and other refined elements
+New portraits for all characters, including side characters and extras
+Exclusive new artwork for each of the 8 protagonists at the moment they are recruited
+New background illustrations for the title screen, Game Over, and disc transitions
+New map name presentations, now accompanied by icons that represent each location
+Mistwake is a love letter to the world of Gaia — and a gift to everyone who, like us, was moved by it.
+	</Description>
+	<PatchNotes>IMPORTANTE: Para vivenciar o mod em sua forma mais refinada, recomendamos o uso da fonte Newsreader 14pt. Ela não está ativada por padrão, mas está inclusa no pacote do mod. Basta instalá-la e selecioná-la manualmente nas configurações no launcher do Memoria e aproveitar toda a elegância visual que Mistwake propõe.</PatchNotes>
+	<MinimumMemoriaVersion>2025.05.12</MinimumMemoriaVersion>
+	<Category>UI</Category>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/104</Website>
+	<PreviewFile>preview/Capa.png</PreviewFile>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/104/104-1750651533-1890299274.png</PreviewFileUrl>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/28hn1wkp6lsbufbb7vrhj/Mistwake-UI.zip?rlkey=h2o5y0fqw1qd716dxby7lfk5u&amp;st=vbdwg5ca&amp;dl=1</DownloadUrl>
+	<Header>UI Themes</Header>
+	<SubMod>
+		<Default/>
+		<Name>Visual: Mistwake Interface</Name>
+		<InstallationPath>Opcionais/Mistwake Interface</InstallationPath>
+		<Description>Muda a estética e visual dos menus e caixa de diálogo.</Description>
+		<PreviewFile>preview/Visual1.png</PreviewFile>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Default/>
+		<Name>Visual: Mistwake Retratos</Name>
+		<InstallationPath>Opcionais/Mistwake Retratos</InstallationPath>
+		<Description>Muda a estética dos avatares dos personagens.</Description>
+		<PreviewFile>preview/Visual2.png</PreviewFile>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Default/>
+		<Name>Visual: Mistawake Retratos Extra</Name>
+		<InstallationPath>Opcionais/Mistawake Retratos Extra</InstallationPath>
+		<Description>Muda a estética dos avatares dos personagens com as roupas extras.</Description>
+		<PreviewFile>preview/Teste</PreviewFile>
+		<Default/>
+	</SubMod>
+</Mod>
+
+
+<Mod>
 	<Name>Playstation Sounds</Name>
 	<Version>2.2</Version>
 	<Priority>-22</Priority>
