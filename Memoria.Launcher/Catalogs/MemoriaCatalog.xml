@@ -234,8 +234,7 @@ Note : To avoid compatibility issues, Quality of the Ifa should be sorted to the
 	<SubMod>
 		<Name>Better Gravity Spell</Name>
 		<InstallationPath>BetterGravity</InstallationPath>
-		<Description>
-Make Gravity more usefull.
+		<Description>Make Gravity more usefull.
 - Gravity Spell never miss, like a Magic Attack.
 - Can work now on boss but the formula is based on their current HP + less power.
 		</Description>
@@ -245,8 +244,8 @@ Make Gravity more usefull.
 		<Name>Better Healer (SA)</Name>
 		<InstallationPath>BetterHealer</InstallationPath>
 		<Description>
-			The attack never miss on an ally + ignore defence of the target
-			(only player), making the heal much powerful (feature from Trance Seek).
+The attack never miss on an ally + ignore defence of the target
+(only player), making the heal much powerful (feature from Trance Seek).
 		</Description>
 		<PreviewFile>BetterHealer/Thumbnail.jpg</PreviewFile>
 	</SubMod>
@@ -291,12 +290,139 @@ More models to come later when i get time.
 </Mod>
 
 <Mod>
+	<Name>Doppelgängers</Name>
+	<Version>1.0</Version>
+	<InstallationPath>Doppelgängers</InstallationPath>
+	<ReleaseDate>21 Jun 2025</ReleaseDate>
+	<ReleaseDateOriginal>21 Jun 2025</ReleaseDateOriginal>
+	<Author>Tetra Gomez, NocturnalHanna and DV</Author>
+	<Category>Gameplay</Category>
+	<PreviewFileUrl>https://i.ibb.co/ccc19T9S/Doppelgangers.jpg</PreviewFileUrl>
+	<PreviewFile>Thumbnail/Doppelgängers.jpg</PreviewFile>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/pdoz5xvtdrfefsdlu48y9/Doppelgangers.zip?rlkey=0b3cim4hiuqgi3jn9um0rhbtb&amp;dl=1</DownloadUrl>
+	<IncompatibleWith>AlternateFantasy, Trance Seek, David Bowie Edition, Beatrix Mod</IncompatibleWith>
+	<Description>
+A mod that simply consists of changing all your characters into a specific one... have you always dreamed of having four Vivis burning everything? A rain of spears from the sky with your Freyas? Or an army of Quina eating monsters by dozens?
+
+Inspired by the AllQuinaMod mod by Tetra Gomez (aka 8bitmissingno), based on an idea from the Twitch streamer NocturnalHanna.
+So why just settle for Quina and do this for all the characters... that's what DV offers in this mod!
+
+NoHardcodedBattles mod already included !
+Compatible with the OG version only.
+
+Coming soon : For the next version, I will try to make a mini .dll file so that the mod is compatible with PCP for example.
+	</Description>
+	<SubMod>
+		<Name>All Zidane</Name>
+		<InstallationPath>All Zidane</InstallationPath>
+		<Description>Replace all characters by Zidane !</Description>
+		<Group>allcharacters</Group>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Name>All Vivi</Name>
+		<InstallationPath>All Vivi</InstallationPath>
+		<Description>Replace all characters by Vivi !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Dagger</Name>
+		<InstallationPath>All Dagger</InstallationPath>
+		<Description>Replace all characters by Dagger !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Steiner</Name>
+		<InstallationPath>All Steiner</InstallationPath>
+		<Description>Replace all characters by Steiner !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Freya</Name>
+		<InstallationPath>All Freya</InstallationPath>
+		<Description>Replace all characters by Freya !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Quina</Name>
+		<InstallationPath>All Quina</InstallationPath>
+		<Description>Replace all characters by Quina !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Eiko</Name>
+		<InstallationPath>All Eiko</InstallationPath>
+		<Description>Replace all characters by Eiko !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Amarant</Name>
+		<InstallationPath>All Amarant</InstallationPath>
+		<Description>Replace all characters by Amarant !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Cinna</Name>
+		<InstallationPath>All Cinna</InstallationPath>
+		<Description>Replace all characters by Cinna !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Cinna (with Zidane skills)</Name>
+		<InstallationPath>All Cinna (with Zidane skills)</InstallationPath>
+		<Description>Replace all characters by Cinna (with Zidane's AA/SA) !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Marcus</Name>
+		<InstallationPath>All Marcus</InstallationPath>
+		<Description>Replace all characters by Marcus !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Marcus (with Zidane skills)</Name>
+		<InstallationPath>All Marcus (with Zidane skills)</InstallationPath>
+		<Description>Replace all characters by Marcus (with Zidane's AA/SA) !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Blank</Name>
+		<InstallationPath>All Blank</InstallationPath>
+		<Description>Replace all characters by Blank !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Blank (with Zidane skills)</Name>
+		<InstallationPath>All Blank (with Zidane skills)</InstallationPath>
+		<Description>Replace all characters by Blank (with Zidane's AA/SA) !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Beatrix</Name>
+		<InstallationPath>All Beatrix</InstallationPath>
+		<Description>Replace all characters by Beatrix !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Beatrix (with Steiner stuff/SA)</Name>
+		<InstallationPath>All Beatrix (with Steiner stuff)</InstallationPath>
+		<Description>Replace all characters by Beatrix (with Steiner's stuff and SA) !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+</Mod>
+
+<Mod>
 	<Name>Playable Character Pack</Name>
 	<Version>1.6.2</Version>
 	<Priority>-20</Priority>
 	<InstallationPath>PlayableCharacterPack</InstallationPath>
 	<ReleaseDateOriginal>9 Nov 2022</ReleaseDateOriginal>
 	<ReleaseDate>23 June 2025</ReleaseDate>
+	<Version>1.6.1</Version>
+	<Priority>-20</Priority>
+	<InstallationPath>PlayableCharacterPack</InstallationPath>
+	<ReleaseDateOriginal>9 Nov 2022</ReleaseDateOriginal>
+	<ReleaseDate>19 June 2025</ReleaseDate>
 	<MinimumMemoriaVersion>2025-05-11</MinimumMemoriaVersion>
 	<Author>Tirlititi / WarpedEdge</Author>
 	<Description>Adds new playable characters to the roster.
@@ -356,7 +482,7 @@ Bug Fixes:
 - Puck not being able to learn Aero/Aera; Added to Stardust and Asura's Rod</PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://steamcommunity.com/app/377840/discussions/0/3497635791229563331/</Website>
-	<DownloadUrl>https://github.com/WarpedEdge/ffix-mod-projects/releases/download/PCP-v1.6.1/PlayableCharacterPack.zip</DownloadUrl>
+	<DownloadUrl>https://github.com/WarpedEdge/ffix-mod-projects/releases/download/PCP-v1.6.2/PlayableCharacterPack.zip</DownloadUrl>
 	<PreviewFile>Preview.png</PreviewFile>
 	<PreviewFileUrl>https://i.imgur.com/LdMuKh1.png</PreviewFileUrl>
 	<Header>Costumes</Header>
@@ -951,7 +1077,7 @@ Flee-Gil - Now only costs 1 magic stone
 </Description>
 	<PatchNotes>Complete changes can be found on the mod page.</PatchNotes>
 	<PreviewFile>Preview.JPG</PreviewFile>
-	<PreviewFileUrl></PreviewFileUrl>
+	<PreviewFileUrl>https://u.cubeupload.com/Emeiru/AmazingAbilities.jpg</PreviewFileUrl>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/89</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/2vglg06fu8rzwx9cdc2j9/AmazingAbilities.zip?rlkey=5uxafkelitnesdwxawftupd96&amp;st=xqtxon42&amp;dl=1</DownloadUrl>
 	<Header>Game Mode</Header>
@@ -2092,10 +2218,10 @@ Available Themes:
 
 <Mod>
 	<Name>Portraits Pack</Name>
-	<Version>4.2.5</Version>
+	<Version>4.2.6</Version>
 	<Priority>10</Priority>	
 	<InstallationPath>KupoPortraits</InstallationPath>
-	<ReleaseDate>2025-05-31</ReleaseDate>
+	<ReleaseDate>2025-06-19</ReleaseDate>
 	<ReleaseDateOriginal>2021-10-18</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>DFFOO portraits are included here. All presets support released and some planned Playable Character Pack characters. 
@@ -2104,7 +2230,7 @@ Changelog: Added support for new characters and costumes. Classic upscaled versi
 Mod Order: Place above Playable Character Pack, Beatrix Mod, Tantalus Mod, and Kupo UI Suite.
 Part of Kupo Mods formerly Mog Add-ons.
 	</Description>
-	<PatchNotes>Added PSX like Pluto Knight costume for Zidane</PatchNotes>
+	<PatchNotes>Added Support for new version of PCP</PatchNotes>
 	<Category>Visual</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/80</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/80dpdv5kn378cw27fay0q/KupoPortraits.zip?rlkey=dnb8htsnmqzoehuibij9tarxd&amp;dl=1</DownloadUrl>
@@ -2115,7 +2241,7 @@ Part of Kupo Mods formerly Mog Add-ons.
 	<SubMod>
 		<Name>Default Extended Cast</Name>
 		<InstallationPath>Features/PortraitDefault</InstallationPath>
-		<Description>Default Portraits</Description>
+		<Description>Default Portraits with extended support</Description>
 		<Group>g-port</Group>
 		<PreviewFile>preview/ext.jpg</PreviewFile>
 	</SubMod>
@@ -2149,7 +2275,6 @@ Part of Kupo Mods formerly Mog Add-ons.
 		<Name>PSX Like</Name>
 		<InstallationPath>Features/PortraitPSXLike</InstallationPath>
 		<Description>PSX Like Portraits</Description>
-		<Default/>
 		<Group>g-port</Group>
 		<PreviewFile>preview/psxlike.jpg</PreviewFile>
 	</SubMod>
@@ -2157,7 +2282,6 @@ Part of Kupo Mods formerly Mog Add-ons.
 		<Name>PSX Like Pluto Knights / White Mage </Name>
 		<InstallationPath>Features/PortraitPSXLikePCP</InstallationPath>
 		<Description>PSX Like Portraits</Description>
-		<Default/>
 		<Group>g-port-extra</Group>
 		<PreviewFile>preview/psxlike.jpg</PreviewFile>
 	</SubMod>	
