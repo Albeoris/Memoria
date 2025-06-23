@@ -58,8 +58,7 @@ namespace SoundDebugRoom
             }
             else if (SceneDirector.IsBattleScene())
             {
-                ApplyBattleEffects(FF9StateSystem.Battle.battleMapIndex);
-                ApplyBattleBgEffects(battlebg.nf_BbgNumber);
+                ApplyBattleEffects(FF9StateSystem.Battle.battleMapIndex, battlebg.nf_BbgNumber);
             }
         }
 
@@ -1216,9 +1215,9 @@ namespace SoundDebugRoom
                             presetFilterIndex = presetFilterCurrent = FF9StateSystem.Battle.battleMapIndex;
                         }
                     }
-                GUILayout.EndHorizontal();
+                    GUILayout.EndHorizontal();
 
-                GUILayout.Space(5);
+                    GUILayout.Space(5);
                     GUILayout.Label("NCalc Condition");
                     String condition = preset.Condition;
                     preset.Condition = GUILayout.TextField(preset.Condition);
@@ -1307,7 +1306,7 @@ namespace SoundDebugRoom
                 return;
             }
 
-            if(presetFilterCaption == "ResourceID")
+            if (presetFilterCaption == "ResourceID")
             {
                 BuildPresetFilterResourceIDList(width);
                 return;

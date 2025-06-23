@@ -59,7 +59,7 @@ namespace Global.Sound.SaXAudio
             }).Start();
         }
 
-        public static void ApplyBattleEffects(Int32 battleID)
+        public static void ApplyBattleEffects(Int32 battleID, Int32 battleBgID)
         {
             if (!IsSaXAudio) return;
             new Thread(() =>
@@ -75,21 +75,8 @@ namespace Global.Sound.SaXAudio
                     Log.Message($"[AudioEffectManager] Applied preset '{preset.Name}' to battle {battleID}");
                     return;
                 }
-                ResetEffects();
-            }).Start();
-        }
 
-        public static void ApplyBattleBgEffects(Int32 battleBgID)
-        {
-            if (!IsSaXAudio) return;
-            new Thread(() =>
-            {
-                lock (battleBgIDPresets)
-                {
-                    if (!initialized) Init();
-                }
-
-                if (battleBgIDPresets.TryGetValue(battleBgID, out EffectPreset preset) && ApplyPreset(ref preset))
+                if (battleBgIDPresets.TryGetValue(battleBgID, out preset) && ApplyPreset(ref preset))
                 {
                     currentPreset = preset;
                     Log.Message($"[AudioEffectManager] Applied preset '{preset.Name}' to battle background {battleBgID}");
@@ -106,7 +93,7 @@ namespace Global.Sound.SaXAudio
 
             EffectPreset? preset = null;
             if (resourceIDPresets.ContainsKey(profile.ResourceID))
-                preset  = resourceIDPresets[profile.ResourceID];
+                preset = resourceIDPresets[profile.ResourceID];
 
             // resourceIDs gets priority
             if (preset != null && (String.IsNullOrEmpty(preset.Value.Condition) || EvaluatePresetCondition(profile, preset.Value.Condition, preset.Value.Name)))
