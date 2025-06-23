@@ -2587,6 +2587,37 @@ Eredeti telepítő: Evin</Description>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/br6xjl22auu284caaxd8n/PC_ModernGerman.zip?rlkey=2pl7a5cycqg4pgiy53u5lwewp&amp;dl=1</DownloadUrl>
 </Mod>
 
+<Mod>
+	<Name>ReTrad FR</Name>
+	<Version>7.0</Version>
+	<InstallationPath>ReTradFr</InstallationPath>
+	<Author>Lunalesca</Author>
+	<ReleaseDate>23 June 2025</ReleaseDate>
+	<ReleaseDateOriginal>30 March 2023</ReleaseDateOriginal>
+	<Description>French retranslation.
+Retraduction complète de tous les textes du jeu.</Description>
+	<PatchNotes>Version 7.0 :
+Correction d'une erreur de traduction sur les origines de la princesse Grenat durant le monologue de maître Toto au début du disque 3.</PatchNotes>
+	<Category>Translation</Category>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/46</Website>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/headers/46_1728643545.jpg</PreviewFileUrl>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/snw3ph7kb3mmwxp6askbm/FFIX-ReTrad-v7.0-46-7-0-1750634487.zip?rlkey=556luhi9lr0w50nlvf0z7smie&amp;st=2t40fbbr&amp;dl=1</DownloadUrl>
+	<SubMod>
+		<Default />
+		<Name>Compatibilité avec BeatrixMod</Name>
+		<InstallationPath>BeatrixMod</InstallationPath>
+		<Description>Traduit les textes rajoutés par le BeatrixMod.</Description>
+		<ActivateWithMod>Beatrix Mod</ActivateWithMod>
+	</SubMod>
+	<SubMod>
+		<Default />
+		<Name>Compatibilité avec KupoUISuite</Name>
+		<InstallationPath>KupoUISuite</InstallationPath>
+		<Description>Traduit les textes rajoutés par le KupoUISuite.</Description>
+		<ActivateWithMod>Kupo UI Suite</ActivateWithMod>
+	</SubMod>
+</Mod>
+
 <!--
 This mod is outdated and has never been compatible with the Mod Manager (it uses the [Import] feature of Memoria.ini)
 <Mod>
