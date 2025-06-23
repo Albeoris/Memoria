@@ -418,11 +418,6 @@ Coming soon : For the next version, I will try to make a mini .dll file so that 
 	<InstallationPath>PlayableCharacterPack</InstallationPath>
 	<ReleaseDateOriginal>9 Nov 2022</ReleaseDateOriginal>
 	<ReleaseDate>23 June 2025</ReleaseDate>
-	<Version>1.6.1</Version>
-	<Priority>-20</Priority>
-	<InstallationPath>PlayableCharacterPack</InstallationPath>
-	<ReleaseDateOriginal>9 Nov 2022</ReleaseDateOriginal>
-	<ReleaseDate>19 June 2025</ReleaseDate>
 	<MinimumMemoriaVersion>2025-05-11</MinimumMemoriaVersion>
 	<Author>Tirlititi / WarpedEdge</Author>
 	<Description>Adds new playable characters to the roster.
