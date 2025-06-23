@@ -292,11 +292,11 @@ More models to come later when i get time.
 
 <Mod>
 	<Name>Playable Character Pack</Name>
-	<Version>1.6.1</Version>
+	<Version>1.6.2</Version>
 	<Priority>-20</Priority>
 	<InstallationPath>PlayableCharacterPack</InstallationPath>
 	<ReleaseDateOriginal>9 Nov 2022</ReleaseDateOriginal>
-	<ReleaseDate>19 June 2025</ReleaseDate>
+	<ReleaseDate>23 June 2025</ReleaseDate>
 	<MinimumMemoriaVersion>2025-05-11</MinimumMemoriaVersion>
 	<Author>Tirlititi / WarpedEdge</Author>
 	<Description>Adds new playable characters to the roster.
@@ -305,6 +305,7 @@ Please Note:
 - Still only playable in US Language only (will be fixed in a later release)
 - Requires Memoria v2025.05.11 or later
 - Currently this mod is not compatible with Trance Seek, but I plan on getting it to eventually
+- Currently Alternate Fantasy will have some nuances like Cheat Fate, Fidget, Auto-Protect/Shell missing (this will be fixed in a later update of PCP)
 
 Currently, these characters are added:
 - Kuja
@@ -335,6 +336,9 @@ Special Thanks for their important help:
 
 You should set the priority of this mod to be higher than the priority of the Moguri mod but lower than other mods, but until Alternate Fantasy's next update, put this mod's priority above it</Description>
 	<PatchNotes>
+------[1.6.2]------
+
+- Fixed Gerome's wild strike to accurate use same script as darkside
 ------[1.6.1]------
 
 - Fixed major bug causing custom status' to inflict negative ones instead
