@@ -170,7 +170,7 @@ namespace Memoria.Launcher
         {
             String fullText = reader.ReadToEnd();
             // Fixes issue when '&' is in the url instead of '&amp;'
-            fullText = Regex.Replace(fullText, "&(?!amp;)", "&amp;");
+            fullText = Regex.Replace(fullText, @"&(?!\w+;)", "&amp;");
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(fullText);
             return doc;
