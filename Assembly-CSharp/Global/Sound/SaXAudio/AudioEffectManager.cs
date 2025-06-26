@@ -20,6 +20,7 @@ namespace Global.Sound.SaXAudio
         private static Dictionary<Int32, EffectPreset> battleBgIDPresets = new Dictionary<Int32, EffectPreset>();
         private static Dictionary<String, EffectPreset> resourceIDPresets = new Dictionary<String, EffectPreset>();
         private static List<EffectPreset> conditionalPresets = new List<EffectPreset>();
+        private static Dictionary<String, EffectPreset> unlistedPresets = new Dictionary<String, EffectPreset>();
         private static EffectPreset? currentPreset = null;
 
         private static Boolean initialized = false;
@@ -115,6 +116,52 @@ namespace Global.Sound.SaXAudio
             return null;
         }
 
+        public static EffectPreset? GetUnlistedPreset(String presetName)
+        {
+            if (!IsSaXAudio || !initialized || !unlistedPresets.ContainsKey(presetName)) return null;
+            return unlistedPresets[presetName];
+        }
+
+        public static EffectPreset? FindPreset(String presetName)
+        {
+            if (!IsSaXAudio || !initialized) return null;
+
+            if(unlistedPresets.ContainsKey(presetName))
+                return unlistedPresets[presetName];
+
+            foreach(Int32 key in fieldIDPresets.Keys)
+            {
+                if (fieldIDPresets[key].Name == presetName)
+                    return fieldIDPresets[key];
+            }
+
+            foreach (Int32 key in battleBgIDPresets.Keys)
+            {
+                if (battleBgIDPresets[key].Name == presetName)
+                    return battleBgIDPresets[key];
+            }
+
+            foreach (Int32 key in battleIDPresets.Keys)
+            {
+                if (battleIDPresets[key].Name == presetName)
+                    return battleIDPresets[key];
+            }
+
+            foreach (String key in resourceIDPresets.Keys)
+            {
+                if (resourceIDPresets[key].Name == presetName)
+                    return resourceIDPresets[key];
+            }
+
+            for(Int32 i = 0; i < conditionalPresets.Count; i++)
+            {
+                if (conditionalPresets[i].Name == presetName)
+                    return conditionalPresets[i];
+            }
+
+            return null;
+        }
+
         public static Boolean EvaluatePresetCondition(SoundProfile profile, String condition, String presetName)
         {
             Expression c = new Expression(condition);
@@ -146,21 +193,35 @@ namespace Global.Sound.SaXAudio
             return false;
         }
 
-        public static void ApplyPresetOnSound(EffectPreset preset, Int32 soundID, String soundName)
+        public static void ApplyPresetOnSound(EffectPreset preset, Int32 soundID, String soundName, Single fade = 0)
         {
-            if (preset.Effects == EffectPreset.Effect.None) return;
+            if (!IsSaXAudio) return;
+            new Thread(() =>
+            {
+                lock (battleBgIDPresets)
+                {
+                    if (!initialized) Init();
+                }
 
-            Boolean reverb = (preset.Effects & EffectPreset.Effect.Reverb) != 0;
-            Boolean eq = (preset.Effects & EffectPreset.Effect.Eq) != 0;
-            Boolean echo = (preset.Effects & EffectPreset.Effect.Echo) != 0;
-            Boolean volume = (preset.Effects & EffectPreset.Effect.Volume) != 0;
+                if (preset.Effects == EffectPreset.Effect.None) return;
 
-            if (reverb) SaXAudio.SetReverb(soundID, preset.Reverb);
-            if (eq) SaXAudio.SetEq(soundID, preset.Eq);
-            if (echo) SaXAudio.SetEcho(soundID, preset.Echo);
-            if (volume) SaXAudio.SetVolume(soundID, preset.Volume);
+                Boolean reverb = (preset.Effects & EffectPreset.Effect.Reverb) != 0;
+                Boolean eq = (preset.Effects & EffectPreset.Effect.Eq) != 0;
+                Boolean echo = (preset.Effects & EffectPreset.Effect.Echo) != 0;
+                Boolean volume = (preset.Effects & EffectPreset.Effect.Volume) != 0;
 
-            Log.Message($"[AudioEffectManager] Applied preset '{preset.Name}' on sound '{soundName}'");
+                if (reverb) SaXAudio.SetReverb(soundID, preset.Reverb, fade);
+                else SaXAudio.RemoveReverb(soundID, fade);
+                if (eq) SaXAudio.SetEq(soundID, preset.Eq, fade);
+                else SaXAudio.RemoveEq(soundID, fade);
+                if (echo) SaXAudio.SetEcho(soundID, preset.Echo, fade);
+                else SaXAudio.RemoveEcho(soundID, fade);
+                // Problem of applying volume directly onto the sound, it's multiplicative and there's no way to restore the original value
+                // This shouldn't be an issue unless ApplyPresetOnSound is called multiple times on the same sound
+                if (volume) SaXAudio.SetVolume(soundID, SaXAudio.GetVolume(soundID) * preset.Volume, fade);
+
+                Log.Message($"[AudioEffectManager] Applied preset '{preset.Name}' on sound '{soundName}'");
+            }).Start();
         }
 
         public static void ResetEffects()
@@ -193,6 +254,7 @@ namespace Global.Sound.SaXAudio
             battleIDPresets.Clear();
             battleBgIDPresets.Clear();
             conditionalPresets.Clear();
+            unlistedPresets.Clear();
 
             foreach (AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
             {
@@ -226,10 +288,12 @@ namespace Global.Sound.SaXAudio
                             resourceIDPresets[resourceID].RemoveIDs();
                             listed = true;
                         }
-                        if (!listed && !String.IsNullOrEmpty(preset.Condition))
+                        if (!listed)
                         {
-                            conditionalPresets.Add(preset);
-                            conditionalPresets.Last().RemoveIDs();
+                            if (!String.IsNullOrEmpty(preset.Condition))
+                                conditionalPresets.Add(preset);
+                            else
+                                unlistedPresets[preset.Name] = preset;
                         }
                     }
                 }
