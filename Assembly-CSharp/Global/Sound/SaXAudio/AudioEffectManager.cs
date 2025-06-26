@@ -220,7 +220,8 @@ namespace Global.Sound.SaXAudio
                 // This shouldn't be an issue unless ApplyPresetOnSound is called multiple times on the same sound
                 if (volume) SaXAudio.SetVolume(soundID, SaXAudio.GetVolume(soundID) * preset.Volume, fade);
 
-                Log.Message($"[AudioEffectManager] Applied preset '{preset.Name}' on sound '{soundName}'");
+                // Can cause a bit too much spam
+                //Log.Message($"[AudioEffectManager] Applied preset '{preset.Name}' on sound '{soundName}'");
             }).Start();
         }
 
