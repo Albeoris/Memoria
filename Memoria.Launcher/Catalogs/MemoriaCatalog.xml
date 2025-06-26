@@ -234,8 +234,7 @@ Note : To avoid compatibility issues, Quality of the Ifa should be sorted to the
 	<SubMod>
 		<Name>Better Gravity Spell</Name>
 		<InstallationPath>BetterGravity</InstallationPath>
-		<Description>
-Make Gravity more usefull.
+		<Description>Make Gravity more usefull.
 - Gravity Spell never miss, like a Magic Attack.
 - Can work now on boss but the formula is based on their current HP + less power.
 		</Description>
@@ -245,8 +244,8 @@ Make Gravity more usefull.
 		<Name>Better Healer (SA)</Name>
 		<InstallationPath>BetterHealer</InstallationPath>
 		<Description>
-			The attack never miss on an ally + ignore defence of the target
-			(only player), making the heal much powerful (feature from Trance Seek).
+The attack never miss on an ally + ignore defence of the target
+(only player), making the heal much powerful (feature from Trance Seek).
 		</Description>
 		<PreviewFile>BetterHealer/Thumbnail.jpg</PreviewFile>
 	</SubMod>
@@ -291,17 +290,143 @@ More models to come later when i get time.
 </Mod>
 
 <Mod>
+	<Name>Doppelgängers</Name>
+	<Version>1.0</Version>
+	<InstallationPath>Doppelgängers</InstallationPath>
+	<ReleaseDate>21 Jun 2025</ReleaseDate>
+	<ReleaseDateOriginal>21 Jun 2025</ReleaseDateOriginal>
+	<Author>Tetra Gomez, NocturnalHanna and DV</Author>
+	<Category>Gameplay</Category>
+	<PreviewFileUrl>https://i.ibb.co/ccc19T9S/Doppelgangers.jpg</PreviewFileUrl>
+	<PreviewFile>Thumbnail/Doppelgängers.jpg</PreviewFile>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/pdoz5xvtdrfefsdlu48y9/Doppelgangers.zip?rlkey=0b3cim4hiuqgi3jn9um0rhbtb&amp;dl=1</DownloadUrl>
+	<IncompatibleWith>AlternateFantasy, Trance Seek, David Bowie Edition, Beatrix Mod</IncompatibleWith>
+	<Description>
+A mod that simply consists of changing all your characters into a specific one... have you always dreamed of having four Vivis burning everything? A rain of spears from the sky with your Freyas? Or an army of Quina eating monsters by dozens?
+
+Inspired by the AllQuinaMod mod by Tetra Gomez (aka 8bitmissingno), based on an idea from the Twitch streamer NocturnalHanna.
+So why just settle for Quina and do this for all the characters... that's what DV offers in this mod!
+
+NoHardcodedBattles mod already included !
+Compatible with the OG version only.
+
+Coming soon : For the next version, I will try to make a mini .dll file so that the mod is compatible with PCP for example.
+	</Description>
+	<SubMod>
+		<Name>All Zidane</Name>
+		<InstallationPath>All Zidane</InstallationPath>
+		<Description>Replace all characters by Zidane !</Description>
+		<Group>allcharacters</Group>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Name>All Vivi</Name>
+		<InstallationPath>All Vivi</InstallationPath>
+		<Description>Replace all characters by Vivi !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Dagger</Name>
+		<InstallationPath>All Dagger</InstallationPath>
+		<Description>Replace all characters by Dagger !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Steiner</Name>
+		<InstallationPath>All Steiner</InstallationPath>
+		<Description>Replace all characters by Steiner !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Freya</Name>
+		<InstallationPath>All Freya</InstallationPath>
+		<Description>Replace all characters by Freya !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Quina</Name>
+		<InstallationPath>All Quina</InstallationPath>
+		<Description>Replace all characters by Quina !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Eiko</Name>
+		<InstallationPath>All Eiko</InstallationPath>
+		<Description>Replace all characters by Eiko !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Amarant</Name>
+		<InstallationPath>All Amarant</InstallationPath>
+		<Description>Replace all characters by Amarant !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Cinna</Name>
+		<InstallationPath>All Cinna</InstallationPath>
+		<Description>Replace all characters by Cinna !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Cinna (with Zidane skills)</Name>
+		<InstallationPath>All Cinna (with Zidane skills)</InstallationPath>
+		<Description>Replace all characters by Cinna (with Zidane's AA/SA) !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Marcus</Name>
+		<InstallationPath>All Marcus</InstallationPath>
+		<Description>Replace all characters by Marcus !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Marcus (with Zidane skills)</Name>
+		<InstallationPath>All Marcus (with Zidane skills)</InstallationPath>
+		<Description>Replace all characters by Marcus (with Zidane's AA/SA) !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Blank</Name>
+		<InstallationPath>All Blank</InstallationPath>
+		<Description>Replace all characters by Blank !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Blank (with Zidane skills)</Name>
+		<InstallationPath>All Blank (with Zidane skills)</InstallationPath>
+		<Description>Replace all characters by Blank (with Zidane's AA/SA) !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Beatrix</Name>
+		<InstallationPath>All Beatrix</InstallationPath>
+		<Description>Replace all characters by Beatrix !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+	<SubMod>
+		<Name>All Beatrix (with Steiner stuff/SA)</Name>
+		<InstallationPath>All Beatrix (with Steiner stuff)</InstallationPath>
+		<Description>Replace all characters by Beatrix (with Steiner's stuff and SA) !</Description>
+		<Group>allcharacters</Group>
+	</SubMod>
+</Mod>
+
+<Mod>
 	<Name>Playable Character Pack</Name>
-	<Version>1.6.0</Version>
+	<Version>1.6.3</Version>
 	<Priority>-20</Priority>
 	<InstallationPath>PlayableCharacterPack</InstallationPath>
 	<ReleaseDateOriginal>9 Nov 2022</ReleaseDateOriginal>
-	<ReleaseDate>18 June 2025</ReleaseDate>
+	<ReleaseDate>25 June 2025</ReleaseDate>
 	<MinimumMemoriaVersion>2025-05-11</MinimumMemoriaVersion>
 	<Author>Tirlititi / WarpedEdge</Author>
 	<Description>Adds new playable characters to the roster.
 
-Please Note: Still only playable in US Language only (will be fixed in a later release)
+Please Note: 
+- Still only playable in US Language only (will be fixed in a later release)
+- Requires Memoria v2025.05.11 or later
+- Currently this mod is not compatible with Trance Seek, but I plan on getting it to eventually
+- Currently Alternate Fantasy will have some nuances like Cheat Fate, Fidget, Auto-Protect/Shell missing (this will be fixed in a later update of PCP)
 
 Currently, these characters are added:
 - Kuja
@@ -331,8 +456,19 @@ Special Thanks for their important help:
 - DV (ability sequences and features)
 
 You should set the priority of this mod to be higher than the priority of the Moguri mod but lower than other mods, but until Alternate Fantasy's next update, put this mod's priority above it</Description>
-	<PatchNotes>	- Requires Memoria v2025.05.11 or later
-	- Currently this mod is not compatible with Trance Seek, but I plan on getting it to eventually
+	<PatchNotes>
+------[1.6.3]------
+
+- Fixed Puck learning Aero/Aera, but not having it in command window
+------[1.6.2]------
+
+- Fixed Gerome's wild strike to accurate use same script as darkside
+------[1.6.1]------
+
+- Fixed major bug causing custom status' to inflict negative ones instead
+- adjusted item priority of axes
+- added items to shops that were missable in disc 4
+- fixed Baku's sneeze accuracy
 
 Bug Fixes:
 - Aria Thunderstrike stuck to Thunder gloves when she cannot equip them (Now moved to Mythril Armlet)
@@ -344,7 +480,7 @@ Bug Fixes:
 - Puck not being able to learn Aero/Aera; Added to Stardust and Asura's Rod</PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://steamcommunity.com/app/377840/discussions/0/3497635791229563331/</Website>
-	<DownloadUrl>https://github.com/WarpedEdge/ffix-mod-projects/releases/download/PCP-v1.6.0/PlayableCharacterPack.zip</DownloadUrl>
+	<DownloadUrl>https://github.com/WarpedEdge/ffix-mod-projects/releases/download/PCP-v1.6.3/PlayableCharacterPack.zip</DownloadUrl>
 	<PreviewFile>Preview.png</PreviewFile>
 	<PreviewFileUrl>https://i.imgur.com/LdMuKh1.png</PreviewFileUrl>
 	<Header>Costumes</Header>
@@ -939,7 +1075,7 @@ Flee-Gil - Now only costs 1 magic stone
 </Description>
 	<PatchNotes>Complete changes can be found on the mod page.</PatchNotes>
 	<PreviewFile>Preview.JPG</PreviewFile>
-	<PreviewFileUrl></PreviewFileUrl>
+	<PreviewFileUrl>https://u.cubeupload.com/Emeiru/AmazingAbilities.jpg</PreviewFileUrl>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/89</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/2vglg06fu8rzwx9cdc2j9/AmazingAbilities.zip?rlkey=5uxafkelitnesdwxawftupd96&amp;st=xqtxon42&amp;dl=1</DownloadUrl>
 	<Header>Game Mode</Header>
@@ -1781,6 +1917,72 @@ added another frame option	</PatchNotes>
 </Mod>
 
 <Mod>
+	<Name>Mistwake UI</Name>
+	<Version>1.0</Version>
+	<InstallationPath>MistwakeUI</InstallationPath>
+	<Author>Daniel Vilela / dkPsycho</Author>
+	<ReleaseDate>2025-06-23</ReleaseDate>
+	<ReleaseDateOriginal>2025-06-23</ReleaseDateOriginal>
+	<Description>Mistwake UI is more than just a visual overhaul of Final Fantasy IX — it’s a tribute.
+Created by fans who grew up mesmerized by every detail of this masterpiece, the mod was born out of a desire to give back for the impact the game had on our lives. With a respectful and meticulous reinterpretation, we aimed to honor everything that made FFIX a classic of the 2000s, enhancing its beauty through a fresh perspective.
+
+This version includes:
+
+A redesigned look for menus, interface, dialogue boxes, and other refined elements
+New portraits for all characters, including side characters and extras
+Exclusive new artwork for each of the 8 protagonists at the moment they are recruited
+New background illustrations for the title screen, Game Over, and disc transitions
+New map name presentations, now accompanied by icons that represent each location
+Mistwake is a love letter to the world of Gaia — and a gift to everyone who, like us, was moved by it.
+
+PT-BR
+
+Mistwake UI é mais do que uma repaginação visual de Final Fantasy IX — é uma homenagem.
+Criado por fãs que cresceram encantados com cada detalhe dessa obra-prima, o mod nasceu do desejo de retribuir o impacto que o jogo teve em nossas vidas. Com uma releitura respeitosa e detalhista, buscamos valorizar tudo o que fez de FFIX um clássico dos anos 2000, exaltando sua beleza com um novo olhar.
+
+Esta versão inclui:
+Novo visual para menus, interface, caixa de diálogo e outros elementos refinados
+Novos retratos para todos os personagens, incluindo secundários e extras
+Novas artes exclusivas para cada um dos 8 protagonistas no momento em que são recrutados
+Novas artes de fundo, para a tela inicial, Game Over e transições de disco
+Novas apresentações dos nomes de mapas, agora acompanhadas por ícones que representam cada local
+
+Mistwake é uma carta de amor ao mundo de Gaia — e um presente para todos que, como nós, se emocionaram com ele.
+</Description>
+	<PatchNotes>IMPORTANT: To experience the mod in its most refined form, we recommend using the Newsreader 14pt font. It is not enabled by default, but it is included in the mod package. Simply install it and select it manually in the Memoria launcher settings to enjoy all the visual elegance that Mistwake offers.
+
+PT-BR
+
+IMPORTANTE: Para vivenciar o mod em sua forma mais refinada, recomendamos o uso da fonte Newsreader 14pt. Ela não está ativada por padrão, mas está inclusa no pacote do mod. Basta instalá-la e selecioná-la manualmente nas configurações no launcher do Memoria e aproveitar toda a elegância visual que Mistwake propõe.</PatchNotes>
+	<MinimumMemoriaVersion>2025.05.12</MinimumMemoriaVersion>
+	<Category>UI</Category>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/104</Website>
+	<PreviewFile>preview/Capa.png</PreviewFile>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/104/104-1750651533-1890299274.png</PreviewFileUrl>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/28hn1wkp6lsbufbb7vrhj/Mistwake-UI.zip?rlkey=h2o5y0fqw1qd716dxby7lfk5u&amp;st=vbdwg5ca&amp;dl=1</DownloadUrl>
+	<Header>UI Themes</Header>
+	<SubMod>
+		<Default/>
+		<Name>Visual: Mistwake Interface</Name>
+		<InstallationPath>Opcionais/Mistwake Interface</InstallationPath>
+		<Description>Novo visual para menus, interface, caixa de diálogo e outros elementos.
+New look for menus, interface, dialog boxes, and other elements.</Description>
+		<PreviewFile>preview/Visual1.png</PreviewFile>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Default/>
+		<Name>Visual: Mistwake Retratos</Name>
+		<InstallationPath>Opcionais/Mistwake Retratos</InstallationPath>
+		<Description>Novos retratos para todos os personagens, incluindo secundários e extras.
+New portraits for all characters, including supporting and background characters.</Description>
+		<PreviewFile>preview/Visual2.png</PreviewFile>
+		<Default/>
+	</SubMod>
+</Mod>
+
+
+<Mod>
 	<Name>Playstation Sounds</Name>
 	<Version>2.2</Version>
 	<Priority>-22</Priority>
@@ -2452,6 +2654,37 @@ Eredeti telepítő: Evin</Description>
  Beispiel: "Wir müßen hier weg!" -> "Wir müssen hier weg!".
  Diese Mod ist NICHT notwendig, wenn ihr mit "Alternate Fantasy" spielt, dort ist "Modern German" bereits integriert.</Description>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/br6xjl22auu284caaxd8n/PC_ModernGerman.zip?rlkey=2pl7a5cycqg4pgiy53u5lwewp&amp;dl=1</DownloadUrl>
+</Mod>
+
+<Mod>
+	<Name>ReTrad FR</Name>
+	<Version>7.0</Version>
+	<InstallationPath>ReTradFr</InstallationPath>
+	<Author>Lunalesca</Author>
+	<ReleaseDate>23 June 2025</ReleaseDate>
+	<ReleaseDateOriginal>30 March 2023</ReleaseDateOriginal>
+	<Description>French retranslation.
+Retraduction complète de tous les textes du jeu.</Description>
+	<PatchNotes>Version 7.0 :
+Correction d'une erreur de traduction sur les origines de la princesse Grenat durant le monologue de maître Toto au début du disque 3.</PatchNotes>
+	<Category>Translation</Category>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/46</Website>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/headers/46_1728643545.jpg</PreviewFileUrl>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/snw3ph7kb3mmwxp6askbm/FFIX-ReTrad-v7.0-46-7-0-1750634487.zip?rlkey=556luhi9lr0w50nlvf0z7smie&amp;st=2t40fbbr&amp;dl=1</DownloadUrl>
+	<SubMod>
+		<Default />
+		<Name>Compatibilité avec BeatrixMod</Name>
+		<InstallationPath>BeatrixMod</InstallationPath>
+		<Description>Traduit les textes rajoutés par le BeatrixMod.</Description>
+		<ActivateWithMod>Beatrix Mod</ActivateWithMod>
+	</SubMod>
+	<SubMod>
+		<Default />
+		<Name>Compatibilité avec KupoUISuite</Name>
+		<InstallationPath>KupoUISuite</InstallationPath>
+		<Description>Traduit les textes rajoutés par le KupoUISuite.</Description>
+		<ActivateWithMod>Kupo UI Suite</ActivateWithMod>
+	</SubMod>
 </Mod>
 
 <!--
