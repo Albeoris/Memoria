@@ -2537,10 +2537,10 @@ Idea by Snouz and made by DV.</Description>
 
 <Mod>
 	<Name>Modern Labels + </Name>
-	<Version>4.1.7</Version>
+	<Version>4.1.8</Version>
 	<Priority>15</Priority>	
 	<InstallationPath>KupoModernLabels</InstallationPath>
-	<ReleaseDate>2025-05-31</ReleaseDate>
+	<ReleaseDate>2025-06-27</ReleaseDate>
 	<ReleaseDateOriginal>2024-10-01</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>A mod that replaces old item, spell and UI names / labels to their modern counterparts or their now known consistent naming convention 
@@ -2548,7 +2548,7 @@ Ideal for those who were introduced to the series post final fantasy 12. Simply 
 For now the primary focus of the mod is the US and UK translation of the game so non english language players feel free to message me if you have something you want to change in your 
 Language of choice. 
 	</Description>
-	<PatchNotes>Now uses the new TextPatch.txt</PatchNotes>
+	<PatchNotes>Added default Intended default names of Amarant and Freja</PatchNotes>
 	<Category>Translation</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/74</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/mi4qmy3h2qqoa57bf8wzu/KupoModernLabels.zip?rlkey=hfbawmgaiijosth1u6wcomwbk&amp;st=zcvbfu94&amp;dl=1</DownloadUrl>
@@ -2560,6 +2560,13 @@ Language of choice.
 		<InstallationPath>extended</InstallationPath>
 		<Description>Mainly Additional Icons on some menus</Description>
 		<Priority>1</Priority>
+		<Default/>
+	</SubMod>
+		<SubMod>
+		<Name>Freija and Salamader</Name>
+		<InstallationPath>Names</InstallationPath>
+		<Description>Changes the default names of Freya and Amarant for both English Translations</Description>
+		<Priority>2</Priority>
 		<Default/>
 	</SubMod>
 </Mod>
