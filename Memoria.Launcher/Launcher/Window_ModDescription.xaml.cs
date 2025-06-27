@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Net;
-using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,7 +21,7 @@ namespace Memoria.Launcher
             ModNameLabel.Content = mod.Name;
             Document.Blocks.Clear();
             String plainText = $"#{Lang.Res["ModEditor.Description"]}\n{mod.Description}";
-            if(!String.IsNullOrEmpty(mod.PatchNotes))
+            if (!String.IsNullOrEmpty(mod.PatchNotes))
                 plainText = $"{plainText}\n#{Lang.Res["ModEditor.ReleaseNotes"]}\n{mod.PatchNotes}";
             String[] lines = Regex.Split(plainText, @"\n", RegexOptions.Singleline);
             List list = null;
@@ -88,6 +86,16 @@ namespace Memoria.Launcher
                     Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aeee"))
                 };
                 Document.Blocks.Add(p);
+            }
+            if (!String.IsNullOrEmpty(mod.DownloadUrl))
+            {
+                Hyperlink link = new Hyperlink(new Run("\n" + (String)Lang.Res["ModEditor.DirectDownload"]));
+                link.NavigateUri = new Uri(mod.DownloadUrl);
+                link.RequestNavigate += (s, e) =>
+                {
+                    Process.Start(e.Uri.ToString());
+                };
+                Document.Blocks.Add(new Paragraph(link) { Margin = new Thickness(0, 10, 0, 10), });
             }
         }
 
