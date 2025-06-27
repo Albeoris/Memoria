@@ -149,7 +149,7 @@ namespace Memoria.Assets
             extraInfoPanel = new ControlPanel(PersistenSingleton<UIManager>.Instance.transform, "");
             extraInfoLabel = extraInfoPanel.AddSimpleLabel("", NGUIText.Alignment.Center, 1);
             extraInfoPanel.EndInitialization(UIWidget.Pivot.BottomRight);
-            extraInfoPanel.BasePanel.SetRect(-50f, 0f, 1500f, 580f);
+            extraInfoPanel.BasePanel.SetRect(-50f, 0f, 1750f, 580f);
 
             InsertTextGUI = UnityEngine.Object.Instantiate(PersistenSingleton<UIManager>.Instance.NameSettingScene.NameInputField.gameObject);
             input = InsertTextGUI.GetComponent<UIInput>();
@@ -1359,6 +1359,11 @@ namespace Memoria.Assets
                         else camera.backgroundColor = Color.black;
                     }
                 }
+                if (Input.GetKeyDown(KeyCode.K) && isAnimStopped && currentAnimName == "CUSTOM_CLIP")
+                {
+                    AddKeyframeToCustomAnimation();
+                }
+
                 Animation animation = currentModel.GetComponent<Animation>();
                 if (animation != null && (!animation.IsPlaying(currentAnimName) || isAnimStopped) && toggleAnim) // make animation a loop by default
                 {
@@ -1574,10 +1579,15 @@ namespace Memoria.Assets
                     controlist += $"{entry.Value} [FFFF00][{entry.Key}][FFFFFF]\r\n";
                 controlLabel.rawText = controlist;
 
-                String extraInfo = "";
-                if (partcontrolled == PartControlled.MODEL && currentModel != null)
+                Animation animation = null;
+                if (currentModel != null)
                 {
-                    Animation animation = currentModel.GetComponent<Animation>();
+                    animation = currentModel.GetComponent<Animation>();
+                }
+
+                String extraInfo = "";
+                if (partcontrolled == PartControlled.MODEL && currentModel != null && animation != null)
+                {
                     if (currentModelWrapper == null)
                         currentModelWrapper = new GameObject("CurrentModelWrapper");
                     currentModel.transform.SetParent(currentModelWrapper.transform);
@@ -1587,14 +1597,11 @@ namespace Memoria.Assets
                     extraInfo += $" Rot(Quat): [x]{Math.Round(currentModelWrapper.transform.localRotation.x, 2)} [y]{Math.Round(currentModelWrapper.transform.localRotation.y, 2)} [z]{Math.Round(currentModelWrapper.transform.localRotation.z, 2)} [w]{Math.Round(currentModelWrapper.transform.localRotation.w, 2)}";
                     extraInfo += $" Rot(Eul): {Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.x, 0)}/{Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.y, 0)}/{Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.z, 0)}";
                     extraInfo += $" Scale: {Math.Round(currentModelWrapper.transform.localScale.x, 2)}/{Math.Round(currentModelWrapper.transform.localScale.y, 2)}/{Math.Round(currentModelWrapper.transform.localScale.z, 2)}";
-
-                    int currentKeyFrame = (int)Math.Round((animation[currentAnimName].time % 1) * animation[currentAnimName].clip.frameRate);
-                    int maxKeyFrame = (int)Math.Round(animation[currentAnimName].clip.length * animation[currentAnimName].clip.frameRate);
-                    extraInfo += $" Frame: {currentKeyFrame}/{maxKeyFrame}";
+                    extraInfo += $" Frame: {Math.Round((animation[currentAnimName].time % 1) * animation[currentAnimName].clip.frameRate)}/{Math.Round(animation[currentAnimName].clip.length * animation[currentAnimName].clip.frameRate)}";
                     extraInfoLabel.color = Color.green;
                     //extraInfo += $" | Rot(Eul): {Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.x,0)}/{Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.y, 0)}/{Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.z, 0)}";
                 }
-                if (partcontrolled == PartControlled.WEAPON && currentWeaponModel != null)
+                if (partcontrolled == PartControlled.WEAPON && currentWeaponModel != null && animation != null)
                 {
                     extraInfo += "[WEAPON] ¤ ";
                     extraInfo += UseModdedTextures ? "text_mod | " : "text_orig | ";
@@ -1602,9 +1609,10 @@ namespace Memoria.Assets
                     extraInfo += $" Rot(Quat): [x]{Math.Round(currentWeaponModel.transform.localRotation.x, 2)} [y]{Math.Round(currentWeaponModel.transform.localRotation.y, 2)} [z]{Math.Round(currentWeaponModel.transform.localRotation.z, 2)} [w]{Math.Round(currentWeaponModel.transform.localRotation.w, 2)}";
                     extraInfo += $" Rot(Eul): {Math.Round(currentWeaponModel.transform.localRotation.eulerAngles.x, 0)}/{Math.Round(currentWeaponModel.transform.localRotation.eulerAngles.y, 0)}/{Math.Round(currentWeaponModel.transform.localRotation.eulerAngles.z, 0)}";
                     extraInfo += $" Scale: {Math.Round(currentWeaponModel.transform.localScale.x, 2)}/{Math.Round(currentWeaponModel.transform.localScale.y, 2)}/{Math.Round(currentWeaponModel.transform.localScale.z, 2)}";
+                    extraInfo += $" Frame: {Math.Round((animation[currentAnimName].time % 1) * animation[currentAnimName].clip.frameRate)}/{Math.Round(animation[currentAnimName].clip.length * animation[currentAnimName].clip.frameRate)}";
                     extraInfoLabel.color = Color.cyan;
                 }
-                else if (partcontrolled == PartControlled.BONE && currentModel != null)
+                else if (partcontrolled == PartControlled.BONE && currentModel != null && animation != null)
                 {
                     Transform BoneSelected = currentModel.transform.GetChildByName("bone" + currentBoneIndex.ToString("D3"));
                     extraInfo += "[BONE] ¤ ";
@@ -1613,6 +1621,7 @@ namespace Memoria.Assets
                     extraInfo += $" Rot(Quat): [x]{Math.Round(BoneSelected.localRotation.x, 2)} [y]{Math.Round(BoneSelected.localRotation.y, 2)} [z]{Math.Round(BoneSelected.localRotation.z, 2)} [w]{Math.Round(BoneSelected.localRotation.w, 2)}";
                     extraInfo += $" Rot(Eul): {Math.Round(BoneSelected.localRotation.eulerAngles.x, 0)}/{Math.Round(BoneSelected.localRotation.eulerAngles.y, 0)}/{Math.Round(BoneSelected.localRotation.eulerAngles.z, 0)}";
                     extraInfo += $" Scale: {Math.Round(BoneSelected.localScale.x, 2)}/{Math.Round(BoneSelected.localScale.y, 2)}/{Math.Round(BoneSelected.localScale.z, 2)}";
+                    extraInfo += $" Frame: {Math.Round((animation[currentAnimName].time % 1) * animation[currentAnimName].clip.frameRate)}/{Math.Round(animation[currentAnimName].clip.length * animation[currentAnimName].clip.frameRate)}";
                     extraInfoLabel.color = new Color(0.85865f, 0.00327f, 0.48478f, 1f); // Deep Red
                 }
                 else if (partcontrolled == PartControlled.FLOOR && currentFloorModel != null)
@@ -1645,6 +1654,7 @@ namespace Memoria.Assets
                 //    controlist += $"\r\n";
                 //controlLabel.text = controlist;
             }
+
             infoPanel.BasePanel.transform.localPosition = new Vector3(0 + InfoPanelPosX, 0, 0);
             controlPanel.BasePanel.transform.localPosition = new Vector3(1000 + ControlPanelPosX, 0, 0);
             controlLabel.fontSize = 22;
@@ -1734,6 +1744,7 @@ namespace Memoria.Assets
             {"⇧R", "Full Reset"},
             {"Z", "Decrement Keyframe"},
             {"X", "Increment Keyframe"},
+            {"K", "Add New Keyframe"},
         };
 
         private static Camera GetCamera()
@@ -2944,6 +2955,158 @@ namespace Memoria.Assets
 
                 }
 
+                anim.RemoveClip("CUSTOM_CLIP");
+                anim.AddClip(clip, "CUSTOM_CLIP");
+                anim.Play("CUSTOM_CLIP");
+            }
+        }
+
+        private static void AddKeyframeToCustomAnimation()
+        {
+            if (isAnimStopped && currentAnimName == "CUSTOM_CLIP" && savedAnimationClip != null)
+            {
+                Animation anim = currentModel.GetComponent<Animation>();
+                AnimationClip clip = anim[currentAnimName].clip;
+                // Already at max animation length
+                if (clip.length >= 1.0f)
+                {
+                    FF9Sfx.FF9SFX_Play(102);
+                    return;
+                }
+
+                clip.legacy = true;
+                clip.frameRate = 30.0f;
+                clip.name = "CUSTOM_CLIP";
+
+                foreach (AnimationClipReader.BoneAnimation boneAnim in savedAnimationClip.boneAnimList)
+                {
+                    String boneName = boneAnim.boneNameInHierarchy;
+
+                    foreach (String localType in new String[] { "localRotation", "localPosition", "localScale" })
+                    {
+                        List<Keyframe> keys_x = new List<Keyframe>();
+                        List<Keyframe> keys_y = new List<Keyframe>();
+                        List<Keyframe> keys_z = new List<Keyframe>();
+                        List<Keyframe> keys_w = new List<Keyframe>();
+
+                        List<Keyframe> keys_xIT = new List<Keyframe>();
+                        List<Keyframe> keys_yIT = new List<Keyframe>();
+                        List<Keyframe> keys_zIT = new List<Keyframe>();
+                        List<Keyframe> keys_wIT = new List<Keyframe>();
+
+                        List<Keyframe> keys_xOT = new List<Keyframe>();
+                        List<Keyframe> keys_yOT = new List<Keyframe>();
+                        List<Keyframe> keys_zOT = new List<Keyframe>();
+                        List<Keyframe> keys_wOT = new List<Keyframe>();
+
+                        foreach (AnimationClipReader.BoneAnimation.TransformAnimation ta in boneAnim.transformAnimList)
+                        {
+                            if (ta.transformType == localType)
+                            {
+                                int keyFrame = 0;
+                                AnimationClipReader.BoneAnimation.TransformAnimation.FrameAnimation keyframeAnim = ta.frameAnimList[currentPausedKeyFrame];
+                                AnimationClipReader.BoneAnimation.TransformAnimation.FrameAnimation duplicateKeyframeAnim = new AnimationClipReader.BoneAnimation.TransformAnimation.FrameAnimation();
+
+                                // copy to the frame directly after current
+                                duplicateKeyframeAnim.pos = new Vector4(keyframeAnim.pos.x, keyframeAnim.pos.y, keyframeAnim.pos.z, keyframeAnim.pos.w);
+                                duplicateKeyframeAnim.posInnerTangent = new Vector4(keyframeAnim.posInnerTangent.x, keyframeAnim.posInnerTangent.y, keyframeAnim.posInnerTangent.z, keyframeAnim.posInnerTangent.w);
+                                duplicateKeyframeAnim.posOuterTangent = new Vector4(keyframeAnim.posOuterTangent.x, keyframeAnim.posOuterTangent.y, keyframeAnim.posOuterTangent.z, keyframeAnim.posOuterTangent.w);
+
+                                ta.frameAnimList.Insert(currentPausedKeyFrame + 1, duplicateKeyframeAnim);
+
+                                foreach (AnimationClipReader.BoneAnimation.TransformAnimation.FrameAnimation fa in ta.frameAnimList)
+                                {
+                                    // Recalculate frame times
+                                    fa.time = (float)(Math.Round(keyFrame / clip.frameRate, 6));
+
+                                    keys_x.Add(new Keyframe(fa.time, fa.pos.x));
+                                    keys_y.Add(new Keyframe(fa.time, fa.pos.y));
+                                    keys_z.Add(new Keyframe(fa.time, fa.pos.z));
+                                    keys_w.Add(new Keyframe(fa.time, fa.pos.w));
+
+                                    keys_xIT.Add(new Keyframe(fa.time, fa.posInnerTangent.x));
+                                    keys_yIT.Add(new Keyframe(fa.time, fa.posInnerTangent.y));
+                                    keys_zIT.Add(new Keyframe(fa.time, fa.posInnerTangent.z));
+                                    keys_wIT.Add(new Keyframe(fa.time, fa.posInnerTangent.w));
+
+                                    keys_xOT.Add(new Keyframe(fa.time, fa.posOuterTangent.x));
+                                    keys_yOT.Add(new Keyframe(fa.time, fa.posOuterTangent.y));
+                                    keys_zOT.Add(new Keyframe(fa.time, fa.posOuterTangent.z));
+                                    keys_wOT.Add(new Keyframe(fa.time, fa.posOuterTangent.w));
+                                    keyFrame++;
+                                }
+
+                                animStoppedTime = duplicateKeyframeAnim.time;
+                            }
+                        }
+
+                        AnimationCurve animCurve;
+                        if (!keys_x.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_x.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".x", animCurve);
+                        }
+                        if (!keys_y.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_y.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".y", animCurve);
+                        }
+                        if (!keys_z.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_z.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".z", animCurve);
+                        }
+                        if (!keys_w.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_w.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".w", animCurve);
+                        }
+
+                        if (!keys_xIT.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_xIT.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".xInnerTangent", animCurve);
+                        }
+                        if (!keys_yIT.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_yIT.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".yInnerTangent", animCurve);
+                        }
+                        if (!keys_zIT.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_zIT.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".zInnerTangent", animCurve);
+                        }
+                        if (!keys_wIT.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_wIT.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".wInnerTangent", animCurve);
+                        }
+
+                        if (!keys_xOT.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_xOT.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".xOuterTangent", animCurve);
+                        }
+                        if (!keys_yOT.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_yOT.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".yOuterTangent", animCurve);
+                        }
+                        if (!keys_zOT.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_zOT.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".zOuterTangent", animCurve);
+                        }
+                        if (!keys_wOT.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_wOT.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".wOuterTangent", animCurve);
+                        }
+                    }
+                }
+
+                currentPausedKeyFrame++;
                 anim.RemoveClip("CUSTOM_CLIP");
                 anim.AddClip(clip, "CUSTOM_CLIP");
                 anim.Play("CUSTOM_CLIP");
