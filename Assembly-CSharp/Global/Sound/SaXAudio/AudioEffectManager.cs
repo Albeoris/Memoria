@@ -43,48 +43,43 @@ namespace Global.Sound.SaXAudio
         {
             if (!IsSaXAudio) return;
 
-            new Thread(() =>
+            lock (battleBgIDPresets)
             {
-                lock (battleBgIDPresets)
-                {
-                    if (!initialized) Init();
-                }
+                if (!initialized) Init();
+            }
 
-                if (fieldIDPresets.TryGetValue(fieldID, out EffectPreset preset) && ApplyPreset(ref preset))
-                {
-                    currentPreset = preset;
-                    Log.Message($"[AudioEffectManager] Applied preset '{preset.Name}' to field {fieldID}");
-                    return;
-                }
-                ResetEffects();
-            }).Start();
+            if (fieldIDPresets.TryGetValue(fieldID, out EffectPreset preset) && ApplyPreset(ref preset))
+            {
+                currentPreset = preset;
+                Log.Message($"[AudioEffectManager] Applied preset '{preset.Name}' to field {fieldID}");
+                return;
+            }
+            ResetEffects();
         }
 
         public static void ApplyBattleEffects(Int32 battleID, Int32 battleBgID)
         {
             if (!IsSaXAudio) return;
-            new Thread(() =>
+
+            lock (battleBgIDPresets)
             {
-                lock (battleBgIDPresets)
-                {
-                    if (!initialized) Init();
-                }
+                if (!initialized) Init();
+            }
 
-                if (battleIDPresets.TryGetValue(battleID, out EffectPreset preset) && ApplyPreset(ref preset))
-                {
-                    currentPreset = preset;
-                    Log.Message($"[AudioEffectManager] Applied preset '{preset.Name}' to battle {battleID}");
-                    return;
-                }
+            if (battleIDPresets.TryGetValue(battleID, out EffectPreset preset) && ApplyPreset(ref preset))
+            {
+                currentPreset = preset;
+                Log.Message($"[AudioEffectManager] Applied preset '{preset.Name}' to battle {battleID}");
+                return;
+            }
 
-                if (battleBgIDPresets.TryGetValue(battleBgID, out preset) && ApplyPreset(ref preset))
-                {
-                    currentPreset = preset;
-                    Log.Message($"[AudioEffectManager] Applied preset '{preset.Name}' to battle background {battleBgID}");
-                    return;
-                }
-                ResetEffects();
-            }).Start();
+            if (battleBgIDPresets.TryGetValue(battleBgID, out preset) && ApplyPreset(ref preset))
+            {
+                currentPreset = preset;
+                Log.Message($"[AudioEffectManager] Applied preset '{preset.Name}' to battle background {battleBgID}");
+                return;
+            }
+            ResetEffects();
         }
 
         public static EffectPreset? GetPreset(SoundProfile profile, Int32 bus)
@@ -126,10 +121,10 @@ namespace Global.Sound.SaXAudio
         {
             if (!IsSaXAudio || !initialized) return null;
 
-            if(unlistedPresets.ContainsKey(presetName))
+            if (unlistedPresets.ContainsKey(presetName))
                 return unlistedPresets[presetName];
 
-            foreach(Int32 key in fieldIDPresets.Keys)
+            foreach (Int32 key in fieldIDPresets.Keys)
             {
                 if (fieldIDPresets[key].Name == presetName)
                     return fieldIDPresets[key];
@@ -153,7 +148,7 @@ namespace Global.Sound.SaXAudio
                     return resourceIDPresets[key];
             }
 
-            for(Int32 i = 0; i < conditionalPresets.Count; i++)
+            for (Int32 i = 0; i < conditionalPresets.Count; i++)
             {
                 if (conditionalPresets[i].Name == presetName)
                     return conditionalPresets[i];
@@ -196,33 +191,31 @@ namespace Global.Sound.SaXAudio
         public static void ApplyPresetOnSound(EffectPreset preset, Int32 soundID, String soundName, Single fade = 0)
         {
             if (!IsSaXAudio) return;
-            new Thread(() =>
+
+            lock (battleBgIDPresets)
             {
-                lock (battleBgIDPresets)
-                {
-                    if (!initialized) Init();
-                }
+                if (!initialized) Init();
+            }
 
-                if (preset.Effects == EffectPreset.Effect.None) return;
+            if (preset.Effects == EffectPreset.Effect.None) return;
 
-                Boolean reverb = (preset.Effects & EffectPreset.Effect.Reverb) != 0;
-                Boolean eq = (preset.Effects & EffectPreset.Effect.Eq) != 0;
-                Boolean echo = (preset.Effects & EffectPreset.Effect.Echo) != 0;
-                Boolean volume = (preset.Effects & EffectPreset.Effect.Volume) != 0;
+            Boolean reverb = (preset.Effects & EffectPreset.Effect.Reverb) != 0;
+            Boolean eq = (preset.Effects & EffectPreset.Effect.Eq) != 0;
+            Boolean echo = (preset.Effects & EffectPreset.Effect.Echo) != 0;
+            Boolean volume = (preset.Effects & EffectPreset.Effect.Volume) != 0;
 
-                if (reverb) SaXAudio.SetReverb(soundID, preset.Reverb, fade);
-                else SaXAudio.RemoveReverb(soundID, fade);
-                if (eq) SaXAudio.SetEq(soundID, preset.Eq, fade);
-                else SaXAudio.RemoveEq(soundID, fade);
-                if (echo) SaXAudio.SetEcho(soundID, preset.Echo, fade);
-                else SaXAudio.RemoveEcho(soundID, fade);
-                // Problem of applying volume directly onto the sound, it's multiplicative and there's no way to restore the original value
-                // This shouldn't be an issue unless ApplyPresetOnSound is called multiple times on the same sound
-                if (volume) SaXAudio.SetVolume(soundID, SaXAudio.GetVolume(soundID) * preset.Volume, fade);
+            if (reverb) SaXAudio.SetReverb(soundID, preset.Reverb, fade);
+            else SaXAudio.RemoveReverb(soundID, fade);
+            if (eq) SaXAudio.SetEq(soundID, preset.Eq, fade);
+            else SaXAudio.RemoveEq(soundID, fade);
+            if (echo) SaXAudio.SetEcho(soundID, preset.Echo, fade);
+            else SaXAudio.RemoveEcho(soundID, fade);
+            // Problem of applying volume directly onto the sound, it's multiplicative and there's no way to restore the original value
+            // This shouldn't be an issue unless ApplyPresetOnSound is called multiple times on the same sound
+            if (volume) SaXAudio.SetVolume(soundID, SaXAudio.GetVolume(soundID) * preset.Volume, fade);
 
-                // Can cause a bit too much spam
-                //Log.Message($"[AudioEffectManager] Applied preset '{preset.Name}' on sound '{soundName}'");
-            }).Start();
+            // Can cause a bit too much spam
+            //Log.Message($"[AudioEffectManager] Applied preset '{preset.Name}' on sound '{soundName}'");
         }
 
         public static void ResetEffects()
