@@ -467,6 +467,7 @@ public partial class EventEngine
             {
                 this._encountBase = 0;
                 SceneNo = this.SelectScene();
+                if (SceneNo == 0) return false;
                 if (SceneNo == this._lastScene)
                     SceneNo = this.SelectScene();
                 this._lastScene = SceneNo;
