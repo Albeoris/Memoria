@@ -351,11 +351,7 @@ namespace XInputDotNetPure
             {
                 if (jslDevices == null)
                 {
-                    // ConnectDevices can hang the game in some cases, so it's only called at startup
-                    // Detecting system device changes would be better
-                    int c = JSL.ConnectDevices();
-                    jslDevices = new int[c > 0 ? c : 0];
-                    JSL.GetConnectedDeviceHandles(jslDevices, jslDevices.Length);
+                    RefreshDevices();
                 }
                 if (jslDevices.Length > 0)
                 {
@@ -401,6 +397,28 @@ namespace XInputDotNetPure
                 Log(e.ToString());
             }
             return new GamePadState(result == Utils.Success, rawState, deadZone);
+        }
+
+        /// <summary>
+        /// Refresh the list of connected gamepad devices
+        /// </summary>
+        /// <returns>true if the number of devices has changed</returns>
+        public static Boolean RefreshDevices()
+        {
+            try
+            {
+                Int32 count = jslDevices?.Length ?? 0;
+                JSL.DisconnectAndDisposeAll();
+                int c = JSL.ConnectDevices();
+                jslDevices = new int[c > 0 ? c : 0];
+                JSL.GetConnectedDeviceHandles(jslDevices, jslDevices.Length);
+                return jslDevices.Length != count;
+            }
+            catch (Exception e)
+            {
+                Log(e.ToString());
+            }
+            return false;
         }
 
         public static Single Threshold { set; get; }

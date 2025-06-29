@@ -40,19 +40,14 @@ namespace UnityXInput
 
         private void CheckConnection()
         {
-            Int32 num = 0;
-            Int32 num2 = 3;
-            this.playerIndexSet = false;
-            for (Int32 i = num; i <= num2; i++)
+            playerIndexSet = false;
+            for (Int32 i = 0; i <= 3; i++)
             {
-                PlayerIndex playerIndex = (PlayerIndex)i;
                 if (XInputDotNetPure.GamePad.GetState(playerIndex).IsConnected)
                 {
-                    String arg = UnityEngine.Input.GetJoystickNames().Length <= 0 ? "Unknown Device" : UnityEngine.Input.GetJoystickNames()[0];
-                    global::Debug.Log(String.Format("GamePad found {0} => {1}", playerIndex, arg));
                     UnityEngine.Input.ResetInputAxes();
-                    this.playerIndex = playerIndex;
-                    this.playerIndexSet = true;
+                    playerIndex = (PlayerIndex)i;
+                    playerIndexSet = true;
                     break;
                 }
             }
@@ -87,6 +82,10 @@ namespace UnityXInput
             {
                 this.resetAxesTime = 1f;
                 global::Debug.Log("Start reset input axes");
+
+                // Pause the game if a controller has been disconnected
+                if (!UIManager.Instance.IsPause)
+                    UIManager.Instance.GetSceneFromState(UIManager.Instance.State).OnKeyPause(null);
             }
         }
 

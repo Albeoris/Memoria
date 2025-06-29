@@ -44,6 +44,7 @@ public static class AssetManager
         Log.Message($"[Initialization] Mods: {modsNames}");
 
         WindowManager.AlignWindow();
+        ControllerWatcher.Instance.Initialize();
 
         AssetManager.IsFullyInitialized = false;
         Array moduleList = Enum.GetValues(typeof(AssetManagerUtil.ModuleBundle));

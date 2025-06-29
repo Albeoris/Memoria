@@ -351,6 +351,7 @@
     <Compile Include="Global\Sound\SoLoud\WavStream.cs" />
     <Compile Include="Global\SPS\CommonSPSSystem.cs" />
     <Compile Include="Global\SPS\SHPEffect.cs" />
+    <Compile Include="Memoria\Application\ControllerWatcher.cs" />
     <Compile Include="Memoria\Application\WindowManager.cs" />
     <Compile Include="Memoria\Assets\3DModel\FbxBone.cs" />
     <Compile Include="Memoria\Assets\3DModel\FbxDeformer.cs" />
