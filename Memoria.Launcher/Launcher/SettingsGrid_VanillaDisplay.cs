@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Application = System.Windows.Application;
 using ComboBox = System.Windows.Controls.ComboBox;
@@ -13,6 +14,7 @@ namespace Memoria.Launcher
 {
     public sealed class SettingsGrid_VanillaDisplay : UiGrid, INotifyPropertyChanged
     {
+        public static String[] availableMonitors = GetAvailableMonitors();
         public SettingsGrid_VanillaDisplay()
         {
             DataContext = this;
@@ -145,11 +147,29 @@ namespace Memoria.Launcher
                 else
                     _resolution = EnumerateDisplaySettings(false).OrderByDescending(x => Convert.ToInt32(x.Split('x')[0])).ToArray()[0];
 
-                value = iniFile.GetSetting("Settings", nameof(ActiveMonitor));
-                if (!String.IsNullOrEmpty(value))
+                value = iniFile.GetSetting("Settings", nameof(ActiveMonitor), "0");
+
+                String[] tokens = value.Split('-');
+                _activeMonitor = availableMonitors[0];
+                foreach (String monitor in availableMonitors)
                 {
-                    var i = value.IndexOf("[");
-                    _activeMonitor = i < 0 ? value : value.Substring(0, i) + (String)Lang.Res["Settings.PrimaryMonitor"];
+                    if (monitor.StartsWith(tokens[0].Trim()))
+                    {
+                        _activeMonitor = monitor;
+                        break;
+                    }
+                }
+                if (tokens.Length > 1)
+                {
+                    String displayName = Regex.Replace(tokens[1], @"\[[^\]]*\]", "").Trim();
+                    foreach (String monitor in availableMonitors)
+                    {
+                        if (monitor.Contains(displayName))
+                        {
+                            _activeMonitor = monitor;
+                            break;
+                        }
+                    }
                 }
 
                 value = iniFile.GetSetting("Settings", nameof(WindowMode));
@@ -233,7 +253,7 @@ namespace Memoria.Launcher
             return resolution;
         }
 
-        public String[] GetAvailableMonitors()
+        public static String[] GetAvailableMonitors()
         {
             var displays = DisplayInfo.Displays;
             String[] result = new String[displays.Count];
@@ -243,7 +263,6 @@ namespace Memoria.Launcher
                 if (displays[i].isPrimary)
                 {
                     result[i] += (String)Lang.Res["Settings.PrimaryMonitor"];
-                    _activeMonitor = result[i];
                 }
             }
 

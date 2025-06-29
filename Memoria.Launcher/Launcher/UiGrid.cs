@@ -55,7 +55,7 @@ namespace Memoria.Launcher
             Children.Add(uiElement);
             return uiElement;
         }
-        public static void MakeTooltip(FrameworkElement uiElement, String text = "", String imageName = "", String curstorType = "mog")
+        public static void MakeTooltip(FrameworkElement uiElement, String text = "", String imageName = "", String curstorType = "mog", PlacementMode placement = PlacementMode.Bottom)
         {
             if (text != "" || imageName != "")
             {
@@ -188,10 +188,10 @@ namespace Memoria.Launcher
                     HasDropShadow = false,
                     BorderBrush = Brushes.Transparent,
                     BorderThickness = new Thickness(0),
-                    Padding = new Thickness(0),
+                    Padding = new Thickness(0,0,5,0),
                     Margin = new Thickness(0),
                     PlacementTarget = uiElement,
-                    Placement = PlacementMode.Bottom,
+                    Placement = placement,
                     VerticalOffset = 0,
                     HorizontalOffset = 0,
                     ForceCursor = true,
@@ -200,7 +200,7 @@ namespace Memoria.Launcher
                 if (uiElement.ToolTip == null || uiElement.ToolTip is string)
                 {
                     uiElement.ToolTipOpening += (object sender, ToolTipEventArgs e) =>
-{
+                    {
                         // Allegedly fixes the System.ArgumentNullException within System.Windows.Controls.ToolTipService.GetBetweenShowDelay
                         e.Handled = true;
                     };

@@ -154,4 +154,16 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style x:Key="ButtonStyleLabel" TargetType="{x:Type Button}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <ContentPresenter
+                            HorizontalAlignment="Center" 
+                            VerticalAlignment="Center"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>
