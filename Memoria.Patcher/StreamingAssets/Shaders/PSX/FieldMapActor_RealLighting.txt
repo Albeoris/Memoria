@@ -5,9 +5,9 @@ Shader "PSX/FieldMapActor_RealLighting" {
 		_Slice ("Slice", Float) = 40960
 	}
 	SubShader { 
-		Tags { "QUEUE"="Transparent+1" "IGNOREPROJECTOR"="true" "RenderType"="Transparent+1" }
+		Tags { "QUEUE"="Transparent-1" "IGNOREPROJECTOR"="true" "RenderType"="Transparent+1" }
 		Pass {
-			Tags { "QUEUE"="Transparent+1" "IGNOREPROJECTOR"="true" "RenderType"="Transparent+1" }
+			Tags { "QUEUE"="Transparent-1" "IGNOREPROJECTOR"="true" "RenderType"="Transparent+1" }
 			Blend One OneMinusSrcAlpha
 			GpuProgramID 65460
 			Program "vp" {
