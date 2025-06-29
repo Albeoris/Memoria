@@ -37,6 +37,7 @@ public class ControllerWatcher : PersistenSingleton<ControllerWatcher>
 
                 Log.Message("[ControllerWatcher] USB device notification registered");
             }
+            message = "Device connected";
             StartCoroutine("RefreshControllers");
         }
         catch (Exception e)
@@ -90,7 +91,7 @@ public class ControllerWatcher : PersistenSingleton<ControllerWatcher>
         if (hasChanged && connect)
         {
             yield return new WaitForSeconds(0.5f);
-            // Refresh one last time for Dualsense over buetooth
+            // Refresh one last time for DualSense over Bluetooth
             XInputDotNetPure.GamePad.RefreshDevices();
         }
     }
