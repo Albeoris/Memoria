@@ -2572,7 +2572,7 @@ Language of choice.
 		<Default/>
 	</SubMod>
 		<SubMod>
-		<Name>Freija and Salamader</Name>
+		<Name>Freija and Salamander</Name>
 		<InstallationPath>Names</InstallationPath>
 		<Description>Changes the default names of Freya and Amarant for both English Translations</Description>
 		<Priority>2</Priority>
