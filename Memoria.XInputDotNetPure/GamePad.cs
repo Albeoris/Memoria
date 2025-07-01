@@ -402,13 +402,14 @@ namespace XInputDotNetPure
         /// <summary>
         /// Refresh the list of connected gamepad devices
         /// </summary>
-        /// <returns>true if the number of devices has changed</returns>
-        public static Boolean RefreshDevices()
+        /// <param name="forceReconnect">Disconnect all devices before (re)connecting</param>
+        /// <returns>true if the number of devices has changed</returns></returns>
+        public static Boolean RefreshDevices(Boolean forceReconnect = false)
         {
             try
             {
                 Int32 count = jslDevices?.Length ?? 0;
-                JSL.DisconnectAndDisposeAll();
+                if (forceReconnect) JSL.DisconnectAndDisposeAll();
                 int c = JSL.ConnectDevices();
                 jslDevices = new int[c > 0 ? c : 0];
                 JSL.GetConnectedDeviceHandles(jslDevices, jslDevices.Length);
