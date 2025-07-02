@@ -2408,15 +2408,14 @@ Change some card textures (add boss + characters)</Description>
 
 <Mod>
 	<Name>Launcher Themes</Name>
-	<Version>1.0.1</Version>
-	<Priority>21</Priority>
+	<Version>1.0.2</Version>
+	<Priority>21</Priority>	
 	<InstallationPath>MemoriaLauncherThemes</InstallationPath>
-	<ReleaseDate>2025-5-12</ReleaseDate>
+	<ReleaseDate>2025-07-02</ReleaseDate>
 	<ReleaseDateOriginal>2024-12-07</ReleaseDateOriginal>
 	<Author>faospark, SamsamTS</Author>
 	<Description>Alternate Themes to Memoria Launcher</Description>
-	<PatchNotes>First Public Release
-Special citation to SamsamTS  for making this possible	</PatchNotes>
+	<PatchNotes>Added Toshiyuki Itahana' Party Artwork, A Callback to one of the OG BGs and Moguri Launcher	</PatchNotes>
 	<Category>Launcher</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/96</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/gvyh8otf7exe99x008mxh/MemoriaLauncherThemes.zip?rlkey=h3fhorrmmvr6nzip9uyrv6kpk&amp;st=h3ec8vdk&amp;dl=1</DownloadUrl>
@@ -2492,9 +2491,31 @@ Special citation to SamsamTS  for making this possible	</PatchNotes>
 		<LauncherBackground>Themes/theme-10.png</LauncherBackground>
 		<LauncherColor>2c5e5f</LauncherColor>
 		<Group>Theme</Group>
-		<Default/>
 	</SubMod>
+	<SubMod>
+		<Name>Theme 11 : The Callback  </Name>
+		<InstallationPath>11</InstallationPath>
+		<LauncherBackground>Themes/theme-11.png</LauncherBackground>
+		<LauncherColor>667daf</LauncherColor>
+		<Group>Theme</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Theme 12 : Moguri..ish </Name>
+		<InstallationPath>12</InstallationPath>
+		<LauncherBackground>Themes/theme-12.png</LauncherBackground>
+		<LauncherColor>b8af9c</LauncherColor>
+		<Group>Theme</Group>
+	</SubMod>
+		<SubMod>
+		<Name>Theme 13 : The Party </Name>
+		<InstallationPath>11</InstallationPath>
+		<LauncherBackground>Themes/theme-13.png</LauncherBackground>
+		<LauncherColor>1c222c</LauncherColor>
+		<Group>Theme</Group>
+		<Default/>
+	</SubMod>					
 </Mod>
+
 
 <Mod>
 	<Name>Better Card Drops</Name>
