@@ -199,7 +199,7 @@ namespace Global.Sound.SaXAudio
         public static extern UInt32 GetChannelCount(Int32 voiceID);
 
         [DllImport("SaXAudio")]
-        public static extern UInt32 GetVoiceCount();
+        public static extern UInt32 GetVoiceCount(Int32 bankID = 0, Int32 busID = 0);
         [DllImport("SaXAudio")]
         public static extern UInt32 GetBankCount();
 

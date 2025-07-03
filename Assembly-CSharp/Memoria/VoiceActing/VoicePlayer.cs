@@ -268,7 +268,7 @@ public class VoicePlayer : SoundPlayer
         if (dialog == specialDialog) specialDialog = null;
         soundOfDialog.Remove(dialog);
 
-        if(closeDialogOnFinish)
+        if (closeDialogOnFinish)
         {
             dialog.OnKeyConfirm(null);
             closeDialogOnFinish = false;
@@ -387,6 +387,27 @@ public class VoicePlayer : SoundPlayer
 
     public static SoundProfile CreateLoadThenPlayVoice(Int32 soundIndex, String vaPath, Action onFinished = null)
     {
+        // Occasionally clear unused voices from the database
+        if (ETb.voiceDatabase.ReadAll().Count > 10)
+        {
+            List<SoundProfile> toDelete = new List<SoundProfile>();
+            foreach (SoundProfile profile in ETb.voiceDatabase.ReadAll().Values)
+            {
+                if (profile.SoundIndex == soundIndex) continue;
+
+                Boolean isUsed = AudioEffectManager.IsSaXAudio ? SaXAudio.GetVoiceCount(profile.BankID) > 0 : ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(profile.SoundID) > 0;
+                if (!isUsed)
+                {
+                    StaticUnregisterBank(profile);
+                    toDelete.Add(profile);
+                }
+            }
+            foreach (SoundProfile profile in toDelete)
+            {
+                ETb.voiceDatabase.Delete(profile);
+            }
+        }
+
         SoundProfile soundProfile = ETb.voiceDatabase.Read(soundIndex);
         if (soundProfile == null)
         {
