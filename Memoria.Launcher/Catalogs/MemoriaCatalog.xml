@@ -2521,7 +2521,7 @@ Change some card textures (add boss + characters)</Description>
 	</SubMod>
 		<SubMod>
 		<Name>Theme 13 : The Party </Name>
-		<InstallationPath>11</InstallationPath>
+		<InstallationPath>13</InstallationPath>
 		<LauncherBackground>Themes/theme-13.png</LauncherBackground>
 		<LauncherColor>1c222c</LauncherColor>
 		<Group>Theme</Group>
