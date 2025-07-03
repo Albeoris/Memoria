@@ -22,6 +22,7 @@ namespace Global.Sound.SaXAudio
         }
 
         private static readonly Dictionary<Int32, BankData> bankData = new Dictionary<Int32, BankData>();
+        private static readonly Dictionary<Int32, SoundProfile> sounds = new Dictionary<Int32, SoundProfile>();
 
         public Int32 BusMusic { get; private set; }
         public Int32 BusAmbient { get; private set; }
@@ -167,6 +168,7 @@ namespace Global.Sound.SaXAudio
             if (preset != null)
                 AudioEffectManager.ApplyPresetOnSound(preset.Value, soundID, data.Profile.Name);
 
+            sounds[soundID] = data.Profile;
             LastSoundID = soundID;
             return soundID;
         }
@@ -183,6 +185,29 @@ namespace Global.Sound.SaXAudio
 
         public override Int32 SdSoundSystem_SoundCtrl_Start(Int32 soundID, Int32 offsetTimeMSec)
         {
+            Int32 bankID = sounds[soundID].BankID;
+            HashSet<Int32> toDelete = new HashSet<Int32>();
+            foreach (var sound in sounds)
+            {
+                if (!SaXAudio.VoiceExist(sound.Key))
+                {
+                    toDelete.Add(sound.Key);
+                    continue;
+                }
+                if (sound.Value.BankID == bankID && SaXAudio.GetPauseStack(soundID) == 0)
+                {
+                    Double pos = SaXAudio.GetPositionTime(sound.Key);
+                    if (pos < 0.01d)
+                    {
+                        // Prevent same sound to play more than once at very close interval (<10ms)
+                        SoundLib.Log($"Sound already playing ({sound.Value.ResourceID}). Stopping {sound.Key} pos {(Int32)(pos * 1000)}ms");
+                        SaXAudio.Stop(sound.Key);
+                    }
+                }
+            }
+            foreach (Int32 key in toDelete)
+                sounds.Remove(key);
+
             return SaXAudio.StartAtTime(soundID, offsetTimeMSec / 1000f) ? 1 : 0;
         }
 
