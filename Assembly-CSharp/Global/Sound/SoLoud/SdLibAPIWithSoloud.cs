@@ -12,8 +12,6 @@ namespace Global.Sound.SoLoud
     {
         public static bool isQuitting = false;
 
-        private const Int32 AkbHeaderSize = 304;
-
         private static Soloud soloud = null;
         private static Bus sfxBus = null;
         private static Bus voiceBus = null;
@@ -112,9 +110,9 @@ namespace Global.Sound.SoLoud
                 Marshal.Copy(akb, akbBin, 0, 304);
 
                 StreamInfo stream = new StreamInfo();
-                stream.akbHeader.ReadFromBytes(akbBin);
+                UInt32 headerSize = stream.akbHeader.ReadFromBytes(akbBin);
                 stream.data = new WavStream();
-                stream.data.loadMem((IntPtr)((Byte*)akb + AkbHeaderSize), (uint)stream.akbHeader.ContentSize, true, true);
+                stream.data.loadMem((IntPtr)((Byte*)akb + headerSize), stream.akbHeader.ContentSize, true, true);
                 stream.profile = profile;
 
                 Int32 bankID = (Int32)stream.data.objhandle;

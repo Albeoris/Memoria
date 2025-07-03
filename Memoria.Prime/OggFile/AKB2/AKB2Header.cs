@@ -111,13 +111,40 @@ namespace Memoria.Prime.AKB2
             header->Constant42 = 0x3F800000;
         }
 
-        public void ReadFromBytes(Byte[] raw)
+        public UInt32 ReadFromBytes(Byte[] raw)
         {
-            if (raw.Length < 304)
-                return;
+            if (raw.Length < 4)
+                return 0;
+
             using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(raw)))
             {
                 this.Signature = binaryReader.ReadUInt32();
+
+                UInt32 headerSize = 0;
+                if (Signature == 0x32424B41) // AKB2
+                    headerSize = 304;
+                else if (Signature == 0x20424B41) // AKB1
+                    headerSize = 204;
+                else
+                    return 0;
+
+                if (raw.Length < headerSize)
+                    return 0;
+
+                if (headerSize == 204)
+                {
+                    // AKB1
+                    binaryReader.ReadUInt32();
+                    ContentSize = binaryReader.ReadUInt32() - headerSize;
+                    binaryReader.ReadUInt16();
+                    SampleRate = binaryReader.ReadUInt16();
+                    binaryReader.ReadUInt32();
+                    LoopStart = binaryReader.ReadUInt32();
+                    LoopEnd = binaryReader.ReadUInt32(); ;
+                    return headerSize;
+                }
+
+                // AKB2
                 this.Constant01 = binaryReader.ReadUInt32();
                 this.FileSize = binaryReader.ReadUInt32();
                 this.Constant02 = binaryReader.ReadUInt32();
@@ -195,6 +222,7 @@ namespace Memoria.Prime.AKB2
                 this.Optional46 = binaryReader.ReadUInt32();
                 this.Optional47 = binaryReader.ReadUInt32();
                 this.Zero48 = binaryReader.ReadUInt32();
+                return headerSize;
             }
         }
 
