@@ -130,6 +130,11 @@ namespace Memoria
                 get => Mathf.Clamp(Instance._interface.FadeDuration / 1000f, 0f, 5f);
                 set => Instance._interface.FadeDuration.Value = (Int32)(value * 1000f);
             }
+            public static Single TextFadeDuration
+            {
+                get => Mathf.Clamp(Instance._interface.TextFadeDuration / 1000f, 0f, 1f);
+                set => Instance._interface.TextFadeDuration.Value = (Int32)(value * 1000f);
+            }
 
             public static void SaveBattleValues()
             {

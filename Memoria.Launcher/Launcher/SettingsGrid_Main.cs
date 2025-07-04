@@ -21,7 +21,7 @@ namespace Memoria.Launcher
             ];
             CreateCombobox("UIColumnsChoice", comboboxchoices, 50, "Settings.UIColumnsChoice", "Settings.UIColumnsChoice_Tooltip");
 
-
+            CreateSlider("TextFadeDuration", "TextFadeDuration", 0, 200, 10, "{0}", 50, "Settings.TextFadeDuration", "Settings.TextFadeDuration_Tooltip", "text_fade.png");
 
             CreateHeading("Settings.Battle");
 

@@ -13,6 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
@@ -112,18 +113,17 @@ namespace Memoria.Launcher
                 AreThereModUpdates = false;
                 AreThereModIncompatibilies = false;
 
-                foreach (Mod mod in ModListInstalled) // reset state
-                {
-                    mod.UpdateIcon = null;
-                    mod.UpdateTooltip = null;
-                    mod.IncompIcon = null;
-                    mod.ActiveIncompatibleMods = null;
-                }
-
                 foreach (Mod mod in ModListInstalled)
                 {
                     if (mod == null || mod.Name == null)
                         continue;
+
+                    // reset state
+                    mod.UpdateIcon = null;
+                    mod.UpdateTooltip = null;
+                    mod.IncompIcon = null;
+                    mod.ActiveIncompatibleMods = null;
+
                     if (((mod.Name == "Moguri Mod" || mod.Name == "MoguriFiles") && mod.InstallationPath.Contains("MoguriFiles")) || (mod.Name == "Moguri - 3D textures" && mod.InstallationPath.Contains("Moguri_3Dtextures")))
                     {
                         mod.UpdateIcon = UpdateEmoji;
@@ -137,8 +137,7 @@ namespace Memoria.Launcher
                     {
                         if (catalog_mod != null && catalog_mod.Name != null && mod.Name == catalog_mod.Name)
                         {
-                            Boolean versionCorresponds = mod.CurrentVersion == catalog_mod.CurrentVersion;
-                            mod.IsOutdated = catalog_mod.IsOutdated = !versionCorresponds;
+                            mod.IsOutdated = catalog_mod.IsOutdated = mod.CurrentVersion < catalog_mod.CurrentVersion;
                             if (mod.IsOutdated)
                             {
                                 mod.UpdateIcon = UpdateEmoji;
@@ -243,12 +242,6 @@ namespace Memoria.Launcher
             }
         }
 
-        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            lstMods.Items.Refresh();
-            lstCatalogMods.Items.Refresh();
-        }
-
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
             Mod mod = (sender as CheckBox)?.DataContext as Mod;
@@ -258,6 +251,175 @@ namespace Memoria.Launcher
             UpdateModSettings();
             RefreshModOptions();
         }
+
+        private void UpdateIcon_Click(object sender, RoutedEventArgs e)
+        {
+            Mod installedMod = (sender as Button)?.DataContext as Mod;
+            if (installedMod == null || installedMod.Name == null)
+                return;
+
+            Mod mod = Mod.SearchMod(ModListCatalog, installedMod);
+            if (mod != null)
+            {
+                tabCtrlMain.SelectedIndex = 1;
+                DownloadList.Add(mod);
+                DownloadStart(mod);
+                mod.Installed = WaitingEmoji;
+                lstCatalogMods.SelectedItem = mod;
+                lstCatalogMods.ScrollIntoView(mod);
+            }
+        }
+
+        //---------------------------
+        // ListView Drag & Drop
+        //---------------------------
+
+        private Point _startPoint;
+        private bool _isDragging = false;
+        private ListViewItem _draggedItem;
+        private int _draggedIndex = -1;
+        private Mod _draggedData;
+
+        private void ListView_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (tabCtrlMain.SelectedIndex == 1 && priorityColumn == null) return;
+            ObservableCollection<Mod> mods = tabCtrlMain.SelectedIndex == 0 ? ModListInstalled : ModListCatalog;
+
+            _startPoint = e.GetPosition(null);
+
+            // Find the ListViewItem that was clicked
+            var item = FindAncestor<ListViewItem>((DependencyObject)e.OriginalSource);
+            if (item != null)
+            {
+                _draggedItem = item;
+                _draggedData = item.Content as Mod;
+                _draggedIndex = mods.IndexOf(_draggedData);
+
+                // Change cursor to indicate vertical movement
+                var listView = FindAncestor<ListView>(_draggedItem);
+                listView.Cursor = Cursors.SizeAll;
+            }
+        }
+
+        private void ListView_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            if (tabCtrlMain.SelectedIndex == 1 && priorityColumn == null) return;
+            if (e.LeftButton == MouseButtonState.Pressed && !_isDragging && _draggedItem != null)
+            {
+                Point position = e.GetPosition(null);
+
+                if (Math.Abs(position.X - _startPoint.X) > SystemParameters.MinimumHorizontalDragDistance ||
+                    Math.Abs(position.Y - _startPoint.Y) > SystemParameters.MinimumVerticalDragDistance)
+                {
+                    StartDrag();
+                }
+            }
+        }
+
+        private void StartDrag()
+        {
+            if (tabCtrlMain.SelectedIndex == 1 && priorityColumn == null) return;
+            if (_draggedItem != null && _draggedData != null)
+            {
+                _isDragging = true;
+
+                // Capture mouse to continue receiving events even when outside the control
+                var listView = FindAncestor<ListView>(_draggedItem);
+                listView?.CaptureMouse();
+            }
+        }
+
+        private void ListView_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (tabCtrlMain.SelectedIndex == 1 && priorityColumn == null) return;
+            ObservableCollection<Mod> mods = tabCtrlMain.SelectedIndex == 0 ? ModListInstalled : ModListCatalog;
+
+            if (_isDragging && e.LeftButton == MouseButtonState.Pressed)
+            {
+                var listView = sender as ListView;
+                Point position = e.GetPosition(listView);
+
+                // Find which item we're hovering over
+                var hitTest = VisualTreeHelper.HitTest(listView, position);
+                if (hitTest != null)
+                {
+                    var targetItem = FindAncestor<ListViewItem>(hitTest.VisualHit);
+                    if (targetItem != null && targetItem != _draggedItem)
+                    {
+                        var targetData = targetItem.Content as Mod;
+                        if (targetData != null)
+                        {
+                            int newIndex = mods.IndexOf(targetData);
+                            int currentIndex = mods.IndexOf(_draggedData);
+
+                            if (newIndex >= 0 && currentIndex >= 0 && newIndex != currentIndex)
+                            {
+                                // Move the item in real-time
+                                mods.Move(currentIndex, newIndex);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void ListView_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            EndDrag(sender as ListView);
+        }
+
+        private void ListView_MouseLeave(object sender, MouseEventArgs e)
+        {
+            EndDrag(sender as ListView);
+        }
+
+        private void EndDrag(ListView listView)
+        {
+            if (tabCtrlMain.SelectedIndex == 1 && priorityColumn == null) return;
+            ObservableCollection<Mod> mods = tabCtrlMain.SelectedIndex == 0 ? ModListInstalled : ModListCatalog;
+
+            if (_isDragging)
+            {
+                _isDragging = false;
+
+                // Release mouse capture
+                listView?.ReleaseMouseCapture();
+
+                // Clear drag state
+                _draggedItem = null;
+                _draggedData = null;
+                _draggedIndex = -1;
+
+                if (tabCtrlMain.SelectedIndex == 0)
+                    UpdateInstalledPriorityValue();
+                else
+                {
+                    UpdateCatalogPriorities();
+                    SaveCatalogPriorities();
+                }
+            }
+
+            // Restore cursor
+            if (listView != null)
+                listView.Cursor = Cursors.Arrow;
+        }
+
+        // Helper method to find ancestor of specific type
+        private static T FindAncestor<T>(DependencyObject current) where T : DependencyObject
+        {
+            do
+            {
+                if (current is T)
+                {
+                    return (T)current;
+                }
+                current = VisualTreeHelper.GetParent(current);
+            }
+            while (current != null);
+            return null;
+        }
+
+        //---------------------------
 
         private void OnClosing(Object sender, CancelEventArgs e)
         {
@@ -442,6 +604,72 @@ namespace Memoria.Launcher
             CheckOutdatedAndIncompatibleMods();
         }
 
+        private GridViewColumn priorityColumn = null;
+
+        private void OnClickPriority(Object sender, RoutedEventArgs e)
+        {
+            if (priorityColumn != null) return;
+
+            GridView gridView = lstCatalogMods.View as GridView;
+
+            priorityColumn = new GridViewColumn();
+            priorityColumn.Header = "";
+            priorityColumn.DisplayMemberBinding = new Binding("Priority");
+
+            // Insert at index 0 to make it the first column
+            gridView.Columns.Insert(0, priorityColumn);
+
+            priorityColumn.Width = Double.NaN;
+            lstCatalogMods.UpdateLayout();
+            priorityColumn.Width = priorityColumn.ActualWidth;
+
+            var sortedMods = ModListCatalog.OrderByDescending((mod) => mod.Priority).ToList();
+            ModListCatalog.Clear();
+            foreach (var mod in sortedMods)
+            {
+                ModListCatalog.Add(mod);
+                if (mod.Priority == 1)
+                {
+                    Mod separator = new Mod();
+                    separator.Name = "---------------------------";
+                    ModListCatalog.Add(separator);
+                }
+            }
+            UpdateCatalogPriorities();
+        }
+
+        private void UpdateCatalogPriorities()
+        {
+            Int32 count;
+            for (count = 0; count < ModListCatalog.Count; count++)
+            {
+                if (ModListCatalog[count].Name == "---------------------------")
+                    break;
+            }
+            for (Int32 i = 0; i < ModListCatalog.Count; i++)
+            {
+                ModListCatalog[i].Priority = count--;
+            }
+            CollectionViewSource.GetDefaultView(lstCatalogMods.ItemsSource).Refresh();
+        }
+
+        private void SaveCatalogPriorities()
+        {
+            String catalog = File.ReadAllText(CATALOG_PATH); ;
+            Dictionary<String, Int32> priorities = new Dictionary<String, Int32>();
+
+            foreach (Mod mod in ModListCatalog)
+            {
+                String search1 = @"(<Name>" + Regex.Escape(mod.Name) + @"((?!<\/Mod>).)*<\/Version>\s*<Priority>)((?!<\/Priority>).)*";
+                String search2 = @"(<Name>" + Regex.Escape(mod.Name) + @"((?!<\/Mod>).)*<\/Version>)(?!\s*<Priority>)";
+                Match m = Regex.Match(catalog, search2, RegexOptions.Singleline);
+                catalog = Regex.Replace(catalog, search1, "${1}" + mod.Priority, RegexOptions.Singleline);
+                catalog = Regex.Replace(catalog, search2, $"$1\r\n\t<Priority>{mod.Priority}</Priority>", RegexOptions.Singleline);
+            }
+
+            File.WriteAllText(CATALOG_PATH, catalog);
+        }
+
         public static bool IsDate1EqualOrMoreRecent(string date1, string date2)
         {
             string format = "yyyy-MM-dd";
@@ -488,6 +716,11 @@ namespace Memoria.Launcher
             if (!String.IsNullOrEmpty(currentMod.Website))
                 Process.Start(currentMod.Website);
         }
+        private void OnClickDescription(Object sender, RoutedEventArgs e)
+        {
+            MainWindowGrid.Children.Add(new Window_ModDescription(currentMod));
+        }
+
         private void OnClickCatalogHeader(Object sender, EventArgs e)
         {
             MethodInfo[] accessors = null;
@@ -604,8 +837,16 @@ namespace Memoria.Launcher
                 try
                 {
                     downloadingMod.PercentComplete = e.ProgressPercentage;
-                    downloadingMod.DownloadSpeed = $"{(Int64)(e.BytesReceived / 1024.0 / timeSpan)} {(String)Lang.Res["Measurement.KByteAbbr"]}/{(String)Lang.Res["Measurement.SecondAbbr"]}";
-                    downloadingMod.RemainingTime = $"{TimeSpan.FromSeconds((e.TotalBytesToReceive - e.BytesReceived) * timeSpan / e.BytesReceived):g}";
+                    Int64 dlSpeed = (Int64)(e.BytesReceived / 1024.0 / timeSpan);
+                    String measurement = (String)Lang.Res["Measurement.KByteAbbr"];
+                    if (dlSpeed > 1024)
+                    {
+                        dlSpeed /= 1024;
+                        measurement = (String)Lang.Res["Measurement.MByteAbbr"];
+                    }
+
+                    downloadingMod.DownloadSpeed = $"{dlSpeed} {measurement}/{(String)Lang.Res["Measurement.SecondAbbr"]}";
+                    downloadingMod.RemainingTime = $"{TimeSpan.FromSeconds(Math.Round((e.TotalBytesToReceive - e.BytesReceived) * timeSpan / e.BytesReceived)):g}";
                 }
                 catch (NullReferenceException) // added to catch a race condition that sometimes occures where Ui tries to update but download has finished
                 {
@@ -639,9 +880,38 @@ namespace Memoria.Launcher
                 downloadingPath = "";
                 return;
             }
-            downloadingPath = "";
+
             Dispatcher.BeginInvoke((MethodInvoker)async delegate
             {
+                Thread extractingThread = new Thread(() =>
+                {
+                    downloadingMod.PercentComplete = 0;
+                    downloadingMod.DownloadSpeed = $"{WaitingEmoji} {(String)Lang.Res["ModEditor.Extracting"]}";
+                    downloadingMod.RemainingTime = "";
+                    String dots = "";
+                    while (downloadingMod != null)
+                    {
+                        try
+                        {
+                            dots = dots == "..." ? "" : dots + ".";
+                            Dispatcher.BeginInvoke((MethodInvoker)delegate
+                            {
+                                downloadingMod.RemainingTime = dots;
+                                lstDownloads.Items.Refresh();
+                            });
+                            Thread.Sleep(500);
+                        }
+                        catch
+                        {
+                            if (downloadingMod != null)
+                            {
+                                downloadingMod.DownloadSpeed = "";
+                                downloadingMod.RemainingTime = "";
+                            }
+                        }
+                    }
+                });
+
                 String downloadingModName = downloadingMod.Name;
                 String path = Mod.INSTALLATION_TMP + "/" + (downloadingMod.InstallationPath ?? downloadingModName);
                 Boolean success = false;
@@ -657,7 +927,9 @@ namespace Memoria.Launcher
                         Boolean moveDesc = false;
                         String sourcePath = "";
                         String destPath = "";
+                        extractingThread.Start();
                         await ExtractAllFileFromArchive(path + downloadFormatExtLower, path);
+                        extractingThread.Abort();
                         File.Delete(path + downloadFormatExtLower);
 
                         String descPath = null;
@@ -768,78 +1040,95 @@ namespace Memoria.Launcher
                 }
                 else if (downloadingMod.DownloadFormat.StartsWith("SingleFileWithPath:"))
                 {
-                    Boolean proceedNext = true;
-                    String modInstallPath = downloadingMod.InstallationPath ?? downloadingModName;
-                    if (Directory.Exists(modInstallPath))
+                    try
+                    {
+                        Boolean proceedNext = true;
+                        String modInstallPath = downloadingMod.InstallationPath ?? downloadingModName;
+                        if (Directory.Exists(modInstallPath))
+                        {
+                            // TODO language:
+                            if (MessageBox.Show($"The current version of the mod folder, {modInstallPath}, will be deleted before moving the new version.\nProceed?", "Updating", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                            {
+                                Directory.Delete(modInstallPath, true);
+                            }
+                            else
+                            {
+                                Process.Start(Path.GetFullPath(Path.GetDirectoryName(path)));
+                                proceedNext = false;
+                            }
+                        }
+                        if (proceedNext)
+                        {
+                            String filePath = downloadingMod.DownloadFormat.Substring("SingleFileWithPath:".Length);
+                            String destPath = modInstallPath + "/" + filePath;
+                            Directory.CreateDirectory(destPath.Substring(0, destPath.LastIndexOf('/')));
+                            File.Move(path + ".zip", destPath);
+                            downloadingMod.GenerateDescription(modInstallPath);
+                            String singleFileList = null;
+                            if (filePath.StartsWith("StreamingAssets/", StringComparison.OrdinalIgnoreCase))
+                                singleFileList = filePath.Substring("StreamingAssets/".Length).ToLower();
+                            else if (filePath.StartsWith("FF9_Data/", StringComparison.OrdinalIgnoreCase))
+                                singleFileList = filePath.Substring("FF9_Data/".Length).ToLower();
+                            else if (Mod.MEMORIA_ROOT_FILES.Any(str => String.Compare(filePath, str, StringComparison.OrdinalIgnoreCase) == 0))
+                                singleFileList = filePath.ToLower();
+                            if (!String.IsNullOrEmpty(singleFileList) && !Mod.ARCHIVE_BUNDLE_FILES.Contains(singleFileList))
+                                File.WriteAllText(modInstallPath + "/" + Mod.MOD_CONTENT_FILE, singleFileList + "\n");
+                            success = true;
+                        }
+                    }
+                    catch (Exception err)
                     {
                         // TODO language:
-                        if (MessageBox.Show($"The current version of the mod folder, {modInstallPath}, will be deleted before moving the new version.\nProceed?", "Updating", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                        MessageBox.Show($"Error while installing the mod {path} (SingleFileWithPath)\n\n{err.Message}", "Error", MessageBoxButton.OK);
+                    }
+                }
+                try
+                {
+                    Boolean activateTheNewMod = success;
+                    String installPath = downloadingMod.InstallationPath ?? downloadingModName;
+                    if (success)
+                    {
+                        if (!Directory.EnumerateFileSystemEntries(Mod.INSTALLATION_TMP).GetEnumerator().MoveNext())
+                            Directory.Delete(Mod.INSTALLATION_TMP);
+                        Mod previousMod = Mod.SearchWithPath(ModListInstalled, installPath);
+                        if (previousMod != null)
                         {
-                            Directory.Delete(modInstallPath, true);
+                            previousMod.CurrentVersion = null;
+                            activateTheNewMod = false;
                         }
-                        else
+                    }
+                    DownloadList.Remove(downloadingMod);
+                    downloadingMod = null;
+                    if (DownloadList.Count > 0)
+                        DownloadStart(DownloadList[0]);
+                    else
+                    {
+                        lstDownloads.MinHeight = 0;
+                        lstDownloads.Height = 0;
+                        btnCancelStackpanel.Height = 0;
+                    }
+                    UpdateModListInstalled();
+                    CheckForValidModFolder();
+                    UpdateCatalogInstallationState();
+                    if (activateTheNewMod)
+                    {
+                        Mod newMod = Mod.SearchWithPath(ModListInstalled, installPath);
+                        if (newMod != null)
                         {
-                            Process.Start(Path.GetFullPath(Path.GetDirectoryName(path)));
-                            proceedNext = false;
+                            newMod.IsActive = true;
+                            foreach (Mod submod in newMod.SubMod)
+                                submod.IsActive = submod.IsDefault;
+                            newMod.TryApplyPreset();
                         }
                     }
-                    if (proceedNext)
-                    {
-                        String filePath = downloadingMod.DownloadFormat.Substring("SingleFileWithPath:".Length);
-                        String destPath = modInstallPath + "/" + filePath;
-                        Directory.CreateDirectory(destPath.Substring(0, destPath.LastIndexOf('/')));
-                        File.Move(path + ".zip", destPath);
-                        downloadingMod.GenerateDescription(modInstallPath);
-                        String singleFileList = null;
-                        if (filePath.StartsWith("StreamingAssets/", StringComparison.OrdinalIgnoreCase))
-                            singleFileList = filePath.Substring("StreamingAssets/".Length).ToLower();
-                        else if (filePath.StartsWith("FF9_Data/", StringComparison.OrdinalIgnoreCase))
-                            singleFileList = filePath.Substring("FF9_Data/".Length).ToLower();
-                        else if (Mod.MEMORIA_ROOT_FILES.Any(str => String.Compare(filePath, str, StringComparison.OrdinalIgnoreCase) == 0))
-                            singleFileList = filePath.ToLower();
-                        if (!String.IsNullOrEmpty(singleFileList) && !Mod.ARCHIVE_BUNDLE_FILES.Contains(singleFileList))
-                            File.WriteAllText(modInstallPath + "/" + Mod.MOD_CONTENT_FILE, singleFileList + "\n");
-                        success = true;
-                    }
+                    CheckOutdatedAndIncompatibleMods();
+                    UpdateModSettings();
                 }
-                Boolean activateTheNewMod = success;
-                if (success)
+                catch (Exception err)
                 {
-                    if (!Directory.EnumerateFileSystemEntries(Mod.INSTALLATION_TMP).GetEnumerator().MoveNext())
-                        Directory.Delete(Mod.INSTALLATION_TMP);
-                    Mod previousMod = Mod.SearchWithName(ModListInstalled, downloadingModName);
-                    if (previousMod != null)
-                    {
-                        previousMod.CurrentVersion = null;
-                        activateTheNewMod = false;
-                    }
+                    // TODO language:
+                    MessageBox.Show($"Error while activating the mod {path}\n\n{err.Message}", "Error", MessageBoxButton.OK);
                 }
-                DownloadList.Remove(downloadingMod);
-                downloadingMod = null;
-                if (DownloadList.Count > 0)
-                    DownloadStart(DownloadList[0]);
-                else
-                {
-                    lstDownloads.MinHeight = 0;
-                    lstDownloads.Height = 0;
-                    btnCancelStackpanel.Height = 0;
-                }
-                UpdateModListInstalled();
-                CheckForValidModFolder();
-                UpdateCatalogInstallationState();
-                if (activateTheNewMod)
-                {
-                    Mod newMod = Mod.SearchWithName(ModListInstalled, downloadingModName);
-                    if (newMod != null)
-                    {
-                        newMod.IsActive = true;
-                        foreach (Mod submod in newMod.SubMod)
-                            submod.IsActive = submod.IsDefault;
-                        newMod.TryApplyPreset();
-                    }
-                }
-                CheckOutdatedAndIncompatibleMods();
-                UpdateModSettings();
             });
         }
         private void DownloadCatalogEnd(Object sender, AsyncCompletedEventArgs e)
@@ -889,27 +1178,6 @@ namespace Memoria.Launcher
             try
             {
                 ModListCatalog.Clear();
-
-                // This is here to help updating the priorities in the catalog
-                // Add/update priorities from PriorityList.txt to the catalog
-                if (false)
-                {
-                    String catalog = File.ReadAllText(CATALOG_PATH); ;
-                    Dictionary<String, Int32> priorities = new Dictionary<String, Int32>();
-                    String[] lines = File.ReadAllLines("PriorityList.txt");
-
-                    foreach (String line in lines)
-                    {
-                        String[] tokens = line.Split('\t');
-                        String search1 = @"(<Name>" + tokens[0] + @"((?!<\/Mod>).)*<\/Version>\s*<Priority>)((?!<\/Priority>).)*";
-                        String search2 = @"(<Name>" + tokens[0] + @"((?!<\/Mod>).)*<\/Version>)(?!\s*<Priority>)";
-                        catalog = Regex.Replace(catalog, search1, "${1}" + tokens[1], RegexOptions.Singleline);
-                        catalog = Regex.Replace(catalog, search2, $"$1\r\n\t<Priority>{tokens[1]}</Priority>", RegexOptions.Singleline);
-                    }
-
-                    File.WriteAllText(CATALOG_PATH, catalog);
-                }
-
                 using (Stream input = File.OpenRead(CATALOG_PATH))
                 using (StreamReader reader = new StreamReader(input))
                     Mod.LoadModDescriptions(reader, ModListCatalog);
@@ -929,10 +1197,20 @@ namespace Memoria.Launcher
                 if (File.Exists(dir + "/" + Mod.DESCRIPTION_FILE))
                 {
                     Mod updatedMod = new Mod(dir);
-                    Mod previousMod = Mod.SearchWithName(ModListInstalled, updatedMod.Name);
+                    Mod previousMod = Mod.SearchMod(ModListInstalled, updatedMod);
                     if (previousMod == null)
                     {
-                        ModListInstalled.Insert(0, updatedMod);
+                        Mod modCatalog = Mod.SearchMod(ModListCatalog, updatedMod);
+                        if (modCatalog != null) updatedMod.Priority = modCatalog.Priority;
+
+                        Int32 at = 0;
+                        for (at = 0; at < ModListInstalled.Count; at++)
+                        {
+                            if (ModListInstalled[at].Priority < updatedMod.Priority)
+                                break;
+                        }
+
+                        ModListInstalled.Insert(at, updatedMod);
                         hasChanged = true;
                     }
                     else if ((updatedMod.CurrentVersion != null && previousMod.CurrentVersion == null) || (previousMod.CurrentVersion != null && updatedMod.CurrentVersion != null && previousMod.CurrentVersion < updatedMod.CurrentVersion))
@@ -947,6 +1225,8 @@ namespace Memoria.Launcher
                         ModListInstalled.RemoveAt(index);
                         ModListInstalled.Insert(index, updatedMod);
                         updatedMod.IsActive = previousMod.IsActive;
+                        updatedMod.Priority = previousMod.Priority;
+
                         hasChanged = true;
                     }
                 }
@@ -1114,7 +1394,7 @@ namespace Memoria.Launcher
                 PreviewModWebsite.Visibility = PreviewModWebsite.IsEnabled ? Visibility.Visible : Visibility.Collapsed;
                 ReleaseNotesBlock.Visibility = PreviewModReleaseNotes.Text == "" ? Visibility.Collapsed : Visibility.Visible;
 
-                Mod installedVersion = Mod.SearchWithName(ModListInstalled, mod.Name);
+                Mod installedVersion = Mod.SearchMod(ModListInstalled, mod);
                 if (installedVersion != null)
                 {
                     foreach (Mod subMod in mod.SubMod)
@@ -1253,7 +1533,7 @@ namespace Memoria.Launcher
                         previewPath = $"./{submod.ParentMod.InstallationPath}/{submod.PreviewFile}";
                     if (!String.IsNullOrEmpty(submod.PreviewFileUrl) && (String.IsNullOrEmpty(submod.PreviewFile) || !File.Exists(previewPath)))
                         previewPath = submod.PreviewFileUrl;
-                    UiGrid.MakeTooltip(grid, submod.Description, previewPath, "");
+                    UiGrid.MakeTooltip(grid, submod.Description, previewPath, "", placement: System.Windows.Controls.Primitives.PlacementMode.Left);
                 }
                 count++;
             }
@@ -1319,11 +1599,11 @@ namespace Memoria.Launcher
         {
             foreach (Mod mod in ModListCatalog)
             {
-                if (Mod.SearchWithName(DownloadList, mod.Name) != null)
+                if (Mod.SearchMod(DownloadList, mod) != null)
                     mod.Installed = WaitingEmoji;
-                else if (Mod.SearchWithName(ModListInstalled, mod.Name) != null && Mod.SearchWithName(ModListInstalled, mod.Name).IsOutdated)
+                else if (Mod.SearchMod(ModListInstalled, mod) != null && Mod.SearchMod(ModListInstalled, mod).IsOutdated)
                     mod.Installed = UpdateEmoji;
-                else if (Mod.SearchWithName(ModListInstalled, mod.Name) != null)
+                else if (Mod.SearchMod(ModListInstalled, mod) != null)
                     mod.Installed = InstalledEmoji;
 
                 else
@@ -1335,7 +1615,11 @@ namespace Memoria.Launcher
         private void UpdateInstalledPriorityValue()
         {
             for (Int32 i = 0; i < ModListInstalled.Count; i++)
-                ModListInstalled[i].Priority = i + 1;
+            {
+                Mod mod = Mod.SearchMod(ModListCatalog, ModListInstalled[i]);
+                if (mod != null)
+                    ModListInstalled[i].Priority = mod.Priority;
+            }
             lstMods.Items.Refresh();
             UpdateModSettings();
         }

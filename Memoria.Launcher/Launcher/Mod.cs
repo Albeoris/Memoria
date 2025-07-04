@@ -77,7 +77,7 @@ namespace Memoria.Launcher
 
         public Mod(String name, String path)
         {
-            Name = name;
+            Name = name?.Trim();
             InstallationPath = path;
             CompatibilityNotes = new CompatibilityNoteClass();
             FileContent = new HashSet<String>();
@@ -126,7 +126,7 @@ namespace Memoria.Launcher
                 yield break;
             Int32 subModIndex = 0;
             List<Mod> mods = new List<Mod>(SubMod);
-            mods.Sort((a, b) => b.Priority - a.Priority);
+            mods.Sort((a, b) => a.Priority.CompareTo(b.Priority));
             while (subModIndex < mods.Count && mods[subModIndex].Priority >= 0)
             {
                 if (!activeOnly || mods[subModIndex].IsActive)
@@ -155,17 +155,6 @@ namespace Memoria.Launcher
                 if (mod.ReadDescription(node))
                     modList.Add(mod);
             }
-            // This is here to help updating the priorities in the catalog
-            // Create priority list file from the current catalog
-            if (false)
-            {
-                String list = "";
-                foreach (Mod mod in modList)
-                {
-                    list += $"{mod.Name}\t{mod.Priority}\r\n";
-                }
-                File.WriteAllText("PriorityList.txt", list);
-            }
         }
 
         public Boolean ReadDescription(StreamReader reader)
@@ -181,7 +170,7 @@ namespace Memoria.Launcher
         {
             String fullText = reader.ReadToEnd();
             // Fixes issue when '&' is in the url instead of '&amp;'
-            fullText = Regex.Replace(fullText, "&(?!amp;)", "&amp;");
+            fullText = Regex.Replace(fullText, @"&(?!\w+;)", "&amp;");
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(fullText);
             return doc;
@@ -189,21 +178,22 @@ namespace Memoria.Launcher
 
         public Boolean ReadDescription(XmlNode modNode)
         {
+            Regex indentRegex = new Regex(@"^[\t ]+", RegexOptions.Multiline);
             XmlElement elName = modNode["Name"];
             XmlElement elInstPath = modNode["InstallationPath"];
             if (elName == null || elInstPath == null)
                 return false;
             XmlElement elVer = modNode["Version"];
             Int64 outParse;
-            Name = elName.InnerText;
+            Name = elName.InnerText?.Trim();
             InstallationPath = elInstPath.InnerText;
             if (elVer != null && Version.TryParse(Regex.Replace(elVer.InnerText, @"[^\d\.]", ""), out Version version))
                 CurrentVersion = version;
             ReleaseDate = modNode["ReleaseDate"]?.InnerText;
             ReleaseDateOriginal = modNode["ReleaseDateOriginal"]?.InnerText;
             Author = modNode["Author"]?.InnerText;
-            Description = modNode["Description"]?.InnerText;
-            PatchNotes = modNode["PatchNotes"]?.InnerText;
+            Description = modNode["Description"] != null ? indentRegex.Replace(modNode["Description"].InnerText, "") : null;
+            PatchNotes = modNode["PatchNotes"] != null ? indentRegex.Replace(modNode["PatchNotes"].InnerText, "") : null;
             foreach (XmlElement elComp in modNode.SelectNodes("CompatibilityNotes"))
             {
                 if (elComp.HasAttribute("OtherModLow") || elComp.HasAttribute("OtherModHigh"))
@@ -248,7 +238,7 @@ namespace Memoria.Launcher
                 Mod sub = new Mod();
                 if (subNode.Name == "Header")
                 {
-                    sub.Name = subNode.InnerText;
+                    sub.Name = subNode.InnerText?.Trim();
                     sub.IsHeader = true;
                     if (!String.IsNullOrEmpty(sub.Name))
                         SubMod.Add(sub);
@@ -258,9 +248,9 @@ namespace Memoria.Launcher
                 elInstPath = subNode["InstallationPath"];
                 if (elName == null || elInstPath == null)
                     continue;
-                sub.Name = elName.InnerText;
+                sub.Name = elName.InnerText?.Trim();
                 sub.InstallationPath = elInstPath.InnerText;
-                sub.Description = subNode["Description"]?.InnerText;
+                sub.Description = subNode["Description"] != null ? indentRegex.Replace(subNode["Description"].InnerText, "") : null;
                 sub.Category = subNode["Category"]?.InnerText;
                 sub.PreviewFile = subNode["PreviewFile"]?.InnerText;
                 sub.PreviewFileUrl = subNode["PreviewFileUrl"]?.InnerText;
@@ -538,11 +528,15 @@ namespace Memoria.Launcher
             return indented;
         }
 
-        public static Mod SearchWithName(IEnumerable<Mod> modList, String queryName)
+        public static Mod SearchMod(IEnumerable<Mod> modList, Mod queryMod)
         {
             foreach (Mod mod in modList)
-                if (mod.Name == queryName)
+            {
+                if (mod.InstallationPath != null && queryMod.InstallationPath != null && mod.InstallationPath == queryMod.InstallationPath)
                     return mod;
+                else if (mod.Name == queryMod.Name)
+                    return mod;
+            }
             return null;
         }
 
