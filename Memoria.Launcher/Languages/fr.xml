@@ -297,6 +297,8 @@ DualLanguageModeChoice2 = "Simultanés"
 DualLanguageMode_Tooltip = "Option 1 : alterner entre deux langues en utilisant la touche Verr. Maj.&#xA;Option 2 : afficher deux langues simultanément"
 DualLanguage = "Langue de Traduction"
 DualLanguage_Tooltip = "Choix de la seconde langue"
+TextFadeDuration = "Fondu du texte"
+TextFadeDuration_Tooltip = "Durée en millisecondes du fondu de chaque caractère apparaissant dans les boîtes de dialogue"
 />
 
 <SteamOverlay
@@ -328,6 +330,8 @@ Active = "Activé"
 Progress = "Téléchargement"
 Speed = "Vitesse"
 TimeLeft = "Temps Restant"
+Extracting = "Extraction"
+DirectDownload = "Téléchargement direct ↗"
 ActiveIncompatibleMods = "Mod incompatible avec : "
 IncompatibleWithMemoria = "La version du mod est incompatible avec la version actuelle de Memoria. Mettez-le à jour depuis le catalogue de mods."
 ApplyModPresetText = "Souhaitez-vous appliquer ce préréglage de mod ?"

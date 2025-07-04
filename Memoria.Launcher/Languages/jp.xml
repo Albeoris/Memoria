@@ -297,6 +297,8 @@ DualLanguageModeChoice2 = "同時"
 DualLanguageMode_Tooltip = "オプション1：Caps Lockキーで言語を切り替える&#xA;オプション2：両方の言語を同時に表示する"
 DualLanguage = "デュアルランゲージ"
 DualLanguage_Tooltip = "セカンダリ言語の選択"
+TextFadeDuration = "テキストのフェード"
+TextFadeDuration_Tooltip = "ダイアログボックスに表示される各文字のフェード時間（ミリ秒単位"
 />
 
 <SteamOverlay
@@ -328,6 +330,8 @@ Active = "アクティブ"
 Progress = "進行状況"
 Speed = "速度"
 TimeLeft = "残り時間"
+Extracting = "抽出"
+DirectDownload = "直接ダウンロード ↗"
 ActiveIncompatibleMods = "以下と互換性がないMod: "
 IncompatibleWithMemoria = "このModのバージョンは現在のMemoriaと互換性がありません。Modカタログから更新してください。"
 ApplyModPresetText = "この MOD プリセットを適用しますか?"

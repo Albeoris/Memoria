@@ -1,93 +1,19 @@
-﻿using System;
-using System.Collections;
-using System.Runtime.InteropServices;
+﻿using Memoria;
+using System;
 using UnityEngine;
-using Object = System.Object;
 
 public class SoundLibWndProc : MonoBehaviour
 {
-    [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
-    public static extern IntPtr GetForegroundWindow();
+    private const UInt32 WM_NCLBUTTONDOWN = 161u;
+    private const UInt32 HTCAPTION = 2u;
+    private const UInt32 WM_SYSKEYDOWN = 260u;
+    private const UInt32 VK_RETURN = 13u;
 
-    [DllImport("user32.dll")]
-    private static extern IntPtr SetWindowLong(IntPtr hWnd, Int32 nIndex, IntPtr dwNewLong);
-
-    [DllImport("user32.dll")]
-    private static extern IntPtr SetWindowLongPtr(IntPtr hWnd, Int32 nIndex, IntPtr dwNewLong);
-
-    [DllImport("user32.dll")]
-    private static extern IntPtr CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
-
-    [DllImport("user32.dll")]
-    private static extern IntPtr GetActiveWindow();
-
-    [DllImport("user32.dll")]
-    public static extern IntPtr FindWindow(string className, string windowName);
-
-    public Boolean Is64Bit()
-    {
-        String environmentVariable = Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE");
-        return !String.IsNullOrEmpty(environmentVariable) && !(environmentVariable.Substring(0, 3) == "x86");
-    }
+    private Boolean isSEADSuspendedByTitleBar;
 
     private void Start()
     {
-        base.StartCoroutine(this.CaptureWindowProc());
-    }
-
-
-    private IEnumerator CaptureWindowProc()
-    {
-        while (this.hMainWindow == IntPtr.Zero)
-        {
-            this.hMainWindow = SoundLibWndProc.FindWindow((string)null, Application.productName);
-            if (this.hMainWindow != IntPtr.Zero)
-            {
-                this.newWndProc = new WndProcDelegate(this.WndProc);
-                this.newWndProcPtr = Marshal.GetFunctionPointerForDelegate(this.newWndProc);
-                if (this.Is64Bit())
-                {
-                    this.oldWndProcPtr = SoundLibWndProc.SetWindowLongPtr(this.hMainWindow, -4, this.newWndProcPtr);
-                }
-                else
-                {
-                    this.oldWndProcPtr = SoundLibWndProc.SetWindowLong(this.hMainWindow, -4, this.newWndProcPtr);
-                }
-            }
-            else
-            {
-                yield return new WaitForEndOfFrame();
-            }
-        }
-        yield break;
-    }
-
-    public static IntPtr GetWindowHandle()
-    {
-        return SoundLibWndProc.GetActiveWindow();
-    }
-
-    private static IntPtr StructToPtr(Object obj)
-    {
-        IntPtr intPtr = Marshal.AllocHGlobal(Marshal.SizeOf(obj));
-        Marshal.StructureToPtr(obj, intPtr, false);
-        return intPtr;
-    }
-
-    private void OnDisable()
-    {
-        if (this.Is64Bit())
-        {
-            SoundLibWndProc.SetWindowLongPtr(this.hMainWindow, -4, this.oldWndProcPtr);
-        }
-        else
-        {
-            SoundLibWndProc.SetWindowLong(this.hMainWindow, -4, this.oldWndProcPtr);
-        }
-        this.hMainWindow = IntPtr.Zero;
-        this.oldWndProcPtr = IntPtr.Zero;
-        this.newWndProcPtr = IntPtr.Zero;
-        this.newWndProc = (WndProcDelegate)null;
+        WindowProc.OnMessage += WndProc;
     }
 
     private void Update()
@@ -99,37 +25,18 @@ public class SoundLibWndProc : MonoBehaviour
         }
     }
 
-    private IntPtr WndProc(IntPtr hWnd, UInt32 msg, IntPtr wParam, IntPtr lParam)
+    private void WndProc(UInt32 msg, IntPtr wParam, IntPtr lParam)
     {
-        if (msg == 161u && (Int64)wParam.ToInt32() == 2L)
+        if (msg == WM_NCLBUTTONDOWN && wParam.ToInt32() == HTCAPTION)
         {
             ISdLibAPIProxy.Instance.SdSoundSystem_Suspend();
             this.isSEADSuspendedByTitleBar = true;
         }
-        if (msg == 260u && (Int64)wParam.ToInt32() == 13L)
+        if (msg == WM_SYSKEYDOWN && wParam.ToInt32() == VK_RETURN)
         {
-            msg = 0u;
+            // Switching between fullscreen and windowed (Alt + Enter) may cause some visual artifacts (i.e. some body parts disappear)
+            // This will prevent switching
+            WindowProc.newMessage = 0u;
         }
-        return SoundLibWndProc.CallWindowProc(this.oldWndProcPtr, hWnd, msg, wParam, lParam);
     }
-
-    private const Int32 GWLP_WNDPROC = -4;
-
-    private const UInt32 WM_NCLBUTTONDOWN = 161u;
-
-    private const UInt32 HTCAPTION = 2u;
-
-    private const UInt32 WM_SYSKEYDOWN = 260u;
-
-    private const UInt32 VK_RETURN = 13u;
-
-    private IntPtr hMainWindow;
-
-    private IntPtr oldWndProcPtr;
-
-    private IntPtr newWndProcPtr;
-
-    private WndProcDelegate newWndProc;
-
-    private Boolean isSEADSuspendedByTitleBar;
 }

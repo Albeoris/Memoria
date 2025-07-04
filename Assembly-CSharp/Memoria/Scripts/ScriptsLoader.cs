@@ -306,7 +306,8 @@ namespace Memoria.Scripts
                             ProcessType(type, result);
                         s_result.Add(result);
                         currentDLL = null;
-                        return;
+                        dllCount++;
+                        break;
                     }
                 }
                 if (dllCount == 0)
@@ -314,6 +315,8 @@ namespace Memoria.Scripts
                     mainDllPath = DataResources.ScriptsDirectory + "Memoria.Scripts.dll";
                     throw new FileNotFoundException($"[ScriptsLoader] Cannot load Memoria.Scripts.dll because a file does not exist: [{mainDllPath}].", mainDllPath);
                 }
+
+                BattleVoice.Initialize();
             }
             catch (Exception ex)
             {

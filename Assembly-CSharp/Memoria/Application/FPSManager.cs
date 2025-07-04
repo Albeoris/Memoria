@@ -43,9 +43,8 @@ namespace Memoria
             if ((QualitySettings.vSyncCount == 1) != Configuration.Graphics.VSync)
                 QualitySettings.vSyncCount = Configuration.Graphics.VSync ? 1 : 0;
 
-            if (fps == Application.targetFrameRate)
-                return;
-            Application.targetFrameRate = fps;
+            if (fps != Application.targetFrameRate)
+                Application.targetFrameRate = fps;
         }
 
         public static Int32 GetTargetFPS()

@@ -282,6 +282,8 @@ DualLanguageModeChoice2 = "Simultaneous"
 DualLanguageMode_Tooltip = "Option 1: switch languages with the key CAPS LOCK&#xA;Option 2: both languages displayed simultaneously"
 DualLanguage = "Dual Language"
 DualLanguage_Tooltip = "Choice of the secondary language"
+TextFadeDuration = "Text fading"
+TextFadeDuration_Tooltip = "The duration in milliseconds of the fade of each character appearing in dialog boxes"
 />
 
 <SteamOverlay
@@ -313,6 +315,8 @@ Active = "Active"
 Progress = "Progress"
 Speed = "Speed"
 TimeLeft = "Time Left"
+Extracting = "Extracting"
+DirectDownload = "Direct download ↗"
 ActiveIncompatibleMods = "Mod Incompatible with: "
 IncompatibleWithMemoria = "Mod version is incompatible with the current Memoria&#xA;Update it from the mod catalog"
 ApplyModPresetText = "Would you like to apply this mod preset?"

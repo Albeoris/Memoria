@@ -182,7 +182,7 @@ namespace Assets.Sources.Graphics.Movie
                             m_syncTime = Time.realtimeSinceStartup;
                         }
 
-                        if (this.isFMV)
+                        if (this.isFMV && !Configuration.Graphics.VSync)
                         {
                             if (this.preciseTimeCycleCounter == 0)
                             {

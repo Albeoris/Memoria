@@ -1,7 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Global.Sound.SaXAudio;
 using Memoria;
 using Memoria.Assets;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using MLog = Memoria.Prime.Log;
 using Object = System.Object;
@@ -784,6 +785,12 @@ public class SoundLib : MonoBehaviour
     {
         if (!SoundLib.isSuspendAllSounds)
         {
+            if (ISdLibAPIProxy.Instance is SdLibAPIWithSaXAudio)
+            {
+                SaXAudio.PauseAll();
+                SoundLib.isSuspendAllSounds = true;
+                return;
+            }
             SoundLib.MovieAudioPlayer.PauseMusic();
             SoundLib.AllSoundDispatchPlayer.PauseAllSounds();
             SoundLib.SfxSoundPlayer.PauseAllSounds();
@@ -796,6 +803,12 @@ public class SoundLib : MonoBehaviour
     {
         if (SoundLib.isSuspendAllSounds)
         {
+            if (ISdLibAPIProxy.Instance is SdLibAPIWithSaXAudio)
+            {
+                SaXAudio.ResumeAll();
+                SoundLib.isSuspendAllSounds = false;
+                return;
+            }
             SoundLib.MovieAudioPlayer.ResumeMusic();
             SoundLib.AllSoundDispatchPlayer.ResumeAllSounds();
             SoundLib.SfxSoundPlayer.ResumeAllSounds();

@@ -1351,57 +1351,68 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 
 <Mod>
 	<Name>FernySupportTweaks</Name>
-	<Version>1.4.3</Version>
+	<Version>1.4.4</Version>
 	<Author>FernyFer</Author>
 	<InstallationPath>FernySupportTweaks</InstallationPath>
-	<ReleaseDate>June 4, 2025</ReleaseDate>
+	<ReleaseDate>July 2, 2025</ReleaseDate>
 	<ReleaseDateOriginal>June 2, 2025</ReleaseDateOriginal>
 	<MinimumMemoriaVersion>2025-05-11</MinimumMemoriaVersion>
 	<Description>Changes some Support Abilities to be "subjectively" more useful! You can enable as many as you want. 
 
+
 Divine Light - (Replaces "Auto-Reflect" Support Ability)
-- Completely drains the Trance bar to stop a character from being KO'd and returning them to 25% of their MaxHP if the Trance bar is at least 50% full.
+- Completely drains the Trance bar to stop a character from being KO'd if the Trance bar is at least 50% full.
+
 
 Trancer - (Replaces "Ability Up" Support Ability)
 - All attacks now slightly increase the Trance gauge.
 - High Tide increases the amount of Trance gained.
 - HIGHLY suggested you use this option with "Kupo Tweaks or Exp , AP, Gil , Rewards Modifier" mod to alter AP gains from losing the Ability Up support ability.
 
+
 Gambling Strikes - (Replaces Zidane's "Bandit" Support Ability)
 - Zidane's damage output randomly ranges from 50% to 200%.
 - HIGHLY suggested you enable "100% Steal Rate" cheat in Memoria engine to offset losing the Bandit support ability.
 
+
 Glass Cannon - (Replaces "Auto-Float" Support Ability)
 - Increases all damage dealt by 60%, but reduces MaxHP by 40%.
+
 
 Dyne Booster - (Zidane Only)
 - All of Zidane's Trance abilities deals 2x damage when his HP falls below 20%.
 - Damage at endgame will easily hit 9,999 damage cap when this triggers.
 - (OPTIONAL) Enable "Break Damage Limit" cheat in Memoria Engine to allow damage to break 9,999 cap.
 
+
 Defence+ - (Replaces "Gambler Defense" Support Ability)
 - Gambler Defense was an abysmally useless Special Ability.
 - Now increases Defence and Magic Defence by 5%.
+
 
 Lucky! - (Replaces "Level Up" Support Ability)
 - There are a few mods out there that allow you that alter your EXP gain... so, I figured the "Level Up" support ability could get a facelift. 
 - Now increases Critical Strike Chance by 10!
 
+
 HP Leech - (Replaces "Add Status" Support Ability)
 - Attacks will now leech a small amount of HP from the target to heal the user.
 - The "Add Status" is now a global passive - no longer needing to be equipped for the effect to be active. Always found it kinda pointless to add Status Effects to weapons and then making them moot if you didn't have this Support Ability equipped. 
+
 
 MP Leech - (Replaces "MP Attack" Support Ability)
 - Attacks will now leech a small amount of MP from the target to heal the user.
 - This ability makes sense in my game because I'm playing the Alternate Fantasy mod and almost all my characters now have skills that deal damage and use MP, so there is no reason to drain my MP to use a regular attack when I could just use one of my skills and do the same thing.
 
+
 Speed+ - (Replaces "Flee-Gil" Support Ability)
 - Flee-Gil is actual doodoo, now it's actually useful!
 - Now increases Speed by 10%.
 
+
 Note/Credit: "Divine Light" idea and code adapted from the Memoria Engine wiki:
 https://github.com/Albeoris/Memoria/wiki/Supporting-ability-features</Description>
-	<PatchNotes>v1.4.3 - "LUCKY!"- had a typo in the code making it not work - this has been fixed. Enjoy your 10 Crit!.</PatchNotes>
+	<PatchNotes>v1.4.4 - Fixed a bug causing Divine Light to not trigger properly.</PatchNotes>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/102</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/32n1c5svgac8qlll3k5ez/FernySupportTweaks.zip?rlkey=3bxlf6cefiuwtuc30bueqlsb7&amp;st=qf88pwn4&amp;dl=1</DownloadUrl>
 	<PreviewFileUrl>https://i.imgur.com/SNFuHb9.jpeg</PreviewFileUrl>
@@ -1480,21 +1491,23 @@ https://github.com/Albeoris/Memoria/wiki/Supporting-ability-features</Descriptio
 
 <Mod>
 	<Name>FernyDifficultyTweaks</Name>
-	<Version>3.1</Version>
+	<Version>3.2</Version>
 	<Author>FernyFer</Author>
 	<InstallationPath>FernyDifficultyTweaks</InstallationPath>
-	<ReleaseDate>June 13, 2025</ReleaseDate>
-	<ReleaseDateOriginal>June 2, 2025</ReleaseDateOriginal>
+	<ReleaseDate>2025-07-02</ReleaseDate>
+	<ReleaseDateOriginal>2025-06-02</ReleaseDateOriginal>
 	<MinimumMemoriaVersion>2025-05-11</MinimumMemoriaVersion>
 	<Description>Increase or Decrease game difficulty!
 Allows the player to select all damage dealt and taken in a modular fashion! Fine-tune the balance of the game to your liking, all in one mod!
 
+
 Player Damage Dealt:
 - Modular scaling allowing the player to deal anywhere from 25% less damage all the way up to 150% more damage to enemies.
 
+
 Player Damage Taken:
 - Modular scaling allowing the player to take anywhere from 20% less damage all the way up to 180% more damage from enemies.</Description>
-	<PatchNotes>v3.1: Damage DEALT was not properly calculating and has been fixed. Enjoy nerfing yourself!</PatchNotes>
+	<PatchNotes>v3.2: Added failsafe so that Prison Cage does not 1-shot Vivi or Garnet in the Evil Forest.</PatchNotes>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/101</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/xjer5n2fw39h5kyapyoza/FernyDifficultyTweaks.zip?rlkey=jlt9wczd4irv8qeljd9xj1zbn&amp;st=0xfgnplu&amp;dl=1</DownloadUrl>
 	<PreviewFileUrl>https://i.imgur.com/t3GdBdB.jpeg</PreviewFileUrl>
@@ -2408,15 +2421,14 @@ Change some card textures (add boss + characters)</Description>
 
 <Mod>
 	<Name>Launcher Themes</Name>
-	<Version>1.0.1</Version>
-	<Priority>21</Priority>
+	<Version>1.0.2</Version>
+	<Priority>21</Priority>	
 	<InstallationPath>MemoriaLauncherThemes</InstallationPath>
-	<ReleaseDate>2025-5-12</ReleaseDate>
+	<ReleaseDate>2025-07-02</ReleaseDate>
 	<ReleaseDateOriginal>2024-12-07</ReleaseDateOriginal>
 	<Author>faospark, SamsamTS</Author>
 	<Description>Alternate Themes to Memoria Launcher</Description>
-	<PatchNotes>First Public Release
-Special citation to SamsamTS  for making this possible	</PatchNotes>
+	<PatchNotes>Added Toshiyuki Itahana' Party Artwork, A Callback to one of the OG BGs and Moguri Launcher	</PatchNotes>
 	<Category>Launcher</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/96</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/gvyh8otf7exe99x008mxh/MemoriaLauncherThemes.zip?rlkey=h3fhorrmmvr6nzip9uyrv6kpk&amp;st=h3ec8vdk&amp;dl=1</DownloadUrl>
@@ -2492,9 +2504,31 @@ Special citation to SamsamTS  for making this possible	</PatchNotes>
 		<LauncherBackground>Themes/theme-10.png</LauncherBackground>
 		<LauncherColor>2c5e5f</LauncherColor>
 		<Group>Theme</Group>
-		<Default/>
 	</SubMod>
+	<SubMod>
+		<Name>Theme 11 : The Callback  </Name>
+		<InstallationPath>11</InstallationPath>
+		<LauncherBackground>Themes/theme-11.png</LauncherBackground>
+		<LauncherColor>667daf</LauncherColor>
+		<Group>Theme</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Theme 12 : Moguri..ish </Name>
+		<InstallationPath>12</InstallationPath>
+		<LauncherBackground>Themes/theme-12.png</LauncherBackground>
+		<LauncherColor>b8af9c</LauncherColor>
+		<Group>Theme</Group>
+	</SubMod>
+		<SubMod>
+		<Name>Theme 13 : The Party </Name>
+		<InstallationPath>13</InstallationPath>
+		<LauncherBackground>Themes/theme-13.png</LauncherBackground>
+		<LauncherColor>1c222c</LauncherColor>
+		<Group>Theme</Group>
+		<Default/>
+	</SubMod>					
 </Mod>
+
 
 <Mod>
 	<Name>Better Card Drops</Name>
