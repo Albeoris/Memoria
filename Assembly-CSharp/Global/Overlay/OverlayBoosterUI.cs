@@ -1,9 +1,8 @@
-﻿using Memoria.Prime;
+﻿using Assets.Sources.Scripts.Common;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Object = System.Object;
 
 public class OverlayBoosterUI : MonoBehaviour
 {
@@ -41,14 +40,24 @@ public class OverlayBoosterUI : MonoBehaviour
 
     private void OnGUI()
     {
-        if (!base.gameObject.activeSelf)
+        if (!base.gameObject.activeSelf || (!SettingsState.IsRapidEncounter && SettingsState.IsFriendlyBattleOnly == 0))
             return;
 
+        GUI.skin.font = DebugGuiSkin.font;
+        GUILayout.BeginArea(new Rect(5, 5, Screen.width, Screen.height));
+        GUILayout.BeginHorizontal();
         if (SettingsState.IsRapidEncounter)
         {
-            if (GUI.Button(new Rect(0, 0, 30, 30), "↑E"))
+            if (GUILayout.Button("Rapid Encounter", GUILayout.ExpandWidth(false)))
                 SettingsState.IsRapidEncounter = false;
         }
+        if (SettingsState.IsFriendlyBattleOnly > 0)
+        {
+            if (GUILayout.Button(SettingsState.IsFriendlyBattleOnly == 1 ? "Friendly Only" : "Ragtime Only", GUILayout.ExpandWidth(false)))
+                SettingsState.IsFriendlyBattleOnly = (SettingsState.IsFriendlyBattleOnly + 1) % 3;
+        }
+        GUILayout.EndHorizontal();
+        GUILayout.EndArea();
     }
 
     public void Restart()

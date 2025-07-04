@@ -4,7 +4,6 @@ using Memoria.Assets;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(UIPanel))]
@@ -100,7 +99,6 @@ public class Dialog : MonoBehaviour
         ETb.sChoose = this.SelectChoice;
         if (this.startChoiceRow >= 0)
         {
-            this.isMuteSelectSound = true;
             base.StartCoroutine(InitializeChoiceProcess(waitEndOfFrame));
         }
     }
@@ -161,7 +159,6 @@ public class Dialog : MonoBehaviour
         ButtonGroupState.SetPointerDepthToGroup(this.phrasePanel.depth + 1, Dialog.DialogGroupButton);
         ButtonGroupState.UpdatePointerPropertyForGroup(Dialog.DialogGroupButton);
         ButtonGroupState.ActiveGroup = Dialog.DialogGroupButton;
-        this.isMuteSelectSound = true;
         this.SetCurrentChoice(this.defaultChoice);
         yield return new WaitForEndOfFrame();
         this.isChoiceReady = true;
@@ -608,16 +605,19 @@ public class Dialog : MonoBehaviour
             this.PrepareNextPage();
             this.currentState = Dialog.State.OpenAnimation;
             this.dialogAnimator.ShowNewPage();
+            VoicePlayer.closeDialogOnFinish = false;
             VoicePlayer.PlayFieldZoneDialogAudio(FF9TextTool.FieldZoneId, this.textId, this);
             return;
         }
         this.isActive = false;
         if (this.HasChoices)
         {
+            VoicePlayer.FieldZoneReleaseVoice(this, true); // If forced close (i.e. by a script) a voice can still be playing. E.g. moogles
             ButtonGroupState.DisableAllGroup(true);
             PersistenSingleton<UIManager>.Instance.Dialogs.HideChoiceHud();
-            ETb.SndOK();
+            if(!VoicePlayer.closeDialogOnFinish) ETb.SndOK();
         }
+        VoicePlayer.closeDialogOnFinish = false;
         if (this.windowStyle == Dialog.WindowStyle.WindowStyleTransparent || this.dialogAnimator.ShowWithoutAnimation)
         {
             this.AfterHidden();
@@ -748,9 +748,28 @@ public class Dialog : MonoBehaviour
         }
         if (this.currentState == Dialog.State.CompleteAnimation)
         {
+            if (VoicePlayer.closeDialogOnFinish)
+            {
+                this.Hide();
+                return;
+            }
+
             if (this.HasChoices)
+            {
+                if (VoicePlayer.HasDialogVoice(this))
+                {
+                    ETb.SndOK();
+                    VoicePlayer.closeDialogOnFinish = true;
+
+                    foreach (GameObject obj in this.maskChoiceList)
+                    {
+                        if (obj != ButtonGroupState.ActiveButton)
+                            DestroyObject(obj);
+                    }
+                }
                 this.SelectChoice = this.choiceList.IndexOf(ButtonGroupState.ActiveButton);
-            if (!this.ignoreInputFlag && (this.startChoiceRow < 0 || this.isChoiceReady))
+            }
+            if (!this.ignoreInputFlag && (this.startChoiceRow < 0 || this.isChoiceReady) && !VoicePlayer.closeDialogOnFinish)
                 this.Hide();
         }
         else if (this.HasChoices && this.defaultChoice >= 0 && (this.currentState == Dialog.State.OpenAnimation || this.currentState == Dialog.State.TextAnimation))

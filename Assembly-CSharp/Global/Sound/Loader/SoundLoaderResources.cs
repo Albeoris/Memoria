@@ -45,12 +45,10 @@ public class SoundLoaderResources : ISoundLoader
             akbInfo = File.ReadAllLines(akbInfoPath);
         if (akbInfo != null && akbInfo.Length > 0)
         {
-            // Assume that AKB header is always of size 304 (split "intPtr" into AkbBin + OggBin if ever that changes)
-            // Maybe use a constant instead of 304 ("SoundImporter.AkbHeaderSize" or something defined at a better place?)
             Byte[] akbBin = new byte[304];
             Marshal.Copy(intPtr, akbBin, 0, 304);
             AKB2Header akbHeader = new AKB2Header();
-            akbHeader.ReadFromBytes(akbBin);
+            UInt32 headerSize = akbHeader.ReadFromBytes(akbBin);
             foreach (String s in akbInfo)
             {
                 String[] akbCode = s.Split(' ');
@@ -65,7 +63,7 @@ public class SoundLoaderResources : ISoundLoader
                 else if (akbCode.Length >= 2 && String.Compare(akbCode[0], "SampleRate") == 0)
                     UInt16.TryParse(akbCode[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out akbHeader.SampleRate);
             }
-            Marshal.Copy(akbHeader.WriteToBytes(), 0, intPtr, 304);
+            Marshal.Copy(akbHeader.WriteToBytes(), 0, intPtr, (Int32)headerSize);
         }
         Int32 bankID = ISdLibAPIProxy.Instance.SdSoundSystem_AddData(intPtr, profile);
         profile.AkbBin = intPtr;

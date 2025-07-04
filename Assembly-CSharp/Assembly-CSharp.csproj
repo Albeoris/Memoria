@@ -261,6 +261,9 @@
     <Compile Include="Global\battle\BattleRainRenderer.cs" />
     <Compile Include="Global\EFFECT_GLOW.cs" />
     <Compile Include="Global\NormalSolver.cs" />
+    <Compile Include="Global\Sound\SaXAudio\AudioEffectManager.cs" />
+    <Compile Include="Global\Sound\SaXAudio\SaXAudio.cs" />
+    <Compile Include="Global\Sound\SaXAudio\SdLibAPIWithSaXAudio.cs" />
     <Compile Include="Global\SPS\BattleSPSSystem.cs" />
     <Compile Include="Global\battle\BattleStateSystem.cs" />
     <Compile Include="Global\battle\BattleSwirl.cs" />
@@ -1457,6 +1460,12 @@
     <None Include="NCalc\Grammar\NCalc.g" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Global\Sound\SaXAudio\x64\SaXAudio.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Global\Sound\SaXAudio\x86\SaXAudio.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Global\Sound\SoLoud\x64\soloud.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

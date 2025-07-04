@@ -513,7 +513,8 @@ public class UIKeyTrigger : MonoBehaviour
 
     private static void OnSoundDebugRoomCommandDetected()
     {
-        SceneDirector.Replace("SoundDebugRoom", SceneTransition.FadeOutToBlack_FadeIn, true);
+        var instance = PersistenSingleton<SoundDebugRoom.SoundView>.Instance;
+        instance.enabled = !instance.enabled;
     }
 
     private void OnMemoriaMenuCommandDetected()
@@ -737,6 +738,13 @@ public class UIKeyTrigger : MonoBehaviour
 
         if (IsShiftKeyPressed && F4KeyDown)
         {
+            if (ControlKey && Configuration.Cheats.NoRandomEncounter)
+            {
+                SettingsState.IsFriendlyBattleOnly = (SettingsState.IsFriendlyBattleOnly + 1) % 3;
+                FF9Sfx.FF9SFX_Play(SettingsState.IsFriendlyBattleOnly == 1 ? 106 : SettingsState.IsFriendlyBattleOnly == 2 ? 1043 : 111);
+                return true;
+            }
+
             SettingsState.IsRapidEncounter = !SettingsState.IsRapidEncounter;
             return true;
         }
@@ -775,14 +783,14 @@ public class UIKeyTrigger : MonoBehaviour
             keyCommand = Control.None;
             if (!PersistenSingleton<UIManager>.Instance.IsPauseControlEnable)
                 return;
-            PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State).OnKeyPause(activeButton);
+            PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State)?.OnKeyPause(activeButton);
         }
         else if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Menu) || keyCommand == Control.Menu)
         {
             keyCommand = Control.None;
             if (!PersistenSingleton<UIManager>.Instance.IsMenuControlEnable)
                 return;
-            PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State).OnKeyMenu(activeButton);
+            PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State)?.OnKeyMenu(activeButton);
         }
     }
 

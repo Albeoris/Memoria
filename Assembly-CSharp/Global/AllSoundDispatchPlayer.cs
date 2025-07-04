@@ -467,7 +467,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
                 }
                 else
                 {
-                    // This will seek with Soloud
+                    // This will seek with Soloud and SaXAudio
                     ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, offsetTimeMSec);
                 }
             }
