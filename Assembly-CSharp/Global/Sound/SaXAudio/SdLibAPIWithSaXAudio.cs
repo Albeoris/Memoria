@@ -83,8 +83,6 @@ namespace Global.Sound.SaXAudio
                 AKB2Header header = new AKB2Header();
                 UInt32 headerSize = header.ReadFromBytes(akbBin);
 
-                Log.Message($"headerSize: {headerSize}");
-
                 static void DeleteAkbBin(Int32 bankID, IntPtr buffer)
                 {
                     if (!bankData.ContainsKey(bankID))
