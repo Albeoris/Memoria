@@ -528,11 +528,15 @@ namespace Memoria.Launcher
             return indented;
         }
 
-        public static Mod SearchWithName(IEnumerable<Mod> modList, String queryName)
+        public static Mod SearchMod(IEnumerable<Mod> modList, Mod queryMod)
         {
             foreach (Mod mod in modList)
-                if (mod.Name == queryName)
+            {
+                if (mod.InstallationPath != null && queryMod.InstallationPath != null && mod.InstallationPath == queryMod.InstallationPath)
                     return mod;
+                else if (mod.Name == queryMod.Name)
+                    return mod;
+            }
             return null;
         }
 

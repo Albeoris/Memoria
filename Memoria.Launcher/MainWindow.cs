@@ -363,7 +363,7 @@ namespace Memoria.Launcher
                     // Refresh mods list and activate the mod
                     UpdateModListInstalled();
                     UpdateCatalogInstallationState();
-                    Mod newMod = Mod.SearchWithName(ModListInstalled, modInfo.Name);
+                    Mod newMod = Mod.SearchMod(ModListInstalled, modInfo);
                     if (newMod != null)
                     {
                         newMod.IsActive = true;

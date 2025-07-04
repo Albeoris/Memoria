@@ -258,7 +258,7 @@ namespace Memoria.Launcher
             if (installedMod == null || installedMod.Name == null)
                 return;
 
-            Mod mod = Mod.SearchWithName(ModListCatalog, installedMod.Name);
+            Mod mod = Mod.SearchMod(ModListCatalog, installedMod);
             if (mod != null)
             {
                 tabCtrlMain.SelectedIndex = 1;
@@ -1085,11 +1085,12 @@ namespace Memoria.Launcher
                 try
                 {
                     Boolean activateTheNewMod = success;
+                    String installPath = downloadingMod.InstallationPath ?? downloadingModName;
                     if (success)
                     {
                         if (!Directory.EnumerateFileSystemEntries(Mod.INSTALLATION_TMP).GetEnumerator().MoveNext())
                             Directory.Delete(Mod.INSTALLATION_TMP);
-                        Mod previousMod = Mod.SearchWithName(ModListInstalled, downloadingModName);
+                        Mod previousMod = Mod.SearchWithPath(ModListInstalled, installPath);
                         if (previousMod != null)
                         {
                             previousMod.CurrentVersion = null;
@@ -1111,7 +1112,8 @@ namespace Memoria.Launcher
                     UpdateCatalogInstallationState();
                     if (activateTheNewMod)
                     {
-                        Mod newMod = Mod.SearchWithName(ModListInstalled, downloadingModName);
+                        Mod newMod = Mod.SearchWithPath(ModListInstalled, installPath);
+                        if (newMod != null)
                         {
                             newMod.IsActive = true;
                             foreach (Mod submod in newMod.SubMod)
@@ -1195,10 +1197,10 @@ namespace Memoria.Launcher
                 if (File.Exists(dir + "/" + Mod.DESCRIPTION_FILE))
                 {
                     Mod updatedMod = new Mod(dir);
-                    Mod previousMod = Mod.SearchWithName(ModListInstalled, updatedMod.Name);
+                    Mod previousMod = Mod.SearchMod(ModListInstalled, updatedMod);
                     if (previousMod == null)
                     {
-                        Mod modCatalog = Mod.SearchWithName(ModListCatalog, updatedMod.Name);
+                        Mod modCatalog = Mod.SearchMod(ModListCatalog, updatedMod);
                         if (modCatalog != null) updatedMod.Priority = modCatalog.Priority;
 
                         Int32 at = 0;
@@ -1392,7 +1394,7 @@ namespace Memoria.Launcher
                 PreviewModWebsite.Visibility = PreviewModWebsite.IsEnabled ? Visibility.Visible : Visibility.Collapsed;
                 ReleaseNotesBlock.Visibility = PreviewModReleaseNotes.Text == "" ? Visibility.Collapsed : Visibility.Visible;
 
-                Mod installedVersion = Mod.SearchWithName(ModListInstalled, mod.Name);
+                Mod installedVersion = Mod.SearchMod(ModListInstalled, mod);
                 if (installedVersion != null)
                 {
                     foreach (Mod subMod in mod.SubMod)
@@ -1597,11 +1599,11 @@ namespace Memoria.Launcher
         {
             foreach (Mod mod in ModListCatalog)
             {
-                if (Mod.SearchWithName(DownloadList, mod.Name) != null)
+                if (Mod.SearchMod(DownloadList, mod) != null)
                     mod.Installed = WaitingEmoji;
-                else if (Mod.SearchWithName(ModListInstalled, mod.Name) != null && Mod.SearchWithName(ModListInstalled, mod.Name).IsOutdated)
+                else if (Mod.SearchMod(ModListInstalled, mod) != null && Mod.SearchMod(ModListInstalled, mod).IsOutdated)
                     mod.Installed = UpdateEmoji;
-                else if (Mod.SearchWithName(ModListInstalled, mod.Name) != null)
+                else if (Mod.SearchMod(ModListInstalled, mod) != null)
                     mod.Installed = InstalledEmoji;
 
                 else
@@ -1614,7 +1616,7 @@ namespace Memoria.Launcher
         {
             for (Int32 i = 0; i < ModListInstalled.Count; i++)
             {
-                Mod mod = Mod.SearchWithName(ModListCatalog, ModListInstalled[i].Name);
+                Mod mod = Mod.SearchMod(ModListCatalog, ModListInstalled[i]);
                 if (mod != null)
                     ModListInstalled[i].Priority = mod.Priority;
             }
