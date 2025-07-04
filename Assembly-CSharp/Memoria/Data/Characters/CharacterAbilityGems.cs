@@ -42,26 +42,29 @@ namespace Memoria.Data
 
     public class SupportingAbilityFeature
     {
-        public class SupportingAbilityEffectPermanent
+        public abstract class SupportingAbilityEffect
         {
             public String Condition = "";
+            public String ModFilePath = null;
+            public Int32 FeatureLineNumber = -1;
+        }
+
+        public class SupportingAbilityEffectPermanent : SupportingAbilityEffect
+        {
             public Dictionary<String, String> Formula = new Dictionary<String, String>();
         }
-        public class SupportingAbilityEffectBattleStartType
+        public class SupportingAbilityEffectBattleStartType : SupportingAbilityEffect
         {
-            public String Condition = "";
             public Dictionary<String, String> Formula = new Dictionary<String, String>();
             public Int32 PreemptivePriorityDelta = 0;
         }
-        public class SupportingAbilityEffectBattleResult
+        public class SupportingAbilityEffectBattleResult : SupportingAbilityEffect
         {
             public String When = "RewardSingle"; // "BattleEnd", "RewardAll", "RewardSingle"
-            public String Condition = "";
             public Dictionary<String, String> Formula = new Dictionary<String, String>();
         }
-        public class SupportingAbilityEffectBattleInitStatus
+        public class SupportingAbilityEffectBattleInitStatus : SupportingAbilityEffect
         {
-            public String Condition = "";
             public BattleStatus PermanentStatus = 0;
             public BattleStatus InitialStatus = 0;
             public BattleStatus ResistStatus = 0;
@@ -69,18 +72,16 @@ namespace Memoria.Data
             public List<KeyValuePair<BattleStatusId, String>> DurationFactorStatus = new List<KeyValuePair<BattleStatusId, String>>();
             public Int32 InitialATB = -1;
         }
-        public class SupportingAbilityEffectAbilityUse
+        public class SupportingAbilityEffectAbilityUse : SupportingAbilityEffect
         {
             public String When = "EffectDone"; // "BattleScriptStart", "HitRateSetup", "CalcDamage", "Steal", "BattleScriptEnd", "EffectDone"
-            public String Condition = "";
             public Dictionary<String, String> Effect = new Dictionary<String, String>();
             public Boolean AsTarget = false;
             public Boolean EvenImmobilized = false;
             public List<SupportAbility> DisableSA = new List<SupportAbility>();
         }
-        public class SupportingAbilityEffectCommandStart
+        public class SupportingAbilityEffectCommandStart : SupportingAbilityEffect
         {
-            public String Condition = "";
             public Dictionary<String, String> Effect = new Dictionary<String, String>();
             public Boolean EvenImmobilized = false;
         }
@@ -95,11 +96,126 @@ namespace Memoria.Data
         public Boolean EnableAsMonsterTransform = false;
         public Boolean EnableAsEnemy = false;
 
+        public void TriggerSpecialSA(PLAYER play)
+        {
+            for (Int32 i = 0; i < PermanentEffect.Count; i++)
+            {
+                try
+                {
+                    if (!PermanentEffect[i].Formula.ContainsKey("ActivateFreeSA") && !PermanentEffect[i].Formula.ContainsKey("BanishSA") && !PermanentEffect[i].Formula.ContainsKey("HiddenSA")
+                        && !PermanentEffect[i].Formula.ContainsKey("ActivateFreeSAByLvl") && !PermanentEffect[i].Formula.ContainsKey("BanishSAByLvl"))
+                        continue;
+                    if (PermanentEffect[i].Condition.Length > 0)
+                    {
+                        Expression c = new Expression(PermanentEffect[i].Condition);
+                        NCalcUtility.InitializeExpressionPlayer(ref c, play);
+                        c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                        c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                        if (!NCalcUtility.EvaluateNCalcCondition(c.Evaluate()))
+                            continue;
+                    }
+                    foreach (KeyValuePair<String, String> formula in PermanentEffect[i].Formula)
+                    {
+                        String[] featureSplit = formula.Value.Split(';');
+                        for (Int32 j = 0; j < featureSplit.Length; j++)
+                        {
+                            Expression e = new Expression(featureSplit[j]);
+                            NCalcUtility.InitializeExpressionPlayer(ref e, play);
+                            e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                            e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                            SupportAbility sa = (SupportAbility)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)SupportAbility.Void);
+                            if (sa == SupportAbility.Void)
+                                continue;
+                            if (String.Equals(formula.Key, "ActivateFreeSA"))
+                            {
+                                play.saForced.Add(sa);
+                            }
+                            else if (String.Equals(formula.Key, "BanishSA"))
+                            {
+                                if (!play.saBanish.Contains(sa))
+                                {
+                                    ff9abil.DisableHierarchyFromSA(play, sa);
+                                    play.saBanish.Add(sa);
+                                }
+                            }
+                            else if (String.Equals(formula.Key, "HiddenSA"))
+                            {
+                                foreach (SupportAbility saToHide in ff9abil.GetHierarchyFromAnySA(sa))
+                                    play.saHidden.Add(saToHide);
+                            }
+                            else if (String.Equals(formula.Key, "ActivateFreeSAByLvl"))
+                            {
+                                SupportAbility baseSA = ff9abil.GetBaseAbilityFromBoostedAbility(sa);
+                                Int32 levelSA = 0;
+                                if (featureSplit.Length > j + 1)
+                                {
+                                    Expression elvl = new Expression(featureSplit[j + 1]);
+                                    NCalcUtility.InitializeExpressionPlayer(ref elvl, play);
+                                    elvl.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                                    elvl.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                                    levelSA = Math.Min((Int32)NCalcUtility.ConvertNCalcResult(elvl.Evaluate(), 0), ff9abil.GetBoostedAbilityMaxLevel(play, baseSA));
+                                    j++;
+                                }
+                                Boolean allSA = levelSA == -1;
+                                Boolean skip = true;
+                                foreach (SupportAbility saToForce in ff9abil.GetHierarchyFromAnySA(baseSA))
+                                {
+                                    if (skip && saToForce != sa && !allSA)
+                                        continue;
+                                    if (levelSA < 0 && !allSA)
+                                        break;
+                                    skip = false;
+                                    play.saForced.Add(saToForce);
+                                    levelSA--;
+                                }
+                            }
+                            else if (String.Equals(formula.Key, "BanishSAByLvl"))
+                            {
+                                SupportAbility baseSA = ff9abil.GetBaseAbilityFromBoostedAbility(sa);
+                                Int32 levelSA = 0;
+                                if (featureSplit.Length > j + 1)
+                                {
+                                    Expression elvl = new Expression(featureSplit[j + 1]);
+                                    NCalcUtility.InitializeExpressionPlayer(ref elvl, play);
+                                    elvl.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                                    elvl.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                                    levelSA = (Int32)NCalcUtility.ConvertNCalcResult(elvl.Evaluate(), 0);
+                                    j++;
+                                }
+                                Boolean allSA = levelSA == -1;
+                                List<SupportAbility> listSAToBanish = ff9abil.GetHierarchyFromAnySA(baseSA);
+                                listSAToBanish.Reverse(); // Start with the maximum boosted one, if it exist.
+                                foreach (SupportAbility saToForce in listSAToBanish)
+                                {
+                                    if (levelSA <= 0 && !allSA)
+                                        break;
+                                    levelSA--;
+                                    play.saBanish.Add(saToForce);
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception err)
+                {
+                    String message = $"Error detected in '{PermanentEffect[i].ModFilePath}' permanent effect at line {PermanentEffect[i].FeatureLineNumber}";
+                    if (message != lastErrorMessage)
+                    {
+                        lastErrorMessage = message;
+                        Log.Error(message);
+                        Log.Error(err);
+                    }
+                }
+            }
+        }
+
+        private static String lastErrorMessage = null;
+
         public void TriggerOnEnable(PLAYER play)
         {
-            try
+            for (Int32 i = 0; i < PermanentEffect.Count; i++)
             {
-                for (Int32 i = 0; i < PermanentEffect.Count; i++)
+                try
                 {
                     if (PermanentEffect[i].Condition.Length > 0)
                     {
@@ -133,20 +249,53 @@ namespace Memoria.Data
                         else if (String.Equals(formula.Key, "MaxDamageLimit")) play.maxDamageLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.maxDamageLimit);
                         else if (String.Equals(formula.Key, "MaxMPDamageLimit")) play.maxMpDamageLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.maxMpDamageLimit);
                         else if (String.Equals(formula.Key, "PlayerPermanentStatus")) play.SetPermanentStatus((BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int64)play.permanent_status));
+                        else if (String.Equals(formula.Key, "MaxGems"))
+                        {
+                            UInt32 newCapa = (UInt32)Math.Max(0, NCalcUtility.ConvertNCalcResult(e.Evaluate(), 0));
+                            if (newCapa == UInt32.MaxValue)
+                            {
+                                play.cur.capa = UInt32.MaxValue;
+                            }
+                            else if (play.cur.capa + newCapa - play.max.capa >= 0)
+                            {
+                                play.cur.capa += newCapa - play.max.capa;
+                            }
+                            else
+                            {
+                                // Not enough magic stones anymore: let ff9abil.CalculateGemsPlayer handle the situation
+                                play.cur.capa = 0;
+                                /* Alternative method: disable all the SA and re-launch FF9Play_Update
+                                play.cur.capa = newCapa;
+                                play.max.capa = newCapa;
+                                play.sa[0] = 0u;
+                                play.sa[1] = 0u;
+                                play.saExtended.Clear();
+                                ff9play.FF9Play_Update(play);
+                                return;
+                                */
+                            }
+                            play.max.capa = newCapa;
+                        }
                     }
                 }
-            }
-            catch (Exception err)
-            {
-                Log.Error(err);
+                catch (Exception err)
+                {
+                    String message = $"Error detected in '{PermanentEffect[i].ModFilePath}' permanent effect at line {PermanentEffect[i].FeatureLineNumber}";
+                    if (message != lastErrorMessage)
+                    {
+                        lastErrorMessage = message;
+                        Log.Error(message);
+                        Log.Error(err);
+                    }
+                }
             }
         }
 
         public void TriggerOnBattleStart(ref Int32 backAttackChance, ref Int32 preemptiveChance, ref Int32 preemptivePriority)
         {
-            try
+            for (Int32 i = 0; i < BattleStartEffect.Count; i++)
             {
-                for (Int32 i = 0; i < BattleStartEffect.Count; i++)
+                try
                 {
                     if (BattleStartEffect[i].Condition.Length > 0)
                     {
@@ -166,19 +315,25 @@ namespace Memoria.Data
                     }
                     preemptivePriority += BattleStartEffect[i].PreemptivePriorityDelta;
                 }
-            }
-            catch (Exception err)
-            {
-                Log.Error(err);
+                catch (Exception err)
+                {
+                    String message = $"Error detected in '{BattleStartEffect[i].ModFilePath}' battle start effect at line {BattleStartEffect[i].FeatureLineNumber}";
+                    if (message != lastErrorMessage)
+                    {
+                        lastErrorMessage = message;
+                        Log.Error(message);
+                        Log.Error(err);
+                    }
+                }
             }
         }
 
         public Boolean TriggerOnBattleResult(PLAYER play, BONUS bonus, List<FF9ITEM> bonus_item, String when, UInt32 fleeGil)
         {
             Boolean triggeredAtLeastOnce = false;
-            try
+            for (Int32 i = 0; i < BattleResultEffect.Count; i++)
             {
-                for (Int32 i = 0; i < BattleResultEffect.Count; i++)
+                try
                 {
                     if (String.Equals(BattleResultEffect[i].When, when))
                     {
@@ -305,10 +460,16 @@ namespace Memoria.Data
                         }
                     }
                 }
-            }
-            catch (Exception err)
-            {
-                Log.Error(err);
+                catch (Exception err)
+                {
+                    String message = $"Error detected in '{BattleResultEffect[i].ModFilePath}' battle result effect at line {BattleResultEffect[i].FeatureLineNumber}";
+                    if (message != lastErrorMessage)
+                    {
+                        lastErrorMessage = message;
+                        Log.Error(message);
+                        Log.Error(err);
+                    }
+                }
             }
             return triggeredAtLeastOnce;
         }
@@ -331,9 +492,9 @@ namespace Memoria.Data
             partialResist = unit.PartialResistStatus;
             durationFactor = unit.StatusDurationFactor;
             atb = -1;
-            try
+            for (Int32 i = 0; i < StatusEffect.Count; i++)
             {
-                for (Int32 i = 0; i < StatusEffect.Count; i++)
+                try
                 {
                     if (StatusEffect[i].Condition.Length > 0)
                     {
@@ -366,10 +527,16 @@ namespace Memoria.Data
                     if (StatusEffect[i].InitialATB >= 0)
                         atb = (Int16)Math.Min(unit.MaximumAtb - 1, unit.MaximumAtb * StatusEffect[i].InitialATB / 100);
                 }
-            }
-            catch (Exception err)
-            {
-                Log.Error(err);
+                catch (Exception err)
+                {
+                    String message = $"Error detected in '{StatusEffect[i].ModFilePath}' status effect at line {StatusEffect[i].FeatureLineNumber}";
+                    if (message != lastErrorMessage)
+                    {
+                        lastErrorMessage = message;
+                        Log.Error(message);
+                        Log.Error(err);
+                    }
+                }
             }
         }
 
@@ -377,10 +544,10 @@ namespace Memoria.Data
         {
             if (!EnableAsEnemy && !EnableAsMonsterTransform && Id >= 0 && calc.Context.DisabledSA.Contains(Id))
                 return;
-            try
+            Boolean canMove = asTarget ? !calc.Target.IsUnderAnyStatus(BattleStatusConst.Immobilized) : !calc.Caster.IsUnderAnyStatus(BattleStatusConst.Immobilized);
+            for (Int32 i = 0; i < AbilityEffect.Count; i++)
             {
-                Boolean canMove = asTarget ? !calc.Target.IsUnderAnyStatus(BattleStatusConst.Immobilized) : !calc.Caster.IsUnderAnyStatus(BattleStatusConst.Immobilized);
-                for (Int32 i = 0; i < AbilityEffect.Count; i++)
+                try
                 {
                     if (AbilityEffect[i].AsTarget == asTarget && (canMove || AbilityEffect[i].EvenImmobilized) && String.Equals(AbilityEffect[i].When, when))
                     {
@@ -570,22 +737,29 @@ namespace Memoria.Data
                         foreach (SupportAbility disSA in AbilityEffect[i].DisableSA)
                             context.DisabledSA.Add(disSA);
                     }
+
                 }
-            }
-            catch (Exception err)
-            {
-                Log.Error(err);
+                catch (Exception err)
+                {
+                    String message = $"Error detected in '{AbilityEffect[i].ModFilePath}' ability effect at line {AbilityEffect[i].FeatureLineNumber}";
+                    if (message != lastErrorMessage)
+                    {
+                        lastErrorMessage = message;
+                        Log.Error(message);
+                        Log.Error(err);
+                    }
+                }
             }
         }
 
         public void TriggerOnCommand(BattleUnit abilityUser, BattleCommand command, ref UInt16 tryCover)
         {
-            try
+            Boolean canMove = !abilityUser.IsUnderAnyStatus(BattleStatusConst.Immobilized);
+            BattleUnit caster = null;
+            BattleUnit target = null;
+            for (Int32 i = 0; i < CommandEffect.Count; i++)
             {
-                Boolean canMove = !abilityUser.IsUnderAnyStatus(BattleStatusConst.Immobilized);
-                BattleUnit caster = null;
-                BattleUnit target = null;
-                for (Int32 i = 0; i < CommandEffect.Count; i++)
+                try
                 {
                     if (canMove || CommandEffect[i].EvenImmobilized)
                     {
@@ -693,10 +867,16 @@ namespace Memoria.Data
                         UpdateUnitStatuses(abilityUser, uCurStat, uAutoStat, uResistStat);
                     }
                 }
-            }
-            catch (Exception err)
-            {
-                Log.Error(err);
+                catch (Exception err)
+                {
+                    String message = $"Error detected in '{CommandEffect[i].ModFilePath}' command effect at line {CommandEffect[i].FeatureLineNumber}";
+                    if (message != lastErrorMessage)
+                    {
+                        lastErrorMessage = message;
+                        Log.Error(message);
+                        Log.Error(err);
+                    }
+                }
             }
         }
 
@@ -710,7 +890,7 @@ namespace Memoria.Data
             if (unit.CurrentStatus != cur) btl_stat.AlterStatuses(unit, cur & ~unit.CurrentStatus);
         }
 
-        public void ParseFeatures(SupportAbility id, String featureCode)
+        public void ParseFeatures(SupportAbility id, String featureCode, String modFilePath, Int32 initialLineNumber)
         {
             Id = id;
             if ((Int32)Id == -3 || (Int32)Id == -4)
@@ -725,9 +905,12 @@ namespace Memoria.Data
                 else
                     endPos = codeMatches[i + 1].Groups[1].Captures[0].Index;
                 String saArgs = featureCode.Substring(startPos, endPos - startPos);
+                Int32 lineNumber = initialLineNumber + Regex.Matches(featureCode.Substring(0, startPos), @"\n", RegexOptions.Singleline).Count + 1;
                 if (String.Equals(saCode, "Permanent"))
                 {
                     SupportingAbilityEffectPermanent newEffect = new SupportingAbilityEffectPermanent();
+                    newEffect.ModFilePath = modFilePath;
+                    newEffect.FeatureLineNumber = lineNumber;
                     foreach (Match formula in new Regex(@"\[code=(.*?)\](.*?)\[/code\]").Matches(saArgs))
                     {
                         if (String.Equals(formula.Groups[1].Value, "Condition"))
@@ -740,6 +923,8 @@ namespace Memoria.Data
                 else if (String.Equals(saCode, "BattleStart"))
                 {
                     SupportingAbilityEffectBattleStartType newEffect = new SupportingAbilityEffectBattleStartType();
+                    newEffect.ModFilePath = modFilePath;
+                    newEffect.FeatureLineNumber = lineNumber;
                     Match priorityDelta = new Regex(@"\bPreemptivePriority\s+([\+-]?\d+)").Match(saArgs);
                     if (priorityDelta.Success)
                         Int32.TryParse(priorityDelta.Groups[1].Value, out newEffect.PreemptivePriorityDelta);
@@ -755,6 +940,8 @@ namespace Memoria.Data
                 else if (String.Equals(saCode, "BattleResult"))
                 {
                     SupportingAbilityEffectBattleResult newEffect = new SupportingAbilityEffectBattleResult();
+                    newEffect.ModFilePath = modFilePath;
+                    newEffect.FeatureLineNumber = lineNumber;
                     Match when = new Regex(@"\bWhen(\w+)\b").Match(saArgs);
                     if (when.Success)
                         newEffect.When = when.Groups[1].Value;
@@ -770,6 +957,8 @@ namespace Memoria.Data
                 else if (String.Equals(saCode, "StatusInit"))
                 {
                     SupportingAbilityEffectBattleInitStatus newEffect = new SupportingAbilityEffectBattleInitStatus();
+                    newEffect.ModFilePath = modFilePath;
+                    newEffect.FeatureLineNumber = lineNumber;
                     foreach (Match formula in new Regex(@"\[code=(.*?)\](.*?)\[/code\]").Matches(saArgs))
                     {
                         String codeName = formula.Groups[1].Value;
@@ -812,6 +1001,8 @@ namespace Memoria.Data
                 else if (String.Equals(saCode, "Ability"))
                 {
                     SupportingAbilityEffectAbilityUse newEffect = new SupportingAbilityEffectAbilityUse();
+                    newEffect.ModFilePath = modFilePath;
+                    newEffect.FeatureLineNumber = lineNumber;
                     Match when = new Regex(@"\bWhen(\w+)\b").Match(saArgs);
                     if (when.Success)
                         newEffect.When = when.Groups[1].Value;
@@ -835,6 +1026,8 @@ namespace Memoria.Data
                 else if (String.Equals(saCode, "Command"))
                 {
                     SupportingAbilityEffectCommandStart newEffect = new SupportingAbilityEffectCommandStart();
+                    newEffect.ModFilePath = modFilePath;
+                    newEffect.FeatureLineNumber = lineNumber;
                     foreach (Match effect in new Regex(@"\[code=(.*?)\](.*?)\[/code\]").Matches(saArgs))
                     {
                         if (String.Equals(effect.Groups[1].Value, "Condition"))

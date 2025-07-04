@@ -405,6 +405,9 @@ public class btl_scrp
             case 148:
                 result = btl.bi.t_gauge != 0 ? btl.trance : 0;
                 break;
+            case 149:
+                result = btl.bi.t_gauge;
+                break;
         }
         return result;
     }

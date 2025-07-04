@@ -349,6 +349,7 @@ public class JsonParser : ISharedDataParser
                 if (player.info.slot_no == CharacterId.Eiko)
                     player.bonus.cap += this.getExtraCap(player);
             }
+
             // Run "FF9Play_Update" anyway when loading data, mostly for "SupportingAbilityFeature.TriggerOnEnable"
             player.ValidateMaxStone();
             ff9play.FF9Play_Update(player);
@@ -905,6 +906,8 @@ public class JsonParser : ISharedDataParser
                 playerClass.Add("maxMpLimit", p.maxMpLimit.ToString());
                 playerClass.Add("maxDamageLimit", p.maxDamageLimit.ToString());
                 playerClass.Add("maxMpDamageLimit", p.maxMpDamageLimit.ToString());
+                playerClass.Add("basis_capa", p.basis.capa.ToString());
+                playerClass.Add("basis_max_capa", p.basis.max_capa.ToString());
             }
             dataPlayerArray.Add(playerClass);
         }
@@ -1279,14 +1282,22 @@ public class JsonParser : ISharedDataParser
                                 ff9abil.FF9Abil_SetEnableSA(player, (SupportAbility)playerClass["sa_extended"][j].AsInt, true);
                     }
                 }
-                if (playerBonusClass["maxHpLimit"] != null)
-                    player.maxHpLimit = playerBonusClass["maxHpLimit"].AsUInt;
-                if (playerBonusClass["maxMpLimit"] != null)
-                    player.maxMpLimit = playerBonusClass["maxMpLimit"].AsUInt;
-                if (playerBonusClass["maxDamageLimit"] != null)
-                    player.maxDamageLimit = playerBonusClass["maxDamageLimit"].AsUInt;
-                if (playerBonusClass["maxMpDamageLimit"] != null)
-                    player.maxMpDamageLimit = playerBonusClass["maxMpDamageLimit"].AsUInt;
+                if (playerClass["maxHpLimit"] != null)
+                    player.maxHpLimit = playerClass["maxHpLimit"].AsUInt;
+                if (playerClass["maxMpLimit"] != null)
+                    player.maxMpLimit = playerClass["maxMpLimit"].AsUInt;
+                if (playerClass["maxDamageLimit"] != null)
+                    player.maxDamageLimit = playerClass["maxDamageLimit"].AsUInt;
+                if (playerClass["maxMpDamageLimit"] != null)
+                    player.maxMpDamageLimit = playerClass["maxMpDamageLimit"].AsUInt;
+                if (playerClass["basis_capa"] != null)
+                    player.basis.capa = playerClass["basis_capa"].AsUInt;
+                else
+                    player.basis.capa = player.cur.capa;
+                if (playerClass["basis_max_capa"] != null)
+                    player.basis.max_capa = playerClass["basis_max_capa"].AsUInt;
+                else
+                    player.basis.max_capa = player.max.capa;
                 player.ValidateSupportAbility();
                 player.ValidateBasisStatus();
             }

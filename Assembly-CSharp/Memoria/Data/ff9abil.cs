@@ -3,8 +3,7 @@ using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
 using Memoria.Prime;
-using Memoria.Prime.Collections;
-using Memoria.Prime.CSV;
+using Memoria.Prime.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -101,7 +100,22 @@ namespace FF9
             return result;
         }
 
-        public static void FF9Abil_SetEnableSA(PLAYER player, SupportAbility saIndex, Boolean enable)
+        public static List<SupportingAbilityFeature> GetEnabledGlobalSA(PLAYER player)
+        {
+            return GetEnabledGlobalSA(player.saExtended);
+        }
+
+        public static List<SupportingAbilityFeature> GetEnabledGlobalSA(HashSet<SupportAbility> saExtended)
+        {
+            List<SupportingAbilityFeature> result = new List<SupportingAbilityFeature>();
+            if (_FF9Abil_SaFeature.ContainsKey((SupportAbility)(-1))) // Global
+                result.Add(_FF9Abil_SaFeature[(SupportAbility)(-1)]);
+            if (_FF9Abil_SaFeature.ContainsKey((SupportAbility)(-2))) // GlobalLast
+                result.Add(_FF9Abil_SaFeature[(SupportAbility)(-2)]);
+            return result;
+        }
+
+        public static void FF9Abil_SetEnableSA(PLAYER player, SupportAbility saIndex, Boolean enable, Boolean gemCost = false)
         {
             if (enable)
                 player.saExtended.Add(saIndex);
@@ -113,6 +127,11 @@ namespace FF9
                     player.sa[(Int32)saIndex >> 5] |= (UInt32)(1 << (Int32)saIndex);
                 else
                     player.sa[(Int32)saIndex >> 5] &= (UInt32)~(1 << (Int32)saIndex);
+            }
+            if (gemCost && (Configuration.Battle.LockEquippedAbilities == 0 || Configuration.Battle.LockEquippedAbilities == 2))
+            {
+                CharacterAbilityGems saData = GetSupportAbilityGem(GetAbilityIdFromSupportAbility(saIndex));
+                player.cur.capa += (UInt32)(enable ? -saData.GemsCount : saData.GemsCount);
             }
         }
 
@@ -193,7 +212,76 @@ namespace FF9
 
         public static List<SupportAbility> GetBoostedAbilityList(SupportAbility baseAbil)
         {
-            return ff9abil._FF9Abil_SaData[baseAbil].Boosted;
+            return _FF9Abil_SaData[baseAbil].Boosted;
+        }
+
+        public static SupportAbility GetBaseAbilityFromBoostedAbility(SupportAbility boostedAbil)
+        {
+            foreach (var kvp in _FF9Abil_SaData)
+                if (kvp.Value.Boosted.Contains(boostedAbil))
+                    return kvp.Key;
+            return boostedAbil;
+        }
+
+        public static List<SupportAbility> GetHierarchyFromAnySA(SupportAbility baseAbil)
+        {
+            SupportAbility baseSA = GetBaseAbilityFromBoostedAbility(baseAbil);
+            List<SupportAbility> boostedList = GetBoostedAbilityList(baseSA);
+            List<SupportAbility> fullHierarchy = new List<SupportAbility>();
+            fullHierarchy.Add(baseSA);
+            foreach (SupportAbility boostedSA in boostedList)
+                fullHierarchy.Add(boostedSA);
+            return fullHierarchy;
+        }
+
+        public static void DisableAllHierarchyFromSA(PLAYER player, SupportAbility baseAbil)
+        {
+            foreach (SupportAbility SAtoReset in GetHierarchyFromAnySA(baseAbil))
+                if (FF9Abil_IsEnableSA(player.saExtended, SAtoReset))
+                    FF9Abil_SetEnableSA(player, SAtoReset, false);
+        }
+
+        public static void DisableHierarchyFromSA(PLAYER player, SupportAbility baseAbil)
+        {
+            List<SupportAbility> saList = GetHierarchyFromAnySA(baseAbil);
+            if (baseAbil != saList[0])
+                return;
+            foreach (SupportAbility sa in saList)
+                if (FF9Abil_IsEnableSA(player.saExtended, sa))
+                    FF9Abil_SetEnableSA(player, sa, false, sa != baseAbil);
+        }
+
+        public static List<SupportAbility> GetNonForcedSAInHierarchy(PLAYER player, SupportAbility baseAbil)
+        {
+            return new List<SupportAbility>(GetHierarchyFromAnySA(baseAbil).Where(sa => !player.saForced.Contains(sa)));
+        }
+
+        public static void CalculateGemsPlayer(PLAYER player)
+        {
+            if (Configuration.Battle.LockEquippedAbilities == 1 || Configuration.Battle.LockEquippedAbilities == 3)
+                return;
+
+            HashSet<SupportAbility> equippedSA = new HashSet<SupportAbility>(player.saExtended);
+            List<String> notEnoughGemsLog = new List<String>();
+            Int32 gemsUsed = 0;
+            player.cur.capa = player.max.capa;
+            foreach (SupportAbility sa in equippedSA)
+            {
+                if (player.cur.capa >= GetSAGemCostFromPlayer(player, sa) && (gemsUsed + GetSAGemCostFromPlayer(player, sa)) <= player.max.capa)
+                {
+                    gemsUsed += GetSAGemCostFromPlayer(player, sa); // "gemsUsed" is a check when using [code=MaxGems] features: in some case, currents "cur.capa" isn't enough
+                    player.cur.capa -= (UInt32)GetSAGemCostFromPlayer(player, sa);
+                }
+                else
+                {
+                    FF9Abil_SetEnableSA(player, sa, false);
+                    notEnoughGemsLog.Add($"{sa}");
+                    player.cur.capa = (UInt32)Math.Min(player.cur.capa + GetSAGemCostFromPlayer(player, sa), player.max.capa);
+                }
+            }
+
+            if (notEnoughGemsLog.Count > 0)
+                Log.Message($"[CalculateGemsPlayer] Not enough gems for {player.Name}, these SA are removed => {String.Join(", ", notEnoughGemsLog.ToArray())}");
         }
 
         public static Int32 GetBoostedAbilityMaxLevel(PLAYER player, SupportAbility baseAbil)
@@ -215,6 +303,13 @@ namespace FF9
                 if (!FF9Abil_IsEnableSA(player.saExtended, boosted[level]))
                     return level;
             return boosted.Count;
+        }
+
+        public static Int32 GetSAGemCostFromPlayer(PLAYER player, SupportAbility baseAbil)
+        {
+            if (player.saForced.Contains(baseAbil))
+                return 0;
+            return _FF9Abil_SaData[baseAbil].GemsCount;
         }
 
         // The followings are also used by CsvParser and CsvWriter, so any change of behaviour should be reflected there as well
@@ -358,7 +453,7 @@ namespace FF9
                 Dictionary<SupportAbility, SupportingAbilityFeature> result = new Dictionary<SupportAbility, SupportingAbilityFeature>();
                 foreach (AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
                     if (folder.TryFindAssetInModOnDisc(inputPath, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
-                        LoadAbilityFeatureFile(ref result, File.ReadAllText(fullPath));
+                        LoadAbilityFeatureFile(ref result, File.ReadAllText(fullPath), fullPath);
                 inputPath = DataResources.Characters.Abilities.Directory + DataResources.Characters.Abilities.SAFeaturesFile;
                 if (result.Count == 0)
                     throw new FileNotFoundException($"File with ability features not found: [{inputPath}]");
@@ -415,7 +510,7 @@ namespace FF9
             }
         }
 
-        public static void LoadAbilityFeatureFile(ref Dictionary<SupportAbility, SupportingAbilityFeature> entries, String input)
+        public static void LoadAbilityFeatureFile(ref Dictionary<SupportAbility, SupportingAbilityFeature> entries, String input, String modFilePath)
         {
             MatchCollection abilMatches = new Regex(@"^(>SA|>AA|>CMD)\s+(\d+|GlobalEnemyLast|GlobalEnemy|GlobalLast|Global)(\+?).*()", RegexOptions.Multiline).Matches(input);
             for (Int32 i = 0; i < abilMatches.Count; i++)
@@ -437,11 +532,12 @@ namespace FF9
                     endPos = input.Length;
                 else
                     endPos = abilMatches[i + 1].Groups[1].Captures[0].Index;
+                Int32 lineNumber = input.Substring(0, abilMatches[i].Index).OccurenceCount("\n") + 1;
                 if (String.Equals(abilMatches[i].Groups[1].Value, ">SA"))
                 {
                     if (!cumulate || !entries.ContainsKey((SupportAbility)abilIndex))
                         entries[(SupportAbility)abilIndex] = new SupportingAbilityFeature();
-                    entries[(SupportAbility)abilIndex].ParseFeatures((SupportAbility)abilIndex, input.Substring(startPos, endPos - startPos));
+                    entries[(SupportAbility)abilIndex].ParseFeatures((SupportAbility)abilIndex, input.Substring(startPos, endPos - startPos), modFilePath, lineNumber);
                 }
                 else if (String.Equals(abilMatches[i].Groups[1].Value, ">AA"))
                 {
