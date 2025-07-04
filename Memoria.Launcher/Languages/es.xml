@@ -297,6 +297,8 @@ DualLanguageModeChoice2 = "Simultáneo"
 DualLanguageMode_Tooltip = "Opción 1: cambia de idioma con la tecla Bloq Mayús&#xA;Opción 2: ambos idiomas se muestran simultáneamente"
 DualLanguage = "Idioma dual"
 DualLanguage_Tooltip = "Selección del idioma secundario"
+TextFadeDuration = "Fundido de texto"
+TextFadeDuration_Tooltip = "Duración en milisegundos del desvanecimiento de cada carácter que aparece en los cuadros de diálogo"
 />
 
 <SteamOverlay

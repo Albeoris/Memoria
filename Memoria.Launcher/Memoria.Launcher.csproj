@@ -209,6 +209,7 @@
   <ItemGroup>
     <Resource Include="images\FF9_logo.png" />
     <Resource Include="images\new_launcher_bg.jpg" />
+    <Resource Include="images\new_launcher_bg2.png" />
     <Resource Include="images\btnReorganize.png" />
     <Resource Include="images\alert_incompat.png" />
     <Resource Include="images\alert_update.png" />
@@ -249,6 +250,7 @@
     <Resource Include="images\tickboxFF9_on.png" />
     <Resource Include="images\tickboxFF9_hover.png" />
     <Resource Include="images\cursorHand.cur" />
+    <Resource Include="images\text_fade.png" />
     <Resource Include="images\texture_filtering.png" />
     <Resource Include="images\texture_filtering2.png" />
     <Resource Include="images\btnUninstallimg_small.png" />

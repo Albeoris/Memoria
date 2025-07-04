@@ -55,8 +55,8 @@ namespace Memoria.Launcher
             KeyUp += ModManagerWindow_KeyUp;
         }
 
-        public static readonly Color DefaultAccentColor = (Color)ColorConverter.ConvertFromString("#CC355566");
-        public const String DefaultBackgroundImage = "pack://application:,,,/images/new_launcher_bg.jpg";
+        public static readonly Color DefaultAccentColor = (Color)ColorConverter.ConvertFromString("#CC427599"); // CC355566
+        public const String DefaultBackgroundImage = "pack://application:,,,/images/new_launcher_bg2.png";
 
         private async void OnLoaded(Object sender, RoutedEventArgs e)
         {
@@ -113,6 +113,25 @@ namespace Memoria.Launcher
                 {
                     // Set FPS to auto
                     FPSDropboxChoice = 0;
+                }
+                else if (date < new DateTime(2025, 07, 04))
+                {
+                    // Enable check update
+                    IniFile.SettingsIni.SetSetting("Version", "CheckUpdates", "True");
+                    // Make sure to use the new back-end
+                    IniFile.MemoriaIni.SetSetting("Audio", "Backend", "1");
+                    IniFile.MemoriaIni.Save();
+                    // Disable themes mod
+                    foreach (var mod in ModListInstalled)
+                    {
+                        if (mod.InstallationPath == "MemoriaLauncherThemes")
+                        {
+                            mod.IsActive = false;
+                            break;
+                        }
+                    }
+                    UpdateModSettings();
+                    UpdateLauncherTheme();
                 }
                 // Set windows mode to 0 if it can't be parsed
                 if (!Int32.TryParse(IniFile.SettingsIni.GetSetting("Settings", "WindowMode", "null"), NumberStyles.Integer, CultureInfo.InvariantCulture, out _))

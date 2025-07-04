@@ -297,6 +297,8 @@ DualLanguageModeChoice2 = "Simultanés"
 DualLanguageMode_Tooltip = "Option 1 : alterner entre deux langues en utilisant la touche Verr. Maj.&#xA;Option 2 : afficher deux langues simultanément"
 DualLanguage = "Langue de Traduction"
 DualLanguage_Tooltip = "Choix de la seconde langue"
+TextFadeDuration = "Fondu du texte"
+TextFadeDuration_Tooltip = "Durée en millisecondes du fondu de chaque caractère apparaissant dans les boîtes de dialogue"
 />
 
 <SteamOverlay

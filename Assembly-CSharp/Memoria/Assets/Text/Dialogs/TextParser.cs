@@ -8,7 +8,7 @@ namespace Memoria.Assets
 {
     public class TextParser
     {
-        public Single FadingPreviewTime = 0.1f;
+        public Single FadingPreviewTime = Configuration.Interface.TextFadeDuration;
 
         // Properly initialised when Step >= Page
         public readonly UILabel LabelContainer;

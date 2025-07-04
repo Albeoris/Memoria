@@ -297,6 +297,8 @@ DualLanguageModeChoice2 = "Simultanea"
 DualLanguageMode_Tooltip = "Opzione 1: cambia lingua con il tasto BLOC MAIUSC&#xA;Opzione 2: entrambe le lingue visualizzate contemporaneamente"
 DualLanguage = "Doppia lingua"
 DualLanguage_Tooltip = "Scelta della lingua secondaria"
+TextFadeDuration = "Dissolvenza del testo"
+TextFadeDuration_Tooltip = "La durata in millisecondi della dissolvenza di ogni carattere che appare nelle finestre di dialogo"
 />
 
 <SteamOverlay

@@ -282,6 +282,8 @@ DualLanguageModeChoice2 = "Eşzamanlı"
 DualLanguageMode_Tooltip = "Seçenek 1: CAPS LOCK tuşuyla dilleri değiştirin&#xA;Seçenek 2: her iki dil de aynı anda görüntülenir"
 DualLanguage = "Çift Dil"
 DualLanguage_Tooltip = "İkincil dil seçimi"
+TextFadeDuration = "Metin solması"
+TextFadeDuration_Tooltip = "İletişim kutularında görünen her karakterin solmasının milisaniye cinsinden süresi"
 />
 
 <SteamOverlay

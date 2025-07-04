@@ -37,6 +37,7 @@ namespace Memoria
             public readonly IniValue<Int32> MenuChocographRowCount;
 
             public readonly IniValue<Int32> FadeDuration;
+            public readonly IniValue<Int32> TextFadeDuration;
 
             public InterfaceSection() : base(nameof(InterfaceSection), true)
             {
@@ -73,6 +74,7 @@ namespace Memoria
                 // Config menu -- Default PC: 6/8, PSX: 9
 
                 FadeDuration = BindInt32(nameof(FadeDuration), 40);
+                TextFadeDuration = BindInt32(nameof(TextFadeDuration), 100);
             }
         }
     }

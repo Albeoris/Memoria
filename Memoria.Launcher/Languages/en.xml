@@ -282,6 +282,8 @@ DualLanguageModeChoice2 = "Simultaneous"
 DualLanguageMode_Tooltip = "Option 1: switch languages with the key CAPS LOCK&#xA;Option 2: both languages displayed simultaneously"
 DualLanguage = "Dual Language"
 DualLanguage_Tooltip = "Choice of the secondary language"
+TextFadeDuration = "Text fading"
+TextFadeDuration_Tooltip = "The duration in milliseconds of the fade of each character appearing in dialog boxes"
 />
 
 <SteamOverlay

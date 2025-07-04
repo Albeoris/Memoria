@@ -297,6 +297,8 @@ DualLanguageModeChoice2 = "Gleichzeitig"
 DualLanguageMode_Tooltip = "Option 1: Sprachenwechsel mit der Feststelltaste&#xA;Option 2: Beide Sprachen werden gleichzeitig angezeigt"
 DualLanguage = "Zweisprachiger"
 DualLanguage_Tooltip = "Auswahl der Zweitsprache"
+TextFadeDuration = "Textüberblendung"
+TextFadeDuration_Tooltip = "Die Dauer der Überblendung jedes Zeichens, das in Dialogfeldern erscheint, in Millisekunden"
 />
 
 <SteamOverlay
