@@ -297,6 +297,8 @@ DualLanguageModeChoice2 = "Одночасний"
 DualLanguageMode_Tooltip = "Варіант 1: перемикати мови за допомогою клавіші CAPS LOCK&#xA;Варіант 2: обидві мови відображаються одночасно"
 DualLanguage = "Подвійна мова"
 DualLanguage_Tooltip = "Вибір додаткової мови"
+TextFadeDuration = "Зникнення тексту"
+TextFadeDuration_Tooltip = "Тривалість у мілісекундах зникнення кожного символу, що з'являється у діалогових вікнах"
 />
 
 <SteamOverlay
@@ -328,6 +330,8 @@ Active = "Активний"
 Progress = "Прогрес"
 Speed = "Швидкість"
 TimeLeft = "Час що лишився"
+Extracting = "Вилучення"
+DirectDownload = "Пряме завантаження ↗"
 ActiveIncompatibleMods = "Мод несумісний з: "
 IncompatibleWithMemoria = "Версія мода несумісна з поточною Memoria. Оновіть його з каталогу модів."
 ApplyModPresetText = "Бажаєте застосувати цей стиль?"

@@ -6,7 +6,7 @@
     <ProjectGuid>{95BC3C2C-0C8B-41B6-92E8-49D301119BE8}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AssemblyName>Memoria.Launcher</AssemblyName>
-    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <IsWebBootstrapper>false</IsWebBootstrapper>
@@ -74,6 +74,9 @@
     <Compile Include="Languages\XmlDocumentExm.cs" />
     <Compile Include="Languages\XmlHelper.cs" />
     <Compile Include="Launcher\ALChColor.cs" />
+    <Compile Include="Launcher\Window_ModDescription.xaml.cs">
+      <DependentUpon>Window_ModDescription.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Launcher\Window_NewPreset.xaml.cs">
       <DependentUpon>Window_NewPreset.xaml</DependentUpon>
     </Compile>
@@ -110,6 +113,10 @@
   <ItemGroup>
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Launcher\Window_ModDescription.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Launcher\Window_NewPreset.xaml">
       <SubType>Designer</SubType>
@@ -202,6 +209,7 @@
   <ItemGroup>
     <Resource Include="images\FF9_logo.png" />
     <Resource Include="images\new_launcher_bg.jpg" />
+    <Resource Include="images\new_launcher_bg2.png" />
     <Resource Include="images\btnReorganize.png" />
     <Resource Include="images\alert_incompat.png" />
     <Resource Include="images\alert_update.png" />
@@ -242,6 +250,7 @@
     <Resource Include="images\tickboxFF9_on.png" />
     <Resource Include="images\tickboxFF9_hover.png" />
     <Resource Include="images\cursorHand.cur" />
+    <Resource Include="images\text_fade.png" />
     <Resource Include="images\texture_filtering.png" />
     <Resource Include="images\texture_filtering2.png" />
     <Resource Include="images\btnUninstallimg_small.png" />
@@ -262,11 +271,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="SharpCompress" Version="0.38.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\ChangeLog.txt">
-      <TargetPath>ChangeLog.txt</TargetPath>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterResolveReferences">

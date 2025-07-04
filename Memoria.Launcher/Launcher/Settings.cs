@@ -63,6 +63,7 @@ namespace Memoria.Launcher
             ["SwapConfirmCancel", "_swapConfirmCancel", "SwapConfirmCancel", "Control", 0, 1, 0],
 
             // Sliders
+            ["TextFadeDuration", "_textFadeDuration", "TextFadeDuration", "Interface", 0, 1, 100],
             ["CameraStabilizer", "_camerastabilizer", "CameraStabilizer", "Graphics", 0, 1, 85],
             ["BattleTPS", "_battletpsfactor", "BattleTPS", "Graphics", 0, 1, 15],
             ["SoundVolume", "_soundVolume", "SoundVolume", "Audio", 0, 1, 100],
@@ -349,6 +350,13 @@ namespace Memoria.Launcher
         /////////////
         // SLIDERS //
         /////////////
+
+        private Int16 _textFadeDuration;
+        public Int16 TextFadeDuration
+        {
+            get => _textFadeDuration;
+            set => SetProperty(ref _textFadeDuration, value);
+        }
 
         private Int16 _camerastabilizer;
         public Int16 CameraStabilizer

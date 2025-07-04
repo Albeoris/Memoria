@@ -294,6 +294,8 @@ DualLanguageModeChoice2 = "同时"
 DualLanguageMode_Tooltip = "选项 1：使用大写锁定键切换语言&#xA;选项 2：两种语言同时显示"
 DualLanguage = "双语"
 DualLanguage_Tooltip = "选择第二语言"
+TextFadeDuration = "文本渐变"
+TextFadeDuration_Tooltip = "对话框中出现的每个字符的渐变持续时间，以毫秒为单位"
 />
 
 <SteamOverlay
@@ -325,6 +327,8 @@ Active = "激活"
 Progress = "进度"
 Speed = "速度"
 TimeLeft = "剩余时间"
+Extracting = "提取"
+DirectDownload = "直接下载 ↗"
 ActiveIncompatibleMods = "与以下模组不兼容: "
 IncompatibleWithMemoria = "模组版本与当前Memoria不兼容&#xA;请前往模组目录更新"
 UpdateTooltip = "此模组有新的版本可用，请前往模组目录查询: "
