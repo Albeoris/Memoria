@@ -25,8 +25,7 @@ public class SdLibAPIWithProLicense : ISdLibAPI
 
     public override Int32 SdSoundSystem_Create(String config)
     {
-        LastSoundID = SdLibAPI.SdSoundSystem_Create(config);
-        return LastSoundID;
+        return SdLibAPI.SdSoundSystem_Create(config); ;
     }
 
     public override void SdSoundSystem_Release()
@@ -61,7 +60,8 @@ public class SdLibAPIWithProLicense : ISdLibAPI
 
     public override Int32 SdSoundSystem_CreateSound(Int32 bankID)
     {
-        return SdLibAPI.SdSoundSystem_CreateSound(bankID, 0);
+        LastSoundID = SdLibAPI.SdSoundSystem_CreateSound(bankID, 0);
+        return LastSoundID;
     }
 
     public override Int32 SdSoundSystem_SoundCtrl_Start(Int32 soundID, Int32 offsetTimeMSec)
