@@ -366,7 +366,22 @@ namespace Memoria.Launcher
 
                     // Move it to the right installation path
                     String modPath = Path.Combine(path, root);
-                    Mod modInfo = new Mod(modPath);
+                    Mod modInfo = null;
+                    try
+                    {
+                        using (Stream input = File.OpenRead(modPath + "/" + Mod.DESCRIPTION_FILE))
+                        using (StreamReader reader = new StreamReader(input))
+                            modInfo = new Mod(reader);
+                    }
+                    catch
+                    {
+                        modInfo = new Mod(modPath);
+                        modInfo.InstallationPath = null;
+                    }
+
+                    if( String.IsNullOrEmpty(modInfo.InstallationPath))
+                        modInfo.InstallationPath = Path.GetFileName(modPath);
+
                     // TODO language:
                     dropLabel.Content = $"Installing '{Path.GetFileNameWithoutExtension(modInfo.Name)}'";
                     if (Directory.Exists(modInfo.InstallationPath))
