@@ -2514,16 +2514,16 @@ Placeholder art - Marcus by nanpou0406 &amp; Cinna Concept Art.
 	<Category>Visual</Category>
 	<PreviewFile>Thumbnail/tripletriad.png</PreviewFile>
 	<PreviewFileUrl>https://i.ibb.co/YFhbMx8X/tripletriad.png</PreviewFileUrl>
-	<DownloadUrl>https://www.dropbox.com/scl/fi/tgs1ivzinnhivry5zxac7/TripleTriad-by-DV.zip?rlkey=nnebxpvw10ovvk516xzr6xdcx&amp;dl=1</DownloadUrl>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/8lc4qic9r85jk1rk1g79b/TripleTriad-by-DV.zip?rlkey=vuv6dplbznmaxpfu9lyedzs6g&amp;dl=1</DownloadUrl>
 	<Description>Brings new elements to make the Triple Triad more faithful.
 Many options available to change the board, music or the cards.
 
-Thumbnail made by Faospark : thanks ^^</Description>
+Thumbnail made by Faospark : thanks you ^^</Description>
 	<PatchNotes>[Version 2.0]
 All changes made to the mode are adjustable as options:
 - You can enable or disable the Triple Triad board.
 - 4 different music avaible now !
-- Cards have been updated to include bosses and characters (+ stats fixes).</PatchNotes>
+- An option to change some cards into bosses and characters version (+ stats fixes).</PatchNotes>
 	<Header>Board</Header>
 	<SubMod>
 		<Name>Triple Triad Board</Name>
@@ -2543,7 +2543,7 @@ All changes made to the mode are adjustable as options:
 	<SubMod>
 		<Name>Shuffle or Boogie (FFXIV)</Name>
 		<InstallationPath>ShuffleorBoogieFF14</InstallationPath>
-		<Description>Change the Tetra Master music into Shuffle or Boogie from FFXIV (tournoi version).</Description>
+		<Description>Change the Tetra Master music into Shuffle or Boogie from FFXIV (tournament version).</Description>
 		<Group>music-group</Group>
 	</SubMod>
 	<SubMod>
