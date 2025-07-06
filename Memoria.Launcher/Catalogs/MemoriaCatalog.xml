@@ -156,7 +156,7 @@ Not supported language : Japanese (a lot of things get deleted... need to wait u
 
 <Mod>
 	<Name>NoHardcodedBattles</Name>
-	<Version>1.0</Version>
+	<Version>1.1</Version>
 	<Priority>3</Priority>
 	<Author>DV</Author>
 	<ReleaseDateOriginal>29 May 2025</ReleaseDateOriginal>
@@ -168,34 +168,51 @@ Not supported language : Japanese (a lot of things get deleted... need to wait u
 A tiny mod to remove some "hardcoded" scripts in battles.
 The goal is to make these fights compatible with any characters in battle, in order to avoid any softlocks.
 	</Description>
+	<PatchNotes>[Version 1.1]
+Fix a very specific soft lock against Prison Cage, Black Waltz 3 and Mistodon.</PatchNotes>
 	<PreviewFileUrl>https://i.imgur.com/KL9DWPk.jpeg</PreviewFileUrl>
 	<PreviewFile>Thumbnail/NoHardcodedBattles.jpg</PreviewFile>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/9nj3r6ph66soi94pokpqt/NoHardcodedBattles.zip?rlkey=nkbi7dxzstozytuxsykqcgejv&amp;dl=1</DownloadUrl>
 </Mod>
 
 <Mod>
-	<Name>Quality Of L'Ifa</Name>
-	<Version>1.0</Version>
+	<Name>QualityOfLifa</Name>
+	<Version>1.1</Version>
 	<Priority>-23</Priority>
-	<InstallationPath>Quality Of L'Ifa</InstallationPath>
-	<ReleaseDate>14 June 2025</ReleaseDate>
-	<ReleaseDateOriginal>14 June 2025</ReleaseDateOriginal>
+	<InstallationPath>QualityOfLifa</InstallationPath>
+	<ReleaseDate>6 Jul 2025</ReleaseDate>
+	<ReleaseDateOriginal>30 Apr 2025</ReleaseDateOriginal>
 	<Author>DV</Author>
 	<Category>Gameplay</Category>
 	<PreviewFileUrl>https://i.ibb.co/20DxpHXN/Quality-Of-Lifa.jpg</PreviewFileUrl>
 	<PreviewFile>Thumbnail/QualityOfLifa.jpg</PreviewFile>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/je4hdj96ngxv7ogjep9tx/Quality-Of-L-Ifa.zip?rlkey=0jmnwa9svspqazb4olrk53qtb&amp;dl=1</DownloadUrl>
-	<Description>
-A very lightweight mod that allows you to modify minor elements of the game while keeping as much of the OG experience as possible.
+	<Description>A very lightweight mod that allows you to modify minor elements of the game while keeping as much of the OG experience as possible.
 All options are independent and can be activated as desired.
 More options will be added over time.
 Note : To avoid compatibility issues, Quality of the Ifa should be sorted to the lowest priority in the mod list.
-	</Description>
+
+Special thanks for SamsamTS to help me on some Regex formulas :D</Description>
+	<PatchNotes>
+[Version 1.1]
+	
+New options available :
+- Portraits on Dialogs
+- Portraits on Dialogs (with PCP)
+- Colored Text for Element in Help
+- Colored Text for Status in Help
+- Icon Element in Help
+- Icon Status in Help
+- Counter Text Cyan + Element Text
+- Counter Text Fuchsia + Element Text
+- Better Jewel Spell
+- Better Price
+	</PatchNotes>
 	<Header>Safe with any Mods</Header>
 	<SubMod>
 		<Name>Elixir Show HP/MP Healed</Name>
 		<InstallationPath>ElixirShowHPMP</InstallationPath>
-		<Description>Items using Elixir script show HP/MP heals on players (feature from Trance Seek).</Description>
+		<Description>Items using Elixir script show HP/MP heals on player (feature from Trance Seek).</Description>
 		<PreviewFile>ElixirShowHPMP/Thumbnail.jpg</PreviewFile>
 	</SubMod>
 	<SubMod>
@@ -205,9 +222,58 @@ Note : To avoid compatibility issues, Quality of the Ifa should be sorted to the
 		<PreviewFile>MPInBlue/Thumbnail.jpg</PreviewFile>
 	</SubMod>
 	<SubMod>
-		<Name>Colored Text from Element Attack</Name>
+		<Name>Portraits on Dialogs</Name>
+		<InstallationPath>PortraitDialog</InstallationPath>
+		<Description>Add the portrait (if exist) of the character talking in the field (feature made by Tirlititi).
+Can make the game load longer.</Description>
+		<Group>portrait-group</Group>
+		<PreviewFile>PortraitDialog/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Portraits on Dialogs (with PCP)</Name>
+		<InstallationPath>PortraitDialogPCP</InstallationPath>
+		<Description>Add the portrait (if exist) of the character talking in the field (feature made by Tirlititi).
+Compatible with the mod PlayableCharacterPack.
+Can make the game load longer.</Description>
+		<Group>portrait-group</Group>
+		<PreviewFile>PortraitDialogPCP/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Colored Text for Element in Help</Name>
+		<InstallationPath>ColoredTextElementDescription</InstallationPath>
+		<Description>Element are now colored in the help text (feature from Trance Seek).
+Can make the game load longer.
+This option is not compatible with Trance Seek.</Description>
+		<PreviewFile>ColoredTextElementDescription/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Colored Text for Status in Help</Name>
+		<InstallationPath>ColoredTextStatusDescription</InstallationPath>
+		<Description>Status are now colored in the help text (feature from Trance Seek).
+Can make the game load longer.
+This option is not compatible with Trance Seek.</Description>
+		<PreviewFile>ColoredTextStatusDescription/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Icon Element in Help</Name>
+		<InstallationPath>IconElementDescription</InstallationPath>
+		<Description>Add an icon next to the element in the help.
+Compatible with other mods using the same icon name, like Modern Labels (4.1.9 or more).
+Can make the game load longer. The icons are from the site finalfantasy.fandom.com.</Description>
+		<PreviewFile>IconElementDescription/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Icon Status in Help</Name>
+		<InstallationPath>IconStatusDescription</InstallationPath>
+		<Description>Add an icon next to the status in the help (feature from Trance Seek).
+Can make the game load longer. Some icons are from the game Octopath Traveler.
+This option is not compatible with Trance Seek.</Description>
+		<PreviewFile>IconStatusDescription/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Colored Text for Element Attack</Name>
 		<InstallationPath>ColoredTextElementAttack</InstallationPath>
-		<Description>Texts from attack are colored, depending of his element</Description>
+		<Description>Attacks text are colored, depending of his element.</Description>
 		<PreviewFile>ColoredTextElementAttack/Thumbnail.jpg</PreviewFile>
 		<Group>cmd-text-color</Group>
 	</SubMod>
@@ -225,6 +291,24 @@ Note : To avoid compatibility issues, Quality of the Ifa should be sorted to the
 		<PreviewFile>CounterFuchsia/Thumbnail.jpg</PreviewFile>
 		<Group>cmd-text-color</Group>
 	</SubMod>
+	<SubMod>
+		<Name>Counter Text Cyan + Element Text</Name>
+		<InstallationPath>ColoredTextElementAttackCounterCyan</InstallationPath>
+		<Description>Counters (player or monster) are displayed in Cyan.
+Also, attacks text are colored, depending of his element.
+If the attack is both a counterattack and elemental, this will be underlined.</Description>
+		<PreviewFile>ColoredTextElementAttackCounterCyan/Thumbnail.jpg</PreviewFile>
+		<Group>cmd-text-color</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Counter Text Fuchsia + Element Text</Name>
+		<InstallationPath>ColoredTextElementAttackCounterFuchsia</InstallationPath>
+		<Description>Counters (player or monster) are displayed in Fuchsia.
+Also, attacks text are colored, depending of his element.
+If the attack is both a counterattack and elemental, this will be underlined.</Description>
+		<PreviewFile>ColoredTextElementAttackCounterFuchsia/Thumbnail.jpg</PreviewFile>
+		<Group>cmd-text-color</Group>
+	</SubMod>
 	<Header>For OG Experience only</Header>
 	<SubMod>
 		<Name>Thunder Slash (OG Version)</Name>
@@ -235,19 +319,24 @@ Note : To avoid compatibility issues, Quality of the Ifa should be sorted to the
 	<SubMod>
 		<Name>Better Gravity Spell</Name>
 		<InstallationPath>BetterGravity</InstallationPath>
-		<Description>Make Gravity more usefull.
-- Gravity Spell never miss, like a Magic Attack.
-- Can work now on boss but the formula is based on their current HP + less power.
-		</Description>
+		<Description>Make Gravity more useful.
+- Gravity Spell never miss, like a Magic Attack
+- Can work now on boss but the formula is based on their current HP + less power.</Description>
 		<PreviewFile>BetterGravity/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Better Jewel Spell</Name>
+		<InstallationPath>BetterJewel</InstallationPath>
+		<Description>Make Jewel more useful.
+- 50% to earn an Ore. Otherwise, get a random jewel (except Moonstone).
+- The spell has 100% accuracy but each success reduces it by 40% (so 100% then 60% then 20%) for each monster.</Description>
+		<PreviewFile>BetterJewel/Thumbnail.jpg</PreviewFile>
 	</SubMod>
 	<SubMod>
 		<Name>Better Healer (SA)</Name>
 		<InstallationPath>BetterHealer</InstallationPath>
-		<Description>
-The attack never miss on an ally + ignore defence of the target
-(only player), making the heal much powerful (feature from Trance Seek).
-		</Description>
+		<Description>The attack never miss on an ally + ignore defence of the target
+(only player), making the heal much powerful (feature from Trance Seek).</Description>
 		<PreviewFile>BetterHealer/Thumbnail.jpg</PreviewFile>
 	</SubMod>
 	<SubMod>
@@ -269,33 +358,35 @@ The attack never miss on an ally + ignore defence of the target
 		<PreviewFile>FloatWeakness/Thumbnail.jpg</PreviewFile>
 	</SubMod>
 	<SubMod>
+		<Name>Better Price</Name>
+		<InstallationPath>BetterPrice</InstallationPath>
+		<Description>No more items can be sold for 1 gil: their price has been reviewed.</Description>
+		<PreviewFile>BetterPrice/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
 		<Name>Better Stats When Character Joins</Name>
 		<InstallationPath>BetterStatsJoining</InstallationPath>
-		<Description>
-Better formula on stats when Freya/Quina/Eiko/Amarant joins the team (feature from Trance Seek).
-More explanations in the .txt file in the mod (BetterStatsJoining folder)
-		</Description>
+		<Description>Better formula on stats when Freya/Quina/Eiko/Amarant joins the team (feature from Trance Seek).
+More explanations in the .txt file in the mod (BetterStatsJoining folder)</Description>
 		<PreviewFile>BetterStatsJoining/Thumbnail.jpg</PreviewFile>
 	</SubMod>
 	<Header>[WIP] Experimental</Header>
 	<SubMod>
 		<Name>Better Garland Model NPC</Name>
 		<InstallationPath>BetterGarlandModel</InstallationPath>
-		<Description>
-Unfinished, replace Garland Model in field from his battle version.
+		<Description>Unfinished, replace Garland Model in field from his battle version.
 Experimental: i need to improve the animation on his cape...
-More models to come later when i get time.
-		</Description>
+More models to come later when i get time.</Description>
 		<PreviewFile>BetterGarlandModel/Thumbnail.jpg</PreviewFile>
 	</SubMod>
 </Mod>
 
 <Mod>
 	<Name>Doppelgängers</Name>
-	<Version>1.0</Version>
+	<Version>1.1</Version>
 	<Priority>-15</Priority>
 	<InstallationPath>Doppelgängers</InstallationPath>
-	<ReleaseDate>21 Jun 2025</ReleaseDate>
+	<ReleaseDate>06 Jul 2025</ReleaseDate>
 	<ReleaseDateOriginal>21 Jun 2025</ReleaseDateOriginal>
 	<Author>Tetra Gomez, NocturnalHanna and DV</Author>
 	<Category>Gameplay</Category>
@@ -314,6 +405,8 @@ Compatible with the OG version only.
 
 Coming soon : For the next version, I will try to make a mini .dll file so that the mod is compatible with PCP for example.
 	</Description>
+	<PatchNotes>[Version 1.1]
+Include the new version ofNoHardcodedBattles.</PatchNotes>
 	<SubMod>
 		<Name>All Zidane</Name>
 		<InstallationPath>All Zidane</InstallationPath>
@@ -2412,17 +2505,67 @@ Placeholder art - Marcus by nanpou0406 &amp; Cinna Concept Art.
 
 <Mod>
 	<Name>Triple Triad</Name>
-	<Version>1.0</Version>
+	<Version>2.0</Version>
 	<Priority>16</Priority>
 	<InstallationPath>TripleTriad</InstallationPath>
-	<ReleaseDateOriginal>25 Jul 2023</ReleaseDateOriginal>
+	<ReleaseDate>06 Jul 2025</ReleaseDate>
+	<ReleaseDateOriginal>25 Apr 2023</ReleaseDateOriginal>
 	<Author>DV</Author>
-	<Description>Change the music and background to the Triple Triad FF8 version (based on Tripod !)
-Change some card textures (add boss + characters)</Description>
-	<Category>Cards</Category>
-	<PreviewFileUrl>https://i.ibb.co/61587rH/image.png</PreviewFileUrl>
+	<Category>Visual</Category>
 	<PreviewFile>Thumbnail/tripletriad.png</PreviewFile>
-	<DownloadUrl>https://www.dropbox.com/scl/fi/8lc4qic9r85jk1rk1g79b/TripleTriad-by-DV.zip?rlkey=vuv6dplbznmaxpfu9lyedzs6g&amp;dl=1</DownloadUrl>
+	<PreviewFileUrl>https://i.ibb.co/YFhbMx8X/tripletriad.png</PreviewFileUrl>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/tgs1ivzinnhivry5zxac7/TripleTriad-by-DV.zip?rlkey=nnebxpvw10ovvk516xzr6xdcx&amp;dl=1</DownloadUrl>
+	<Description>Brings new elements to make the Triple Triad more faithful.
+Many options available to change the board, music or the cards.
+
+Thumbnail made by Faospark : thanks ^^</Description>
+	<PatchNotes>[Version 2.0]
+All changes made to the mode are adjustable as options:
+- You can enable or disable the Triple Triad board.
+- 4 different music avaible now !
+- Cards have been updated to include bosses and characters (+ stats fixes).</PatchNotes>
+	<Header>Board</Header>
+	<SubMod>
+		<Name>Triple Triad Board</Name>
+		<InstallationPath>TripleTriadBoard</InstallationPath>
+		<Description>Change the board into the Triple Triad version (from FF8's mod called Tripod).</Description>
+		<PreviewFile>TripleTriadBoard/Thumbnail.jpg</PreviewFile>
+		<Default/>
+	</SubMod>
+	<Header>Music</Header>
+	<SubMod>
+		<Name>Shuffle or Boogie (FFVIII)</Name>
+		<InstallationPath>ShuffleorBoogieFF8</InstallationPath>
+		<Description>Change the Tetra Master music into Shuffle or Boogie from FFVIII.</Description>
+		<Group>music-group</Group>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Name>Shuffle or Boogie (FFXIV)</Name>
+		<InstallationPath>ShuffleorBoogieFF14</InstallationPath>
+		<Description>Change the Tetra Master music into Shuffle or Boogie from FFXIV (tournoi version).</Description>
+		<Group>music-group</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Shuffle or Boogie (OC ReMix)</Name>
+		<InstallationPath>ShuffleorBoogieFFOCREMIX</InstallationPath>
+		<Description>Change the Tetra Master music into Shuffle or Boogie from OC ReMix.</Description>
+		<Group>music-group</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Shuffle or Boogie (FFVIII 8-bit by HCBailly)</Name>
+		<InstallationPath>ShuffleorBoogieFFHCBAILLY</InstallationPath>
+		<Description>Change the Tetra Master music into Shuffle or Boogie from HCBailly (8 bit version), made with Mario Paint.</Description>
+		<Group>music-group</Group>
+	</SubMod>
+	<Header>Cards</Header>
+	<SubMod>
+		<Name>Deck with Boss and Characters</Name>
+		<InstallationPath>DeckCard1</InstallationPath>
+		<Description>Change some cards with bosses and characters (feature from Trance Seek).</Description>
+		<Group>cards-group</Group>
+		<PreviewFile>DeckCard1/Thumbnail.jpg</PreviewFile>
+	</SubMod>
 </Mod>
 
 <Mod>
