@@ -137,7 +137,7 @@ namespace Memoria.Launcher
                     {
                         if (catalog_mod != null && catalog_mod.Name != null && mod.Name == catalog_mod.Name)
                         {
-                            mod.IsOutdated = catalog_mod.IsOutdated = mod.CurrentVersion < catalog_mod.CurrentVersion;
+                            mod.IsOutdated = catalog_mod.IsOutdated = mod.CurrentVersion == null || mod.CurrentVersion < catalog_mod.CurrentVersion;
                             if (mod.IsOutdated)
                             {
                                 mod.UpdateIcon = UpdateEmoji;
