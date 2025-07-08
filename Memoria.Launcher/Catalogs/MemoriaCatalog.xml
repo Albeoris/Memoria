@@ -177,10 +177,10 @@ Fix a very specific soft lock against Prison Cage, Black Waltz 3 and Mistodon.</
 
 <Mod>
 	<Name>QualityOfLifa</Name>
-	<Version>1.1</Version>
+	<Version>1.2</Version>
 	<Priority>-23</Priority>
 	<InstallationPath>QualityOfLifa</InstallationPath>
-	<ReleaseDate>6 Jul 2025</ReleaseDate>
+	<ReleaseDate>8 Jul 2025</ReleaseDate>
 	<ReleaseDateOriginal>30 Apr 2025</ReleaseDateOriginal>
 	<Author>DV</Author>
 	<Category>Gameplay</Category>
@@ -194,8 +194,16 @@ Note : To avoid compatibility issues, Quality of the Ifa should be sorted to the
 
 Special thanks for SamsamTS to help me on some Regex formulas :D</Description>
 	<PatchNotes>
+[Version 1.2]
+
+(Icon Status in Help) => Fix an issue about Gradual Petrify in some lang.
+(Icon Status in Help) => Made a tiny change on TextPatch.txt.
+The option didn't work for some players but can't reproduce the bug (report and fixed by SamsamTS)
+(Icon Element in Help) => Made a tiny change on TextPatch.txt.
+The option didn't work for some players but can't reproduce the bug (report and fixed by SamsamTS)
+
 [Version 1.1]
-	
+
 New options available :
 - Portraits on Dialogs
 - Portraits on Dialogs (with PCP)
@@ -1699,6 +1707,73 @@ Player Damage Taken:
 </Mod>
 
 <Mod>
+	<Name>FernyTranceTweaks</Name>
+	<Version>2.1</Version>
+	<Author>FernyFer</Author>
+	<InstallationPath>FernyTranceTweaks</InstallationPath>
+	<ReleaseDate>2025-07-07</ReleaseDate>
+	<ReleaseDateOriginal>2025-07-05</ReleaseDateOriginal>
+	<MinimumMemoriaVersion>2025-05-11</MinimumMemoriaVersion>
+	<Description>A modular Final Fantasy IX Trance system overhaul!
+
+Do you think the Trance system in Final Fantasy IX is a steaming hot pile of... well, you know.
+Well, look no further! I introduce to you the newest addition to my gameplay overhaul suite: Ferny Trance Tweaks!
+
+With this mod, you can overhaul the way you utilize Trance in Final Fantasy IX and make it into something MUCH better * subjectively *
+than it was in the base game.
+
+Options include:
+
+Trance - Overhaul System
+* Disables `Auto-Trance` when the gauge fills up and allows the player to activate Trance when they choose to do so.
+* Allows the player to build their Trance Gauge on every action, no longer just when they take damage.
+* `High Tide` Support Ability increases the amount of Trance gained on all actions.
+
+
+Trance - MP Reduction
+* Reduces MP costs of Blue Magic, White Magic, Black Magic, and Summons while in Trance by 50%.
+
+
+Trance - Crit Boost
+* Applies an innate +25% bonus to Critical Hit Chance while in Trance.
+
+
+Trance - Patch for `Ferny Support Tweaks`
+* Includes everything in the `Overhaul System` option.
+* FernySupportTweaks adds a new Support Ability: `Trancer` which allows the player to build Trance via offensive actions. this has been coded into this mod and is now redundant. This patch changes up `Trancer` with `Spirit+` which instead increases Spirit by +5% (which helps scale the amount of Trance you gain on all actions).
+
+Enjoy!</Description>
+	<PatchNotes>v2.1: Fixed the Divine Light text bug with `Trancer - FernySupportTweaks Patch.</PatchNotes>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/105</Website>
+	<PreviewFileUrl>https://i.ibb.co/VcHTHDkp/Tweaks-Image.png</PreviewFileUrl>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/bmv5q05ji3u38kkgn0wr1/FernyTranceTweaks.zip?rlkey=fq7nvm7nmbtkb2brodluu5bj6&amp;st=qamln9la&amp;dl=1</DownloadUrl>
+	<PreviewFile>TweaksImage.png</PreviewFile>
+	<Category>Gameplay</Category>
+	<SubMod>
+		<Name>[Trance - Overhaul System]</Name>
+		<InstallationPath>Trance_Overhaul_System</InstallationPath>
+		<Description>More Trance? Yes, please!</Description>
+		<Group>Trancer</Group>
+	</SubMod>
+	<SubMod>
+		<Name>[Trance - MP Reduction]</Name>
+		<InstallationPath>Trance_MPReduction</InstallationPath>
+		<Description>Enjoy a nice MP cost discount while in Trance mode!</Description>
+	</SubMod>
+	<SubMod>
+		<Name>[Trance - CritBoost]</Name>
+		<InstallationPath>Trance_CritBoost</InstallationPath>
+		<Description>A little extra crit never hurt nobody.</Description>
+	</SubMod>
+	<SubMod>
+		<Name>[Trancer - FernySupportTweaks Patch]</Name>
+		<InstallationPath>Trancer_FST_Patch</InstallationPath>
+		<Description>Overhaul + Patch for `FernySupportTweaks` mod</Description>
+		<Group>Trancer</Group>
+	</SubMod>
+</Mod>
+
+<Mod>
 	<Name>David Bowie Edition</Name>
 	<Version>2.0</Version>
 	<Priority>-18</Priority>
@@ -2117,6 +2192,192 @@ New portraits for all characters, including supporting and background characters
 	<PreviewFileUrl>https://i.imgur.com/6EEBG0I.jpeg</PreviewFileUrl>
 	<Website>https://steamcommunity.com/app/377840/discussions/0/3189117724409401717/</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/wrdzcvjxl2keuhr1923g3/FF9_Sounds_Fix-by-DV.zip?rlkey=ilew1n0xznbhwpgx9wg9ggyaz&amp;dl=1</DownloadUrl>
+</Mod>
+
+<Mod>
+	<Name>Gaia Bless the Soundtrack</Name>
+	<Version>1.0.1</Version>
+	<Priority></Priority>
+	<InstallationPath>GaiaBlessTheSoundtrack</InstallationPath>
+	<ReleaseDate>July 07, 2025</ReleaseDate>
+	<ReleaseDateOriginal>July 07, 2025</ReleaseDateOriginal>
+	<Author>Ehrgeiz</Author>
+	<Description>Replaces the battle music with either remixes of original songs or tracks from other video games. Multiple choices for a single track to choose from, as Ferny would say "Best of both worlds!", enjoy!
+
+CREDIT GOES TO THE FOLLOWING:
+
+ENRICO DEIANA
+https://www.youtube.com/@EnricoDeianamusic
+
+JSF MUSIC (For the Faerie Battle Remix)
+https://www.youtube.com/@jsfmusic2174
+
+All original music in this mod belongs to thier respective composers, I do NOT own them.
+
+Shout out to FernyFer &amp; SamSamTS for guiding me!</Description>
+	<PatchNotes>To Do:
+-Figure out how to add tracks for specific fights (i.e: The Black Waltz Trio, Zorn &amp; Thorn, Beatrix third battle, etc.)…there’s a way I just don’t have the necessary knowledge of it.
+
+-Figure out how to customize the 2 loops in The Final Battle.</PatchNotes>
+	<Category>Music</Category>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/106</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/mogpt1jl0sq497d8onrsf/GaiaBlessTheSoundtrack.zip?rlkey=jfvwks1x3uiakhpm0qie9k50e&amp;st=nun6y8ne&amp;dl=1</DownloadUrl>
+	<PreviewFile>Banner.png</PreviewFile>
+	<PreviewFileUrl>https://i.imgur.com/ikTEOnY.png</PreviewFileUrl>
+	<MinimumMemoriaVersion></MinimumMemoriaVersion>
+	<Header>Battle 1</Header>
+	<SubMod>
+		<Name>Battle 1 ~Enrico Deiana Ver.~</Name>
+		<InstallationPath>Battle 1 Remix</InstallationPath>
+		<Description>Replaces Battle 1 with Enrico Deiana's remixed version!</Description>
+		<Group>BATTLE 1</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Battle 1 ~arrange~</Name>
+		<InstallationPath>Battle 1 Arrange</InstallationPath>
+		<Description>Replaces Battle 1 with the arranged version from Dissidia: Final Fantasy!</Description>
+		<Group>BATTLE 1</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Kingdom Valley Act 1</Name>
+		<InstallationPath>Kingdom Valley Act 1</InstallationPath>
+		<Description>Replaces Battle 1 with the first level of Kingdom Valley from Sonic X Shadow Generations!</Description>
+		<Group>BATTLE 1</Group>
+	</SubMod>
+	<SubMod>
+		<Name>You Will Know Our Names</Name>
+		<InstallationPath>You Will Know Our Names</InstallationPath>
+		<Description>Replaces Battle 1 with the remastered Unique Monster battle theme from Xenoblade Chronicles: Definitive Edition!</Description>
+		<Group>BATTLE 1</Group>
+	</SubMod>
+	<Header>Battle 2</Header>
+	<SubMod>
+		<Name>Battle 2 ~Record Keeper Ver.~</Name>
+		<InstallationPath>Battle 2 Record Keeper</InstallationPath>
+		<Description>Replaces Battle 2 with the Record Keeper version!</Description>
+		<Group>BATTLE 2</Group>
+	</SubMod>
+	<SubMod>
+		<Name>A Bet On This Bout</Name>
+		<InstallationPath>A Bet On This Bout</InstallationPath>
+		<Description>Replaces Battle 2 with the boss theme from Tales of Vesperia!</Description>
+		<Group>BATTLE 2</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Boss B</Name>
+		<InstallationPath>Boss B</InstallationPath>
+		<Description>Replaces Battle 2 with the second boss theme from Star Fox Zero!</Description>
+		<Group>BATTLE 2</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Finality</Name>
+		<InstallationPath>Finality</InstallationPath>
+		<Description>Replaces Battle 2 with the dungeon boss theme from Final Fantasy XIV's Endwalker expansion!</Description>
+		<Group>BATTLE 2</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Incoming!</Name>
+		<InstallationPath>Incoming!</InstallationPath>
+		<Description>Replaces Battle 2 with the one of the many boss themes from Xenoblade Chronicles 2!</Description>
+		<Group>BATTLE 2</Group>
+	</SubMod>
+	<Header>Faerie Battle</Header>
+	<SubMod>
+		<Name>Faerie Battle ~JSF Music ver.~</Name>
+		<InstallationPath>Faerie Battle Remix</InstallationPath>
+		<Description>Replaces Faerie Battle with a remixed version made by JSF Music!</Description>
+		<Group>FAERIE</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Mid-Boss Room</Name>
+		<InstallationPath>Mid Boss Room</InstallationPath>
+		<Description>Replaces Faerie Battle with the Mid-Boss Room remix from Kirby AirRide!</Description>
+		<Group>FAERIE</Group>
+	</SubMod>
+	<Header>Festival of the Hunt/Hunter's Chance</Header>
+	<SubMod>
+		<Name>Festival of the Hunt ~FFXIV Endwalker Ver.~</Name>
+		<InstallationPath>Festival of the Hunt</InstallationPath>
+		<Description>Replaces Festival of the Hunt with the version from Final Fantasy XIV: Endwalker!</Description>
+		<Group>HUNTER</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Menu (Melee)</Name>
+		<InstallationPath>Melee Menu</InstallationPath>
+		<Description>Replaces Festival of the Hunt with an arrangement of Super Smash Bros Melee's Menu Theme (from SSBB)!</Description>
+		<Group>HUNTER</Group>
+	</SubMod>
+	<Header>The Wavering Blade/Sword of Doubt</Header>
+	<SubMod>
+		<Name>Aqua ~Dark Dive~</Name>
+		<InstallationPath>Aqua Dark Dive(Kingdom Hearts III)</InstallationPath>
+		<Description>Replaces track with Aqua's boss theme from Kingdom Hearts III!</Description>
+		<Group>BLADE</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Spring Meadows - Beneath the Blue Tree</Name>
+		<InstallationPath>Beneath the Blue Tree</InstallationPath>
+		<Description>Replaces track with Eveque's boss theme from Clair Obsur: Expedition 33!</Description>
+		<Group>BLADE</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Kiryu G@ Ki LI</Name>
+		<InstallationPath>Kiryu</InstallationPath>
+		<Description>Replaces track with Satsuki's theme from Kill la Kill!</Description>
+		<Group>BLADE</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Sad but True</Name>
+		<InstallationPath>Sad but True</InstallationPath>
+		<Description>Replaces track with Jill Valentine's boss theme from Resident Evil 5!</Description>
+		<Group>BLADE</Group>
+	</SubMod>
+	<SubMod>
+		<Name>The Wavering Blade ~Enrico Deiana Ver.~</Name>
+		<InstallationPath>Wavering Remix</InstallationPath>
+		<Description>Replaces track with Enrico Deiana's remixed version!</Description>
+		<Group>BLADE</Group>
+	</SubMod>
+	<Header>The Darkness of Eternity/Dark Messenger</Header>
+	<SubMod>
+		<Name>Dark Messenger ~Enrico Deiana Ver.~</Name>
+		<InstallationPath>Dark Messenger Remix</InstallationPath>
+		<Description>Replaces track with Enrico Deiana's remixed version!</Description>
+		<Group>KUJA</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Forza Finale</Name>
+		<InstallationPath>Forza Finale</InstallationPath>
+		<Description>Replaces track with the boss theme of Ansem (Seeker of Darkness), Xemnas, and Young Xehanort from Kingdom Hearts III!</Description>
+		<Group>KUJA</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Hellfire</Name>
+		<InstallationPath>Hellfire</InstallationPath>
+		<Description>Replaces track with the boss theme of Ifrit from Final Fantasy XV!</Description>
+		<Group>KUJA</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Moebius Battle</Name>
+		<InstallationPath>Moebius Battle</InstallationPath>
+		<Description>Replaces track with the boss theme of the Consul from Xenoblade Chronicles III!</Description>
+		<Group>KUJA</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Wind of Madness ~Orchestra~</Name>
+		<InstallationPath>Wind of Madness</InstallationPath>
+		<Description>Replaces track with the orchestrated version of Wesker's boss theme from Resident Evil 5!</Description>
+		<Group>KUJA</Group>
+	</SubMod>
+	<Header>Tantalus Tango</Header>
+	<SubMod>
+		<Name>Gang-Plank Galleon</Name>
+		<InstallationPath>Gang Plank</InstallationPath>
+		<Description>A custom track that replaces Battle 1 with King K. Rool's boss theme in Donkey Kong Country. Specifically for the first &amp; third fight against Baku!</Description>
+		<Group>BAKU</Group>
+	</SubMod>
+
+
 </Mod>
 
 <Mod>
