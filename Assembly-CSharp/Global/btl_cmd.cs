@@ -2,6 +2,8 @@
 using FF9;
 using Memoria;
 using Memoria.Assets;
+using Memoria.BattleCommands.Core;
+using Memoria.BattleCommands.Integration;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Scripts;
@@ -51,21 +53,48 @@ public class btl_cmd
     {
     }
 
+    /// <summary>
+    /// Clears all data from a battle command, resetting it to default state.
+    /// This method now uses the refactored BattleCommandService for improved testability.
+    /// </summary>
+    /// <param name="cmd">The command data to clear.</param>
     public static void ClearCommand(CMD_DATA cmd)
     {
+        if (cmd == null)
+            return;
+
+        // Convert to new command data format
+        var commandData = CommandDataAdapter.ToCommandData(cmd);
+        
+        // Use the refactored service
+        BattleCommandService.ClearCommand(commandData);
+        
+        // Update the original object with the cleared data
+        CommandDataAdapter.UpdateFromCommandData(cmd, commandData);
+
+        // Clear additional fields that are specific to the original CMD_DATA
         cmd.next = null;
         cmd.aa = null;
-        cmd.tar_id = 0;
-        cmd.magic_caster_id = 0;
-        cmd.cmd_no = BattleCommandId.None;
-        cmd.sub_no = 0;
-        cmd.info.Reset();
     }
 
+    /// <summary>
+    /// Clears the reflection data for a battle command, removing all reflection target information.
+    /// This method now uses the refactored BattleCommandService for improved testability.
+    /// </summary>
+    /// <param name="cmd">The command whose reflection data should be cleared.</param>
     public static void ClearReflecData(CMD_DATA cmd)
     {
-        for (Int32 index = 0; index < 4; ++index)
-            cmd.reflec.tar_id[index] = 0;
+        if (cmd == null)
+            return;
+
+        // Convert to new command data format
+        var commandData = CommandDataAdapter.ToCommandData(cmd);
+        
+        // Use the refactored service
+        BattleCommandService.ClearReflectionData(commandData);
+        
+        // Update the original object with the cleared reflection data
+        CommandDataAdapter.UpdateFromCommandData(cmd, commandData);
     }
 
     public static void InitCommandSystem(FF9StateBattleSystem btlsys, Boolean isStart)
