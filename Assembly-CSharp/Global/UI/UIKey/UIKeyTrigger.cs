@@ -738,14 +738,22 @@ public class UIKeyTrigger : MonoBehaviour
 
         if (IsShiftKeyPressed && F4KeyDown)
         {
-            if (ControlKey && Configuration.Cheats.NoRandomEncounter)
+            if (ControlKey)
             {
-                SettingsState.IsFriendlyBattleOnly = (SettingsState.IsFriendlyBattleOnly + 1) % 3;
-                FF9Sfx.FF9SFX_Play(SettingsState.IsFriendlyBattleOnly == 1 ? 106 : SettingsState.IsFriendlyBattleOnly == 2 ? 1043 : 111);
+                if (Configuration.Cheats.NoRandomEncounter)
+                {
+                    SettingsState.IsFriendlyBattleOnly = (SettingsState.IsFriendlyBattleOnly + 1) % 3;
+                    FF9Sfx.FF9SFX_Play(SettingsState.IsFriendlyBattleOnly == 1 ? 106 : SettingsState.IsFriendlyBattleOnly == 2 ? 1043 : 111);
+                }
+                else
+                {
+                    FF9Sfx.FF9SFX_Play(102);
+                }
                 return true;
             }
 
             SettingsState.IsRapidEncounter = !SettingsState.IsRapidEncounter;
+            FF9Sfx.FF9SFX_Play(SettingsState.IsRapidEncounter ? 1325 : 1047);
             return true;
         }
 
