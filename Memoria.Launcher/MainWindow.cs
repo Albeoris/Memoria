@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -60,6 +61,12 @@ namespace Memoria.Launcher
 
         private async void OnLoaded(Object sender, RoutedEventArgs e)
         {
+            try
+            {
+                if (Directory.Exists(Mod.INSTALLATION_TMP))
+                    Directory.Delete(Mod.INSTALLATION_TMP, true);
+            } catch { }
+            UpdateLauncherTheme();
             HotfixForMoguriMod();
             Lang.Res["Settings.LauncherWindowTitle"] += " | v" + MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd");
             Lang.Res["Settings.MemoriaEngine"] += " v" + MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd");
@@ -243,17 +250,19 @@ namespace Memoria.Launcher
                     if (!SupportedArchives.Contains(ext))
                         continue;
 
-                    IArchive archive = ArchiveFactory.Open(filename);
-                    foreach (var entry in archive.Entries)
+                    using (IArchive archive = ArchiveFactory.Open(filename))
                     {
-                        if (entry.Key == null || !entry.Key.Contains(Mod.DESCRIPTION_FILE))
-                            continue;
+                        foreach (var entry in archive.Entries)
+                        {
+                            if (entry.Key == null || !entry.Key.Contains(Mod.DESCRIPTION_FILE))
+                                continue;
 
-                        // TODO translate:
-                        dropLabel.Content = Lang.Res["Launcher.InstallMod"];
-                        dropBackground.Visibility = Visibility.Visible;
-                        Activate();
-                        return;
+                            // TODO translate:
+                            dropLabel.Content = Lang.Res["Launcher.InstallMod"];
+                            dropBackground.Visibility = Visibility.Visible;
+                            Activate();
+                            return;
+                        }
                     }
                 }
             }
@@ -340,87 +349,36 @@ namespace Memoria.Launcher
 
                     if (!SupportedArchives.Contains(ext))
                         continue;
-                    // Find if it is a mod
-                    IArchive archive = ArchiveFactory.Open(filename);
-                    String root = null;
-                    foreach (var entry in archive.Entries)
-                    {
-                        if (entry.Key == null || !entry.Key.Contains(Mod.DESCRIPTION_FILE))
-                            continue;
-
-                        String dir = Path.GetDirectoryName(entry.Key);
-                        if (dir.Length == 0 || Path.GetDirectoryName(dir).Length == 0)
-                        {
-                            root = dir;
-                            break;
-                        }
-                    }
-                    if (root == null) continue;
 
                     // Extract the archive
                     // TODO language:
                     dropLabel.Content = $"Extracting '{Path.GetFileName(filename)}'";
-                    String path = Mod.INSTALLATION_TMP + "/" + Path.GetFileNameWithoutExtension(filename);
-                    Directory.CreateDirectory(path);
-                    await ExtractAllFileFromArchive(filename, path);
-
-                    // Move it to the right installation path
-                    String modPath = Path.Combine(path, root);
-                    Mod modInfo = null;
-                    try
+                    Mod modInfo = await InstallModFromArchive(filename, null, (progress) =>
                     {
-                        using (Stream input = File.OpenRead(modPath + "/" + Mod.DESCRIPTION_FILE))
-                        using (StreamReader reader = new StreamReader(input))
-                            modInfo = new Mod(reader);
-                    }
-                    catch
-                    {
-                        modInfo = new Mod(modPath);
-                        modInfo.InstallationPath = null;
-                    }
-
-                    if( String.IsNullOrEmpty(modInfo.InstallationPath))
-                        modInfo.InstallationPath = Path.GetFileName(modPath);
-
-                    // TODO language:
-                    dropLabel.Content = $"Installing '{Path.GetFileNameWithoutExtension(modInfo.Name)}'";
-                    if (Directory.Exists(modInfo.InstallationPath))
-                    {
-                        // TODO language:
-                        if (MessageBox.Show($"The mod folder '{modInfo.InstallationPath}' already exits.\nWould you like to overwrite it?", "Overwrite mod?", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
-                            Directory.Delete(modInfo.InstallationPath, true);
-                        else
-                            continue;
-                    }
-                    Directory.Move(modPath, modInfo.InstallationPath);
+                        Dispatcher.BeginInvoke(() =>
+                        {
+                            dropLabel.Content = $"Extracting '{Path.GetFileName(filename)}' - {progress}%";
+                        });
+                    });
 
                     // Refresh mods list and activate the mod
                     UpdateModListInstalled();
                     UpdateCatalogInstallationState();
-                    Mod newMod = Mod.SearchMod(ModListInstalled, modInfo);
-                    if (newMod != null)
-                    {
-                        newMod.IsActive = true;
-                        foreach (Mod submod in newMod.SubMod)
-                            submod.IsActive = submod.IsDefault;
-                        newMod.TryApplyPreset();
-                    }
                     CheckOutdatedAndIncompatibleMods();
                     UpdateModSettings();
                     // TODO language:
-                    MessageBox.Show($"The mod '{modInfo.Name}' has been successfully installed and activated", "Mod installed", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show($"The mod '{modInfo.Name}' has been successfully installed", "Mod installed", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
+            catch (TaskCanceledException) { }
             catch (Exception err)
             {
                 // TODO language:
-                MessageBox.Show($"Failed to automatically install the mod {err.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Failed to automatically install the mod\n{err.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {
                 dropBackground.Visibility = Visibility.Hidden;
-                if (Directory.Exists(Mod.INSTALLATION_TMP))
-                    Directory.Delete(Mod.INSTALLATION_TMP, true);
             }
         }
 
