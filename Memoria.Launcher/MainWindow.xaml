@@ -32,6 +32,7 @@
 
         <Image x:Name="LogoImage"
             Height="250"
+            UseLayoutRounding="True"
             VerticalAlignment="Top"
             HorizontalAlignment="Left"
             Margin="20,-53,0,0"
@@ -70,6 +71,7 @@
             VerticalAlignment="Bottom"
             Width="960"
             Height="520"
+            UseLayoutRounding="True"
             Margin="0,0,0,22"
             Background="Transparent"
             BorderBrush="Transparent"
@@ -79,38 +81,44 @@
 
             <!-- Settings Tab -->
             <TabItem x:Name="menuSettings"
+                Height="45"
                 Header="{DynamicResource Settings.menuSettings}"
                 Style="{StaticResource MainTabs}" >
-                <Border Style="{StaticResource TransparentGridStyle}">
-                    <Grid>
+                <Border Style="{StaticResource TransparentGridStyle}" Padding="0,0,20,0">
+                    <Grid UseLayoutRounding="False">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"  />
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
                         <launcher:SettingsGrid_Presets x:Name="SettingsGrid_Presets"
-                            Width="293"
+                            Grid.Column="0"  
                             Margin="20,15,0,0"
-                            HorizontalAlignment="Left"
+                            HorizontalAlignment="Stretch"
                             VerticalAlignment="Top" />
 
                         <launcher:SettingsGrid_VanillaDisplay x:Name="GameSettingsDisplay"
-                            Width="293"
+                            Grid.Column="0"
                             Margin="20,73,0,0"
-                            HorizontalAlignment="Left"
+                            HorizontalAlignment="Stretch"
                             VerticalAlignment="Top" />
 
                         <launcher:SettingsGrid_Display x:Name="SettingsGrid_Display"
-                            Width="293"
+                            Grid.Column="0"
                             Margin="20,190,0,0"
-                            HorizontalAlignment="Left"
+                            HorizontalAlignment="Stretch"
                             VerticalAlignment="Top" />
 
                         <launcher:SettingsGrid_Main x:Name="SettingsGrid_Main"
-                            Width="292"
-                            Margin="0,15,0,0"
-                            HorizontalAlignment="Center"
+                            Grid.Column="1"
+                            Margin="20,15,0,0"
+                            HorizontalAlignment="Stretch"
                             VerticalAlignment="Top" />
 
                         <launcher:SettingsGrid_Main2 x:Name="SettingsGrid_Main2"
-                            Width="293"
-                            Margin="0,15,20,0"
-                            HorizontalAlignment="Right"
+                            Grid.Column="2"
+                            Margin="20,15,0,0"
+                            HorizontalAlignment="Stretch"
                             VerticalAlignment="Top" />
                     </Grid>
                 </Border>
@@ -118,19 +126,25 @@
 
             <!-- Cheats Tab -->
             <TabItem x:Name="menuCheats"
+                Height="45"
                 Header="{DynamicResource Settings.menuCheats}"
                 Style="{StaticResource MainTabs}" >
-                <Border Style="{StaticResource TransparentGridStyle}">
-                    <Grid>
+                <Border Style="{StaticResource TransparentGridStyle}" Padding="0,0,20,0">
+                    <Grid UseLayoutRounding="False">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"  />
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
                         <launcher:SettingsGrid_Cheats x:Name="SettingsGrid_Cheats"
-                            Width="293"
-                            Margin="20,15"
-                            HorizontalAlignment="Left"
+                            Grid.Column="0"  
+                            Margin="20,15,0,0"
+                            HorizontalAlignment="Stretch"
                             VerticalAlignment="Top" />
                         <launcher:SettingsGrid_Cheats2 x:Name="SettingsGrid_Cheats2"
-                            Width="293"
-                            Margin="20,15"
-                            HorizontalAlignment="Center"
+                            Grid.Column="1"
+                            Margin="20,15,0,0"
+                            HorizontalAlignment="Stretch"
                             VerticalAlignment="Top" />
                     </Grid>
                 </Border>
@@ -138,60 +152,66 @@
 
             <!-- Advanced Tab -->
             <TabItem x:Name="menuAdvanced"
+                Height="45"
                 Header="{DynamicResource Settings.menuAdvanced}"
                 Style="{StaticResource MainTabs}" >
-                <Border Style="{StaticResource TransparentGridStyle}">
-                    <Grid>
+                <Border Style="{StaticResource TransparentGridStyle}" Padding="0,0,20,0">
+                    <Grid UseLayoutRounding="False">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"  />
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
                         <launcher:SettingsGrid_Vanilla x:Name="GameSettings"
-                            Width="293"
-                            Margin="20,15"
-                            HorizontalAlignment="Left"
+                            Grid.Column="0"  
+                            Margin="20,15,0,0"
+                            HorizontalAlignment="Stretch"
                             VerticalAlignment="Top" />
 
                         <launcher:SettingsGrid_Advanced x:Name="SettingsGrid_Advanced"
-                            Width="293"
+                            Grid.Column="0"  
                             Margin="20,184,0,0"
-                            HorizontalAlignment="Left"
+                            HorizontalAlignment="Stretch"
                             VerticalAlignment="Top" />
 
                         <launcher:SettingsGrid_Advanced2 x:Name="SettingsGrid_Advanced2"
-                            Width="293"
-                            Margin="0,15,0,0"
-                            HorizontalAlignment="Center"
+                            Grid.Column="1"  
+                            Margin="20,15,0,0"
+                            HorizontalAlignment="Stretch"
                             VerticalAlignment="Top" />
 
                         <launcher:SettingsGrid_Advanced3 x:Name="SettingsGrid_Advanced3"
-                            Width="293"
-                            Margin="20,15,20,0"
-                            HorizontalAlignment="Right"
+                            Grid.Column="2"
+                            Margin="20,15,0,0"
+                            HorizontalAlignment="Stretch"
                             VerticalAlignment="Top" />
 
                         <Button Name="ModelViewerButton"
                             Content="{DynamicResource Launcher.ModelViewer}"
                             Style="{StaticResource ButtonStyle2}"
-                            Width="293"
+                            Grid.Column="0"
                             Height="35"
-                            HorizontalAlignment="Center"
+                            HorizontalAlignment="Stretch"
                             VerticalAlignment="Bottom"
-                            Margin="0,0,0,20"
+                            Margin="20,0,0,20"
                             Click="ModelViewerButton_Click"/>
 
                         <Button Name="NewPresetButton"
                             Content="{DynamicResource Launcher.CreatePreset}"
                             Style="{StaticResource ButtonStyle2}"
-                            Width="293"
+                            Grid.Column="1"
                             Height="35"
-                            HorizontalAlignment="Left"
+                            HorizontalAlignment="Stretch"
                             VerticalAlignment="Bottom"
-                            Margin="20"
+                            Margin="20,0,0,20"
                             Click="SavePreset_Click"/>
 
                         <StackPanel
                             Orientation="Vertical"
-                            HorizontalAlignment="Right"
+                            HorizontalAlignment="Stretch"
                             VerticalAlignment="Bottom"
-                            Width="293"
-                            Margin="20" >
+                            Grid.Column="2"
+                            Margin="20,0,0,20" >
                             <TextBlock x:Name="CopyLogButton_StatusMessage"
                                 Visibility="Collapsed"
                                 HorizontalAlignment="Center"
@@ -213,6 +233,7 @@
 
             <!-- Mods Tab -->
             <TabItem x:Name="ModManagerTab"
+                Height="45"
                 Header="{DynamicResource Settings.menuMods}"
                 Tag="16"
                 Style="{StaticResource MainTabs}" >
@@ -243,8 +264,7 @@
                                     SelectedIndex="0"
                                     Grid.ColumnSpan="2" >
                                     <TabItem x:Name="tabCtrlMods"
-                                        Style="{StaticResource subtab}"
-                                        Padding="10,0,10,0">
+                                        Style="{StaticResource subtab}">
                                         <TabItem.Header>
                                             <TextBlock
                                                 x:Name="tabMyMods"
@@ -423,7 +443,10 @@
                                             </Grid>
                                         </Border>
                                     </TabItem>
-                                    <TabItem x:Name="tabCtrlCatalog" Style="{StaticResource subtab}" >
+                                    <TabItem x:Name="tabCtrlCatalog"
+                                        Margin="0,0,4,0"
+                                        HorizontalAlignment="Right"
+                                        Style="{StaticResource subtab}" >
                                         <TabItem.Header>
                                             <TextBlock
                                                 x:Name="tabCatalog"

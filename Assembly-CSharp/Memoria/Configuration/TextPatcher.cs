@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
+﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
-using Assets.Scripts.Common;
 using FF9;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Prime.Text;
 using NCalc;
+using NCalc.Domain;
+using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace Memoria
@@ -293,17 +294,28 @@ namespace Memoria
             return str;
         }
 
+        private Expression GetExpression(ref String condition, ExpressionInitializer ncalcInitializer)
+        {
+            if (!expressionCache.TryGetValue(condition, out LogicalExpression exp))
+            {
+                exp = Expression.Compile(condition, true);
+                expressionCache[condition] = exp;
+            }
+            Expression c = new Expression(exp);
+            ncalcInitializer(ref c);
+            c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+            c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+            return c;
+        }
+
         private Boolean ApplyPatch(ref String str, ExpressionInitializer ncalcInitializer)
         {
+            Single patchStart = Time.realtimeSinceStartup;
             if (Languages.Count > 0 && !Languages.Contains(Localization.CurrentDisplaySymbol))
                 return false;
             if (!String.IsNullOrEmpty(Condition))
             {
-                Expression c = new Expression(Condition);
-                ncalcInitializer(ref c);
-                c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-                if (!NCalcUtility.EvaluateNCalcCondition(c.Evaluate()))
+                if (!NCalcUtility.EvaluateNCalcCondition(GetExpression(ref Condition, ncalcInitializer).Evaluate()))
                     return false;
             }
             foreach (Modifier modifier in Modifiers)
@@ -312,11 +324,7 @@ namespace Memoria
                     continue;
                 if (!String.IsNullOrEmpty(modifier.Condition))
                 {
-                    Expression c = new Expression(modifier.Condition);
-                    ncalcInitializer(ref c);
-                    c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                    c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-                    if (!NCalcUtility.EvaluateNCalcCondition(c.Evaluate()))
+                    if (!NCalcUtility.EvaluateNCalcCondition(GetExpression(ref modifier.Condition, ncalcInitializer).Evaluate()))
                         continue;
                 }
                 if (modifier is FindAndReplacer replacer && replacer.Find != null)
@@ -324,11 +332,7 @@ namespace Memoria
                     String replace = replacer.Replace;
                     if (replacer.AsExpression && !String.IsNullOrEmpty(replace))
                     {
-                        Expression expr = new Expression(replace);
-                        ncalcInitializer(ref expr);
-                        expr.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                        expr.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-                        replace = NCalcUtility.EvaluateNCalcString(expr.Evaluate());
+                        replace = NCalcUtility.EvaluateNCalcString(GetExpression(ref replace, ncalcInitializer).Evaluate());
                     }
                     str = replacer.Find.Replace(str, replace);
                 }
@@ -337,11 +341,7 @@ namespace Memoria
                     String add = appender.Text;
                     if (appender.AsExpression && !String.IsNullOrEmpty(add))
                     {
-                        Expression expr = new Expression(add);
-                        ncalcInitializer(ref expr);
-                        expr.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                        expr.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-                        add = NCalcUtility.EvaluateNCalcString(expr.Evaluate());
+                        add = NCalcUtility.EvaluateNCalcString(GetExpression(ref add, ncalcInitializer).Evaluate());
                     }
                     appender.Apply(ref str, add);
                 }
@@ -349,6 +349,8 @@ namespace Memoria
             }
             return false;
         }
+
+        public static Dictionary<String, LogicalExpression> expressionCache = new Dictionary<String, LogicalExpression>();
 
         private delegate void ExpressionInitializer(ref Expression expr);
 

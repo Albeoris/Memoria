@@ -43,7 +43,6 @@ public static class AssetManager
             modsNames += "'" + name + "' ";
         Log.Message($"[Initialization] Mods: {modsNames}");
 
-        WindowManager.AlignWindow();
         ControllerWatcher.Instance.StartCoroutine("RefreshControllers");
 
         AssetManager.IsFullyInitialized = false;

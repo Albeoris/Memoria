@@ -74,6 +74,7 @@ namespace Memoria
                 int width = displayWidth;
                 int height = displayHeight;
 
+                // Windowed modes
                 if (windowMode == 0 || windowMode == 3)
                 {
                     Int32 targetWidth = 0;
@@ -85,20 +86,15 @@ namespace Memoria
                         Int32.TryParse(resolution[1], out targetHeight);
                     }
 
-                    int borderWidth = windowRect.right - windowRect.left - Screen.width;
-                    int borderHeight = windowRect.bottom - windowRect.top - Screen.height;
+                    // Not auto resolution
+                    if (targetWidth != 0 && targetHeight != 0)
+                    {
+                        int borderWidth = windowRect.right - windowRect.left - Screen.width;
+                        int borderHeight = windowRect.bottom - windowRect.top - Screen.height;
 
-                    // Auto resolution
-                    if (targetWidth == 0 || targetHeight == 0)
-                    {
-                        width = displayWidth;
-                        height = displayHeight;
-                    }
-                    else
-                    {
                         // We make sure the window fits into the screen
                         height = Math.Min(displayHeight, windowRect.bottom - windowRect.top);
-                        width = (height - borderHeight) * targetWidth / targetHeight + borderWidth; // We want to keep the propotions
+                        width = (height - borderHeight) * targetWidth / targetHeight + borderWidth; // We want to keep the proportions
 
                         if (width > displayWidth)
                         {
@@ -108,15 +104,17 @@ namespace Memoria
                     }
                 }
 
+                // Align at the center by default
                 int x = rect.left + (displayWidth - width) / 2;
                 int y = rect.top + (displayHeight - height) / 2;
 
+                // Custom alignments
                 if (alignment.Contains("top"))
                     y = rect.top;
                 else if (alignment.Contains("bottom"))
                     y = rect.top + (displayHeight - height);
 
-                if(alignment.Contains("left"))
+                if (alignment.Contains("left"))
                     x = rect.left;
                 else if (alignment.Contains("right"))
                     x = rect.left + (displayWidth - width);
@@ -132,7 +130,8 @@ namespace Memoria
                     }
                 }
 
-                if (x != windowRect.left || y != windowRect.top)
+                // Not fullscreen
+                if (windowMode != 1)
                 {
                     Log.Message($"[WindowManager] Moving window to ({x},{y}) with size ({width},{height}) on monitor {monitor}");
                     MoveWindow(hWindow, x, y, width, height, true);
