@@ -870,7 +870,7 @@ namespace Memoria.Launcher
                 }
                 catch { }
 
-                if (root == null) throw new Exception("The file doesn't look like a mod.");
+                if (root == null) throw new FileFormatException("The file doesn't look like a mod.");
 
                 // Extract the archive
                 String extractPath = Mod.INSTALLATION_TMP + "/" + Path.GetFileNameWithoutExtension(archivePath);
