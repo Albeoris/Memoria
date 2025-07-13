@@ -46,7 +46,7 @@ public static class JSL
 
     [DllImport(Library, EntryPoint = "JslConnectDevices")]
     public static extern int ConnectDevices();
-    [DllImport("JoyShockLibrary", EntryPoint = "JslDisconnectAndDisposeAll")]
+    [DllImport(Library, EntryPoint = "JslDisconnectAndDisposeAll")]
     public static extern void DisconnectAndDisposeAll();
     [DllImport(Library, EntryPoint = "JslStillConnected")]
     public static extern bool StillConnected(int deviceId);

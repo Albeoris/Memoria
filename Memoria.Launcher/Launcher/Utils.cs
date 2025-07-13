@@ -4,8 +4,10 @@ using SharpCompress.Common;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -817,9 +819,11 @@ namespace Memoria.Launcher
     #endregion
 
     #region Extractor
-    public static class Extractor
+
+    public static class ExtractorSharpCompress
     {
-        public static void ExtractAllFileFromArchive(string archivePath, string extractTo, CancellationToken cancellationToken)
+        // This is slow with some archives (7zip)
+        public static void ExtractAllFileFromArchive(string archivePath, string extractTo, CancellationToken cancellationToken, Action<int> progressCallbak = null)
         {
             if (!File.Exists(archivePath))
             {
@@ -827,6 +831,11 @@ namespace Memoria.Launcher
             }
             using (var archive = ArchiveFactory.Open(archivePath))
             {
+                int total = 0;
+                foreach (var entry in archive.Entries)
+                    if (!entry.IsDirectory) total++;
+
+                int current = 0;
                 foreach (var entry in archive.Entries)
                 {
                     if (cancellationToken.IsCancellationRequested)
@@ -841,6 +850,8 @@ namespace Memoria.Launcher
                             ExtractFullPath = true,
                             Overwrite = true
                         });
+                        current++;
+                        progressCallbak?.Invoke((int)(100 * current / total));
                     }
                 }
                 if (cancellationToken.IsCancellationRequested)
@@ -848,6 +859,59 @@ namespace Memoria.Launcher
                     Directory.Delete(extractTo, true);
                 }
             }
+        }
+    }
+
+    public static class Extractor
+    {
+        private const String SevenZipPath = "7za.exe";
+        public static void ExtractAllFileFromArchive(string archivePath, string extractTo, CancellationToken cancellationToken, Action<int> progressCallbak = null)
+        {
+            if (!File.Exists(archivePath))
+                return;
+
+            if (!File.Exists(SevenZipPath))
+            {
+                using Stream input = Assembly.GetExecutingAssembly().GetManifestResourceStream("7za.exe");
+                using FileStream output = File.Create(SevenZipPath);
+                input.CopyTo(output);
+            }
+
+            progressCallbak?.Invoke(0);
+            using (Process process = new Process())
+            {
+                process.StartInfo.FileName = SevenZipPath;
+                process.StartInfo.Arguments = $@"x -bsp1 -aoa -o""{extractTo}"" ""{archivePath}""";
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.CreateNoWindow = true;
+                process.StartInfo.UseShellExecute = false;
+
+                String error = null;
+                process.OutputDataReceived += (s, e) =>
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        process.Kill();
+                        return;
+                    }
+
+                    string data = e.Data ?? "";
+                    if (data.Contains("Can't open as archive"))
+                        error = data;
+                    int pos = data.IndexOf('%');
+                    if (pos >= 0 && int.TryParse(data.Substring(0, pos), out int progress))
+                        progressCallbak?.Invoke(progress);
+                };
+
+                process.Start();
+                process.BeginOutputReadLine();
+                process.WaitForExit();
+
+                if (error != null) throw new FileFormatException(error);
+                progressCallbak?.Invoke(100);
+            }
+            if (File.Exists(SevenZipPath))
+                File.Delete(SevenZipPath);
         }
     }
     #endregion

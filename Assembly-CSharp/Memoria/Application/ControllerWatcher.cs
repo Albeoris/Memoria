@@ -61,5 +61,6 @@ public class ControllerWatcher : PersistenSingleton<ControllerWatcher>
             // Refresh one last time for DualSense over Bluetooth
             XInputDotNetPure.GamePad.RefreshDevices(true);
         }
+        yield break;
     }
 }

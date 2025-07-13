@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Diagnostics;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria;
+using Memoria.Prime;
 using Memoria.Scenes;
 using Memoria.Scripts;
-using Memoria.Prime;
+using System;
+using System.Collections;
+using System.Diagnostics;
 using UnityEngine;
 
 public class UIManager : PersistenSingleton<UIManager>
@@ -191,7 +191,6 @@ public class UIManager : PersistenSingleton<UIManager>
 
     private void Start()
     {
-        base.StartCoroutine(PersistenSingleton<FF9TextTool>.Instance.UpdateTextLocalization(null));
         this.InitFadeTexture();
         OverlayCanvas instance = PersistenSingleton<OverlayCanvas>.Instance;
         this.fastTrophy = GameObject.Find("UI Root/Submenu Container/Fast Trophy");

@@ -201,6 +201,9 @@
     <EmbeddedResource Include="Ini\Settings.ini">
       <TargetPath>Settings.ini</TargetPath>
     </EmbeddedResource>
+    <EmbeddedResource Include="7za.exe">
+      <TargetPath>7za.exe</TargetPath>
+    </EmbeddedResource>
     <Resource Include="Fonts\centurygothic-bold.ttf" />
     <Resource Include="Fonts\centurygothic.ttf" />
     <Resource Include="Fonts\notoemoji.ttf" />
@@ -270,7 +273,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="SharpCompress" Version="0.38.0" />
+    <PackageReference Include="SharpCompress" Version="0.40.0" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterResolveReferences">

@@ -1,13 +1,13 @@
-﻿using System;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using Memoria;
+﻿using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace Assets.Sources.Scripts.UI.Common
@@ -392,6 +392,8 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public IEnumerator UpdateTextLocalization(Action setMenuLanguageCallback)
         {
+            Log.Message($"Updating text localization [{FF9StateSystem.Settings.CurrentLanguage}]");
+            Single start = Time.realtimeSinceStartup;
             yield return base.StartCoroutine(FF9TextTool.InitializeItemText());
             yield return base.StartCoroutine(FF9TextTool.InitializeImportantItemText());
             yield return base.StartCoroutine(FF9TextTool.InitializeAbilityText());
@@ -402,6 +404,9 @@ namespace Assets.Sources.Scripts.UI.Common
             yield return base.StartCoroutine(FF9TextTool.InitializeCharacterNamesText());
             if (setMenuLanguageCallback != null)
                 setMenuLanguageCallback();
+            TextPatcher.expressionCache.Clear();
+            // DualLanguage: This doesn't count the initialization time of the 2nd language
+            Log.Message($"Total text update time: {Mathf.Round((Time.realtimeSinceStartup - start) * 100f) / 100f}s");
             yield break;
         }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Memoria;
+using System;
 using System.IO;
 using UnityEngine;
 
@@ -6,6 +7,7 @@ public class BundleSceneSelector : MonoBehaviour
 {
     private void Awake()
     {
+        WindowManager.AlignWindow();
         global::Debug.Log("10 BundleSceneSelector.Awake");
         Boolean flag = false;
         String[] files = Directory.GetFiles("./", "*steam_appid.txt", SearchOption.AllDirectories);
