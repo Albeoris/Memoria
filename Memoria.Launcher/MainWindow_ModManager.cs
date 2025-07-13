@@ -1802,6 +1802,6 @@ namespace Memoria.Launcher
         private object ascendingSortedColumn = null;
 
         private const String CATALOG_PATH = "./ModCatalog.xml";
-        private const String CATALOG_URL = "https://raw.githubusercontent.com/Albeoris/Memoria/main/Memoria.Launcher/Catalogs/MemoriaCatalog.xml";
+        private const String CATALOG_URL = "https://raw.githubusercontent.com/Albeoris/Memoria/mod-catalog/MemoriaCatalog.xml";
     }
 }
