@@ -125,9 +125,6 @@ namespace Memoria.Launcher
                 {
                     // Enable check update
                     IniFile.SettingsIni.SetSetting("Version", "CheckUpdates", "True");
-                    // Make sure to use the new back-end
-                    IniFile.MemoriaIni.SetSetting("Audio", "Backend", "1");
-                    IniFile.MemoriaIni.Save();
                     // Disable themes mod
                     foreach (var mod in ModListInstalled)
                     {
@@ -139,6 +136,12 @@ namespace Memoria.Launcher
                     }
                     UpdateModSettings();
                     UpdateLauncherTheme();
+                }
+                else if(date < new DateTime(2025, 07, 13))
+                {
+                    // Make sure to use the new back-end
+                    IniFile.MemoriaIni.SetSetting("Audio", "Backend", "1");
+                    IniFile.MemoriaIni.Save();
                 }
                 // Set windows mode to 0 if it can't be parsed
                 if (!Int32.TryParse(IniFile.SettingsIni.GetSetting("Settings", "WindowMode", "null"), NumberStyles.Integer, CultureInfo.InvariantCulture, out _))
