@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -821,9 +820,9 @@ namespace Memoria.Launcher
 
     #region Extractor
 
-    // This is VERY slow, we use 7zip instead
     public static class ExtractorSharpCompress
     {
+        // This is slow with some archives (7zip)
         public static void ExtractAllFileFromArchive(string archivePath, string extractTo, CancellationToken cancellationToken, Action<int> progressCallbak = null)
         {
             if (!File.Exists(archivePath))
@@ -832,7 +831,10 @@ namespace Memoria.Launcher
             }
             using (var archive = ArchiveFactory.Open(archivePath))
             {
-                int total = archive.Entries.Where((e) => !e.IsDirectory).Count();
+                int total = 0;
+                foreach (var entry in archive.Entries)
+                    if (!entry.IsDirectory) total++;
+
                 int current = 0;
                 foreach (var entry in archive.Entries)
                 {
@@ -849,7 +851,7 @@ namespace Memoria.Launcher
                             Overwrite = true
                         });
                         current++;
-                        progressCallbak?.Invoke((int)(current / total));
+                        progressCallbak?.Invoke((int)(100 * current / total));
                     }
                 }
                 if (cancellationToken.IsCancellationRequested)

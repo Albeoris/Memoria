@@ -822,6 +822,43 @@ namespace Memoria.Launcher
             });
         }
 
+        private String FindModRoot(String archivePath, String preferedRootName = null)
+        {
+            String[] lookUpFiles = [Mod.DESCRIPTION_FILE, "Memoria.ini", "DictionaryPatch.txt", "FF9_Data", "StreamingAssets"];
+            using (IArchive archive = ArchiveFactory.Open(archivePath))
+            {
+                foreach (var entry in archive.Entries)
+                {
+                    if (entry.Key == null) continue;
+
+                    if (entry.IsDirectory && preferedRootName != null && Path.GetDirectoryName(entry.Key) == preferedRootName)
+                        return preferedRootName;
+
+                    String name = Path.GetFileName($"./{entry.Key}");
+                    String directory = Path.GetDirectoryName(entry.Key);
+
+                    if (preferedRootName == null)
+                    {
+                        // Check if it's in the catalog
+                        foreach (Mod mod in ModListCatalog)
+                            if (directory == mod.InstallationPath)
+                                return directory;
+                    }
+
+                    if (!lookUpFiles.Contains(name, StringComparer.InvariantCultureIgnoreCase))
+                        continue;
+
+                    if (directory.Length == 0 || Path.GetDirectoryName(directory).Length == 0)
+                        return directory;
+                }
+            }
+            String archiveName = Path.GetFileNameWithoutExtension(archivePath);
+            foreach (Mod mod in ModListCatalog)
+                if (archiveName.StartsWith(mod.InstallationPath))
+                    return "";
+            return null;
+        }
+
         private Task<Mod> InstallModFromArchive(String archivePath, String defaultInstallPath, Action<int> progressCallbak)
         {
             return Task.Run(() =>
@@ -829,28 +866,11 @@ namespace Memoria.Launcher
                 String root = null;
                 try
                 {
-                    using (IArchive archive = ArchiveFactory.Open(archivePath))
-                    {
-                        foreach (var entry in archive.Entries)
-                        {
-                            if (entry.Key == null)
-                                continue;
-                            String str = Path.GetDirectoryName(entry.Key);
-                            if (entry.IsDirectory && Path.GetDirectoryName(entry.Key) == defaultInstallPath)
-                                root = defaultInstallPath;
-
-                            if (!entry.Key.Contains(Mod.DESCRIPTION_FILE)) continue;
-
-                            String dir = Path.GetDirectoryName(entry.Key);
-                            if (dir.Length == 0 || Path.GetDirectoryName(dir).Length == 0)
-                            {
-                                root = dir;
-                                break;
-                            }
-                        }
-                    }
+                    root = FindModRoot(archivePath, defaultInstallPath);
                 }
                 catch { }
+
+                if (root == null) throw new Exception("The file doesn't look like a mod.");
 
                 // Extract the archive
                 String extractPath = Mod.INSTALLATION_TMP + "/" + Path.GetFileNameWithoutExtension(archivePath);

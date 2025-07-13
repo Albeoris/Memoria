@@ -1,5 +1,4 @@
-﻿using SharpCompress.Archives;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -65,7 +64,8 @@ namespace Memoria.Launcher
             {
                 if (Directory.Exists(Mod.INSTALLATION_TMP))
                     Directory.Delete(Mod.INSTALLATION_TMP, true);
-            } catch { }
+            }
+            catch { }
             UpdateLauncherTheme();
             HotfixForMoguriMod();
             Lang.Res["Settings.LauncherWindowTitle"] += " | v" + MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd");
@@ -250,19 +250,11 @@ namespace Memoria.Launcher
                     if (!SupportedArchives.Contains(ext))
                         continue;
 
-                    using (IArchive archive = ArchiveFactory.Open(filename))
+                    if (FindModRoot(filename) != null)
                     {
-                        foreach (var entry in archive.Entries)
-                        {
-                            if (entry.Key == null || !entry.Key.Contains(Mod.DESCRIPTION_FILE))
-                                continue;
-
-                            // TODO translate:
-                            dropLabel.Content = Lang.Res["Launcher.InstallMod"];
-                            dropBackground.Visibility = Visibility.Visible;
-                            Activate();
-                            return;
-                        }
+                        // TODO translate:
+                        dropLabel.Content = Lang.Res["Launcher.InstallMod"];
+                        dropBackground.Visibility = Visibility.Visible;
                     }
                 }
             }
@@ -366,8 +358,9 @@ namespace Memoria.Launcher
                     UpdateCatalogInstallationState();
                     CheckOutdatedAndIncompatibleMods();
                     UpdateModSettings();
+                    modInfo = Mod.SearchMod(ModListInstalled, modInfo);
                     // TODO language:
-                    MessageBox.Show($"The mod '{modInfo.Name}' has been successfully installed", "Mod installed", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show($"The mod '{modInfo.Name}{(modInfo.CurrentVersion != null ? " " + modInfo.CurrentVersion : "")}' has been successfully installed", "Mod installed", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
             catch (TaskCanceledException) { }
