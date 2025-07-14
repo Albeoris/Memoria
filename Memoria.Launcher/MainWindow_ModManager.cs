@@ -832,11 +832,12 @@ namespace Memoria.Launcher
                 {
                     if (entry.Key == null) continue;
 
-                    if (entry.IsDirectory && preferedRootName != null && Path.GetDirectoryName(entry.Key) == preferedRootName)
-                        return preferedRootName;
+                    String entryPath = entry.Key.TrimEnd(['/', '\\']);
+                    String name = Path.GetFileName($"./{entryPath}");
+                    String directory = Path.GetDirectoryName(entryPath);
 
-                    String name = Path.GetFileName($"./{entry.Key}");
-                    String directory = Path.GetDirectoryName(entry.Key);
+                    if (entry.IsDirectory && preferedRootName != null && directory == preferedRootName)
+                        return preferedRootName;
 
                     if (preferedRootName == null)
                     {
@@ -850,10 +851,11 @@ namespace Memoria.Launcher
                     if (name.Equals(Mod.DESCRIPTION_FILE, StringComparison.InvariantCultureIgnoreCase))
                         return directory;
 
-                    // Look for other files/folder
+                    // Look for other files/folders
                     if (!lookUpFiles.Contains(name, StringComparer.InvariantCultureIgnoreCase))
                         continue;
 
+                    // Always prefer the top folder
                     if (directory.Length == 0)
                         root = directory;
                     else if (root == null && Path.GetDirectoryName(directory).Length == 0)
