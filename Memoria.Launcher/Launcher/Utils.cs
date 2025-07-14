@@ -820,7 +820,7 @@ namespace Memoria.Launcher
 
     #region Extractor
 
-    public static class ExtractorSharpCompress
+    public static class Extractor
     {
         // This is slow with some archives (7zip)
         public static void ExtractAllFileFromArchive(string archivePath, string extractTo, CancellationToken cancellationToken, Action<int> progressCallbak = null)
@@ -862,7 +862,7 @@ namespace Memoria.Launcher
         }
     }
 
-    public static class Extractor
+    public static class Extractor7Zip
     {
         private const String SevenZipPath = "7za.exe";
         public static void ExtractAllFileFromArchive(string archivePath, string extractTo, CancellationToken cancellationToken, Action<int> progressCallbak = null)
@@ -891,7 +891,11 @@ namespace Memoria.Launcher
                 {
                     if (cancellationToken.IsCancellationRequested)
                     {
-                        process.Kill();
+                        try
+                        {
+                            if (!process.HasExited) process.Kill();
+                        }
+                        catch { }
                         return;
                     }
 

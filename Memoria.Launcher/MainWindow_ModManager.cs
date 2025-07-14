@@ -824,9 +824,10 @@ namespace Memoria.Launcher
 
         private String FindModRoot(String archivePath, String preferedRootName = null)
         {
-            String[] lookUpFiles = [Mod.DESCRIPTION_FILE, "Memoria.ini", "DictionaryPatch.txt", "FF9_Data", "StreamingAssets"];
+            String[] lookUpFiles = ["Memoria.ini", "DictionaryPatch.txt", "FF9_Data", "StreamingAssets"];
             using (IArchive archive = ArchiveFactory.Open(archivePath))
             {
+                String root = null;
                 foreach (var entry in archive.Entries)
                 {
                     if (entry.Key == null) continue;
@@ -845,12 +846,21 @@ namespace Memoria.Launcher
                                 return directory;
                     }
 
+                    // Description file has priority
+                    if (name.Equals(Mod.DESCRIPTION_FILE, StringComparison.InvariantCultureIgnoreCase))
+                        return directory;
+
+                    // Look for other files/folder
                     if (!lookUpFiles.Contains(name, StringComparer.InvariantCultureIgnoreCase))
                         continue;
 
-                    if (directory.Length == 0 || Path.GetDirectoryName(directory).Length == 0)
-                        return directory;
+                    if (directory.Length == 0)
+                        root = directory;
+                    else if (root == null && Path.GetDirectoryName(directory).Length == 0)
+                        root = directory;
                 }
+                if (root != null)
+                    return root;
             }
             String archiveName = Path.GetFileNameWithoutExtension(archivePath);
             foreach (Mod mod in ModListCatalog)
@@ -876,7 +886,11 @@ namespace Memoria.Launcher
                 String extractPath = Mod.INSTALLATION_TMP + "/" + Path.GetFileNameWithoutExtension(archivePath);
                 if (!Directory.Exists(extractPath)) Directory.CreateDirectory(extractPath);
 
-                Extractor.ExtractAllFileFromArchive(archivePath, extractPath, ExtractionCancellationToken.Token, progressCallbak);
+                if (Path.GetExtension(archivePath).ToLower() == ".rar")
+                    Extractor.ExtractAllFileFromArchive(archivePath, extractPath, ExtractionCancellationToken.Token, progressCallbak);
+                else
+                    Extractor7Zip.ExtractAllFileFromArchive(archivePath, extractPath, ExtractionCancellationToken.Token, progressCallbak);
+
                 if (ExtractionCancellationToken.IsCancellationRequested)
                 {
                     ExtractionCancellationToken.Dispose();
