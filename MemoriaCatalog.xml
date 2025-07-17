@@ -190,6 +190,10 @@ Fix a very specific soft lock against Prison Cage, Black Waltz 3 and Mistodon.</
 	<Description>A very lightweight mod that allows you to modify minor elements of the game while keeping as much of the OG experience as possible.
 All options are independent and can be activated as desired.
 More options will be added over time.
+
+SA = Support Ability (like UndeadKiller, Mug, AntiBody, etc...)
+AA = Active Ability (like Firaga, Cure, Life, Shock, etc...)
+
 Note : To avoid compatibility issues, Quality of the Ifa should be sorted to the lowest priority in the mod list.
 
 Special thanks for SamsamTS to help me on some Regex formulas :D</Description>
@@ -2271,207 +2275,207 @@ Final Battle has currently 3 Custom Tracks</PatchNotes>
     <MinimumMemoriaVersion></MinimumMemoriaVersion>
 	<Header>Battle 1</Header>
 	<SubMod>
-	<Name>Battle 1 ~arrange~</Name>
-	<InstallationPath>Battle 1 Arrange</InstallationPath>
-	<Description>Replaces Battle 1 with the arranged version from Dissidia: Final Fantasy!</Description>
-	<Group>BATTLE 1</Group>
+		<Name>Battle 1 ~arrange~</Name>
+		<InstallationPath>Battle 1 Arrange</InstallationPath>
+		<Description>Replaces Battle 1 with the arranged version from Dissidia: Final Fantasy!</Description>
+		<Group>BATTLE 1</Group>
 	</SubMod>
 	<SubMod>
-	<Name>Battle 1 ~Record Keeper Ver.~</Name>
-	<InstallationPath>Battle 1 Record Keeper</InstallationPath>
-	<Description>Replaces Battle 1 with the Record Keeper version!</Description>
-	<Group>BATTLE 1</Group>
+		<Name>Battle 1 ~Record Keeper Ver.~</Name>
+		<InstallationPath>Battle 1 Record Keeper</InstallationPath>
+		<Description>Replaces Battle 1 with the Record Keeper version!</Description>
+		<Group>BATTLE 1</Group>
 	</SubMod>
 	<SubMod>
-	<Name>Battle 1 ~Enrico Deiana Ver.~</Name>
-	<InstallationPath>Battle 1 Remix</InstallationPath>
-	<Description>Replaces Battle 1 with Enrico Deiana's remixed version!</Description>
-	<Group>BATTLE 1</Group>
+		<Name>Battle 1 ~Enrico Deiana Ver.~</Name>
+		<InstallationPath>Battle 1 Remix</InstallationPath>
+		<Description>Replaces Battle 1 with Enrico Deiana's remixed version!</Description>
+		<Group>BATTLE 1</Group>
 	</SubMod>
 	<SubMod>
-	<Name>Kingdom Valley Act 1</Name>
-	<InstallationPath>Kingdom Valley Act 1</InstallationPath>
-	<Description>Replaces Battle 1 with the first level of Kingdom Valley from Sonic X Shadow Generations!</Description>
-	<Group>BATTLE 1</Group>
+		<Name>Kingdom Valley Act 1</Name>
+		<InstallationPath>Kingdom Valley Act 1</InstallationPath>
+		<Description>Replaces Battle 1 with the first level of Kingdom Valley from Sonic X Shadow Generations!</Description>
+		<Group>BATTLE 1</Group>
 	</SubMod>
 	<SubMod>
-	<Name>You Will Know Our Names</Name>
-	<InstallationPath>You Will Know Our Names</InstallationPath>
-	<Description>Replaces Battle 1 with the remastered Unique Monster battle theme from Xenoblade Chronicles: Definitive Edition!</Description>
-	<Group>BATTLE 1</Group>
+		<Name>You Will Know Our Names</Name>
+		<InstallationPath>You Will Know Our Names</InstallationPath>
+		<Description>Replaces Battle 1 with the remastered Unique Monster battle theme from Xenoblade Chronicles: Definitive Edition!</Description>
+		<Group>BATTLE 1</Group>
 	</SubMod>
 	<Header>Swords of Fury/Feel My Blade</Header>
 	<SubMod>
-	<Name>Swords of Fury ~Enrico Deiana Ver.~</Name>
-	<InstallationPath>Feel My Blade Remix</InstallationPath>
-	<Description>Replaces track with Enrico Deiana's remixed version!</Description>
-	<Group>FURY</Group>
+		<Name>Swords of Fury ~Enrico Deiana Ver.~</Name>
+		<InstallationPath>Feel My Blade Remix</InstallationPath>
+		<Description>Replaces track with Enrico Deiana's remixed version!</Description>
+		<Group>FURY</Group>
 	</SubMod>
 	<SubMod>
-	<Name>Swords of Fury ~Daric Shire Ver.~</Name>
-	<InstallationPath>Feel My Blade Orchestra</InstallationPath>
-	<Description>Replaces track with an orchestrated version made by Daric Shire!</Description>
-	<Group>FURY</Group>
+		<Name>Swords of Fury ~Daric Shire Ver.~</Name>
+		<InstallationPath>Feel My Blade Orchestra</InstallationPath>
+		<Description>Replaces track with an orchestrated version made by Daric Shire!</Description>
+		<Group>FURY</Group>
 	</SubMod>
 	<Header>Victory Fanfare</Header>
 	<SubMod>
-	<Name>Victory Fanfare Orchestral Remake</Name>
-	<InstallationPath>Victory Fanfare</InstallationPath>
-	<Description>Replaces Victory Fanfare with Joshua Hunt's version.</Description>
-	<Group>YAY ME</Group>
+		<Name>Victory Fanfare Orchestral Remake</Name>
+		<InstallationPath>Victory Fanfare</InstallationPath>
+		<Description>Replaces Victory Fanfare with Joshua Hunt's version.</Description>
+		<Group>YAY ME</Group>
 	</SubMod>
 	<Header>Battle 2</Header>
 	<SubMod>
-	<Name>Battle 2 ~Record Keeper Ver.~</Name>
-	<InstallationPath>Battle 2 Record Keeper</InstallationPath>
-	<Description>Replaces Battle 2 with the Record Keeper version!</Description>
-	<Group>BATTLE 2</Group>
+		<Name>Battle 2 ~Record Keeper Ver.~</Name>
+		<InstallationPath>Battle 2 Record Keeper</InstallationPath>
+		<Description>Replaces Battle 2 with the Record Keeper version!</Description>
+		<Group>BATTLE 2</Group>
 	</SubMod>
 	<SubMod>
-	<Name>A Bet On This Bout</Name>
-	<InstallationPath>A Bet On This Bout</InstallationPath>
-	<Description>Replaces Battle 2 with the boss theme from Tales of Vesperia!</Description>
-	<Group>BATTLE 2</Group>
+		<Name>A Bet On This Bout</Name>
+		<InstallationPath>A Bet On This Bout</InstallationPath>
+		<Description>Replaces Battle 2 with the boss theme from Tales of Vesperia!</Description>
+		<Group>BATTLE 2</Group>
 	</SubMod>
 	<SubMod>
-	<Name>Boss B</Name>
-	<InstallationPath>Boss B</InstallationPath>
-	<Description>Replaces Battle 2 with the second boss theme from Star Fox Zero!</Description>
-	<Group>BATTLE 2</Group>
+		<Name>Boss B</Name>
+		<InstallationPath>Boss B</InstallationPath>
+		<Description>Replaces Battle 2 with the second boss theme from Star Fox Zero!</Description>
+		<Group>BATTLE 2</Group>
 	</SubMod>
 	<SubMod>
-	<Name>Finality</Name>
-	<InstallationPath>Finality</InstallationPath>
-	<Description>Replaces Battle 2 with the dungeon boss theme from Final Fantasy XIV's Endwalker expansion!</Description>
-	<Group>BATTLE 2</Group>
+		<Name>Finality</Name>
+		<InstallationPath>Finality</InstallationPath>
+		<Description>Replaces Battle 2 with the dungeon boss theme from Final Fantasy XIV's Endwalker expansion!</Description>
+		<Group>BATTLE 2</Group>
 	</SubMod>
 	<SubMod>
-	<Name>Incoming!</Name>
-	<InstallationPath>Incoming!</InstallationPath>
-	<Description>Replaces Battle 2 with the one of the many boss themes from Xenoblade Chronicles 2!</Description>
-	<Group>BATTLE 2</Group>
+		<Name>Incoming!</Name>
+		<InstallationPath>Incoming!</InstallationPath>
+		<Description>Replaces Battle 2 with the one of the many boss themes from Xenoblade Chronicles 2!</Description>
+		<Group>BATTLE 2</Group>
 	</SubMod>
 	<Header>Faerie Battle</Header>
 	<SubMod>
-	<Name>Faerie Battle ~JSF Music ver.~</Name>
-	<InstallationPath>Faerie Battle Remix</InstallationPath>
-	<Description>Replaces Faerie Battle with a remixed version made by JSF Music!</Description>
-	<Group>FAERIE</Group>
+		<Name>Faerie Battle ~JSF Music ver.~</Name>
+		<InstallationPath>Faerie Battle Remix</InstallationPath>
+		<Description>Replaces Faerie Battle with a remixed version made by JSF Music!</Description>
+		<Group>FAERIE</Group>
 	</SubMod>
 	<SubMod>
-	<Name>Mid-Boss Room</Name>
-	<InstallationPath>Mid Boss Room</InstallationPath>
-	<Description>Replaces Faerie Battle with the Mid-Boss Room remix from Kirby AirRide!</Description>
-	<Group>FAERIE</Group>
+		<Name>Mid-Boss Room</Name>
+		<InstallationPath>Mid Boss Room</InstallationPath>
+		<Description>Replaces Faerie Battle with the Mid-Boss Room remix from Kirby AirRide!</Description>
+		<Group>FAERIE</Group>
 	</SubMod>
 	<Header>Festival of the Hunt/Hunter's Chance</Header>
 	<SubMod>
-	<Name>Festival of the Hunt ~Enrico Deiana Ver.~</Name>
-	<InstallationPath>Festival of the Hunt Remix</InstallationPath>
-	<Description>Replaces track with Enrico Deiana's remixed version!</Description>
-	<Group>HUNTER</Group>
+		<Name>Festival of the Hunt ~Enrico Deiana Ver.~</Name>
+		<InstallationPath>Festival of the Hunt Remix</InstallationPath>
+		<Description>Replaces track with Enrico Deiana's remixed version!</Description>
+		<Group>HUNTER</Group>
 	</SubMod>
 	<SubMod>
-	<Name>Festival of the Hunt ~FFXIV Endwalker Ver.~</Name>
-	<InstallationPath>Festival of the Hunt</InstallationPath>
-	<Description>Replaces Festival of the Hunt with the version from Final Fantasy XIV: Endwalker!</Description>
-	<Group>HUNTER</Group>
+		<Name>Festival of the Hunt ~FFXIV Endwalker Ver.~</Name>
+		<InstallationPath>Festival of the Hunt</InstallationPath>
+		<Description>Replaces Festival of the Hunt with the version from Final Fantasy XIV: Endwalker!</Description>
+		<Group>HUNTER</Group>
 	</SubMod>
 	<SubMod>
-	<Name>Menu (Melee)</Name>
-	<InstallationPath>Melee Menu</InstallationPath>
-	<Description>Replaces Festival of the Hunt with an arrangement of Super Smash Bros Melee's Menu Theme (from SSBB)!</Description>
-	<Group>HUNTER</Group>
+		<Name>Menu (Melee)</Name>
+		<InstallationPath>Melee Menu</InstallationPath>
+		<Description>Replaces Festival of the Hunt with an arrangement of Super Smash Bros Melee's Menu Theme (from SSBB)!</Description>
+		<Group>HUNTER</Group>
 	</SubMod>
 	<Header>The Wavering Blade/Sword of Doubt</Header>
 	<SubMod>
-	<Name>Aqua ~Dark Dive~</Name>
-	<InstallationPath>Aqua Dark Dive(Kingdom Hearts III)</InstallationPath>
-	<Description>Replaces track with Aqua's boss theme from Kingdom Hearts III!</Description>
-	<Group>BLADE</Group>
+		<Name>Aqua ~Dark Dive~</Name>
+		<InstallationPath>Aqua Dark Dive(Kingdom Hearts III)</InstallationPath>
+		<Description>Replaces track with Aqua's boss theme from Kingdom Hearts III!</Description>
+		<Group>BLADE</Group>
 	</SubMod>
 	<SubMod>
-	<Name>Kiryu G@ Ki LI</Name>
-	<InstallationPath>Kiryu</InstallationPath>
-	<Description>Replaces track with Satsuki's theme from Kill la Kill!</Description>
-	<Group>BLADE</Group>
+		<Name>Kiryu G@ Ki LI</Name>
+		<InstallationPath>Kiryu</InstallationPath>
+		<Description>Replaces track with Satsuki's theme from Kill la Kill!</Description>
+		<Group>BLADE</Group>
 	</SubMod>
 	<SubMod>
-	<Name>Sad but True</Name>
-	<InstallationPath>Sad but True</InstallationPath>
-	<Description>Replaces track with Jill Valentine's boss theme from Resident Evil 5!</Description>
-	<Group>BLADE</Group>
+		<Name>Sad but True</Name>
+		<InstallationPath>Sad but True</InstallationPath>
+		<Description>Replaces track with Jill Valentine's boss theme from Resident Evil 5!</Description>
+		<Group>BLADE</Group>
 	</SubMod>
 	<SubMod>
-	<Name>Spring Meadows - Beneath the Blue Tree</Name>
-	<InstallationPath>Beneath the Blue Tree</InstallationPath>
-	<Description>Replaces track with Eveque's boss theme from Clair Obsur: Expedition 33!</Description>
-	<Group>BLADE</Group>
+		<Name>Spring Meadows - Beneath the Blue Tree</Name>
+		<InstallationPath>Beneath the Blue Tree</InstallationPath>
+		<Description>Replaces track with Eveque's boss theme from Clair Obsur: Expedition 33!</Description>
+		<Group>BLADE</Group>
 	</SubMod>
 	<SubMod>
-	<Name>The Wavering Blade ~Enrico Deiana Ver.~</Name>
-	<InstallationPath>Wavering Remix</InstallationPath>
-	<Description>Replaces track with Enrico Deiana's remixed version!</Description>
-	<Group>BLADE</Group>
+		<Name>The Wavering Blade ~Enrico Deiana Ver.~</Name>
+		<InstallationPath>Wavering Remix</InstallationPath>
+		<Description>Replaces track with Enrico Deiana's remixed version!</Description>
+		<Group>BLADE</Group>
 	</SubMod>
 	<Header>The Darkness of Eternity/Dark Messenger</Header>
 	<SubMod>
-	<Name>Dark Messenger ~Enrico Deiana Ver.~</Name>
-	<InstallationPath>Dark Messenger Remix</InstallationPath>
-	<Description>Replaces track with Enrico Deiana's remixed version!</Description>
-	<Group>KUJA</Group>
+		<Name>Dark Messenger ~Enrico Deiana Ver.~</Name>
+		<InstallationPath>Dark Messenger Remix</InstallationPath>
+		<Description>Replaces track with Enrico Deiana's remixed version!</Description>
+		<Group>KUJA</Group>
 	</SubMod>
 	<SubMod>
-	<Name>Forza Finale</Name>
-	<InstallationPath>Forza Finale</InstallationPath>
-	<Description>Replaces track with the boss theme of Ansem (Seeker of Darkness), Xemnas, and Young Xehanort from Kingdom Hearts III!</Description>
-	<Group>KUJA</Group>
+		<Name>Forza Finale</Name>
+		<InstallationPath>Forza Finale</InstallationPath>
+		<Description>Replaces track with the boss theme of Ansem (Seeker of Darkness), Xemnas, and Young Xehanort from Kingdom Hearts III!</Description>
+		<Group>KUJA</Group>
 	</SubMod>
 	<SubMod>
-	<Name>Hellfire</Name>
-	<InstallationPath>Hellfire</InstallationPath>
-	<Description>Replaces track with the boss theme of Ifrit from Final Fantasy XV!</Description>
-	<Group>KUJA</Group>
+		<Name>Hellfire</Name>
+		<InstallationPath>Hellfire</InstallationPath>
+		<Description>Replaces track with the boss theme of Ifrit from Final Fantasy XV!</Description>
+		<Group>KUJA</Group>
 	</SubMod>
 	<SubMod>
-	<Name>Moebius Battle</Name>
-	<InstallationPath>Moebius Battle</InstallationPath>
-	<Description>Replaces track with the boss theme of the Consul from Xenoblade Chronicles III!</Description>
-	<Group>KUJA</Group>
+		<Name>Moebius Battle</Name>
+		<InstallationPath>Moebius Battle</InstallationPath>
+		<Description>Replaces track with the boss theme of the Consul from Xenoblade Chronicles III!</Description>
+		<Group>KUJA</Group>
 	</SubMod>
 	<SubMod>
-	<Name>Wind of Madness ~Orchestra~</Name>
-	<InstallationPath>Wind of Madness</InstallationPath>
-	<Description>Replaces track with the orchestrated version of Wesker's boss theme from Resident Evil 5!</Description>
-	<Group>KUJA</Group>
+		<Name>Wind of Madness ~Orchestra~</Name>
+		<InstallationPath>Wind of Madness</InstallationPath>
+		<Description>Replaces track with the orchestrated version of Wesker's boss theme from Resident Evil 5!</Description>
+		<Group>KUJA</Group>
 	</SubMod>
 	<Header>The Final Battle/Grand Cross</Header>
 	<SubMod>
-	<Name>The Final Battle ~Record Keeper Ver.~</Name>
-	<InstallationPath>Final Battle Record Keeper</InstallationPath>
-	<Description>Replaces track with the Record Keeper version!</Description>
-	<Group>NECRON</Group>
+		<Name>The Final Battle ~Record Keeper Ver.~</Name>
+		<InstallationPath>Final Battle Record Keeper</InstallationPath>
+		<Description>Replaces track with the Record Keeper version!</Description>
+		<Group>NECRON</Group>
 	</SubMod>
 	<SubMod>
-	<Name>Grand Cross</Name>
-	<InstallationPath>Grand Cross</InstallationPath>
-	<Description>Replaces track with the hard rock version titled "Grand Cross", arranged by The Black Mages!</Description>
-	<Group>NECRON</Group>
+		<Name>Grand Cross</Name>
+		<InstallationPath>Grand Cross</InstallationPath>
+		<Description>Replaces track with the hard rock version titled "Grand Cross", arranged by The Black Mages!</Description>
+		<Group>NECRON</Group>
 	</SubMod>
 	<SubMod>
-	<Name>Zero World</Name>
-	<InstallationPath>Zero World</InstallationPath>
-	<Description>Replaces track with OverClocked ReMix's version. 
-	Intro loop was also customized using Mortal Kombat Deception's Menu theme and added horror sounds in the background!</Description>
-	<Group>NECRON</Group>
+		<Name>Zero World</Name>
+		<InstallationPath>Zero World</InstallationPath>
+		<Description>Replaces track with OverClocked ReMix's version. 
+		Intro loop was also customized using Mortal Kombat Deception's Menu theme and added horror sounds in the background!</Description>
+		<Group>NECRON</Group>
 	</SubMod>
 	<Header>Specific Fights [Vanilla Only]</Header>
 	<SubMod>
-	<Name>Enable/Disable</Name>
-	<InstallationPath>Specific Fights</InstallationPath>
-	<Description>Replaces regular battle/boss music with custom tracks specifically for certain fights like Baku, the Black Waltz trio, Zorn &amp; Thorn, and yes, even Steiner too will have his own boss theme! :-P
+		<Name>Enable/Disable</Name>
+		<InstallationPath>Specific Fights</InstallationPath>
+		<Description>Replaces regular battle/boss music with custom tracks specifically for certain fights like Baku, the Black Waltz trio, Zorn &amp; Thorn, and yes, even Steiner too will have his own boss theme! :-P
 
-	Feel free to read the Music List within the Specific Fights folder for full information on tracks used!</Description>
+		Feel free to read the Music List within the Specific Fights folder for full information on tracks used!</Description>
 	</SubMod>
 </Mod>
 
@@ -2916,6 +2920,12 @@ All changes made to the mode are adjustable as options:
 		<Name>Shuffle or Boogie (FFVIII 8-bit by HCBailly)</Name>
 		<InstallationPath>ShuffleorBoogieFFHCBAILLY</InstallationPath>
 		<Description>Change the Tetra Master music into Shuffle or Boogie from HCBailly (8 bit version), made with Mario Paint.</Description>
+		<Group>music-group</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Don't change music.</Name>
+		<InstallationPath>Dummy</InstallationPath>
+		<Description>Keep the OG music.</Description>
 		<Group>music-group</Group>
 	</SubMod>
 	<Header>Cards</Header>
