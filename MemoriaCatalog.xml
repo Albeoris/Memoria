@@ -610,7 +610,7 @@ Bug Fixes:
 <Mod>
 	<Name>Support Ability Cost</Name>
 	<Version>4.1.5</Version>
-	<Priority>-3</Priority>	
+	<Priority>-3</Priority>
 	<InstallationPath>KupoGemSATweak</InstallationPath>
 	<ReleaseDate>2025-05-31</ReleaseDate>
 	<ReleaseDateOriginal>2022-4-14</ReleaseDateOriginal>
@@ -658,7 +658,7 @@ Corrected website links and preview url	</PatchNotes>
 <Mod>
 	<Name>Exp, AP, Gil, Rewards Tweaks</Name>
 	<Version>4.1.3</Version>
-	<Priority>-4</Priority>	
+	<Priority>-4</Priority>
 	<InstallationPath>KupoTweaks</InstallationPath>
 	<ReleaseDate>2025-01-13</ReleaseDate>
 	<ReleaseDateOriginal>2022-08-14</ReleaseDateOriginal>
@@ -723,7 +723,7 @@ Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</D
 		<InstallationPath>Features/Tweaks/2xgil</InstallationPath>
 		<Description>Doubles Gil received after battle</Description>
 		<Priority>1</Priority>
-		<Group>GIL</Group>	
+		<Group>GIL</Group>
 	</SubMod>
 	<SubMod>
 		<Name>4x gil</Name>
@@ -761,9 +761,9 @@ Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</D
 <Mod>
 	<Name>No Exp Plus</Name>
 	<Version>4.1.4</Version>
-	<Priority>-5</Priority>	
+	<Priority>-5</Priority>
 	<InstallationPath>KupoNoEXP</InstallationPath>
-	<ReleaseDate>22025-07-20</ReleaseDate>
+	<ReleaseDate>2025-07-20</ReleaseDate>
 	<ReleaseDateOriginal>2023-07-20</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>If you want some degree of challenge. This mod basically suppresses leveling up in game and more
@@ -2553,7 +2553,7 @@ Note: 30fps videos and the alternative soundtrack are now separate mods</Descrip
 <Mod>
 	<Name>Cursors Mod</Name>
 	<Version>4.1.4</Version>
-	<Priority>7</Priority>	
+	<Priority>7</Priority>
 	<InstallationPath>KupoCursors</InstallationPath>
 	<ReleaseDate>2025-05-31</ReleaseDate>
 	<ReleaseDateOriginal>2024-10-01</ReleaseDateOriginal>
@@ -2733,7 +2733,7 @@ Available Themes:
 		<InstallationPath>Features/ButtonsXboxGloss</InstallationPath>
 		<Description>Glossy Version of the  Default Xbox Prompts</Description>
 		<Group>g-controller</Group>
-		<PreviewFile>preview/controller-xbox-g.jpg</PreviewFile>		
+		<PreviewFile>preview/controller-xbox-g.jpg</PreviewFile>
 	</SubMod>
 	<SubMod>
 		<Name>Default Xbox</Name>
@@ -2810,7 +2810,7 @@ Available Themes:
 <Mod>
 	<Name>Portraits Pack</Name>
 	<Version>4.2.7</Version>
-	<Priority>13</Priority>	
+	<Priority>13</Priority>
 	<InstallationPath>KupoPortraits</InstallationPath>
 	<ReleaseDate>2025-06-19</ReleaseDate>
 	<ReleaseDateOriginal>2021-10-18</ReleaseDateOriginal>
@@ -2876,7 +2876,7 @@ Part of Kupo Mods formerly Mog Add-ons.
 		<Description>PSX Like Portraits</Description>
 		<Group>g-port-extra</Group>
 		<PreviewFile>preview/psxlike.jpg</PreviewFile>
-	</SubMod>	
+	</SubMod>
 </Mod>
 
 <Mod>
@@ -2978,7 +2978,7 @@ All changes made to the mode are adjustable as options:
 <Mod>
 	<Name>Launcher Themes</Name>
 	<Version>1.0.2</Version>
-	<Priority>25</Priority>	
+	<Priority>25</Priority>
 	<InstallationPath>MemoriaLauncherThemes</InstallationPath>
 	<ReleaseDate>2025-07-02</ReleaseDate>
 	<ReleaseDateOriginal>2024-12-07</ReleaseDateOriginal>
@@ -3082,7 +3082,7 @@ All changes made to the mode are adjustable as options:
 		<LauncherColor>1c222c</LauncherColor>
 		<Group>Theme</Group>
 		<Default/>
-	</SubMod>					
+	</SubMod>
 </Mod>
 
 
@@ -3137,7 +3137,7 @@ Idea by Snouz and made by DV.</Description>
 <Mod>
 	<Name>Modern Labels + </Name>
 	<Version>4.1.8</Version>
-	<Priority>18</Priority>	
+	<Priority>18</Priority>
 	<InstallationPath>KupoModernLabels</InstallationPath>
 	<ReleaseDate>2025-06-27</ReleaseDate>
 	<ReleaseDateOriginal>2024-10-01</ReleaseDateOriginal>
