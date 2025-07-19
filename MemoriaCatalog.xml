@@ -23,7 +23,7 @@ Note: 30fps videos and the alternative soundtrack are now separate mods</Descrip
 	<PatchNotes>Version 9.0 is a full rework of all aspects with new technologies, especially the backgrounds and battle maps.</PatchNotes>
 	<MinimumMemoriaVersion>2024-08-04</MinimumMemoriaVersion>
 	<Category>Visual</Category>
-	<DownloadUrl>https://pub-c382d4096c4340cca3a31c6fc7fc0a8a.r2.dev/MoguriMain.7z</DownloadUrl>
+	<DownloadUrl>https://modcdn.win/MoguriMain.7z</DownloadUrl>
 	<Website>https://sites.google.com/view/moguri-mod</Website>
 	<PreviewFileUrl>https://i.imgur.com/yz2cgYv.jpeg</PreviewFileUrl>
 </Mod>
@@ -39,7 +39,7 @@ Note: 30fps videos and the alternative soundtrack are now separate mods</Descrip
 Lykon - rendering, research
 Snouz - syncronization</Description>
 	<Category>Visual</Category>
-	<DownloadUrl>https://pub-c382d4096c4340cca3a31c6fc7fc0a8a.r2.dev/MoguriVideo.zip</DownloadUrl>
+	<DownloadUrl>https://modcdn.win/MoguriVideo.zip</DownloadUrl>
 	<Website>https://sites.google.com/view/moguri-mod</Website>
 	<PreviewFileUrl>https://i.imgur.com/1nVsQ3j.jpeg</PreviewFileUrl>
 </Mod>
@@ -2614,7 +2614,7 @@ Final Battle has currently 3 Custom Tracks</PatchNotes>
 	<Description>Orchestral version for 13 songs, reinterpreted by Pontus Hultgren</Description>
 	<Category>Music</Category>
 	<Website>https://sites.google.com/view/moguri-mod</Website>
-	<DownloadUrl>https://pub-c382d4096c4340cca3a31c6fc7fc0a8a.r2.dev/MoguriSoundtrack.zip</DownloadUrl>
+	<DownloadUrl>https://modcdn.win/MoguriSoundtrack.zip</DownloadUrl>
 	<PreviewFile>moguri_alternative_soundtrack.jpg</PreviewFile>
 	<PreviewFileUrl>https://i.imgur.com/ciiVRnY.jpeg</PreviewFileUrl>
 </Mod>
@@ -2644,7 +2644,7 @@ Note: 30fps videos and the alternative soundtrack are now separate mods</Descrip
 	<PatchNotes>Version 8.4 has the same backgrounds as 8.3, but with some redone layer edges, lights, new battle textures, UI elements, NPC, bugfixes...</PatchNotes>
 	<MinimumMemoriaVersion>2024-08-04</MinimumMemoriaVersion>
 	<Category>Visual</Category>
-	<DownloadUrl>https://pub-c382d4096c4340cca3a31c6fc7fc0a8a.r2.dev/MoguriMain8.7z</DownloadUrl>
+	<DownloadUrl>https://modcdn.win/MoguriMain8.7z</DownloadUrl>
 	<Website>https://sites.google.com/view/moguri-mod</Website>
 	<PreviewFileUrl>https://i.imgur.com/ywCN2EB.jpeg</PreviewFileUrl>
 </Mod>
