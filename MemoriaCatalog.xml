@@ -614,7 +614,7 @@ Bug Fixes:
 <Mod>
 	<Name>Support Ability Cost</Name>
 	<Version>4.1.5</Version>
-	<Priority>-3</Priority>	
+	<Priority>-3</Priority>
 	<InstallationPath>KupoGemSATweak</InstallationPath>
 	<ReleaseDate>2025-05-31</ReleaseDate>
 	<ReleaseDateOriginal>2022-4-14</ReleaseDateOriginal>
@@ -662,7 +662,7 @@ Corrected website links and preview url	</PatchNotes>
 <Mod>
 	<Name>Exp, AP, Gil, Rewards Tweaks</Name>
 	<Version>4.1.3</Version>
-	<Priority>-4</Priority>	
+	<Priority>-4</Priority>
 	<InstallationPath>KupoTweaks</InstallationPath>
 	<ReleaseDate>2025-01-13</ReleaseDate>
 	<ReleaseDateOriginal>2022-08-14</ReleaseDateOriginal>
@@ -727,7 +727,7 @@ Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</D
 		<InstallationPath>Features/Tweaks/2xgil</InstallationPath>
 		<Description>Doubles Gil received after battle</Description>
 		<Priority>1</Priority>
-		<Group>GIL</Group>	
+		<Group>GIL</Group>
 	</SubMod>
 	<SubMod>
 		<Name>4x gil</Name>
@@ -764,10 +764,10 @@ Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</D
 
 <Mod>
 	<Name>No Exp Plus</Name>
-	<Version>4.1.3</Version>
-	<Priority>-5</Priority>	
+	<Version>4.1.4</Version>
+	<Priority>-5</Priority>
 	<InstallationPath>KupoNoEXP</InstallationPath>
-	<ReleaseDate>2024-12-06</ReleaseDate>
+	<ReleaseDate>2025-07-20</ReleaseDate>
 	<ReleaseDateOriginal>2023-07-20</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>If you want some degree of challenge. This mod basically suppresses leveling up in game and more
@@ -776,6 +776,8 @@ Features:
 [2] No EXP Gain After Battle BUT GAINS AP
 [3] Doubled EXP Requirement
 [4] 8x EXP Requirement
+[5] No Status Immunity Support Abilities
+
 This mod was initially introduced as the Exp challenge tweaks within Kupo Mods, previously known as Mog Add-ons.</Description>
 	<PatchNotes>Improved compatibility with the mod manager</PatchNotes>
 	<Category>Gameplay</Category>
@@ -813,6 +815,11 @@ This mod was initially introduced as the Exp challenge tweaks within Kupo Mods, 
 		<InstallationPath>Features/Tweaks/ExpX8</InstallationPath>
 		<Description>8 Times EXP requirement so you almost dont level up</Description>
 		<Group>g-exp</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Challenge: NO Status Immunity Support Abilities</Name>
+		<InstallationPath>Features/Tweaks/NoSAStatusProt</InstallationPath>
+		<Description>Remove Status Immunity Support Abilities</Description>
 	</SubMod>
 </Mod>
 
@@ -1875,159 +1882,124 @@ You should better use the Playable Characters Pack instead. This later one doesn
 
 <Mod>
 	<Name>Kupo UI Suite</Name>
-	<Version>4.2.1</Version>
+	<Version>4.2.2</Version>
 	<Priority>6</Priority>
 	<InstallationPath>KupoUISuite</InstallationPath>
-	<ReleaseDate>2025-05-31</ReleaseDate>
+	<ReleaseDate>2025-07-20</ReleaseDate>
 	<ReleaseDateOriginal>2021-08-14</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>
 The First User Interface Suite for FFIX. This mod allows you to change the ff: Dialogue UI, Menu, Title Screen, Menu Bg , World Map , Title loop , Triple Triad Mat. etc
 See More information on the Readme.txt file 
-
 Mod Order : Position one or on top of Any Gameplay mod.
 Originally released as part of Kupo Mods formerly Mog-Addons 
 	</Description>
-	<PatchNotes>Improved compatibility Playable Character Pack
-added another frame option	</PatchNotes>
+	<PatchNotes>A revamp of order mods and new features Please see Readme file on the root folder</PatchNotes>
 	<Category>UI</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/bwgd9529j6wx7jhiju419/KupoUISuite.zip?rlkey=z8yybpjg9i5fi9vu3kz33zeiw&amp;dl=1</DownloadUrl>
 	<PreviewFile>preview/kupo-ui-pack.png</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313891-596422989.png</PreviewFileUrl>
 	<MinimumMemoriaVersion>2024.05.19</MinimumMemoriaVersion>
-	<Header>UI Themes</Header>
+	<Header>General Options</Header>
 	<SubMod>
-		<Name>Darker UI</Name>
-		<InstallationPath>Features/DialogueBox/DarkerUI</InstallationPath>
-		<Description>Forces Darker UI</Description>
+		<Name>Icons: Curative item Icons</Name>
+		<InstallationPath>Features/NewIcons</InstallationPath>
+		<Description>An reworked set of icons for certain items</Description>
+		<PreviewFile>preview/i1.png</PreviewFile>
 		<Default/>
-		<Group>g-ui-theme</Group>
-		<PreviewFile>preview/d1.png</PreviewFile>
 	</SubMod>
 	<SubMod>
-		<Name>Modern [Transparent]</Name>
-		<InstallationPath>Features/DialogueBox/Modern</InstallationPath>
-		<Description>Recommended to use with Dynamic Backgrounds</Description>
-		<Group>g-ui-theme</Group>
-		<PreviewFile>preview/d2.png</PreviewFile>
-	</SubMod>
-	<SubMod>
-		<Name>Flat</Name>
-		<InstallationPath>Features/DialogueBox/FlatUI</InstallationPath>
-		<Description>Just Full Solid colors like the old games</Description>
-		<Group>g-ui-theme</Group>
-		<PreviewFile>preview/d3.png</PreviewFile>
-	</SubMod>
-	<SubMod>
-		<Name>Pixel Frame</Name>
-		<InstallationPath>Features/DialogueBox/PRFrame</InstallationPath>
-		<Description>Pixel Remaster Frame</Description>
-		<Group>g-ui-theme</Group>
-		<PreviewFile>preview/d4.png</PreviewFile>
-	</SubMod>
-	<SubMod>
-		<Name>Scroll</Name>
-		<InstallationPath>Features/DialogueBox/Scroll</InstallationPath>
-		<Description>So Ugly... you'll Love it </Description>
-		<Group>g-ui-theme</Group>
-		<PreviewFile>preview/d5.png</PreviewFile>
-	</SubMod>
-	<SubMod>
-		<Name>Default</Name>
-		<InstallationPath>Features/DialogueBox/</InstallationPath>
-		<Description>Default</Description>
-		<Group>g-ui-theme</Group>
-	</SubMod>
-	<Header>UI Misc Options</Header>
-	<SubMod>
-		<Name>UI Option: Borderless</Name>
-		<InstallationPath>Features/frames/borderless</InstallationPath>
-		<Description>Remove white Border mostly for testing purposes </Description>
-		<Priority>4</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>UI Option: No Divider</Name>
-		<InstallationPath>Features/frames/divideless</InstallationPath>
-		<Description>removes dividers in menu, recommended to be on. </Description>
-		<Priority>4</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>UI Option: No battle Divider</Name>
-		<InstallationPath>Features/frames/dividelessbat</InstallationPath>
-		<Description>removes dividers in battles only </Description>
-		<Priority>4</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>UI Option: No Highlight</Name>
-		<InstallationPath>Features/frames/highlightless</InstallationPath>
-		<Description>Removes dividers in menu</Description>
-		<Priority>4</Priority>		
-	</SubMod>
-	<Header>Tiled Menu Backgrounds</Header>
-	<SubMod>
-		<Name>Stone</Name>
-		<InstallationPath>Features/Menubg/menubgstone</InstallationPath>
-		<Description>Stone Pattern on Menu Background</Description>
-		<Group>g-menu-bg</Group>
+		<Name>Icons: Gems [!New]</Name>
+		<InstallationPath>Features/GemIcons</InstallationPath>
+		<Description>Adds Icon variance to Gems the the game</Description>
+		<PreviewFile>preview/i4.png</PreviewFile>
 		<Default/>
-		<PreviewFile>preview/b4.png</PreviewFile>
 	</SubMod>
 	<SubMod>
-		<Name>Pure Black</Name>
-		<InstallationPath>Features/Menubg/menubgblack</InstallationPath>
-		<Description>Removes the store pattern in Menu Background</Description>
-		<Group>g-menu-bg</Group>
-		<PreviewFile>preview/b1.png</PreviewFile>
+		<Name>Icons: Extended Elemental Icons</Name>
+		<InstallationPath>Features/NewElementIcons</InstallationPath>
+		<Description>A Set of Elemental Icons that modders can use in game</Description>
+		<PreviewFile>preview/i2.png</PreviewFile>
+		<Default/>
 	</SubMod>
 	<SubMod>
-		<Name>Tantalus</Name>
-		<InstallationPath>Features/Menubg/menubgtantalus</InstallationPath>
-		<Description>Tantalus Pattern on Menu Background</Description>
-		<Group>g-menu-bg</Group>
-		<PreviewFile>preview/b3.png</PreviewFile>
+		<Name>Icons: Key Items [!New]</Name>
+		<InstallationPath>Features/NewKeyItemIcons</InstallationPath>
+		<Description>Iconography for Key Items (For English Language For now)</Description>
+		<PreviewFile>preview/i5.png</PreviewFile>
+		<Default/>
 	</SubMod>
 	<SubMod>
-		<Name>Chocobo</Name>
-		<InstallationPath>Features/Menubg/menubgchocobo</InstallationPath>
-		<Description>Chocobo Pattern on Menu Background</Description>
-		<Group>g-menu-bg</Group>
-		<PreviewFile>preview/b2.png</PreviewFile>
+		<Name>SquareSoft Logo [!New]</Name>
+		<InstallationPath>Features/Squaresoft</InstallationPath>
+		<Description>Restores SquareSoft's OG Logo, wont see this if you have skip logos on </Description>
+		<PreviewFile>preview/sq.png</PreviewFile>
+		<Default/>
 	</SubMod>
 	<SubMod>
-		<Name>Default</Name>
-		<InstallationPath>Features/Menubg/</InstallationPath>
-		<Description>Default Background</Description>
-		<Group>g-menu-bg</Group>
-	</SubMod>
-	<Header>Full Menu Backgrounds</Header>
-	<SubMod>
-		<Name>Crash Site Forest </Name>
-		<InstallationPath>Features/Menubg/menubgfull01</InstallationPath>
-		<Description>A save point in the forest</Description>
-		<Group>g-menu-bg</Group>
-		<PreviewFile>preview/f1.png</PreviewFile>
+		<Name>Omnia Naming Window [!New]</Name>
+		<InstallationPath>Features/NamingWindow</InstallationPath>
+		<Description>Opera Omnia Style Naming window</Description>
+		<Default/>
 	</SubMod>
 	<SubMod>
-		<Name>Black Mage Village Huts</Name>
-		<InstallationPath>Features/Menubg/menubgfull02</InstallationPath>
-		<Description>The huts of the Black Mage</Description>
-		<Group>g-menu-bg</Group>
-		<PreviewFile>preview/f2.png</PreviewFile>
+		<Name>Cards: Triple Triad Mat</Name>
+		<InstallationPath>Features/Cards</InstallationPath>
+		<Description>Triple triad inspired mat and UI for the Game, This automatically sets the game to be in triple triad mode </Description>
+		<PreviewFile>preview/tm.png</PreviewFile>
+		<Default/>
 	</SubMod>
 	<SubMod>
-		<Name>Secret Room</Name>
-		<InstallationPath>Features/Menubg/menubgfull03</InstallationPath>
-		<Description>An Unused Room room for the game </Description>
-		<PreviewFile>preview/f3.png</PreviewFile>
-		<Group>g-menu-bg</Group>
+		<Name>Alternate Colored Maps</Name>
+		<InstallationPath>Features/Maps</InstallationPath>
+		<Description>Alternative Over world Map. Based of the work of Snouz </Description>
+		<PreviewFile>preview/map1.png</PreviewFile>
+		<Default/>
 	</SubMod>
 	<SubMod>
-		<Name>Dynamic</Name>
-		<InstallationPath>Features/Menubg/menubgdynamic</InstallationPath>
-		<Description>Dynamically changes depending on the window </Description>
-		<PreviewFile>preview/f4.png</PreviewFile>
-		<Group>g-menu-bg</Group>
+		<Name>UI Sound: Alt Cursor Sound  </Name>
+		<InstallationPath>Features/CursorSound</InstallationPath>
+		<Description>What i think is a better cursor sound</Description>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Name>Key Item Background</Name>
+		<InstallationPath>Features/KeyItem</InstallationPath>
+		<Description>A custom Key Item background when reading description.</Description>
+		<PreviewFile>preview/tk.png</PreviewFile>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Name>Concept Art Title Loop</Name>
+		<InstallationPath>Features/TitleLogo/TitleLoop</InstallationPath>
+		<Description>Replace Title Loop Images with Concept Art</Description>
+		<PreviewFile>preview/titleloop.png</PreviewFile>
+	</SubMod>
+	<Header>Speech Bubbles [!New]</Header>
+	<SubMod>
+		<Name>Modern Speech Bubbles </Name>
+		<InstallationPath>Features/SpeechBubbles/ModernSpeech</InstallationPath>
+		<Description>Textures are from the mobile version </Description>
+		<Priority>15</Priority>
+		<Group>g-speech</Group>
+		<PreviewFile>preview/sq.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Ivalice like Speech Bubbles </Name>
+		<InstallationPath>Features/SpeechBubbles/IvaliceTypeSpeech</InstallationPath>
+		<Description>Textures are from the mobile version </Description>
+		<Priority>15</Priority>
+		<Group>g-speech</Group>
+		<PreviewFile>preview/sq.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Blue and Black Speech Bubbles </Name>
+		<InstallationPath>Features/SpeechBubbles/BlackBlueSpeech</InstallationPath>
+		<Description>Textures are from the mobile version </Description>
+		<Priority>15</Priority>
+		<Group>g-speech</Group>
+		<PreviewFile>preview/sq.png</PreviewFile>
 	</SubMod>
 	<Header>Title Screen</Header>
 	<SubMod>
@@ -2060,58 +2032,211 @@ added another frame option	</PatchNotes>
 		<PreviewFile>preview/t1.png</PreviewFile>
 	</SubMod>
 	<SubMod>
+		<Name>Origins White</Name>
+		<InstallationPath>Features/TitleLogo/TitleLogo5</InstallationPath>
+		<Description>Original concept of the logo white version </Description>
+		<Group>g-title</Group>
+		<PreviewFile>preview/t1.png</PreviewFile>
+	</SubMod>
+	<SubMod>
 		<Name>Default</Name>
 		<InstallationPath>Features/TitleLogo/</InstallationPath>
 		<Description>Original concept of the logo </Description>
 		<Group>g-title</Group>
 	</SubMod>
-	<Header>Extended Options</Header>
+	<Header>UI Themes</Header>
 	<SubMod>
-		<Name>Cards: Triple Triad Mat</Name>
-		<InstallationPath>Features/Cards</InstallationPath>
-		<Description>Triple triad inspired mat and UI for the Game, This automatically sets the game to be in triple triad mode </Description>
-		<PreviewFile>preview/tm.png</PreviewFile>
+		<Name>Darker UI</Name>
+		<InstallationPath>Features/DialogueBox/DarkerUI</InstallationPath>
+		<Description>Forces Darker UI</Description>
 		<Default/>
-	</SubMod>	
-	<SubMod>
-		<Name>Alternate Colored Maps</Name>
-		<InstallationPath>Features/Maps</InstallationPath>
-		<Description>Alternative Over world Map </Description>
-		<PreviewFile>preview/map1.png</PreviewFile>
-		<Default/>
+		<Group>g-ui-theme</Group>
+		<PreviewFile>preview/d1.png</PreviewFile>
 	</SubMod>
 	<SubMod>
-		<Name>Icons: New Curative item Icons</Name>
-		<InstallationPath>Features/NewIcons</InstallationPath>
-		<Description>An reworked set of icons for certain items</Description>
-		<PreviewFile>preview/i1.png</PreviewFile>
-		<Default/>
+		<Name>Modern I</Name>
+		<InstallationPath>Features/DialogueBox/Modern</InstallationPath>
+		<Description>Recommended to use with Dynamic Backgrounds</Description>
+		<Group>g-ui-theme</Group>
+		<PreviewFile>preview/d2.png</PreviewFile>
 	</SubMod>
 	<SubMod>
-		<Name>Icons: Extended Icons</Name>
-		<InstallationPath>Features/NewElementIcons</InstallationPath>
-		<Description>A Set of Extended Icons that modders can use in game</Description>
-		<PreviewFile>preview/i2.png</PreviewFile>
-		<Default/>
+		<Name>Modern II </Name>
+		<InstallationPath>Features/DialogueBox/ModernII</InstallationPath>
+		<Description>A variant of the above but with Transparent borders</Description>
+		<Group>g-ui-theme</Group>
+		<PreviewFile>preview/d6.png</PreviewFile>
+	</SubMod>
+	<!-- <SubMod> -->
+	<!-- For Future Release -->
+		<!-- <Name>Ivalice </Name> -->
+		<!-- <InstallationPath>Features/DialogueBox/Ivalice</InstallationPath> -->
+		<!-- <Description>Ivalician Theme </Description> -->
+		<!-- <Priority>35</Priority> -->
+		<!-- <Group>g-ui-theme</Group> -->
+		<!-- <PreviewFile>preview/d6.png</PreviewFile> -->
+	<!-- </SubMod> -->
+	<SubMod>
+		<Name>Flat</Name>
+		<InstallationPath>Features/DialogueBox/FlatUI</InstallationPath>
+		<Description>Just Full Solid colors like the old games</Description>
+		<Group>g-ui-theme</Group>
+		<PreviewFile>preview/d3.png</PreviewFile>
 	</SubMod>
 	<SubMod>
-		<Name>UI Sound: Alt Cursor Sound  </Name>
-		<InstallationPath>Features/CursorSound</InstallationPath>
-		<Description>What i think is a better cursor sound</Description>
-		<Default/>
+		<Name>Pixel Frame</Name>
+		<InstallationPath>Features/DialogueBox/PRFrame</InstallationPath>
+		<Description>Pixel Remaster Frame</Description>
+		<Group>g-ui-theme</Group>
+		<PreviewFile>preview/d4.png</PreviewFile>
 	</SubMod>
 	<SubMod>
-		<Name>Key Item Background</Name>
-		<InstallationPath>Features/KeyItem</InstallationPath>
-		<Description>A custom Key Item background when reading description.</Description>
-		<PreviewFile>preview/tk.png</PreviewFile>
-		<Default/>
-	</SubMod>	
+		<Name>Scroll</Name>
+		<InstallationPath>Features/DialogueBox/Scroll</InstallationPath>
+		<Description>So Ugly... you'll Love it </Description>
+		<Group>g-ui-theme</Group>
+		<PreviewFile>preview/d5.png</PreviewFile>
+	</SubMod>
 	<SubMod>
-		<Name>Concept Art Title Loop</Name>
-		<InstallationPath>Features/TitleLogo/TitleLoop</InstallationPath>
-		<Description>Replace Title Loop Images with Concept Art</Description>
-		<PreviewFile>preview/titleloop.png</PreviewFile>
+		<Name>Default</Name>
+		<InstallationPath>Features/DialogueBox/</InstallationPath>
+		<Description>Default</Description>
+		<Group>g-ui-theme</Group>
+	</SubMod>
+	<Header>Tiled Menu Backgrounds</Header>
+	<SubMod>
+		<Name>Stone</Name>
+		<InstallationPath>Features/Menubg/menubgstone</InstallationPath>
+		<Description>Stone Pattern on Menu Background</Description>
+		<Group>g-menu-bg</Group>
+		<PreviewFile>preview/b4.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Pure Black</Name>
+		<InstallationPath>Features/Menubg/menubgblack</InstallationPath>
+		<Description>Removes the store pattern in Menu Background</Description>
+		<Group>g-menu-bg</Group>
+		<PreviewFile>preview/b1.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Tantalus</Name>
+		<InstallationPath>Features/Menubg/menubgtantalus</InstallationPath>
+		<Description>Tantalus Pattern on Menu Background</Description>
+		<Group>g-menu-bg</Group>
+		<PreviewFile>preview/b3.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Chocobo</Name>
+		<InstallationPath>Features/Menubg/menubgchocobo</InstallationPath>
+		<Description>Chocobo Pattern on Menu Background</Description>
+		<Group>g-menu-bg</Group>
+		<PreviewFile>preview/b2.png</PreviewFile>
+	</SubMod>
+	<Header>Text Options [!New]</Header>
+	<SubMod>
+		<Name>Stylized Speaker Name</Name>
+		<InstallationPath>Features/TextOptions/StyledSpeakerName</InstallationPath>
+		<Description>add stylistic choices on speaker on dialogue</Description>
+		<PreviewFile>preview/f1.png</PreviewFile>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Dialogue Flat Text</Name>
+		<InstallationPath>Features/TextOptions/FlatText</InstallationPath>
+		<Description>Removes Text Shadow on most text in the game Dialogue</Description>
+		<PreviewFile>preview/f1.png</PreviewFile>
+		<Priority>2</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Bold Text</Name>
+		<InstallationPath>Features/TextOptions/BoldText</InstallationPath>
+		<Description>Bolden the text in game, Font use must Support Font weights</Description>
+		<PreviewFile>preview/f1.png</PreviewFile>
+		<Priority>3</Priority>
+	</SubMod>
+	<Header>Full Menu Backgrounds [!New]</Header>
+	<SubMod>
+		<Name>FBG - Crash Site Forest </Name>
+		<InstallationPath>Features/Menubg/menu-1</InstallationPath>
+		<Description>A save point in the forest</Description>
+		<Group>g-menu-bg</Group>
+		<Priority>10</Priority>
+		<PreviewFile>preview/f1.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>FBG - Peaceful Valley</Name>
+		<InstallationPath>Features/Menubg/menu-2</InstallationPath>
+		<Description>A Green Scenery</Description>
+		<Group>g-menu-bg</Group>
+		<PreviewFile>preview/f2.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>FBG - Village Night Sky</Name>
+		<InstallationPath>Features/Menubg/menu-3</InstallationPath>
+		<Description>Black Mage Village</Description>
+		<Group>g-menu-bg</Group>
+		<PreviewFile>preview/f3.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>FBG - Armory</Name>
+		<InstallationPath>Features/Menubg/menu-4</InstallationPath>
+		<Description>A room of Gear and Weapons</Description>
+		<Group>g-menu-bg</Group>
+		<PreviewFile>preview/f4.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>FBG - Apothecary</Name>
+		<InstallationPath>Features/Menubg/menu-5</InstallationPath>
+		<Description>A workshop room</Description>
+		<Group>g-menu-bg</Group>
+		<PreviewFile>preview/f5.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>FBG - Crystal</Name>
+		<InstallationPath>Features/Menubg/menu-6</InstallationPath>
+		<Description>A view of one of Terra's Crystal</Description>
+		<Group>g-menu-bg</Group>
+		<PreviewFile>preview/f6.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>FBG - Secret Room</Name>
+		<InstallationPath>Features/Menubg/menu-7</InstallationPath>
+		<Description>Likely the concept for the observatory in Lindblum</Description>
+		<Group>g-menu-bg</Group>
+		<PreviewFile>preview/f7.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>FBG - Dynamic</Name>
+		<InstallationPath>Features/Menubg/menubgdynamic</InstallationPath>
+		<Description>Dynamically changes depending on the window </Description>
+		<PreviewFile>preview/fd.png</PreviewFile>
+		<Group>g-menu-bg</Group>
+		<Priority>5</Priority>
+	</SubMod>
+	<Header>UI Overrides</Header>
+	<SubMod>
+		<Name>UI Option: Borderless</Name>
+		<InstallationPath>Features/frames/borderless</InstallationPath>
+		<Description>Remove white Border mostly for testing purposes </Description>
+		<Priority>4</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>UI Option: No Divider</Name>
+		<InstallationPath>Features/frames/divideless</InstallationPath>
+		<Description>removes dividers in menu, recommended to be on. </Description>
+		<Priority>4</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>UI Option: No battle Divider</Name>
+		<InstallationPath>Features/frames/dividelessbat</InstallationPath>
+		<Description>removes dividers in battles only </Description>
+		<Priority>4</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>UI Option: No Highlight</Name>
+		<InstallationPath>Features/frames/highlightless</InstallationPath>
+		<Description>Removes dividers in menu</Description>
+		<Priority>4</Priority>
 	</SubMod>
 </Mod>
 
@@ -2527,7 +2652,7 @@ Note: 30fps videos and the alternative soundtrack are now separate mods</Descrip
 <Mod>
 	<Name>Cursors Mod</Name>
 	<Version>4.1.4</Version>
-	<Priority>7</Priority>	
+	<Priority>7</Priority>
 	<InstallationPath>KupoCursors</InstallationPath>
 	<ReleaseDate>2025-05-31</ReleaseDate>
 	<ReleaseDateOriginal>2024-10-01</ReleaseDateOriginal>
@@ -2626,10 +2751,10 @@ Defaults to smaller cursor but has several options Dagger, Ultima Blade, Staff
 
 <Mod>
 	<Name>Kupo Controller Pack</Name>
-	<Version>4.1.3</Version>
-	<Priority>11</Priority>	
+	<Version>4.1.4</Version>
+	<Priority>11</Priority>
 	<InstallationPath>KupoButtonsPack</InstallationPath>
-	<ReleaseDate>2024-12-06</ReleaseDate>
+	<ReleaseDate>2025-07-19</ReleaseDate>
 	<ReleaseDateOriginal>2021-08-27</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>The original COMPLETE controller buttons pack of FF9.
@@ -2644,8 +2769,13 @@ Available Themes:
   if you want it old School
 - SNES North American one [via request]
   Because we can.
+- Switch Pro Controller [NEW]
+  Because we duh .
+- Xbox Gloss [NEW]
+  Because why not .
+ 
  A component of Kupo Library formerly Mog Add-ons</Description>
-	<PatchNotes>Improved compatibility with the mod manager</PatchNotes>
+	<PatchNotes>Added Switch and Xbox Gloss Options , Fixed error on moogle icon being declared on tp sheet</PatchNotes>
 	<Category>Visual</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/81</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/aro9kltyr05pwgspwi9bg/KupoButtonsPack.zip?rlkey=6gg5g2fkizchhp4vthop0v4nd&amp;dl=1</DownloadUrl>
@@ -2660,6 +2790,7 @@ Available Themes:
 		<Default/>
 		<Group>g-controller</Group>
 		<PreviewFile>preview/controller-ps4gloss.jpg</PreviewFile>
+		<Priority>10</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>PS5 (DualSense)</Name>
@@ -2689,7 +2820,21 @@ Available Themes:
 		<Group>g-controller</Group>
 		<PreviewFile>preview/controller-snes.jpg</PreviewFile>
 	</SubMod>
-		<SubMod>
+	<SubMod>
+		<Name>Switch</Name>
+		<InstallationPath>Features/ButtonsSwitch</InstallationPath>
+		<Description>Switch layout and colors </Description>
+		<Group>g-controller</Group>
+		<PreviewFile>preview/controller-witch.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Xbox Gloss</Name>
+		<InstallationPath>Features/ButtonsXboxGloss</InstallationPath>
+		<Description>Glossy Version of the  Default Xbox Prompts</Description>
+		<Group>g-controller</Group>
+		<PreviewFile>preview/controller-xbox-g.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
 		<Name>Default Xbox</Name>
 		<InstallationPath>Features/ButtonsXbox</InstallationPath>
 		<Description>Restores Default Xbox Prompts</Description>
@@ -2763,19 +2908,20 @@ Available Themes:
 
 <Mod>
 	<Name>Portraits Pack</Name>
-	<Version>4.2.6</Version>
-	<Priority>13</Priority>	
+	<Version>4.2.7</Version>
+	<Priority>13</Priority>
 	<InstallationPath>KupoPortraits</InstallationPath>
 	<ReleaseDate>2025-06-19</ReleaseDate>
 	<ReleaseDateOriginal>2021-10-18</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>DFFOO portraits are included here. All presets support released and some planned Playable Character Pack characters. 
-Changelog: Added support for new characters and costumes. Classic upscaled version discontinued.
+Changelog: Mainly updated portraits for compatibility reasons for PCP . 
+
 
 Mod Order: Place above Playable Character Pack, Beatrix Mod, Tantalus Mod, and Kupo UI Suite.
 Part of Kupo Mods formerly Mog Add-ons.
 	</Description>
-	<PatchNotes>Added Support for new version of PCP</PatchNotes>
+	<PatchNotes>See more on readme.txt</PatchNotes>
 	<Category>Visual</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/80</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/80dpdv5kn378cw27fay0q/KupoPortraits.zip?rlkey=dnb8htsnmqzoehuibij9tarxd&amp;dl=1</DownloadUrl>
@@ -2829,7 +2975,7 @@ Part of Kupo Mods formerly Mog Add-ons.
 		<Description>PSX Like Portraits</Description>
 		<Group>g-port-extra</Group>
 		<PreviewFile>preview/psxlike.jpg</PreviewFile>
-	</SubMod>	
+	</SubMod>
 </Mod>
 
 <Mod>
@@ -2941,7 +3087,7 @@ All changes made to the mode are adjustable as options:
 <Mod>
 	<Name>Launcher Themes</Name>
 	<Version>1.0.2</Version>
-	<Priority>25</Priority>	
+	<Priority>25</Priority>
 	<InstallationPath>MemoriaLauncherThemes</InstallationPath>
 	<ReleaseDate>2025-07-02</ReleaseDate>
 	<ReleaseDateOriginal>2024-12-07</ReleaseDateOriginal>
@@ -3045,7 +3191,7 @@ All changes made to the mode are adjustable as options:
 		<LauncherColor>1c222c</LauncherColor>
 		<Group>Theme</Group>
 		<Default/>
-	</SubMod>					
+	</SubMod>
 </Mod>
 
 
@@ -3100,7 +3246,7 @@ Idea by Snouz and made by DV.</Description>
 <Mod>
 	<Name>Modern Labels + </Name>
 	<Version>4.1.8</Version>
-	<Priority>18</Priority>	
+	<Priority>18</Priority>
 	<InstallationPath>KupoModernLabels</InstallationPath>
 	<ReleaseDate>2025-06-27</ReleaseDate>
 	<ReleaseDateOriginal>2024-10-01</ReleaseDateOriginal>
