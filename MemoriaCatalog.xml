@@ -2605,6 +2605,22 @@ Final Battle has currently 3 Custom Tracks</PatchNotes>
 </Mod>
 
 <Mod>
+	<Name>KupoMail</Name>
+	<Version>0.2</Version>
+	<InstallationPath>KupoMail</InstallationPath>
+	<Author>Aurora Rosalia</Author>
+	<ReleaseDateOriginal>2025-07-10</ReleaseDateOriginal>
+	<ReleaseDate>2025-07-21</ReleaseDate>
+	<Description>A mod that brings voice acting to Final Fantasy IX. The Demo covers all the way up to Lindblum but the full release will cover the whole game.</Description>
+	<Category>Voice Acting</Category>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/110?tab=posts</Website>
+	<DownloadUrl>https://drive.usercontent.google.com/download?id=1T2x1MfpYfHtZMCzpSvPbKPa7C4HGV1fu&amp;export=download&amp;confirm=t</DownloadUrl>
+	<PreviewFileUrl>https://i.imgur.com/dhhsFxv.jpeg</PreviewFileUrl>
+	<LauncherBackground>LauncherBackground.jpg</LauncherBackground>
+	<LauncherColor>ea9c9c</LauncherColor>
+</Mod>
+
+<Mod>
 	<Name>Moguri Alt Soundtrack</Name>
 	<Version>8.3</Version>
 	<Priority>-26</Priority>
