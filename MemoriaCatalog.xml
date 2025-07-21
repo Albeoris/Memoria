@@ -23,7 +23,7 @@ Note: 30fps videos and the alternative soundtrack are now separate mods</Descrip
 	<PatchNotes>Version 9.0 is a full rework of all aspects with new technologies, especially the backgrounds and battle maps.</PatchNotes>
 	<MinimumMemoriaVersion>2024-08-04</MinimumMemoriaVersion>
 	<Category>Visual</Category>
-	<DownloadUrl>https://www.dropbox.com/scl/fi/pafgrioj8v3xxmtwdckei/MoguriMain.zip?rlkey=23itwkiaz6btq0ez3qk1ofk0v&amp;st=ykl84ui9&amp;dl=1</DownloadUrl>
+	<DownloadUrl>https://modcdn.win/MoguriMain.7z</DownloadUrl>
 	<Website>https://sites.google.com/view/moguri-mod</Website>
 	<PreviewFileUrl>https://i.imgur.com/yz2cgYv.jpeg</PreviewFileUrl>
 </Mod>
@@ -39,7 +39,7 @@ Note: 30fps videos and the alternative soundtrack are now separate mods</Descrip
 Lykon - rendering, research
 Snouz - syncronization</Description>
 	<Category>Visual</Category>
-	<DownloadUrl>https://www.dropbox.com/scl/fi/pkslhbl8bpv3k82ywnsth/MoguriVideo.zip?rlkey=tuuwpqwzd4z0e7gbkttwl20mv&amp;st=c2296hm3&amp;dl=1</DownloadUrl>
+	<DownloadUrl>https://modcdn.win/MoguriVideo.zip</DownloadUrl>
 	<Website>https://sites.google.com/view/moguri-mod</Website>
 	<PreviewFileUrl>https://i.imgur.com/1nVsQ3j.jpeg</PreviewFileUrl>
 </Mod>
@@ -190,6 +190,10 @@ Fix a very specific soft lock against Prison Cage, Black Waltz 3 and Mistodon.</
 	<Description>A very lightweight mod that allows you to modify minor elements of the game while keeping as much of the OG experience as possible.
 All options are independent and can be activated as desired.
 More options will be added over time.
+
+SA = Support Ability (like UndeadKiller, Mug, AntiBody, etc...)
+AA = Active Ability (like Firaga, Cure, Life, Shock, etc...)
+
 Note : To avoid compatibility issues, Quality of the Ifa should be sorted to the lowest priority in the mod list.
 
 Special thanks for SamsamTS to help me on some Regex formulas :D</Description>
@@ -2321,13 +2325,21 @@ New portraits for all characters, including supporting and background characters
 
 <Mod>
 	<Name>Gaia Bless the Soundtrack</Name>
-	<Version>1.0.1</Version>
+	<Version>1.1.0</Version>
 	<Priority></Priority>
 	<InstallationPath>GaiaBlessTheSoundtrack</InstallationPath>
-	<ReleaseDate>July 07, 2025</ReleaseDate>
+	<ReleaseDate>July 17, 2025</ReleaseDate>
 	<ReleaseDateOriginal>July 07, 2025</ReleaseDateOriginal>
 	<Author>Ehrgeiz</Author>
-	<Description>Replaces the battle music with either remixes of original songs or tracks from other video games. Multiple choices for a single track to choose from, as Ferny would say "Best of both worlds!", enjoy!
+	<Description>Replaces the battle music with either remixes of original songs (from FFIX) or tracks from other video games (both original &amp; remixed). Multiple choices for a single track to choose from, as Ferny would say "Best of both worlds!", enjoy!
+
+If you would like to listen to replaced or custom tracks early on:
+-Start the game via Memoria
+-In the main menu press Ctrl + Alt + Shift + S to open the Sound View
+-Go to BGM and click the music ID you'd wish to listen to. More details on this website:
+ https://github.com/Albeoris/Memoria/wiki/List-of-musics
+-Custom tracks start from Sounds01/BGM_/music123 (149)
+
 
 CREDIT GOES TO THE FOLLOWING:
 
@@ -2337,30 +2349,72 @@ https://www.youtube.com/@EnricoDeianamusic
 JSF MUSIC (For the Faerie Battle Remix)
 https://www.youtube.com/@jsfmusic2174
 
+DARIC SHIRE (For the Sword of Fury Orchestral Cover)
+https://www.youtube.com/channel/UCA_5xBJF5uXw-Wic24E358w
+
+TAKUMA NISHIMURA
+https://www.youtube.com/@TakumaNishimura-Orchestra
+
+OVERCLOCKED REMIX (For the Final Battle Remix)
+https://www.youtube.com/@ocremix
+
+SANITYZER/JOSHUA HUNT (For the Victory Fanfare Orchestral Remake)
+https://www.youtube.com/@sanityzer8575
+https://joshuahuntcompositions.com/
+
+THE OFFICIAL CRANE (For his voice clip in "No Script, Just Fists")
+https://www.youtube.com/c/TheOfficialCrane
+
+THE OFFICIAL DJ SUPER RAVEN (For the Black Waltz Remix)
+https://www.youtube.com/@TheOfficialDJSuperRaveman
+
+VETROM (For the Battle! Legendary Pokémon Remix)
+https://www.youtube.com/@Vetrom
+
+GMAN GUITAR STUFF (For the Battle 2 Metal Cover)
+https://www.youtube.com/channel/UCnGqk0hDRE693pbsaUOjoCA
+
+
+
 All original music in this mod belongs to thier respective composers, I do NOT own them.
 
-Shout out to FernyFer &amp; SamSamTS for guiding me!</Description>
-	<PatchNotes>To Do:
--Figure out how to add tracks for specific fights (i.e: The Black Waltz Trio, Zorn &amp; Thorn, Beatrix third battle, etc.)…there’s a way I just don’t have the necessary knowledge of it.
+Shout out to FernyFer &amp; SamSamTS for guiding me, and shout out to Tsuna for teaching me about specific fight music set ups!</Description>
+    <PatchNotes>-Custom Tracks for Specific Fights (i.e, Baku, The Black Waltz trio, Zorn &amp; Thorn, etc.) has now been added and has its own section below the music list which can be toggled on/off (check under "Specfic Fights [Vanilla Only]" in Mod Options)! However, it is currently only compatible with the vanilla version of the game, but compatibility with game overhauled mods (like TranceSeek &amp; Alternate Fantasy) will be happening soon!
+----As of this update the Specific Fights music goes up to the crash scene in Lindblum, but MORE MUSIC UNDERWAY, stay tuned!
 
--Figure out how to customize the 2 loops in The Final Battle.</PatchNotes>
-	<Category>Music</Category>
-	<Website>https://www.nexusmods.com/finalfantasy9/mods/106</Website>
-	<DownloadUrl>https://www.dropbox.com/scl/fi/mogpt1jl0sq497d8onrsf/GaiaBlessTheSoundtrack.zip?rlkey=jfvwks1x3uiakhpm0qie9k50e&amp;st=nun6y8ne&amp;dl=1</DownloadUrl>
-	<PreviewFile>Banner.png</PreviewFile>
-	<PreviewFileUrl>https://i.imgur.com/ikTEOnY.png</PreviewFileUrl>
-	<MinimumMemoriaVersion></MinimumMemoriaVersion>
+Current Music List:
+Battle 1 has currently 5 Custom Tracks
+Swords of Fury has currently 2 Custom Tracks
+Victory Fanfare has currently 1 Custom Track
+Battle 2 has currently 5 Custom Tracks
+Faerie Battle has currently 2 Custom Tracks
+Festival of the Hunt has currently 3 Custom Tracks
+The Wavering Blade has currently 5 Custom Tracks
+Dark Messenger has currently 5 Custom Tracks
+Final Battle has currently 3 Custom Tracks</PatchNotes>
+    <Category>Music</Category>
+    <Website>https://www.nexusmods.com/finalfantasy9/mods/106</Website>
+    <DownloadUrl>https://www.dropbox.com/scl/fi/mogpt1jl0sq497d8onrsf/GaiaBlessTheSoundtrack.zip?rlkey=jfvwks1x3uiakhpm0qie9k50e&amp;st=nun6y8ne&amp;dl=1</DownloadUrl>
+    <PreviewFile>Banner.png</PreviewFile>
+    <PreviewFileUrl>https://i.imgur.com/ikTEOnY.png</PreviewFileUrl>
+    <MinimumMemoriaVersion></MinimumMemoriaVersion>
 	<Header>Battle 1</Header>
-	<SubMod>
-		<Name>Battle 1 ~Enrico Deiana Ver.~</Name>
-		<InstallationPath>Battle 1 Remix</InstallationPath>
-		<Description>Replaces Battle 1 with Enrico Deiana's remixed version!</Description>
-		<Group>BATTLE 1</Group>
-	</SubMod>
 	<SubMod>
 		<Name>Battle 1 ~arrange~</Name>
 		<InstallationPath>Battle 1 Arrange</InstallationPath>
 		<Description>Replaces Battle 1 with the arranged version from Dissidia: Final Fantasy!</Description>
+		<Group>BATTLE 1</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Battle 1 ~Record Keeper Ver.~</Name>
+		<InstallationPath>Battle 1 Record Keeper</InstallationPath>
+		<Description>Replaces Battle 1 with the Record Keeper version!</Description>
+		<Group>BATTLE 1</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Battle 1 ~Enrico Deiana Ver.~</Name>
+		<InstallationPath>Battle 1 Remix</InstallationPath>
+		<Description>Replaces Battle 1 with Enrico Deiana's remixed version!</Description>
 		<Group>BATTLE 1</Group>
 	</SubMod>
 	<SubMod>
@@ -2374,6 +2428,26 @@ Shout out to FernyFer &amp; SamSamTS for guiding me!</Description>
 		<InstallationPath>You Will Know Our Names</InstallationPath>
 		<Description>Replaces Battle 1 with the remastered Unique Monster battle theme from Xenoblade Chronicles: Definitive Edition!</Description>
 		<Group>BATTLE 1</Group>
+	</SubMod>
+	<Header>Swords of Fury/Feel My Blade</Header>
+	<SubMod>
+		<Name>Swords of Fury ~Enrico Deiana Ver.~</Name>
+		<InstallationPath>Feel My Blade Remix</InstallationPath>
+		<Description>Replaces track with Enrico Deiana's remixed version!</Description>
+		<Group>FURY</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Swords of Fury ~Daric Shire Ver.~</Name>
+		<InstallationPath>Feel My Blade Orchestra</InstallationPath>
+		<Description>Replaces track with an orchestrated version made by Daric Shire!</Description>
+		<Group>FURY</Group>
+	</SubMod>
+	<Header>Victory Fanfare</Header>
+	<SubMod>
+		<Name>Victory Fanfare Orchestral Remake</Name>
+		<InstallationPath>Victory Fanfare</InstallationPath>
+		<Description>Replaces Victory Fanfare with Joshua Hunt's version.</Description>
+		<Group>YAY ME</Group>
 	</SubMod>
 	<Header>Battle 2</Header>
 	<SubMod>
@@ -2421,6 +2495,12 @@ Shout out to FernyFer &amp; SamSamTS for guiding me!</Description>
 	</SubMod>
 	<Header>Festival of the Hunt/Hunter's Chance</Header>
 	<SubMod>
+		<Name>Festival of the Hunt ~Enrico Deiana Ver.~</Name>
+		<InstallationPath>Festival of the Hunt Remix</InstallationPath>
+		<Description>Replaces track with Enrico Deiana's remixed version!</Description>
+		<Group>HUNTER</Group>
+	</SubMod>
+	<SubMod>
 		<Name>Festival of the Hunt ~FFXIV Endwalker Ver.~</Name>
 		<InstallationPath>Festival of the Hunt</InstallationPath>
 		<Description>Replaces Festival of the Hunt with the version from Final Fantasy XIV: Endwalker!</Description>
@@ -2440,12 +2520,6 @@ Shout out to FernyFer &amp; SamSamTS for guiding me!</Description>
 		<Group>BLADE</Group>
 	</SubMod>
 	<SubMod>
-		<Name>Spring Meadows - Beneath the Blue Tree</Name>
-		<InstallationPath>Beneath the Blue Tree</InstallationPath>
-		<Description>Replaces track with Eveque's boss theme from Clair Obsur: Expedition 33!</Description>
-		<Group>BLADE</Group>
-	</SubMod>
-	<SubMod>
 		<Name>Kiryu G@ Ki LI</Name>
 		<InstallationPath>Kiryu</InstallationPath>
 		<Description>Replaces track with Satsuki's theme from Kill la Kill!</Description>
@@ -2455,6 +2529,12 @@ Shout out to FernyFer &amp; SamSamTS for guiding me!</Description>
 		<Name>Sad but True</Name>
 		<InstallationPath>Sad but True</InstallationPath>
 		<Description>Replaces track with Jill Valentine's boss theme from Resident Evil 5!</Description>
+		<Group>BLADE</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Spring Meadows - Beneath the Blue Tree</Name>
+		<InstallationPath>Beneath the Blue Tree</InstallationPath>
+		<Description>Replaces track with Eveque's boss theme from Clair Obsur: Expedition 33!</Description>
 		<Group>BLADE</Group>
 	</SubMod>
 	<SubMod>
@@ -2494,15 +2574,50 @@ Shout out to FernyFer &amp; SamSamTS for guiding me!</Description>
 		<Description>Replaces track with the orchestrated version of Wesker's boss theme from Resident Evil 5!</Description>
 		<Group>KUJA</Group>
 	</SubMod>
-	<Header>Tantalus Tango</Header>
+	<Header>The Final Battle/Grand Cross</Header>
 	<SubMod>
-		<Name>Gang-Plank Galleon</Name>
-		<InstallationPath>Gang Plank</InstallationPath>
-		<Description>A custom track that replaces Battle 1 with King K. Rool's boss theme in Donkey Kong Country. Specifically for the first &amp; third fight against Baku!</Description>
-		<Group>BAKU</Group>
+		<Name>The Final Battle ~Record Keeper Ver.~</Name>
+		<InstallationPath>Final Battle Record Keeper</InstallationPath>
+		<Description>Replaces track with the Record Keeper version!</Description>
+		<Group>NECRON</Group>
 	</SubMod>
+	<SubMod>
+		<Name>Grand Cross</Name>
+		<InstallationPath>Grand Cross</InstallationPath>
+		<Description>Replaces track with the hard rock version titled "Grand Cross", arranged by The Black Mages!</Description>
+		<Group>NECRON</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Zero World</Name>
+		<InstallationPath>Zero World</InstallationPath>
+		<Description>Replaces track with OverClocked ReMix's version. 
+		Intro loop was also customized using Mortal Kombat Deception's Menu theme and added horror sounds in the background!</Description>
+		<Group>NECRON</Group>
+	</SubMod>
+	<Header>Specific Fights [Vanilla Only]</Header>
+	<SubMod>
+		<Name>Enable/Disable</Name>
+		<InstallationPath>Specific Fights</InstallationPath>
+		<Description>Replaces regular battle/boss music with custom tracks specifically for certain fights like Baku, the Black Waltz trio, Zorn &amp; Thorn, and yes, even Steiner too will have his own boss theme! :-P
 
+		Feel free to read the Music List within the Specific Fights folder for full information on tracks used!</Description>
+	</SubMod>
+</Mod>
 
+<Mod>
+	<Name>KupoMail</Name>
+	<Version>0.2</Version>
+	<InstallationPath>KupoMail</InstallationPath>
+	<Author>Aurora Rosalia</Author>
+	<ReleaseDateOriginal>2025-07-10</ReleaseDateOriginal>
+	<ReleaseDate>2025-07-21</ReleaseDate>
+	<Description>A mod that brings voice acting to Final Fantasy IX. The Demo covers all the way up to Lindblum but the full release will cover the whole game.</Description>
+	<Category>Voice Acting</Category>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/110?tab=posts</Website>
+	<DownloadUrl>https://drive.usercontent.google.com/download?id=1T2x1MfpYfHtZMCzpSvPbKPa7C4HGV1fu&amp;export=download&amp;confirm=t</DownloadUrl>
+	<PreviewFileUrl>https://i.imgur.com/dhhsFxv.jpeg</PreviewFileUrl>
+	<LauncherBackground>LauncherBackground.jpg</LauncherBackground>
+	<LauncherColor>ea9c9c</LauncherColor>
 </Mod>
 
 <Mod>
@@ -2515,7 +2630,7 @@ Shout out to FernyFer &amp; SamSamTS for guiding me!</Description>
 	<Description>Orchestral version for 13 songs, reinterpreted by Pontus Hultgren</Description>
 	<Category>Music</Category>
 	<Website>https://sites.google.com/view/moguri-mod</Website>
-	<DownloadUrl>https://www.dropbox.com/scl/fi/y90tb0bz9q3ubpawb0y96/MoguriSoundtrack.zip?rlkey=7pr2jd3rtipno6ntfm5zb8g8o&amp;st=4beqvfar&amp;dl=1</DownloadUrl>
+	<DownloadUrl>https://modcdn.win/MoguriSoundtrack.zip</DownloadUrl>
 	<PreviewFile>moguri_alternative_soundtrack.jpg</PreviewFile>
 	<PreviewFileUrl>https://i.imgur.com/ciiVRnY.jpeg</PreviewFileUrl>
 </Mod>
@@ -2545,7 +2660,7 @@ Note: 30fps videos and the alternative soundtrack are now separate mods</Descrip
 	<PatchNotes>Version 8.4 has the same backgrounds as 8.3, but with some redone layer edges, lights, new battle textures, UI elements, NPC, bugfixes...</PatchNotes>
 	<MinimumMemoriaVersion>2024-08-04</MinimumMemoriaVersion>
 	<Category>Visual</Category>
-	<DownloadUrl>https://www.dropbox.com/scl/fi/si1jdjtb9p8y43qz1ow3v/MoguriMain8.zip?rlkey=kp4iwfmrgxvbjv1fbsw25f6pv&amp;st=p8yndvah&amp;dl=1</DownloadUrl>
+	<DownloadUrl>https://modcdn.win/MoguriMain8.7z</DownloadUrl>
 	<Website>https://sites.google.com/view/moguri-mod</Website>
 	<PreviewFileUrl>https://i.imgur.com/ywCN2EB.jpeg</PreviewFileUrl>
 </Mod>
@@ -2912,10 +3027,10 @@ Placeholder art - Marcus by nanpou0406 &amp; Cinna Concept Art.
 
 <Mod>
 	<Name>Triple Triad</Name>
-	<Version>2.0</Version>
+	<Version>2.1</Version>
 	<Priority>16</Priority>
 	<InstallationPath>TripleTriad</InstallationPath>
-	<ReleaseDate>06 Jul 2025</ReleaseDate>
+	<ReleaseDate>17 Jul 2025</ReleaseDate>
 	<ReleaseDateOriginal>25 Apr 2023</ReleaseDateOriginal>
 	<Author>DV</Author>
 	<Category>Visual</Category>
@@ -2926,7 +3041,11 @@ Placeholder art - Marcus by nanpou0406 &amp; Cinna Concept Art.
 Many options available to change the board, music or the cards.
 
 Thumbnail made by Faospark : thanks you ^^</Description>
-	<PatchNotes>[Version 2.0]
+	<PatchNotes>[Version 2.1]
+- Add an option to keep the OG music (Tetra Master).
+- Fix an issue with "Deck with Boss and Characters" option.
+	
+[Version 2.0]
 All changes made to the mode are adjustable as options:
 - You can enable or disable the Triple Triad board.
 - 4 different music avaible now !
@@ -2963,6 +3082,12 @@ All changes made to the mode are adjustable as options:
 		<Name>Shuffle or Boogie (FFVIII 8-bit by HCBailly)</Name>
 		<InstallationPath>ShuffleorBoogieFFHCBAILLY</InstallationPath>
 		<Description>Change the Tetra Master music into Shuffle or Boogie from HCBailly (8 bit version), made with Mario Paint.</Description>
+		<Group>music-group</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Don't change music.</Name>
+		<InstallationPath>Dummy</InstallationPath>
+		<Description>Keep the OG music.</Description>
 		<Group>music-group</Group>
 	</SubMod>
 	<Header>Cards</Header>
