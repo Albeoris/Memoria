@@ -245,6 +245,7 @@ namespace Memoria.Launcher
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
             Mod mod = (sender as CheckBox)?.DataContext as Mod;
+            UpdateLauncherTheme();
             if (mod != null && mod.IsActive)
                 mod.TryApplyPreset();
             CheckOutdatedAndIncompatibleMods();

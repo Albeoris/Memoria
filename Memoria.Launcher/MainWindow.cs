@@ -93,6 +93,7 @@ namespace Memoria.Launcher
                 tabCtrlMain.SelectedIndex = 1;
             UpdateModDetails((Mod)null);
             CheckOutdatedAndIncompatibleMods();
+            UpdateLauncherTheme();
 
             // add tooltip style to manager's buttons
             UiGrid.MakeTooltip(btnReorganize, "ModEditor.TooltipReorganize", "", "hand");
