@@ -151,7 +151,7 @@ Not supported language : Japanese (a lot of things get deleted... need to wait u
 	<PreviewFileUrl>https://i.ibb.co/HC3GH4j/Logo-Trance-Seek.png</PreviewFileUrl>
 	<PreviewFile>Thumbnail/LogoTranceSeek.png</PreviewFile>
 	<Website>https://steamcommunity.com/app/377840/discussions/0/5362100202713255072/</Website>
-	<DownloadUrl>https://www.dropbox.com/scl/fi/8c4ndrnppvyd8jlrx5wul/TranceSeek-Demo-CD3-by-DV.zip?rlkey=85hqper3dtu0ojc2sir32km27&amp;dl=1</DownloadUrl>
+	<DownloadUrl>https://files.dv-modding.fr/TranceSeek%20%28Demo%20CD3%2C%20by%20DV%29.zip</DownloadUrl>
 </Mod>
 
 <Mod>
@@ -172,12 +172,12 @@ The goal is to make these fights compatible with any characters in battle, in or
 Fix a very specific soft lock against Prison Cage, Black Waltz 3 and Mistodon.</PatchNotes>
 	<PreviewFileUrl>https://i.imgur.com/KL9DWPk.jpeg</PreviewFileUrl>
 	<PreviewFile>Thumbnail/NoHardcodedBattles.jpg</PreviewFile>
-	<DownloadUrl>https://www.dropbox.com/scl/fi/9nj3r6ph66soi94pokpqt/NoHardcodedBattles.zip?rlkey=nkbi7dxzstozytuxsykqcgejv&amp;dl=1</DownloadUrl>
+	<DownloadUrl>https://files.dv-modding.fr/NoHardcodedBattles.zip</DownloadUrl>
 </Mod>
 
 <Mod>
 	<Name>QualityOfLifa</Name>
-	<Version>1.2</Version>
+	<Version>1.4</Version>
 	<Priority>-23</Priority>
 	<InstallationPath>QualityOfLifa</InstallationPath>
 	<ReleaseDate>8 Jul 2025</ReleaseDate>
@@ -186,7 +186,7 @@ Fix a very specific soft lock against Prison Cage, Black Waltz 3 and Mistodon.</
 	<Category>Gameplay</Category>
 	<PreviewFileUrl>https://i.ibb.co/20DxpHXN/Quality-Of-Lifa.jpg</PreviewFileUrl>
 	<PreviewFile>Thumbnail/QualityOfLifa.jpg</PreviewFile>
-	<DownloadUrl>https://www.dropbox.com/scl/fi/je4hdj96ngxv7ogjep9tx/Quality-Of-L-Ifa.zip?rlkey=0jmnwa9svspqazb4olrk53qtb&amp;dl=1</DownloadUrl>
+	<DownloadUrl>https://files.dv-modding.fr/Quality%20Of%20L%27Ifa.zip</DownloadUrl>
 	<Description>A very lightweight mod that allows you to modify minor elements of the game while keeping as much of the OG experience as possible.
 All options are independent and can be activated as desired.
 More options will be added over time.
@@ -198,27 +198,15 @@ Note : To avoid compatibility issues, Quality of the Ifa should be sorted to the
 
 Special thanks for SamsamTS to help me on some Regex formulas :D</Description>
 	<PatchNotes>
-[Version 1.2]
-
-(Icon Status in Help) => Fix an issue about Gradual Petrify in some lang.
-(Icon Status in Help) => Made a tiny change on TextPatch.txt.
-The option didn't work for some players but can't reproduce the bug (report and fixed by SamsamTS)
-(Icon Element in Help) => Made a tiny change on TextPatch.txt.
-The option didn't work for some players but can't reproduce the bug (report and fixed by SamsamTS)
-
-[Version 1.1]
+[Version 1.4]
 
 New options available :
-- Portraits on Dialogs
-- Portraits on Dialogs (with PCP)
-- Colored Text for Element in Help
-- Colored Text for Status in Help
-- Icon Element in Help
-- Icon Status in Help
-- Counter Text Cyan + Element Text
-- Counter Text Fuchsia + Element Text
-- Better Jewel Spell
-- Better Price
+- Gem Stones Counter Colored
+- Gem Stones Counter Colored (Alt.)
+- Better Scan Spell
+- Better Might Spell
+- Monsters Sync Level
+- Default Character Name
 	</PatchNotes>
 	<Header>Safe with any Mods</Header>
 	<SubMod>
@@ -321,6 +309,20 @@ If the attack is both a counterattack and elemental, this will be underlined.</D
 		<PreviewFile>ColoredTextElementAttackCounterFuchsia/Thumbnail.jpg</PreviewFile>
 		<Group>cmd-text-color</Group>
 	</SubMod>
+	<SubMod>
+		<Name>Gem Stones Counter Colored</Name>
+		<InstallationPath>ColoredGemCounter</InstallationPath>
+		<Description>New color indicator for the gem stone counter.</Description>
+		<PreviewFile>ColoredGemCounter/Thumbnail.jpg</PreviewFile>
+		<Group>gem-stone-color</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Gem Stones Counter Colored (Alt.)</Name>
+		<InstallationPath>ColoredGemCounterBis</InstallationPath>
+		<Description>New color indicator for the gem stone counter (Alt version).</Description>
+		<PreviewFile>ColoredGemCounterBis/Thumbnail.jpg</PreviewFile>
+		<Group>gem-stone-color</Group>
+	</SubMod>
 	<Header>For OG Experience only</Header>
 	<SubMod>
 		<Name>Thunder Slash (OG Version)</Name>
@@ -343,6 +345,18 @@ If the attack is both a counterattack and elemental, this will be underlined.</D
 - 50% to earn an Ore. Otherwise, get a random jewel (except Moonstone).
 - The spell has 100% accuracy but each success reduces it by 40% (so 100% then 60% then 20%) for each monster.</Description>
 		<PreviewFile>BetterJewel/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Better Scan Spell</Name>
+		<InstallationPath>BetterScan</InstallationPath>
+		<Description>Make Scan more useful, showing even more informations on the target (made by Tirlititi).</Description>
+		<PreviewFile>BetterScan/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Better Might Spell</Name>
+		<InstallationPath>BetterMight</InstallationPath>
+		<Description>Make Might more useful, boosting also Magic on the target (feature from Trance Seek).</Description>
+		<PreviewFile>BetterMight/Thumbnail.jpg</PreviewFile>
 	</SubMod>
 	<SubMod>
 		<Name>Better Healer (SA)</Name>
@@ -382,6 +396,13 @@ If the attack is both a counterattack and elemental, this will be underlined.</D
 More explanations in the .txt file in the mod (BetterStatsJoining folder)</Description>
 		<PreviewFile>BetterStatsJoining/Thumbnail.jpg</PreviewFile>
 	</SubMod>
+	<SubMod>
+		<Name>Monsters Sync Level</Name>
+		<InstallationPath>MonstersSyncStats</InstallationPath>
+		<Description>All enemies' stats improve based on your team's average level.
+This option is not be compatible with some mods like Alternate Fantasy, Trance Seek, etc...</Description>
+		<PreviewFile>MonstersSyncStats/Thumbnail.jpg</PreviewFile>
+	</SubMod>
 	<Header>[WIP] Experimental</Header>
 	<SubMod>
 		<Name>Better Garland Model NPC</Name>
@@ -390,6 +411,15 @@ More explanations in the .txt file in the mod (BetterStatsJoining folder)</Descr
 Experimental: i need to improve the animation on his cape...
 More models to come later when i get time.</Description>
 		<PreviewFile>BetterGarlandModel/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Default Character Name</Name>
+		<InstallationPath>DefaultCharacterName</InstallationPath>
+		<Description>Rename all (OG) characters to their default name.
+		
+Note : This option will later be replaced by a Hack feature in Memoria,
+which will be much more optimized (DV & Tirlititi).</Description>
+		<PreviewFile>DefaultCharacterName/Thumbnail.jpg</PreviewFile>
 	</SubMod>
 </Mod>
 
@@ -404,7 +434,7 @@ More models to come later when i get time.</Description>
 	<Category>Gameplay</Category>
 	<PreviewFileUrl>https://i.ibb.co/ccc19T9S/Doppelgangers.jpg</PreviewFileUrl>
 	<PreviewFile>Thumbnail/Doppelgängers.jpg</PreviewFile>
-	<DownloadUrl>https://www.dropbox.com/scl/fi/pdoz5xvtdrfefsdlu48y9/Doppelgangers.zip?rlkey=0b3cim4hiuqgi3jn9um0rhbtb&amp;dl=1</DownloadUrl>
+	<DownloadUrl>https://files.dv-modding.fr/Doppelgangers.zip</DownloadUrl>
 	<IncompatibleWith>AlternateFantasy, Trance Seek, David Bowie Edition, Beatrix Mod</IncompatibleWith>
 	<Description>
 A mod that simply consists of changing all your characters into a specific one... have you always dreamed of having four Vivis burning everything? A rain of spears from the sky with your Freyas? Or an army of Quina eating monsters by dozens?
@@ -2320,7 +2350,7 @@ New portraits for all characters, including supporting and background characters
 	<Category>Audio</Category>
 	<PreviewFileUrl>https://i.imgur.com/6EEBG0I.jpeg</PreviewFileUrl>
 	<Website>https://steamcommunity.com/app/377840/discussions/0/3189117724409401717/</Website>
-	<DownloadUrl>https://www.dropbox.com/scl/fi/wrdzcvjxl2keuhr1923g3/FF9_Sounds_Fix-by-DV.zip?rlkey=ilew1n0xznbhwpgx9wg9ggyaz&amp;dl=1</DownloadUrl>
+	<DownloadUrl>https://files.dv-modding.fr/FF9_Sounds_Fix%20%28by%20DV%29.zip</DownloadUrl>
 </Mod>
 
 <Mod>
@@ -3036,7 +3066,7 @@ Placeholder art - Marcus by nanpou0406 &amp; Cinna Concept Art.
 	<Category>Visual</Category>
 	<PreviewFile>Thumbnail/tripletriad.png</PreviewFile>
 	<PreviewFileUrl>https://i.ibb.co/YFhbMx8X/tripletriad.png</PreviewFileUrl>
-	<DownloadUrl>https://www.dropbox.com/scl/fi/8lc4qic9r85jk1rk1g79b/TripleTriad-by-DV.zip?rlkey=vuv6dplbznmaxpfu9lyedzs6g&amp;dl=1</DownloadUrl>
+	<DownloadUrl>https://files.dv-modding.fr/TripleTriad%20%28by%20DV%29.zip</DownloadUrl>
 	<Description>Brings new elements to make the Triple Triad more faithful.
 Many options available to change the board, music or the cards.
 
@@ -3254,7 +3284,7 @@ Idea by Snouz and made by DV.</Description>
 	<PatchNotes>- Add a thumbnail (thank you Faospark ! :D)
 - Merge RandomCard options from Mog Add-ons to BetterCardDrop (by Faospark)</PatchNotes>
 	<Category>Cards</Category>
-	<DownloadUrl>https://www.dropbox.com/scl/fi/06u78j1hpvhxgz5651w2w/BetterCardDrop-by-DV.zip?rlkey=qnwg687rgpft07m657psm2z88&amp;dl=1</DownloadUrl>
+	<DownloadUrl>https://files.dv-modding.fr/BetterCardDrop%20%28by%20DV%29.zip</DownloadUrl>
 	<PreviewFileUrl>https://i.ibb.co/47NThCX/Better-Card-Drop.png</PreviewFileUrl>
 	<PreviewFile>Thumbnail/BetterCardDrop.png</PreviewFile>
 </Mod>
