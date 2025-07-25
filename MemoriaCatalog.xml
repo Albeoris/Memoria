@@ -1927,7 +1927,7 @@ Originally released as part of Kupo Mods formerly Mog-Addons
 	<PatchNotes>Essentially an Extension and fix of the previous Version. Please see Readme file on the root folder</PatchNotes>
 	<Category>UI</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
-	<DownloadUrl>https://www.dropbox.com/scl/fi/bwgd9529j6wx7jhiju419/KupoUISuite.zip?rlkey=z8yybpjg9i5fi9vu3kz33zeiw&amp;dl=1</DownloadUrl>
+	<DownloadUrl>https://drive.usercontent.google.com/download?id=1hm7knrKrKAc8JVLe_NmB-XcLHMOYkuA0&amp;export=download&amp;confirm=t</DownloadUrl>
 	<PreviewFile>preview/kupo-ui-pack.png</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313891-596422989.png</PreviewFileUrl>
 	<MinimumMemoriaVersion>2024.05.19</MinimumMemoriaVersion>
@@ -1998,7 +1998,7 @@ Originally released as part of Kupo Mods formerly Mog-Addons
 	<SubMod>
 		<Name>Key Item Background</Name>
 		<InstallationPath>Features/KeyItem/KeyItemsBg</InstallationPath>
-		<Description>A custom Key Item background when reading It's description.</Description>
+		<Description>A custom Key Item background when reading Its description.</Description>
 		<PreviewFile>preview/tk.png</PreviewFile>
 		<Default/>
 	</SubMod>
