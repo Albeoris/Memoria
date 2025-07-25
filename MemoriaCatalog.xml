@@ -1912,10 +1912,10 @@ You should better use the Playable Characters Pack instead. This later one doesn
 
 <Mod>
 	<Name>Kupo UI Suite</Name>
-	<Version>4.2.2</Version>
+	<Version>4.2.3</Version>
 	<Priority>6</Priority>
 	<InstallationPath>KupoUISuite</InstallationPath>
-	<ReleaseDate>2025-07-20</ReleaseDate>
+	<ReleaseDate>2025-07-25</ReleaseDate>
 	<ReleaseDateOriginal>2021-08-14</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>
@@ -1924,7 +1924,7 @@ See More information on the Readme.txt file
 Mod Order : Position one or on top of Any Gameplay mod.
 Originally released as part of Kupo Mods formerly Mog-Addons 
 	</Description>
-	<PatchNotes>A revamp of order mods and new features Please see Readme file on the root folder</PatchNotes>
+	<PatchNotes>Essentially an Extension and fix of the previous Version. Please see Readme file on the root folder</PatchNotes>
 	<Category>UI</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://drive.usercontent.google.com/download?id=1hm7knrKrKAc8JVLe_NmB-XcLHMOYkuA0&amp;export=download&amp;confirm=t</DownloadUrl>
@@ -1932,34 +1932,6 @@ Originally released as part of Kupo Mods formerly Mog-Addons
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313891-596422989.png</PreviewFileUrl>
 	<MinimumMemoriaVersion>2024.05.19</MinimumMemoriaVersion>
 	<Header>General Options</Header>
-	<SubMod>
-		<Name>Icons: Curative item Icons</Name>
-		<InstallationPath>Features/NewIcons</InstallationPath>
-		<Description>An reworked set of icons for certain items</Description>
-		<PreviewFile>preview/i1.png</PreviewFile>
-		<Default/>
-	</SubMod>
-	<SubMod>
-		<Name>Icons: Gems [!New]</Name>
-		<InstallationPath>Features/GemIcons</InstallationPath>
-		<Description>Adds Icon variance to Gems the the game</Description>
-		<PreviewFile>preview/i4.png</PreviewFile>
-		<Default/>
-	</SubMod>
-	<SubMod>
-		<Name>Icons: Extended Elemental Icons</Name>
-		<InstallationPath>Features/NewElementIcons</InstallationPath>
-		<Description>A Set of Elemental Icons that modders can use in game</Description>
-		<PreviewFile>preview/i2.png</PreviewFile>
-		<Default/>
-	</SubMod>
-	<SubMod>
-		<Name>Icons: Key Items [!New]</Name>
-		<InstallationPath>Features/NewKeyItemIcons</InstallationPath>
-		<Description>Iconography for Key Items (For English Language For now)</Description>
-		<PreviewFile>preview/i5.png</PreviewFile>
-		<Default/>
-	</SubMod>
 	<SubMod>
 		<Name>SquareSoft Logo [!New]</Name>
 		<InstallationPath>Features/Squaresoft</InstallationPath>
@@ -1971,6 +1943,7 @@ Originally released as part of Kupo Mods formerly Mog-Addons
 		<Name>Omnia Naming Window [!New]</Name>
 		<InstallationPath>Features/NamingWindow</InstallationPath>
 		<Description>Opera Omnia Style Naming window</Description>
+		<PreviewFile>preview/onw.png</PreviewFile>
 		<Default/>
 	</SubMod>
 	<SubMod>
@@ -1994,42 +1967,97 @@ Originally released as part of Kupo Mods formerly Mog-Addons
 		<Default/>
 	</SubMod>
 	<SubMod>
-		<Name>Key Item Background</Name>
-		<InstallationPath>Features/KeyItem</InstallationPath>
-		<Description>A custom Key Item background when reading description.</Description>
-		<PreviewFile>preview/tk.png</PreviewFile>
-		<Default/>
-	</SubMod>
-	<SubMod>
 		<Name>Concept Art Title Loop</Name>
 		<InstallationPath>Features/TitleLogo/TitleLoop</InstallationPath>
 		<Description>Replace Title Loop Images with Concept Art</Description>
 		<PreviewFile>preview/titleloop.png</PreviewFile>
 	</SubMod>
+	<Header>Item Iconography [!New]</Header>
+	<SubMod>
+		<Name>Icons: Curative item Icons</Name>
+		<InstallationPath>Features/NewIcons</InstallationPath>
+		<Description>An reworked set for Curative Items</Description>
+		<PreviewFile>preview/i1.png</PreviewFile>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Name>Icons: Gems [!New]</Name>
+		<InstallationPath>Features/GemIcons</InstallationPath>
+		<Description>Adds Icon variance to Gems the the game</Description>
+		<PreviewFile>preview/i4.png</PreviewFile>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Name>Icons: Extended Elemental Icons</Name>
+		<InstallationPath>Features/NewElementIcons</InstallationPath>
+		<Description>A Set of Elemental Icons that modders can use in game</Description>
+		<PreviewFile>preview/i2.png</PreviewFile>
+		<Default/>
+	</SubMod>
+	<Header>Key Items</Header>
+	<SubMod>
+		<Name>Key Item Background</Name>
+		<InstallationPath>Features/KeyItem/KeyItemsBg</InstallationPath>
+		<Description>A custom Key Item background when reading its description.</Description>
+		<PreviewFile>preview/tk.png</PreviewFile>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Name>Key Items Icons [!New]</Name>
+		<InstallationPath>Features/Keyitem/KeyItemsIcons</InstallationPath>
+		<Description>Iconography for Key Items (Now Supports all Languages)</Description>
+		<PreviewFile>preview/i5.png</PreviewFile>
+		<Priority>10</Priority>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Name>Key Items Center Text [!New]</Name>
+		<InstallationPath>Features/KeyItem/KeyitemsAlign</InstallationPath>
+		<Description>Centers the text for UK and US version making the alignment of text more consistent one</Description>
+		<PreviewFile>preview/tk.png</PreviewFile>
+		<Priority>15</Priority>
+		<Default/>
+	</SubMod>
 	<Header>Speech Bubbles [!New]</Header>
 	<SubMod>
-		<Name>Modern Speech Bubbles </Name>
+		<Name>Small Regular Speech Bubbles [!New]</Name>
+		<InstallationPath>Features/SpeechBubbles/RegularSpeech</InstallationPath>
+		<Description>A smaller circular version of the regular speech bubble</Description>
+		<Priority>15</Priority>
+		<Group>g-speech</Group>
+		<PreviewFile>preview/sb.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Modern Speech Bubbles</Name>
 		<InstallationPath>Features/SpeechBubbles/ModernSpeech</InstallationPath>
-		<Description>Textures are from the mobile version </Description>
+		<Description>Textures are from the mobile version</Description>
 		<Priority>15</Priority>
 		<Group>g-speech</Group>
-		<PreviewFile>preview/sq.png</PreviewFile>
+		<PreviewFile>preview/sb.png</PreviewFile>
 	</SubMod>
 	<SubMod>
-		<Name>Ivalice like Speech Bubbles </Name>
+		<Name>Ivalice like Speech Bubbles [!Fixed]</Name>
 		<InstallationPath>Features/SpeechBubbles/IvaliceTypeSpeech</InstallationPath>
-		<Description>Textures are from the mobile version </Description>
+		<Description>Textures are from the mobile version</Description>
 		<Priority>15</Priority>
 		<Group>g-speech</Group>
-		<PreviewFile>preview/sq.png</PreviewFile>
+		<PreviewFile>preview/sb.png</PreviewFile>
 	</SubMod>
 	<SubMod>
-		<Name>Blue and Black Speech Bubbles </Name>
+		<Name>Blue and Black Speech Bubbles</Name>
 		<InstallationPath>Features/SpeechBubbles/BlackBlueSpeech</InstallationPath>
-		<Description>Textures are from the mobile version </Description>
+		<Description>Textures are from the mobile version</Description>
 		<Priority>15</Priority>
 		<Group>g-speech</Group>
-		<PreviewFile>preview/sq.png</PreviewFile>
+		<PreviewFile>preview/sb.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Screen Button Speech Bubbles [!New]</Name>
+		<InstallationPath>Features/SpeechBubbles/ScreenSpeech</InstallationPath>
+		<Description>The one found in screen button atlas that is unused for the PC Version</Description>
+		<Priority>15</Priority>
+		<Group>g-speech</Group>
+		<PreviewFile>preview/sb.png</PreviewFile>
 	</SubMod>
 	<Header>Title Screen</Header>
 	<SubMod>
@@ -2066,7 +2094,7 @@ Originally released as part of Kupo Mods formerly Mog-Addons
 		<InstallationPath>Features/TitleLogo/TitleLogo5</InstallationPath>
 		<Description>Original concept of the logo white version </Description>
 		<Group>g-title</Group>
-		<PreviewFile>preview/t1.png</PreviewFile>
+		<PreviewFile>preview/t5.png</PreviewFile>
 	</SubMod>
 	<SubMod>
 		<Name>Default</Name>
@@ -2099,12 +2127,12 @@ Originally released as part of Kupo Mods formerly Mog-Addons
 	</SubMod>
 	<!-- <SubMod> -->
 	<!-- For Future Release -->
-		<!-- <Name>Ivalice </Name> -->
-		<!-- <InstallationPath>Features/DialogueBox/Ivalice</InstallationPath> -->
-		<!-- <Description>Ivalician Theme </Description> -->
-		<!-- <Priority>35</Priority> -->
-		<!-- <Group>g-ui-theme</Group> -->
-		<!-- <PreviewFile>preview/d6.png</PreviewFile> -->
+	<!-- <Name>Ivalice </Name> -->
+	<!-- <InstallationPath>Features/DialogueBox/Ivalice</InstallationPath> -->
+	<!-- <Description>Ivalician Theme </Description> -->
+	<!-- <Priority>35</Priority> -->
+	<!-- <Group>g-ui-theme</Group> -->
+	<!-- <PreviewFile>preview/d6.png</PreviewFile> -->
 	<!-- </SubMod> -->
 	<SubMod>
 		<Name>Flat</Name>
@@ -2161,28 +2189,6 @@ Originally released as part of Kupo Mods formerly Mog-Addons
 		<Description>Chocobo Pattern on Menu Background</Description>
 		<Group>g-menu-bg</Group>
 		<PreviewFile>preview/b2.png</PreviewFile>
-	</SubMod>
-	<Header>Text Options [!New]</Header>
-	<SubMod>
-		<Name>Stylized Speaker Name</Name>
-		<InstallationPath>Features/TextOptions/StyledSpeakerName</InstallationPath>
-		<Description>add stylistic choices on speaker on dialogue</Description>
-		<PreviewFile>preview/f1.png</PreviewFile>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Dialogue Flat Text</Name>
-		<InstallationPath>Features/TextOptions/FlatText</InstallationPath>
-		<Description>Removes Text Shadow on most text in the game Dialogue</Description>
-		<PreviewFile>preview/f1.png</PreviewFile>
-		<Priority>2</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Bold Text</Name>
-		<InstallationPath>Features/TextOptions/BoldText</InstallationPath>
-		<Description>Bolden the text in game, Font use must Support Font weights</Description>
-		<PreviewFile>preview/f1.png</PreviewFile>
-		<Priority>3</Priority>
 	</SubMod>
 	<Header>Full Menu Backgrounds [!New]</Header>
 	<SubMod>
@@ -2242,6 +2248,28 @@ Originally released as part of Kupo Mods formerly Mog-Addons
 		<PreviewFile>preview/fd.png</PreviewFile>
 		<Group>g-menu-bg</Group>
 		<Priority>5</Priority>
+	</SubMod>
+	<Header>Text Options [!New]</Header>
+	<SubMod>
+		<Name>Stylized Speaker Name</Name>
+		<InstallationPath>Features/TextOptions/StyledSpeakerName</InstallationPath>
+		<Description>add stylistic choices on speaker on dialogue</Description>
+		<PreviewFile>preview/to1.png</PreviewFile>
+		<Priority>4</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Dialogue Flat Text</Name>
+		<InstallationPath>Features/TextOptions/FlatText</InstallationPath>
+		<Description>Removes Text Shadow on most text in the game Dialogue</Description>
+		<PreviewFile>preview/to2.png</PreviewFile>
+		<Priority>2</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Bold Text</Name>
+		<InstallationPath>Features/TextOptions/BoldText</InstallationPath>
+		<Description>Bolden the text in game, Font used must Support Bold Font Weights</Description>
+		<PreviewFile>preview/to3.png</PreviewFile>
+		<Priority>3</Priority>
 	</SubMod>
 	<Header>UI Overrides</Header>
 	<SubMod>
