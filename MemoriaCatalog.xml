@@ -1998,7 +1998,7 @@ Originally released as part of Kupo Mods formerly Mog-Addons
 	<SubMod>
 		<Name>Key Item Background</Name>
 		<InstallationPath>Features/KeyItem/KeyItemsBg</InstallationPath>
-		<Description>A custom Key Item background when reading Its description.</Description>
+		<Description>A custom Key Item background when reading its description.</Description>
 		<PreviewFile>preview/tk.png</PreviewFile>
 		<Default/>
 	</SubMod>
@@ -2013,7 +2013,7 @@ Originally released as part of Kupo Mods formerly Mog-Addons
 	<SubMod>
 		<Name>Key Items Center Text [!New]</Name>
 		<InstallationPath>Features/KeyItem/KeyitemsAlign</InstallationPath>
-		<Description>Centers the text for UK and US version makign the alignment of text more consistent one changes the font</Description>
+		<Description>Centers the text for UK and US version making the alignment of text more consistent one</Description>
 		<PreviewFile>preview/tk.png</PreviewFile>
 		<Priority>15</Priority>
 		<Default/>
