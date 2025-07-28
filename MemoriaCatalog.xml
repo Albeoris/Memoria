@@ -2982,18 +2982,16 @@ Available Themes:
 
 <Mod>
 	<Name>Portraits Pack</Name>
-	<Version>4.2.7</Version>
-	<Priority>13</Priority>
+	<Version>4.2.8</Version>
+	<Priority>13</Priority>	
 	<InstallationPath>KupoPortraits</InstallationPath>
 	<ReleaseDate>2025-06-19</ReleaseDate>
 	<ReleaseDateOriginal>2021-10-18</ReleaseDateOriginal>
 	<Author>faospark</Author>
-	<Description>DFFOO portraits are included here. All presets support released and some planned Playable Character Pack characters. 
-Changelog: Mainly updated portraits for compatibility reasons for PCP . 
-
-
+	<Description>DFFOO-style portraits are included. All presets support released characters and select planned additions from the Playable Character Pack.
+Changelog: Flipped Priority Order for the mod to work properly.
 Mod Order: Place above Playable Character Pack, Beatrix Mod, Tantalus Mod, and Kupo UI Suite.
-Part of Kupo Mods formerly Mog Add-ons.
+Part of the Kupo Mods suite, formerly known as Mog Add-ons.
 	</Description>
 	<PatchNotes>See more on readme.txt</PatchNotes>
 	<Category>Visual</Category>
@@ -3007,13 +3005,14 @@ Part of Kupo Mods formerly Mog Add-ons.
 		<Name>Default Extended Cast</Name>
 		<InstallationPath>Features/PortraitDefault</InstallationPath>
 		<Description>Default Portraits with extended support</Description>
+		<Priority>5</Priority>
 		<Group>g-port</Group>
 		<PreviewFile>preview/ext.jpg</PreviewFile>
 	</SubMod>
 	<SubMod>
 		<Name>Default Pluto Knights / White Mage  </Name>
 		<InstallationPath>Features/PortraitDefaultPCP</InstallationPath>
-		<Description>For Extra costumes of PCP, must be used with default or PSX like portraits </Description>
+		<Description>For extra PCP costumes. Must be used alongside Default or PSX-like portraits.</Description>
 		<Priority>2</Priority>
 		<Group>g-port-extra</Group>
 		<PreviewFile>preview/ext-alt.jpg</PreviewFile>
@@ -3023,15 +3022,15 @@ Part of Kupo Mods formerly Mog Add-ons.
 		<Name>Opera Omnia</Name>
 		<InstallationPath>Features/PortraitOperaOmnia</InstallationPath>
 		<Description>Dissidia Opera Omnia Portraits</Description>
-		<Priority>1</Priority>
+		<Priority>5</Priority>
 		<Group>g-port</Group>
 		<PreviewFile>preview/dffoo-alt.jpg</PreviewFile>
 	</SubMod>
 	<SubMod>
 		<Name>DFFOO Pluto Knights / White Mage  </Name>
 		<InstallationPath>Features/PortraitOperaOmniaPCP</InstallationPath>
-		<Description>DFFOO Style for Extra costumes of PCP, must be used with the Opera Omnia portraits </Description>
-		<Priority>2</Priority>
+		<Description>DFFOO-style portraits for extra PCP costumes. Must be used with the Opera Omnia set.</Description>
+		<Priority>1</Priority>
 		<Group>g-port-extra</Group>
 		<PreviewFile>preview/dffoo.jpg</PreviewFile>
 	</SubMod>
@@ -3040,6 +3039,7 @@ Part of Kupo Mods formerly Mog Add-ons.
 		<Name>PSX Like</Name>
 		<InstallationPath>Features/PortraitPSXLike</InstallationPath>
 		<Description>PSX Like Portraits</Description>
+		<Priority>5</Priority>		
 		<Group>g-port</Group>
 		<PreviewFile>preview/psxlike.jpg</PreviewFile>
 	</SubMod>
@@ -3047,9 +3047,10 @@ Part of Kupo Mods formerly Mog Add-ons.
 		<Name>PSX Like Pluto Knights / White Mage </Name>
 		<InstallationPath>Features/PortraitPSXLikePCP</InstallationPath>
 		<Description>PSX Like Portraits</Description>
+		<Priority>2</Priority>		
 		<Group>g-port-extra</Group>
 		<PreviewFile>preview/psxlike.jpg</PreviewFile>
-	</SubMod>
+	</SubMod>	
 </Mod>
 
 <Mod>
