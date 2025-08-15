@@ -91,11 +91,11 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 	
 <Mod>
 	<Name>Trance Seek</Name>
-	<Version>0.3.35</Version>
+	<Version>0.3.36</Version>
 	<Priority>4</Priority>
 	<InstallationPath>TranceSeek</InstallationPath>
 	<ReleaseDateOriginal>28 Jan 2022</ReleaseDateOriginal>
-	<ReleaseDate>30 May 2025</ReleaseDate>
+	<ReleaseDate>15 Aug 2025</ReleaseDate>
 	<MinimumMemoriaVersion>2025-05-12</MinimumMemoriaVersion>
 	<Author>DV</Author>
 	<IncompatibleWith>Alternate Fantasy,Amazing Quina,Beatrix Mod,Black Cat - Endgame Shop,David Bowie Edition,Freya Game+,Garnet is Main Character,Perfect Stats,Play As Kuja,Playable Character Pack,Tantalus</IncompatibleWith>
@@ -123,29 +123,92 @@ Don't hesitate to try!
 Recommended language : Français / English (UK)
 Not supported language : Japanese (a lot of things get deleted... need to wait until full release... sorry !)</Description>
 	<PatchNotes>
-------[0.3.35]------
-{Characters}
-- Fixed Eiko's passive, which was appearing far too frequently.
+------[0.3.36]------
 
-{SA / AA Skills}
-- Fixed SA and AA skills that were granting a Trance bonus (failed to trigger the character's Trance).
-- Fixed the AA "Soul Blade" on allies.
-- The "Death" spell now triggers Vivi's passive.
+{New Features}
+- 2 new difficulty levels added: Beatrix and Ozma.
+Beatrix ⇒ Same as Necron but without the Gil and EXP penalty.
+Ozma ⇒ Same as Zidane, but you can no longer gain EXP beyond certain thresholds based on story progression.
+For example: max level 12 before defeating Gizamaluke, level 15 before the end of Disc 1, etc.
+In Ozma difficulty, you cannot change difficulty mid-game.
+- Rework of the Chocographs: rewards obtained from Chocographs have been revised.
+- More rewarding, with a new equipment piece as a prize!
+- 17 new equipment pieces added in this update.
+- 21 new weapons added… find them yourselves!
+- All level-1 Support Abilities (SA) are now available… normally. ^^
+- Rework of summon damage output and balance adjustments on certain SAs.
+
+{Characters}
+- Eiko’s passive trigger rate is slightly reduced.
+- Some effects of Eiko’s passive are now rarer than others.
+- Fixed a bug with Beatrix where she did not gain "Redemption" when protecting an ally with "Cover".
+
+{SA / AA Abilities}
+- Cost of SA "Steal Gil" : 5 → 2.
+- Cost of SA "High Tide" : 8 → 6. Effects of both SAs have been changed.
+- Cost of SA "EX Mode": 5 → 4.
+- Cost of SA "SOS Regen" : 4 → 6.
+- Cost of SA "Odin’s Sword": 5 → 3.
+- Cost of SA "Lethality" (Létalité): 3 → 5.
+- Effects of SA "Come here!" halved.
+- Effects of SA "Protector" increased.
+- Effects of SA "Boost" revised.
+- Effects of SA "Auto-Potion" revised.
+- Behavior of SA type "SOS" changed ⇒ the character receives the effect if the condition is met, but it no longer persists.
+To reapply the effect, the character must meet the condition again.
+- Summon damage formula revised.
+- MP cost of Ramuh: 22 → 24.
+- MP cost of Ifrit: 36 → 32.
+- Power of Ifrit reduced: 42 → 40.
+- Power of Odin increased: 46 → 61.
+- Power of Leviathan increased: 59 → 63.
+- Power of Bahamut reduced: 88 → 78.
+- Slight change to Bahamut’s effect under "Divine Aid".
+- Power of Fenril (Wind) reduced: 44 → 40.
+- Duration of Carbuncle’s effects shortened if using the short animation.
+- Carbuncle is now affected by SA "Boost".
+- Phoenix now uses the same damage formula as most summons.
+- Revive healing from Phoenix now based on a new formula.
+- MP cost of Phoenix: 32 → 58.
+- Power of Madeen : 71 → 88.
+- MP cost of Madeen: 58 → 72.
+- [WIP] "Shadow" and "Holy" spells are now more powerful than other spells of the same tier (e.g., Darkra vs Fira).
+- Power of "Prayaga" reduced: 20 → 15.
+- "Drain Sword" now correctly restores Steiner’s HP.
+- Fixed Poison-type damage bonus against Humanoids: 100% → 50%.
+- "Telekinesis" can now be reflected by Boomerang.
+- Fixed Dagger’s "White Magic" command which mistakenly listed "Confuse" twice.
 
 {Items}
-- 17 new weapon models, including Zidane's daggers/swords and 3 Vivi's Scepters.
-- [WIP] Adjusted the power of Zidane's daggers and swords: the new daggers are less powerful, while the Gladius, Zorlin, and Orichalcum swords are slightly more powerful.
-- Added a new weapon.
-- Fixed the Lamia’s Flute special effect.
-- Adjusted the behavior of the SPS effect on status immunities with magic weapons.
-- Some items have been renamed.
-- Fixed some descriptions.
+- 21 new weapons added.
+- 17 new equipment pieces, many obtainable via Chocographs.
+- Mithril Lance power slightly increased: 20 → 22.
+- Forkerature power reduced: 67 → 61.
+- [WIP] Most items’ elemental affinities revised, especially Darkness and Holy which are now rarer.
+- New icons for certain items.
+- [WIP] Items have been re-sorted, accessories are now better categorized.
+- "Dragon" status is now displayed on items and SAs.
+- Fixed abilities to be learned on the "Magic Racket".
 
-{Monsters + Bosses}
-- Fixed a softlock with the Sandworm.
+{Monsters & Bosses}
+- "Heat" status deals less damage on bosses (1/128 instead of 1/64).
+- Magic damage reduction from "Silence" on bosses increased (25% instead of 10%).
+- Stats and stealable/droppable items modified for several monsters.
+- Goblin AI fixed.
+- New animations for certain Lani spells, which have also been renamed.
 
 {Fields}
-- A new Easter egg has been added... ô_o
+- Starting items (and their quantities) vary depending on chosen difficulty.
+- Frog Catching mini-game rewards reworked.
+- Many shops and forges redesigned, notably in Alexandria, Treno, and Lindblum, with separate versions in Disc 3 and Disc 4.
+- Fixed Black Mage forge in US version at end of Disc 3.
+- Fixed a minor bug where the difficulty selection music persists if you soft reset on the Prima Vista first screen.
+
+{Miscellaneous}
+- 2 new difficulties: Beatrix and Ozma.
+- "Holy" element color slightly more pearlescent.
+- Multiple descriptions and texts corrected.
+- Fixed "Power Break" sprites where 1 pixel extended to the right.
 	</PatchNotes>
 	<Category>Gameplay</Category>
 	<PreviewFileUrl>https://i.ibb.co/HC3GH4j/Logo-Trance-Seek.png</PreviewFileUrl>
