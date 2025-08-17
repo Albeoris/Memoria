@@ -705,53 +705,54 @@ Bug Fixes:
 </Mod>
 
 <Mod>
-	<Name>1 Gem Support Ability Cost</Name>
-	<Version>4.1.6</Version>
-	<Priority>-3</Priority>	
-	<InstallationPath>KupoGemSATweak</InstallationPath>
-	<ReleaseDate>2025-07-28</ReleaseDate>
-	<ReleaseDateOriginal>2022-4-14</ReleaseDateOriginal>
-	<Author>faospark / Tirlititi </Author>
-	<Description> The Original 1 Gem Support Ability Mod. Easy to use, Simple to install, choose your option and compatible with most mods. 
-NO OVERWRITES, NO FILES, NO MESS.
+    <Name>1 Gem Support Ability Cost</Name>
+    <Version>4.1.7</Version>
+    <Priority>-3</Priority>	
+    <InstallationPath>KupoGemSATweak</InstallationPath>
+    <ReleaseDate>2025-08-17</ReleaseDate>
+    <ReleaseDateOriginal>2022-04-14</ReleaseDateOriginal>
+    <Author>faospark / Tirlititi</Author>
+    <Description>The original 1-gem support ability mod. Easy to use and simple to install — choose your option; compatible with most mods.
+NO OVERWRITES, NO EXTRA FILES, NO MESS.
 
-Allows You to have 1 Gem cost per support ability or Half.
-[1] 1 Gem Cost is activate by default 
-[2] Half the cost of Support abilities
-[3] Double the cost of Support abilities
+Allows you to set support abilities to cost 1 gem, half cost, or double cost.
+Options:
+[1] 1 Gem cost — activated by default
+[2] Half the cost of support abilities
+[3] Double the cost of support abilities
 
-Supports the following mods: Alternate Fantasy, Playable Character Pack, Playable Tantalus Mod, and Kupo Heroes Pack
+Supports the following mods: Alternate Fantasy, Playable Character Pack, Playable Tantalus Mod, and Kupo Heroes Pack.
 
-Mod Order : Position 1 or on top of Any Gameplay mods such as Alternate Fantasy , Playable Character pack. Tantalus Etc 
-This was the Original earliest public release of this type of Mod that modifies the Gem Cost of Support Abilities 
-Originally released as part of the tweaks of Kupo Mods formerly Mog Add-ons
-	</Description>
-	<PatchNotes>Updated Name and Description</PatchNotes>
-	<Category>Gameplay</Category>
-	<Website>https://www.nexusmods.com/finalfantasy9/mods/88</Website>
-	<DownloadUrl>https://drive.usercontent.google.com/download?id=1fp-oVdXSyGcJjEcUpIVHSCIHQwN5Sp6p&amp;export=download&amp;confirm=t</DownloadUrl>
-	<PreviewFile>preview/kupo-Gem.png</PreviewFile>
-	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313895-1564815189.png</PreviewFileUrl>
-	<MinimumMemoriaVersion>2024.05.19</MinimumMemoriaVersion>
-	<SubMod>
-		<Name>Tweak: 1 Gem cost Support Abilities</Name>
-		<InstallationPath>Features/Tweaks/Ability</InstallationPath>
-		<Description>1 Gem Support Ability</Description>
-		<Default/>
-		<Group>g-ab</Group>
-	</SubMod>
-	<SubMod>
-		<Name>Tweak: Half Cost of Support Abilities</Name>
-		<InstallationPath>Features/Tweaks/AbilityHalf</InstallationPath>
-		<Description>Cuts ability gems to half for support abilities </Description>
-		<Group>g-ab</Group>
-	</SubMod>
-	<SubMod>
-		<Name>Tweak: Double Cost of Support Abilities</Name>
-		<InstallationPath>Features/Tweaks/AbilityDbl</InstallationPath>
-		<Description>Doubles the gem requirement for support abilities for increased difficulty </Description>
-		<Group>g-ab</Group>
-	</SubMod>
+Mod order: Place this mod at position 1 or on top of any gameplay mods such as Alternate Fantasy, Playable Character Pack, Tantalus, etc.
+This was the earliest public release of this type of mod that modifies the gem cost of support abilities.
+Originally released as part of the tweaks for Kupo Mods (formerly Mog Add-ons).
+    </Description>
+    <PatchNotes>Updated name and description</PatchNotes>
+    <Category>Gameplay</Category>
+    <Website>https://www.nexusmods.com/finalfantasy9/mods/88</Website>
+    <DownloadUrl>https://drive.usercontent.google.com/download?id=1fp-oVdXSyGcJjEcUpIVHSCIHQwN5Sp6p&amp;export=download&amp;confirm=t</DownloadUrl>
+    <PreviewFile>preview/kupo-Gem.png</PreviewFile>
+    <PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313895-1564815189.png</PreviewFileUrl>
+    <MinimumMemoriaVersion>2024.05.19</MinimumMemoriaVersion>
+    <SubMod>
+        <Name>Tweak: 1 Gem cost Support Abilities</Name>
+        <InstallationPath>Features/Tweaks/Ability</InstallationPath>
+        <Description>Sets support abilities to cost 1 gem.</Description>
+        <Default/>
+        <Group>g-ab</Group>
+    </SubMod>
+    <SubMod>
+        <Name>Tweak: Half Cost of Support Abilities</Name>
+        <InstallationPath>Features/Tweaks/AbilityHalf</InstallationPath>
+        <Description>Halves the gem cost of support abilities.</Description>
+        <Group>g-ab</Group>
+    </SubMod>
+    <SubMod>
+        <Name>Tweak: Double Cost of Support Abilities</Name>
+        <InstallationPath>Features/Tweaks/AbilityDbl</InstallationPath>
+        <Description>Doubles the gem cost of support abilities (increased difficulty).</Description>
+        <Group>g-ab</Group>
+    </SubMod>
 </Mod>
 
 <Mod>
@@ -3383,18 +3384,17 @@ Idea by Snouz and made by DV.</Description>
 
 <Mod>
 	<Name>Modern Labels + </Name>
-	<Version>4.1.8</Version>
-	<Priority>18</Priority>
+	<Version>4.1.9</Version>
+	<Priority>15</Priority>
 	<InstallationPath>KupoModernLabels</InstallationPath>
-	<ReleaseDate>2025-06-27</ReleaseDate>
+	<ReleaseDate>2025-08-17</ReleaseDate>
 	<ReleaseDateOriginal>2024-10-01</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>A mod that replaces old item, spell and UI names / labels to their modern counterparts or their now known consistent naming convention 
 Ideal for those who were introduced to the series post final fantasy 12. Simply activate and that should work. 
-For now the primary focus of the mod is the US and UK translation of the game so non english language players feel free to message me if you have something you want to change in your 
-Language of choice. 
+For now the primary focus of the mod is the US and UK translation of the game, so non-English language players feel free to message me if you have suggestions or requests for your language of choice.
 	</Description>
-	<PatchNotes>Added Intended default names of Amarant and Freya</PatchNotes>
+	<PatchNotes>Added suggestions of AdmiralBloaf and SuperSanityMan. Read more on the read me file</PatchNotes>
 	<Category>Translation</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/74</Website>
 	<DownloadUrl>https://drive.usercontent.google.com/download?id=13u-acfqaEhYAi4IxkHV7Kj0HSajyne-Y&amp;export=download&amp;confirm=t</DownloadUrl>
@@ -3408,8 +3408,8 @@ Language of choice.
 		<Priority>1</Priority>
 		<Default/>
 	</SubMod>
-		<SubMod>
-		<Name>Freija and Salamander</Name>
+	<SubMod>
+		<Name>Freija and Salamader</Name>
 		<InstallationPath>Names</InstallationPath>
 		<Description>Changes the default names of Freya and Amarant for both English Translations</Description>
 		<Priority>2</Priority>
