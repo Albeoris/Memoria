@@ -91,11 +91,11 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 	
 <Mod>
 	<Name>Trance Seek</Name>
-	<Version>0.3.36</Version>
+	<Version>0.3.36.1</Version>
 	<Priority>4</Priority>
 	<InstallationPath>TranceSeek</InstallationPath>
 	<ReleaseDateOriginal>28 Jan 2022</ReleaseDateOriginal>
-	<ReleaseDate>15 Aug 2025</ReleaseDate>
+	<ReleaseDate>17 Aug 2025</ReleaseDate>
 	<MinimumMemoriaVersion>2025-05-12</MinimumMemoriaVersion>
 	<Author>DV</Author>
 	<IncompatibleWith>Alternate Fantasy,Amazing Quina,Beatrix Mod,Black Cat - Endgame Shop,David Bowie Edition,Freya Game+,Garnet is Main Character,Perfect Stats,Play As Kuja,Playable Character Pack,Tantalus</IncompatibleWith>
@@ -123,6 +123,42 @@ Don't hesitate to try!
 Recommended language : Français / English (UK)
 Not supported language : Japanese (a lot of things get deleted... need to wait until full release... sorry !)</Description>
 	<PatchNotes>
+------[0.3.36.1]------
+
+{New Features}
+- 4 new options are available as a SubMod:
+⇒ HP is colored green when at maximum.
+⇒ MP is colored blue when at maximum.
+⇒ The number of gems has a slight coloration.
+⇒ Creates a StuffListed.txt file at the start of each battle, listing each character's stats, equipment, and SA.
+Useful for YouTube video descriptions or guides.
+
+These options can be enabled/disabled via the mod options in the Memoria launcher.
+
+{Characters}
+- Fix for Freya so she can stack Dragon with her weapon or specific skills under Naströnd.
+
+{SA / AA Abilities}
+- Correction of the name "Gourmandise" in all languages except FR.
+- Changed descriptions for Power Break, Magic Break, Armor Break, and Mental Break.
+- New icons, notably for stat modifications.
+- Correction of various descriptions.
+
+{Items}
+- Overhaul of the damage formula for one of the new weapons.
+- Adjustment of the power of certain weapons.
+- Fix for sorting of some weapons.
+
+{Monsters & Bosses}
+- Fix for a bug in Black Waltz 2's AI.
+- Fix for a bug in Gizamaluke's AI.
+
+{Fields}
+- Based on numerous feedbacks, displays an alert message for the Treno auctions to provide explanations.
+
+{Miscellaneous}
+- Fix for the damage formula when a -25% debuff is applied.
+
 ------[0.3.36]------
 
 {New Features}
