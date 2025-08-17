@@ -149,7 +149,7 @@ These options can be enabled/disabled via the mod options in the Memoria launche
 - Adjustment of the power of certain weapons.
 - Fix for sorting of some weapons.
 
-{Monsters & Bosses}
+{Monsters + Bosses}
 - Fix for a bug in Black Waltz 2's AI.
 - Fix for a bug in Gizamaluke's AI.
 
@@ -226,7 +226,7 @@ To reapply the effect, the character must meet the condition again.
 - "Dragon" status is now displayed on items and SAs.
 - Fixed abilities to be learned on the "Magic Racket".
 
-{Monsters & Bosses}
+{Monsters + Bosses}
 - "Heat" status deals less damage on bosses (1/128 instead of 1/64).
 - Magic damage reduction from "Silence" on bosses increased (25% instead of 10%).
 - Stats and stealable/droppable items modified for several monsters.
