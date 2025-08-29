@@ -2700,10 +2700,10 @@ public partial class BattleHUD : UIScene
 
                 btl.max.hp = Math.Max(1, btl.max.hp + player.max.hp - beforeMenu.max.hp);
                 btl.max.mp = Math.Max(0, btl.max.mp + player.max.mp - beforeMenu.max.mp);
-                btl.elem.dex = (Byte)Mathf.Clamp(player.elem.dex + player.elem.dex - beforeMenu.elem.dex, 0, Byte.MaxValue);
-                btl.elem.str = (Byte)Mathf.Clamp(player.elem.str + player.elem.str - beforeMenu.elem.str, 0, Byte.MaxValue);
-                btl.elem.mgc = (Byte)Mathf.Clamp(player.elem.mgc + player.elem.mgc - beforeMenu.elem.mgc, 0, Byte.MaxValue);
-                btl.elem.wpr = (Byte)Mathf.Clamp(player.elem.wpr + player.elem.wpr - beforeMenu.elem.wpr, 0, Byte.MaxValue);
+                btl.elem.dex = (Byte)Mathf.Clamp(btl.elem.dex + player.elem.dex - beforeMenu.elem.dex, 0, Byte.MaxValue);
+                btl.elem.str = (Byte)Mathf.Clamp(btl.elem.str + player.elem.str - beforeMenu.elem.str, 0, Byte.MaxValue);
+                btl.elem.mgc = (Byte)Mathf.Clamp(btl.elem.mgc + player.elem.mgc - beforeMenu.elem.mgc, 0, Byte.MaxValue);
+                btl.elem.wpr = (Byte)Mathf.Clamp(btl.elem.wpr + player.elem.wpr - beforeMenu.elem.wpr, 0, Byte.MaxValue);
                 btl.defence.PhysicalDefence = Math.Max(0, btl.defence.PhysicalDefence + player.defence.PhysicalDefence - beforeMenu.defence.PhysicalDefence);
                 btl.defence.PhysicalEvade = Math.Max(0, btl.defence.PhysicalEvade + player.defence.PhysicalEvade - beforeMenu.defence.PhysicalEvade);
                 btl.defence.MagicalDefence = Math.Max(0, btl.defence.MagicalDefence + player.defence.MagicalDefence - beforeMenu.defence.MagicalDefence);
