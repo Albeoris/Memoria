@@ -45,6 +45,39 @@ Snouz - syncronization</Description>
 </Mod>
 
 <Mod>
+	<Name>4K Video Pack</Name>
+	<Version>1.0</Version>
+	<Priority>-31</Priority>
+	<InstallationPath>4K Video Pack - Ultimate Remaster</InstallationPath>
+	<Author>Ultimate Remaster</Author>
+	<Category>Visual</Category>
+	<ReleaseDateOriginal>2025-08-27</ReleaseDateOriginal>
+	<ReleaseDate>2025-08-27</ReleaseDate>
+	<Description>A QUARTER OF A CENTURY LATER, THE LEGEND SHINES BRIGHTER...
+
+    Today, in celebration of its 25th anniversary (July 7, 2025), this remaster transforms every FMV into true 4k high definition (2880x2160p 4:3) — restoring details lost over time to heavy compression, pixelation, noise, and blur, all while faithfully preserving the original artistic style with professional care, patience, hard work and a lot of time leveraging AI and handmade adjustments, to bring back the timeless beauty of a game that defined a generation, and that, to this day, lives in the hearts of thousands of people.
+
+    EACH SCENE HAS BEEN METICULOUSLY RESTORED TO:
+
+    1) Remove compression artifacts and visual noise, resulting in a cleaner, more polished image.
+    2) Sharpen and restore fine details in textures, architecture, and character models.
+    3) Improve overall clarity and color balance, giving each scene richer tones without oversaturation.
+    4) Optimize motion playback through encoding refinements, adjusting frame timing and keyframe placement to enhance smoothness.
+
+    MOD PRIORITY:
+    This mod needs to be positioned above the Moguri Mods in the Installed Mods list here in Memoria Launcher, otherwise Moguri Mod Motion Backgrouns and FMVs will bypass the 4k remastered videos and prevent them from being displayed.
+
+    I HOPE YOU ALL ENJOY IT!
+    Best regards,
+    Ultimate Remaster
+	</Description>
+	<Website>https://youtube.com/@UltimateRemasterGames</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/1r9cf5t7o1534ekuzuex6/4K-Video-Pack-Ultimate-Remaster.zip?rlkey=f9oh2b2gyvddz0om2ga68wpcq&amp;st=mbhafkqv&amp;dl=1</DownloadUrl>
+	<DownloadFormat>Zip</DownloadFormat>
+	<PreviewFileUrl>https://raw.githubusercontent.com/UltimateRemaster/ultimate-remaster-assets/main/Ultimate%20Remaster%20-%204k%20Video%20Pack%20Memoria%20(1).png</PreviewFileUrl>
+</Mod>
+
+<Mod>
 	<Name>Alternate Fantasy</Name>
 	<Version>6.8</Version>
 	<Priority>-17</Priority>
@@ -1625,6 +1658,82 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 </Mod>
 
 <Mod>
+	<Name>Ferny Fantasy IX</Name>
+	<Author>FernyFer</Author>
+	<Version>0.8</Version>
+	<InstallationPath>FernyFantasyIX</InstallationPath>
+	<ReleaseDate>2025-09-01</ReleaseDate>
+	<ReleaseDateOriginal>2025-06-19</ReleaseDateOriginal>
+	<MinimumMemoriaVersion>2025-05-11</MinimumMemoriaVersion>
+	<PatchNotes>This mod is still in BETA - content "ends" at the end of Disc 3.</PatchNotes>
+	<PreviewFile>logo.png</PreviewFile>
+	<Category>Gameplay</Category>
+	<Description>A complete combat overhaul mod aimed to bring a new feel to the battle system and crank the difficulty up a few notches.
+
+
+This mod includes an overhaul of MANY systems, including brand new passives, character skills, tons of new items, mini-bosses, revamped boss battles,
+and so much more.This mod is a WIP and I highly appreciate any and all feedback you might have so that I can make it as great as it can be. I hope you enjoy what I've done!
+
+
+*** IMPORTANT ***
+This mod was balanced with `Turn-Based ATB` mode in mind. Make sure to enable it to experience the mod the way it was intended to be played. Buff/debuff durations and
+boss mechanics are all tuned around the ATB not "ticking" while animations are playing (as they do in other ATB modes), and this will greatly impact the flow of combat
+if not set.
+
+
+{Load Order, Incompatibility, and Credits}
+[Mods and Load Order:]
+    (1) Ferny Fantasy IX - 'Place above AF'
+    (2) Alternate Fantasy - 'REQUIRED'
+
+
+[Optional] 
+    * FernyDifficultyTweaks - Ferny Fantasy is already a significant difficulty spike compared to vanilla, only use this mod if you want even more challenge. Place it above FernyFantasy.
+
+
+[Optional]
+    * Kupo UI Suite - 'place my mod above theirs to use my custom title screen, otherwise, you can place Kupo UI Suite above mine to use one of their titles.'
+
+
+[Optional]
+    * All graphical and music mods are compatible with Ferny Fantasy.
+
+
+[Incompatibility]
+My mod is not compatible with any of the following mods (more details in CREDITS section).
+    (1) Kupo Heroes Pack (see Credits)
+    (2) Amazing Vivi, Steiner, Garnet, etc. Series (See Credits)
+    (3) Amazing Abilities - Both mods replace "Healer" Support Ability
+    (4) David Bowie Edition - my mod REQUIRES Alternate Fantasy and AF is incompatible with DB.
+    (5) Trance Seek - Both aim to overhaul the game but in different ways. 
+    (5) FernySupportTweaks - Redundant to use with this mod as they do the same thing with support abilities.
+    (6) FernyTranceTweaks - Redundant to use with this mod as they do the same thing with support abilities.
+
+
+[Credit]
+Credit will go to where it is rightfully deserved. I took a lot of the best ideas, skills, passives, spells, items, etc. of some of the above mentioned mods and combined them into my mod for maximum compatibility. They did amazing work with the mods they made, but there were some compatibility issues if you wanted to use them all AND Alternate Fantasy together. Now, with my mod, that is possible. I want to say thank you to the following:
+
+
+{Emeiru} - Creator of the "Amazing Character" Series and "Perfect Stats." His code was used as a base for the Attributess/Magic Stones formulas in my mod. Adopted his "Bye Auto Potion" and the majority of his AF patched support abilities for each character.
+
+
+{WarpedEdge} - Creator of the "Playable Characters Pack" for all their help and inspiration. 
+
+
+{Faospark} - Creator of "Kupo Heroes Pack." I adapted a ton of his spells/abilities, such as Aero, Quake, Water, etc. series, as well about 70% of the passives for each of the characters in that pack. 
+
+
+{DV} - Trance Seek mod author for assisting me with a handful of codes that I was having trouble with.
+
+
+{Tirlititi} - Alternate Fantasy mod author for his amazing work with Alternate Fantasy, assisting me with code, and of course all his contributions to the FF9 modding community. Seriously dude, thank you.
+	</Description>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/117</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/6xpr123v7gooaoz94k5u6/FernyFantasyIX.zip?rlkey=zy4dtz009exgxdbshzqizvhed&amp;st=x9ao3d4p&amp;dl=1</DownloadUrl>
+	<PreviewFileUrl>https://i.imgur.com/Hn25x1M.png</PreviewFileUrl>
+</Mod>
+
+<Mod>
 	<Name>FernySupportTweaks</Name>
 	<Version>1.4.4</Version>
 	<Priority>2</Priority>
@@ -2592,330 +2701,329 @@ Custom Tracks for Specific Fights (i.e, Baku, The Black Waltz trio, Zorn &amp; T
     <PreviewFile>Banner.png</PreviewFile>
     <PreviewFileUrl>https://i.imgur.com/ikTEOnY.png</PreviewFileUrl>
     <MinimumMemoriaVersion></MinimumMemoriaVersion>
-<Header>Battle 1</Header>
-<SubMod>
-<Name>Battle 1 ~8bit~</Name>
-<InstallationPath>Battle18bit</InstallationPath>
-<Description>Replaces Battle 1 with an 8bit remix made by Taroimo!</Description>
-<Group>BATTLE 1</Group>
-</SubMod>
-<SubMod>
-<Name>Battle 1 ~arrange~</Name>
-<InstallationPath>Battle1Arrange</InstallationPath>
-<Description>Replaces Battle 1 with the arranged version from Dissidia: Final Fantasy!</Description>
-<Group>BATTLE 1</Group>
-</SubMod>
-<SubMod>
-<Name>Battle 1 ~Enrico Deiana Ver.~</Name>
-<InstallationPath>Battle1Remix</InstallationPath>
-<Description>Replaces Battle 1 with Enrico Deiana's remixed version!</Description>
-<Group>BATTLE 1</Group>
-</SubMod>
-<SubMod>
-<Name>Battle 1 (Chrono Trigger) ~Enrico Deiana Ver.~</Name>
-<InstallationPath>Battle1CTRemix</InstallationPath>
-<Description>Replaces Battle 1 with Enrico Deiana's remixed version of the Chrono Trigger battle theme!</Description>
-<Group>BATTLE 1</Group>
-</SubMod>
-<SubMod>
-<Name>Battle 1 ~Record Keeper Ver.~</Name>
-<InstallationPath>Battle1Record Keeper</InstallationPath>
-<Description>Replaces Battle 1 with the Record Keeper version!</Description>
-<Group>BATTLE 1</Group>
-</SubMod>
-<SubMod>
-<Name>Kingdom Valley Act 1</Name>
-<InstallationPath>KingdomValleyAct1</InstallationPath>
-<Description>Replaces Battle 1 with the first level of Kingdom Valley from Sonic X Shadow Generations!</Description>
-<Group>BATTLE 1</Group>
-</SubMod>
-<SubMod>
-<Name>You Will Know Our Names</Name>
-<InstallationPath>YouWillKnowOurNames</InstallationPath>
-<Description>Replaces Battle 1 with the remastered Unique Monster battle theme from Xenoblade Chronicles: Definitive Edition!</Description>
-<Group>BATTLE 1</Group>
-</SubMod>
-<Header>Swords of Fury/Feel My Blade</Header>
-<SubMod>
-<Name>Swords of Fury ~Enrico Deiana Ver.~</Name>
-<InstallationPath>FeelMyBladeRemix</InstallationPath>
-<Description>Replaces track with Enrico Deiana's remixed version!</Description>
-<Group>FURY</Group>
-</SubMod>
-<SubMod>
-<Name>Swords of Fury ~Daric Shire Ver.~</Name>
-<InstallationPath>FeelMyBladeOrchestra</InstallationPath>
-<Description>Replaces track with an orchestrated version made by Daric Shire!</Description>
-<Group>FURY</Group>
-</SubMod>
-<Header>Victory Fanfare</Header>
-<SubMod>
-<Name>Victory Fanfare ~8bit~</Name>
-<InstallationPath>VictoryFanfare8bit</InstallationPath>
-<Description>Replaces Victory Fanfare with an 8bit version made by 8-bit Tunes.</Description>
-<Group>YAY ME</Group>
-</SubMod>
-<SubMod>
-<Name>Victory Fanfare ~FFVIIR~</Name>
-<InstallationPath>VictoryFanfareFF7R</InstallationPath>
-<Description>Replaces Victory Fanfare with FFVII Remake's version.</Description>
-<Group>YAY ME</Group>
-</SubMod>
-<SubMod>
-<Name>Victory Fanfare Orchestral Remake</Name>
-<InstallationPath>VictoryFanfare</InstallationPath>
-<Description>Replaces Victory Fanfare with Joshua Hunt's version.</Description>
-<Group>YAY ME</Group>
-</SubMod>
-<Header>Battle 2</Header>
-<SubMod>
-<Name>Battle 2 ~8bit~</Name>
-<InstallationPath>Battle28bit</InstallationPath>
-<Description>Replaces Battle 2 with an 8bit remix made by Taroimo!</Description>
-<Group>BATTLE 2</Group>
-</SubMod>
-<SubMod>
-<Name>Battle 2 ~Record Keeper Ver.~</Name>
-<InstallationPath>Battle2RecordKeeper</InstallationPath>
-<Description>Replaces Battle 2 with the Record Keeper version!</Description>
-<Group>BATTLE 2</Group>
-</SubMod>
-<SubMod>
-<Name>A Bet On This Bout</Name>
-<InstallationPath>ABetOnThisBout</InstallationPath>
-<Description>Replaces Battle 2 with the boss theme from Tales of Vesperia!</Description>
-<Group>BATTLE 2</Group>
-</SubMod>
-<SubMod>
-<Name>Boss B</Name>
-<InstallationPath>BossB</InstallationPath>
-<Description>Replaces Battle 2 with the second boss theme from Star Fox Zero!</Description>
-<Group>BATTLE 2</Group>
-</SubMod>
-<SubMod>
-<Name>Boss Battle 1 ~Orchestra Arrangement~</Name>
-<InstallationPath>BossBattle1CTArrange</InstallationPath>
-<Description>Replaces Battle 2 with an arrangement of Chrono Trigger's first boss theme made by Pokestir!</Description>
-<Group>BATTLE 2</Group>
-</SubMod>
-<SubMod>
-<Name>Finality</Name>
-<InstallationPath>Finality</InstallationPath>
-<Description>Replaces Battle 2 with the dungeon boss theme from Final Fantasy XIV's Endwalker expansion!</Description>
-<Group>BATTLE 2</Group>
-</SubMod>
-<SubMod>
-<Name>Force Your Way ~Orchestral Battle Arrange~</Name>
-<InstallationPath>ForceYourWayOrchestra</InstallationPath>
-<Description>Replaces Battle 2 with an orchestral arrangement of FFVIII's boss theme by Jericho George!</Description>
-<Group>BATTLE 2</Group>
-</SubMod>
-<SubMod>
-<Name>Incoming!</Name>
-<InstallationPath>Incoming!</InstallationPath>
-<Description>Replaces Battle 2 with the one of the many boss themes from Xenoblade Chronicles 2!</Description>
-<Group>BATTLE 2</Group>
-</SubMod>
-<Header>Run!</Header>
-<SubMod>
-<Name>Hurry!! ~Enrico Deiana Ver.~</Name>
-<InstallationPath>HurryRemix</InstallationPath>
-<Description>Replaces Run! with a remixed version of FFVII's Hurry!! made by Enrico Deiana!</Description>
-<Group>RUN</Group>
-</SubMod>
-<SubMod>
-<Name>Never Look Back ~Enrico Deiana Ver.~</Name>
-<InstallationPath>NeverLookBackRemix</InstallationPath>
-<Description>Replaces Run! with a remixed version of FFVIII's Never Look Back made by Enrico Deiana!</Description>
-<Group>RUN</Group>
-</SubMod>
-<SubMod>
-<Name>Run! ~FFX Remaster~</Name>
-<InstallationPath>RunFFXRemaster</InstallationPath>
-<Description>Replaces Run! with FFX Remaster's version with the same name!</Description>
-<Group>RUN</Group>
-</SubMod>
-<SubMod>
-<Name>Run! ~FFXIV Endwalker Ver.~</Name>
-<InstallationPath>RunEndwalker</InstallationPath>
-<Description>Replaces Run! with the version from Final Fantasy XIV: Endwalker!</Description>
-<Group>RUN</Group>
-</SubMod>
-<SubMod>
-<Name>Unforgiven ~Arrange~</Name>
-<InstallationPath>UnforgivenArrange</InstallationPath>
-<Description>Replaces Run! with an arranged version of FFVI's Unforgiven by Dracula9AntiChapel!</Description>
-<Group>RUN</Group>
-</SubMod>
-<Header>Faerie Battle</Header>
-<SubMod>
-<Name>Faerie Battle ~JSF Music ver.~</Name>
-<InstallationPath>FaerieBattleRemix</InstallationPath>
-<Description>Replaces Faerie Battle with a remixed version made by JSF Music!</Description>
-<Group>FAERIE</Group>
-</SubMod>
-<SubMod>
-<Name>Mid-Boss Room</Name>
-<InstallationPath>MidBossRoom</InstallationPath>
-<Description>Replaces Faerie Battle with the Mid-Boss Room remix from Kirby AirRide!</Description>
-<Group>FAERIE</Group>
-</SubMod>
-<Header>Festival of the Hunt/Hunter's Chance</Header>
-<SubMod>
-<Name>Festival of the Hunt ~Enrico Deiana Ver.~</Name>
-<InstallationPath>FestivaloftheHuntRemix</InstallationPath>
-<Description>Replaces track with Enrico Deiana's remixed version!</Description>
-<Group>HUNTER</Group>
-</SubMod>
-<SubMod>
-<Name>Festival of the Hunt ~FFXIV Endwalker Ver.~</Name>
-<InstallationPath>FestivaloftheHunt</InstallationPath>
-<Description>Replaces Festival of the Hunt with the version from Final Fantasy XIV: Endwalker!</Description>
-<Group>HUNTER</Group>
-</SubMod>
-<SubMod>
-<Name>Menu (Melee)</Name>
-<InstallationPath>MeleeMenu</InstallationPath>
-<Description>Replaces Festival of the Hunt with an arrangement of Super Smash Bros Melee's Menu Theme (from SSBB)!</Description>
-<Group>HUNTER</Group>
-</SubMod>
-<Header>The Wavering Blade/Sword of Doubt</Header>
-<SubMod>
-<Name>Aqua ~Dark Dive~</Name>
-<InstallationPath>AquaDarkDive(Kingdom Hearts III)</InstallationPath>
-<Description>Replaces track with Aqua's boss theme from Kingdom Hearts III!</Description>
-<Group>BLADE</Group>
-</SubMod>
-<SubMod>
-<Name>Kiryu G@ Ki LI</Name>
-<InstallationPath>Kiryu</InstallationPath>
-<Description>Replaces track with Satsuki's theme from Kill la Kill!</Description>
-<Group>BLADE</Group>
-</SubMod>
-<SubMod>
-<Name>Sad but True</Name>
-<InstallationPath>SadbutTrue</InstallationPath>
-<Description>Replaces track with Jill Valentine's boss theme from Resident Evil 5!</Description>
-<Group>BLADE</Group>
-</SubMod>
-<SubMod>
-<Name>Spring Meadows - Beneath the Blue Tree</Name>
-<InstallationPath>BeneaththeBlueTree</InstallationPath>
-<Description>Replaces track with Eveque's boss theme from Clair Obsur: Expedition 33!</Description>
-<Group>BLADE</Group>
-</SubMod>
-<SubMod>
-<Name>The Wavering Blade ~Enrico Deiana Ver.~</Name>
-<InstallationPath>WaveringRemix</InstallationPath>
-<Description>Replaces track with Enrico Deiana's remixed version!</Description>
-<Group>BLADE</Group>
-</SubMod>
-<Header>City Under Siege/Ambush Attack</Header>
-<SubMod>
-<Name>Corneria ~SF Assault~</Name>
-<InstallationPath>CorneriaAssault</InstallationPath>
-<Description>Replaces track with the orchestrated version of Corneria from Star Fox Assault!</Description>
-<Group>SIEGE</Group>
-</SubMod>
-<Header>Something to Protect/Protecting My Devotion</Header>
-<SubMod>
-<Name>Menu (Brawl)</Name>
-<InstallationPath>BrawlMenu</InstallationPath>
-<Description>Replaces track with SSBB's main menu theme!</Description>
-<Group>PROTECT</Group>
-</SubMod>
-<SubMod>
-<Name>Something to Protect ~GaMetal Ver.~</Name>
-<InstallationPath>SomethingtoProtectRemix</InstallationPath>
-<Description>Replaces track with GaMetal's remixed version!</Description>
-<Group>PROTECT</Group>
-</SubMod>
-<SubMod>
-<Name>Something to Protect ~Daric Shire Ver.~</Name>
-<InstallationPath>SomethingtoProtectOrchestra</InstallationPath>
-<Description>Replaces track with an orchestrated version made by Daric Shire!</Description>
-<Group>PROTECT</Group>
-</SubMod>
-<SubMod>
-<Name>Together We Ride (SSBM)</Name>
-<InstallationPath>TogetherWeRide</InstallationPath>
-<Description>Replaces track with an arrangement of Fire Emblem's "Together We Ride" (from SSBM)!</Description>
-<Group>PROTECT</Group>
-</SubMod>
-<Header>Not Alone/You're Not Alone</Header>
-<SubMod>
-<Name>Not Alone ~GaMetal Ver.~</Name>
-<InstallationPath>NotAloneGaMetal</InstallationPath>
-<Description>Replaces track with GaMetal's remixed version!</Description>
-<Group>FRIENDS</Group>
-</SubMod>
-<SubMod>
-<Name>Not Alone ~Enrico Deiana Ver.~</Name>
-<InstallationPath>NotAloneRemix</InstallationPath>
-<Description>Replaces track with GaMetal's remixed version!</Description>
-<Group>FRIENDS</Group>
-</SubMod>
-<Header>The Darkness of Eternity/Dark Messenger</Header>
-<SubMod>
-<Name>Dark Messenger ~Enrico Deiana Ver.~</Name>
-<InstallationPath>DarkMessengerRemix</InstallationPath>
-<Description>Replaces track with Enrico Deiana's remixed version!</Description>
-<Group>KUJA</Group>
-</SubMod>
-<SubMod>
-<Name>Forza Finale</Name>
-<InstallationPath>ForzaFinale</InstallationPath>
-<Description>Replaces track with the boss theme of Ansem (Seeker of Darkness), Xemnas, and Young Xehanort from Kingdom Hearts III!</Description>
-<Group>KUJA</Group>
-</SubMod>
-<SubMod>
-<Name>Hellfire</Name>
-<InstallationPath>Hellfire</InstallationPath>
-<Description>Replaces track with the boss theme of Ifrit from Final Fantasy XV!</Description>
-<Group>KUJA</Group>
-</SubMod>
-<SubMod>
-<Name>Moebius Battle</Name>
-<InstallationPath>MoebiusBattle</InstallationPath>
-<Description>Replaces track with the boss theme of the Consul from Xenoblade Chronicles III!</Description>
-<Group>KUJA</Group>
-</SubMod>
-<SubMod>
-<Name>Wind of Madness ~Orchestra~</Name>
-<InstallationPath>WindofMadness</InstallationPath>
-<Description>Replaces track with the orchestrated version of Wesker's boss theme from Resident Evil 5!</Description>
-<Group>KUJA</Group>
-</SubMod>
-<Header>The Final Battle/Grand Cross</Header>
-<SubMod>
-<Name>The Final Battle ~Record Keeper Ver.~</Name>
-<InstallationPath>FinalBattleRecordKeeper</InstallationPath>
-<Description>Replaces track with the Record Keeper version!</Description>
-<Group>NECRON</Group>
-</SubMod>
-<SubMod>
-<Name>Grand Cross</Name>
-<InstallationPath>GrandCross</InstallationPath>
-<Description>Replaces track with the hard rock version titled "Grand Cross", arranged by The Black Mages!</Description>
-<Group>NECRON</Group>
-</SubMod>
-<SubMod>
-<Name>Zero World</Name>
-<InstallationPath>ZeroWorld</InstallationPath>
-<Description>Replaces track with OverClocked ReMix's version. 
-Intro loop was also customized using Mortal Kombat Deception's Menu theme and added horror sounds in the background!</Description>
-<Group>NECRON</Group>
-</SubMod>
-<Header>Echoes of Gaia [Vanilla Only]</Header>
-<SubMod>
-<Name>Enable/Disable</Name>
-<InstallationPath>EchoesofGaia</InstallationPath>
-<Description>An expansion that allows regular battle &amp; boss music to be replaced individually with unique songs to give a FFIX playthrough an imaginable and enjoyable remake vibe! Inspired by FFVII Remake &amp; Rebirth's battle music transitions. Music during Full Animation Summons has also been added!
+	<Header>Battle 1</Header>
+	<SubMod>
+		<Name>Battle 1 ~8bit~</Name>
+		<InstallationPath>Battle18bit</InstallationPath>
+		<Description>Replaces Battle 1 with an 8bit remix made by Taroimo!</Description>
+		<Group>BATTLE 1</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Battle 1 ~arrange~</Name>
+		<InstallationPath>Battle1Arrange</InstallationPath>
+		<Description>Replaces Battle 1 with the arranged version from Dissidia: Final Fantasy!</Description>
+		<Group>BATTLE 1</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Battle 1 ~Enrico Deiana Ver.~</Name>
+		<InstallationPath>Battle1Remix</InstallationPath>
+		<Description>Replaces Battle 1 with Enrico Deiana's remixed version!</Description>
+		<Group>BATTLE 1</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Battle 1 (Chrono Trigger) ~Enrico Deiana Ver.~</Name>
+		<InstallationPath>Battle1CTRemix</InstallationPath>
+		<Description>Replaces Battle 1 with Enrico Deiana's remixed version of the Chrono Trigger battle theme!</Description>
+		<Group>BATTLE 1</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Battle 1 ~Record Keeper Ver.~</Name>
+		<InstallationPath>Battle1Record Keeper</InstallationPath>
+		<Description>Replaces Battle 1 with the Record Keeper version!</Description>
+		<Group>BATTLE 1</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Kingdom Valley Act 1</Name>
+		<InstallationPath>KingdomValleyAct1</InstallationPath>
+		<Description>Replaces Battle 1 with the first level of Kingdom Valley from Sonic X Shadow Generations!</Description>
+		<Group>BATTLE 1</Group>
+	</SubMod>
+	<SubMod>
+		<Name>You Will Know Our Names</Name>
+		<InstallationPath>YouWillKnowOurNames</InstallationPath>
+		<Description>Replaces Battle 1 with the remastered Unique Monster battle theme from Xenoblade Chronicles: Definitive Edition!</Description>
+		<Group>BATTLE 1</Group>
+	</SubMod>
+	<Header>Swords of Fury/Feel My Blade</Header>
+	<SubMod>
+		<Name>Swords of Fury ~Enrico Deiana Ver.~</Name>
+		<InstallationPath>FeelMyBladeRemix</InstallationPath>
+		<Description>Replaces track with Enrico Deiana's remixed version!</Description>
+		<Group>FURY</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Swords of Fury ~Daric Shire Ver.~</Name>
+		<InstallationPath>FeelMyBladeOrchestra</InstallationPath>
+		<Description>Replaces track with an orchestrated version made by Daric Shire!</Description>
+		<Group>FURY</Group>
+	</SubMod>
+	<Header>Victory Fanfare</Header>
+	<SubMod>
+		<Name>Victory Fanfare ~8bit~</Name>
+		<InstallationPath>VictoryFanfare8bit</InstallationPath>
+		<Description>Replaces Victory Fanfare with an 8bit version made by 8-bit Tunes.</Description>
+		<Group>YAY ME</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Victory Fanfare ~FFVIIR~</Name>
+		<InstallationPath>VictoryFanfareFF7R</InstallationPath>
+		<Description>Replaces Victory Fanfare with FFVII Remake's version.</Description>
+		<Group>YAY ME</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Victory Fanfare Orchestral Remake</Name>
+		<InstallationPath>VictoryFanfare</InstallationPath>
+		<Description>Replaces Victory Fanfare with Joshua Hunt's version.</Description>
+		<Group>YAY ME</Group>
+	</SubMod>
+	<Header>Battle 2</Header>
+	<SubMod>
+		<Name>Battle 2 ~8bit~</Name>
+		<InstallationPath>Battle28bit</InstallationPath>
+		<Description>Replaces Battle 2 with an 8bit remix made by Taroimo!</Description>
+		<Group>BATTLE 2</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Battle 2 ~Record Keeper Ver.~</Name>
+		<InstallationPath>Battle2RecordKeeper</InstallationPath>
+		<Description>Replaces Battle 2 with the Record Keeper version!</Description>
+		<Group>BATTLE 2</Group>
+	</SubMod>
+	<SubMod>
+		<Name>A Bet On This Bout</Name>
+		<InstallationPath>ABetOnThisBout</InstallationPath>
+		<Description>Replaces Battle 2 with the boss theme from Tales of Vesperia!</Description>
+		<Group>BATTLE 2</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Boss B</Name>
+		<InstallationPath>BossB</InstallationPath>
+		<Description>Replaces Battle 2 with the second boss theme from Star Fox Zero!</Description>
+		<Group>BATTLE 2</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Boss Battle 1 ~Orchestra Arrangement~</Name>
+		<InstallationPath>BossBattle1CTArrange</InstallationPath>
+		<Description>Replaces Battle 2 with an arrangement of Chrono Trigger's first boss theme made by Pokestir!</Description>
+		<Group>BATTLE 2</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Finality</Name>
+		<InstallationPath>Finality</InstallationPath>
+		<Description>Replaces Battle 2 with the dungeon boss theme from Final Fantasy XIV's Endwalker expansion!</Description>
+		<Group>BATTLE 2</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Force Your Way ~Orchestral Battle Arrange~</Name>
+		<InstallationPath>ForceYourWayOrchestra</InstallationPath>
+		<Description>Replaces Battle 2 with an orchestral arrangement of FFVIII's boss theme by Jericho George!</Description>
+		<Group>BATTLE 2</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Incoming!</Name>
+		<InstallationPath>Incoming!</InstallationPath>
+		<Description>Replaces Battle 2 with the one of the many boss themes from Xenoblade Chronicles 2!</Description>
+		<Group>BATTLE 2</Group>
+	</SubMod>
+	<Header>Run!</Header>
+	<SubMod>
+		<Name>Hurry!! ~Enrico Deiana Ver.~</Name>
+		<InstallationPath>HurryRemix</InstallationPath>
+		<Description>Replaces Run! with a remixed version of FFVII's Hurry!! made by Enrico Deiana!</Description>
+		<Group>RUN</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Never Look Back ~Enrico Deiana Ver.~</Name>
+		<InstallationPath>NeverLookBackRemix</InstallationPath>
+		<Description>Replaces Run! with a remixed version of FFVIII's Never Look Back made by Enrico Deiana!</Description>
+		<Group>RUN</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Run! ~FFX Remaster~</Name>
+		<InstallationPath>RunFFXRemaster</InstallationPath>
+		<Description>Replaces Run! with FFX Remaster's version with the same name!</Description>
+		<Group>RUN</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Run! ~FFXIV Endwalker Ver.~</Name>
+		<InstallationPath>RunEndwalker</InstallationPath>
+		<Description>Replaces Run! with the version from Final Fantasy XIV: Endwalker!</Description>
+		<Group>RUN</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Unforgiven ~Arrange~</Name>
+		<InstallationPath>UnforgivenArrange</InstallationPath>
+		<Description>Replaces Run! with an arranged version of FFVI's Unforgiven by Dracula9AntiChapel!</Description>
+		<Group>RUN</Group>
+	</SubMod>
+	<Header>Faerie Battle</Header>
+	<SubMod>
+		<Name>Faerie Battle ~JSF Music ver.~</Name>
+		<InstallationPath>FaerieBattleRemix</InstallationPath>
+		<Description>Replaces Faerie Battle with a remixed version made by JSF Music!</Description>
+		<Group>FAERIE</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Mid-Boss Room</Name>
+		<InstallationPath>MidBossRoom</InstallationPath>
+		<Description>Replaces Faerie Battle with the Mid-Boss Room remix from Kirby AirRide!</Description>
+		<Group>FAERIE</Group>
+	</SubMod>
+	<Header>Festival of the Hunt/Hunter's Chance</Header>
+	<SubMod>
+		<Name>Festival of the Hunt ~Enrico Deiana Ver.~</Name>
+		<InstallationPath>FestivaloftheHuntRemix</InstallationPath>
+		<Description>Replaces track with Enrico Deiana's remixed version!</Description>
+		<Group>HUNTER</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Festival of the Hunt ~FFXIV Endwalker Ver.~</Name>
+		<InstallationPath>FestivaloftheHunt</InstallationPath>
+		<Description>Replaces Festival of the Hunt with the version from Final Fantasy XIV: Endwalker!</Description>
+		<Group>HUNTER</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Menu (Melee)</Name>
+		<InstallationPath>MeleeMenu</InstallationPath>
+		<Description>Replaces Festival of the Hunt with an arrangement of Super Smash Bros Melee's Menu Theme (from SSBB)!</Description>
+		<Group>HUNTER</Group>
+	</SubMod>
+	<Header>The Wavering Blade/Sword of Doubt</Header>
+	<SubMod>
+		<Name>Aqua ~Dark Dive~</Name>
+		<InstallationPath>AquaDarkDive(Kingdom Hearts III)</InstallationPath>
+		<Description>Replaces track with Aqua's boss theme from Kingdom Hearts III!</Description>
+		<Group>BLADE</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Kiryu G@ Ki LI</Name>
+		<InstallationPath>Kiryu</InstallationPath>
+		<Description>Replaces track with Satsuki's theme from Kill la Kill!</Description>
+		<Group>BLADE</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Sad but True</Name>
+		<InstallationPath>SadbutTrue</InstallationPath>
+		<Description>Replaces track with Jill Valentine's boss theme from Resident Evil 5!</Description>
+		<Group>BLADE</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Spring Meadows - Beneath the Blue Tree</Name>
+		<InstallationPath>BeneaththeBlueTree</InstallationPath>
+		<Description>Replaces track with Eveque's boss theme from Clair Obsur: Expedition 33!</Description>
+		<Group>BLADE</Group>
+	</SubMod>
+	<SubMod>
+		<Name>The Wavering Blade ~Enrico Deiana Ver.~</Name>
+		<InstallationPath>WaveringRemix</InstallationPath>
+		<Description>Replaces track with Enrico Deiana's remixed version!</Description>
+		<Group>BLADE</Group>
+	</SubMod>
+	<Header>City Under Siege/Ambush Attack</Header>
+	<SubMod>
+		<Name>Corneria ~SF Assault~</Name>
+		<InstallationPath>CorneriaAssault</InstallationPath>
+		<Description>Replaces track with the orchestrated version of Corneria from Star Fox Assault!</Description>
+		<Group>SIEGE</Group>
+	</SubMod>
+	<Header>Something to Protect/Protecting My Devotion</Header>
+	<SubMod>
+		<Name>Menu (Brawl)</Name>
+		<InstallationPath>BrawlMenu</InstallationPath>
+		<Description>Replaces track with SSBB's main menu theme!</Description>
+		<Group>PROTECT</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Something to Protect ~GaMetal Ver.~</Name>
+		<InstallationPath>SomethingtoProtectRemix</InstallationPath>
+		<Description>Replaces track with GaMetal's remixed version!</Description>
+		<Group>PROTECT</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Something to Protect ~Daric Shire Ver.~</Name>
+		<InstallationPath>SomethingtoProtectOrchestra</InstallationPath>
+		<Description>Replaces track with an orchestrated version made by Daric Shire!</Description>
+		<Group>PROTECT</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Together We Ride (SSBM)</Name>
+		<InstallationPath>TogetherWeRide</InstallationPath>
+		<Description>Replaces track with an arrangement of Fire Emblem's "Together We Ride" (from SSBM)!</Description>
+		<Group>PROTECT</Group>
+	</SubMod>
+	<Header>Not Alone/You're Not Alone</Header>
+	<SubMod>
+		<Name>Not Alone ~GaMetal Ver.~</Name>
+		<InstallationPath>NotAloneGaMetal</InstallationPath>
+		<Description>Replaces track with GaMetal's remixed version!</Description>
+		<Group>FRIENDS</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Not Alone ~Enrico Deiana Ver.~</Name>
+		<InstallationPath>NotAloneRemix</InstallationPath>
+		<Description>Replaces track with GaMetal's remixed version!</Description>
+		<Group>FRIENDS</Group>
+	</SubMod>
+	<Header>The Darkness of Eternity/Dark Messenger</Header>
+	<SubMod>
+		<Name>Dark Messenger ~Enrico Deiana Ver.~</Name>
+		<InstallationPath>DarkMessengerRemix</InstallationPath>
+		<Description>Replaces track with Enrico Deiana's remixed version!</Description>
+		<Group>KUJA</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Forza Finale</Name>
+		<InstallationPath>ForzaFinale</InstallationPath>
+		<Description>Replaces track with the boss theme of Ansem (Seeker of Darkness), Xemnas, and Young Xehanort from Kingdom Hearts III!</Description>
+		<Group>KUJA</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Hellfire</Name>
+		<InstallationPath>Hellfire</InstallationPath>
+		<Description>Replaces track with the boss theme of Ifrit from Final Fantasy XV!</Description>
+		<Group>KUJA</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Moebius Battle</Name>
+		<InstallationPath>MoebiusBattle</InstallationPath>
+		<Description>Replaces track with the boss theme of the Consul from Xenoblade Chronicles III!</Description>
+		<Group>KUJA</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Wind of Madness ~Orchestra~</Name>
+		<InstallationPath>WindofMadness</InstallationPath>
+		<Description>Replaces track with the orchestrated version of Wesker's boss theme from Resident Evil 5!</Description>
+		<Group>KUJA</Group>
+	</SubMod>
+	<Header>The Final Battle/Grand Cross</Header>
+	<SubMod>
+		<Name>The Final Battle ~Record Keeper Ver.~</Name>
+		<InstallationPath>FinalBattleRecordKeeper</InstallationPath>
+		<Description>Replaces track with the Record Keeper version!</Description>
+		<Group>NECRON</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Grand Cross</Name>
+		<InstallationPath>GrandCross</InstallationPath>
+		<Description>Replaces track with the hard rock version titled "Grand Cross", arranged by The Black Mages!</Description>
+		<Group>NECRON</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Zero World</Name>
+		<InstallationPath>ZeroWorld</InstallationPath>
+		<Description>Replaces track with OverClocked ReMix's version. 
+		Intro loop was also customized using Mortal Kombat Deception's Menu theme and added horror sounds in the background!</Description>
+		<Group>NECRON</Group>
+	</SubMod>
+	<Header>Echoes of Gaia [Vanilla Only]</Header>
+	<SubMod>
+		<Name>Enable/Disable</Name>
+		<InstallationPath>EchoesofGaia</InstallationPath>
+		<Description>An expansion that allows regular battle &amp; boss music to be replaced individually with unique songs to give a FFIX playthrough an imaginable and enjoyable remake vibe! Inspired by FFVII Remake &amp; Rebirth's battle music transitions. Music during Full Animation Summons has also been added!
 
 Feel free to read the Music List &amp; newly added Summon Music List within the Echoes of Gaia folder for full information on tracks used!</Description>
-<PreviewFile>EchoesofGaia/FFIXEoG.png</PreviewFile>
-</SubMod>
-
+		<PreviewFile>EchoesofGaia/FFIXEoG.png</PreviewFile>
+	</SubMod>
 </Mod>
 
 <Mod>
