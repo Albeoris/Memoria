@@ -45,6 +45,39 @@ Snouz - syncronization</Description>
 </Mod>
 
 <Mod>
+	<Name>4K Video Pack</Name>
+	<Version>1.0</Version>
+	<Priority>-31</Priority>
+	<InstallationPath>4K Video Pack - Ultimate Remaster</InstallationPath>
+	<Author>Ultimate Remaster</Author>
+	<Category>Visual</Category>
+	<ReleaseDateOriginal>2025-08-27</ReleaseDateOriginal>
+	<ReleaseDate>2025-08-27</ReleaseDate>
+	<Description>A QUARTER OF A CENTURY LATER, THE LEGEND SHINES BRIGHTER...
+
+    Today, in celebration of its 25th anniversary (July 7, 2025), this remaster transforms every FMV into true 4k high definition (2880x2160p 4:3) — restoring details lost over time to heavy compression, pixelation, noise, and blur, all while faithfully preserving the original artistic style with professional care, patience, hard work and a lot of time leveraging AI and handmade adjustments, to bring back the timeless beauty of a game that defined a generation, and that, to this day, lives in the hearts of thousands of people.
+
+    EACH SCENE HAS BEEN METICULOUSLY RESTORED TO:
+
+    1) Remove compression artifacts and visual noise, resulting in a cleaner, more polished image.
+    2) Sharpen and restore fine details in textures, architecture, and character models.
+    3) Improve overall clarity and color balance, giving each scene richer tones without oversaturation.
+    4) Optimize motion playback through encoding refinements, adjusting frame timing and keyframe placement to enhance smoothness.
+
+    MOD PRIORITY:
+    This mod needs to be positioned above the Moguri Mods in the Installed Mods list here in Memoria Launcher, otherwise Moguri Mod Motion Backgrouns and FMVs will bypass the 4k remastered videos and prevent them from being displayed.
+
+    I HOPE YOU ALL ENJOY IT!
+    Best regards,
+    Ultimate Remaster
+	</Description>
+	<Website>https://youtube.com/@UltimateRemasterGames</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/1r9cf5t7o1534ekuzuex6/4K-Video-Pack-Ultimate-Remaster.zip?rlkey=f9oh2b2gyvddz0om2ga68wpcq&amp;st=mbhafkqv&amp;dl=1</DownloadUrl>
+	<DownloadFormat>Zip</DownloadFormat>
+	<PreviewFileUrl>https://raw.githubusercontent.com/UltimateRemaster/ultimate-remaster-assets/main/Ultimate%20Remaster%20-%204k%20Video%20Pack%20Memoria%20(1).png</PreviewFileUrl>
+</Mod>
+
+<Mod>
 	<Name>Alternate Fantasy</Name>
 	<Version>6.8</Version>
 	<Priority>-17</Priority>
