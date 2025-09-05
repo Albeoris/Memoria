@@ -124,11 +124,11 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 	
 <Mod>
 	<Name>Trance Seek</Name>
-	<Version>0.3.36.1</Version>
+	<Version>0.3.36.2</Version>
 	<Priority>4</Priority>
 	<InstallationPath>TranceSeek</InstallationPath>
 	<ReleaseDateOriginal>28 Jan 2022</ReleaseDateOriginal>
-	<ReleaseDate>17 Aug 2025</ReleaseDate>
+	<ReleaseDate>5 Sep 2025</ReleaseDate>
 	<MinimumMemoriaVersion>2025-05-12</MinimumMemoriaVersion>
 	<Author>DV</Author>
 	<IncompatibleWith>Alternate Fantasy,Amazing Quina,Beatrix Mod,Black Cat - Endgame Shop,David Bowie Edition,Freya Game+,Garnet is Main Character,Perfect Stats,Play As Kuja,Playable Character Pack,Tantalus</IncompatibleWith>
@@ -156,128 +156,106 @@ Don't hesitate to try!
 Recommended language : Français / English (UK)
 Not supported language : Japanese (a lot of things get deleted... need to wait until full release... sorry !)</Description>
 	<PatchNotes>
-------[0.3.36.1]------
-
-{New Features}
-- 4 new options are available as a SubMod:
-⇒ HP is colored green when at maximum.
-⇒ MP is colored blue when at maximum.
-⇒ The number of gems has a slight coloration.
-⇒ Creates a StuffListed.txt file at the start of each battle, listing each character's stats, equipment, and SA.
-Useful for YouTube video descriptions or guides.
-
-These options can be enabled/disabled via the mod options in the Memoria launcher.
+------[0.3.36.2]------
 
 {Characters}
-- Fix for Freya so she can stack Dragon with her weapon or specific skills under Naströnd.
+- Zidane will chuckle when a steal succeeds under the effect of "Thief’s Eye"
+- Fixed some bugs with Eiko’s passive under specific conditions.
+- Fixed Vivi’s animations for high-tier spells.
+- Changed Vivi’s SA "Invigorating" to "Last Stand".
+- "Mog Flare" and "Mog Holy" are much less likely to be cast against targets under "Reflect".
+- New texture for Steiner under "Old" status so it’s more visible, especially under magical barriers like Shell.
+- Restored "Aero" and "Aero+" spells to Beatrix’s "Saint Mag" command.
+- Fixed Vivi’s Focus effect with "Dbl Blk" when ATB is set to "Wait Mode".
+- [WIP] Fixed a specific bug where a character remained invisible after a scripted Trance with the accessory "Ghost Scarf", notably with Vivi against Black Waltz 3 in Disc 1.
+- The "Zombie" status no longer prevents fleeing.
 
 {SA / AA Abilities}
-- Correction of the name "Gourmandise" in all languages except FR.
-- Changed descriptions for Power Break, Magic Break, Armor Break, and Mental Break.
-- New icons, notably for stat modifications.
-- Correction of various descriptions.
+- "What’s That!?" is compatible with Thief’s Eye and applies Zidane’s passive to every target.
+- "What’s That!?" allows repositioning in any situation, even against bosses.
+- "Transmute" and "Mana Well" commands are now properly disabled when Vivi is under Silence.
+- Gil bonuses now stack (from SAs or equipment).
+- Camera sequences for "Eat" and "Cook" are disabled under certain conditions (notably when damage is dealt).
+- Fixed the "Appetite" and "Gluttony" SAs against certain targets, especially humanoids.
+- Fixed the "Demi" spell when cast on multiple targets.
+- Fixed the sequence file for the AA "Dragon’s Crest", which displayed invisible enemies in battle.
+- Fixed the AA "Mog Life".
+- Fixed the MP cost of one of Quina’s blue magics.
+- SOS-type SAs are no longer always reset when a character is revived.
+- Fixed the description of the SA "Voracious".
+- Fixed the SA "Turbo".
+- Fixed the SA "Embrace".
+- Fixed the SA "Propagation" which was changing "Lv.4 Holy" into "Matra Magic".
+- Fixed the SA "Fencing".
+- Fixed the AA "Fenrir", about unlocking its "Wind" version.
+- Adjusted the cost of the SA "Fencing": 3 -> 4.
+- Adjusted the cost of the SA "Presence": 4 -> 3.
+- Adjusted the cost of the SA "Alert": 5 -> 4.
+- The "Attack" command will now change if the weapon element is infused, especially with the SA "Enchanted Blade".
+- Fixed "Atomos" damage on bosses.
+- Fixed the formula of the SA "Invigorating" and slightly adjusted its effect.
+- Slight adjustment to the effect of "Zantetsuken" under "Divine guidance".
+- Fixed the Gravity spell against certain monsters, especially bosses with scripted deaths.
+  With the new Gravity spells added to Vivi, the damage penalty now starts at 2 instead of 1 (damage divided by 2, then 4, 8, 16, 32, etc…).
+- Gravity spells are 50% more effective against "Giant"-type enemies (instead of 100%).
+  They also gain a 25% damage bonus against Giant-type bosses.
+- The abilities "Zeus", "Hikari" and "Zantetsu" have been renamed to "Fulmen", "Sentence" and "Inquisition".
+- Improved the descriptions of Freya’s "Dragon" spells.
+- Fixed and improved the descriptions of several AAs/SAs.
 
 {Items}
-- Overhaul of the damage formula for one of the new weapons.
-- Adjustment of the power of certain weapons.
-- Fix for sorting of some weapons.
+- "Smoke Bomb" no longer has the "IsPhysical" tag.
+- Adjusted some SFX depending on the weapon type thrown by Amarant.
+- Fixed SAs tied to certain items.
+- Fixed the description of the SA "Invigorating".
+- Added a new effect for "Pickpocket".
+- Fixed the description of "Cypress Pile", which didn’t display the correct status effect.
+- Optimized the effect of "Larceny Scepter" in multi-target cases.
+- Adjusted the price of certain items.
+- Fixed the effects of several items, some of which failed to properly trigger a free SA activation.
+- Fixed and improved the descriptions of all weapons to be clearer when using the "Throw" command.
+- Fixed and improved the descriptions of several items.
 
-{Monsters + Bosses}
-- Fix for a bug in Black Waltz 2's AI.
-- Fix for a bug in Gizamaluke's AI.
-
-{Fields}
-- Based on numerous feedbacks, displays an alert message for the Treno auctions to provide explanations.
-
-{Miscellaneous}
-- Fix for the damage formula when a -25% debuff is applied.
-
-------[0.3.36]------
-
-{New Features}
-- 2 new difficulty levels added: Beatrix and Ozma.
-Beatrix ⇒ Same as Necron but without the Gil and EXP penalty.
-Ozma ⇒ Same as Zidane, but you can no longer gain EXP beyond certain thresholds based on story progression.
-For example: max level 12 before defeating Gizamaluke, level 15 before the end of Disc 1, etc.
-In Ozma difficulty, you cannot change difficulty mid-game.
-- Rework of the Chocographs: rewards obtained from Chocographs have been revised.
-- More rewarding, with a new equipment piece as a prize!
-- 17 new equipment pieces added in this update.
-- 21 new weapons added… find them yourselves!
-- All level-1 Support Abilities (SA) are now available… normally. ^^
-- Rework of summon damage output and balance adjustments on certain SAs.
-
-{Characters}
-- Eiko’s passive trigger rate is slightly reduced.
-- Some effects of Eiko’s passive are now rarer than others.
-- Fixed a bug with Beatrix where she did not gain "Redemption" when protecting an ally with "Cover".
-
-{SA / AA Abilities}
-- Cost of SA "Steal Gil" : 5 → 2.
-- Cost of SA "High Tide" : 8 → 6. Effects of both SAs have been changed.
-- Cost of SA "EX Mode": 5 → 4.
-- Cost of SA "SOS Regen" : 4 → 6.
-- Cost of SA "Odin’s Sword": 5 → 3.
-- Cost of SA "Lethality" (Létalité): 3 → 5.
-- Effects of SA "Come here!" halved.
-- Effects of SA "Protector" increased.
-- Effects of SA "Boost" revised.
-- Effects of SA "Auto-Potion" revised.
-- Behavior of SA type "SOS" changed ⇒ the character receives the effect if the condition is met, but it no longer persists.
-To reapply the effect, the character must meet the condition again.
-- Summon damage formula revised.
-- MP cost of Ramuh: 22 → 24.
-- MP cost of Ifrit: 36 → 32.
-- Power of Ifrit reduced: 42 → 40.
-- Power of Odin increased: 46 → 61.
-- Power of Leviathan increased: 59 → 63.
-- Power of Bahamut reduced: 88 → 78.
-- Slight change to Bahamut’s effect under "Divine Aid".
-- Power of Fenril (Wind) reduced: 44 → 40.
-- Duration of Carbuncle’s effects shortened if using the short animation.
-- Carbuncle is now affected by SA "Boost".
-- Phoenix now uses the same damage formula as most summons.
-- Revive healing from Phoenix now based on a new formula.
-- MP cost of Phoenix: 32 → 58.
-- Power of Madeen : 71 → 88.
-- MP cost of Madeen: 58 → 72.
-- [WIP] "Shadow" and "Holy" spells are now more powerful than other spells of the same tier (e.g., Darkra vs Fira).
-- Power of "Prayaga" reduced: 20 → 15.
-- "Drain Sword" now correctly restores Steiner’s HP.
-- Fixed Poison-type damage bonus against Humanoids: 100% → 50%.
-- "Telekinesis" can now be reflected by Boomerang.
-- Fixed Dagger’s "White Magic" command which mistakenly listed "Confuse" twice.
-
-{Items}
-- 21 new weapons added.
-- 17 new equipment pieces, many obtainable via Chocographs.
-- Mithril Lance power slightly increased: 20 → 22.
-- Forkerature power reduced: 67 → 61.
-- [WIP] Most items’ elemental affinities revised, especially Darkness and Holy which are now rarer.
-- New icons for certain items.
-- [WIP] Items have been re-sorted, accessories are now better categorized.
-- "Dragon" status is now displayed on items and SAs.
-- Fixed abilities to be learned on the "Magic Racket".
-
-{Monsters + Bosses}
-- "Heat" status deals less damage on bosses (1/128 instead of 1/64).
-- Magic damage reduction from "Silence" on bosses increased (25% instead of 10%).
-- Stats and stealable/droppable items modified for several monsters.
-- Goblin AI fixed.
-- New animations for certain Lani spells, which have also been renamed.
+{Monsters and Bosses}
+- Reworked a majority of AIs so their scripts depend on MAX_HP instead of a fixed value (to better match the different difficulty settings).
+  Some formulas remain unchanged depending on the difficulty, such as Gisamark’s last phase.
+- Reworked code handling buffs/debuffs tied to difficulty (in preparation for the future Garland mode).
+- Added 2 new monsters in the "Pandemonium" dungeon.
+- Fixed Soulcage’s AI.
+- Fixed Thorn’s AI (Disc 1) (+ complete reset of the entire fight due to corruption in the .hws project).
+- Adjusted Hilgigars’s AI.
+- Adjusted Taharka’s AI.
+- Adjusted Baku’s AI.
+- Adjusted Steiner’s AI (first encounter).
+- Adjusted the AI of Malboros.
+- Adjusted the AI of Vices.
+- Adjusted the AI of Magic Vices.
+- Adjusted Beatrix 3’s fight: just a small detail added at the end of the battle.
+- Fixed Kuja’s animations in Disc 3 and improved sequence files.
+- Fixed certain sequence files that still targeted KO’d characters.
+- Fixed a sequence file of "Sand Worm" where the second-position character could end up under the terrain.
+- Fixed a bug against "Sand Worm" where it was possible to resist its "Quicksand" attack.
+- Monsters during the "You Are Not Alone" scene are now considered bosses instead of elite monsters.
+- Added a "mini hack" for monsters when they can’t target anyone in ATB "Wait Mode", notably Freya in 1v1 who could easily spam "Jump" at equal speed.
+- The boss "Arkh" will no longer coo at all! ^^
+- Fixed the "Trouble Knife" attack of Ogres in "Outer Continent, Dirt" which didn’t have the correct sequence file.
+- Fixed the rewards of a boss.
+- Fixed Hilgigars’s max HP, which made Gravity damage inconsistent.
+- Improved the sequence files of certain monsters.
 
 {Fields}
-- Starting items (and their quantities) vary depending on chosen difficulty.
-- Frog Catching mini-game rewards reworked.
-- Many shops and forges redesigned, notably in Alexandria, Treno, and Lindblum, with separate versions in Disc 3 and Disc 4.
-- Fixed Black Mage forge in US version at end of Disc 3.
-- Fixed a minor bug where the difficulty selection music persists if you soft reset on the Prima Vista first screen.
+- Added Beatrix to field 2854 "Hilda Garde 3/Bridge"
+- Fixed a bug in field 2706 "Pand./Hall" where the Beatrix model remained.
+- Fixed a bug in field 2711 "Pand./Control Room" where TurboDialog wasn’t compatible with the elevator control window.
+- Fixed the score window in US during Lindblum’s Festival of the Hunt.
+- Fixed the position of the points window awarded by Fang in US.
+- Fixed NPC dialogues in fields 551 + 563 + 572, which caused a softlock in US during Lindblum’s Festival of the Hunt.
+- Fixed the rewards in the Fossil Roo mining mini-game.
+- Fixed the reward at 5 Frogs in Qu’s Marsh frog catching mini-game.
 
 {Miscellaneous}
-- 2 new difficulties: Beatrix and Ozma.
-- "Holy" element color slightly more pearlescent.
-- Multiple descriptions and texts corrected.
-- Fixed "Power Break" sprites where 1 pixel extended to the right.
+- Fixed certain conditions in Ozma Mode where the level cap was locked in unintended places.
+- SAs are now sorted alphabetically for the StuffListed.txt option.
 	</PatchNotes>
 	<Header>QoL options</Header>
 	<SubMod>
