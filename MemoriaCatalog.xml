@@ -3416,6 +3416,24 @@ Placeholder art - Marcus by nanpou0406 &amp; Cinna Concept Art.
 </Mod>
 
 <Mod>
+	<Name>PSX Portraits</Name>
+	<Version>1.0</Version>
+	<InstallationPath>PSXPortraits</InstallationPath>
+	<ReleaseDate>2025-09-03</ReleaseDate>
+	<ReleaseDateOriginal>2025-09-03</ReleaseDateOriginal>
+	<Author>Adimanther</Author>
+	<Description>Replaces party portraits with upscaled and hand-edited versions of the original PSX ones.
+
+	Load Order : Above anything that modifies the default portraits.</Description>
+	<PatchNotes>First Release</PatchNotes>
+	<Category>Visual</Category>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/118</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/eh41tbb223spddb289kng/PSX-Portraits.zip?rlkey=vn36fl13izlf6ussswniz1t0q&amp;st=neg58lnt&amp;dl=1</DownloadUrl>
+	<PreviewFile>preview/preview.png</PreviewFile>
+	<PreviewFileUrl>https://i.ibb.co/VWRLgmfk/preview.png</PreviewFileUrl>
+</Mod>
+
+<Mod>
 	<Name>No Cutscene</Name>
 	<Version>0.5</Version>
 	<Priority>-24</Priority>
