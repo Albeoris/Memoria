@@ -85,7 +85,12 @@ namespace FF9
 
         public static List<SupportingAbilityFeature> GetEnabledSA(PLAYER player)
         {
-            return GetEnabledSA(player.saExtended);
+            HashSet<SupportAbility> PlayerAllSA = new HashSet<SupportAbility>(player.saExtended);
+            foreach (SupportAbility saForcedIndex in player.saForced)
+                if (!PlayerAllSA.Contains(saForcedIndex))
+                    PlayerAllSA.Add(saForcedIndex);
+                
+            return GetEnabledSA(PlayerAllSA);
         }
 
         public static List<SupportingAbilityFeature> GetEnabledSA(HashSet<SupportAbility> saExtended)
@@ -267,7 +272,7 @@ namespace FF9
             player.cur.capa = player.max.capa;
             foreach (SupportAbility sa in equippedSA)
             {
-                if (player.cur.capa >= GetSAGemCostFromPlayer(player, sa) && (gemsUsed + GetSAGemCostFromPlayer(player, sa)) <= player.max.capa)
+                if ((player.cur.capa >= GetSAGemCostFromPlayer(player, sa) && (gemsUsed + GetSAGemCostFromPlayer(player, sa)) <= player.max.capa))
                 {
                     gemsUsed += GetSAGemCostFromPlayer(player, sa); // "gemsUsed" is a check when using [code=MaxGems] features: in some case, currents "cur.capa" isn't enough
                     player.cur.capa -= (UInt32)GetSAGemCostFromPlayer(player, sa);
@@ -281,7 +286,10 @@ namespace FF9
             }
 
             if (notEnoughGemsLog.Count > 0)
+            {
+                FF9Sfx.FF9SFX_Play(1043);
                 Log.Message($"[CalculateGemsPlayer] Not enough gems for {player.Name}, these SA are removed => {String.Join(", ", notEnoughGemsLog.ToArray())}");
+            }
         }
 
         public static Int32 GetBoostedAbilityMaxLevel(PLAYER player, SupportAbility baseAbil)
@@ -310,6 +318,16 @@ namespace FF9
             if (player.saForced.Contains(baseAbil))
                 return 0;
             return _FF9Abil_SaData[baseAbil].GemsCount;
+        }
+
+        public static Boolean PlayerHasSAinData(PLAYER player, SupportAbility baseAbil)
+        {
+            CharacterAbility[] charAbil = _FF9Abil_PaData[player.PresetId];
+
+            if (charAbil.Any(abil => abil.IsPassive && abil.PassiveId == baseAbil))
+                return true;
+
+            return false;
         }
 
         // The followings are also used by CsvParser and CsvWriter, so any change of behaviour should be reflected there as well

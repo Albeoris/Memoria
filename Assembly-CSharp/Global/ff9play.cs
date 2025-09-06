@@ -7,6 +7,7 @@ using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 #pragma warning disable 169
@@ -271,7 +272,7 @@ public static class ff9play
         FF9Play_UpdateSA(play);
     }
 
-    public static void FF9Play_Update(PLAYER play)
+    public static void FF9Play_Update(PLAYER play, Boolean IsPreview = false)
     {
         play.max.hp = play.basis.max_hp;
         play.max.mp = play.basis.max_mp;
@@ -327,12 +328,13 @@ public static class ff9play
         play.maxDamageLimit = ff9play.FF9PLAY_DAMAGE_MAX;
         play.maxMpDamageLimit = ff9play.FF9PLAY_MPDAMAGE_MAX;
 
-        FF9Play_SAFeature_Update(play);
+        FF9Play_SAFeature_Update(play, IsPreview);
 
         foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(play))
             saFeature.TriggerOnEnable(play);
 
-        ff9abil.CalculateGemsPlayer(play);
+        if (!IsPreview)
+            ff9abil.CalculateGemsPlayer(play);
 
         if (play.max.hp > play.maxHpLimit)
             play.max.hp = play.maxHpLimit;
@@ -344,7 +346,7 @@ public static class ff9play
             play.cur.mp = play.max.mp;
     }
 
-    public static void FF9Play_SAFeature_Update(PLAYER play)
+    public static void FF9Play_SAFeature_Update(PLAYER play, Boolean IsPreview = false)
     {
         HashSet<SupportAbility> OldSAForced = new HashSet<SupportAbility>();
         foreach (SupportAbility OldSA in play.saForced)
@@ -357,14 +359,19 @@ public static class ff9play
         foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledGlobalSA(play))
             saFeature.TriggerSpecialSA(play);
 
-        foreach (SupportAbility SaForcedToReset in OldSAForced)
-            if (!play.saForced.Contains(SaForcedToReset))
+        CharacterAbility[] charAbil = ff9abil._FF9Abil_PaData[play.PresetId];
+        foreach (SupportAbility SaForcedToReset in OldSAForced) // Remove Forced SA for characters who don't have it (on their SA list).
+            if (!play.saForced.Contains(SaForcedToReset) && !ff9abil.PlayerHasSAinData(play, SaForcedToReset))
                 ff9abil.DisableAllHierarchyFromSA(play, SaForcedToReset);
 
-        foreach (SupportAbility SaBanish in play.saBanish)
-            ff9abil.FF9Abil_SetEnableSA(play, SaBanish, false);
-        foreach (SupportAbility SaForced in play.saForced)
-            ff9abil.FF9Abil_SetEnableSA(play, SaForced, true);
+        if (!IsPreview)
+        {
+            foreach (SupportAbility SaBanish in play.saBanish)
+                ff9abil.FF9Abil_SetEnableSA(play, SaBanish, false);
+            foreach (SupportAbility SaForced in play.saForced)
+                if (!ff9abil.FF9Abil_IsEnableSA(play, SaForced))
+                    ff9abil.FF9Abil_SetEnableSA(play, SaForced, true);
+        }
     }
 
     public static CharacterId CharacterOldIndexToID(CharacterOldIndex characterIndex)

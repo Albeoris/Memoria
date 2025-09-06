@@ -562,13 +562,13 @@ public class EquipUI : UIScene
                 player.equip[this.currentEquipPart] = RegularItem.NoItem;
             if (player.equip[this.currentEquipPart] != itemEquipped)
             {
-                ff9play.FF9Play_Update(player);
+                ff9play.FF9Play_Update(player, true);
                 previewMaxHp = player.max.hp;
                 previewMaxMp = player.max.mp;
                 for (Int32 i = 0; i < 9; i++)
                     previewStats[i] = player.GetPlayerStat(i);
                 player.equip[this.currentEquipPart] = itemEquipped;
-                ff9play.FF9Play_Update(player);
+                ff9play.FF9Play_Update(player, true);
                 for (Int32 i = 0; i < 9; i++)
                     currentStats[i] = player.GetPlayerStat(i);
             }
