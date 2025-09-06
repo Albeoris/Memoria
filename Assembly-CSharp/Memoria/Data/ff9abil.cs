@@ -85,10 +85,19 @@ namespace FF9
 
         public static List<SupportingAbilityFeature> GetEnabledSA(PLAYER player)
         {
-            HashSet<SupportAbility> PlayerAllSA = new HashSet<SupportAbility>(player.saExtended);
-            foreach (SupportAbility saForcedIndex in player.saForced)
-                if (!PlayerAllSA.Contains(saForcedIndex))
-                    PlayerAllSA.Add(saForcedIndex);
+            HashSet<SupportAbility> PlayerAllSA = new HashSet<SupportAbility>();
+
+            if (player.saPreview.Count > 0)
+            {
+                PlayerAllSA = new HashSet<SupportAbility>(player.saPreview);
+            }
+            else
+            {
+                PlayerAllSA = new HashSet<SupportAbility>(player.saExtended);
+                foreach (SupportAbility saForcedIndex in player.saForced)
+                    if (!PlayerAllSA.Contains(saForcedIndex))
+                        PlayerAllSA.Add(saForcedIndex);
+            }
                 
             return GetEnabledSA(PlayerAllSA);
         }
