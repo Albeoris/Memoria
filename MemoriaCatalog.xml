@@ -45,17 +45,17 @@ Snouz - syncronization</Description>
 </Mod>
 
 <Mod>
-	<Name>4K Video Pack</Name>
+	<Name>2K Video Pack</Name>
 	<Version>1.0</Version>
-	<Priority>-31</Priority>
-	<InstallationPath>4K Video Pack - Ultimate Remaster</InstallationPath>
+	<Priority>-32</Priority>
+	<InstallationPath>2K Video Pack - Ultimate Remaster</InstallationPath>
 	<Author>Ultimate Remaster</Author>
 	<Category>Visual</Category>
 	<ReleaseDateOriginal>2025-08-27</ReleaseDateOriginal>
-	<ReleaseDate>2025-08-27</ReleaseDate>
-	<Description>A QUARTER OF A CENTURY LATER, THE LEGEND SHINES BRIGHTER...
-
-    Today, in celebration of its 25th anniversary (July 7, 2025), this remaster transforms every FMV into true 4k high definition (2880x2160p 4:3) — restoring details lost over time to heavy compression, pixelation, noise, and blur, all while faithfully preserving the original artistic style with professional care, patience, hard work and a lot of time leveraging AI and handmade adjustments, to bring back the timeless beauty of a game that defined a generation, and that, to this day, lives in the hearts of thousands of people.
+	<ReleaseDate>2025-09-08</ReleaseDate>
+	<Description>This remaster transforms every FMV into true 2k high definition (1920x1440p 4:3) — restoring details lost over time to heavy compression, pixelation, noise, and blur, all while faithfully preserving the original artistic style with professional care, patience, hard work and a lot of time leveraging AI and handmade adjustments, to bring back the timeless beauty of a game that defined a generation, and that, to this day, lives in the hearts of thousands of people.
+    
+    - This lighter version is highly recommended for PCs/Laptops with 2K or lower screens.
 
     EACH SCENE HAS BEEN METICULOUSLY RESTORED TO:
 
@@ -64,17 +64,54 @@ Snouz - syncronization</Description>
     3) Improve overall clarity and color balance, giving each scene richer tones without oversaturation.
     4) Optimize motion playback through encoding refinements, adjusting frame timing and keyframe placement to enhance smoothness.
 
-    MOD PRIORITY:
-    This mod needs to be positioned above the Moguri Mods in the Installed Mods list here in Memoria Launcher, otherwise Moguri Mod Motion Backgrouns and FMVs will bypass the 4k remastered videos and prevent them from being displayed.
-
     I HOPE YOU ALL ENJOY IT!
+
+    Check out and subscribe to my YouTube channel to find more high-definition mods and video demonstrations — link on the Website button ;)
+
     Best regards,
     Ultimate Remaster
 	</Description>
-	<Website>https://youtube.com/@UltimateRemasterGames</Website>
-	<DownloadUrl>https://www.dropbox.com/scl/fi/1r9cf5t7o1534ekuzuex6/4K-Video-Pack-Ultimate-Remaster.zip?rlkey=f9oh2b2gyvddz0om2ga68wpcq&amp;st=mbhafkqv&amp;dl=1</DownloadUrl>
+	<PatchNotes>Download Size: 3,2GB
+    - This lighter version is highly recommended for PCs/Laptops with 2K or lower screens.</PatchNotes>
+	<Website>https://youtube.com/@UltimateRemasterGames?sub_confirmation=1</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/3hopgm68sb6txq82eouyi/2K-Video-Pack-Ultimate-Remaster.zip?rlkey=7bxhk8obpe6z735xl5zji62tl&amp;st=1p5pko3b&amp;dl=1</DownloadUrl>
 	<DownloadFormat>Zip</DownloadFormat>
-	<PreviewFileUrl>https://raw.githubusercontent.com/UltimateRemaster/ultimate-remaster-assets/main/Ultimate%20Remaster%20-%204k%20Video%20Pack%20Memoria%20(1).png</PreviewFileUrl>
+	<PreviewFileUrl>https://uc8dea44053bedb3094fe5ab2feb.previews.dropboxusercontent.com/p/thumb/ACxIwJfvf4MhZni8p-mseomFvkSL8kfXRucbWosCIvHKpEmk5f5_9xnH4VOW2q190yku5M1eO67afbqOSkvlwGiN276M1Ywedne7Y9P0syhMXI-sHRrDAhKmGQNmIL4vNPfAoZkFI-AckT_fzXgx77z0O-_lPD3Ic9I2cmiMxX-YYPmzXMLgPSTWsRHlGRnir7lY9Epn2A203nvY2UG9d5jKDad91oXTSlh56YqzAXkOIcbEp7e-VphEV9BENXGh2xVCx_w-yY7kCkhiVZd9qVYAzmXY1mrLkCOtYZkZZ8x9ZNleaJ_RLLuY59qHkAJdJxxXDe_UCqnloWtxhBtMLRM9HfRWN38ACgnhEb-hxjpLAubxl4b982es8YPQz-mca1U/p.png?is_prewarmed=true</PreviewFileUrl>
+</Mod>
+
+<Mod>
+	<Name>4K Video Pack</Name>
+	<Version>1.0</Version>
+	<Priority>-31</Priority>
+	<InstallationPath>4K Video Pack - Ultimate Remaster</InstallationPath>
+	<Author>Ultimate Remaster</Author>
+	<Category>Visual</Category>
+	<ReleaseDateOriginal>2025-08-27</ReleaseDateOriginal>
+	<ReleaseDate>2025-09-08</ReleaseDate>
+	<Description>This remaster transforms every FMV into true 4k high definition (2880x2160p 4:3) — restoring details lost over time to heavy compression, pixelation, noise, and blur, all while faithfully preserving the original artistic style with professional care, patience, hard work and a lot of time leveraging AI and handmade adjustments, to bring back the timeless beauty of a game that defined a generation, and that, to this day, lives in the hearts of thousands of people.
+
+    - This 4K Version is recommended for mid-range and high-end PCs/Laptops with 4K or higher screens.
+
+    EACH SCENE HAS BEEN METICULOUSLY RESTORED TO:
+
+    1) Remove compression artifacts and visual noise, resulting in a cleaner, more polished image.
+    2) Sharpen and restore fine details in textures, architecture, and character models.
+    3) Improve overall clarity and color balance, giving each scene richer tones without oversaturation.
+    4) Optimize motion playback through encoding refinements, adjusting frame timing and keyframe placement to enhance smoothness.
+
+    I HOPE YOU ALL ENJOY IT!
+
+    Check out and subscribe to my YouTube channel to find more high-definition mods and video demonstrations — link on the Website button ;)
+
+    Best regards,
+    Ultimate Remaster
+	</Description>
+	<PatchNotes>Download Size: 4,89GB
+    - This 4K Version is recommended for mid-range and high-end PCs/Laptops with 4K or higher screens.</PatchNotes>
+	<Website>https://youtube.com/@UltimateRemasterGames?sub_confirmation=1</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/k3brqqtv3vwmi0n00jffh/4K-Video-Pack-Ultimate-Remaster.zip?rlkey=g25btx1s3kq0duo5c2the9xjb&amp;st=p0q66jpk&amp;dl=1</DownloadUrl>
+	<DownloadFormat>Zip</DownloadFormat>
+	<PreviewFileUrl>https://uceb432900e9c4055f3eaf6d66ae.previews.dropboxusercontent.com/p/thumb/ACz5sxiXPOEkmAUqeImUQj7JobXp4Jk3InljqznUzTD5XYYz5raTmZ5adxblBQxrNqtHVGSEcWg_CL0k0Y2R-w_-sButkIPAmzfxU69QzzUhsROvEA7bm24MV_nw0UJA27V_9RoxHLpuS4by7F7Oi0GO8Vw97yGID3IchXWcG_ezZvcahBWSB1xID_llBfp6xlDIUWCX0xhC6DRkzZ_L15uTimv7Dx-SRMBuwU3JUsROX61p4zftxVSbCW6j339Qyx_UlUs-zENejH9LXF8xi9wpTq6PG4lN7YCuNIAjRq1-Fs7X4jH41CqS7wYU85SHfjoxaPoPDzFHRtJYfkMeUOMOea9xbTkgZH95b34D2G2njpBGqvLFvaw4ueQv9q3BSzY/p.png?is_prewarmed=true</PreviewFileUrl>
 </Mod>
 
 <Mod>
