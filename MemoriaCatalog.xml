@@ -45,17 +45,17 @@ Snouz - syncronization</Description>
 </Mod>
 
 <Mod>
-	<Name>4K Video Pack</Name>
-	<Version>1.0</Version>
-	<Priority>-31</Priority>
-	<InstallationPath>4K Video Pack - Ultimate Remaster</InstallationPath>
+	<Name>2K Video Pack</Name>
+	<Version>1.0.3</Version>
+	<Priority>-32</Priority>
+	<InstallationPath>2K Video Pack - Ultimate Remaster</InstallationPath>
 	<Author>Ultimate Remaster</Author>
 	<Category>Visual</Category>
 	<ReleaseDateOriginal>2025-08-27</ReleaseDateOriginal>
-	<ReleaseDate>2025-08-27</ReleaseDate>
-	<Description>A QUARTER OF A CENTURY LATER, THE LEGEND SHINES BRIGHTER...
-
-    Today, in celebration of its 25th anniversary (July 7, 2025), this remaster transforms every FMV into true 4k high definition (2880x2160p 4:3) — restoring details lost over time to heavy compression, pixelation, noise, and blur, all while faithfully preserving the original artistic style with professional care, patience, hard work and a lot of time leveraging AI and handmade adjustments, to bring back the timeless beauty of a game that defined a generation, and that, to this day, lives in the hearts of thousands of people.
+	<ReleaseDate>2025-09-08</ReleaseDate>
+	<Description>This remaster transforms every FMV into true 2k high definition (1920x1440p 4:3) — restoring details lost over time to heavy compression, pixelation, noise, and blur, all while faithfully preserving the original artistic style with professional care, patience, hard work and a lot of time leveraging AI and handmade adjustments, to bring back the timeless beauty of a game that defined a generation, and that, to this day, lives in the hearts of thousands of people.
+    
+    - This lighter version is highly recommended for PCs/Laptops with 2K or lower screens.
 
     EACH SCENE HAS BEEN METICULOUSLY RESTORED TO:
 
@@ -64,17 +64,54 @@ Snouz - syncronization</Description>
     3) Improve overall clarity and color balance, giving each scene richer tones without oversaturation.
     4) Optimize motion playback through encoding refinements, adjusting frame timing and keyframe placement to enhance smoothness.
 
-    MOD PRIORITY:
-    This mod needs to be positioned above the Moguri Mods in the Installed Mods list here in Memoria Launcher, otherwise Moguri Mod Motion Backgrouns and FMVs will bypass the 4k remastered videos and prevent them from being displayed.
-
     I HOPE YOU ALL ENJOY IT!
+
+    Check out and subscribe to my YouTube channel to find more high-definition mods and video demonstrations — link on the Website button ;)
+
     Best regards,
     Ultimate Remaster
 	</Description>
-	<Website>https://youtube.com/@UltimateRemasterGames</Website>
-	<DownloadUrl>https://www.dropbox.com/scl/fi/1r9cf5t7o1534ekuzuex6/4K-Video-Pack-Ultimate-Remaster.zip?rlkey=f9oh2b2gyvddz0om2ga68wpcq&amp;st=mbhafkqv&amp;dl=1</DownloadUrl>
+	<PatchNotes>Download Size: 3,2GB
+    - This lighter version is highly recommended for PCs/Laptops with 2K or lower screens.</PatchNotes>
+	<Website>https://next.nexusmods.com/profile/UltimateRemaster/mods</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/1438hhh3d69aya2e2vpff/2K-Video-Pack-Ultimate-Remaster.zip?rlkey=0qw5rhtqye99474iws77laudp&amp;st=47hgeqeq&amp;dl=1</DownloadUrl>
 	<DownloadFormat>Zip</DownloadFormat>
-	<PreviewFileUrl>https://raw.githubusercontent.com/UltimateRemaster/ultimate-remaster-assets/main/Ultimate%20Remaster%20-%204k%20Video%20Pack%20Memoria%20(1).png</PreviewFileUrl>
+	<PreviewFileUrl>https://github.com/UltimateRemaster/ultimate-remaster-assets/blob/main/2K%20Video%20Pack%20Memoria%20Launcher.png?raw=true</PreviewFileUrl>
+</Mod>
+
+<Mod>
+	<Name>4K Video Pack</Name>
+	<Version>1.0.3</Version>
+	<Priority>-31</Priority>
+	<InstallationPath>4K Video Pack - Ultimate Remaster</InstallationPath>
+	<Author>Ultimate Remaster</Author>
+	<Category>Visual</Category>
+	<ReleaseDateOriginal>2025-08-27</ReleaseDateOriginal>
+	<ReleaseDate>2025-09-08</ReleaseDate>
+	<Description>This remaster transforms every FMV into true 4k high definition (2880x2160p 4:3) — restoring details lost over time to heavy compression, pixelation, noise, and blur, all while faithfully preserving the original artistic style with professional care, patience, hard work and a lot of time leveraging AI and handmade adjustments, to bring back the timeless beauty of a game that defined a generation, and that, to this day, lives in the hearts of thousands of people.
+
+    - This 4K Version is recommended for mid-range and high-end PCs/Laptops with 4K or higher screens.
+
+    EACH SCENE HAS BEEN METICULOUSLY RESTORED TO:
+
+    1) Remove compression artifacts and visual noise, resulting in a cleaner, more polished image.
+    2) Sharpen and restore fine details in textures, architecture, and character models.
+    3) Improve overall clarity and color balance, giving each scene richer tones without oversaturation.
+    4) Optimize motion playback through encoding refinements, adjusting frame timing and keyframe placement to enhance smoothness.
+
+    I HOPE YOU ALL ENJOY IT!
+
+    Check out and subscribe to my YouTube channel to find more high-definition mods and video demonstrations — link on the Website button ;)
+
+    Best regards,
+    Ultimate Remaster
+	</Description>
+	<PatchNotes>Download Size: 4,89GB
+    - This 4K Version is recommended for mid-range and high-end PCs/Laptops with 4K or higher screens.</PatchNotes>
+	<Website>https://next.nexusmods.com/profile/UltimateRemaster/mods</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/4q7pvueaq9taf5bkga7o2/4K-Video-Pack-Ultimate-Remaster.zip?rlkey=pt0hr074ys9c5pczzt93qfn7f&amp;st=4sziduwc&amp;dl=1</DownloadUrl>
+	<DownloadFormat>Zip</DownloadFormat>
+	<PreviewFileUrl>https://github.com/UltimateRemaster/ultimate-remaster-assets/blob/main/4K%20Video%20Pack%20Memoria%20Launcher.png?raw=true</PreviewFileUrl>
 </Mod>
 
 <Mod>
