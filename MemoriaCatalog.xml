@@ -2113,15 +2113,14 @@ Good luck!</Description>
 <Mod>
     <Name>[Tsunamods] Four Shrines Revival</Name>
 	<Version>1.0</Version>
-    <InstallationPath>[Tsunamods] Four Shrines Revival</InstallationPath>
+    <InstallationPath>Four Shrines Revival</InstallationPath>
+	<ReleaseDateOriginal>2025-09-18</ReleaseDateOriginal>
 	<ReleaseDate>2025-09-18</ReleaseDate>
     <Category>Gameplay</Category>
 	<Author>Tsunamix / DV</Author>
 	<Description>Adds the other 3 Shrine bosses to be fought by the correct teams during the four shrines quest.
-	
+
 	If you're using difficulty mods, these new fights will be balanced for vanilla difficulty.</Description>
-	
-	
 	<Website>https://www.tsunamods.com</Website>
 	<DownloadUrl>https://download.tsunamods.com/?id=23</DownloadUrl>
 	<PreviewFileUrl>https://i.imgur.com/ebFRPUD.png</PreviewFileUrl>
