@@ -1582,23 +1582,25 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 
 <Mod>
 	<Name>Amazing Steiner</Name>
-	<Version>1.2</Version>
+	<Version>2.0</Version>
 	<Priority>-11</Priority>
 	<Author>Emeiru</Author>
 	<Category>Gameplay</Category>
 	<ReleaseDateOriginal>2024-11-18</ReleaseDateOriginal>
-	<ReleaseDate>2025-05-29</ReleaseDate>
-	<MinimumMemoriaVersion>v2025.05.12</MinimumMemoriaVersion>
+	<ReleaseDate>2025-09-28</ReleaseDate>
+	<MinimumMemoriaVersion>v2025.07.04</MinimumMemoriaVersion>
 	<InstallationPath>AmazingSteiner</InstallationPath>
 <Description>Amazing tweaks and improvement for Rus.. err Steiner
 - Steiner now can use basic Swd Mag without Vivi
 - Trance removes damage limit
 - Break techniques have high hit rate in random encounters or when in Trance
 - With Cover, Steiner will always take damage for Garnet
+- New ability: Knight's Judgment, ultimate attack that can exceed the damage limit
+- Knight swords' learnable abilities have been adjusted
 
 Alternate Fantasy
 - Shock's animation reverted to default
-- Renamed Sword Dance to Sword Blitz (different name and animation only)
+- Replaced Sword Dance with Knight's Judgment
 
 Compatible with Alternate Fantasy v6.8 only</Description>
 	<PatchNotes>Complete changes can be found on the mod page.</PatchNotes>
@@ -1608,10 +1610,18 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/wdqqrrg17715wmcbemqi5/AmazingSteiner.zip?rlkey=qxkl3wyp98mx0e9jdk1f47d6m&amp;st=n042djcc&amp;dl=1</DownloadUrl>
 <Header>Game Mode</Header>
 	<SubMod>
+		<Name>Kupo Modern Labels</Name>
+		<InstallationPath>KupoModernLabels</InstallationPath>
+		<Description>Compatibility for Kupo Modern Labels</Description>
+		<Priority>1</Priority>
+		<Group>GameMode</Group>
+		<ActivateWithMod>Modern Labels + </ActivateWithMod>
+	</SubMod>
+	<SubMod>
 		<Name>Vanilla</Name>
 		<InstallationPath>Vanilla</InstallationPath>
 		<Description>Version for regular FFIX</Description>
-		<Priority>1</Priority>
+		<Priority>2</Priority>
 		<Group>GameMode</Group>
 		<ActivateWithoutMod>Alternate Fantasy</ActivateWithoutMod>
 		<Default/>
@@ -1620,7 +1630,7 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 		<Name>Alternate Fantasy</Name>
 		<InstallationPath>AlternateFantasy</InstallationPath>
 		<Description>Version for Alternate Fantasy</Description>
-		<Priority>2</Priority>
+		<Priority>3</Priority>
 		<Group>GameMode</Group>
 		<ActivateWithMod>Alternate Fantasy</ActivateWithMod>
 	</SubMod>
