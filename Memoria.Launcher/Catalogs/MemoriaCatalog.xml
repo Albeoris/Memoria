@@ -1396,7 +1396,7 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 <Mod>
 	<Name>Amazing Steiner</Name>
 	<Version>2.0</Version>
-	<Priority>-10</Priority>
+	<Priority>-11</Priority>
 	<Author>Emeiru</Author>
 	<Category>Gameplay</Category>
 	<ReleaseDateOriginal>2024-11-18</ReleaseDateOriginal>
@@ -1429,7 +1429,7 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 		<Priority>1</Priority>
 		<Group>GameMode</Group>
 		<ActivateWithMod>Modern Labels + </ActivateWithMod>
-		</SubMod>
+	</SubMod>
 	<SubMod>
 		<Name>Vanilla</Name>
 		<InstallationPath>Vanilla</InstallationPath>
@@ -1438,7 +1438,7 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 		<Group>GameMode</Group>
 		<ActivateWithoutMod>Alternate Fantasy</ActivateWithoutMod>
 		<Default/>
-		</SubMod>
+	</SubMod>
 	<SubMod>
 		<Name>Alternate Fantasy</Name>
 		<InstallationPath>AlternateFantasy</InstallationPath>
@@ -1446,7 +1446,7 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 		<Priority>3</Priority>
 		<Group>GameMode</Group>
 		<ActivateWithMod>Alternate Fantasy</ActivateWithMod>
-		</SubMod>
+	</SubMod>
 </Mod>
 
 <Mod>
