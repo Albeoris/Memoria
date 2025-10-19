@@ -375,6 +375,11 @@ namespace NCalc
                     Int32 saId = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)SupportAbility.Void);
                     args.Result = ff9abil.FF9Abil_IsMaster(play, ff9abil.GetAbilityIdFromSupportAbility((SupportAbility)saId));
                 }
+                else if (name == "HasSupportAbilityInData" && args.Parameters.Length == 1)
+                {
+                    Int32 saId = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)SupportAbility.Void);
+                    args.Result = ff9abil.FF9Abil_GetIndex(play, ff9abil.GetAbilityIdFromSupportAbility((SupportAbility)saId)) >= 0;
+                }
             };
         }
 
