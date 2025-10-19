@@ -519,6 +519,20 @@ namespace Memoria
                         FF9BattleDB.Animation[ID[idindex]] = entry[entry.Length - 1];
                     }
                 }
+                else if (String.Equals(entry[0], "3DModelParameter"))
+                {
+                    // eg.: 3DModelParameter MODELID HEIGHT RADIUS BONENECK
+                    if (!Int32.TryParse(entry[1], out Int32 ModelId))
+                        continue;
+                    if (!Int32.TryParse(entry[2], out Int32 height))
+                        continue;
+                    if (!Int32.TryParse(entry[3], out Int32 radius))
+                        continue;
+                    if (!Int32.TryParse(entry[4], out Int32 boneneck))
+                        continue;
+
+                    FF9BattleDBHeightAndRadius.Data.Add(ModelId, [height, radius, boneneck]);
+                }
                 else if (String.Equals(entry[0], "SwapFieldModelTexture"))
                 {
                     // eg.: SwapFieldModelTexture 2250 GEO_MON_B3_093 CustomTextures/OeilvertGuardian/342_0.png CustomTextures/OeilvertGuardian/342_1.png CustomTextures/OeilvertGuardian/342_2.png CustomTextures/OeilvertGuardian/342_3.png CustomTextures/OeilvertGuardian/342_4.png CustomTextures/OeilvertGuardian/342_5.png
