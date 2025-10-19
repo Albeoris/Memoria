@@ -1,5 +1,4 @@
 ﻿using FF9;
-using Memoria.Database;
 using Memoria.Prime;
 using NCalc;
 using System;
@@ -65,6 +64,8 @@ namespace Memoria.Data
                     set.AbilityItemRequirement = formula.Groups[2].Value;
                 else if (String.Equals(formula.Groups[1].Value, "Disable"))
                     set.AbilityDisable = formula.Groups[2].Value;
+                else if (String.Equals(formula.Groups[1].Value, "HardDisable"))
+                    set.AbilityHardDisable = formula.Groups[2].Value;
             }
         }
 
@@ -117,6 +118,42 @@ namespace Memoria.Data
         {
             foreach (FeatureSet feat in GetApplicableFeatures(abilId, potentialCaster, cmdId, menu))
                 if (feat.CheckAbilityIsDisabled(abilId, potentialCaster, cmdId, menu, true))
+                    return true;
+            return false;
+        }
+
+        public static Boolean IsAbilityDisabledInMenu(BattleAbilityId abilId, PLAYER player)
+        {
+            try
+            {
+                if (abilId != BattleAbilityId.Void && AbilityFeatures.TryGetValue(abilId, out FeatureSet abilSet))
+                    return abilSet.CheckAbilityIsDisabledInMenu(abilId, player);
+            }
+            catch (Exception err)
+            {
+                Log.Error(err);
+            }
+            return false;
+        }
+
+        public static Boolean IsAbilityHardDisabledInMenu(BattleAbilityId abilId, PLAYER player)
+        {
+            try
+            {
+                if (abilId != BattleAbilityId.Void && AbilityFeatures.TryGetValue(abilId, out FeatureSet abilSet))
+                    return abilSet.CheckAbilityIsHardDisabledInMenu(abilId, player);
+            }
+            catch (Exception err)
+            {
+                Log.Error(err);
+            }
+            return false;
+        }
+
+        public static Boolean IsAbilityHardDisabled(BattleAbilityId abilId, BattleUnit potentialCaster, BattleCommandId cmdId, BattleCommandMenu menu)
+        {
+            foreach (FeatureSet feat in GetApplicableFeatures(abilId, potentialCaster, cmdId, menu))
+                if (feat.CheckAbilityIsHardDisabled(abilId, potentialCaster, cmdId, menu, true))
                     return true;
             return false;
         }
@@ -198,6 +235,7 @@ namespace Memoria.Data
             public String AbilityMPCost = null;
             public String AbilityItemRequirement = null;
             public String AbilityDisable = null;
+            public String AbilityHardDisable = null;
 
             public Boolean CheckCondition(BattleAbilityId abilId, BattleUnit caster, BattleCommandId cmdId, BattleCommandMenu menu, AA_DATA ability = null, CMD_DATA cmd = null)
             {
@@ -230,6 +268,45 @@ namespace Memoria.Data
                 c.Parameters["CommandId"] = (Int32)cmdId;
                 c.Parameters["CommandMenu"] = (Int32)menu;
                 c.Parameters["CheckInMenu"] = inMenu;
+                c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                return NCalcUtility.EvaluateNCalcCondition(c.Evaluate());
+            }
+
+            public Boolean CheckAbilityIsHardDisabled(BattleAbilityId abilId, BattleUnit caster, BattleCommandId cmdId, BattleCommandMenu menu, Boolean inMenu)
+            {
+                if (String.IsNullOrEmpty(AbilityHardDisable))
+                    return false;
+                Expression c = new Expression(AbilityHardDisable);
+                NCalcUtility.InitializeExpressionUnit(ref c, caster, "Caster");
+                NCalcUtility.InitializeExpressionRawAbility(ref c, FF9BattleDB.CharacterActions[abilId], abilId);
+                c.Parameters["CommandId"] = (Int32)cmdId;
+                c.Parameters["CommandMenu"] = (Int32)menu;
+                c.Parameters["CheckInMenu"] = inMenu;
+                c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                return NCalcUtility.EvaluateNCalcCondition(c.Evaluate());
+            }
+
+            public Boolean CheckAbilityIsDisabledInMenu(BattleAbilityId abilId, PLAYER play)
+            {
+                if (String.IsNullOrEmpty(AbilityDisable))
+                    return false;
+                Expression c = new Expression(AbilityDisable);
+                NCalcUtility.InitializeExpressionPlayer(ref c, play);
+                NCalcUtility.InitializeExpressionRawAbility(ref c, FF9BattleDB.CharacterActions[abilId], abilId);
+                c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                return NCalcUtility.EvaluateNCalcCondition(c.Evaluate());
+            }
+
+            public Boolean CheckAbilityIsHardDisabledInMenu(BattleAbilityId abilId, PLAYER play)
+            {
+                if (String.IsNullOrEmpty(AbilityHardDisable))
+                    return false;
+                Expression c = new Expression(AbilityHardDisable);
+                NCalcUtility.InitializeExpressionPlayer(ref c, play);
+                NCalcUtility.InitializeExpressionRawAbility(ref c, FF9BattleDB.CharacterActions[abilId], abilId);
                 c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                 c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                 return NCalcUtility.EvaluateNCalcCondition(c.Evaluate());

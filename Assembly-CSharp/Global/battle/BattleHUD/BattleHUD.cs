@@ -1356,6 +1356,8 @@ public partial class BattleHUD : UIScene
                 return AbilityStatus.Disable;
         }
 
+        if (BattleAbilityHelper.IsAbilityHardDisabled(patchedId, unit, checkCurrentPlayer ? _currentCommandId : BattleCommandId.None, checkCurrentPlayer ? _currentCommandIndex : BattleCommandMenu.None))
+            return AbilityStatus.None;
         if (BattleAbilityHelper.IsAbilityDisabled(patchedId, unit, checkCurrentPlayer ? _currentCommandId : BattleCommandId.None, checkCurrentPlayer ? _currentCommandIndex : BattleCommandMenu.None))
             return AbilityStatus.Disable;
         if (GetActionMpCost(patchedAbil, unit, patchedId, checkCurrentPlayer) > unit.CurrentMp)

@@ -1248,6 +1248,12 @@ public class AbilityUI : UIScene
         BattleAbilityId patchedId = this.PatchAbility(ff9abil.GetActiveAbilityFromAbilityId(abilityId));
         AA_DATA patchedAbil = FF9BattleDB.CharacterActions[patchedId];
 
+        if (BattleAbilityHelper.IsAbilityDisabledInMenu(patchedId, player))
+            return AbilityType.CantSpell;
+
+        if (BattleAbilityHelper.IsAbilityHardDisabledInMenu(patchedId, player))
+            return AbilityType.NoDraw;
+
         if (!this.equipmentPartInAbilityDict.ContainsKey(abilityId))
         {
             Int32 index = ff9abil.FF9Abil_GetIndex(player, abilityId);
