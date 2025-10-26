@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static Memoria.Assets.DataResources;
 
 public partial class BattleHUD : UIScene
 {
@@ -161,6 +162,12 @@ public partial class BattleHUD : UIScene
                 return [FF9TextTool.BattleLibraText(11) + unit.CurrentHp + FF9TextTool.BattleLibraText(13) + unit.MaximumHp];
             case LibraInformation.MP:
                 return [FF9TextTool.BattleLibraText(12) + unit.CurrentMp + FF9TextTool.BattleLibraText(13) + unit.MaximumMp];
+            case LibraInformation.Stats:
+                messages.Add("[FFCC00]" + Localization.GetWithDefault("Speed") + "[FFFFFF] : " + unit.Dexterity + " / " + "[FFCC00]" + Localization.GetWithDefault("DefenseStats") + "[FFFFFF] : " + unit.PhysicalDefence);
+                messages.Add("[FFCC00]" + Localization.GetWithDefault("Strength") + "[FFFFFF] : " + unit.Strength + " / " + "[FFCC00]" + Localization.GetWithDefault("Evade") + "[FFFFFF] : " + unit.PhysicalEvade);
+                messages.Add("[FFCC00]" + Localization.GetWithDefault("Magic") + "[FFFFFF] : " + unit.Magic + " / " + "[FFCC00]" + Localization.GetWithDefault("MagicDef") + "[FFFFFF] : " + unit.MagicDefence);
+                messages.Add("[FFCC00]" + Localization.GetWithDefault("Spirit") + "[FFFFFF] : " + unit.Will + " / " + "[FFCC00]" + Localization.GetWithDefault("MagicEva") + "[FFFFFF] : " + unit.MagicEvade);
+                return messages;
             case LibraInformation.Category:
                 if (!unit.IsPlayer)
                 {
@@ -230,9 +237,20 @@ public partial class BattleHUD : UIScene
                 if (!unit.IsPlayer)
                 {
                     BattleEnemy enemy = unit.Enemy;
+                    messages.Add("[FFCC00] === " + FF9TextTool.CommandName(BattleCommandId.Steal) + " === [FFFFFF]");
                     foreach (RegularItem itemId in enemy.StealableItems)
                         if (itemId != RegularItem.NoItem)
                             messages.Add(Localization.CurrentDisplaySymbol != "JP" ? FF9TextTool.BattleLibraText(8) + "[FFCC00]" + FF9TextTool.ItemName(itemId) + "[FFFFFF]" : "[FFCC00]" + FF9TextTool.ItemName(itemId) + "[FFFFFF]" + FF9TextTool.BattleLibraText(8));
+                }
+                return messages;
+            case LibraInformation.ItemBonus:
+                if (!unit.IsPlayer)
+                {
+                    BattleEnemy enemy = unit.Enemy;
+                    messages.Add("[00DBDB] === " + Localization.GetWithDefault("MobLoot") + " === [FFFFFF]");
+                    foreach (RegularItem itemId in enemy.DroppableItems)
+                        if (itemId != RegularItem.NoItem)
+                            messages.Add(Localization.CurrentDisplaySymbol != "JP" ? FF9TextTool.BattleLibraText(8) + "[00DBDB]" + FF9TextTool.ItemName(itemId) + "[FFFFFF]" : "[00DBDB]" + FF9TextTool.ItemName(itemId) + "[FFFFFF]" + FF9TextTool.BattleLibraText(8));
                 }
                 return messages;
             case LibraInformation.BlueLearn:
@@ -281,7 +299,7 @@ public partial class BattleHUD : UIScene
     {
         _currentLibraMessageCount = 0;
         _currentLibraMessageNumber++;
-        while (_currentLibraMessageNumber < 13)
+        while (_currentLibraMessageNumber < 14)
         {
             if (_currentLibraMessageNumber == 1 && (_libraEnabledMessage & LibraInformation.NameLevel) != 0)
                 return;
@@ -303,9 +321,11 @@ public partial class BattleHUD : UIScene
                 return;
             if (_currentLibraMessageNumber == 10 && (_libraEnabledMessage & LibraInformation.ItemSteal) != 0)
                 return;
-            if (_currentLibraMessageNumber == 11 && (_libraEnabledMessage & LibraInformation.BlueLearn) != 0)
+            if (_currentLibraMessageNumber == 11 && (_libraEnabledMessage & LibraInformation.ItemBonus) != 0)
                 return;
-            if (_currentLibraMessageNumber == 12 && (_libraEnabledMessage & LibraInformation.AttackList) != 0)
+            if (_currentLibraMessageNumber == 12 && (_libraEnabledMessage & LibraInformation.BlueLearn) != 0)
+                return;
+            if (_currentLibraMessageNumber == 13 && (_libraEnabledMessage & LibraInformation.AttackList) != 0)
                 return;
             _currentLibraMessageNumber++;
         }
@@ -356,8 +376,10 @@ public partial class BattleHUD : UIScene
         else if (_currentLibraMessageNumber == 10)
             multiMessages = GetLibraMessages(_libraBtlData, LibraInformation.ItemSteal);
         else if (_currentLibraMessageNumber == 11)
-            multiMessages = GetLibraMessages(_libraBtlData, LibraInformation.BlueLearn);
+            multiMessages = GetLibraMessages(_libraBtlData, LibraInformation.ItemBonus);
         else if (_currentLibraMessageNumber == 12)
+            multiMessages = GetLibraMessages(_libraBtlData, LibraInformation.BlueLearn);
+        else if (_currentLibraMessageNumber == 13)
             multiMessages = GetLibraMessages(_libraBtlData, LibraInformation.AttackList);
         if (multiMessages != null && _currentLibraMessageCount < multiMessages.Count)
         {
@@ -365,7 +387,7 @@ public partial class BattleHUD : UIScene
             return true;
         }
         AdvanceLibraMessageNumber();
-        if (_currentLibraMessageNumber >= 13)
+        if (_currentLibraMessageNumber >= 14)
         {
             _libraBtlData = null;
             _currentLibraMessageCount = 0;
