@@ -352,6 +352,51 @@ Fix a very specific soft lock against Prison Cage, Black Waltz 3 and Mistodon.</
 </Mod>
 
 <Mod>
+	<Name>New Game +</Name>
+	<Version>1.0</Version>
+	<InstallationPath>NewGamePlus</InstallationPath>
+	<ReleaseDate>11 May 2025</ReleaseDate>
+	<ReleaseDateOriginal>11 May 2025</ReleaseDateOriginal>
+	<Author>DV</Author>
+	<Description>This mod adds a new menu that lets you restart the game using your existing save!
+You can choose to reset (or not) the following options:
+- Your level
+- Your abilities (AA/SA)
+- Your inventory
+- Your treasures (Key Items)
+- Your card collection
+- Your Gils
+- Your playtime
+
+This menu can appear in two different places (you can choose through the options):
+- At the end of the game, right before the final cutscene.
+- At the last save point of the final dungeon.
+
+This mod is somewhat experimental — I can’t guarantee it won’t cause soft locks, but in theory, all variables are fully reset.
+I recommend saving to a new slot when starting this NG+.
+Also, this mod is made to be very friendly with other mods, such as Alternate Fantasy, for example.</Description>
+	<Category>Gameplay</Category>
+	<DownloadUrl>https://files.dv-modding.fr/NewGamePlus.zip</DownloadUrl>
+	<PreviewFile>Thumbnail/NewGamePlus.jpg</PreviewFile>
+	<PreviewFileUrl>https://i.ibb.co/MkDFb6NP/New-Game-Plus.jpg</PreviewFileUrl>
+	<SubMod>
+		<Name>At the end of the game</Name>
+		<InstallationPath>EndOfTheGame</InstallationPath>
+		<Description>Put the NG+ menu before the last cinematic of the game.</Description>
+		<PreviewFile>EndOfTheGame/Thumbnail.jpg</PreviewFile>
+		<Group>NewGamePlus</Group>
+		<Default />
+	</SubMod>
+	<SubMod>
+		<Name>Last Save at Crystal World</Name>
+		<InstallationPath>CrystalWorld</InstallationPath>
+		<Description>Put the NG+ menu at the last save in the last dungeon of the game.</Description>
+		<PreviewFile>CrystalWorld/Thumbnail.jpg</PreviewFile>
+		<Group>NewGamePlus</Group>
+	</SubMod>
+</Mod>
+
+<Mod>
 	<Name>QualityOfLifa</Name>
 	<Version>1.4</Version>
 	<Priority>-23</Priority>
