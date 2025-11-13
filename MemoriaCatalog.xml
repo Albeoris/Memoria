@@ -353,10 +353,10 @@ Fix a very specific soft lock against Prison Cage, Black Waltz 3 and Mistodon.</
 
 <Mod>
 	<Name>New Game +</Name>
-	<Version>1.0</Version>
+	<Version>1.1</Version>
 	<InstallationPath>NewGamePlus</InstallationPath>
-	<ReleaseDate>11 May 2025</ReleaseDate>
-	<ReleaseDateOriginal>11 May 2025</ReleaseDateOriginal>
+	<ReleaseDate>13 Oct 2025</ReleaseDate>
+	<ReleaseDateOriginal>11 Oct 2025</ReleaseDateOriginal>
 	<Author>DV</Author>
 	<Description>This mod adds a new menu that lets you restart the game using your existing save!
 You can choose to reset (or not) the following options:
@@ -375,6 +375,7 @@ This menu can appear in two different places (you can choose through the options
 This mod is somewhat experimental — I can’t guarantee it won’t cause soft locks, but in theory, all variables are fully reset.
 I recommend saving to a new slot when starting this NG+.
 Also, this mod is made to be very friendly with other mods, such as Alternate Fantasy, for example.</Description>
+	<PatchNotes>Force the "SFXRework" parameter to 1 (otherwise, the mod don't work at all)</PatchNotes>
 	<Category>Gameplay</Category>
 	<DownloadUrl>https://files.dv-modding.fr/NewGamePlus.zip</DownloadUrl>
 	<PreviewFile>Thumbnail/NewGamePlus.jpg</PreviewFile>
