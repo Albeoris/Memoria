@@ -355,8 +355,8 @@ Fix a very specific soft lock against Prison Cage, Black Waltz 3 and Mistodon.</
 	<Name>New Game +</Name>
 	<Version>1.1</Version>
 	<InstallationPath>NewGamePlus</InstallationPath>
-	<ReleaseDate>13 Oct 2025</ReleaseDate>
-	<ReleaseDateOriginal>11 Oct 2025</ReleaseDateOriginal>
+	<ReleaseDate>13 Nov 2025</ReleaseDate>
+	<ReleaseDateOriginal>11 Nov 2025</ReleaseDateOriginal>
 	<Author>DV</Author>
 	<Description>This mod adds a new menu that lets you restart the game using your existing save!
 You can choose to reset (or not) the following options:
