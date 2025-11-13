@@ -4058,4 +4058,30 @@ Check them out at https://www.nexusmods.com/finalfantasy9/mods/</Description>
 	<MinimumMemoriaVersion>2024-12-04</MinimumMemoriaVersion>
 </Mod>
 
+<Mod>
+	<Name>VVsRandomizer</Name>
+	<Version>6.3</Version>
+	<Author>VVilmot</Author>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/30</Website>
+	<InstallationPath>VVsRandomizer</InstallationPath>
+	<ReleaseDate>2025-11-13</ReleaseDate>
+	<ReleaseDateOriginal>2021-09-21</ReleaseDateOriginal>
+	<Category>Gameplay</Category>
+	<Description>A mod to give each playthrough a fresh feel, with many different options to customize your experience.
+
+Download this mod from 'Nexus' and run the executable.
+
+Features;
+- Item randomization
+- Ability randomization
+- Enemy randomization (BETA)
+- Custom weapons and gear
+- New Chocographs
+- New textbox colours
+- Challenge options
+- Seed input to share the experience</Description>
+	<PreviewFile>vvsrandomizer.jpg</PreviewFile>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/30/30-1762368557-608107247.png</PreviewFileUrl>
+</Mod>
+
 </ModCatalog>
