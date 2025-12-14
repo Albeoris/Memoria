@@ -2242,19 +2242,19 @@ You should better use the Playable Characters Pack instead. This later one doesn
 
 <Mod>
 	<Name>Kupo UI Suite</Name>
-	<Version>4.2.3</Version>
+	<Version>4.3.3</Version>
 	<Priority>6</Priority>
 	<InstallationPath>KupoUISuite</InstallationPath>
-	<ReleaseDate>2025-07-25</ReleaseDate>
+	<ReleaseDate>2025-12-14</ReleaseDate>
 	<ReleaseDateOriginal>2021-08-14</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>
 The First User Interface Suite for FFIX. This mod allows you to change the ff: Dialogue UI, Menu, Title Screen, Menu Bg , World Map , Title loop , Triple Triad Mat. etc
-See More information on the Readme.txt file 
+See More information on the Readme.txt file
 Mod Order : Position one or on top of Any Gameplay mod.
-Originally released as part of Kupo Mods formerly Mog-Addons 
+Originally released as part of Kupo Mods formerly Mog-Addons
 	</Description>
-	<PatchNotes>Essentially an Extension and fix of the previous Version. Please see Readme file on the root folder</PatchNotes>
+	<PatchNotes>Please see Readme file</PatchNotes>
 	<Category>UI</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://drive.usercontent.google.com/download?id=1hm7knrKrKAc8JVLe_NmB-XcLHMOYkuA0&amp;export=download&amp;confirm=t</DownloadUrl>
@@ -2263,24 +2263,17 @@ Originally released as part of Kupo Mods formerly Mog-Addons
 	<MinimumMemoriaVersion>2024.05.19</MinimumMemoriaVersion>
 	<Header>General Options</Header>
 	<SubMod>
-		<Name>SquareSoft Logo [!New]</Name>
+		<Name>SquareSoft Logo</Name>
 		<InstallationPath>Features/Squaresoft</InstallationPath>
 		<Description>Restores SquareSoft's OG Logo, wont see this if you have skip logos on </Description>
 		<PreviewFile>preview/sq.png</PreviewFile>
 		<Default/>
 	</SubMod>
 	<SubMod>
-		<Name>Omnia Naming Window [!New]</Name>
+		<Name>Omnia Naming Window</Name>
 		<InstallationPath>Features/NamingWindow</InstallationPath>
 		<Description>Opera Omnia Style Naming window</Description>
 		<PreviewFile>preview/onw.png</PreviewFile>
-		<Default/>
-	</SubMod>
-	<SubMod>
-		<Name>Cards: Triple Triad Mat</Name>
-		<InstallationPath>Features/Cards</InstallationPath>
-		<Description>Triple triad inspired mat and UI for the Game, This automatically sets the game to be in triple triad mode </Description>
-		<PreviewFile>preview/tm.png</PreviewFile>
 		<Default/>
 	</SubMod>
 	<SubMod>
@@ -2302,7 +2295,41 @@ Originally released as part of Kupo Mods formerly Mog-Addons
 		<Description>Replace Title Loop Images with Concept Art</Description>
 		<PreviewFile>preview/titleloop.png</PreviewFile>
 	</SubMod>
-	<Header>Item Iconography [!New]</Header>
+	<!-- <SubMod> -->
+		<!-- <Name>World Map: Smoother Texture</Name> -->
+		<!-- <InstallationPath>Features/Texturedown</InstallationPath> -->
+		<!-- <Description>Removes the Flicker and severe sharpness of the world map especially on AMD devices [These downsized versions of Moguri world map]</Description> -->
+		<!-- <Priority>1</Priority> -->
+	<!-- </SubMod> -->
+	<SubMod>
+		<Name>Enable Anti Aliasing</Name>
+		<InstallationPath>Features/ClassicAA</InstallationPath>
+		<Description>A Toggle to enable Anti-Aliasing for the game so that you no longer need to find and edit the ini file</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<Header>Cards</Header>
+	<SubMod>
+		<Name>Cards: Triple Triad Mat</Name>
+		<InstallationPath>Features/Cards/Cards-Mat</InstallationPath>
+		<Description>Triple triad inspired mat </Description>
+		<PreviewFile>preview/tm.png</PreviewFile>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Name>Cards: Triple Triad Online Cards Design</Name>
+		<InstallationPath>Features/Cards/Cards-UI</InstallationPath>
+		<Description>Triple triad Online inspired UI for the Game</Description>
+		<PreviewFile>preview/tm.png</PreviewFile>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Name>Cards: Monster Retexture</Name>
+		<InstallationPath>Features/Cards/Cards-Monsters</InstallationPath>
+		<Description>Monster Retexture, This automatically sets the game to be in triple triad mode</Description>
+		<PreviewFile>preview/tm.png</PreviewFile>
+		<Default/>
+	</SubMod>
+	<Header>Item Iconography</Header>
 	<SubMod>
 		<Name>Icons: Curative item Icons</Name>
 		<InstallationPath>Features/NewIcons</InstallationPath>
@@ -2311,7 +2338,7 @@ Originally released as part of Kupo Mods formerly Mog-Addons
 		<Default/>
 	</SubMod>
 	<SubMod>
-		<Name>Icons: Gems [!New]</Name>
+		<Name>Icons: Gems</Name>
 		<InstallationPath>Features/GemIcons</InstallationPath>
 		<Description>Adds Icon variance to Gems the the game</Description>
 		<PreviewFile>preview/i4.png</PreviewFile>
@@ -2333,24 +2360,24 @@ Originally released as part of Kupo Mods formerly Mog-Addons
 		<Default/>
 	</SubMod>
 	<SubMod>
-		<Name>Key Items Icons [!New]</Name>
+		<Name>Key Items Icons </Name>
 		<InstallationPath>Features/Keyitem/KeyItemsIcons</InstallationPath>
-		<Description>Iconography for Key Items (Now Supports all Languages)</Description>
+		<Description>Iconography for Key Items (fixed the bug that overwrites other names)</Description>
 		<PreviewFile>preview/i5.png</PreviewFile>
 		<Priority>10</Priority>
 		<Default/>
 	</SubMod>
 	<SubMod>
-		<Name>Key Items Center Text [!New]</Name>
+		<Name>Key Items Center Text </Name>
 		<InstallationPath>Features/KeyItem/KeyitemsAlign</InstallationPath>
 		<Description>Centers the text for UK and US version making the alignment of text more consistent one</Description>
 		<PreviewFile>preview/tk.png</PreviewFile>
 		<Priority>15</Priority>
 		<Default/>
 	</SubMod>
-	<Header>Speech Bubbles [!New]</Header>
+	<Header>Speech Bubbles</Header>
 	<SubMod>
-		<Name>Small Regular Speech Bubbles [!New]</Name>
+		<Name>Small Regular Speech Bubbles </Name>
 		<InstallationPath>Features/SpeechBubbles/RegularSpeech</InstallationPath>
 		<Description>A smaller circular version of the regular speech bubble</Description>
 		<Priority>15</Priority>
@@ -2366,14 +2393,6 @@ Originally released as part of Kupo Mods formerly Mog-Addons
 		<PreviewFile>preview/sb.png</PreviewFile>
 	</SubMod>
 	<SubMod>
-		<Name>Ivalice like Speech Bubbles [!Fixed]</Name>
-		<InstallationPath>Features/SpeechBubbles/IvaliceTypeSpeech</InstallationPath>
-		<Description>Textures are from the mobile version</Description>
-		<Priority>15</Priority>
-		<Group>g-speech</Group>
-		<PreviewFile>preview/sb.png</PreviewFile>
-	</SubMod>
-	<SubMod>
 		<Name>Blue and Black Speech Bubbles</Name>
 		<InstallationPath>Features/SpeechBubbles/BlackBlueSpeech</InstallationPath>
 		<Description>Textures are from the mobile version</Description>
@@ -2382,7 +2401,7 @@ Originally released as part of Kupo Mods formerly Mog-Addons
 		<PreviewFile>preview/sb.png</PreviewFile>
 	</SubMod>
 	<SubMod>
-		<Name>Screen Button Speech Bubbles [!New]</Name>
+		<Name>Screen Button Speech Bubbles</Name>
 		<InstallationPath>Features/SpeechBubbles/ScreenSpeech</InstallationPath>
 		<Description>The one found in screen button atlas that is unused for the PC Version</Description>
 		<Priority>15</Priority>
@@ -2455,15 +2474,6 @@ Originally released as part of Kupo Mods formerly Mog-Addons
 		<Group>g-ui-theme</Group>
 		<PreviewFile>preview/d6.png</PreviewFile>
 	</SubMod>
-	<!-- <SubMod> -->
-	<!-- For Future Release -->
-	<!-- <Name>Ivalice </Name> -->
-	<!-- <InstallationPath>Features/DialogueBox/Ivalice</InstallationPath> -->
-	<!-- <Description>Ivalician Theme </Description> -->
-	<!-- <Priority>35</Priority> -->
-	<!-- <Group>g-ui-theme</Group> -->
-	<!-- <PreviewFile>preview/d6.png</PreviewFile> -->
-	<!-- </SubMod> -->
 	<SubMod>
 		<Name>Flat</Name>
 		<InstallationPath>Features/DialogueBox/FlatUI</InstallationPath>
@@ -2491,12 +2501,47 @@ Originally released as part of Kupo Mods formerly Mog-Addons
 		<Description>Default</Description>
 		<Group>g-ui-theme</Group>
 	</SubMod>
+	<Header>Ivalice Theme [Special]</Header>
+	<!-- A Special Theme  -->
+	<SubMod>
+		<Name>Ivalice </Name>
+		<InstallationPath>Features/DialogueBox/Ivalice</InstallationPath>
+		<Description>Ivalician Theme</Description>
+		<Priority>35</Priority>
+		<Group>g-ui-theme</Group>
+		<PreviewFile>preview/d7.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Ivalician Title Screen</Name>
+		<InstallationPath>Features/IvaliceTheme/IvaliceTitle</InstallationPath>
+		<Description>Inspired By FF Tactics Title Screen</Description>
+		<Group>g-title</Group>
+		<Priority>35</Priority>
+		<PreviewFile>preview/t6.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Ivalice Speech Bubbles</Name>
+		<InstallationPath>Features/SpeechBubbles/IvaliceTypeSpeech</InstallationPath>
+		<Description>Textures are from the mobile version</Description>
+		<Priority>15</Priority>
+		<Group>g-speech</Group>
+		<PreviewFile>preview/sb.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<!-- My work around to have a disabled state for tiled and large menu Backgrounds -->
+		<Name>Ivalice Must Be ON</Name>
+		<InstallationPath>Features/Zecrets</InstallationPath>
+		<Description>Must Be turned on To turn off things that can interfere with the theme</Description>
+		<Priority>35</Priority>
+		<Group>g-menu-bg</Group>
+	</SubMod>
 	<Header>Tiled Menu Backgrounds</Header>
 	<SubMod>
 		<Name>Stone</Name>
 		<InstallationPath>Features/Menubg/menubgstone</InstallationPath>
 		<Description>Stone Pattern on Menu Background</Description>
 		<Group>g-menu-bg</Group>
+		<Default/>
 		<PreviewFile>preview/b4.png</PreviewFile>
 	</SubMod>
 	<SubMod>
@@ -2520,7 +2565,7 @@ Originally released as part of Kupo Mods formerly Mog-Addons
 		<Group>g-menu-bg</Group>
 		<PreviewFile>preview/b2.png</PreviewFile>
 	</SubMod>
-	<Header>Full Menu Backgrounds [!New]</Header>
+	<Header>Full Menu Backgrounds</Header>
 	<SubMod>
 		<Name>FBG - Crash Site Forest </Name>
 		<InstallationPath>Features/Menubg/menu-1</InstallationPath>
@@ -2579,25 +2624,25 @@ Originally released as part of Kupo Mods formerly Mog-Addons
 		<Group>g-menu-bg</Group>
 		<Priority>5</Priority>
 	</SubMod>
-	<Header>Text Options [!New]</Header>
+	<Header>Text Options</Header>
 	<SubMod>
 		<Name>Stylized Speaker Name</Name>
 		<InstallationPath>Features/TextOptions/StyledSpeakerName</InstallationPath>
-		<Description>add stylistic choices on speaker on dialogue</Description>
+		<Description>Adds stylistic choices for speakers in dialogue</Description>
 		<PreviewFile>preview/to1.png</PreviewFile>
 		<Priority>4</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Dialogue Flat Text</Name>
 		<InstallationPath>Features/TextOptions/FlatText</InstallationPath>
-		<Description>Removes Text Shadow on most text in the game Dialogue</Description>
+		<Description>Removes text shadows from most dialogue text in the game</Description>
 		<PreviewFile>preview/to2.png</PreviewFile>
 		<Priority>2</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Bold Text</Name>
 		<InstallationPath>Features/TextOptions/BoldText</InstallationPath>
-		<Description>Bolden the text in game, Font used must Support Bold Font Weights</Description>
+		<Description>Makes text bold in-game. Font used must support bold font weights</Description>
 		<PreviewFile>preview/to3.png</PreviewFile>
 		<Priority>3</Priority>
 	</SubMod>
@@ -3279,10 +3324,10 @@ Defaults to smaller cursor but has several options Dagger, Ultima Blade, Staff
 
 <Mod>
 	<Name>Kupo Controller Pack</Name>
-	<Version>4.1.4</Version>
+	<Version>4.1.5</Version>
 	<Priority>11</Priority>
 	<InstallationPath>KupoButtonsPack</InstallationPath>
-	<ReleaseDate>2025-07-19</ReleaseDate>
+	<ReleaseDate>2025-12-14</ReleaseDate>
 	<ReleaseDateOriginal>2021-08-27</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>The original COMPLETE controller buttons pack of FF9.
@@ -3297,16 +3342,18 @@ Available Themes:
   if you want it old School
 - SNES North American one [via request]
   Because we can.
-- Switch Pro Controller [NEW]
+- Switch Pro Controller 
   Because we duh .
-- Xbox Gloss [NEW]
+- Xbox Gloss 
   Because why not .
- 
- A component of Kupo Library formerly Mog Add-ons</Description>
-	<PatchNotes>Added Switch and Xbox Gloss Options , Fixed error on moogle icon being declared on tp sheet</PatchNotes>
+- Ivalician [NEW] 
+  Inspire by FF Tactics UI
+
+A component of Mods Kupo Library formerly Mog Add-ons</Description>
+	<PatchNotes>Added Ivalician Option</PatchNotes>
 	<Category>Visual</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/81</Website>
-	<DownloadUrl>https://drive.usercontent.google.com/download?id=1elCvAm5AuRB1T7CZRvXaH5aKTbRzQnbK&amp;export=download&amp;confirm=t</DownloadUrl>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/aro9kltyr05pwgspwi9bg/KupoButtonsPack.zip?rlkey=6gg5g2fkizchhp4vthop0v4nd&amp;dl=1</DownloadUrl>
 	<PreviewFile>preview/kupo-buttons-pack.png</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/81/81-1730476327-697295505.png</PreviewFileUrl>
 	<MinimumMemoriaVersion>2024.05.19</MinimumMemoriaVersion>
@@ -3360,7 +3407,14 @@ Available Themes:
 		<InstallationPath>Features/ButtonsXboxGloss</InstallationPath>
 		<Description>Glossy Version of the  Default Xbox Prompts</Description>
 		<Group>g-controller</Group>
-		<PreviewFile>preview/controller-xbox-g.jpg</PreviewFile>
+		<PreviewFile>preview/controller-xbox-g.jpg</PreviewFile>		
+	</SubMod>
+	<SubMod>
+		<Name>Ivalician</Name>
+		<InstallationPath>Features/IvaliceTheme</InstallationPath>
+		<Description>Prompts Inspired by FF Tactics</Description>
+		<Group>g-controller</Group>
+		<PreviewFile>preview/controller-ivalice.jpg</PreviewFile>		
 	</SubMod>
 	<SubMod>
 		<Name>Default Xbox</Name>
@@ -3436,14 +3490,13 @@ Available Themes:
 
 <Mod>
 	<Name>Portraits Pack</Name>
-	<Version>4.2.8</Version>
+	<Version>4.2.9</Version>
 	<Priority>13</Priority>	
 	<InstallationPath>KupoPortraits</InstallationPath>
-	<ReleaseDate>2025-06-19</ReleaseDate>
+	<ReleaseDate>2025-12-14</ReleaseDate>
 	<ReleaseDateOriginal>2021-10-18</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>DFFOO-style portraits are included. All presets support released characters and select planned additions from the Playable Character Pack.
-Changelog: Flipped Priority Order for the mod to work properly.
 Mod Order: Place above Playable Character Pack, Beatrix Mod, Tantalus Mod, and Kupo UI Suite.
 Part of the Kupo Mods suite, formerly known as Mog Add-ons.
 	</Description>
@@ -3470,6 +3523,23 @@ Part of the Kupo Mods suite, formerly known as Mog Add-ons.
 		<Priority>2</Priority>
 		<Group>g-port-extra</Group>
 		<PreviewFile>preview/ext-alt.jpg</PreviewFile>
+	</SubMod>
+	<Header>Celebration Portraits</Header>
+	<SubMod>
+		<Name>Celebration</Name>
+		<InstallationPath>Features/PortraitCelebration</InstallationPath>
+		<Description>A special version of portraits in celebration of 25th Anniversary</Description>
+		<Priority>5</Priority>
+		<Group>g-port</Group>
+		<PreviewFile>preview/dffoo-alt.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Celebration Pluto Knights / White Mage  </Name>
+		<InstallationPath>Features/PortraitCelebrationPCP</InstallationPath>
+		<Description>A special version of portraits in celebration of 25th anniversary. Must be used with the celebration set.</Description>
+		<Priority>1</Priority>
+		<Group>g-port-extra</Group>
+		<PreviewFile>preview/dffoo.jpg</PreviewFile>
 	</SubMod>
 	<Header>DFFOO Portraits</Header>
 	<SubMod>
@@ -3792,17 +3862,17 @@ Idea by Snouz and made by DV.</Description>
 
 <Mod>
 	<Name>Modern Labels + </Name>
-	<Version>4.1.9</Version>
+	<Version>4.2.0</Version>
 	<Priority>18</Priority>
 	<InstallationPath>KupoModernLabels</InstallationPath>
-	<ReleaseDate>2025-08-17</ReleaseDate>
+	<ReleaseDate>2025-12-14</ReleaseDate>
 	<ReleaseDateOriginal>2024-10-01</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>A mod that replaces old item, spell and UI names / labels to their modern counterparts or their now known consistent naming convention 
 Ideal for those who were introduced to the series post final fantasy 12. Simply activate and that should work. 
 For now the primary focus of the mod is the US and UK translation of the game, so non-English language players feel free to message me if you have suggestions or requests for your language of choice.
 	</Description>
-	<PatchNotes>Added suggestions of AdmiralBloaf and SuperSanityMan. Read more on the read me file</PatchNotes>
+	<PatchNotes>See Readme.txt</PatchNotes>
 	<Category>Translation</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/74</Website>
 	<DownloadUrl>https://drive.usercontent.google.com/download?id=13u-acfqaEhYAi4IxkHV7Kj0HSajyne-Y&amp;export=download&amp;confirm=t</DownloadUrl>
