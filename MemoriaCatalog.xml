@@ -646,6 +646,80 @@ which will be much more optimized (DV and Tirlititi).</Description>
 </Mod>
 
 <Mod>
+	<Name>Chocobo Hot and Cold QoL</Name>
+	<Version>1.0</Version>
+	<Author>CheddarBung</Author>
+	<Category>Gameplay</Category>
+	<PreviewFile>preview/chocoHC.png</PreviewFile>
+	<InstallationPath>Chocobo Hot and Cold</InstallationPath>
+	<ReleaseDate>2025-12-14</ReleaseDate>
+	<ReleaseDateOriginal>2025-12-14</ReleaseDateOriginal>
+	<Website>https://github.com/robmcfarlane1120-sudo/Chocobo-Hot-and-Cold-QoL</Website>
+	<DownloadUrl>https://github.com/robmcfarlane1120-sudo/Chocobo-Hot-and-Cold-QoL/releases/download/v1.0.1/Chocobo_Hot_and_Cold_QOL_v1.0.1.zip</DownloadUrl>
+	<PreviewFileUrl>https://github.com/robmcfarlane1120-sudo/Chocobo-Hot-and-Cold-QoL/blob/main/Chocobo%20Hot%20and%20Cold/Preview/chocoHC.png?raw=true</PreviewFileUrl>
+	<Description>Chocobo Hot and Cold QoL
+
+Quality-of-life tweaks for Final Fantasy IX’s Chocobo Hot &amp; Cold that respect vanilla progression.
+Multiple modes adjust RNG to suit different playstyles, from the untouched classic experience to streamlined options for faster chocograph progression.
+Compatible with Alternate Fantasy and Ferny Fantasy.
+Load above them in the mod order.
+
+Modes
+
+Chocobo Naturalist (Recommended)
+
+Balanced for real-time play without Turbo.
+Averages ~2½ chocographs within the first six digs, with rewards scaling for higher dig counts.
+Lets you play a handful of focused sessions, have a good time, and be done — without Turbo and without feeling like you’re cheating.
+
+Chocographer
+
+100% chance to find chocographs and pieces when available.
+For players who want quick access to Ozma and rewards without RNG.
+
+Lucky Beak
+
+Speeds up the vanilla turbo experience without turning Hot &amp; Cold into a cheat.
+Averages ~2½ chocographs over an eight-dig round, allows multiple finds per session, and keeps RNG intact.
+Designed for Turbo play with fewer sessions and steady progress.
+
+Vanilla
+
+Completely untouched Hot &amp; Cold behavior.
+Useful as a dedicated override for mods that edit Barrel_38, Barrel_41, or Barrel_46.
+	</Description>
+	<SubMod>
+		<Name>Chocographer</Name>
+		<InstallationPath>Chocographer</InstallationPath>
+		<Description>100% chocograph and Chocograph piece chance if available. Ideal for players who simply want to reach Ozma and get loot without fighting RNG.</Description>
+		<PreviewFile>Preview/choco.png</PreviewFile>
+		<Group>ChocoboHotandCold</Group>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Name>Lucky Beak</Name>
+		<InstallationPath>LuckyBeak</InstallationPath>
+		<Description>Designed for players who still enjoy turbo mode but want fewer dry runs. Slightly improved Chocograph and piece chance. Can find more than 1 per round.</Description>
+		<PreviewFile>Preview/choco1.png</PreviewFile>
+		<Group>ChocoboHotandCold</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Chocobo Naturalist</Name>
+		<InstallationPath>ChocoboNaturalist</InstallationPath>
+		<Description>Designed for players who want the natural feel of the game without the time sink it demands. Turn turbo off, beak level matters, race the clock to dig up your items. Greatly improved chocograph and piece chance. Can find more than 1 per round. (Recommended)</Description>
+		<PreviewFile>Preview/choco2.png</PreviewFile>
+		<Group>ChocoboHotandCold</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Vanilla</Name>
+		<InstallationPath>Vanilla</InstallationPath>
+		<Description>The classic Hot and Cold experience with completely unmodified vanilla behavior.</Description>
+		<PreviewFile>Preview/choco3.png</PreviewFile>
+		<Group>ChocoboHotandCold</Group>
+	</SubMod>
+</Mod>
+
+<Mod>
 	<Name>Doppelgängers</Name>
 	<Version>1.1</Version>
 	<Priority>-15</Priority>
