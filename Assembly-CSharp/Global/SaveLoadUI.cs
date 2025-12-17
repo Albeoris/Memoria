@@ -49,6 +49,24 @@ public class SaveLoadUI : UIScene
             PersistenSingleton<UIManager>.Instance.IsPlayerControlEnable = false;
     }
 
+    private void Update()
+    {
+        if (!this.isActiveAndEnabled || base.Loading || ButtonGroupState.ActiveGroup == SaveLoadUI.FileGroupButton)
+            return;
+
+        bool prevPage = PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftBumper) || UIManager.Input.GetKey(Control.LeftBumper);
+        bool nextPage = PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.RightBumper) || UIManager.Input.GetKey(Control.RightBumper);
+
+        if (prevPage)
+        {
+            ChangePage(-1);
+        }
+        else if (nextPage)
+        {
+            ChangePage(1);
+        }
+    }
+
     public override void Show(UIScene.SceneVoidDelegate afterFinished = null)
     {
         if (FF9StateSystem.aaaaPlatform)
@@ -69,7 +87,7 @@ public class SaveLoadUI : UIScene
                 ButtonGroupState.SetPointerLimitRectToGroup(this.FileListPanel.GetComponent<UIWidget>(), this.fileScrollList.ItemHeight, SaveLoadUI.FileGroupButton);
                 ButtonGroupState.SetScrollButtonToGroup(this.FileListPanel.GetChild(0).GetComponent<ScrollButton>(), SaveLoadUI.FileGroupButton);
                 Int32 index = FF9StateSystem.Settings.LatestSlot < 0 ? 0 : FF9StateSystem.Settings.LatestSlot;
-                this.helpSlotLabel.rawText = String.Format(Localization.Get("SlotNo"), index + 1);
+                this.helpSlotLabel.rawText = String.Format(Localization.Get("SlotNo"), (SharedDataBytesStorage.CurrentSavePage * 10) + this.currentSlot + 1);
                 ButtonGroupState.SetCursorStartSelect(this.slotNameButtonList[index].gameObject, SaveLoadUI.SlotGroupButton);
                 ButtonGroupState.ActiveGroup = SaveLoadUI.SlotGroupButton;
             };
@@ -107,7 +125,7 @@ public class SaveLoadUI : UIScene
         if (!isActiveAndEnabled)
             return;
         if (this.currentSlot >= 0)
-            this.helpSlotLabel.rawText = String.Format(Localization.Get("SlotNo"), this.currentSlot + 1);
+            this.helpSlotLabel.rawText = String.Format(Localization.Get("SlotNo"), (SharedDataBytesStorage.CurrentSavePage * 10) + this.currentSlot + 1);
         if (this.dataInfos != null && this.FileListPanel.activeInHierarchy)
         {
             Int32 saveID = 0;
@@ -256,7 +274,7 @@ public class SaveLoadUI : UIScene
                 if (this.currentSlot != go.transform.GetSiblingIndex())
                 {
                     this.currentSlot = go.transform.GetSiblingIndex();
-                    this.helpSlotLabel.rawText = String.Format(Localization.Get("SlotNo"), this.currentSlot + 1);
+                    this.helpSlotLabel.rawText = String.Format(Localization.Get("SlotNo"), (SharedDataBytesStorage.CurrentSavePage * 10) + this.currentSlot + 1);
                 }
             }
             else if (ButtonGroupState.ActiveGroup == SaveLoadUI.FileGroupButton)
@@ -493,11 +511,12 @@ public class SaveLoadUI : UIScene
         Int32 slotID = 0;
         foreach (UILabel uilabel in this.slotNameLabelList)
         {
-            uilabel.rawText = String.Format(Localization.Get("SlotNo"), slotID + 1);
+            int realSlotNumber = (SharedDataBytesStorage.CurrentSavePage * 10) + slotID + 1;
+            uilabel.rawText = String.Format(Localization.Get("SlotNo"), realSlotNumber);
             uilabel.color = FF9TextTool.White;
             slotID++;
         }
-        this.helpSlotLabel.rawText = String.Format(Localization.Get("SlotNo"), this.currentSlot + 1);
+        this.helpSlotLabel.rawText = String.Format(Localization.Get("SlotNo"), (SharedDataBytesStorage.CurrentSavePage * 10) + this.currentSlot + 1);
         if (updateActive)
         {
             this.currentSlot = FF9StateSystem.Settings.LatestSlot;
@@ -624,6 +643,29 @@ public class SaveLoadUI : UIScene
     private void OnFinishedUploadToCloud(DataSerializerErrorCode errNo, Boolean isSuccess, SharedDataPreviewSlot localData, SharedDataPreviewSlot cloudData)
     {
         base.StartCoroutine(this.OnFinishedUploadToCloud_delay(errNo, isSuccess, localData, cloudData));
+    }
+
+    private void ChangePage(int direction)
+    {
+        int newPage = SharedDataBytesStorage.CurrentSavePage + direction;
+
+        if (newPage < 0) return;
+        if (newPage > 9) return;
+
+        FF9Sfx.FF9SFX_Play(103);
+        SharedDataBytesStorage.CurrentSavePage = newPage;
+        SharedDataBytesStorage.UpdatePathForPage();
+        RefreshSaveList();
+    }
+
+    private void RefreshSaveList()
+    {
+        this.DisplaySlot(false);
+        if (this.currentSlot >= 0)
+        {
+            int realSlotNumber = (SharedDataBytesStorage.CurrentSavePage * 10) + this.currentSlot + 1;
+            this.helpSlotLabel.rawText = String.Format(Localization.Get("SlotNo"), realSlotNumber);
+        }
     }
 
     private IEnumerator OnFinishedSaveFile_delay(DataSerializerErrorCode errNo, Int32 slotID, Int32 saveID, Boolean isSuccess, SharedDataPreviewSlot data)
