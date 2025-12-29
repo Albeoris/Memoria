@@ -63,7 +63,9 @@ namespace Memoria.Assets
         private static CommonSPSSystem spsUtility;
         private static SPSEffect spsEffect;
         private static Single speedFactor;
+        private static Int32 currentPausedKeyFrame;
         private static String savedAnimationPath;
+        private static AnimationClipReader savedAnimationClip;
         private static Boolean isLoadingModel;
         private static Boolean isLoadingWeaponModel;
         private static Boolean isLoadingFloorModel;
@@ -93,6 +95,8 @@ namespace Memoria.Assets
         private static GameObject backgroundGo;
         private static GameObject labelGo;
         private static UISprite background;
+        private static Boolean isAnimStopped;
+        private static float animStoppedTime;
 
         public static void Init()
         {
@@ -112,6 +116,7 @@ namespace Memoria.Assets
             currentHiddenBonesID = new List<Int32>();
             speedFactor = 1f;
             savedAnimationPath = null;
+            savedAnimationClip = null;
             spsUtility = new CommonSPSSystem();
             GameObject spsGo = new GameObject($"ModelViewer_SPS");
             MeshRenderer meshRenderer = spsGo.AddComponent<MeshRenderer>();
@@ -140,11 +145,11 @@ namespace Memoria.Assets
             controlPanel = new ControlPanel(PersistenSingleton<UIManager>.Instance.transform, "");
             controlLabel = controlPanel.AddSimpleLabel("", NGUIText.Alignment.Right, 11);
             controlPanel.EndInitialization(UIWidget.Pivot.BottomRight);
-            controlPanel.BasePanel.SetRect(-50f, 0f, 1000f, 580f);
+            controlPanel.BasePanel.SetRect(-50f, 0f, 1000f, 520f);
             extraInfoPanel = new ControlPanel(PersistenSingleton<UIManager>.Instance.transform, "");
             extraInfoLabel = extraInfoPanel.AddSimpleLabel("", NGUIText.Alignment.Center, 1);
             extraInfoPanel.EndInitialization(UIWidget.Pivot.BottomRight);
-            extraInfoPanel.BasePanel.SetRect(-50f, 0f, 1500f, 580f);
+            extraInfoPanel.BasePanel.SetRect(-50f, 0f, 1750f, 580f);
 
             InsertTextGUI = UnityEngine.Object.Instantiate(PersistenSingleton<UIManager>.Instance.NameSettingScene.NameInputField.gameObject);
             input = InsertTextGUI.GetComponent<UIInput>();
@@ -417,6 +422,10 @@ namespace Memoria.Assets
                 Boolean alt = Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt);
                 Boolean altgr = Input.GetKey(KeyCode.AltGr);
 
+                Boolean rotationModified = false;
+                Boolean positionModified = false;
+                Boolean scaleModified = false;
+
                 if (Input.GetKeyDown(KeyCode.RightArrow))
                 {
                     Int32 nextIndex = currentGeoIndex + 1;
@@ -529,6 +538,11 @@ namespace Memoria.Assets
                             speedFactor = 0.1f;
                         else if (speedFactor == 0.1f)
                             speedFactor = 1f;
+                    }
+
+                    if (toggleAnim && (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.X))) // frame advance
+                    {
+                        toggleAnim = false;
                     }
                 }
                 if (!downUpProcessed) // Browse anims
@@ -654,6 +668,7 @@ namespace Memoria.Assets
                             BoneSelected.localRotation *= Quaternion.Euler(0f, 0f, -1f);
 
                         OffsetBonesRot[currentBoneIndex] += (BoneSelected.localRotation.eulerAngles - PreviousRot);
+                        rotationModified = true;
                     }
                     else if (partcontrolled == PartControlled.FLOOR)
                     {
@@ -720,6 +735,8 @@ namespace Memoria.Assets
                                 OffsetBonesPos[currentBoneIndex] += moveSpeed * Vector3.left;
                             else
                                 OffsetBonesPos.Add(currentBoneIndex, moveSpeed * Vector3.left);
+
+                            positionModified = true;
                         }
                         if (Input.GetKey(KeyCode.Keypad4))
                         {
@@ -728,6 +745,8 @@ namespace Memoria.Assets
                                 OffsetBonesPos[currentBoneIndex] += moveSpeed * Vector3.right;
                             else
                                 OffsetBonesPos.Add(currentBoneIndex, moveSpeed * Vector3.right);
+
+                            positionModified = true;
                         }
                         if (Input.GetKey(KeyCode.Keypad8))
                         {
@@ -736,6 +755,8 @@ namespace Memoria.Assets
                                 OffsetBonesPos[currentBoneIndex] += moveSpeed * Vector3.down;
                             else
                                 OffsetBonesPos.Add(currentBoneIndex, moveSpeed * Vector3.down);
+
+                            positionModified = true;
                         }
                         if (Input.GetKey(KeyCode.Keypad2))
                         {
@@ -744,6 +765,8 @@ namespace Memoria.Assets
                                 OffsetBonesPos[currentBoneIndex] += moveSpeed * Vector3.up;
                             else
                                 OffsetBonesPos.Add(currentBoneIndex, moveSpeed * Vector3.up);
+
+                            positionModified = true;
                         }
 
                         if (Input.GetKey(KeyCode.Keypad7) || Input.GetKey(KeyCode.Keypad9))
@@ -753,6 +776,8 @@ namespace Memoria.Assets
                                 OffsetBonesPos[currentBoneIndex] += moveSpeed * Vector3.back;
                             else
                                 OffsetBonesPos.Add(currentBoneIndex, moveSpeed * Vector3.back);
+
+                            positionModified = true;
                         }
                         if (Input.GetKey(KeyCode.Keypad1) || Input.GetKey(KeyCode.Keypad3))
                         {
@@ -761,6 +786,8 @@ namespace Memoria.Assets
                                 OffsetBonesPos[currentBoneIndex] += moveSpeed * Vector3.forward;
                             else
                                 OffsetBonesPos.Add(currentBoneIndex, moveSpeed * Vector3.forward);
+
+                            positionModified = true;
                         }
                     }
                     else if (partcontrolled == PartControlled.FLOOR)
@@ -823,6 +850,8 @@ namespace Memoria.Assets
                             BoneSelected.localScale += Input.GetKey(KeyCode.KeypadPlus) ? new Vector3(0.01f, 0.01f, 0.01f) : -new Vector3(0.01f, 0.01f, 0.01f);
 
                         OffsetBonesScale[currentBoneIndex] = BoneSelected.localScale;
+
+                        scaleModified = true;
                     }
                     else if (partcontrolled == PartControlled.FLOOR)
                     {
@@ -1023,6 +1052,8 @@ namespace Memoria.Assets
                                 OffsetBonesPos[currentBoneIndex] -= mouseSensibility * new Vector3(mouseDelta.x, mouseDelta.y, mouseDelta.z);
                             else
                                 OffsetBonesPos.Add(currentBoneIndex, mouseSensibility * new Vector3(mouseDelta.x, mouseDelta.y, mouseDelta.z));
+
+                            positionModified = true;
                         }
                         else if (partcontrolled == PartControlled.FLOOR)
                         {
@@ -1114,6 +1145,7 @@ namespace Memoria.Assets
                             }
 
                             OffsetBonesRot[currentBoneIndex] += (BoneSelected.localRotation.eulerAngles - PreviousRot);
+                            rotationModified = true;
                         }
                         else if (partcontrolled == PartControlled.FLOOR)
                         {
@@ -1214,6 +1246,8 @@ namespace Memoria.Assets
                             boneselected_scaleFactor.y = boneselected_scaleFactor.z = boneselected_scaleFactor.x;
                             BoneSelected.localScale = boneselected_scaleFactor;
                             OffsetBonesScale[currentBoneIndex] = boneselected_scaleFactor;
+
+                            scaleModified = true;
                         }
                         else if (partcontrolled == PartControlled.FLOOR)
                         {
@@ -1237,7 +1271,11 @@ namespace Memoria.Assets
                             exportedAnims = animList.Select(a => a.Value).ToList();
                         else
                             exportedAnims = new List<String>() { animList[currentAnimIndex].Value };
-                        ExportAnimation(exportedAnims);
+
+                        if (currentAnimName == "CUSTOM_CLIP")
+                            ExportAnimation(exportedAnims, savedAnimationClip);
+                        else
+                            ExportAnimation(exportedAnims, null);
                     }
                     else if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS && currentModel != null)
                     {
@@ -1321,17 +1359,62 @@ namespace Memoria.Assets
                         else camera.backgroundColor = Color.black;
                     }
                 }
-                Animation animation = currentModel.GetComponent<Animation>();
-                if (animation != null && !animation.IsPlaying(currentAnimName) && toggleAnim) // make animation a loop by default
+                if (Input.GetKeyDown(KeyCode.K) && isAnimStopped && currentAnimName == "CUSTOM_CLIP")
                 {
+                    AddKeyframeToCustomAnimation();
+                }
+                if (Input.GetKeyDown(KeyCode.D) && isAnimStopped && currentAnimName == "CUSTOM_CLIP")
+                {
+                    RemoveKeyframeToCustomAnimation();
+                }
+
+                Animation animation = currentModel.GetComponent<Animation>();
+                if (animation != null && (!animation.IsPlaying(currentAnimName) || isAnimStopped) && toggleAnim) // make animation a loop by default
+                {
+                    isAnimStopped = false;
                     animation.Play(currentAnimName);
                     if (animation[currentAnimName] != null)
                         animation[currentAnimName].speed = speedFactor;
                 }
-                else if (animation != null && animation.IsPlaying(currentAnimName) && (!toggleAnim || Input.GetKeyDown(KeyCode.S)))
+                else if (animation != null && !isAnimStopped && (!toggleAnim || Input.GetKeyDown(KeyCode.S)))
                 {
-                    animation.Stop();
+                    // Advancing through and changing keyframes requires a custom clip to be loaded
+                    if (currentAnimName == "CUSTOM_CLIP")
+                    {
+                        isAnimStopped = true;
+                        if (animation[currentAnimName] != null && animation[currentAnimName].clip != null)
+                        {
+                            animation[currentAnimName].speed = 0;
+                            animStoppedTime = animation[currentAnimName].time;
+                            currentPausedKeyFrame = (int)Math.Round((animation[currentAnimName].time % 1) * animation[currentAnimName].clip.frameRate);
+                        }
+                    }
+                    else
+                    {
+                        animation.Stop();
+                    }
                 }
+
+                if (animation != null && isAnimStopped && currentAnimName == "CUSTOM_CLIP")
+                {
+                    if (Input.GetKeyDown(KeyCode.Z))
+                    {
+                        AdvanceAnimationByFrames(animation, -1);
+                    }
+                    else if (Input.GetKeyDown(KeyCode.X))
+                    {
+                        AdvanceAnimationByFrames(animation, 1);
+                    }
+                    else
+                    {
+                        UpdateCustomAnimationCurves(BoneSelected, rotationModified, positionModified, scaleModified);
+
+                        // Pause animation
+                        animation[currentAnimName].speed = 0;
+                        animation[currentAnimName].time = animStoppedTime;
+                    }
+                }
+
                 UpdateRender();
                 ProcessBuiltInWeapon();
                 if (!LoadingWeaponConfig)
@@ -1500,8 +1583,14 @@ namespace Memoria.Assets
                     controlist += $"{entry.Value} [FFFF00][{entry.Key}][FFFFFF]\r\n";
                 controlLabel.rawText = controlist;
 
+                Animation animation = null;
+                if (currentModel != null)
+                {
+                    animation = currentModel.GetComponent<Animation>();
+                }
+
                 String extraInfo = "";
-                if (partcontrolled == PartControlled.MODEL && currentModel != null)
+                if (partcontrolled == PartControlled.MODEL && currentModel != null && animation != null)
                 {
                     if (currentModelWrapper == null)
                         currentModelWrapper = new GameObject("CurrentModelWrapper");
@@ -1512,10 +1601,11 @@ namespace Memoria.Assets
                     extraInfo += $" Rot(Quat): [x]{Math.Round(currentModelWrapper.transform.localRotation.x, 2)} [y]{Math.Round(currentModelWrapper.transform.localRotation.y, 2)} [z]{Math.Round(currentModelWrapper.transform.localRotation.z, 2)} [w]{Math.Round(currentModelWrapper.transform.localRotation.w, 2)}";
                     extraInfo += $" Rot(Eul): {Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.x, 0)}/{Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.y, 0)}/{Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.z, 0)}";
                     extraInfo += $" Scale: {Math.Round(currentModelWrapper.transform.localScale.x, 2)}/{Math.Round(currentModelWrapper.transform.localScale.y, 2)}/{Math.Round(currentModelWrapper.transform.localScale.z, 2)}";
+                    extraInfo += $" Frame: {Math.Round((animation[currentAnimName].time % 1) * animation[currentAnimName].clip.frameRate)}/{Math.Round(animation[currentAnimName].clip.length * animation[currentAnimName].clip.frameRate)}";
                     extraInfoLabel.color = Color.green;
                     //extraInfo += $" | Rot(Eul): {Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.x,0)}/{Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.y, 0)}/{Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.z, 0)}";
                 }
-                if (partcontrolled == PartControlled.WEAPON && currentWeaponModel != null)
+                if (partcontrolled == PartControlled.WEAPON && currentWeaponModel != null && animation != null)
                 {
                     extraInfo += "[WEAPON] ¤ ";
                     extraInfo += UseModdedTextures ? "text_mod | " : "text_orig | ";
@@ -1523,9 +1613,10 @@ namespace Memoria.Assets
                     extraInfo += $" Rot(Quat): [x]{Math.Round(currentWeaponModel.transform.localRotation.x, 2)} [y]{Math.Round(currentWeaponModel.transform.localRotation.y, 2)} [z]{Math.Round(currentWeaponModel.transform.localRotation.z, 2)} [w]{Math.Round(currentWeaponModel.transform.localRotation.w, 2)}";
                     extraInfo += $" Rot(Eul): {Math.Round(currentWeaponModel.transform.localRotation.eulerAngles.x, 0)}/{Math.Round(currentWeaponModel.transform.localRotation.eulerAngles.y, 0)}/{Math.Round(currentWeaponModel.transform.localRotation.eulerAngles.z, 0)}";
                     extraInfo += $" Scale: {Math.Round(currentWeaponModel.transform.localScale.x, 2)}/{Math.Round(currentWeaponModel.transform.localScale.y, 2)}/{Math.Round(currentWeaponModel.transform.localScale.z, 2)}";
+                    extraInfo += $" Frame: {Math.Round((animation[currentAnimName].time % 1) * animation[currentAnimName].clip.frameRate)}/{Math.Round(animation[currentAnimName].clip.length * animation[currentAnimName].clip.frameRate)}";
                     extraInfoLabel.color = Color.cyan;
                 }
-                else if (partcontrolled == PartControlled.BONE && currentModel != null)
+                else if (partcontrolled == PartControlled.BONE && currentModel != null && animation != null)
                 {
                     Transform BoneSelected = currentModel.transform.GetChildByName("bone" + currentBoneIndex.ToString("D3"));
                     extraInfo += "[BONE] ¤ ";
@@ -1534,6 +1625,7 @@ namespace Memoria.Assets
                     extraInfo += $" Rot(Quat): [x]{Math.Round(BoneSelected.localRotation.x, 2)} [y]{Math.Round(BoneSelected.localRotation.y, 2)} [z]{Math.Round(BoneSelected.localRotation.z, 2)} [w]{Math.Round(BoneSelected.localRotation.w, 2)}";
                     extraInfo += $" Rot(Eul): {Math.Round(BoneSelected.localRotation.eulerAngles.x, 0)}/{Math.Round(BoneSelected.localRotation.eulerAngles.y, 0)}/{Math.Round(BoneSelected.localRotation.eulerAngles.z, 0)}";
                     extraInfo += $" Scale: {Math.Round(BoneSelected.localScale.x, 2)}/{Math.Round(BoneSelected.localScale.y, 2)}/{Math.Round(BoneSelected.localScale.z, 2)}";
+                    extraInfo += $" Frame: {Math.Round((animation[currentAnimName].time % 1) * animation[currentAnimName].clip.frameRate)}/{Math.Round(animation[currentAnimName].clip.length * animation[currentAnimName].clip.frameRate)}";
                     extraInfoLabel.color = new Color(0.85865f, 0.00327f, 0.48478f, 1f); // Deep Red
                 }
                 else if (partcontrolled == PartControlled.FLOOR && currentFloorModel != null)
@@ -1566,6 +1658,7 @@ namespace Memoria.Assets
                 //    controlist += $"\r\n";
                 //controlLabel.text = controlist;
             }
+
             infoPanel.BasePanel.transform.localPosition = new Vector3(0 + InfoPanelPosX, 0, 0);
             controlPanel.BasePanel.transform.localPosition = new Vector3(1000 + ControlPanelPosX, 0, 0);
             controlLabel.fontSize = 22;
@@ -1652,7 +1745,11 @@ namespace Memoria.Assets
             {"F 5", "Refresh"},
             {"W", "Mod/orig textures"},
             {"R", "Reset position"},
-            {"⇧R", "Full Reset"}
+            {"⇧R", "Full Reset"},
+            {"Z", "Decrement Keyframe"},
+            {"X", "Increment Keyframe"},
+            {"K", "Add New Keyframe"},
+            {"D", "Delete Current Keyframe"},
         };
 
         private static Camera GetCamera()
@@ -1994,6 +2091,12 @@ namespace Memoria.Assets
                 {
                     anim.Play(currentAnimName);
                     anim[currentAnimName].speed = speedFactor;
+                    if (isAnimStopped)
+                    {
+                        anim[currentAnimName].time = 0;
+                        anim[currentAnimName].speed = 0;
+                        animStoppedTime = 0;
+                    }
                 }
             }
         }
@@ -2059,29 +2162,32 @@ namespace Memoria.Assets
             mesh.vertices = meshVert;
         }
 
-        private static void ExportAnimation(List<String> animNameList)
+        private static void ExportAnimation(List<String> animNameList, AnimationClipReader clipIO)
         {
             String exportConf = "MemoriaExportAnim.txt";
             if (File.Exists(exportConf))
             {
-                if (ProcessExportAnimation(File.ReadAllText(exportConf)))
+                if (ProcessExportAnimation(File.ReadAllText(exportConf), clipIO))
                     File.Delete(exportConf);
             }
             else
             {
-                if (GenerateExportAnimationFile(exportConf, animNameList))
+                if (GenerateExportAnimationFile(exportConf, animNameList, clipIO))
                     Process.Start(Path.GetFullPath(exportConf));
             }
         }
 
-        private static Boolean GenerateExportAnimationFile(String filepath, List<String> animNameList)
+        private static Boolean GenerateExportAnimationFile(String filepath, List<String> animNameList, AnimationClipReader clipIO)
         {
             String[] animNameToken = animNameList[0].Split('_');
             String animModelName = "GEO_" + animNameToken[1] + "_" + animNameToken[2] + "_" + animNameToken[3];
             String assetPath = "Animations/" + animModelName + "/" + animNameList[0];
             assetPath = AnimationFactory.GetRenameAnimationPath(assetPath);
-            AnimationClipReader clipIO;
-            AnimationClipReader.ReadAnimationClipFromDisc("StreamingAssets/Assets/Resources/" + assetPath + ".anim", out clipIO);
+            if (clipIO == null)
+            {
+                AnimationClipReader.ReadAnimationClipFromDisc("StreamingAssets/Assets/Resources/" + assetPath + ".anim", out clipIO);
+            }
+
             if (clipIO == null)
             {
                 FF9Sfx.FF9SFX_Play(102);
@@ -2113,7 +2219,7 @@ namespace Memoria.Assets
             return true;
         }
 
-        private static Boolean ProcessExportAnimation(String config)
+        private static Boolean ProcessExportAnimation(String config, AnimationClipReader clipIO)
         {
             Dictionary<String, Dictionary<String, Vector4>> animPatch = new Dictionary<String, Dictionary<String, Vector4>>();
             List<String> animNameList = new List<String>();
@@ -2196,8 +2302,11 @@ namespace Memoria.Assets
                 String animModelName = "GEO_" + animNameToken[1] + "_" + animNameToken[2] + "_" + animNameToken[3];
                 String assetPath = "Animations/" + animModelName + "/" + animNameList[i];
                 assetPath = AnimationFactory.GetRenameAnimationPath(assetPath);
-                AnimationClipReader clipIO;
-                AnimationClipReader.ReadAnimationClipFromDisc("StreamingAssets/Assets/Resources/" + assetPath + ".anim", out clipIO);
+                if (clipIO == null)
+                {
+                    AnimationClipReader.ReadAnimationClipFromDisc("StreamingAssets/Assets/Resources/" + assetPath + ".anim", out clipIO);
+                }
+
                 if (clipIO == null)
                 {
                     allGood = false;
@@ -2277,6 +2386,7 @@ namespace Memoria.Assets
                 AnimationClipReader.LoadedClips.Remove("StreamingAssets/Assets/Resources/" + assetPath + ".anim");
                 AnimationClipReader.LoadedClips.Remove(outputPath);
                 savedAnimationPath = outputPath;
+                savedAnimationClip = clipIO;
             }
             if (!allGood)
             {
@@ -2725,6 +2835,432 @@ namespace Memoria.Assets
             }
             Line = "";
         }
+
+        public static void AdvanceAnimationByFrames(Animation animation, int frames)
+        {
+            AnimationState animationState = animation[currentAnimName];
+            if (animationState)
+            {
+                AnimationClip clip = animationState.clip;
+                if (clip != null)
+                {
+                    int currentKeyFrame = (int)Math.Round((animationState.time % 1) * clip.frameRate);
+                    int maxKeyFrame = (int)Math.Round(clip.length * clip.frameRate);
+                    int nextKeyFrame = ((currentKeyFrame + frames) % (maxKeyFrame + 1));
+                    if (nextKeyFrame < 0)
+                    {
+                        nextKeyFrame += maxKeyFrame + 1;
+                    }
+
+                    float nextAnimTime = (float)Math.Round(nextKeyFrame / clip.frameRate, 6);
+                    if (nextAnimTime > animationState.length)
+                    {
+                        nextAnimTime = animationState.length;
+                    }
+
+                    animationState.time = nextAnimTime;
+                    animStoppedTime = animationState.time;
+                    currentPausedKeyFrame = nextKeyFrame;
+                }
+            }
+        }
+
+        private static void UpdateCustomAnimationCurves(Transform selectedBone, Boolean rotationModified, Boolean positionModified, Boolean scaleModified)
+        {
+            // If this is a custom clip, save the modified bone
+            if (isAnimStopped && currentAnimName == "CUSTOM_CLIP" && savedAnimationClip != null && (rotationModified || positionModified || scaleModified))
+            {
+                AnimationClipReader.BoneAnimation boneAnim = savedAnimationClip.boneAnimList[currentBoneIndex];
+                String boneName = boneAnim.boneNameInHierarchy;
+                List<String> modifiedTranforms = new List<string>();
+                if (rotationModified)
+                {
+                    modifiedTranforms.Add("localRotation");
+                }
+                if (positionModified)
+                {
+                    modifiedTranforms.Add("localPosition");
+                }
+                if (scaleModified)
+                {
+                    modifiedTranforms.Add("localScale");
+                }
+
+                Animation anim = currentModel.GetComponent<Animation>();
+                AnimationClip clip = anim[currentAnimName].clip;
+
+                foreach (String localType in modifiedTranforms)
+                {
+                    List<Keyframe> keys_x = new List<Keyframe>();
+                    List<Keyframe> keys_y = new List<Keyframe>();
+                    List<Keyframe> keys_z = new List<Keyframe>();
+                    List<Keyframe> keys_w = new List<Keyframe>();
+                    
+                    // TODO:
+                    // Add some way to modify inner/outer tangents?
+
+                    foreach (AnimationClipReader.BoneAnimation.TransformAnimation ta in boneAnim.transformAnimList)
+                    {
+                        if (ta.transformType == localType)
+                        {
+                            int keyFrame = 0;
+                            foreach (AnimationClipReader.BoneAnimation.TransformAnimation.FrameAnimation fa in ta.frameAnimList)
+                            {
+                                if (keyFrame == currentPausedKeyFrame)
+                                {
+                                    switch(localType)
+                                    {
+                                        case "localRotation":
+                                            fa.pos = QuaternionToVector(selectedBone.localRotation);
+                                            break;
+                                        case "localPosition":
+                                            fa.pos = selectedBone.localPosition;
+                                            break;
+                                        case "localScale":
+                                            fa.pos = selectedBone.localScale;
+                                            break;
+                                        default:
+                                            break;
+                                    }
+
+                                    // make sure the keyframe times are synced or you get jitter
+                                    animStoppedTime = fa.time;
+                                }
+
+                                keys_x.Add(new Keyframe(fa.time, fa.pos.x));
+                                keys_y.Add(new Keyframe(fa.time, fa.pos.y));
+                                keys_z.Add(new Keyframe(fa.time, fa.pos.z));
+                                keys_w.Add(new Keyframe(fa.time, fa.pos.w));
+                                keyFrame++;
+                            }
+                        }
+                    }
+
+                    AnimationCurve animCurve;
+                    if (!keys_x.IsNullOrEmpty())
+                    {
+                        animCurve = new AnimationCurve(keys_x.ToArray());
+                        clip.SetCurve(boneName, typeof(Transform), localType + ".x", animCurve);
+                    }
+                    if (!keys_y.IsNullOrEmpty())
+                    {
+                        animCurve = new AnimationCurve(keys_y.ToArray());
+                        clip.SetCurve(boneName, typeof(Transform), localType + ".y", animCurve);
+                    }
+                    if (!keys_z.IsNullOrEmpty())
+                    {
+                        animCurve = new AnimationCurve(keys_z.ToArray());
+                        clip.SetCurve(boneName, typeof(Transform), localType + ".z", animCurve);
+                    }
+                    if (!keys_w.IsNullOrEmpty())
+                    {
+                        animCurve = new AnimationCurve(keys_w.ToArray());
+                        clip.SetCurve(boneName, typeof(Transform), localType + ".w", animCurve);
+                    }
+
+                }
+
+                anim.RemoveClip("CUSTOM_CLIP");
+                anim.AddClip(clip, "CUSTOM_CLIP");
+                anim.Play("CUSTOM_CLIP");
+            }
+        }
+
+        private static void AddKeyframeToCustomAnimation()
+        {
+            if (isAnimStopped && currentAnimName == "CUSTOM_CLIP" && savedAnimationClip != null)
+            {
+                Animation anim = currentModel.GetComponent<Animation>();
+                AnimationClip clip = anim[currentAnimName].clip;
+                // Already at max animation length
+                if (clip.length >= 1.0f)
+                {
+                    FF9Sfx.FF9SFX_Play(102);
+                    return;
+                }
+
+                clip.legacy = true;
+                clip.frameRate = 30.0f;
+                clip.name = "CUSTOM_CLIP";
+
+                foreach (AnimationClipReader.BoneAnimation boneAnim in savedAnimationClip.boneAnimList)
+                {
+                    String boneName = boneAnim.boneNameInHierarchy;
+
+                    foreach (String localType in new String[] { "localRotation", "localPosition", "localScale" })
+                    {
+                        List<Keyframe> keys_x = new List<Keyframe>();
+                        List<Keyframe> keys_y = new List<Keyframe>();
+                        List<Keyframe> keys_z = new List<Keyframe>();
+                        List<Keyframe> keys_w = new List<Keyframe>();
+
+                        List<Keyframe> keys_xIT = new List<Keyframe>();
+                        List<Keyframe> keys_yIT = new List<Keyframe>();
+                        List<Keyframe> keys_zIT = new List<Keyframe>();
+                        List<Keyframe> keys_wIT = new List<Keyframe>();
+
+                        List<Keyframe> keys_xOT = new List<Keyframe>();
+                        List<Keyframe> keys_yOT = new List<Keyframe>();
+                        List<Keyframe> keys_zOT = new List<Keyframe>();
+                        List<Keyframe> keys_wOT = new List<Keyframe>();
+
+                        foreach (AnimationClipReader.BoneAnimation.TransformAnimation ta in boneAnim.transformAnimList)
+                        {
+                            if (ta.transformType == localType)
+                            {
+                                int keyFrame = 0;
+                                AnimationClipReader.BoneAnimation.TransformAnimation.FrameAnimation keyframeAnim = ta.frameAnimList[currentPausedKeyFrame];
+                                AnimationClipReader.BoneAnimation.TransformAnimation.FrameAnimation duplicateKeyframeAnim = new AnimationClipReader.BoneAnimation.TransformAnimation.FrameAnimation();
+
+                                // copy to the frame directly after current
+                                duplicateKeyframeAnim.pos = new Vector4(keyframeAnim.pos.x, keyframeAnim.pos.y, keyframeAnim.pos.z, keyframeAnim.pos.w);
+                                duplicateKeyframeAnim.posInnerTangent = new Vector4(keyframeAnim.posInnerTangent.x, keyframeAnim.posInnerTangent.y, keyframeAnim.posInnerTangent.z, keyframeAnim.posInnerTangent.w);
+                                duplicateKeyframeAnim.posOuterTangent = new Vector4(keyframeAnim.posOuterTangent.x, keyframeAnim.posOuterTangent.y, keyframeAnim.posOuterTangent.z, keyframeAnim.posOuterTangent.w);
+
+                                ta.frameAnimList.Insert(currentPausedKeyFrame + 1, duplicateKeyframeAnim);
+
+                                foreach (AnimationClipReader.BoneAnimation.TransformAnimation.FrameAnimation fa in ta.frameAnimList)
+                                {
+                                    // Recalculate frame times
+                                    fa.time = (float)(Math.Round(keyFrame / clip.frameRate, 6));
+
+                                    keys_x.Add(new Keyframe(fa.time, fa.pos.x));
+                                    keys_y.Add(new Keyframe(fa.time, fa.pos.y));
+                                    keys_z.Add(new Keyframe(fa.time, fa.pos.z));
+                                    keys_w.Add(new Keyframe(fa.time, fa.pos.w));
+
+                                    keys_xIT.Add(new Keyframe(fa.time, fa.posInnerTangent.x));
+                                    keys_yIT.Add(new Keyframe(fa.time, fa.posInnerTangent.y));
+                                    keys_zIT.Add(new Keyframe(fa.time, fa.posInnerTangent.z));
+                                    keys_wIT.Add(new Keyframe(fa.time, fa.posInnerTangent.w));
+
+                                    keys_xOT.Add(new Keyframe(fa.time, fa.posOuterTangent.x));
+                                    keys_yOT.Add(new Keyframe(fa.time, fa.posOuterTangent.y));
+                                    keys_zOT.Add(new Keyframe(fa.time, fa.posOuterTangent.z));
+                                    keys_wOT.Add(new Keyframe(fa.time, fa.posOuterTangent.w));
+                                    keyFrame++;
+                                }
+
+                                animStoppedTime = duplicateKeyframeAnim.time;
+                            }
+                        }
+
+                        AnimationCurve animCurve;
+                        if (!keys_x.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_x.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".x", animCurve);
+                        }
+                        if (!keys_y.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_y.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".y", animCurve);
+                        }
+                        if (!keys_z.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_z.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".z", animCurve);
+                        }
+                        if (!keys_w.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_w.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".w", animCurve);
+                        }
+
+                        if (!keys_xIT.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_xIT.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".xInnerTangent", animCurve);
+                        }
+                        if (!keys_yIT.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_yIT.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".yInnerTangent", animCurve);
+                        }
+                        if (!keys_zIT.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_zIT.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".zInnerTangent", animCurve);
+                        }
+                        if (!keys_wIT.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_wIT.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".wInnerTangent", animCurve);
+                        }
+
+                        if (!keys_xOT.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_xOT.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".xOuterTangent", animCurve);
+                        }
+                        if (!keys_yOT.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_yOT.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".yOuterTangent", animCurve);
+                        }
+                        if (!keys_zOT.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_zOT.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".zOuterTangent", animCurve);
+                        }
+                        if (!keys_wOT.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_wOT.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".wOuterTangent", animCurve);
+                        }
+                    }
+                }
+
+                currentPausedKeyFrame++;
+                anim.RemoveClip("CUSTOM_CLIP");
+                anim.AddClip(clip, "CUSTOM_CLIP");
+                anim.Play("CUSTOM_CLIP");
+            }
+        }
+
+        private static void RemoveKeyframeToCustomAnimation()
+        {
+            if (isAnimStopped && currentAnimName == "CUSTOM_CLIP" && savedAnimationClip != null)
+            {
+                Animation anim = currentModel.GetComponent<Animation>();
+                AnimationClip currentClip = anim[currentAnimName].clip;
+                AnimationClip clip = new AnimationClip();
+                // Already at min animation length
+                if (currentClip.length <= 1.0f/currentClip.frameRate)
+                {
+                    FF9Sfx.FF9SFX_Play(102);
+                    return;
+                }
+
+                clip.legacy = true;
+                clip.frameRate = 30.0f;
+                clip.name = "CUSTOM_CLIP";
+
+                foreach (AnimationClipReader.BoneAnimation boneAnim in savedAnimationClip.boneAnimList)
+                {
+                    String boneName = boneAnim.boneNameInHierarchy;
+
+                    foreach (String localType in new String[] { "localRotation", "localPosition", "localScale" })
+                    {
+                        List<Keyframe> keys_x = new List<Keyframe>();
+                        List<Keyframe> keys_y = new List<Keyframe>();
+                        List<Keyframe> keys_z = new List<Keyframe>();
+                        List<Keyframe> keys_w = new List<Keyframe>();
+
+                        List<Keyframe> keys_xIT = new List<Keyframe>();
+                        List<Keyframe> keys_yIT = new List<Keyframe>();
+                        List<Keyframe> keys_zIT = new List<Keyframe>();
+                        List<Keyframe> keys_wIT = new List<Keyframe>();
+
+                        List<Keyframe> keys_xOT = new List<Keyframe>();
+                        List<Keyframe> keys_yOT = new List<Keyframe>();
+                        List<Keyframe> keys_zOT = new List<Keyframe>();
+                        List<Keyframe> keys_wOT = new List<Keyframe>();
+
+                        foreach (AnimationClipReader.BoneAnimation.TransformAnimation ta in boneAnim.transformAnimList)
+                        {
+                            if (ta.transformType == localType)
+                            {
+                                int keyFrame = 0;
+                                AnimationClipReader.BoneAnimation.TransformAnimation.FrameAnimation keyframeAnim = ta.frameAnimList[currentPausedKeyFrame];
+                                ta.frameAnimList.Remove(keyframeAnim);
+
+                                foreach (AnimationClipReader.BoneAnimation.TransformAnimation.FrameAnimation fa in ta.frameAnimList)
+                                {
+                                    // Recalculate frame times
+                                    fa.time = (float)(Math.Round(keyFrame / clip.frameRate, 6));
+
+                                    keys_x.Add(new Keyframe(fa.time, fa.pos.x));
+                                    keys_y.Add(new Keyframe(fa.time, fa.pos.y));
+                                    keys_z.Add(new Keyframe(fa.time, fa.pos.z));
+                                    keys_w.Add(new Keyframe(fa.time, fa.pos.w));
+
+                                    keys_xIT.Add(new Keyframe(fa.time, fa.posInnerTangent.x));
+                                    keys_yIT.Add(new Keyframe(fa.time, fa.posInnerTangent.y));
+                                    keys_zIT.Add(new Keyframe(fa.time, fa.posInnerTangent.z));
+                                    keys_wIT.Add(new Keyframe(fa.time, fa.posInnerTangent.w));
+
+                                    keys_xOT.Add(new Keyframe(fa.time, fa.posOuterTangent.x));
+                                    keys_yOT.Add(new Keyframe(fa.time, fa.posOuterTangent.y));
+                                    keys_zOT.Add(new Keyframe(fa.time, fa.posOuterTangent.z));
+                                    keys_wOT.Add(new Keyframe(fa.time, fa.posOuterTangent.w));
+                                    keyFrame++;
+                                }
+                            }
+                        }
+
+                        AnimationCurve animCurve;
+                        if (!keys_x.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_x.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".x", animCurve);
+                        }
+                        if (!keys_y.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_y.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".y", animCurve);
+                        }
+                        if (!keys_z.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_z.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".z", animCurve);
+                        }
+                        if (!keys_w.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_w.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".w", animCurve);
+                        }
+
+                        if (!keys_xIT.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_xIT.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".xInnerTangent", animCurve);
+                        }
+                        if (!keys_yIT.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_yIT.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".yInnerTangent", animCurve);
+                        }
+                        if (!keys_zIT.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_zIT.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".zInnerTangent", animCurve);
+                        }
+                        if (!keys_wIT.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_wIT.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".wInnerTangent", animCurve);
+                        }
+
+                        if (!keys_xOT.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_xOT.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".xOuterTangent", animCurve);
+                        }
+                        if (!keys_yOT.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_yOT.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".yOuterTangent", animCurve);
+                        }
+                        if (!keys_zOT.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_zOT.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".zOuterTangent", animCurve);
+                        }
+                        if (!keys_wOT.IsNullOrEmpty())
+                        {
+                            animCurve = new AnimationCurve(keys_wOT.ToArray());
+                            clip.SetCurve(boneName, typeof(Transform), localType + ".wOuterTangent", animCurve);
+                        }
+                    }
+                }
+
+                anim.RemoveClip("CUSTOM_CLIP");
+                anim.AddClip(clip, "CUSTOM_CLIP");
+                anim.Play("CUSTOM_CLIP");
+            }
+        }
+
 
         // TODO: maybe add that kind of API somewhere else (ExtensionMethodsVector3?)
         private static Quaternion VectorToQuaternion(Vector4 val)
