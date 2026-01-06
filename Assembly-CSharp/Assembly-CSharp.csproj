@@ -261,6 +261,7 @@
     <Compile Include="Global\battle\BattleRainRenderer.cs" />
     <Compile Include="Global\EFFECT_GLOW.cs" />
     <Compile Include="Global\NormalSolver.cs" />
+    <Compile Include="Global\SavePageNamer.cs" />
     <Compile Include="Global\Sound\SaXAudio\AudioEffectManager.cs" />
     <Compile Include="Global\Sound\SaXAudio\SaXAudio.cs" />
     <Compile Include="Global\Sound\SaXAudio\SdLibAPIWithSaXAudio.cs" />
