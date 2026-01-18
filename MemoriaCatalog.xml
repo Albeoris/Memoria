@@ -1808,9 +1808,9 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 <Mod>
 	<Name>Ferny Fantasy IX</Name>
 	<Author>FernyFer</Author>
-	<Version>0.8</Version>
+	<Version>0.9</Version>
 	<InstallationPath>FernyFantasyIX</InstallationPath>
-	<ReleaseDate>2025-09-01</ReleaseDate>
+	<ReleaseDate>2026-01-18</ReleaseDate>
 	<ReleaseDateOriginal>2025-06-19</ReleaseDateOriginal>
 	<MinimumMemoriaVersion>2025-05-11</MinimumMemoriaVersion>
 	<PatchNotes>This mod is still in BETA - content "ends" at the end of Disc 3.</PatchNotes>
@@ -1818,34 +1818,26 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 	<Category>Gameplay</Category>
 	<Description>A complete combat overhaul mod aimed to bring a new feel to the battle system and crank the difficulty up a few notches.
 
-
 This mod includes an overhaul of MANY systems, including brand new passives, character skills, tons of new items, mini-bosses, revamped boss battles,
 and so much more.This mod is a WIP and I highly appreciate any and all feedback you might have so that I can make it as great as it can be. I hope you enjoy what I've done!
 
-
 *** IMPORTANT ***
-This mod was balanced with `Turn-Based ATB` mode in mind. Make sure to enable it to experience the mod the way it was intended to be played. Buff/debuff durations and
-boss mechanics are all tuned around the ATB not "ticking" while animations are playing (as they do in other ATB modes), and this will greatly impact the flow of combat
-if not set.
-
+This mod was balanced with `Active OR Wait ATB` mode in mind. Make sure to enable it to experience the mod the way it was intended to be played. Buff/debuff durations and
+boss mechanics are all tuned around these modes and using `Turn-Based` will lead to balance issues which will greatly impact the flow of combat if not set correctly.
 
 {Load Order, Incompatibility, and Credits}
 [Mods and Load Order:]
     (1) Ferny Fantasy IX - 'Place above AF'
     (2) Alternate Fantasy - 'REQUIRED'
 
-
 [Optional] 
-    * FernyDifficultyTweaks - Ferny Fantasy is already a significant difficulty spike compared to vanilla, only use this mod if you want even more challenge. Place it above FernyFantasy.
-
+    * FernyDifficultyTweaks - Ferny Fantasy is already a significant difficulty spike compared to vanilla, only use this mod if you want even more challenge or to reduce the difficulty of Ferny Fantasy. Place it above FernyFantasy.
 
 [Optional]
     * Kupo UI Suite - 'place my mod above theirs to use my custom title screen, otherwise, you can place Kupo UI Suite above mine to use one of their titles.'
 
-
 [Optional]
     * All graphical and music mods are compatible with Ferny Fantasy.
-
 
 [Incompatibility]
 My mod is not compatible with any of the following mods (more details in CREDITS section).
@@ -1857,22 +1849,20 @@ My mod is not compatible with any of the following mods (more details in CREDITS
     (5) FernySupportTweaks - Redundant to use with this mod as they do the same thing with support abilities.
     (6) FernyTranceTweaks - Redundant to use with this mod as they do the same thing with support abilities.
 
+[Known Bugs]
+    * Due to the way the full damage formula was overhauled in my mod, there is an unfortunate side effect where there is a micro-lag when the player deals damage or heals multiple party members with items or a heal spell. There really isn't much I can do to mitigate the problem this far into the mod development and is an unfortunate side-effect of my modding process.
+    * There is a bug in the memoria engine that causes passives to be randomly unequipped. This is not a bug with my mod, but one that the dev team of Memoria Engine are aware of and working on.
 
 [Credit]
 Credit will go to where it is rightfully deserved. I took a lot of the best ideas, skills, passives, spells, items, etc. of some of the above mentioned mods and combined them into my mod for maximum compatibility. They did amazing work with the mods they made, but there were some compatibility issues if you wanted to use them all AND Alternate Fantasy together. Now, with my mod, that is possible. I want to say thank you to the following:
 
-
 {Emeiru} - Creator of the "Amazing Character" Series and "Perfect Stats." His code was used as a base for the Attributess/Magic Stones formulas in my mod. Adopted his "Bye Auto Potion" and the majority of his AF patched support abilities for each character.
-
 
 {WarpedEdge} - Creator of the "Playable Characters Pack" for all their help and inspiration. 
 
-
 {Faospark} - Creator of "Kupo Heroes Pack." I adapted a ton of his spells/abilities, such as Aero, Quake, Water, etc. series, as well about 70% of the passives for each of the characters in that pack. 
 
-
 {DV} - Trance Seek mod author for assisting me with a handful of codes that I was having trouble with.
-
 
 {Tirlititi} - Alternate Fantasy mod author for his amazing work with Alternate Fantasy, assisting me with code, and of course all his contributions to the FF9 modding community. Seriously dude, thank you.
 	</Description>
