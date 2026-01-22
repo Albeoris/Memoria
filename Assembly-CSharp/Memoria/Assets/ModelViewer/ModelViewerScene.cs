@@ -1318,6 +1318,7 @@ namespace Memoria.Assets
                         if (camera.backgroundColor == Color.black) camera.backgroundColor = Color.grey;
                         else if (camera.backgroundColor == Color.grey) camera.backgroundColor = Color.green;
                         else if (camera.backgroundColor == Color.green) camera.backgroundColor = Color.blue;
+                        else if (camera.backgroundColor == Color.blue) camera.backgroundColor = Color.white;
                         else camera.backgroundColor = Color.black;
                     }
                 }
