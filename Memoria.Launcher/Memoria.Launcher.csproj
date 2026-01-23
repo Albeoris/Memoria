@@ -201,7 +201,7 @@
     <EmbeddedResource Include="Ini\Settings.ini">
       <TargetPath>Settings.ini</TargetPath>
     </EmbeddedResource>
-    <EmbeddedResource Include="7za.exe">
+    <EmbeddedResource Include="Tools\7za.exe">
       <TargetPath>7za.exe</TargetPath>
     </EmbeddedResource>
     <Resource Include="Fonts\centurygothic-bold.ttf" />
@@ -274,6 +274,9 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="SharpCompress" Version="0.40.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Tools\7za.License.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterResolveReferences">
