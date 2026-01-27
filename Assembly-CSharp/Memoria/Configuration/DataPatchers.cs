@@ -521,7 +521,8 @@ namespace Memoria
                 }
                 else if (String.Equals(entry[0], "3DModelParameter"))
                 {
-                    // eg.: 3DModelParameter MODELID HEIGHT RADIUS BONENECK
+                    // eg.: 3DModelParameter MODELID HEIGHT RADIUS BONENECK TARGET_BONE
+
                     if (!Int32.TryParse(entry[1], out Int32 ModelId))
                         continue;
                     if (!Int32.TryParse(entry[2], out Int32 height))
@@ -530,8 +531,36 @@ namespace Memoria
                         continue;
                     if (!Int32.TryParse(entry[4], out Int32 boneneck))
                         continue;
+                    if (!Int32.TryParse(entry[5], out Int32 tar_bone))
+                        tar_bone = 0;
 
-                    FF9BattleDBHeightAndRadius.Data.Add(ModelId, [height, radius, boneneck]);
+                    FF9BattleDBHeightAndRadius.Data.Add(ModelId, [height, radius, boneneck, tar_bone]);
+                }
+                else if (String.Equals(entry[0], "ModifyPlayerParty"))
+                {
+                    // eg.: ModifyPlayerParty Add 40
+                    // eg.: ModifyPlayerParty Remove 30
+                    // eg.: ModifyPlayerParty Set 1 2 3 4
+
+                    Boolean add = String.Equals(entry[1], "Add");
+                    Boolean remove = String.Equals(entry[1], "Remove");
+                    Boolean set = String.Equals(entry[1], "Set");
+
+                    if (set)
+                        PartySettingUI.ForcedParty.Clear();
+
+                    for (Int32 i = 2; i < entry.Length; i++)
+                    {
+                        if (Int32.TryParse(entry[i], out Int32 charId))
+                        {
+                            if (set)
+                                PartySettingUI.ForcedParty.Add((CharacterId)charId);
+                            else if (add)
+                                PartySettingUI.AddCharacterForParty.Add((CharacterId)charId);
+                            else if (remove)
+                                PartySettingUI.AddCharacterForParty.Remove((CharacterId)charId);
+                        }
+                    }
                 }
                 else if (String.Equals(entry[0], "SwapFieldModelTexture"))
                 {

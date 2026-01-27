@@ -26,8 +26,19 @@ public static class FF9BattleDBHeightAndRadius
         return false;
     }
 
+    public static byte TryFindNewTargetBone(Int32 geoId)
+    {
+        if (Data.ContainsKey(geoId))
+        {
+            if (Data[geoId].Length > 3)
+                return (byte)Data[geoId][3];
+        }
+
+        return 0;
+    }
+
     public static Dictionary<int, int[]> Data = new Dictionary<int, int[]>
-    { //MODELID HEIGHT RADIUS BONENECK
+    { //MODELID HEIGHT RADIUS BONENECK TAR_BONE (0 by default)
         {0, [4693, 2026, 34]},
         {1, [2351, 1175, 0]},
         {2, [1751, 813, 11]},
