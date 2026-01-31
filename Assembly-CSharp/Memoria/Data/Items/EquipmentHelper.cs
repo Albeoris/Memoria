@@ -13,28 +13,42 @@ namespace Memoria.Data
         public class ItemFeatureEffect
         {
             public String Condition = "";
+            public Expression ConditionExpression = null;
+
             public Dictionary<String, String> Formula = new Dictionary<String, String>();
+            public Dictionary<String, Expression> FormulaExpression = new Dictionary<String, Expression>();
+
             public String ModFilePath = null;
             public Int32 FeatureLineNumber = -1;
         }
+
         public class ItemSpecialEffect
         {
             public String Condition = "";
+            public Expression ConditionExpression = null;
+
             public Dictionary<String, String> Formula = new Dictionary<String, String>();
+            public Dictionary<String, List<Expression>> FormulaExpressions = new Dictionary<String, List<Expression>>();
+
             public String ModFilePath = null;
             public Int32 FeatureLineNumber = -1;
         }
+
         public class ItemStatusInitEffect
         {
             public String Condition = "";
+            public Expression ConditionExpression = null;
+
             public String ModFilePath = null;
             public Int32 FeatureLineNumber = -1;
 
             public BattleStatus PermanentStatus = 0;
             public BattleStatus InitialStatus = 0;
             public BattleStatus ResistStatus = 0;
-            public List<KeyValuePair<BattleStatusId, String>> PartialResistStatus = new List<KeyValuePair<BattleStatusId, String>>();
-            public List<KeyValuePair<BattleStatusId, String>> DurationFactorStatus = new List<KeyValuePair<BattleStatusId, String>>();
+
+            public List<KeyValuePair<BattleStatusId, Expression>> PartialResistStatus = new List<KeyValuePair<BattleStatusId, Expression>>();
+            public List<KeyValuePair<BattleStatusId, Expression>> DurationFactorStatus = new List<KeyValuePair<BattleStatusId, Expression>>();
+
             public Int32 InitialATB = -1;
         }
 
@@ -63,12 +77,6 @@ namespace Memoria.Data
         public static List<ItemStatusInitEffect> FlexibleStatusFeatures = new List<ItemStatusInitEffect>();
 
         private static String lastErrorMessage = null;
-        public static void Clear()
-        {
-            WeaponFeatures.Clear(); HeadFeatures.Clear(); WristFeatures.Clear(); ArmorFeatures.Clear(); AccessoryFeatures.Clear(); GenericFeatures.Clear(); FlexibleItemFeatures.Clear();
-            WeaponSpecialFeatures.Clear(); HeadSpecialFeatures.Clear(); WristSpecialFeatures.Clear(); ArmorSpecialFeatures.Clear(); AccessorySpecialFeatures.Clear(); GenericSpecialFeatures.Clear(); FlexibleSpecialFeatures.Clear();
-            WeaponStatusFeatures.Clear(); HeadStatusFeatures.Clear(); WristStatusFeatures.Clear(); ArmorStatusFeatures.Clear(); AccessoryStatusFeatures.Clear(); GenericStatusFeatures.Clear(); FlexibleStatusFeatures.Clear();
-        }
 
         public static void ClearItemFeature(RegularItem itemId)
         {
@@ -100,6 +108,7 @@ namespace Memoria.Data
             FlexibleSpecialFeatures.Clear();
             FlexibleStatusFeatures.Clear();
         }
+
         public static void ParseItemFeature(String featureCode, String modFilePath = null, Int32 initialLineNumber = 0)
         {
             ParseItemFeature(RegularItem.NoItem, featureCode, modFilePath, initialLineNumber, null);
@@ -120,22 +129,16 @@ namespace Memoria.Data
                 String codeType = codeMatches[i].Groups[1].Value;
                 Int32 endPos, startPos = codeMatches[i].Index + codeMatches[i].Length;
 
-                if (i + 1 == codeMatches.Count)
-                    endPos = featureCode.Length;
-                else
-                    endPos = codeMatches[i + 1].Index;
+                if (i + 1 == codeMatches.Count) endPos = featureCode.Length;
+                else endPos = codeMatches[i + 1].Index;
 
                 String blockContent = featureCode.Substring(startPos, endPos - startPos);
                 Int32 blockLine = initialLineNumber + Regex.Matches(featureCode.Substring(0, startPos), @"\n", RegexOptions.Singleline).Count;
 
                 if (String.Equals(codeType, "Permanent"))
-                {
                     ParsePermanentBlock(itemId, blockContent, modFilePath, blockLine, slotName);
-                }
                 else if (String.Equals(codeType, "StatusInit"))
-                {
                     ParseStatusInitBlock(itemId, blockContent, modFilePath, blockLine, slotName);
-                }
             }
         }
 
@@ -154,11 +157,11 @@ namespace Memoria.Data
                 Dictionary<RegularItem, List<ItemFeatureEffect>> statDict;
                 Dictionary<RegularItem, List<ItemSpecialEffect>> specialDict;
 
-                if (String.Equals(slotName, "Weapon", StringComparison.OrdinalIgnoreCase)) { statDict = WeaponFeatures; specialDict = WeaponSpecialFeatures; }
-                else if (String.Equals(slotName, "Head", StringComparison.OrdinalIgnoreCase)) { statDict = HeadFeatures; specialDict = HeadSpecialFeatures; }
-                else if (String.Equals(slotName, "Wrist", StringComparison.OrdinalIgnoreCase)) { statDict = WristFeatures; specialDict = WristSpecialFeatures; }
-                else if (String.Equals(slotName, "Armor", StringComparison.OrdinalIgnoreCase)) { statDict = ArmorFeatures; specialDict = ArmorSpecialFeatures; }
-                else if (String.Equals(slotName, "Accessory", StringComparison.OrdinalIgnoreCase)) { statDict = AccessoryFeatures; specialDict = AccessorySpecialFeatures; }
+                if (String.Equals(slotName, "Weapon")) { statDict = WeaponFeatures; specialDict = WeaponSpecialFeatures; }
+                else if (String.Equals(slotName, "Head")) { statDict = HeadFeatures; specialDict = HeadSpecialFeatures; }
+                else if (String.Equals(slotName, "Wrist")) { statDict = WristFeatures; specialDict = WristSpecialFeatures; }
+                else if (String.Equals(slotName, "Armor")) { statDict = ArmorFeatures; specialDict = ArmorSpecialFeatures; }
+                else if (String.Equals(slotName, "Accessory")) { statDict = AccessoryFeatures; specialDict = AccessorySpecialFeatures; }
                 else { statDict = GenericFeatures; specialDict = GenericSpecialFeatures; }
 
                 if (!statDict.ContainsKey(itemId)) statDict[itemId] = new List<ItemFeatureEffect>();
@@ -179,19 +182,34 @@ namespace Memoria.Data
                     formulas[formula.Groups[1].Value] = formula.Groups[2].Value;
             }
 
-            ItemFeatureEffect statEffect = new ItemFeatureEffect { ModFilePath = modFilePath, FeatureLineNumber = lineNumber, Condition = condition };
-            ItemSpecialEffect specialEffect = new ItemSpecialEffect { ModFilePath = modFilePath, FeatureLineNumber = lineNumber, Condition = condition };
+            Expression compiledCondition = null;
+            if (!String.IsNullOrEmpty(condition))
+                compiledCondition = NCalcUtility.PrepareExpression(condition);
+
+            ItemFeatureEffect statEffect = new ItemFeatureEffect { ModFilePath = modFilePath, FeatureLineNumber = lineNumber, Condition = condition, ConditionExpression = compiledCondition };
+            ItemSpecialEffect specialEffect = new ItemSpecialEffect { ModFilePath = modFilePath, FeatureLineNumber = lineNumber, Condition = condition, ConditionExpression = compiledCondition };
 
             foreach (var kvp in formulas)
             {
                 if (IsSpecialKey(kvp.Key))
+                {
                     specialEffect.Formula.Add(kvp.Key, kvp.Value);
+                    List<Expression> compiledParts = new List<Expression>();
+                    foreach (String part in kvp.Value.Split(';'))
+                    {
+                        compiledParts.Add(NCalcUtility.PrepareExpression(part));
+                    }
+                    specialEffect.FormulaExpressions.Add(kvp.Key, compiledParts);
+                }
                 else
+                {
                     statEffect.Formula.Add(kvp.Key, kvp.Value);
+                    statEffect.FormulaExpression.Add(kvp.Key, NCalcUtility.PrepareExpression(kvp.Value));
+                }
             }
 
-            if (statEffect.Formula.Count > 0) targetStatList.Add(statEffect);
-            if (specialEffect.Formula.Count > 0) targetSpecialList.Add(specialEffect);
+            if (statEffect.FormulaExpression.Count > 0) targetStatList.Add(statEffect);
+            if (specialEffect.FormulaExpressions.Count > 0) targetSpecialList.Add(specialEffect);
         }
 
         private static void ParseStatusInitBlock(RegularItem itemId, String content, String modFilePath, Int32 lineNumber, String slotName)
@@ -201,11 +219,11 @@ namespace Memoria.Data
             else
             {
                 Dictionary<RegularItem, List<ItemStatusInitEffect>> targetDict;
-                if (String.Equals(slotName, "Weapon", StringComparison.OrdinalIgnoreCase)) targetDict = WeaponStatusFeatures;
-                else if (String.Equals(slotName, "Head", StringComparison.OrdinalIgnoreCase)) targetDict = HeadStatusFeatures;
-                else if (String.Equals(slotName, "Wrist", StringComparison.OrdinalIgnoreCase)) targetDict = WristStatusFeatures;
-                else if (String.Equals(slotName, "Armor", StringComparison.OrdinalIgnoreCase)) targetDict = ArmorStatusFeatures;
-                else if (String.Equals(slotName, "Accessory", StringComparison.OrdinalIgnoreCase)) targetDict = AccessoryStatusFeatures;
+                if (String.Equals(slotName, "Weapon")) targetDict = WeaponStatusFeatures;
+                else if (String.Equals(slotName, "Head")) targetDict = HeadStatusFeatures;
+                else if (String.Equals(slotName, "Wrist")) targetDict = WristStatusFeatures;
+                else if (String.Equals(slotName, "Armor")) targetDict = ArmorStatusFeatures;
+                else if (String.Equals(slotName, "Accessory")) targetDict = AccessoryStatusFeatures;
                 else targetDict = GenericStatusFeatures;
 
                 if (!targetDict.ContainsKey(itemId)) targetDict[itemId] = new List<ItemStatusInitEffect>();
@@ -219,16 +237,20 @@ namespace Memoria.Data
             foreach (Match formula in new Regex(@"\[code=(.*?)\](.*?)\[/code\]").Matches(content))
             {
                 String codeName = formula.Groups[1].Value;
-                if (String.Equals(codeName, "Condition")) newEffect.Condition = formula.Groups[2].Value;
+                if (String.Equals(codeName, "Condition"))
+                {
+                    newEffect.Condition = formula.Groups[2].Value;
+                    newEffect.ConditionExpression = NCalcUtility.PrepareExpression(newEffect.Condition);
+                }
                 else if (codeName.StartsWith("PartialResist"))
                 {
                     if (codeName.Substring("PartialResist".Length).TryEnumParse(out BattleStatusId status))
-                        newEffect.PartialResistStatus.Add(new KeyValuePair<BattleStatusId, String>(status, formula.Groups[2].Value));
+                        newEffect.PartialResistStatus.Add(new KeyValuePair<BattleStatusId, Expression>(status, NCalcUtility.PrepareExpression(formula.Groups[2].Value)));
                 }
                 else if (codeName.StartsWith("DurationFactor"))
                 {
                     if (codeName.Substring("DurationFactor".Length).TryEnumParse(out BattleStatusId status))
-                        newEffect.DurationFactorStatus.Add(new KeyValuePair<BattleStatusId, String>(status, formula.Groups[2].Value));
+                        newEffect.DurationFactorStatus.Add(new KeyValuePair<BattleStatusId, Expression>(status, NCalcUtility.PrepareExpression(formula.Groups[2].Value)));
                 }
             }
 
@@ -259,6 +281,7 @@ namespace Memoria.Data
                    String.Equals(key, "ActivateFreeSAByLvl") ||
                    String.Equals(key, "BanishSAByLvl");
         }
+
         public static void TriggerOnEnable(PLAYER play)
         {
             foreach (ItemFeatureEffect effect in FlexibleItemFeatures) ApplyEffect(play, effect);
@@ -268,6 +291,7 @@ namespace Memoria.Data
             if (play.equip.Armor != RegularItem.NoItem) ApplySlotEffects(play, play.equip.Armor, ArmorFeatures, GenericFeatures);
             if (play.equip.Accessory != RegularItem.NoItem) ApplySlotEffects(play, play.equip.Accessory, AccessoryFeatures, GenericFeatures);
         }
+
         public static void TriggerSpecialFeature(PLAYER play)
         {
             foreach (ItemSpecialEffect effect in FlexibleSpecialFeatures) ApplySpecialEffect(play, effect);
@@ -289,6 +313,7 @@ namespace Memoria.Data
             if (play.equip.Armor != RegularItem.NoItem) ApplySlotStatusEffects(unit, play.equip.Armor, ArmorStatusFeatures, GenericStatusFeatures);
             if (play.equip.Accessory != RegularItem.NoItem) ApplySlotStatusEffects(unit, play.equip.Accessory, AccessoryStatusFeatures, GenericStatusFeatures);
         }
+
         private static void ApplySlotEffects(PLAYER play, RegularItem itemId, Dictionary<RegularItem, List<ItemFeatureEffect>> specificDict, Dictionary<RegularItem, List<ItemFeatureEffect>> genericDict)
         {
             if (specificDict.ContainsKey(itemId)) foreach (var effect in specificDict[itemId]) ApplyEffect(play, effect);
@@ -311,21 +336,17 @@ namespace Memoria.Data
         {
             try
             {
-                if (effect.Condition.Length > 0)
+                if (effect.ConditionExpression != null)
                 {
-                    Expression c = new Expression(effect.Condition);
+                    Expression c = effect.ConditionExpression;
                     NCalcUtility.InitializeExpressionPlayer(ref c, play);
-                    c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                    c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                     if (!NCalcUtility.EvaluateNCalcCondition(c.Evaluate())) return;
                 }
 
-                foreach (KeyValuePair<String, String> formula in effect.Formula)
+                foreach (KeyValuePair<String, Expression> formula in effect.FormulaExpression)
                 {
-                    Expression e = new Expression(formula.Value);
+                    Expression e = formula.Value;
                     NCalcUtility.InitializeExpressionPlayer(ref e, play);
-                    e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                    e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
 
                     if (String.Equals(formula.Key, "MaxHP")) play.max.hp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.max.hp);
                     else if (String.Equals(formula.Key, "MaxMP")) play.max.mp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.max.mp);
@@ -364,33 +385,30 @@ namespace Memoria.Data
         {
             try
             {
-                if (effect.Condition.Length > 0)
+                if (effect.ConditionExpression != null)
                 {
-                    Expression c = new Expression(effect.Condition);
+                    Expression c = effect.ConditionExpression;
                     NCalcUtility.InitializeExpressionPlayer(ref c, play);
-                    c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                    c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                     if (!NCalcUtility.EvaluateNCalcCondition(c.Evaluate())) return;
                 }
 
-                foreach (KeyValuePair<String, String> formula in effect.Formula)
+                foreach (KeyValuePair<String, List<Expression>> kvp in effect.FormulaExpressions)
                 {
-                    String[] featureSplit = formula.Value.Split(';');
-                    for (Int32 j = 0; j < featureSplit.Length; j++)
+                    List<Expression> expressions = kvp.Value;
+                    for (Int32 j = 0; j < expressions.Count; j++)
                     {
-                        Expression e = new Expression(featureSplit[j]);
+                        Expression e = expressions[j];
                         NCalcUtility.InitializeExpressionPlayer(ref e, play);
-                        e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                        e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+
                         SupportAbility sa = (SupportAbility)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)SupportAbility.Void);
 
                         if (sa == SupportAbility.Void) continue;
 
-                        if (String.Equals(formula.Key, "ActivateFreeSA"))
+                        if (String.Equals(kvp.Key, "ActivateFreeSA"))
                         {
                             play.saForced.Add(sa);
                         }
-                        else if (String.Equals(formula.Key, "BanishSA"))
+                        else if (String.Equals(kvp.Key, "BanishSA"))
                         {
                             if (!play.saBanish.Contains(sa))
                             {
@@ -398,24 +416,23 @@ namespace Memoria.Data
                                 play.saBanish.Add(sa);
                             }
                         }
-                        else if (String.Equals(formula.Key, "HiddenSA"))
+                        else if (String.Equals(kvp.Key, "HiddenSA"))
                         {
                             foreach (SupportAbility saToHide in ff9abil.GetHierarchyFromAnySA(sa))
                                 play.saHidden.Add(saToHide);
                         }
-                        else if (String.Equals(formula.Key, "ActivateFreeSAByLvl"))
+                        else if (String.Equals(kvp.Key, "ActivateFreeSAByLvl"))
                         {
+                            if (expressions.Count <= j + 1) break;
+
                             SupportAbility baseSA = ff9abil.GetBaseAbilityFromBoostedAbility(sa);
-                            Int32 levelSA = 0;
-                            if (featureSplit.Length > j + 1)
-                            {
-                                Expression elvl = new Expression(featureSplit[j + 1]);
-                                NCalcUtility.InitializeExpressionPlayer(ref elvl, play);
-                                elvl.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                                elvl.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-                                levelSA = Math.Min((Int32)NCalcUtility.ConvertNCalcResult(elvl.Evaluate(), 0), ff9abil.GetBoostedAbilityMaxLevel(play, baseSA));
-                                j++;
-                            }
+
+                            Expression elvl = expressions[j + 1];
+                            NCalcUtility.InitializeExpressionPlayer(ref elvl, play);
+
+                            Int32 levelSA = Math.Min((Int32)NCalcUtility.ConvertNCalcResult(elvl.Evaluate(), 0), ff9abil.GetBoostedAbilityMaxLevel(play, baseSA));
+                            j++;
+
                             Boolean allSA = levelSA == -1;
                             Boolean skip = true;
                             foreach (SupportAbility saToForce in ff9abil.GetHierarchyFromAnySA(baseSA))
@@ -427,19 +444,18 @@ namespace Memoria.Data
                                 levelSA--;
                             }
                         }
-                        else if (String.Equals(formula.Key, "BanishSAByLvl"))
+                        else if (String.Equals(kvp.Key, "BanishSAByLvl"))
                         {
+                            if (expressions.Count <= j + 1) break;
+
                             SupportAbility baseSA = ff9abil.GetBaseAbilityFromBoostedAbility(sa);
-                            Int32 levelSA = 0;
-                            if (featureSplit.Length > j + 1)
-                            {
-                                Expression elvl = new Expression(featureSplit[j + 1]);
-                                NCalcUtility.InitializeExpressionPlayer(ref elvl, play);
-                                elvl.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                                elvl.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-                                levelSA = (Int32)NCalcUtility.ConvertNCalcResult(elvl.Evaluate(), 0);
-                                j++;
-                            }
+
+                            Expression elvl = expressions[j + 1];
+                            NCalcUtility.InitializeExpressionPlayer(ref elvl, play);
+
+                            Int32 levelSA = (Int32)NCalcUtility.ConvertNCalcResult(elvl.Evaluate(), 0);
+                            j++;
+
                             Boolean allSA = levelSA == -1;
                             List<SupportAbility> listSAToBanish = ff9abil.GetHierarchyFromAnySA(baseSA);
                             listSAToBanish.Reverse();
@@ -463,12 +479,10 @@ namespace Memoria.Data
         {
             try
             {
-                if (effect.Condition.Length > 0)
+                if (effect.ConditionExpression != null)
                 {
-                    Expression c = new Expression(effect.Condition);
+                    Expression c = effect.ConditionExpression;
                     NCalcUtility.InitializeExpressionUnit(ref c, unit);
-                    c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                    c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                     if (!NCalcUtility.EvaluateNCalcCondition(c.Evaluate())) return;
                 }
 
@@ -476,20 +490,16 @@ namespace Memoria.Data
                 unit.Data.stat.cur |= effect.InitialStatus;
                 unit.ResistStatus |= effect.ResistStatus;
 
-                foreach (KeyValuePair<BattleStatusId, String> kvp in effect.PartialResistStatus)
+                foreach (KeyValuePair<BattleStatusId, Expression> kvp in effect.PartialResistStatus)
                 {
-                    Expression e = new Expression(kvp.Value);
+                    Expression e = kvp.Value;
                     NCalcUtility.InitializeExpressionUnit(ref e, unit);
-                    e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                    e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                     unit.PartialResistStatus[kvp.Key] = NCalcUtility.ConvertNCalcResult(e.Evaluate(), 0f);
                 }
-                foreach (KeyValuePair<BattleStatusId, String> kvp in effect.DurationFactorStatus)
+                foreach (KeyValuePair<BattleStatusId, Expression> kvp in effect.DurationFactorStatus)
                 {
-                    Expression e = new Expression(kvp.Value);
+                    Expression e = kvp.Value;
                     NCalcUtility.InitializeExpressionUnit(ref e, unit);
-                    e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                    e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                     unit.StatusDurationFactor[kvp.Key] = NCalcUtility.ConvertNCalcResult(e.Evaluate(), 1f);
                 }
                 if (effect.InitialATB >= 0)

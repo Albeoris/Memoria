@@ -57,7 +57,7 @@ namespace FF9
             _FF9Abil_SaData = LoadCharacterAbilityGems();
             _FF9Abil_SaFeature = LoadAllAbilityFeatures();
             LogStatisticsAll();
-            EquipmentHelper.LogStatistics();
+            //EquipmentHelper.LogStatistics();
         }
 
         public static Boolean FF9Abil_IsEnableSA(HashSet<SupportAbility> sa, SupportAbility saIndex)

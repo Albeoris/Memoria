@@ -307,6 +307,14 @@ namespace NCalc
             if (name == "WorldDisc") args.Result = (Int32)ff9.w_frameDisc;
         };
 
+        public static Expression PrepareExpression(String code)
+        {
+            Expression e = new Expression(code);
+            e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+            e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+            return e;
+        }
+
         public static void InitializeExpressionPlayer(ref Expression expr, PLAYER play)
         {
             expr.Parameters["Name"] = play.Name;
