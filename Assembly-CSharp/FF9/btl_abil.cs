@@ -245,6 +245,8 @@ namespace FF9
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(btl))
                 saFeature.TriggerOnStatusInit(btl);
 
+            EquipmentHelper.TriggerOnStatusInit(btl);
+
             /*if (btl.HasSupportAbility(SupportAbility1.AutoReflect))
            {
                 btl.PermanentStatus |= BattleStatus.Reflect;

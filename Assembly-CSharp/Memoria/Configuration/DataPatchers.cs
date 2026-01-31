@@ -534,7 +534,7 @@ namespace Memoria
                     if (!Int32.TryParse(entry[5], out Int32 tar_bone))
                         tar_bone = 0;
 
-                    FF9BattleDBHeightAndRadius.Data.Add(ModelId, [height, radius, boneneck, tar_bone]);
+                    FF9BattleDBHeightAndRadius.Data[ModelId] = [height, radius, boneneck, tar_bone];
                 }
                 else if (String.Equals(entry[0], "ModifyPlayerParty"))
                 {
@@ -571,7 +571,7 @@ namespace Memoria
                     for (Int32 i = 3; i < entry.Length; i++)
                         TexturesList.Add(entry[i]);
                     String[] TexturesCustomModel = TexturesList.ToArray();
-                    ModelFactory.CustomModelField.Add(new KeyValuePair<Int32, String>(fieldID, entry[2]), TexturesCustomModel);
+                    ModelFactory.CustomModelField[new KeyValuePair<Int32, String>(fieldID, entry[2])] = TexturesCustomModel;
                 }
             }
             if (shouldUpdateBattleStatus)

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using static Memoria.Assets.DataResources;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable RedundantExplicitArraySize
@@ -55,6 +56,8 @@ namespace FF9
             _FF9Abil_PaData = LoadCharacterAbilities();
             _FF9Abil_SaData = LoadCharacterAbilityGems();
             _FF9Abil_SaFeature = LoadAllAbilityFeatures();
+            LogStatisticsAll();
+            EquipmentHelper.LogStatistics();
         }
 
         public static Boolean FF9Abil_IsEnableSA(HashSet<SupportAbility> sa, SupportAbility saIndex)
@@ -539,68 +542,204 @@ namespace FF9
 
         public static void LoadAbilityFeatureFile(ref Dictionary<SupportAbility, SupportingAbilityFeature> entries, String input, String modFilePath)
         {
-            MatchCollection abilMatches = new Regex(@"^(>SA|>AA|>CMD)\s+(\d+|GlobalEnemyLast|GlobalEnemy|GlobalLast|Global)(\+?).*()", RegexOptions.Multiline).Matches(input);
+            Int32 countSA = 0;
+            Int32 countAA = 0;
+            Int32 countCMD = 0;
+            Int32 countItemWpn = 0;
+            Int32 countItemHead = 0;
+            Int32 countItemWrist = 0;
+            Int32 countItemArmor = 0;
+            Int32 countItemAcc = 0;
+            Int32 countItemGen = 0;
+
+            MatchCollection abilMatches = new Regex(@"^(>SA|>AA|>CMD|>Item_Equip_Weapon|>Item_Equip_Head|>Item_Equip_Wrist|>Item_Equip_Armor|>Item_Equip_Accessory|>Item_Equip)\s+(\d+|GlobalEnemyLast|GlobalEnemy|GlobalLast|Global)(\+?).*()", RegexOptions.Multiline).Matches(input);
+
             for (Int32 i = 0; i < abilMatches.Count; i++)
             {
-                Int32 abilIndex;
-                if (String.Equals(abilMatches[i].Groups[2].Value, "Global"))
-                    abilIndex = -1;
-                else if (String.Equals(abilMatches[i].Groups[2].Value, "GlobalLast"))
-                    abilIndex = -2;
-                else if (String.Equals(abilMatches[i].Groups[2].Value, "GlobalEnemy"))
-                    abilIndex = -3;
-                else if (String.Equals(abilMatches[i].Groups[2].Value, "GlobalEnemyLast"))
-                    abilIndex = -4;
-                else if (!Int32.TryParse(abilMatches[i].Groups[2].Value, out abilIndex))
-                    continue;
-                Boolean cumulate = String.Equals(abilMatches[i].Groups[3].Value, "+");
                 Int32 endPos, startPos = abilMatches[i].Groups[4].Captures[0].Index + 1;
                 if (i + 1 == abilMatches.Count)
                     endPos = input.Length;
                 else
                     endPos = abilMatches[i + 1].Groups[1].Captures[0].Index;
+
+                Int32 abilIndex;
+                if (String.Equals(abilMatches[i].Groups[2].Value, "Global")) abilIndex = -1;
+                else if (String.Equals(abilMatches[i].Groups[2].Value, "GlobalLast")) abilIndex = -2;
+                else if (String.Equals(abilMatches[i].Groups[2].Value, "GlobalEnemy")) abilIndex = -3;
+                else if (String.Equals(abilMatches[i].Groups[2].Value, "GlobalEnemyLast")) abilIndex = -4;
+                else if (!Int32.TryParse(abilMatches[i].Groups[2].Value, out abilIndex)) continue;
+
+                Boolean cumulate = String.Equals(abilMatches[i].Groups[3].Value, "+");
+                String tag = abilMatches[i].Groups[1].Value;
                 Int32 lineNumber = input.Substring(0, abilMatches[i].Index).OccurenceCount("\n") + 1;
-                if (String.Equals(abilMatches[i].Groups[1].Value, ">SA"))
+
+                if (tag.StartsWith(">Item_Equip"))
                 {
+                    String slotName = null;
+                    if (String.Equals(tag, ">Item_Equip_Weapon"))
+                    {
+                        slotName = "Weapon";
+                        countItemWpn++;
+                    }
+                    else if (String.Equals(tag, ">Item_Equip_Head"))
+                    {
+                        slotName = "Head";
+                        countItemHead++;
+                    }
+                    else if (String.Equals(tag, ">Item_Equip_Wrist"))
+                    {
+                        slotName = "Wrist";
+                        countItemWrist++;
+                    }
+                    else if (String.Equals(tag, ">Item_Equip_Armor"))
+                    {
+                        slotName = "Armor";
+                        countItemArmor++;
+                    }
+                    else if (String.Equals(tag, ">Item_Equip_Accessory"))
+                    {
+                        slotName = "Accessory";
+                        countItemAcc++;
+                    }
+                    else
+                    {
+                        countItemGen++;
+                    }
+
+                    if (abilIndex > 0)
+                    {
+                        if (!cumulate) EquipmentHelper.ClearItemFeature((RegularItem)abilIndex);
+                        EquipmentHelper.ParseItemFeature((RegularItem)abilIndex, input.Substring(startPos, endPos - startPos), modFilePath, lineNumber, slotName);
+                    }
+                    else if (abilIndex == -1)
+                    {
+                        if (!cumulate) EquipmentHelper.ClearFlexibleItemFeature();
+                        EquipmentHelper.ParseItemFeature(input.Substring(startPos, endPos - startPos), modFilePath, lineNumber);
+                    }
+                }
+                else if (String.Equals(tag, ">SA"))
+                {
+                    countSA++;
                     if (!cumulate || !entries.ContainsKey((SupportAbility)abilIndex))
                         entries[(SupportAbility)abilIndex] = new SupportingAbilityFeature();
                     entries[(SupportAbility)abilIndex].ParseFeatures((SupportAbility)abilIndex, input.Substring(startPos, endPos - startPos), modFilePath, lineNumber);
                 }
-                else if (String.Equals(abilMatches[i].Groups[1].Value, ">AA"))
+                else if (String.Equals(tag, ">AA"))
                 {
+                    countAA++;
                     if (abilIndex > 0)
                     {
-                        if (!cumulate)
-                            BattleAbilityHelper.ClearAbilityFeature((BattleAbilityId)abilIndex);
+                        if (!cumulate) BattleAbilityHelper.ClearAbilityFeature((BattleAbilityId)abilIndex);
                         BattleAbilityHelper.ParseAbilityFeature((BattleAbilityId)abilIndex, input.Substring(startPos, endPos - startPos));
                     }
                     else if (abilIndex == -1)
                     {
-                        if (!cumulate)
-                            BattleAbilityHelper.ClearFlexibleAbilityFeature();
+                        if (!cumulate) BattleAbilityHelper.ClearFlexibleAbilityFeature();
                         BattleAbilityHelper.ParseAbilityFeature(input.Substring(startPos, endPos - startPos));
                     }
                 }
-                else if (String.Equals(abilMatches[i].Groups[1].Value, ">CMD"))
+                else if (String.Equals(tag, ">CMD"))
                 {
+                    countCMD++;
                     if (abilIndex > 0)
                     {
-                        if (!cumulate)
-                            BattleCommandHelper.ClearCommandFeature((BattleCommandId)abilIndex);
+                        if (!cumulate) BattleCommandHelper.ClearCommandFeature((BattleCommandId)abilIndex);
                         BattleCommandHelper.ParseCommandFeature((BattleCommandId)abilIndex, input.Substring(startPos, endPos - startPos));
                     }
                     else if (abilIndex == -1)
                     {
-                        if (!cumulate)
-                            BattleCommandHelper.ClearFlexibleCommandFeature();
+                        if (!cumulate) BattleCommandHelper.ClearFlexibleCommandFeature();
                         BattleCommandHelper.ParseCommandFeature(input.Substring(startPos, endPos - startPos));
                     }
                 }
-                else
+            }
+
+            Int32 totalItems = countItemWpn + countItemHead + countItemWrist + countItemArmor + countItemAcc + countItemGen;
+
+            if (countSA + countAA + countCMD + totalItems > 0)
+            {
+                Log.Message($"[ff9abil] Loaded from {modFilePath} :");
+                if (countSA > 0) Log.Message($"   - Support Abilities : {countSA}");
+                if (countAA > 0) Log.Message($"   - Action Abilities  : {countAA}");
+                if (countCMD > 0) Log.Message($"   - Commands          : {countCMD}");
+                if (totalItems > 0)
                 {
-                    Log.Warning($"[ff9abil] Failure of regex find: '{abilMatches[i].Value}'");
+                    Log.Message($"   - Equipment Items   : {totalItems}");
+                    Log.Message($"     (Wpn: {countItemWpn}, Head: {countItemHead}, Wst: {countItemWrist}, Arm: {countItemArmor}, Acc: {countItemAcc}, Gen: {countItemGen})");
                 }
             }
+        }
+
+        public static void LogStatisticsAll()
+        {
+            Int32 countPermanent = 0;
+            Int32 countBattleStart = 0;
+            Int32 countBattleResult = 0;
+            Int32 countStatusInit = 0;
+            Int32 countAbility = 0;
+            Int32 countCommand = 0;
+            Int32 countSpecial = 0;
+
+            foreach (KeyValuePair<SupportAbility, SupportingAbilityFeature> entry in _FF9Abil_SaFeature)
+            {
+                SupportingAbilityFeature feat = entry.Value;
+
+                countPermanent += feat.PermanentEffect.Count;
+                countBattleStart += feat.BattleStartEffect.Count;
+                countBattleResult += feat.BattleResultEffect.Count;
+                countStatusInit += feat.StatusEffect.Count;
+                countAbility += feat.AbilityEffect.Count;
+                countCommand += feat.CommandEffect.Count;
+                countSpecial += feat.SpecialEffect.Count;
+            }
+
+            Int32 itemPerm = 0;
+            itemPerm += EquipmentHelper.WeaponFeatures.Sum(x => x.Value.Count);
+            itemPerm += EquipmentHelper.HeadFeatures.Sum(x => x.Value.Count);
+            itemPerm += EquipmentHelper.WristFeatures.Sum(x => x.Value.Count);
+            itemPerm += EquipmentHelper.ArmorFeatures.Sum(x => x.Value.Count);
+            itemPerm += EquipmentHelper.AccessoryFeatures.Sum(x => x.Value.Count);
+            itemPerm += EquipmentHelper.GenericFeatures.Sum(x => x.Value.Count);
+            itemPerm += EquipmentHelper.FlexibleItemFeatures.Count;
+
+            Int32 itemSpecial = 0;
+            itemSpecial += EquipmentHelper.WeaponSpecialFeatures.Sum(x => x.Value.Count);
+            itemSpecial += EquipmentHelper.HeadSpecialFeatures.Sum(x => x.Value.Count);
+            itemSpecial += EquipmentHelper.WristSpecialFeatures.Sum(x => x.Value.Count);
+            itemSpecial += EquipmentHelper.ArmorSpecialFeatures.Sum(x => x.Value.Count);
+            itemSpecial += EquipmentHelper.AccessorySpecialFeatures.Sum(x => x.Value.Count);
+            itemSpecial += EquipmentHelper.GenericSpecialFeatures.Sum(x => x.Value.Count);
+            itemSpecial += EquipmentHelper.FlexibleSpecialFeatures.Count;
+
+            Int32 itemStatus = 0;
+            itemStatus += EquipmentHelper.WeaponStatusFeatures.Sum(x => x.Value.Count);
+            itemStatus += EquipmentHelper.HeadStatusFeatures.Sum(x => x.Value.Count);
+            itemStatus += EquipmentHelper.WristStatusFeatures.Sum(x => x.Value.Count);
+            itemStatus += EquipmentHelper.ArmorStatusFeatures.Sum(x => x.Value.Count);
+            itemStatus += EquipmentHelper.AccessoryStatusFeatures.Sum(x => x.Value.Count);
+            itemStatus += EquipmentHelper.GenericStatusFeatures.Sum(x => x.Value.Count);
+            itemStatus += EquipmentHelper.FlexibleStatusFeatures.Count;
+
+            int Total = countPermanent + countSpecial + countBattleStart + countBattleResult + countStatusInit + countAbility + countCommand + itemPerm + itemSpecial + itemStatus;
+            int TotalItem = itemPerm + itemSpecial + itemStatus;
+            Log.Message("========== [CharacterAbilityGems] Statistics ==========");
+            Log.Message($"[Total] Number of Entries from AbilityFeatures.txt: {Total}");
+            Log.Message($"[Details] Total of {_FF9Abil_SaFeature.Count} Effects loaded for SA:");
+            Log.Message($"   - Permanent (Stats):      {countPermanent}");
+            Log.Message($"   - Special (Free/Banish):  {countSpecial}");
+            Log.Message($"   - BattleStart:            {countBattleStart}");
+            Log.Message($"   - BattleResult:           {countBattleResult}");
+            Log.Message($"   - StatusInit:             {countStatusInit}");
+            Log.Message($"   - Ability:                {countAbility}");
+            Log.Message($"   - Command:                {countCommand}");
+            if (TotalItem > 0)
+            {
+                Log.Message($"[Details] {TotalItem} Effects loaded from EquipmentHelper:");
+                Log.Message($"   - Permanent (Stats):      {itemPerm}");
+                Log.Message($"   - Special (Free/Banish):  {itemSpecial}");
+                Log.Message($"   - StatusInit:             {itemStatus}");
+            }
+            Log.Message("==================================================");
         }
     }
 }

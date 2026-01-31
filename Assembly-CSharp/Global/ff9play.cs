@@ -337,6 +337,8 @@ public static class ff9play
         foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(play))
             saFeature.TriggerOnEnable(play);
 
+        EquipmentHelper.TriggerOnEnable(play);
+
         if (IsPreview)
             play.cur.capa = PlayGemsPreview;
         else
@@ -365,6 +367,8 @@ public static class ff9play
 
         foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledGlobalSA(play))
             saFeature.TriggerSpecialSA(play);
+
+        EquipmentHelper.TriggerSpecialFeature(play);
 
         if (IsPreview)
         {

@@ -53,6 +53,12 @@ namespace Memoria.Data
         {
             public Dictionary<String, String> Formula = new Dictionary<String, String>();
         }
+
+        public class SupportingAbilitySpecialEffectPermanent : SupportingAbilityEffect // For special SA features like FreeSA, BanishSA, HiddenSA, etc.
+        {
+            public Dictionary<String, String> Formula = new Dictionary<String, String>();
+        }
+
         public class SupportingAbilityEffectBattleStartType : SupportingAbilityEffect
         {
             public Dictionary<String, String> Formula = new Dictionary<String, String>();
@@ -93,28 +99,27 @@ namespace Memoria.Data
         public List<SupportingAbilityEffectBattleInitStatus> StatusEffect = new List<SupportingAbilityEffectBattleInitStatus>();
         public List<SupportingAbilityEffectAbilityUse> AbilityEffect = new List<SupportingAbilityEffectAbilityUse>();
         public List<SupportingAbilityEffectCommandStart> CommandEffect = new List<SupportingAbilityEffectCommandStart>();
+        public List<SupportingAbilitySpecialEffectPermanent> SpecialEffect = new List<SupportingAbilitySpecialEffectPermanent>();
         public Boolean EnableAsMonsterTransform = false;
         public Boolean EnableAsEnemy = false;
 
         public void TriggerSpecialSA(PLAYER play)
         {
-            for (Int32 i = 0; i < PermanentEffect.Count; i++)
+            for (Int32 i = 0; i < SpecialEffect.Count; i++)
             {
                 try
                 {
-                    if (!PermanentEffect[i].Formula.ContainsKey("ActivateFreeSA") && !PermanentEffect[i].Formula.ContainsKey("BanishSA") && !PermanentEffect[i].Formula.ContainsKey("HiddenSA")
-                        && !PermanentEffect[i].Formula.ContainsKey("ActivateFreeSAByLvl") && !PermanentEffect[i].Formula.ContainsKey("BanishSAByLvl"))
-                        continue;
-                    if (PermanentEffect[i].Condition.Length > 0)
+                    if (SpecialEffect[i].Condition.Length > 0)
                     {
-                        Expression c = new Expression(PermanentEffect[i].Condition);
+                        Expression c = new Expression(SpecialEffect[i].Condition);
                         NCalcUtility.InitializeExpressionPlayer(ref c, play);
                         c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                         c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                         if (!NCalcUtility.EvaluateNCalcCondition(c.Evaluate()))
                             continue;
                     }
-                    foreach (KeyValuePair<String, String> formula in PermanentEffect[i].Formula)
+
+                    foreach (KeyValuePair<String, String> formula in SpecialEffect[i].Formula)
                     {
                         String[] featureSplit = formula.Value.Split(';');
                         for (Int32 j = 0; j < featureSplit.Length; j++)
@@ -124,8 +129,10 @@ namespace Memoria.Data
                             e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                             e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                             SupportAbility sa = (SupportAbility)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)SupportAbility.Void);
+
                             if (sa == SupportAbility.Void)
                                 continue;
+
                             if (String.Equals(formula.Key, "ActivateFreeSA"))
                             {
                                 play.saForced.Add(sa);
@@ -184,7 +191,7 @@ namespace Memoria.Data
                                 }
                                 Boolean allSA = levelSA == -1;
                                 List<SupportAbility> listSAToBanish = ff9abil.GetHierarchyFromAnySA(baseSA);
-                                listSAToBanish.Reverse(); // Start with the maximum boosted one, if it exist.
+                                listSAToBanish.Reverse();
                                 foreach (SupportAbility saToForce in listSAToBanish)
                                 {
                                     if (levelSA <= 0 && !allSA)
@@ -198,7 +205,7 @@ namespace Memoria.Data
                 }
                 catch (Exception err)
                 {
-                    String message = $"Error detected in '{PermanentEffect[i].ModFilePath}' permanent effect at line {PermanentEffect[i].FeatureLineNumber}";
+                    String message = $"Error detected in '{SpecialEffect[i].ModFilePath}' special effect at line {SpecialEffect[i].FeatureLineNumber}";
                     if (message != lastErrorMessage)
                     {
                         lastErrorMessage = message;
@@ -890,6 +897,15 @@ namespace Memoria.Data
             if (unit.CurrentStatus != cur) btl_stat.AlterStatuses(unit, cur & ~unit.CurrentStatus);
         }
 
+        private Boolean IsSpecialSAKey(String key)
+        {
+            return String.Equals(key, "ActivateFreeSA") ||
+                   String.Equals(key, "BanishSA") ||
+                   String.Equals(key, "HiddenSA") ||
+                   String.Equals(key, "ActivateFreeSAByLvl") ||
+                   String.Equals(key, "BanishSAByLvl");
+        }
+
         public void ParseFeatures(SupportAbility id, String featureCode, String modFilePath, Int32 initialLineNumber)
         {
             Id = id;
@@ -908,17 +924,39 @@ namespace Memoria.Data
                 Int32 lineNumber = initialLineNumber + Regex.Matches(featureCode.Substring(0, startPos), @"\n", RegexOptions.Singleline).Count + 1;
                 if (String.Equals(saCode, "Permanent"))
                 {
-                    SupportingAbilityEffectPermanent newEffect = new SupportingAbilityEffectPermanent();
-                    newEffect.ModFilePath = modFilePath;
-                    newEffect.FeatureLineNumber = lineNumber;
+                    String condition = "";
+                    Dictionary<String, String> tempFormulas = new Dictionary<String, String>();
+
                     foreach (Match formula in new Regex(@"\[code=(.*?)\](.*?)\[/code\]").Matches(saArgs))
                     {
                         if (String.Equals(formula.Groups[1].Value, "Condition"))
-                            newEffect.Condition = formula.Groups[2].Value;
+                            condition = formula.Groups[2].Value;
                         else
-                            newEffect.Formula[formula.Groups[1].Value] = formula.Groups[2].Value;
+                            tempFormulas[formula.Groups[1].Value] = formula.Groups[2].Value;
                     }
-                    PermanentEffect.Add(newEffect);
+
+                    SupportingAbilityEffectPermanent permEffect = new SupportingAbilityEffectPermanent();
+                    permEffect.ModFilePath = modFilePath;
+                    permEffect.FeatureLineNumber = lineNumber;
+                    permEffect.Condition = condition;
+
+                    SupportingAbilitySpecialEffectPermanent specEffect = new SupportingAbilitySpecialEffectPermanent();
+                    specEffect.ModFilePath = modFilePath;
+                    specEffect.FeatureLineNumber = lineNumber;
+                    specEffect.Condition = condition;
+
+                    foreach (var kvp in tempFormulas)
+                    {
+                        if (IsSpecialSAKey(kvp.Key))
+                            specEffect.Formula.Add(kvp.Key, kvp.Value);
+                        else
+                            permEffect.Formula.Add(kvp.Key, kvp.Value);
+                    }
+
+                    if (permEffect.Formula.Count > 0)
+                        PermanentEffect.Add(permEffect);
+                    if (specEffect.Formula.Count > 0)
+                        SpecialEffect.Add(specEffect);
                 }
                 else if (String.Equals(saCode, "BattleStart"))
                 {
