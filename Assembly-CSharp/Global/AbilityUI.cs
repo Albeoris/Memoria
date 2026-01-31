@@ -1248,6 +1248,12 @@ public class AbilityUI : UIScene
         BattleAbilityId patchedId = this.PatchAbility(ff9abil.GetActiveAbilityFromAbilityId(abilityId));
         AA_DATA patchedAbil = FF9BattleDB.CharacterActions[patchedId];
 
+        if (BattleAbilityHelper.IsAbilityDisabledInMenu(patchedId, player))
+            return AbilityType.CantSpell;
+
+        if (BattleAbilityHelper.IsAbilityHardDisabledInMenu(patchedId, player))
+            return AbilityType.NoDraw;
+
         if (!this.equipmentPartInAbilityDict.ContainsKey(abilityId))
         {
             Int32 index = ff9abil.FF9Abil_GetIndex(player, abilityId);
@@ -1277,7 +1283,10 @@ public class AbilityUI : UIScene
             return AbilityType.NoDraw;
 
         if (player.saBanish.Contains(ff9abil.GetSupportAbilityFromAbilityId(abilityId)))
-            return player.saForced.Contains(ff9abil.GetSupportAbilityFromAbilityId(abilityId)) ? AbilityType.CantDisable : AbilityType.CantSpell;
+            if (!ff9abil.FF9Abil_IsMaster(player, abilityId) && !equipmentPartInAbilityDict.ContainsKey(abilityId))
+                return AbilityType.NoDraw;
+            else
+                return player.saForced.Contains(ff9abil.GetSupportAbilityFromAbilityId(abilityId)) ? AbilityType.CantDisable : AbilityType.CantSpell;
 
         if (Configuration.Battle.LockEquippedAbilities == 1 || Configuration.Battle.LockEquippedAbilities == 3)
         {

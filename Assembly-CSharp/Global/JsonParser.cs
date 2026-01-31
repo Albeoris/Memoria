@@ -1279,7 +1279,10 @@ public class JsonParser : ISharedDataParser
                     {
                         for (Int32 j = 0; j < playerClass["sa_extended"].Count; j++)
                             if (ff9abil._FF9Abil_SaData.ContainsKey((SupportAbility)playerClass["sa_extended"][j].AsInt)) // Check if SA exist (specially custom SA otherwise loading save can softlock).
-                                ff9abil.FF9Abil_SetEnableSA(player, (SupportAbility)playerClass["sa_extended"][j].AsInt, true);
+                                if (ff9abil.FF9Abil_GetIndex(player, ff9abil.GetAbilityIdFromSupportAbility((SupportAbility)playerClass["sa_extended"][j].AsInt)) < 0)
+                                    Log.Message($"[WARNING] {player.Name} can't learn SA:{(SupportAbility)playerClass["sa_extended"][j].AsInt} anymore... => It's now disabled.");
+                                else
+                                    ff9abil.FF9Abil_SetEnableSA(player, (SupportAbility)playerClass["sa_extended"][j].AsInt, true);
                     }
                 }
                 if (playerClass["maxHpLimit"] != null)

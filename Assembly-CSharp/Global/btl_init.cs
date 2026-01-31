@@ -389,7 +389,7 @@ public static class btl_init
             btl.bi.t_gauge = 1;
             btl.trance = p.trance;
         }
-        btl.tar_bone = 0;
+        btl.tar_bone = FF9BattleDBHeightAndRadius.TryFindNewTargetBone(btl.dms_geo_id);
         btl.sa = p.sa;
         btl.saExtended = p.saExtended;
         btl.saMonster = new List<SupportingAbilityFeature>();
