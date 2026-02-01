@@ -334,19 +334,25 @@ public class UIKeyTrigger : MonoBehaviour
                 PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(true);
                 ff9.w_naviMode = 0;
             }
+            else if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Battle)
+            {
+                ButtonGroupState.DisableAllGroup(true);
+                UIManager.Battle.FF9BMenu_EnableMenu(false);
+                FF9StateSystem.Battle.FF9Battle.btl_seq = 1; // Prevent the Start button to pause again
+                UIManager.Battle.DisableAutoBattle();
+                SFX.EndBattle();
+            }
 
             PersistenSingleton<UIManager>.Instance.Dialogs.PauseAllDialog(true);
             PersistenSingleton<UIManager>.Instance.HideAllHUD();
             Singleton<DialogManager>.Instance.CloseAll();
-            ButtonGroupState.DisableAllGroup(true);
-            UIManager.Battle.FF9BMenu_EnableMenu(false);
-            if (PersistenSingleton<UIManager>.Instance.IsPause)
-                PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State).OnKeyPause(null);
-            FF9StateSystem.Battle.FF9Battle.btl_seq = 1; // Prevent the Start button to pause again
-            UIManager.Battle.DisableAutoBattle();
             EventHUD.Cleanup();
             EventInput.ClearPadMask();
             TimerUI.SetEnable(false);
+
+            if (PersistenSingleton<UIManager>.Instance.IsPause)
+                PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State).OnKeyPause(null);
+
             SceneDirector.FadeEventSetColor(FadeMode.Sub, Color.black);
             SceneDirector.Replace("Title", SceneTransition.FadeOutToBlack_FadeIn, true);
             return;
