@@ -12,7 +12,6 @@ namespace Memoria.Data
     {
         public class ItemFeatureEffect
         {
-            public String Condition = "";
             public Expression ConditionExpression = null;
 
             public Dictionary<String, String> Formula = new Dictionary<String, String>();
@@ -24,7 +23,6 @@ namespace Memoria.Data
 
         public class ItemSpecialEffect
         {
-            public String Condition = "";
             public Expression ConditionExpression = null;
 
             public Dictionary<String, String> Formula = new Dictionary<String, String>();
@@ -36,7 +34,6 @@ namespace Memoria.Data
 
         public class ItemStatusInitEffect
         {
-            public String Condition = "";
             public Expression ConditionExpression = null;
 
             public String ModFilePath = null;
@@ -186,8 +183,8 @@ namespace Memoria.Data
             if (!String.IsNullOrEmpty(condition))
                 compiledCondition = NCalcUtility.PrepareExpression(condition);
 
-            ItemFeatureEffect statEffect = new ItemFeatureEffect { ModFilePath = modFilePath, FeatureLineNumber = lineNumber, Condition = condition, ConditionExpression = compiledCondition };
-            ItemSpecialEffect specialEffect = new ItemSpecialEffect { ModFilePath = modFilePath, FeatureLineNumber = lineNumber, Condition = condition, ConditionExpression = compiledCondition };
+            ItemFeatureEffect statEffect = new ItemFeatureEffect { ModFilePath = modFilePath, FeatureLineNumber = lineNumber, ConditionExpression = compiledCondition };
+            ItemSpecialEffect specialEffect = new ItemSpecialEffect { ModFilePath = modFilePath, FeatureLineNumber = lineNumber, ConditionExpression = compiledCondition };
 
             foreach (var kvp in formulas)
             {
@@ -239,8 +236,7 @@ namespace Memoria.Data
                 String codeName = formula.Groups[1].Value;
                 if (String.Equals(codeName, "Condition"))
                 {
-                    newEffect.Condition = formula.Groups[2].Value;
-                    newEffect.ConditionExpression = NCalcUtility.PrepareExpression(newEffect.Condition);
+                    newEffect.ConditionExpression = NCalcUtility.PrepareExpression(formula.Groups[2].Value);
                 }
                 else if (codeName.StartsWith("PartialResist"))
                 {

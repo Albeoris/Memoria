@@ -1,4 +1,5 @@
 ﻿using FF9;
+using Memoria.Database;
 using Memoria.Prime;
 using NCalc;
 using System;
@@ -19,19 +20,18 @@ namespace Memoria.Data
             FeatureSet set;
             if (abilId == BattleAbilityId.Void)
             {
-                // A feature that relies on their "Condition" to discriminate whether it applies or not
                 set = new FeatureSet();
                 FlexibleFeatures.Add(set);
             }
             else
             {
-                // A feature linked to a particular Ability ID
                 if (!AbilityFeatures.TryGetValue(abilId, out set))
                 {
                     set = new FeatureSet();
                     AbilityFeatures.Add(abilId, set);
                 }
             }
+
             foreach (Match formula in new Regex(@"\[code=(.*?)\](.*?)\[/code\]").Matches(input))
             {
                 String codeType = formula.Groups[1].Value;
@@ -39,77 +39,73 @@ namespace Memoria.Data
 
                 if (String.Equals(codeType, "Condition"))
                 {
-                    set.Condition = codeContent;
-                    set.ConditionExpression = NCalcUtility.PrepareExpression(codeContent);
+                    set.ConditionExpression = PrepareExpression(codeContent);
                 }
                 else if (String.Equals(codeType, "Patch"))
                 {
-                    set.AbilityPatch = codeContent;
                     if (abilId == BattleAbilityId.Void)
                         Log.Warning($"[{nameof(BattleAbilityHelper)}] \"Patch\" cannot be used as a Global AA feature");
                     else
-                        set.AbilityPatchExpression = NCalcUtility.PrepareExpression(codeContent);
+                        set.AbilityPatchExpression = PrepareExpression(codeContent);
                 }
                 else if (String.Equals(codeType, "Priority"))
                 {
-                    set.AbilityPriority = codeContent;
-                    set.AbilityPriorityExpression = NCalcUtility.PrepareExpression(codeContent);
+                    set.AbilityPriorityExpression = PrepareExpression(codeContent);
                 }
                 else if (String.Equals(codeType, "Power"))
                 {
-                    set.AbilityPowerPatch = codeContent;
-                    set.AbilityPowerPatchExpression = NCalcUtility.PrepareExpression(codeContent);
+                    set.AbilityPowerPatchExpression = PrepareExpression(codeContent);
                 }
                 else if (String.Equals(codeType, "HitRate"))
                 {
-                    set.AbilityHitRatePatch = codeContent;
-                    set.AbilityHitRatePatchExpression = NCalcUtility.PrepareExpression(codeContent);
+                    set.AbilityHitRatePatchExpression = PrepareExpression(codeContent);
                 }
                 else if (String.Equals(codeType, "Element"))
                 {
-                    set.AbilityElementPatch = codeContent;
-                    set.AbilityElementPatchExpression = NCalcUtility.PrepareExpression(codeContent);
+                    set.AbilityElementPatchExpression = PrepareExpression(codeContent);
                 }
                 else if (String.Equals(codeType, "Status"))
                 {
-                    set.AbilityStatusPatch = codeContent;
-                    set.AbilityStatusPatchExpression = NCalcUtility.PrepareExpression(codeContent);
+                    set.AbilityStatusPatchExpression = PrepareExpression(codeContent);
                 }
                 else if (String.Equals(codeType, "Target"))
                 {
-                    set.AbilityTargetPatch = codeContent;
-                    set.AbilityTargetPatchExpression = NCalcUtility.PrepareExpression(codeContent);
+                    set.AbilityTargetPatchExpression = PrepareExpression(codeContent);
                 }
                 else if (String.Equals(codeType, "SpecialEffect"))
                 {
-                    set.AbilitySpecialEffectPatch = codeContent;
-                    set.AbilitySpecialEffectPatchExpression = NCalcUtility.PrepareExpression(codeContent);
+                    set.AbilitySpecialEffectPatchExpression = PrepareExpression(codeContent);
                 }
                 else if (String.Equals(codeType, "GilCost"))
                 {
-                    set.AbilityGilCost = codeContent;
-                    set.AbilityGilCostExpression = NCalcUtility.PrepareExpression(codeContent);
+                    set.AbilityGilCostExpression = PrepareExpression(codeContent);
                 }
                 else if (String.Equals(codeType, "MPCost"))
                 {
-                    set.AbilityMPCost = codeContent;
-                    set.AbilityMPCostExpression = NCalcUtility.PrepareExpression(codeContent);
+                    set.AbilityMPCostExpression = PrepareExpression(codeContent);
                 }
                 else if (String.Equals(codeType, "ItemRequirement"))
                 {
-                    set.AbilityItemRequirement = codeContent;
                     foreach (String part in codeContent.Split(';'))
-                        set.AbilityItemRequirementExpressions.Add(NCalcUtility.PrepareExpression(part));
+                    {
+                        set.AbilityItemRequirementExpressions.Add(PrepareExpression(part));
+                    }
                 }
                 else if (String.Equals(codeType, "Disable"))
                 {
-                    set.AbilityDisable = codeContent;
-                    set.AbilityDisableExpression = NCalcUtility.PrepareExpression(codeContent);
+                    set.AbilityDisableExpression = PrepareExpression(codeContent);
                 }
                 else if (String.Equals(codeType, "HardDisable"))
                 {
-                    set.AbilityHardDisable = codeContent;
-                    set.AbilityHardDisableExpression = NCalcUtility.PrepareExpression(codeContent);
+                    set.AbilityHardDisableExpression = PrepareExpression(codeContent);
+                }
+                else if (String.Equals(codeType, "DisableInMenu"))
+                {
+                    set.AbilityDisableInMenuExpression = PrepareExpression(codeContent);
+                }
+                else if (String.Equals(codeType, "HardDisableInMenu"))
+                {
+                    set.AbilityHardDisableInMenuExpression = PrepareExpression(codeContent);
                 }
             }
         }
@@ -124,126 +120,75 @@ namespace Memoria.Data
             FlexibleFeatures.Clear();
         }
 
-        public static Boolean ApplySpecialCommandCondition(CMD_DATA cmd)
+        public static Expression PrepareExpression(String code)
         {
-            try
-            {
-                if (cmd.regist == null)
-                    return true;
-                BattleAbilityId abilId = btl_util.GetCommandMainActionIndex(cmd);
-                BattleUnit caster = new BattleUnit(cmd.regist);
-                Int64 gilCost = 0;
-                foreach (FeatureSet feat in GetApplicableFeatures(abilId, caster, cmd.cmd_no, cmd.info.cmdMenu, cmd.aa, cmd))
-                {
-                    feat.ApplyBasicModifiers(cmd);
-                    if (!feat.ApplyCommandCondition(cmd, ref gilCost))
-                        return false;
-                    if (feat.CheckAbilityIsDisabled(abilId, caster, cmd.cmd_no, cmd.info.cmdMenu, false))
-                    {
-                        UIManager.Battle.SetBattleFollowMessage(BattleMesages.CannotCast);
-                        return false;
-                    }
-                }
-                PARTY_DATA ff9party = FF9StateSystem.Common.FF9.party;
-                if (gilCost > ff9party.gil)
-                {
-                    UIManager.Battle.SetBattleFollowMessage(BattleMesages.NotEnoughGil);
+            Expression e = new Expression(code);
+            e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+            e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+            return e;
+        }
+
+        public static Boolean CheckAbilityCondition(BattleAbilityId abilId, BattleUnit caster, BattleCommandId cmdId, BattleCommandMenu menu, AA_DATA ability = null, CMD_DATA cmd = null)
+        {
+            foreach (FeatureSet feat in GetApplicableFeatures(abilId))
+                if (!feat.CheckCondition(abilId, caster, cmdId, menu, ability, cmd))
                     return false;
-                }
-                ff9party.gil -= (UInt32)gilCost;
-            }
-            catch (Exception err)
-            {
-                Log.Error(err);
-            }
             return true;
         }
 
-        public static Boolean IsAbilityDisabled(BattleAbilityId abilId, BattleUnit potentialCaster, BattleCommandId cmdId, BattleCommandMenu menu)
+        public static Boolean IsAbilityDisabled(BattleAbilityId abilId, BattleUnit caster, BattleCommandId cmdId, BattleCommandMenu menu)
         {
-            foreach (FeatureSet feat in GetApplicableFeatures(abilId, potentialCaster, cmdId, menu))
-                if (feat.CheckAbilityIsDisabled(abilId, potentialCaster, cmdId, menu, true))
+            return IsAbilityDisabled(abilId, caster, cmdId, menu, false);
+        }
+
+        public static Boolean IsAbilityDisabled(BattleAbilityId abilId, BattleUnit caster, BattleCommandId cmdId, BattleCommandMenu menu, Boolean inMenu)
+        {
+            foreach (FeatureSet feat in GetApplicableFeatures(abilId))
+            {
+                if (feat.CheckAbilityIsHardDisabled(abilId, caster, cmdId, menu, inMenu))
                     return true;
+                if (feat.CheckAbilityIsDisabled(abilId, caster, cmdId, menu, inMenu))
+                    return true;
+            }
             return false;
         }
 
         public static Boolean IsAbilityDisabledInMenu(BattleAbilityId abilId, PLAYER player)
         {
-            try
+            foreach (FeatureSet feat in GetApplicableFeatures(abilId))
             {
-                if (abilId != BattleAbilityId.Void && AbilityFeatures.TryGetValue(abilId, out FeatureSet abilSet))
-                    return abilSet.CheckAbilityIsDisabledInMenu(abilId, player);
-            }
-            catch (Exception err)
-            {
-                Log.Error(err);
-            }
-            return false;
-        }
-
-        public static Boolean IsAbilityHardDisabledInMenu(BattleAbilityId abilId, PLAYER player)
-        {
-            try
-            {
-                if (abilId != BattleAbilityId.Void && AbilityFeatures.TryGetValue(abilId, out FeatureSet abilSet))
-                    return abilSet.CheckAbilityIsHardDisabledInMenu(abilId, player);
-            }
-            catch (Exception err)
-            {
-                Log.Error(err);
-            }
-            return false;
-        }
-
-        public static Boolean IsAbilityHardDisabled(BattleAbilityId abilId, BattleUnit potentialCaster, BattleCommandId cmdId, BattleCommandMenu menu)
-        {
-            foreach (FeatureSet feat in GetApplicableFeatures(abilId, potentialCaster, cmdId, menu))
-                if (feat.CheckAbilityIsHardDisabled(abilId, potentialCaster, cmdId, menu, true))
+                if (feat.CheckAbilityIsHardDisabledInMenu(abilId, player))
                     return true;
+                if (feat.CheckAbilityIsDisabledInMenu(abilId, player))
+                    return true;
+            }
             return false;
         }
 
-        public static Boolean GetPatchedMPCost(ref Int32 mpCost, BattleAbilityId abilId, BattleUnit potentialCaster, BattleCommandId cmdId, BattleCommandMenu menu, AA_DATA ability = null, CMD_DATA cmd = null)
+        public static Int32 GetActiveAbilityState(BattleAbilityId abilId, BattleUnit caster, BattleCommandId cmdId, BattleCommandMenu menu)
         {
-            Boolean changeMPCost = false;
-            try
-            {
-                foreach (FeatureSet feat in GetApplicableFeatures(abilId, potentialCaster, cmdId, menu, ability, cmd))
-                    if (feat.ApplyMPCost(ref mpCost, abilId, potentialCaster, cmdId, menu, ability))
-                        changeMPCost = true;
-            }
-            catch (Exception err)
-            {
-                Log.Error(err);
-            }
-            return changeMPCost;
+            return GetActiveAbilityState(abilId, caster, cmdId, menu, false);
         }
 
-        public static void SetCustomPriority(CMD_DATA cmd)
+        public static Int32 GetActiveAbilityState(BattleAbilityId abilId, BattleUnit caster, BattleCommandId cmdId, BattleCommandMenu menu, Boolean inMenu)
         {
-            try
+            Int32 state = 2;
+            foreach (FeatureSet feat in GetApplicableFeatures(abilId))
             {
-                if (cmd.regist == null)
-                    return;
-                BattleAbilityId abilId = btl_util.GetCommandMainActionIndex(cmd);
-                BattleUnit caster = new BattleUnit(cmd.regist);
-                foreach (FeatureSet feat in GetApplicableFeatures(abilId, caster, cmd.cmd_no, cmd.info.cmdMenu, cmd.aa, cmd))
-                    feat.ApplyPriority(cmd);
+                if (feat.CheckAbilityIsHardDisabled(abilId, caster, cmdId, menu, inMenu))
+                    return 0;
+                if (feat.CheckAbilityIsDisabled(abilId, caster, cmdId, menu, inMenu))
+                    state = 1;
             }
-            catch (Exception err)
-            {
-                Log.Error(err);
-            }
+            return state;
         }
 
         public static BattleAbilityId Patch(BattleAbilityId abilId, PLAYER character)
         {
             try
             {
-                // Flexible features are not taken into account, and there cannot be any condition tied to a patch
-                // Using a NCalc formula that conditionally returns -1 can be used instead of a condition
-                if (abilId != BattleAbilityId.Void && AbilityFeatures.TryGetValue(abilId, out FeatureSet abilSet))
-                    return abilSet.ApplyPatch(abilId, character);
+                if (abilId != BattleAbilityId.Void && AbilityFeatures.TryGetValue(abilId, out FeatureSet set))
+                    abilId = set.ApplyPatch(abilId, character);
             }
             catch (Exception err)
             {
@@ -252,36 +197,75 @@ namespace Memoria.Data
             return abilId;
         }
 
-        private static IEnumerable<FeatureSet> GetApplicableFeatures(BattleAbilityId abilId, BattleUnit caster, BattleCommandId cmdId, BattleCommandMenu menu, AA_DATA ability = null, CMD_DATA cmd = null)
+        public static void ApplyBasicModifiers(CMD_DATA cmd)
         {
-            if (!caster.IsPlayer)
-                yield break;
-            if (cmdId < BattleCommandId.SysEscape || cmdId > BattleCommandId.SysStone)
-                foreach (FeatureSet flexiSet in FlexibleFeatures)
-                    if (flexiSet.CheckCondition(abilId, caster, cmdId, menu, ability, cmd))
-                        yield return flexiSet;
-            if (abilId != BattleAbilityId.Void && AbilityFeatures.TryGetValue(abilId, out FeatureSet abilSet) && abilSet.CheckCondition(abilId, caster, cmdId, menu, ability, cmd))
+            try
+            {
+                BattleAbilityId abilId = (BattleAbilityId)cmd.sub_no;
+                foreach (FeatureSet set in GetApplicableFeatures(abilId))
+                    set.ApplyBasicModifiers(cmd);
+            }
+            catch (Exception err)
+            {
+                Log.Error(err);
+            }
+        }
+
+        public static Boolean ApplyCommandCondition(CMD_DATA cmd, ref Int64 totalGilCost)
+        {
+            try
+            {
+                BattleAbilityId abilId = (BattleAbilityId)cmd.sub_no;
+                foreach (FeatureSet set in GetApplicableFeatures(abilId))
+                    if (!set.ApplyCommandCondition(cmd, ref totalGilCost))
+                        return false;
+            }
+            catch (Exception err)
+            {
+                Log.Error(err);
+                return true;
+            }
+            return true;
+        }
+
+        public static Int32 ApplyMPCost(Int32 mpCost, BattleAbilityId abilId, BattleUnit potentialCaster, BattleCommandId cmdId, BattleCommandMenu menu, AA_DATA ability = null)
+        {
+            try
+            {
+                foreach (FeatureSet set in GetApplicableFeatures(abilId))
+                    set.ApplyMPCost(ref mpCost, abilId, potentialCaster, cmdId, menu, ability);
+            }
+            catch (Exception err)
+            {
+                Log.Error(err);
+            }
+            return mpCost;
+        }
+
+        public static void ApplyPriority(CMD_DATA cmd)
+        {
+            try
+            {
+                BattleAbilityId abilId = (BattleAbilityId)cmd.sub_no;
+                foreach (FeatureSet set in GetApplicableFeatures(abilId))
+                    set.ApplyPriority(cmd);
+            }
+            catch (Exception err)
+            {
+                Log.Error(err);
+            }
+        }
+
+        private static IEnumerable<FeatureSet> GetApplicableFeatures(BattleAbilityId abilId)
+        {
+            foreach (FeatureSet flexiSet in FlexibleFeatures)
+                yield return flexiSet;
+            if (abilId != BattleAbilityId.Void && AbilityFeatures.TryGetValue(abilId, out FeatureSet abilSet))
                 yield return abilSet;
-            yield break;
         }
 
         private class FeatureSet
         {
-            public String Condition = null;
-            public String AbilityPatch = null;
-            public String AbilityPriority = null;
-            public String AbilityPowerPatch = null;
-            public String AbilityHitRatePatch = null;
-            public String AbilityElementPatch = null;
-            public String AbilityStatusPatch = null;
-            public String AbilityTargetPatch = null;
-            public String AbilitySpecialEffectPatch = null;
-            public String AbilityGilCost = null;
-            public String AbilityMPCost = null;
-            public String AbilityItemRequirement = null;
-            public String AbilityDisable = null;
-            public String AbilityHardDisable = null;
-
             public Expression ConditionExpression = null;
             public Expression AbilityPatchExpression = null;
             public Expression AbilityPriorityExpression = null;
@@ -294,14 +278,16 @@ namespace Memoria.Data
             public Expression AbilityGilCostExpression = null;
             public Expression AbilityMPCostExpression = null;
             public List<Expression> AbilityItemRequirementExpressions = new List<Expression>();
+
             public Expression AbilityDisableExpression = null;
             public Expression AbilityHardDisableExpression = null;
+            public Expression AbilityDisableInMenuExpression = null;
+            public Expression AbilityHardDisableInMenuExpression = null;
 
             public Boolean CheckCondition(BattleAbilityId abilId, BattleUnit caster, BattleCommandId cmdId, BattleCommandMenu menu, AA_DATA ability = null, CMD_DATA cmd = null)
             {
                 if (ConditionExpression == null)
                 {
-                    // Logique originale pour le fallback
                     if (cmd == null && ability == null && abilId == BattleAbilityId.Void)
                         return false;
                     if (ability == null && !FF9BattleDB.CharacterActions.TryGetValue(abilId, out ability))
@@ -349,8 +335,8 @@ namespace Memoria.Data
 
             public Boolean CheckAbilityIsDisabledInMenu(BattleAbilityId abilId, PLAYER play)
             {
-                if (AbilityDisableExpression == null) return false;
-                Expression c = AbilityDisableExpression;
+                if (AbilityDisableInMenuExpression == null) return false;
+                Expression c = AbilityDisableInMenuExpression;
                 NCalcUtility.InitializeExpressionPlayer(ref c, play);
                 NCalcUtility.InitializeExpressionRawAbility(ref c, FF9BattleDB.CharacterActions[abilId], abilId);
                 return NCalcUtility.EvaluateNCalcCondition(c.Evaluate());
@@ -358,8 +344,8 @@ namespace Memoria.Data
 
             public Boolean CheckAbilityIsHardDisabledInMenu(BattleAbilityId abilId, PLAYER play)
             {
-                if (AbilityHardDisableExpression == null) return false;
-                Expression c = AbilityHardDisableExpression;
+                if (AbilityHardDisableInMenuExpression == null) return false;
+                Expression c = AbilityHardDisableInMenuExpression;
                 NCalcUtility.InitializeExpressionPlayer(ref c, play);
                 NCalcUtility.InitializeExpressionRawAbility(ref c, FF9BattleDB.CharacterActions[abilId], abilId);
                 return NCalcUtility.EvaluateNCalcCondition(c.Evaluate());
@@ -513,8 +499,7 @@ namespace Memoria.Data
                 return abilId;
             }
 
-            // Remplace InitCommandExpression mais SANS rattacher les Events (déjà fait dans NCalcUtility.PrepareExpression)
-            private static void SetCommandParameters(ref Expression e, CMD_DATA cmd)
+            private void SetCommandParameters(ref Expression e, CMD_DATA cmd)
             {
                 BattleUnit caster = new BattleUnit(cmd.regist);
                 NCalcUtility.InitializeExpressionUnit(ref e, caster, "Caster");

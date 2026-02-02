@@ -40,12 +40,10 @@ namespace Memoria.Data
 
                 if (String.Equals(codeType, "Condition"))
                 {
-                    set.Condition = codeContent;
                     set.ConditionExpression = NCalcUtility.PrepareExpression(codeContent);
                 }
                 else if (String.Equals(codeType, "Patch"))
                 {
-                    set.CommandPatch = codeContent;
                     if (cmdId == BattleCommandId.None)
                         Log.Warning($"[{nameof(BattleCommandHelper)}] \"Patch\" cannot be used as a Global CMD feature");
                     else
@@ -53,12 +51,10 @@ namespace Memoria.Data
                 }
                 else if (String.Equals(codeType, "Disable"))
                 {
-                    set.CommandDisable = codeContent;
                     set.CommandDisableExpression = NCalcUtility.PrepareExpression(codeContent);
                 }
                 else if (String.Equals(codeType, "HardDisable"))
                 {
-                    set.CommandHardDisable = codeContent;
                     set.CommandHardDisableExpression = NCalcUtility.PrepareExpression(codeContent);
                 }
             }
@@ -145,16 +141,9 @@ namespace Memoria.Data
 
         private class FeatureSet
         {
-            public String Condition = null;
             public Expression ConditionExpression = null;
-
-            public String CommandPatch = null;
             public Expression CommandPatchExpression = null;
-
-            public String CommandDisable = null;
             public Expression CommandDisableExpression = null;
-
-            public String CommandHardDisable = null;
             public Expression CommandHardDisableExpression = null;
 
             public Boolean CheckCondition(BattleCommandId cmdId, BattleCommandMenu menu, PLAYER character, BattleUnit asUnit = null)
