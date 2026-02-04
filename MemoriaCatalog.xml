@@ -3226,6 +3226,22 @@ Feel free to read the Music List &amp; newly added Summon Music List within the 
 </Mod>
 
 <Mod>
+    <Name>Songs of Memories</Name>
+    <Version>0.5</Version>
+    <InstallationPath>Songs of Memories</InstallationPath>
+    <ReleaseDate>2025-01-12</ReleaseDate>
+    <ReleaseDateOriginal>2025-01-12</ReleaseDateOriginal>
+    <Author>Foxmanity</Author>
+    <Description>I love Final Fantasy IX and its music, so I decided I will show my love in trying to remake the soundtrack with modern sound while also maintaining the same mood and authenticity, so new players can still enjoy the soundtrack as it is.</Description>
+    <PatchNotes>First Release</PatchNotes>
+    <Category>Music</Category>
+    <Website>https://www.nexusmods.com/finalfantasy9/mods/125</Website>
+    <PreviewFile>Songs of Memories.png</PreviewFile>
+    <DownloadUrl>https://drive.usercontent.google.com/download?id=18E8e3R8ER3OVt8pP7dC7H9AmHg2eXF0T&amp;export=download&amp;confirm=t</DownloadUrl>
+    <PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/125/125-1769963784-1122579843.png</PreviewFileUrl>
+</Mod>
+
+<Mod>
 	<Name>KupoMail</Name>
 	<Version>0.2</Version>
 	<InstallationPath>KupoMail</InstallationPath>
