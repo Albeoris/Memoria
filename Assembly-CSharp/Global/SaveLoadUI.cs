@@ -767,7 +767,6 @@ public class SaveLoadUI : UIScene
 
         GameObject newObj = NGUITools.AddChild(this.gameObject, this.helpSlotLabel.gameObject);
 
-        // 1. Configuration du Label (Aspect visuel)
         UILabel labelComponent = newObj.GetComponent<UILabel>();
         labelComponent.leftAnchor.target = null;
         labelComponent.rightAnchor.target = null;

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using Memoria; // Ajouté pour être sûr d'avoir accès aux classes Memoria si besoin
 
 public static class SavePageNamer
 {
@@ -11,8 +9,6 @@ public static class SavePageNamer
 
     static SavePageNamer()
     {
-        // On récupère le dossier officiel utilisé par le jeu (défini dans SharedDataBytesStorage)
-        // Si le chemin n'est pas encore initialisé par le jeu, on force son initialisation
         if (string.IsNullOrEmpty(SharedDataBytesStorage.MetaData.DirPath))
         {
             SharedDataBytesStorage.SetPCPath();
@@ -20,7 +16,6 @@ public static class SavePageNamer
 
         string saveFolder = SharedDataBytesStorage.MetaData.DirPath;
 
-        // Sécurité : si jamais ça échoue, on fallback sur le persistentDataPath
         if (string.IsNullOrEmpty(saveFolder))
         {
             saveFolder = Application.persistentDataPath + "/EncryptedSavedData";
@@ -41,7 +36,6 @@ public static class SavePageNamer
         foreach (string line in lines)
         {
             if (string.IsNullOrEmpty(line) || !line.Contains("=")) continue;
-            // On sépare au premier '=' rencontré
             string[] parts = line.Split(new char[] { '=' }, 2);
             if (int.TryParse(parts[0], out int pageId))
             {

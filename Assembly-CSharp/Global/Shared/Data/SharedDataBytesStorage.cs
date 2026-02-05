@@ -88,7 +88,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 
         if (CurrentSavePage > 0)
         {
-            // Exemple : EncryptedSavedData/ExtraSave_1/SavedData_ww.dat
+            // Example : EncryptedSavedData/ExtraSave_1/SavedData_ww.dat
             string extraFolder = "ExtraSave_" + CurrentSavePage;
             string newDir = Path.Combine(MetaData.DirPath, extraFolder);
 
@@ -748,10 +748,8 @@ public class SharedDataBytesStorage : ISharedDataStorage
 
     public override void Autoload(ISharedDataStorage.OnAutoloadFinish onFinishDelegate)
     {
-        // Mémoriser
         int cachedPage = CurrentSavePage;
 
-        // Forcer Page 0
         if (cachedPage != 0)
         {
             CurrentSavePage = 0;
@@ -759,10 +757,8 @@ public class SharedDataBytesStorage : ISharedDataStorage
             SetPCPath();
         }
 
-        // Charger
         JSONClass rootNode = this.Load(true, -1, -1);
 
-        // Restaurer
         if (cachedPage != 0)
         {
             CurrentSavePage = cachedPage;
