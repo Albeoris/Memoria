@@ -47,6 +47,8 @@ public abstract class SoundPlayer
 
     public static void StaticCreateSound(SoundProfile soundProfile)
     {
+        if (soundProfile.SoundID > 0) return;
+
         Int32 num = ISdLibAPIProxy.Instance.SdSoundSystem_CreateSound(soundProfile.BankID);
         if (num == 0)
         {
