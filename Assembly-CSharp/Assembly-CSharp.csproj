@@ -414,6 +414,7 @@
     <Compile Include="Memoria\Data\Battle\BattleCommandHelper.cs" />
     <Compile Include="Memoria\Data\Battle\BattleCommandMenu.cs" />
     <Compile Include="Memoria\Data\Battle\BattleMagicSwordSet.cs" />
+    <Compile Include="Memoria\Data\Characters\AbilitySorter.cs" />
     <Compile Include="Memoria\Data\Items\EquipmentHelper.cs" />
     <Compile Include="Memoria\Data\Items\MixCommandType.cs" />
     <Compile Include="Memoria\Data\SpecialEffects\SHPPrototype.cs" />

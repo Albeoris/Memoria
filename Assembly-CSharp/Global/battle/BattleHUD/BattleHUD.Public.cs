@@ -60,6 +60,7 @@ public partial class BattleHUD : UIScene
         _matchBattleIdPlayerList = new List<Int32>();
         _matchBattleIdEnemyList = new List<Int32>();
         _itemIdList = new List<RegularItem>();
+        _abilityIdList = new List<Int32>();
         _messageQueue = new Dictionary<String, Message>();
         _commandEnabledState = new Dictionary<BattleCommandMenu, Int32>();
         _oneTime = true;

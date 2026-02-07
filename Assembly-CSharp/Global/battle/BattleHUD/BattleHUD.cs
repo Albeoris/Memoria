@@ -25,6 +25,7 @@ public partial class BattleHUD : UIScene
     private readonly List<Int32> _matchBattleIdPlayerList;
     private readonly List<Int32> _matchBattleIdEnemyList;
     private readonly List<RegularItem> _itemIdList;
+    private readonly List<Int32> _abilityIdList;
     private readonly Dictionary<String, Message> _messageQueue;
 
     private Single _lastFrameRightTriggerAxis;
@@ -796,8 +797,10 @@ public partial class BattleHUD : UIScene
 
     private void DisplayAbility()
     {
+        _abilityIdList.Clear();
         List<ListDataTypeBase> inDataList = new List<ListDataTypeBase>();
         CharacterCommand ff9Command = CharacterCommands.Commands[_currentCommandId];
+
         if (CommandIsMonsterTransformCommand(CurrentPlayerIndex, _currentCommandId, out BTL_DATA.MONSTER_TRANSFORM transform))
         {
             for (Int32 i = 0; i < ff9Command.ListEntry.Length; i++)
@@ -808,6 +811,31 @@ public partial class BattleHUD : UIScene
             SetAbilityAp(_abilityDetailDict[CurrentPlayerIndex]);
             foreach (BattleAbilityId abilId in ff9Command.EnumerateAbilities())
                 inDataList.Add(new BattleAbilityListData { Id = ff9abil.GetAbilityIdFromActiveAbility(abilId) });
+        }
+
+        if (CurrentPlayerIndex >= 0)
+        {
+            PLAYER player = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex).Player;
+
+            List<BattleAbilityListData> tempList = inDataList.Cast<BattleAbilityListData>().ToList();
+            List<int> currentIds = tempList.Select(x => x.Id).ToList();
+            AbilitySorter.Sort(player.Index, currentIds, false);
+
+            inDataList.Clear();
+            foreach (int sortedId in currentIds)
+            {
+                var item = tempList.FirstOrDefault(x => x.Id == sortedId);
+                if (item != null)
+                {
+                    inDataList.Add(item);
+                    _abilityIdList.Add(sortedId);
+                }
+            }
+        }
+        else
+        {
+            foreach (BattleAbilityListData item in inDataList)
+                _abilityIdList.Add(item.Id);
         }
 
         if (_abilityScrollList.ItemsPool.Count == 0)
@@ -1528,6 +1556,7 @@ public partial class BattleHUD : UIScene
         _matchBattleIdPlayerList.Clear();
         _matchBattleIdEnemyList.Clear();
         _itemIdList.Clear();
+        _abilityIdList.Clear();
 
         foreach (AbilityPlayerDetail value in _abilityDetailDict.Values)
             value.Clear();
@@ -1583,7 +1612,11 @@ public partial class BattleHUD : UIScene
 
         CharacterCommandType commandType = CharacterCommands.Commands[cmdId].Type;
         if (commandType == CharacterCommandType.Normal || commandType == CharacterCommandType.Ability || commandType == CharacterCommandType.Instant)
-            commandDetail.SubId = (Int32)PatchAbility(CharacterCommands.Commands[cmdId].GetAbilityId(_currentSubMenuIndex));
+        {
+            int rawAbilityId = _abilityIdList[_currentSubMenuIndex];
+            BattleAbilityId battleAbilId = ff9abil.GetActiveAbilityFromAbilityId(rawAbilityId);
+            commandDetail.SubId = (Int32)PatchAbility(battleAbilId);
+        }
         else if (commandType == CharacterCommandType.Item || commandType == CharacterCommandType.Throw)
             commandDetail.SubId = (Int32)_itemIdList[_currentSubMenuIndex];
 

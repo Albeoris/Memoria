@@ -233,6 +233,7 @@ public class JsonParser : ISharedDataParser
         {
             { "00001_time", FF9StateSystem.Settings.time.ToString() }
         });
+        AbilitySorter.WriteToJSON(rootMemoriaClass);
         this.ParseEventDataToJson(FF9StateSystem.EventState, rootMemoriaClass, schemaMemoriaClass, false);
         this.ParseCommonDataToJson(FF9StateSystem.Common.FF9, rootMemoriaClass, schemaMemoriaClass, false);
         this.ParseQuadMistDataToJson(FF9StateSystem.MiniGame.SavedData, rootMemoriaClass, schemaMemoriaClass, false);
@@ -340,6 +341,7 @@ public class JsonParser : ISharedDataParser
                 this.ParseCommonJsonToData(memoriaClass["40000_Common"], false);
             if (memoriaClass["30000_MiniGame"] != null)
                 FF9StateSystem.MiniGame.SavedData = this.ParseQuadMistJsonToData(memoriaClass["30000_MiniGame"], false);
+            AbilitySorter.ReadFromJSON(memoriaClass.AsObject);
         }
         foreach (PLAYER player in FF9StateSystem.Common.FF9.PlayerList)
         {
