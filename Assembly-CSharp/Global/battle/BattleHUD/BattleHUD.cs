@@ -1613,12 +1613,20 @@ public partial class BattleHUD : UIScene
         CharacterCommandType commandType = CharacterCommands.Commands[cmdId].Type;
         if (commandType == CharacterCommandType.Normal || commandType == CharacterCommandType.Ability || commandType == CharacterCommandType.Instant)
         {
-            int rawAbilityId = _abilityIdList[_currentSubMenuIndex];
-            BattleAbilityId battleAbilId = ff9abil.GetActiveAbilityFromAbilityId(rawAbilityId);
-            commandDetail.SubId = (Int32)PatchAbility(battleAbilId);
+            if (commandType == CharacterCommandType.Ability && _currentSubMenuIndex >= 0 && _currentSubMenuIndex < _abilityIdList.Count)
+            {
+                BattleAbilityId battleAbilId = ff9abil.GetActiveAbilityFromAbilityId(_abilityIdList[_currentSubMenuIndex]);
+                commandDetail.SubId = (Int32)PatchAbility(battleAbilId);
+            }
+            else
+            {
+                commandDetail.SubId = (Int32)PatchAbility(CharacterCommands.Commands[cmdId].GetAbilityId(_currentSubMenuIndex));
+            }
         }
         else if (commandType == CharacterCommandType.Item || commandType == CharacterCommandType.Throw)
+        {
             commandDetail.SubId = (Int32)_itemIdList[_currentSubMenuIndex];
+        }
 
         commandDetail.TargetId = 0;
 
