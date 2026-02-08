@@ -101,6 +101,7 @@ public partial class BattleHUD : UIScene
     private BattleCommandMenu _buttonSlideInitial;
     private GONavigationButton _buttonSliding;
     private Int32 CurrentBattlePlayerIndex => _matchBattleIdPlayerList.IndexOf(CurrentPlayerIndex);
+    private Int32 _battleSortingIndex = -1;
 
     private void DisplayBattleMessage(Message message)
     {
@@ -790,7 +791,12 @@ public partial class BattleHUD : UIScene
             abilId = BattleAbilityId.Void;
             return transform.spell[subNo];
         }
-        abilId = PatchAbility(ff9Command.GetAbilityId(abilityIndex));
+
+        if (_abilityIdList != null && abilityIndex >= 0 && abilityIndex < _abilityIdList.Count)
+            abilId = PatchAbility(ff9abil.GetActiveAbilityFromAbilityId(_abilityIdList[abilityIndex]));
+        else
+            abilId = PatchAbility(ff9Command.GetAbilityId(abilityIndex));
+
         subNo = (Int32)abilId;
         return FF9StateSystem.Battle.FF9Battle.aa_data[abilId];
     }
@@ -819,7 +825,8 @@ public partial class BattleHUD : UIScene
 
             List<BattleAbilityListData> tempList = inDataList.Cast<BattleAbilityListData>().ToList();
             List<int> currentIds = tempList.Select(x => x.Id).ToList();
-            AbilitySorter.Sort(player.Index, currentIds, false);
+
+            AbilitySorter.SortBattle(player.Index, _currentCommandId, currentIds);
 
             inDataList.Clear();
             foreach (int sortedId in currentIds)
@@ -906,6 +913,11 @@ public partial class BattleHUD : UIScene
                 itemListDetailHud.NumberLabel.color = FF9TextTool.White;
                 ButtonGroupState.SetButtonAnimation(itemListDetailHud.Self, true);
             }
+        }
+        if (_battleSortingIndex == index && AbilityPanel.activeSelf)
+        {
+            itemListDetailHud.NameLabel.color = FF9TextTool.Cyan;
+            itemListDetailHud.NumberLabel.color = FF9TextTool.Cyan;
         }
     }
 
@@ -1974,6 +1986,7 @@ public partial class BattleHUD : UIScene
         }
         else
         {
+            _battleSortingIndex = -1;
             if (_currentSubMenuIndex != -1)
                 _abilityCursorMemorize[new PairCharCommand(CurrentPlayerIndex, _currentCommandId)] = _currentSubMenuIndex;
             AbilityPanel.SetActive(false);
