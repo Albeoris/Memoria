@@ -427,7 +427,7 @@ public partial class BattleHUD : UIScene
             if (_usingMainMenu)
                 return true;
 
-            if (ButtonGroupState.ActiveGroup == AbilityGroupButton && AbilityPanel.activeSelf && Configuration.Battle.SorterAASA)
+            if (ButtonGroupState.ActiveGroup == AbilityGroupButton && AbilityPanel.activeSelf && Configuration.Battle.AASASorter)
             {
                 Int32 currentIndex = _currentSubMenuIndex;
 

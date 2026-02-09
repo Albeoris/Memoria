@@ -792,7 +792,7 @@ public partial class BattleHUD : UIScene
             return transform.spell[subNo];
         }
 
-        if (_abilityIdList != null && abilityIndex >= 0 && abilityIndex < _abilityIdList.Count)
+        if (_abilityIdList != null && abilityIndex >= 0 && abilityIndex < _abilityIdList.Count && ff9Command.Type == CharacterCommandType.Ability && Configuration.Battle.AASASorter)
             abilId = PatchAbility(ff9abil.GetActiveAbilityFromAbilityId(_abilityIdList[abilityIndex]));
         else
             abilId = PatchAbility(ff9Command.GetAbilityId(abilityIndex));

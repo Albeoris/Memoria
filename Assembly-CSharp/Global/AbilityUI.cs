@@ -815,7 +815,7 @@ public class AbilityUI : UIScene
     {
         if (!base.OnKeyMenu(go)) return true;
 
-        if ((ButtonGroupState.ActiveGroup == ActionAbilityGroupButton || ButtonGroupState.ActiveGroup == SupportAbilityGroupButton) && Configuration.Battle.SorterAASA)
+        if ((ButtonGroupState.ActiveGroup == ActionAbilityGroupButton || ButtonGroupState.ActiveGroup == SupportAbilityGroupButton) && Configuration.Battle.AASASorter)
         {
             int currentIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
 
@@ -840,7 +840,8 @@ public class AbilityUI : UIScene
                     this.aaIdList[_sortingSourceIndex] = idDest;
                     this.aaIdList[currentIndex] = idSource;
 
-                    AbilitySorter.UpdateMenuAA(player.Index, this.aaIdList);
+                    if (Configuration.Battle.AASASorter)
+                        AbilitySorter.UpdateMenuAA(player.Index, this.aaIdList);
 
                     _sortingSourceIndex = -1;
                     DisplayAA();
@@ -855,7 +856,8 @@ public class AbilityUI : UIScene
                     this.saIdList[_sortingSourceIndex] = idDest;
                     this.saIdList[currentIndex] = idSource;
 
-                    AbilitySorter.UpdateMenuSA(player.Index, this.saIdList);
+                    if (Configuration.Battle.AASASorter)
+                        AbilitySorter.UpdateMenuSA(player.Index, this.saIdList);
 
                     _sortingSourceIndex = -1;
 
@@ -1558,8 +1560,11 @@ public class AbilityUI : UIScene
                 }
             }
         }
-        AbilitySorter.SortMenuAA(player.Index, this.aaIdList);
-        AbilitySorter.SortMenuSA(player.Index, this.saIdList);
+        if (Configuration.Battle.AASASorter)
+        {
+            AbilitySorter.SortMenuAA(player.Index, this.aaIdList);
+            AbilitySorter.SortMenuSA(player.Index, this.saIdList);
+        }
         this.isAAEnable = !IsSubMenuDisabledByMainMenu(true) && player.cur.hp > 0 && (player.status & BattleStatusConst.CannotUseAbilityInMenu) == 0 && this.aaIdList.Count > 0 && FF9StateSystem.EventState.gEventGlobal[FF9FABIL_EVENT_NOMAGIC] == 0;
         this.isSAEnable = !IsSubMenuDisabledByMainMenu(false) && ff9abil.FF9Abil_HasSA(player);
         this.useSubMenuLabel.color = !this.isAAEnable ? FF9TextTool.Gray : FF9TextTool.White;
