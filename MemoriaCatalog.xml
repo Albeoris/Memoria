@@ -3227,13 +3227,17 @@ Feel free to read the Music List &amp; newly added Summon Music List within the 
 
 <Mod>
     <Name>Songs of Memories</Name>
-    <Version>0.5</Version>
+    <Version>0.6</Version>
     <InstallationPath>Songs of Memories</InstallationPath>
-    <ReleaseDate>2025-01-12</ReleaseDate>
-    <ReleaseDateOriginal>2025-01-12</ReleaseDateOriginal>
+    <ReleaseDate>2026-02-07</ReleaseDate>
+    <ReleaseDateOriginal>2026-01-12</ReleaseDateOriginal>
     <Author>Foxmanity</Author>
-    <Description>I love Final Fantasy IX and its music, so I decided I will show my love in trying to remake the soundtrack with modern sound while also maintaining the same mood and authenticity, so new players can still enjoy the soundtrack as it is.</Description>
-    <PatchNotes>First Release</PatchNotes>
+    <Description>A modernised look on FFIX wonderful soundtrack, which also tried to remain as close to the original mood and atmosphere as possible. My main goal with this mod was to give the game modern sound without actually straying away from the original ost. I'm not trying to make it more cinematic or change the emotions or pacing, my goal is just to remake the soundtrack with modern sound and give it a new feel, while still remaining the same old masterpiece that Nobuo Uematsu wrote.</Description>
+    <PatchNotes>-Added missing Disc 1 tracks: Tantalus Theme, Eyes on you, Tetra master and Rufus Welcoming Ceremony. 
+-Disc 2 is fully complete! 
+-Renamed all the files to what they should be so there won't be any incompatabilities with other music mods!
+-Adjusted all the volumes (Still could've missed something) 
+Please notify if you notice problems</PatchNotes>
     <Category>Music</Category>
     <Website>https://www.nexusmods.com/finalfantasy9/mods/125</Website>
     <PreviewFile>Songs of Memories.png</PreviewFile>
