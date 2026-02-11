@@ -151,7 +151,7 @@ public class UIKeyTrigger : MonoBehaviour
             if (!UnityXInput.Input.anyKey && !isLockLazyInput)
                 ResetKeyCode();
             if (Configuration.Lang.DualLanguageMode == 1)
-                Localization.UseSecondaryLanguage = IsKeyLocked(LockKey.Caps);
+                Localization.UseSecondaryLanguage = Configuration.Lang.IsSwitchKeyActive();
             AccelerateKeyNavigation();
             if (HandleMenuControlKeyPressCustomInput())
                 return;
