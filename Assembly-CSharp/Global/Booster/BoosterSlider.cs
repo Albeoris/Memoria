@@ -281,7 +281,7 @@ public class BoosterSlider : MonoBehaviour
         }
     }
 
-    public void ShowWaringDialog(BoosterType type, Action callback = null)
+    public void ShowWarningDialog(BoosterType type, Action callback = null)
     {
         if (this.needComfirmType == BoosterType.None
             && (PersistenSingleton<UIManager>.Instance.IsPlayerControlEnable || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Config)

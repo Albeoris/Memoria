@@ -196,7 +196,7 @@ public class UIKeyTrigger : MonoBehaviour
             return;
         if (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Title || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.PreEnding || (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Ending || !MBG.IsNull && !MBG.Instance.IsFinishedForDisableBooster()))
             return;
-        if (UnityXInput.Input.GetKeyDown(KeyCode.F1) || triggerType == BoosterType.HighSpeedMode)
+        if (UnityXInput.Input.GetKeyDown(KeyCode.F1) || triggerType == BoosterType.HighSpeedMode || HonoInputManager.Instance.IsL3Pressed()) 
         {
             if (!Configuration.Cheats.SpeedMode)
             {
@@ -267,7 +267,7 @@ public class UIKeyTrigger : MonoBehaviour
 
             if (!FF9StateSystem.Settings.IsMasterSkill)
             {
-                PersistenSingleton<UIManager>.Instance.Booster.ShowWaringDialog(BoosterType.MasterSkill);
+                PersistenSingleton<UIManager>.Instance.Booster.ShowWarningDialog(BoosterType.MasterSkill);
             }
             else
             {
@@ -284,7 +284,7 @@ public class UIKeyTrigger : MonoBehaviour
                 return;
             }
 
-            PersistenSingleton<UIManager>.Instance.Booster.ShowWaringDialog(BoosterType.LvMax);
+            PersistenSingleton<UIManager>.Instance.Booster.ShowWarningDialog(BoosterType.LvMax);
         }
         if (UnityXInput.Input.GetKeyDown(KeyCode.F7) && (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.FieldHUD || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.WorldHUD || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Pause))
         {
@@ -295,7 +295,7 @@ public class UIKeyTrigger : MonoBehaviour
                 return;
             }
 
-            PersistenSingleton<UIManager>.Instance.Booster.ShowWaringDialog(BoosterType.GilMax);
+            PersistenSingleton<UIManager>.Instance.Booster.ShowWarningDialog(BoosterType.GilMax);
         }
         if (Configuration.Control.SoftReset && ((UnityXInput.Input.GetKeyDown(KeyCode.F8) && PersistenSingleton<UIManager>.Instance.IsPause) || SoftResetKeyPSXDown))
         { // Soft Reset
