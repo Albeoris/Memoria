@@ -1173,7 +1173,7 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
             }
         }
 
-        float triggerLeft = UnityEngine.Input.GetAxis("LeftTrigger"); // Nom défini dans l'Input Manager d'Unity
+        float triggerLeft = UnityEngine.Input.GetAxis("LeftTrigger");
         if (triggerLeft > 0.1f)
         {
             Log.Message("[DEBUG INPUT] Unity Axis LeftTrigger: " + triggerLeft);
