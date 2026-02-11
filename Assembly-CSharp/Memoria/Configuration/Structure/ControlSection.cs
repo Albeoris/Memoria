@@ -55,8 +55,8 @@ namespace Memoria
                 PSXMovementMethod = BindBoolean(nameof(PSXMovementMethod), false);
                 AlwaysCaptureGamepad = BindBoolean(nameof(AlwaysCaptureGamepad), true);
                 SwapConfirmCancel = BindBoolean(nameof(SwapConfirmCancel), false);
-                KeyCodeLeftStick = BindInt32(nameof(KeyCodeLeftStick), 340);
-                KeyCodeRightStick = BindInt32(nameof(KeyCodeRightStick), 341);
+                KeyCodeLeftStick = BindInt32(nameof(KeyCodeLeftStick), -1);
+                KeyCodeRightStick = BindInt32(nameof(KeyCodeRightStick), -1);
             }
         }
     }
