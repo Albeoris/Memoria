@@ -43,6 +43,31 @@ namespace NCalc
             Options = options;
         }
 
+        /// <summary>
+        /// Gets the current number of subscribers (for debugging).
+        /// </summary>
+        public int EvaluateFunctionCount
+        {
+            get { return _evaluateFunction != null ? _evaluateFunction.GetInvocationList().Length : 0; }
+        }
+
+        /// <summary>
+        /// Gets the current number of subscribers (for debugging).
+        /// </summary>
+        public int EvaluateParameterCount
+        {
+            get { return _evaluateParameter != null ? _evaluateParameter.GetInvocationList().Length : 0; }
+        }
+
+        /// <summary>
+        /// Clears all event subscribers to prevent memory leaks.
+        /// </summary>
+        public void ClearHandlers()
+        {
+            _evaluateFunction = null;
+            _evaluateParameter = null;
+        }
+
         #region Cache management
 
         private static bool cacheEnabled = true;
@@ -195,8 +220,8 @@ namespace NCalc
             }
 
             var visitor = new EvaluationVisitor(Options);
-            visitor.EvaluateFunction += EvaluateFunction;
-            visitor.EvaluateParameter += EvaluateParameter;
+            visitor.EvaluateFunction += _evaluateFunction;
+            visitor.EvaluateParameter += _evaluateParameter;
             visitor.Parameters = Parameters;
 
             // Add a "null" parameter which returns null if configured to do so
@@ -266,9 +291,38 @@ namespace NCalc
             return visitor.Result;
         }
 
-        public event EvaluateFunctionHandler EvaluateFunction;
+        private EvaluateFunctionHandler _evaluateFunction;
+        private EvaluateParameterHandler _evaluateParameter;
 
-        public event EvaluateParameterHandler EvaluateParameter;
+        // [DV] I made this "auto-clean" feature, for huge mod using a lot of AbilityFeatures.txt, mostly for the PlayerHUD.
+        // EvaluateFunction can increase very high, like 300+ with this kind of AbilF.txt (like the Cloud mod from WarpedEdge).
+        // NCalc will auto-clean if there is more than 100 EvaluateFunction or EvaluateParameter (but this is for EvaluateFunction mostly).
+        // This is preventing huge lag spike on the Equipement Menu.
+        public event EvaluateFunctionHandler EvaluateFunction 
+        {
+            add
+            {
+                if (_evaluateFunction != null && _evaluateFunction.GetInvocationList().Length > 100)
+                {
+                    _evaluateFunction = null; // Auto-fix leak
+                }
+                _evaluateFunction += value;
+            }
+            remove { _evaluateFunction -= value; }
+        }
+
+        public event EvaluateParameterHandler EvaluateParameter
+        {
+            add
+            {
+                if (_evaluateParameter != null && _evaluateParameter.GetInvocationList().Length > 100)
+                {
+                    _evaluateParameter = null; // Auto-fix leak
+                }
+                _evaluateParameter += value;
+            }
+            remove { _evaluateParameter -= value; }
+        }
 
         private Dictionary<string, object> parameters;
 
