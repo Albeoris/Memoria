@@ -298,15 +298,13 @@ namespace NCalc
         // EvaluateFunction can increase very high, like 300+ with this kind of AbilF.txt (like the Cloud mod from WarpedEdge).
         // NCalc will auto-clean if there is more than 100 EvaluateFunction or EvaluateParameter (but this is for EvaluateFunction mostly).
         // This is preventing huge lag spike on the Equipement Menu. For now, i am testing with 100.
-        public event EvaluateFunctionHandler EvaluateFunction 
+        public event EvaluateFunctionHandler EvaluateFunction
         {
             add
             {
                 if (_evaluateFunction != null)
-                {
-                    if (EvaluateFunctionCount > 100)
-                        _evaluateFunction = null; // Auto-fix leak
-                }
+                    SmartCleanFunctionHandlers();
+
                 _evaluateFunction += value;
             }
             remove { _evaluateFunction -= value; }
@@ -317,16 +315,39 @@ namespace NCalc
             add
             {
                 if (_evaluateParameter != null)
-                {
-                    if (EvaluateParameterCount > 100)
-                        _evaluateParameter = null; // Auto-fix leak
-                }
+                    SmartCleanParameterHandlers();
+
                 _evaluateParameter += value;
             }
             remove { _evaluateParameter -= value; }
         }
 
+        private void SmartCleanFunctionHandlers()
+        {
+            if (_evaluateFunction == null) return;
+
+            var list = _evaluateFunction.GetInvocationList();
+
+            if (list.Length < 50) return;
+            EvaluateFunctionHandler systemHandler = (EvaluateFunctionHandler)list[0];
+            _evaluateFunction = systemHandler;
+            Memoria.Prime.Log.Warning($"[SmartCleanFunctionHandlers] NCalc Auto-Cleanup: Removed {list.Length - 1} junk handlers.");
+        }
+
+        private void SmartCleanParameterHandlers()
+        {
+            if (_evaluateParameter == null) return;
+
+            var list = _evaluateParameter.GetInvocationList();
+
+            if (list.Length < 50) return;
+            EvaluateParameterHandler systemHandler = (EvaluateParameterHandler)list[0];
+            _evaluateParameter = systemHandler;
+            Memoria.Prime.Log.Warning($"[SmartCleanParameterHandlers] NCalc Auto-Cleanup: Removed {list.Length - 1} junk handlers.");
+        }
+
         private Dictionary<string, object> parameters;
+        private volatile bool _isEvaluating = false;
 
         public Dictionary<string, object> Parameters
         {
