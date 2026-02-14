@@ -297,14 +297,15 @@ namespace NCalc
         // [DV] I made this "auto-clean" feature, for huge mod using a lot of AbilityFeatures.txt, mostly for the PlayerHUD.
         // EvaluateFunction can increase very high, like 300+ with this kind of AbilF.txt (like the Cloud mod from WarpedEdge).
         // NCalc will auto-clean if there is more than 100 EvaluateFunction or EvaluateParameter (but this is for EvaluateFunction mostly).
-        // This is preventing huge lag spike on the Equipement Menu.
+        // This is preventing huge lag spike on the Equipement Menu. For now, i am testing with 100.
         public event EvaluateFunctionHandler EvaluateFunction 
         {
             add
             {
-                if (_evaluateFunction != null && _evaluateFunction.GetInvocationList().Length > 100)
+                if (_evaluateFunction != null)
                 {
-                    _evaluateFunction = null; // Auto-fix leak
+                    if (EvaluateFunctionCount > 100)
+                        _evaluateFunction = null; // Auto-fix leak
                 }
                 _evaluateFunction += value;
             }
@@ -315,9 +316,10 @@ namespace NCalc
         {
             add
             {
-                if (_evaluateParameter != null && _evaluateParameter.GetInvocationList().Length > 100)
+                if (_evaluateParameter != null)
                 {
-                    _evaluateParameter = null; // Auto-fix leak
+                    if (EvaluateParameterCount > 100)
+                        _evaluateParameter = null; // Auto-fix leak
                 }
                 _evaluateParameter += value;
             }
