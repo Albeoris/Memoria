@@ -1144,7 +1144,7 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
     public bool IsBindingInput { get; set; } = false;
     public bool IsL3Pressed()
     {
-        if (IsBindingInput) return false;
+        if (IsBindingInput || Configuration.Control.LeftStick == -1) return false;
 
         if (Input.GetKeyDown((KeyCode)Configuration.Control.LeftStick))
             return true;
@@ -1154,7 +1154,7 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 
     public bool IsR3Pressed()
     {
-        if (IsBindingInput) return false;
+        if (IsBindingInput || Configuration.Control.RightStick == -1) return false;
 
         if (Input.GetKeyDown((KeyCode)Configuration.Control.RightStick))
             return true;
