@@ -331,7 +331,7 @@ namespace NCalc
             if (list.Length < 50) return;
             EvaluateFunctionHandler systemHandler = (EvaluateFunctionHandler)list[0];
             _evaluateFunction = systemHandler;
-            Memoria.Prime.Log.Warning($"[SmartCleanFunctionHandlers] NCalc Auto-Cleanup: Removed {list.Length - 1} junk handlers.");
+            //Memoria.Prime.Log.Warning($"[SmartCleanFunctionHandlers] NCalc Auto-Cleanup: Removed {list.Length - 1} junk handlers.");
         }
 
         private void SmartCleanParameterHandlers()
@@ -343,7 +343,7 @@ namespace NCalc
             if (list.Length < 50) return;
             EvaluateParameterHandler systemHandler = (EvaluateParameterHandler)list[0];
             _evaluateParameter = systemHandler;
-            Memoria.Prime.Log.Warning($"[SmartCleanParameterHandlers] NCalc Auto-Cleanup: Removed {list.Length - 1} junk handlers.");
+            //Memoria.Prime.Log.Warning($"[SmartCleanParameterHandlers] NCalc Auto-Cleanup: Removed {list.Length - 1} junk handlers.");
         }
 
         private Dictionary<string, object> parameters;
