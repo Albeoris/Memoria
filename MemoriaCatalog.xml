@@ -3226,23 +3226,21 @@ Feel free to read the Music List &amp; newly added Summon Music List within the 
 </Mod>
 
 <Mod>
-    <Name>Songs of Memories</Name>
-    <Version>0.6</Version>
-    <InstallationPath>Songs of Memories</InstallationPath>
-    <ReleaseDate>2026-02-07</ReleaseDate>
-    <ReleaseDateOriginal>2026-01-12</ReleaseDateOriginal>
-    <Author>Foxmanity</Author>
-    <Description>A modernised look on FFIX wonderful soundtrack, which also tried to remain as close to the original mood and atmosphere as possible. My main goal with this mod was to give the game modern sound without actually straying away from the original ost. I'm not trying to make it more cinematic or change the emotions or pacing, my goal is just to remake the soundtrack with modern sound and give it a new feel, while still remaining the same old masterpiece that Nobuo Uematsu wrote.</Description>
-    <PatchNotes>-Added missing Disc 1 tracks: Tantalus Theme, Eyes on you, Tetra master and Rufus Welcoming Ceremony. 
--Disc 2 is fully complete! 
--Renamed all the files to what they should be so there won't be any incompatabilities with other music mods!
--Adjusted all the volumes (Still could've missed something) 
+	<Name>Songs of Memories</Name>
+	<Version>0.9</Version>
+	<InstallationPath>Songs of Memories</InstallationPath>
+	<ReleaseDate>2026-02-20</ReleaseDate>
+	<ReleaseDateOriginal>2026-01-12</ReleaseDateOriginal>
+	<Author>Foxmanity</Author>
+	<Description>A modernised look on FFIX wonderful soundtrack, which also tried to remain as close to the original mood and atmosphere as possible. My main goal with this mod was to give the game modern sound without actually straying away from the original ost. I'm not trying to make it more cinematic or change the emotions or pacing, my goal is just to remake the soundtrack with modern sound and give it a new feel, while still remaining the same old masterpiece that Nobuo Uematsu wrote.</Description>
+	<PatchNotes>-Pre release is here! All Disc 3 and Disc 4 music is done, except all tracks after Final Battle (I have some problem there, gonna fix it later)
+For the most part the story is fully playable!
 Please notify if you notice problems</PatchNotes>
-    <Category>Music</Category>
-    <Website>https://www.nexusmods.com/finalfantasy9/mods/125</Website>
-    <PreviewFile>Songs of Memories.png</PreviewFile>
-    <DownloadUrl>https://drive.usercontent.google.com/download?id=18E8e3R8ER3OVt8pP7dC7H9AmHg2eXF0T&amp;export=download&amp;confirm=t</DownloadUrl>
-    <PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/125/125-1769963784-1122579843.png</PreviewFileUrl>
+	<Category>Music</Category>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/125</Website>
+	<PreviewFile>Songs of Memories.png</PreviewFile>
+	<DownloadUrl>https://drive.usercontent.google.com/download?id=18E8e3R8ER3OVt8pP7dC7H9AmHg2eXF0T&amp;export=download&amp;confirm=t</DownloadUrl>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/125/125-1769963784-1122579843.png</PreviewFileUrl>
 </Mod>
 
 <Mod>
