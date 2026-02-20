@@ -351,7 +351,7 @@ public class UIKeyTrigger : MonoBehaviour
             SceneDirector.Replace("Title", SceneTransition.FadeOutToBlack_FadeIn, true);
             return;
         }
-        if (UnityXInput.Input.GetKeyDown(KeyCode.F9) && Configuration.Control.TurboDialog)
+        if ((UnityXInput.Input.GetKeyDown(KeyCode.F9) || HonoInputManager.Instance.IsR3Pressed()) && Configuration.Control.TurboDialog)
         {
             if (TurboKey)
                 TurboKey = false;
