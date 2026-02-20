@@ -37,14 +37,22 @@ jobs:
 
     - name: Build Memoria.MSBuild.csproj (Release)
       run: msbuild Memoria.MSBuild/Memoria.MSBuild.csproj /t:Build /p:Configuration=Release
-      
+
     - name: Build main solution (Release)
       run: msbuild Memoria.sln /t:Build /p:Configuration=Release
 
-    - name: Release Memoria.Patcher.exe
+    - name: Publish Memoria.Patcher (Win-x64)
+      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj /t:Publish /p:PublishProfile=Win-x64
+
+    - name: Publish Memoria.Patcher (Linux-x64)
+      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj /t:Publish /p:PublishProfile=Linux-x64
+
+    - name: Release Memoria.Patcher
       uses: softprops/action-gh-release@v2
       with:
-        files: Output/Memoria.Patcher.exe
+        files: |
+          Output/win-x64/Memoria.Patcher.exe
+          Output/linux-x64/Memoria.Patcher
         generate_release_notes: true
         draft: true
       env:

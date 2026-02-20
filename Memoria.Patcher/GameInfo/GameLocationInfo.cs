@@ -12,11 +12,11 @@ namespace Memoria.Patcher
         public readonly String StreamingAssetsPath;
         public readonly String EmbeddedAssetPath;
 
-        public const String LauncherName = @"FF9_Launcher.exe";
-        private const String ManagedRelativePathX64 = @"x64\FF9_Data\Managed";
-        private const String ManagedRelativePathX86 = @"x86\FF9_Data\Managed";
-        private const String StreamingAssetsRelativePath = @"StreamingAssets";
-        private const String EmbeddedAssetRelativePath = @"FF9_Data";
+        public static readonly String LauncherName = @"FF9_Launcher.exe";
+        private static readonly String ManagedRelativePathX64 = Path.Combine("x64", "FF9_Data", "Managed");
+        private static readonly String ManagedRelativePathX86 = Path.Combine("x86", "FF9_Data", "Managed");
+        private static readonly String StreamingAssetsRelativePath = @"StreamingAssets";
+        private static readonly String EmbeddedAssetRelativePath = @"FF9_Data";
 
         public String LauncherPath => Path.Combine(RootDirectory, LauncherName);
 

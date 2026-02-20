@@ -35,12 +35,24 @@ jobs:
 
     - name: Build Memoria.MSBuild.csproj (Release)
       run: msbuild Memoria.MSBuild/Memoria.MSBuild.csproj /t:Build /p:Configuration=Release
-      
+
     - name: Build main solution (Release)
       run: msbuild Memoria.sln /t:Build /p:Configuration=Release
 
-    - name: Upload artifact
+    - name: Publish Memoria.Patcher (Win-x64)
+      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj /t:Publish /p:PublishProfile=Win-x64
+
+    - name: Publish Memoria.Patcher (Linux-x64)
+      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj /t:Publish /p:PublishProfile=Linux-x64
+
+    - name: Upload Win-x64 artifact
       uses: actions/upload-artifact@v4
       with:
-        name: Memoria-Patcher
-        path: Output/Memoria.Patcher.exe
+        name: Memoria-Patcher-Win-x64
+        path: Output/win-x64/Memoria.Patcher.exe
+
+    - name: Upload Linux-x64 artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Memoria-Patcher-Linux-x64
+        path: Output/linux-x64/Memoria.Patcher
