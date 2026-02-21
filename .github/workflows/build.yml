@@ -1,6 +1,12 @@
-name: Manual Build Memoria Patcher
+name: Build Memoria Patcher
 
 on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
   workflow_dispatch:
 
 jobs:
