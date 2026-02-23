@@ -28,6 +28,18 @@ public static class AbilitySorter
         _sortedMenuSA[charId] = new List<int>(list);
     }
 
+    public static void ResetMenuAA(CharacterId charId)
+    {
+        if (_sortedMenuAA.ContainsKey(charId))
+            _sortedMenuAA.Remove(charId);
+    }
+
+    public static void ResetMenuSA(CharacterId charId)
+    {
+        if (_sortedMenuSA.ContainsKey(charId))
+            _sortedMenuSA.Remove(charId);
+    }
+
     public static void SortBattle(CharacterId charId, BattleCommandId cmdId, List<int> list)
     {
         if (!_sortedBattleAA.ContainsKey(charId) || !_sortedBattleAA[charId].ContainsKey(cmdId))
@@ -51,6 +63,12 @@ public static class AbilitySorter
             _sortedBattleAA[charId] = new Dictionary<BattleCommandId, List<int>>();
 
         _sortedBattleAA[charId][cmdId] = new List<int>(list);
+    }
+
+    public static void ResetBattleOrder(CharacterId charId, BattleCommandId cmdId)
+    {
+        if (_sortedBattleAA.ContainsKey(charId) && _sortedBattleAA[charId].ContainsKey(cmdId))
+            _sortedBattleAA[charId].Remove(cmdId);
     }
 
     private static void SortList(CharacterId charId, List<int> list, Dictionary<CharacterId, List<int>> dict)

@@ -27,6 +27,7 @@ namespace Memoria.Scripts.Battle
 
             _v.Target.FaceAsUnit(_v.Caster);
             _v.Target.ChangeRowToDefault();
+            _v.Target.Data.IsBackAttack = !_v.Target.IsPlayer;
         }
     }
 }

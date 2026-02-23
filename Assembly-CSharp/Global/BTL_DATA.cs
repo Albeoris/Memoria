@@ -162,6 +162,8 @@ public partial class BTL_DATA
 
     public Int16 dms_geo_id;
 
+    public Boolean IsBackAttack; // Better handling for battle_start_type_tags 
+
     public Quaternion rot;
     public Vector3 pos;
     public Vector3 base_pos;

@@ -109,6 +109,15 @@ public class AbilityUI : UIScene
         this.equipmentIdInAbilityDict = new Dictionary<Int32, RegularItem[]>();
     }
 
+    private void Update() // [DV] Maybe we can improve that ? Instead of using the Update method...
+    {
+        if (!this.isActiveAndEnabled || _sortingSourceIndex == -1)
+            return;
+
+        if (UIManager.Input.L2Down || UIManager.Input.R2Down)
+            this.ResetSorter();
+    }
+
     public override void Show(SceneVoidDelegate afterFinished = null)
     {
         SceneVoidDelegate afterShowAction = () =>
@@ -871,6 +880,42 @@ public class AbilityUI : UIScene
             }
         }
         return true;
+    }
+
+    private void ResetSorter()
+    {
+        if (_sortingSourceIndex != -1)
+        {
+            PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
+
+            FF9Sfx.FF9SFX_Play(1047);
+
+            if (ButtonGroupState.ActiveGroup == ActionAbilityGroupButton)
+            {
+                AbilitySorter.ResetMenuAA(player.Index);
+            }
+            else if (ButtonGroupState.ActiveGroup == SupportAbilityGroupButton)
+            {
+                AbilitySorter.ResetMenuSA(player.Index);
+            }
+
+            _sortingSourceIndex = -1;
+
+            this.InitialData();
+
+            if (ButtonGroupState.ActiveGroup == ActionAbilityGroupButton)
+            {
+                this.DisplayAA();
+                this.currentAbilityIndex = 0;
+                this.activeAbilityScrollList.JumpToIndex(0, false);
+            }
+            else if (ButtonGroupState.ActiveGroup == SupportAbilityGroupButton)
+            {
+                this.DisplaySA();
+                this.currentAbilityIndex = 0;
+                this.supportAbilityScrollList.JumpToIndex(0, false);
+            }
+        }
     }
 
     public override Boolean OnItemSelect(GameObject go)

@@ -52,21 +52,18 @@ public class UIKeyTrigger : MonoBehaviour
     private Boolean MKeyDown => UnityXInput.Input.GetKeyDown(KeyCode.M);
     private Boolean SKeyDown => UnityXInput.Input.GetKeyDown(KeyCode.S);
 
-    private Boolean SoftResetKeyPSXDown => // L1 + R1 + L2 + R2 + start + select
-        PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftBumper) && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftTrigger)
-        && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.RightBumper) && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.RightTrigger)
-        && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Pause) && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Select)
-        || keyCommand == Control.LeftBumper && keyCommand == Control.LeftTrigger && keyCommand == Control.RightBumper && keyCommand == Control.RightTrigger
-        && keyCommand == Control.Pause && keyCommand == Control.Select || UIManager.Input.GetKey(Control.LeftBumper) && UIManager.Input.GetKey(Control.LeftTrigger)
-        && UIManager.Input.GetKey(Control.RightBumper) && UIManager.Input.GetKey(Control.RightTrigger) && UIManager.Input.GetKey(Control.Pause) && UIManager.Input.GetKey(Control.Select);
+    public Boolean L1Down => PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftBumper) || keyCommand == Control.LeftBumper || UIManager.Input.GetKey(Control.LeftBumper);
+    public Boolean R1Down => PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.RightBumper) || keyCommand == Control.RightBumper || UIManager.Input.GetKey(Control.RightBumper);
+    public Boolean L2Down => PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftTrigger) || keyCommand == Control.LeftTrigger || UIManager.Input.GetKey(Control.LeftTrigger);
+    public Boolean R2Down => PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.RightTrigger) || keyCommand == Control.RightTrigger || UIManager.Input.GetKey(Control.RightTrigger);
+    public Boolean StartDown => PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Pause) || keyCommand == Control.Pause || UIManager.Input.GetKey(Control.Pause);
+    public Boolean SelectDown => PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Select) || keyCommand == Control.Select || UIManager.Input.GetKey(Control.Select);
 
-    private Boolean SoftResetKeyPSXForPause => // L1 + R1 + L2 + R2 + select
-    PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftBumper) && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftTrigger)
-    && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.RightBumper) && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.RightTrigger)
-    && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Select)
-    || keyCommand == Control.LeftBumper && keyCommand == Control.LeftTrigger && keyCommand == Control.RightBumper && keyCommand == Control.RightTrigger
-    && keyCommand == Control.Select || UIManager.Input.GetKey(Control.LeftBumper) && UIManager.Input.GetKey(Control.LeftTrigger)
-    && UIManager.Input.GetKey(Control.RightBumper) && UIManager.Input.GetKey(Control.RightTrigger) && UIManager.Input.GetKey(Control.Select);
+    // L1 + R1 + L2 + R2 + Start + Select
+    private Boolean SoftResetKeyPSXDown => L1Down && L2Down && R1Down && R2Down && StartDown && SelectDown;
+
+    // L1 + R1 + L2 + R2 + Select
+    private Boolean SoftResetKeyPSXForPause => L1Down && L2Down && R1Down && R2Down && SelectDown;
 
     public UIKeyTrigger()
     {
