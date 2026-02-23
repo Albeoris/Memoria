@@ -23,7 +23,7 @@ namespace Memoria
                 {
                     try
                     {
-                        _cachedKey = (KeyCode)Enum.Parse(typeof(KeyCode), Instance._lang.KeyDualLanguage.Value, true);
+                        _cachedKey = (KeyCode)Enum.Parse(typeof(KeyCode), Instance._lang.KeyDualLanguage.Value.Trim().Trim('"'), true);
                     }
                     catch
                     {
