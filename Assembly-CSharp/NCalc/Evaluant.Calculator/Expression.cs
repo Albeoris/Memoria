@@ -296,16 +296,24 @@ namespace NCalc
 
         // [DV] I made this "auto-clean" feature, for huge mod using a lot of AbilityFeatures.txt, mostly for the PlayerHUD.
         // EvaluateFunction can increase very high, like 300+ with this kind of AbilF.txt (like the Cloud mod from WarpedEdge).
-        // NCalc will auto-clean if there is more than 100 EvaluateFunction or EvaluateParameter (but this is for EvaluateFunction mostly).
-        // This is preventing huge lag spike on the Equipement Menu. For now, i am testing with 100.
+        // NCalc will call all these handlers for each evaluation, which can eliminate memory leaks if the handlers are not properly removed (mostly in the HUD when checking party equipments).
         public event EvaluateFunctionHandler EvaluateFunction
         {
             add
             {
                 if (_evaluateFunction != null)
-                    SmartCleanFunctionHandlers();
+                {
+                    foreach (Delegate d in _evaluateFunction.GetInvocationList())
+                    {
+                        if (d.Method == value.Method && d.Target == value.Target)
+                            return;
 
+                        if (d.Method.Name == value.Method.Name && d.Method.DeclaringType == value.Method.DeclaringType)
+                            _evaluateFunction -= (EvaluateFunctionHandler)d;
+                    }
+                }
                 _evaluateFunction += value;
+                //Memoria.Prime.Log.Warning($"[EvaluateFunction] NCalc: Added new handler: {value.Method.Name} from {value.Target}. Total handlers: {EvaluateFunctionCount}");
             }
             remove { _evaluateFunction -= value; }
         }
@@ -315,35 +323,20 @@ namespace NCalc
             add
             {
                 if (_evaluateParameter != null)
-                    SmartCleanParameterHandlers();
+                {
+                    foreach (Delegate d in _evaluateParameter.GetInvocationList())
+                    {
+                        if (d.Method == value.Method && d.Target == value.Target)
+                            return;
 
+                        if (d.Method.Name == value.Method.Name && d.Method.DeclaringType == value.Method.DeclaringType)
+                            _evaluateParameter -= (EvaluateParameterHandler)d;
+                    }
+                }
                 _evaluateParameter += value;
+                //Memoria.Prime.Log.Warning($"[EvaluateParameter] NCalc: Added new handler: {value.Method.Name} from {value.Target}. Total handlers: {EvaluateParameterCount}");
             }
             remove { _evaluateParameter -= value; }
-        }
-
-        private void SmartCleanFunctionHandlers()
-        {
-            if (_evaluateFunction == null) return;
-
-            var list = _evaluateFunction.GetInvocationList();
-
-            if (list.Length < 50) return;
-            EvaluateFunctionHandler systemHandler = (EvaluateFunctionHandler)list[0];
-            _evaluateFunction = systemHandler;
-            //Memoria.Prime.Log.Warning($"[SmartCleanFunctionHandlers] NCalc Auto-Cleanup: Removed {list.Length - 1} junk handlers.");
-        }
-
-        private void SmartCleanParameterHandlers()
-        {
-            if (_evaluateParameter == null) return;
-
-            var list = _evaluateParameter.GetInvocationList();
-
-            if (list.Length < 50) return;
-            EvaluateParameterHandler systemHandler = (EvaluateParameterHandler)list[0];
-            _evaluateParameter = systemHandler;
-            //Memoria.Prime.Log.Warning($"[SmartCleanParameterHandlers] NCalc Auto-Cleanup: Removed {list.Length - 1} junk handlers.");
         }
 
         private Dictionary<string, object> parameters;
