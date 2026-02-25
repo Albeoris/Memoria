@@ -399,6 +399,7 @@
     <Compile Include="Memoria\Assets\Text\Strings\TextResourceReference.cs" />
     <Compile Include="Memoria\Assets\Text\Strings\TextResjsonFormatter.cs" />
     <Compile Include="Memoria\Battle\Calculator\EatResult.cs" />
+    <Compile Include="Memoria\Battle\Scripts\MergingOverloadableMethod.cs" />
     <Compile Include="Memoria\Battle\Scripts\IOverloadableMethod.cs" />
     <Compile Include="Memoria\Battle\Scripts\IStatusScript.cs" />
     <Compile Include="Memoria\Configuration\Access\Lang.cs" />

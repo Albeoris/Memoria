@@ -60,10 +60,9 @@ namespace Memoria
                 foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target))
                     saFeature.TriggerOnAbility(v, "BattleScriptStart", true);
 
-                IOverloadOnBattleScriptStartScript overloadedMethod = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadOnBattleScriptStartScript)) as IOverloadOnBattleScriptStartScript;
-                if (overloadedMethod != null)
+                if (MergingScriptsCache.OnBattleScriptStart.HasLoaded)
                 {
-                    if (overloadedMethod.OnBattleScriptStart(v))
+                    if (MergingScriptsCache.OnBattleScriptStart.OnBattleScriptStart(v))
                     {
                         SBattleCalculator.CalcResult(v);
                         return;
@@ -197,9 +196,9 @@ namespace Memoria
 
                 target.fig.info |= (UInt16)v.Target.Flags;
                 caster.fig.info |= (UInt16)v.Caster.Flags;
-                if (BattleCalculator.DamageModifierScript != null)
+                if (MergingScriptsCache.DamageModifier.HasLoaded)
                 {
-                    BattleCalculator.DamageModifierScript.OnDamageFinalChanges(v);
+                    MergingScriptsCache.DamageModifier.OnDamageFinalChanges(v);
                 }
                 else
                 {
@@ -309,9 +308,7 @@ namespace Memoria
             BattleVoice.TriggerOnHitted(target, when, v);
             BattleCalculator.FrameAppliedEffectList.Add(v);
 
-            IOverloadOnBattleScriptEndScript overloadedMethod = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadOnBattleScriptEndScript)) as IOverloadOnBattleScriptEndScript;
-            if (overloadedMethod != null)
-                overloadedMethod.OnBattleScriptEnd(v);
+            MergingScriptsCache.OnBattleScriptEnd.OnBattleScriptEnd(v);
 
             if (target.bi.player != 0 || FF9StateSystem.Battle.isDebug)
                 return;

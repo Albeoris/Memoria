@@ -506,10 +506,10 @@ public class btl_cmd
             return;
 
         btl_cmd.next_cmd_delay = btl_cmd.cmd_delay_max;
-        IOverloadOnCommandRunScript overloadedMethod = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadOnCommandRunScript)) as IOverloadOnCommandRunScript;
-        if (overloadedMethod != null)
+
+        if (MergingScriptsCache.OnCommandRun.HasLoaded)
         {
-            if (overloadedMethod.OnCommandRun(new BattleCommand(cmd)))
+            if (MergingScriptsCache.OnCommandRun.OnCommandRun(new BattleCommand(cmd)))
                 return;
         }
         else
