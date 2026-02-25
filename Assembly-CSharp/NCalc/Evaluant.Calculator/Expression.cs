@@ -304,16 +304,13 @@ namespace NCalc
                 if (_evaluateFunction != null)
                 {
                     foreach (Delegate d in _evaluateFunction.GetInvocationList())
-                    {
                         if (d.Method == value.Method && d.Target == value.Target)
                             return;
 
-                        if (d.Method.Name == value.Method.Name && d.Method.DeclaringType == value.Method.DeclaringType)
-                            _evaluateFunction -= (EvaluateFunctionHandler)d;
-                    }
+                    SmartCleanFunctionHandlers();
                 }
+
                 _evaluateFunction += value;
-                //Memoria.Prime.Log.Warning($"[EvaluateFunction] NCalc: Added new handler: {value.Method.Name} from {value.Target}. Total handlers: {EvaluateFunctionCount}");
             }
             remove { _evaluateFunction -= value; }
         }
@@ -325,18 +322,49 @@ namespace NCalc
                 if (_evaluateParameter != null)
                 {
                     foreach (Delegate d in _evaluateParameter.GetInvocationList())
-                    {
                         if (d.Method == value.Method && d.Target == value.Target)
                             return;
 
-                        if (d.Method.Name == value.Method.Name && d.Method.DeclaringType == value.Method.DeclaringType)
-                            _evaluateParameter -= (EvaluateParameterHandler)d;
-                    }
+                    SmartCleanParameterHandlers();
                 }
+
                 _evaluateParameter += value;
-                //Memoria.Prime.Log.Warning($"[EvaluateParameter] NCalc: Added new handler: {value.Method.Name} from {value.Target}. Total handlers: {EvaluateParameterCount}");
             }
             remove { _evaluateParameter -= value; }
+        }
+
+        private void SmartCleanFunctionHandlers()
+        {
+            var list = _evaluateFunction.GetInvocationList();
+
+            if (list.Length <= 50) return;
+
+            _evaluateFunction = null;
+
+            for (int i = 0; i < list.Length; i++)
+            {
+                var d = list[i];
+
+                if (d.Target != null && d.Target.GetType().Name == "<>c" || i >= list.Length - 10)
+                    _evaluateFunction += (EvaluateFunctionHandler)d;
+            }
+        }
+
+        private void SmartCleanParameterHandlers()
+        {
+            var list = _evaluateParameter.GetInvocationList();
+
+            if (list.Length <= 50) return;
+
+            _evaluateParameter = null;
+
+            for (int i = 0; i < list.Length; i++)
+            {
+                var d = list[i];
+
+                if (d.Target != null && d.Target.GetType().Name == "<>c" || i >= list.Length - 10)
+                    _evaluateParameter += (EvaluateParameterHandler)d;
+            }
         }
 
         private Dictionary<string, object> parameters;
@@ -346,6 +374,30 @@ namespace NCalc
         {
             get { return parameters ?? (parameters = new Dictionary<string, object>(IgnoreCase ? StringComparer.CurrentCultureIgnoreCase : StringComparer.CurrentCulture)); }
             set { parameters = value; }
+        }
+
+        private void AnalyzeFunctionHandlers()
+        {
+            if (_evaluateFunction == null) return;
+
+            var list = _evaluateFunction.GetInvocationList();
+
+            if (list.Length >= 50)
+            {
+                Memoria.Prime.Log.Warning($"[NCalc Debug] --- ANALYSE DES HANDLERS FUNCTION (Total: {list.Length}) ---");
+
+                for (int i = 0; i < list.Length; i++)
+                {
+                    var d = list[i];
+
+                    string methodName = d.Method != null ? d.Method.Name : "UnknownMethod";
+                    string targetType = d.Target != null ? d.Target.GetType().Name : "Static/Null";
+                    string targetHash = d.Target != null ? d.Target.GetHashCode().ToString() : "N/A";
+
+                    Memoria.Prime.Log.Warning($"   -> [{i}] Method: {methodName} | Target: {targetType} (Hash: {targetHash})");
+                }
+                Memoria.Prime.Log.Warning($"[NCalc Debug] ----------------------------------------------------");
+            }
         }
     }
 }
