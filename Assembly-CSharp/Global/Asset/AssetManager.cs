@@ -43,7 +43,7 @@ public static class AssetManager
             modsNames += "'" + name + "' ";
         Log.Message($"[Initialization] Mods: {modsNames}");
 
-        ControllerWatcher.Instance.StartCoroutine("RefreshControllers");
+        ControllerWatcher.Instance.StartRefresh();
 
         AssetManager.IsFullyInitialized = false;
         Array moduleList = Enum.GetValues(typeof(AssetManagerUtil.ModuleBundle));
