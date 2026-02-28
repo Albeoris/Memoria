@@ -47,6 +47,8 @@ namespace Memoria
             public static String SpiritStatFormula => Instance._battle.SpiritStatFormula;
             public static String MagicStoneStockFormula => Instance._battle.MagicStoneStockFormula;
             public static String TranceDecreaseFormula => Instance._battle.TranceDecreaseFormula;
+            public static Boolean AASASorter => Instance._battle.AASASorter;
+
             private static Int32 GetBattleSpeed()
             {
                 Int32 value = Math.Max(Instance._battle.Speed, Instance._hacks.BattleSpeed);

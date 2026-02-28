@@ -87,28 +87,31 @@ namespace Global.Sound.SaXAudio
             if (!IsSaXAudio || !initialized)
                 return null;
 
-            EffectPreset? preset = null;
-            if (resourceIDPresets.ContainsKey(profile.ResourceID))
-                preset = resourceIDPresets[profile.ResourceID];
-
-            // resourceIDs gets priority
-            if (preset != null && (String.IsNullOrEmpty(preset.Value.Condition) || EvaluatePresetCondition(profile, preset.Value.Condition, preset.Value.Name)))
-                return preset;
-
-            // then conditional
-            for (Int32 i = 0; i < conditionalPresets.Count; i++)
+            lock (battleBgIDPresets)
             {
-                preset = conditionalPresets[i];
-                if ((preset.Value.Layers == EffectPreset.Layer.None || preset.Value.IsBusInLayers(bus)) && EvaluatePresetCondition(profile, preset.Value.Condition, preset.Value.Name))
+                EffectPreset? preset = null;
+                if (resourceIDPresets.ContainsKey(profile.ResourceID))
+                    preset = resourceIDPresets[profile.ResourceID];
+
+                // resourceIDs gets priority
+                if (preset != null && (String.IsNullOrEmpty(preset.Value.Condition) || EvaluatePresetCondition(preset.Value, profile, bus)))
                     return preset;
+
+                // then conditional
+                for (Int32 i = 0; i < conditionalPresets.Count; i++)
+                {
+                    preset = conditionalPresets[i];
+                    if ((preset.Value.Layers == EffectPreset.Layer.None || preset.Value.IsBusInLayers(bus)) && EvaluatePresetCondition(preset.Value, profile, bus))
+                        return preset;
+                }
+
+                // then filter current preset
+                preset = currentPreset;
+                if (preset != null && preset.Value.IsBusInLayers(bus) && !String.IsNullOrEmpty(preset.Value.Condition) && !EvaluatePresetCondition(preset.Value, profile, bus))
+                    return new EffectPreset(); // empty preset because we want to exclude that particular sound
+
+                return null;
             }
-
-            // then filter current preset
-            preset = currentPreset;
-            if (preset != null && preset.Value.IsBusInLayers(bus) && !String.IsNullOrEmpty(preset.Value.Condition) && !EvaluatePresetCondition(profile, preset.Value.Condition, preset.Value.Name))
-                return new EffectPreset(); // empty preset because we want to exclude that particular sound
-
-            return null;
         }
 
         public static EffectPreset? GetUnlistedPreset(String presetName)
@@ -157,35 +160,37 @@ namespace Global.Sound.SaXAudio
             return null;
         }
 
-        public static Boolean EvaluatePresetCondition(SoundProfile profile, String condition, String presetName)
+        private static Boolean EvaluatePresetCondition(EffectPreset preset, SoundProfile profile, Int32 bus)
         {
-            Expression c = new Expression(condition);
-            c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-            c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-            c.EvaluateParameter += NCalcUtility.worldNCalcParameters;
-            c.Parameters["SoundIndex"] = profile.SoundIndex;
-            c.Parameters["ResourceID"] = profile.ResourceID;
-            c.Parameters["SoundProfileType"] = profile.SoundProfileType;
-            c.Parameters["SoundProfileType_Default"] = SoundProfileType.Default;
-            c.Parameters["SoundProfileType_Music"] = SoundProfileType.Music;
-            c.Parameters["SoundProfileType_SoundEffect"] = (Byte)SoundProfileType.SoundEffect;
-            c.Parameters["SoundProfileType_MovieAudio"] = SoundProfileType.MovieAudio;
-            c.Parameters["SoundProfileType_Song"] = SoundProfileType.Song;
-            c.Parameters["SoundProfileType_Sfx"] = SoundProfileType.Sfx;
-            c.Parameters["SoundProfileType_Voice"] = SoundProfileType.Voice;
+            if (preset.CachedExpression == null)
+                return true;
 
             try
             {
-                if (NCalcUtility.EvaluateNCalcCondition(c.Evaluate()))
-                    return true;
-            }
-            catch (Exception e)
-            {
-                Log.Error($"[AudioEffectManager] Couldn't evaluate condition: '{condition.Trim()}' in preset '{presetName}'");
-                Log.Error(e);
-            }
+                Expression c = preset.CachedExpression;
+                c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                c.EvaluateParameter += NCalcUtility.worldNCalcParameters;
+                c.Parameters["SoundIndex"] = profile.SoundIndex;
+                c.Parameters["ResourceID"] = profile.ResourceID;
+                c.Parameters["SoundProfileType"] = profile.SoundProfileType;
+                c.Parameters["SoundProfileType_Default"] = SoundProfileType.Default;
+                c.Parameters["SoundProfileType_Music"] = SoundProfileType.Music;
+                c.Parameters["SoundProfileType_SoundEffect"] = (Byte)SoundProfileType.SoundEffect;
+                c.Parameters["SoundProfileType_MovieAudio"] = SoundProfileType.MovieAudio;
+                c.Parameters["SoundProfileType_Song"] = SoundProfileType.Song;
+                c.Parameters["SoundProfileType_Sfx"] = SoundProfileType.Sfx;
+                c.Parameters["SoundProfileType_Voice"] = SoundProfileType.Voice;
 
-            return false;
+                object result = c.Evaluate();
+
+                return result is Boolean && (Boolean)result;           
+            }
+            catch (Exception ex)
+            {
+                Log.Warning($"[SaXAudio] Erreur evaluation preset '{preset.Name}': {ex.Message}");
+                return false;
+            }
         }
 
         public static void ApplyPresetOnSound(EffectPreset preset, Int32 soundID, String soundName, Single fade = 0)
@@ -393,6 +398,8 @@ namespace Global.Sound.SaXAudio
 
             public String Condition = "";
 
+            public Expression CachedExpression { get; private set; }
+
             public EffectPreset() { }
             public EffectPreset(String str)
             {
@@ -476,6 +483,13 @@ namespace Global.Sound.SaXAudio
                 }
 
                 Condition = tokens[i++].Replace('\x0A', ';');
+
+                if (!String.IsNullOrEmpty(Condition))
+                {
+                    CachedExpression = new Expression(Condition);
+                    if (CachedExpression.HasErrors())
+                        Log.Error($"[AudioEffectManager] Syntax error for preset '{Name}': {CachedExpression.Error}");
+                }
             }
 
             public override readonly String ToString()

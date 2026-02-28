@@ -261,6 +261,7 @@
     <Compile Include="Global\battle\BattleRainRenderer.cs" />
     <Compile Include="Global\EFFECT_GLOW.cs" />
     <Compile Include="Global\NormalSolver.cs" />
+    <Compile Include="Global\SavePageNamer.cs" />
     <Compile Include="Global\Sound\SaXAudio\AudioEffectManager.cs" />
     <Compile Include="Global\Sound\SaXAudio\SaXAudio.cs" />
     <Compile Include="Global\Sound\SaXAudio\SdLibAPIWithSaXAudio.cs" />
@@ -398,6 +399,7 @@
     <Compile Include="Memoria\Assets\Text\Strings\TextResourceReference.cs" />
     <Compile Include="Memoria\Assets\Text\Strings\TextResjsonFormatter.cs" />
     <Compile Include="Memoria\Battle\Calculator\EatResult.cs" />
+    <Compile Include="Memoria\Battle\Scripts\MergingOverloadableMethod.cs" />
     <Compile Include="Memoria\Battle\Scripts\IOverloadableMethod.cs" />
     <Compile Include="Memoria\Battle\Scripts\IStatusScript.cs" />
     <Compile Include="Memoria\Configuration\Access\Lang.cs" />
@@ -413,6 +415,8 @@
     <Compile Include="Memoria\Data\Battle\BattleCommandHelper.cs" />
     <Compile Include="Memoria\Data\Battle\BattleCommandMenu.cs" />
     <Compile Include="Memoria\Data\Battle\BattleMagicSwordSet.cs" />
+    <Compile Include="Memoria\Data\Characters\AbilitySorter.cs" />
+    <Compile Include="Memoria\Data\Items\EquipmentHelper.cs" />
     <Compile Include="Memoria\Data\Items\MixCommandType.cs" />
     <Compile Include="Memoria\Data\SpecialEffects\SHPPrototype.cs" />
     <Compile Include="Memoria\Data\SpecialEffects\SPSPrototype.cs" />

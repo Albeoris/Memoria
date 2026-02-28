@@ -96,6 +96,8 @@ public class PartySettingUI : UIScene
     private List<CharacterOutsidePartyHud> outsidePartyHudList = new List<CharacterOutsidePartyHud>();
     private PartySelect currentCharacterSelect = new PartySelect(Mode.None, 0);
     private CharacterId currentCharacterId;
+    public static HashSet<CharacterId> ForcedParty = new HashSet<CharacterId>();
+    public static HashSet<CharacterId> AddCharacterForParty = new HashSet<CharacterId>();
     private FF9PARTY_INFO info;
 
     [NonSerialized]
@@ -532,12 +534,21 @@ public class PartySettingUI : UIScene
 
     private static void TryHackPartyInfo(FF9PARTY_INFO partyInfo)
     {
-        if (Configuration.Hacks.AllCharactersAvailable < 1)
+        if (Configuration.Hacks.AllCharactersAvailable < 1 && ForcedParty.Count == 0 && AddCharacterForParty.Count == 0)
             return;
 
         List<CharacterId> selectList = new List<CharacterId>();
-        foreach (PLAYER p in FF9StateSystem.Common.FF9.PlayerList)
-            selectList.Add(p.info.slot_no);
+        if (ForcedParty.Count > 0)
+        {
+            foreach (CharacterId forcedchar in ForcedParty)
+                selectList.Add(forcedchar);
+        }
+        else
+        {
+            foreach (PLAYER p in FF9StateSystem.Common.FF9.PlayerList)
+                if (Configuration.Hacks.AllCharactersAvailable >= 1 || AddCharacterForParty.Contains(p.info.slot_no) || p.info.party != 0)
+                    selectList.Add(p.info.slot_no);
+        }
 
         for (Int32 memberIndex = 0; memberIndex < 4; ++memberIndex)
         {

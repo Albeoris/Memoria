@@ -84,10 +84,9 @@ namespace FF9
             }
             else
             {
-                IOverloadOnGameOverScript overloadedMethod = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadOnGameOverScript)) as IOverloadOnGameOverScript;
-                if (overloadedMethod != null)
+                if (MergingScriptsCache.OnGameOver.HasLoaded)
                 {
-                    if (overloadedMethod.OnGameOver(ff9Battle, new BattleUnit(dyingUnit)))
+                    if (MergingScriptsCache.OnGameOver.OnGameOver(ff9Battle, new BattleUnit(dyingUnit)))
                         return;
                 }
                 else
