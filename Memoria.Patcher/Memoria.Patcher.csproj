@@ -1,10 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <UsingTask AssemblyFile="$(SolutionDir)\References\Memoria.MSBuild.dll" TaskName="Memoria.MSBuild.Pack" Runtime="CLR4" />
   <PropertyGroup>
-    <NativeExecutableExtension Condition="'$(RuntimeIdentifier)' != '' and $(RuntimeIdentifier.StartsWith('win'))">.exe</NativeExecutableExtension>
-    <NativeExecutableExtension Condition="'$(RuntimeIdentifier)' == '' or !$(RuntimeIdentifier.StartsWith('win'))"></NativeExecutableExtension>
-  </PropertyGroup>
-  <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{4BB1EB9A-F28E-448A-90F1-C5594B5F84F8}</ProjectGuid>
@@ -13,6 +9,7 @@
     <RootNamespace>Memoria.Patcher</RootNamespace>
     <AssemblyName>Memoria.Patcher</AssemblyName>
     <TargetFramework>net8.0</TargetFramework>
+    <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
@@ -3805,6 +3802,10 @@
     <Pack SolutionDir="$(SolutionDir)" TargetPath="$(TargetPath)" TargetDir="$(TargetDir)" TargetName="$(TargetName)" />
   </Target>
   <Target Name="MemoriaPatcherAfterPublish" AfterTargets="Publish" Condition="'$(PublishSingleFile)' == 'true'">
+    <PropertyGroup>
+      <NativeExecutableExtension Condition="'$(RuntimeIdentifier)' != '' and $(RuntimeIdentifier.StartsWith('win'))">.exe</NativeExecutableExtension>
+      <NativeExecutableExtension Condition="'$(RuntimeIdentifier)' == '' or !$(RuntimeIdentifier.StartsWith('win'))"></NativeExecutableExtension>
+    </PropertyGroup>
     <Pack SolutionDir="$(SolutionDir)" TargetPath="$(PublishDir)$(TargetName)$(NativeExecutableExtension)" TargetDir="$(TargetDir)" TargetName="$(TargetName)" />
   </Target>
 </Project>
