@@ -9,6 +9,8 @@
 // Then pressing the button Triangle triggers both the event script checks "IsButton(4096)" and "IsButton(131072)", which respectively check for the physical button "Triangle" and the logical button "Confirm"
 // The keyboard key's associated physical button also depends on the joystick configuration: pressing "A" triggers the same checks "IsButton(4096)" and "IsButton(131072)"
 
+// [DV] L3 and R3 can be called with KeyCode.JoystickButton10 and KeyCode.JoystickButton11 (eg. Input.GetKeyDown(KeyCode.JoystickButton10) )
+
 public enum Control
 {
     Confirm,
