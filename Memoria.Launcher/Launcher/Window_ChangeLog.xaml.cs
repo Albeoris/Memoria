@@ -30,13 +30,13 @@ namespace Memoria.Launcher
 
         private async void LoadRemoteChangelog()
         {
-            Document.Blocks.Clear();
+            Document.Document.Blocks.Clear();
             Paragraph loading = new Paragraph(new Run($"Loading changelog..."))
             {
                 Margin = new Thickness(0, 20, 0, 20),
                 Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aeee"))
             };
-            Document.Blocks.Add(loading);
+            Document.Document.Blocks.Add(loading);
             try
             {
                 // Load the release page from github and parse it into a changelog
@@ -54,19 +54,19 @@ namespace Memoria.Launcher
             }
             catch
             {
-                Document.Blocks.Clear();
+                Document.Document.Blocks.Clear();
                 Paragraph p = new Paragraph(new Run($"Couldn't load the changelog."))
                 {
                     Margin = new Thickness(0, 20, 0, 20),
                     Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aeee"))
                 };
-                Document.Blocks.Add(p);
+                Document.Document.Blocks.Add(p);
             }
         }
 
         private void ParseChangeLogHtml()
         {
-            Document.Blocks.Clear();
+            Document.Document.Blocks.Clear();
 
             try
             {
@@ -106,7 +106,7 @@ namespace Memoria.Launcher
                             p.Inlines.Add(new LineBreak());
                             p.Inlines.Add(link);
                         }
-                        Document.Blocks.Add(p);
+                        Document.Document.Blocks.Add(p);
                     }
 
                     // Parse content
@@ -126,7 +126,7 @@ namespace Memoria.Launcher
                                 Margin = new Thickness(0, 20, 0, 10),
                                 FontSize = 20
                             };
-                            Document.Blocks.Add(p);
+                            Document.Document.Blocks.Add(p);
                             continue;
                         }
                         if (trimmed.StartsWith("<ul>"))
@@ -146,7 +146,7 @@ namespace Memoria.Launcher
                             {
                                 list = new List();
                                 list.Padding = new Thickness(0, 0, 0, 0);
-                                Document.Blocks.Add(list);
+                                Document.Document.Blocks.Add(list);
                             }
                             list.ListItems.Add(item);
                             continue;
@@ -165,7 +165,7 @@ namespace Memoria.Launcher
                                 Margin = new Thickness(0, 10, 0, 10),
                                 Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aeee"))
                             };
-                            Document.Blocks.Add(p);
+                            Document.Document.Blocks.Add(p);
                             continue;
                         }
                     }
@@ -173,13 +173,13 @@ namespace Memoria.Launcher
             }
             catch
             {
-                Document.Blocks.Clear();
+                Document.Document.Blocks.Clear();
                 Paragraph p = new Paragraph(new Run($"Couldn't parse the changelog."))
                 {
                     Margin = new Thickness(0, 20, 0, 20),
                     Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aeee"))
                 };
-                Document.Blocks.Add(p);
+                Document.Document.Blocks.Add(p);
             }
         }
 
@@ -208,13 +208,9 @@ namespace Memoria.Launcher
 
         private void DocumentScrollViewer_PreviewMouseWheel(Object sender, MouseWheelEventArgs e)
         {
-            FlowDocumentScrollViewer o = (FlowDocumentScrollViewer)sender;
-            ScrollViewer scrollViewer = o.Template?.FindName("PART_ContentHost", o) as ScrollViewer;
-            if (scrollViewer is not null)
-            {
-                double offset = scrollViewer.VerticalOffset - (e.Delta / 3f);
-                scrollViewer.ScrollToVerticalOffset(offset < 0 ? 0 : offset > scrollViewer.ExtentHeight ? scrollViewer.ExtentHeight : offset);
-            }
+            ScrollViewer scrollViewer = (ScrollViewer)sender;
+            double offset = scrollViewer.VerticalOffset - (e.Delta / 3f);
+            scrollViewer.ScrollToVerticalOffset(offset < 0 ? 0 : offset > scrollViewer.ExtentHeight ? scrollViewer.ExtentHeight : offset);
         }
     }
 }
