@@ -115,15 +115,23 @@ namespace Memoria.Patcher
                 Console.ReadLine();
                 Environment.Exit(1);
             }
-            String executablePath = Assembly.GetEntryAssembly().Location;
+            String executablePath = Environment.ProcessPath!;
             using (FileStream inputFile = File.OpenRead(executablePath))
             {
                 Int64 magicNumber;
                 BinaryReader br = new BinaryReader(inputFile);
 
-                Assembly assembly = Assembly.GetExecutingAssembly();
-                Module module = assembly.GetModules().First();
-                X509Certificate certificate = module.GetSignerCertificate();
+                X509Certificate certificate = null;
+                try
+                {
+                    certificate = X509Certificate.CreateFromSignedFile(executablePath);
+                }
+                catch
+                {
+                    // File is not signed or certificate cannot be retrieved
+                    certificate = null;
+                }
+
                 // certificates vary slightly in size but are always within a few bytes this range is small enough that it's quick but will find the magic number if it's there
                 // how to sign this patcher once it's completly built run from Output directory
                 // signtool sign /d "Memoria Patcher for Modding FF9" /td SHA256 /fd SHA256 /sha1 {your certificates SHA1 signature} /tr http://timestamp.digicert.com .\Memoria.Patcher.exe 
