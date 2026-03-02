@@ -906,7 +906,7 @@
             Cursor="Hand"
             MouseUp="ShowReleaseNotes"/>
 
-        <Border x:Name="dropBackground" Background="#d000" Visibility="Hidden">
+        <Border x:Name="dropBackground" Background="#d000" Visibility="Hidden" MouseRightButtonUp="CancelExtraction">
             <Label
                 x:Name="dropLabel"
                 Content="Install mod(s)"
