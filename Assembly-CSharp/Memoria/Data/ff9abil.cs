@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using static Memoria.Assets.DataResources;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable RedundantExplicitArraySize
@@ -55,6 +56,7 @@ namespace FF9
             _FF9Abil_PaData = LoadCharacterAbilities();
             _FF9Abil_SaData = LoadCharacterAbilityGems();
             _FF9Abil_SaFeature = LoadAllAbilityFeatures();
+            LogStatisticsAll();
         }
 
         public static Boolean FF9Abil_IsEnableSA(HashSet<SupportAbility> sa, SupportAbility saIndex)
@@ -85,7 +87,21 @@ namespace FF9
 
         public static List<SupportingAbilityFeature> GetEnabledSA(PLAYER player)
         {
-            return GetEnabledSA(player.saExtended);
+            HashSet<SupportAbility> PlayerAllSA = new HashSet<SupportAbility>();
+
+            if (player.saPreview.Count > 0)
+            {
+                PlayerAllSA = new HashSet<SupportAbility>(player.saPreview);
+            }
+            else
+            {
+                PlayerAllSA = new HashSet<SupportAbility>(player.saExtended);
+                foreach (SupportAbility saForcedIndex in player.saForced)
+                    if (!PlayerAllSA.Contains(saForcedIndex))
+                        PlayerAllSA.Add(saForcedIndex);
+            }
+                
+            return GetEnabledSA(PlayerAllSA);
         }
 
         public static List<SupportingAbilityFeature> GetEnabledSA(HashSet<SupportAbility> saExtended)
@@ -267,7 +283,7 @@ namespace FF9
             player.cur.capa = player.max.capa;
             foreach (SupportAbility sa in equippedSA)
             {
-                if (player.cur.capa >= GetSAGemCostFromPlayer(player, sa) && (gemsUsed + GetSAGemCostFromPlayer(player, sa)) <= player.max.capa)
+                if ((player.cur.capa >= GetSAGemCostFromPlayer(player, sa) && (gemsUsed + GetSAGemCostFromPlayer(player, sa)) <= player.max.capa))
                 {
                     gemsUsed += GetSAGemCostFromPlayer(player, sa); // "gemsUsed" is a check when using [code=MaxGems] features: in some case, currents "cur.capa" isn't enough
                     player.cur.capa -= (UInt32)GetSAGemCostFromPlayer(player, sa);
@@ -281,7 +297,10 @@ namespace FF9
             }
 
             if (notEnoughGemsLog.Count > 0)
+            {
+                FF9Sfx.FF9SFX_Play(1043);
                 Log.Message($"[CalculateGemsPlayer] Not enough gems for {player.Name}, these SA are removed => {String.Join(", ", notEnoughGemsLog.ToArray())}");
+            }
         }
 
         public static Int32 GetBoostedAbilityMaxLevel(PLAYER player, SupportAbility baseAbil)
@@ -310,6 +329,16 @@ namespace FF9
             if (player.saForced.Contains(baseAbil))
                 return 0;
             return _FF9Abil_SaData[baseAbil].GemsCount;
+        }
+
+        public static Boolean PlayerHasSAinData(PLAYER player, SupportAbility baseAbil)
+        {
+            CharacterAbility[] charAbil = _FF9Abil_PaData[player.PresetId];
+
+            if (charAbil.Any(abil => abil.IsPassive && abil.PassiveId == baseAbil))
+                return true;
+
+            return false;
         }
 
         // The followings are also used by CsvParser and CsvWriter, so any change of behaviour should be reflected there as well
@@ -449,6 +478,7 @@ namespace FF9
         {
             try
             {
+                _FeatureStats.Clear();
                 String inputPath = DataResources.Characters.Abilities.PureDirectory + DataResources.Characters.Abilities.SAFeaturesFile;
                 Dictionary<SupportAbility, SupportingAbilityFeature> result = new Dictionary<SupportAbility, SupportingAbilityFeature>();
                 foreach (AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
@@ -512,68 +542,226 @@ namespace FF9
 
         public static void LoadAbilityFeatureFile(ref Dictionary<SupportAbility, SupportingAbilityFeature> entries, String input, String modFilePath)
         {
-            MatchCollection abilMatches = new Regex(@"^(>SA|>AA|>CMD)\s+(\d+|GlobalEnemyLast|GlobalEnemy|GlobalLast|Global)(\+?).*()", RegexOptions.Multiline).Matches(input);
+            MatchCollection abilMatches = new Regex(@"^(>SA|>AA|>CMD|>Item_Equip_Weapon|>Item_Equip_Head|>Item_Equip_Wrist|>Item_Equip_Armor|>Item_Equip_Accessory|>Item_Equip)\s+(\d+|GlobalEnemyLast|GlobalEnemy|GlobalLast|Global)(\+?).*()", RegexOptions.Multiline).Matches(input);
+
+            ModStats stats = GetStats(modFilePath);
+
             for (Int32 i = 0; i < abilMatches.Count; i++)
             {
-                Int32 abilIndex;
-                if (String.Equals(abilMatches[i].Groups[2].Value, "Global"))
-                    abilIndex = -1;
-                else if (String.Equals(abilMatches[i].Groups[2].Value, "GlobalLast"))
-                    abilIndex = -2;
-                else if (String.Equals(abilMatches[i].Groups[2].Value, "GlobalEnemy"))
-                    abilIndex = -3;
-                else if (String.Equals(abilMatches[i].Groups[2].Value, "GlobalEnemyLast"))
-                    abilIndex = -4;
-                else if (!Int32.TryParse(abilMatches[i].Groups[2].Value, out abilIndex))
-                    continue;
-                Boolean cumulate = String.Equals(abilMatches[i].Groups[3].Value, "+");
                 Int32 endPos, startPos = abilMatches[i].Groups[4].Captures[0].Index + 1;
                 if (i + 1 == abilMatches.Count)
                     endPos = input.Length;
                 else
                     endPos = abilMatches[i + 1].Groups[1].Captures[0].Index;
+
+                String tagStr = abilMatches[i].Groups[1].Value;
+                String idStr = abilMatches[i].Groups[2].Value;
+                String cumulateStr = abilMatches[i].Groups[3].Value;
+
+                String displayTag = tagStr;
+                if (!Int32.TryParse(idStr, out _)) displayTag += $" {idStr}";
+                if (cumulateStr == "+") displayTag += "+";
+
+                String blockContent = input.Substring(startPos, endPos - startPos);
+
+                MatchCollection blockMatches = new Regex(@"^(Permanent|BattleStart|BattleResult|StatusInit|Ability|Command|EnemyFeature|MorphFeature)\b", RegexOptions.Multiline).Matches(blockContent);
+
+                if (blockMatches.Count > 0)
+                {
+                    for (int j = 0; j < blockMatches.Count; j++)
+                    {
+                        String effectType = blockMatches[j].Groups[1].Value;
+                        int subStart = blockMatches[j].Index;
+                        int subEnd = (j + 1 < blockMatches.Count) ? blockMatches[j + 1].Index : blockContent.Length;
+                        String subContent = blockContent.Substring(subStart, subEnd - subStart);
+
+                        if (effectType == "Permanent")
+                        {
+                            if (new Regex(@"\[code=(ActivateFreeSA|BanishSA|HiddenSA|ActivateFreeSAByLvl|BanishSAByLvl)\]").IsMatch(subContent))
+                                stats.AddEffect(displayTag, "SpecialSA");
+                            else
+                                stats.AddEffect(displayTag, "Permanent");
+                        }
+                        else
+                        {
+                            stats.AddEffect(displayTag, effectType);
+                        }
+                    }
+                }
+                else
+                {
+                    if (tagStr.StartsWith(">Item_Equip"))
+                    {
+                        if (new Regex(@"\[code=(ActivateFreeSA|BanishSA|HiddenSA|ActivateFreeSAByLvl|BanishSAByLvl)\]").IsMatch(blockContent))
+                            stats.AddEffect(displayTag, "SpecialSA");
+                        else if (blockContent.Contains("[code="))
+                            stats.AddEffect(displayTag, "Permanent");
+                    }
+                    else if (tagStr == ">AA" || tagStr == ">CMD")
+                    {
+                        if (blockContent.Contains("[code="))
+                            stats.AddEffect(displayTag, "Formula");
+                    }
+                }
+
+                Int32 abilIndex;
+                if (String.Equals(abilMatches[i].Groups[2].Value, "Global")) abilIndex = -1;
+                else if (String.Equals(abilMatches[i].Groups[2].Value, "GlobalLast")) abilIndex = -2;
+                else if (String.Equals(abilMatches[i].Groups[2].Value, "GlobalEnemy")) abilIndex = -3;
+                else if (String.Equals(abilMatches[i].Groups[2].Value, "GlobalEnemyLast")) abilIndex = -4;
+                else if (!Int32.TryParse(abilMatches[i].Groups[2].Value, out abilIndex)) continue;
+
+                Boolean cumulate = String.Equals(abilMatches[i].Groups[3].Value, "+");
+                String tag = abilMatches[i].Groups[1].Value;
                 Int32 lineNumber = input.Substring(0, abilMatches[i].Index).OccurenceCount("\n") + 1;
-                if (String.Equals(abilMatches[i].Groups[1].Value, ">SA"))
+
+                if (tag.StartsWith(">Item_Equip"))
+                {
+                    String slotName = null;
+                    if (String.Equals(tag, ">Item_Equip_Weapon")) slotName = "Weapon";
+                    else if (String.Equals(tag, ">Item_Equip_Head")) slotName = "Head";
+                    else if (String.Equals(tag, ">Item_Equip_Wrist")) slotName = "Wrist";
+                    else if (String.Equals(tag, ">Item_Equip_Armor")) slotName = "Armor";
+                    else if (String.Equals(tag, ">Item_Equip_Accessory")) slotName = "Accessory";
+
+                    if (abilIndex > 0)
+                    {
+                        if (!cumulate) EquipmentHelper.ClearItemFeature((RegularItem)abilIndex);
+                        EquipmentHelper.ParseItemFeature((RegularItem)abilIndex, input.Substring(startPos, endPos - startPos), modFilePath, lineNumber, slotName);
+                    }
+                    else if (abilIndex == -1)
+                    {
+                        if (!cumulate) EquipmentHelper.ClearFlexibleItemFeature();
+                        EquipmentHelper.ParseItemFeature(input.Substring(startPos, endPos - startPos), modFilePath, lineNumber);
+                    }
+                }
+                else if (String.Equals(tag, ">SA"))
                 {
                     if (!cumulate || !entries.ContainsKey((SupportAbility)abilIndex))
                         entries[(SupportAbility)abilIndex] = new SupportingAbilityFeature();
                     entries[(SupportAbility)abilIndex].ParseFeatures((SupportAbility)abilIndex, input.Substring(startPos, endPos - startPos), modFilePath, lineNumber);
                 }
-                else if (String.Equals(abilMatches[i].Groups[1].Value, ">AA"))
+                else if (String.Equals(tag, ">AA"))
                 {
                     if (abilIndex > 0)
                     {
-                        if (!cumulate)
-                            BattleAbilityHelper.ClearAbilityFeature((BattleAbilityId)abilIndex);
+                        if (!cumulate) BattleAbilityHelper.ClearAbilityFeature((BattleAbilityId)abilIndex);
                         BattleAbilityHelper.ParseAbilityFeature((BattleAbilityId)abilIndex, input.Substring(startPos, endPos - startPos));
                     }
                     else if (abilIndex == -1)
                     {
-                        if (!cumulate)
-                            BattleAbilityHelper.ClearFlexibleAbilityFeature();
+                        if (!cumulate) BattleAbilityHelper.ClearFlexibleAbilityFeature();
                         BattleAbilityHelper.ParseAbilityFeature(input.Substring(startPos, endPos - startPos));
                     }
                 }
-                else if (String.Equals(abilMatches[i].Groups[1].Value, ">CMD"))
+                else if (String.Equals(tag, ">CMD"))
                 {
                     if (abilIndex > 0)
                     {
-                        if (!cumulate)
-                            BattleCommandHelper.ClearCommandFeature((BattleCommandId)abilIndex);
+                        if (!cumulate) BattleCommandHelper.ClearCommandFeature((BattleCommandId)abilIndex);
                         BattleCommandHelper.ParseCommandFeature((BattleCommandId)abilIndex, input.Substring(startPos, endPos - startPos));
                     }
                     else if (abilIndex == -1)
                     {
-                        if (!cumulate)
-                            BattleCommandHelper.ClearFlexibleCommandFeature();
+                        if (!cumulate) BattleCommandHelper.ClearFlexibleCommandFeature();
                         BattleCommandHelper.ParseCommandFeature(input.Substring(startPos, endPos - startPos));
                     }
                 }
-                else
+            }
+        }
+
+        public class ModStats
+        {
+            public Dictionary<String, Dictionary<String, Int32>> TagStats = new Dictionary<String, Dictionary<String, Int32>>();
+
+            public void AddEffect(String tag, String effect, Int32 count = 1)
+            {
+                if (!TagStats.ContainsKey(tag)) TagStats[tag] = new Dictionary<String, Int32>();
+                if (!TagStats[tag].ContainsKey(effect)) TagStats[tag][effect] = 0;
+                TagStats[tag][effect] += count;
+            }
+
+            public Int32 GetTotal()
+            {
+                return TagStats.Values.Sum(dict => dict.Values.Sum());
+            }
+        }
+
+        public static Dictionary<String, ModStats> _FeatureStats = new Dictionary<String, ModStats>();
+
+        public static String GetModName(String path)
+        {
+            if (String.IsNullOrEmpty(path)) return "Memoria";
+            String normPath = path.Replace('\\', '/');
+            Int32 index = normPath.IndexOf("/StreamingAssets");
+            if (index > 0) return normPath.Substring(0, index);
+            return "Memoria";
+        }
+
+        public static ModStats GetStats(String path)
+        {
+            String modName = GetModName(path);
+            if (!_FeatureStats.ContainsKey(modName))
+                _FeatureStats[modName] = new ModStats();
+            return _FeatureStats[modName];
+        }
+
+        public static void LogStatisticsAll()
+        {
+            Int32 grandTotal = 0;
+            foreach (var stat in _FeatureStats.Values) grandTotal += stat.GetTotal();
+
+            Log.Message("========== [FF9ABIL LOADING] ==========");
+            Log.Message($"Total Features Loaded: {grandTotal}");
+
+            List<String> customTagOrder = new List<String>
+            {
+                ">SA Global+",
+                ">SA Global",
+                ">SA GlobalEnemy+",
+                ">SA GlobalEnemy",
+                ">SA",
+                ">AA",
+                ">AA Global+",
+                ">CMD",
+                ">Item_Equip",
+                ">Item_Equip Global",
+                ">Item_Equip_Accessory",
+                ">Item_Equip_Armor",
+                ">Item_Equip_Head",
+                ">Item_Equip_Wrist",
+                ">Item_Equip_Weapon"
+            };
+
+            foreach (var kvp in _FeatureStats)
+            {
+                String modName = kvp.Key;
+                ModStats stats = kvp.Value;
+
+                if (stats.GetTotal() == 0) continue;
+
+                Log.Message($"[{modName}]");
+
+                var sortedTags = stats.TagStats
+                    .OrderBy(t => customTagOrder.IndexOf(t.Key) != -1 ? customTagOrder.IndexOf(t.Key) : Int32.MaxValue)
+                    .ThenBy(t => t.Key);
+
+                foreach (var tagKvp in sortedTags)
                 {
-                    Log.Warning($"[ff9abil] Failure of regex find: '{abilMatches[i].Value}'");
+                    String tag = tagKvp.Key;
+                    Dictionary<String, Int32> effects = tagKvp.Value;
+                    Int32 tagTotal = effects.Values.Sum();
+
+                    List<String> details = new List<String>();
+                    foreach (var effKvp in effects.OrderBy(e => e.Key))
+                    {
+                        details.Add($"{effKvp.Key}: {effKvp.Value}");
+                    }
+
+                    Log.Message($"   └> {tag,-22} : {tagTotal} ({String.Join(", ", details.ToArray())})");
                 }
             }
+            Log.Message("===============================================================");
         }
     }
 }
