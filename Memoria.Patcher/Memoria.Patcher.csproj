@@ -9,7 +9,7 @@
     <RootNamespace>Memoria.Patcher</RootNamespace>
     <AssemblyName>Memoria.Patcher</AssemblyName>
     <TargetFramework>net8.0</TargetFramework>
-    <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>win-x64;linux-x64;osx-x64</RuntimeIdentifiers>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
