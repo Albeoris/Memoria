@@ -444,10 +444,9 @@ public static class battle
                     sys.btl_flag |= battle.BTL_CONTI_FLD_SONG;
                 sys.btl_result = FF9StateGlobal.BTL_RESULT_ESCAPE;
                 btlsys.btl_phase = FF9StateBattleSystem.PHASE_CLOSE;
-                IOverloadOnFleeScript overloadedMethod = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadOnFleeScript)) as IOverloadOnFleeScript;
-                if (overloadedMethod != null)
+                if (MergingScriptsCache.OnFlee.HasLoaded)
                 {
-                    overloadedMethod.OnFlee(sys);
+                    MergingScriptsCache.OnFlee.OnFlee(sys);
                 }
                 else
                 {
@@ -542,9 +541,8 @@ public static class battle
             settings.SetHPFull();
             for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
                 BattleTexAnimWatcher.ForcedNonCullingMesh(next.gameObject);
-            IOverloadOnBattleInitScript overloadedMethod = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadOnBattleInitScript)) as IOverloadOnBattleInitScript;
-            if (overloadedMethod != null)
-                overloadedMethod.OnBattleInit();
+            MergingScriptsCache.OnBattleInit.OnBattleInit();
+            Memoria.Prime.Log.Message("BattleLoadLoop: Player data initialized");
         }
         else
         {

@@ -2284,7 +2284,7 @@ public partial class EventEngine
             {
                 UInt32 menuId = Convert.ToUInt32(this.getv1()); // arg1: menu type
                 UInt32 subId = Convert.ToUInt32(this.getv1()); // arg2: depends on the menu type. Naming Menu: character to name | Shop Menu: shop ID
-                if (Configuration.Hacks.DisableNameChoice && menuId == 1)
+                if (Configuration.Hacks.DisableNameChoice > 0 && menuId == 1)
                 {
                     CharacterId charId = this.chr2slot((Int32)subId);
                     if (charId != CharacterId.NONE && NameSettingUI.IsDefaultName(charId))
