@@ -252,7 +252,7 @@ namespace Memoria.Data
                             {
                                 play.cur.capa = UInt32.MaxValue;
                             }
-                            else if (play.cur.capa + newCapa - play.max.capa >= 0)
+                            else if (play.cur.capa + newCapa >= play.max.capa)
                             {
                                 play.cur.capa += newCapa - play.max.capa;
                             }

@@ -292,7 +292,7 @@ namespace FF9
                 {
                     FF9Abil_SetEnableSA(player, sa, false);
                     notEnoughGemsLog.Add($"{sa}");
-                    player.cur.capa = (UInt32)Math.Min(player.cur.capa + GetSAGemCostFromPlayer(player, sa), player.max.capa);
+                    //player.cur.capa = (UInt32)Math.Min(player.cur.capa + GetSAGemCostFromPlayer(player, sa), player.max.capa);
                 }
             }
 
