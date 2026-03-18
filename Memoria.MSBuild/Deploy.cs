@@ -30,6 +30,14 @@ namespace Memoria.MSBuild
         [Required]
         public String TargetName { get; set; }
 
+        public String SourceFileName { get; set; }
+
+        public String DestinationFileName { get; set; }
+
+        public Boolean CopyMdbSymbols { get; set; } = true;
+
+        public Boolean DeployToRootDirectory { get; set; }
+
         private readonly TaskLoggingHelper _log;
 
         public Deploy()
@@ -43,21 +51,24 @@ namespace Memoria.MSBuild
                 Debugger.Launch();
 
             MdbGenerator generator = new MdbGenerator(this);
-            generator.BeginGenerateMdbSymbols();
+            if (CopyMdbSymbols)
+                generator.BeginGenerateMdbSymbols();
 
             FileCopier copier = FileCopier.TryGetFileCopier(this);
             if (copier != null)
             {
-                copier.BeginCopyDll();
+                copier.BeginCopyMainFile();
                 copier.BeginCopyPdb();
             }
 
             // Wait until .mdb symbols generated to able to copy it
-            generator.EndGenerateMdbSymbols();
+            if (CopyMdbSymbols)
+                generator.EndGenerateMdbSymbols();
 
             if (copier != null)
             {
-                copier.BeginCopyMdb();
+                if (CopyMdbSymbols)
+                    copier.BeginCopyMdb();
                 copier.EndCopy();
             }
 
@@ -134,6 +145,9 @@ namespace Memoria.MSBuild
 
             private readonly Deploy _deployTask;
             private readonly String _sourcePath;
+            private readonly String _destinationFileName;
+            private readonly String _sourceMdbPath;
+            private readonly String _destinationMdbFileName;
             private readonly String _targetPathX64;
             private readonly String _targetPathX86;
             private readonly List<Task> _tasks;
@@ -141,19 +155,29 @@ namespace Memoria.MSBuild
             private FileCopier(Deploy deployTask, String assemblyDirectoryX64, String assemblyDirectoryX86)
             {
                 _deployTask = deployTask;
-                _sourcePath = Path.Combine(deployTask.TargetDir, deployTask.TargetName);
+                String sourceFileName = String.IsNullOrWhiteSpace(deployTask.SourceFileName)
+                    ? deployTask.TargetName + ".dll"
+                    : deployTask.SourceFileName;
+
+                _destinationFileName = String.IsNullOrWhiteSpace(deployTask.DestinationFileName)
+                    ? sourceFileName
+                    : deployTask.DestinationFileName;
+
+                _sourcePath = Path.Combine(deployTask.TargetDir, sourceFileName);
+                _sourceMdbPath = _sourcePath + ".mdb";
+                _destinationMdbFileName = _destinationFileName + ".mdb";
 
                 Int32 estimatedTaskCount = 0;
 
                 if (assemblyDirectoryX64 != null)
                 {
-                    _targetPathX64 = Path.Combine(assemblyDirectoryX64, _deployTask.TargetName);
+                    _targetPathX64 = Path.Combine(assemblyDirectoryX64, _destinationFileName);
                     estimatedTaskCount += EstimatedTaskCountPerPlatform;
                 }
 
                 if (assemblyDirectoryX86 != null)
                 {
-                    _targetPathX86 = Path.Combine(assemblyDirectoryX86, _deployTask.TargetName);
+                    _targetPathX86 = Path.Combine(assemblyDirectoryX86, _destinationFileName);
                     estimatedTaskCount += EstimatedTaskCountPerPlatform;
                 }
 
@@ -169,6 +193,17 @@ namespace Memoria.MSBuild
                     {
                         LogWarning(deployTask, "Cannot find the game folder.");
                         return null;
+                    }
+
+                    if (deployTask.DeployToRootDirectory)
+                    {
+                        if (!Directory.Exists(gameLocation.RootDirectory))
+                        {
+                            LogWarning(deployTask, $"Cannot find the game root directory [{gameLocation.RootDirectory}].");
+                            return null;
+                        }
+
+                        return new FileCopier(deployTask, gameLocation.RootDirectory, null);
                     }
 
                     Boolean isX64Exists = Directory.Exists(gameLocation.ManagedPathX64);
@@ -203,12 +238,15 @@ namespace Memoria.MSBuild
 
             private static void LogWarning(Deploy deployTask, String warning)
             {
-                deployTask._log.LogWarning($"{warning} {deployTask.TargetName} will not be deployed automatically.");
+                String destinationFileName = String.IsNullOrWhiteSpace(deployTask.DestinationFileName)
+                    ? (String.IsNullOrWhiteSpace(deployTask.SourceFileName) ? deployTask.TargetName + ".dll" : deployTask.SourceFileName)
+                    : deployTask.DestinationFileName;
+                deployTask._log.LogWarning($"{warning} {destinationFileName} will not be deployed automatically.");
             }
 
-            public void BeginCopyDll()
+            public void BeginCopyMainFile()
             {
-                BeginCopy(".dll", logSuccess: true);
+                BeginCopy(_sourcePath, _destinationFileName, logSuccess: true);
             }
 
             public void BeginCopyPdb()
@@ -219,22 +257,20 @@ namespace Memoria.MSBuild
 
             public void BeginCopyMdb()
             {
-                BeginCopy(".dll.mdb", logSuccess: false);
+                BeginCopy(_sourceMdbPath, _destinationMdbFileName, logSuccess: false);
             }
 
-            private void BeginCopy(String extension, Boolean logSuccess)
+            private void BeginCopy(String sourceItem, String destinationFileName, Boolean logSuccess)
             {
-                String sourceItem = _sourcePath + extension;
-
                 if (_targetPathX64 != null)
                 {
-                    String targetItem = _targetPathX64 + extension;
+                    String targetItem = Path.Combine(Path.GetDirectoryName(_targetPathX64), destinationFileName);
                     _tasks.Add(Task.Factory.StartNew(() => CopyFile(sourceItem, targetItem, logSuccess)));
                 }
 
                 if (_targetPathX86 != null)
                 {
-                    String targetItem = _targetPathX86 + extension;
+                    String targetItem = Path.Combine(Path.GetDirectoryName(_targetPathX86), destinationFileName);
                     _tasks.Add(Task.Factory.StartNew(() => CopyFile(sourceItem, targetItem, logSuccess)));
                 }
             }
@@ -259,11 +295,11 @@ namespace Memoria.MSBuild
                 {
                     File.Copy(sourceItem, targetItem, true);
                     if (logSuccess)
-                        _deployTask._log.LogMessage(MessageImportance.High, "{0}Deployed [{1}]: {2}{0}", Environment.NewLine, _deployTask.TargetName, targetItem);
+                        _deployTask._log.LogMessage(MessageImportance.High, "{0}Deployed [{1}]: {2}{0}", Environment.NewLine, Path.GetFileName(targetItem), targetItem);
                 }
                 catch (Exception ex)
                 {
-                    _deployTask._log.LogWarning(Environment.NewLine + "Cannot deploy {0} to the game." + Environment.NewLine, _deployTask.TargetName);
+                    _deployTask._log.LogWarning(Environment.NewLine + "Cannot deploy {0} to the game." + Environment.NewLine, Path.GetFileName(targetItem));
                     _deployTask._log.LogWarningFromException(ex, showStackTrace: false);
                 }
             }
