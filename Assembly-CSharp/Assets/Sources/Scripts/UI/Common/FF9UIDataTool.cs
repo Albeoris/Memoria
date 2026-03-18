@@ -66,7 +66,7 @@ namespace Assets.Sources.Scripts.UI.Common
             Int32 columnIndex = 0;
             IEnumerable<KeyValuePair<RegularItem, Int32>> enumerator = items;
             if (items.Count == 1 && items.First().Value == 2)
-                enumerator = new List<KeyValuePair<RegularItem, Int32>>([new(items.First().Key, 1), new(items.First().Key, 1)]);
+                enumerator = new List<KeyValuePair<RegularItem, Int32>>() { new(items.First().Key, 1), new(items.First().Key, 1) };
             foreach (KeyValuePair<RegularItem, Int32> kvp in enumerator)
             {
                 if (kvp.Key == RegularItem.NoItem || kvp.Value <= 0)
