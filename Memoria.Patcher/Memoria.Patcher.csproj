@@ -3798,8 +3798,8 @@
     <MSBuild Projects="..\Memoria.Injection\Memoria.Injection.vcxproj" Properties="Platform=Win32" RunEachTargetSeparately="true" />
     <MSBuild Projects="..\Memoria.Injection\Memoria.Injection.vcxproj" Properties="Platform=x64" RunEachTargetSeparately="true" />
   </Target>
-  <Target Name="MemoriaPatcherAfterBuild" AfterTargets="AfterBuild" Condition="'$(PublishSingleFile)' != 'true'">
-    <Pack SolutionDir="$(SolutionDir)" TargetPath="$(TargetPath)" TargetDir="$(TargetDir)" TargetName="$(TargetName)" />
+  <Target Name="MemoriaPatcherBeforePublish" BeforeTargets="Publish" Condition="'$(PublishSingleFile)' == 'true'">
+    <MSBuild Projects="..\Assembly-CSharp\Assembly-CSharp.csproj" Properties="Platform=AnyCPU" RunEachTargetSeparately="true" />
   </Target>
   <Target Name="MemoriaPatcherAfterPublish" AfterTargets="Publish" Condition="'$(PublishSingleFile)' == 'true'">
     <PropertyGroup>
