@@ -60,21 +60,27 @@
                     Padding="0"
                     Height="28"
                     Margin="-5,-10,0,0"/>
-                    <FlowDocumentScrollViewer
+                    <ScrollViewer
                         Width="700"
                         Height="400"
                         Padding="0"
                         Margin="-15,6"
                         VerticalScrollBarVisibility="Auto"
                         PreviewMouseWheel="DocumentScrollViewer_PreviewMouseWheel">
-                        <FlowDocument
+                        <RichTextBox
                             x:Name="Document"
-                            PagePadding="15,0"
+                            Padding="15,0"
                             Foreground="{StaticResource WhiteUI}"
-                            FontFamily="Segoe UI"
-                            FontSize="16">
-                        </FlowDocument>
-                    </FlowDocumentScrollViewer>
+                            FontFamily="Tahoma"
+                            FontSize="16"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            IsReadOnly="True"
+                            IsDocumentEnabled="True"
+                            UseLayoutRounding="True"
+                            TextOptions.TextFormattingMode="Display">
+                        </RichTextBox>
+                    </ScrollViewer>
                     <Button
                         x:Name="Ok"
                         Content="{DynamicResource Launcher.OK}"

@@ -68,10 +68,9 @@ Note: This is **not** affiliated with the Memoria Project, a 2023 Proof-of-conce
 
 ## 🚀 Build the Latest Memoria Patcher
 
-[![Build Current Version](https://img.shields.io/badge/Build%20Current%20Version-blue?logo=github)](https://github.com/Albeoris/Memoria/actions/workflows/build.yml)
+[![Work-in-progress Builds](https://img.shields.io/badge/Work--in--progress_Builds-blue?logo=github)](https://github.com/Albeoris/Memoria/actions/workflows/build.yml)
 
-**How to build and download the current version (may contain errors and not work at all):**
-1. Click the **"Build Current Version"** button above.
-2. On the GitHub Actions page, click **"Run workflow"** (top right).
-3. Select the branch you want to build and click **"Run workflow"**.
-4. After the workflow completes, download the `Memoria-Patcher.zip` artifact from the workflow run page.
+**How to retrieve the work-in-progress version of Memoria (may contain errors and not work at all):**
+1. Click the **"Work-in-progress Builds"** button above.
+2. Open the **latest run** at the top of the list.
+3. Download the relevant **artifact** (Memoria-Patcher for either Linux or Windows) at the bottom of the page.
