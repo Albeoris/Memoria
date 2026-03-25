@@ -3660,6 +3660,282 @@ Part of the Kupo Mods suite, formerly known as Mog Add-ons.
 </Mod>
 
 <Mod>
+    <Name>CostumePack</Name>
+    <Version>1.0.0</Version>
+    <Priority>1</Priority>
+    <InstallationPath>CostumePack</InstallationPath>
+    <ReleaseDateOriginal>25 Mar 2026</ReleaseDateOriginal>
+    <ReleaseDate>25 Mar 2026</ReleaseDate>
+    <Author>WarpedEdge and ChikoLad</Author>
+    <Description>The purpose of the mod is to give the FFIX cast costumes either already in the game, from DFFOO, or any other ones made for them</Description>
+    <Category>Visual</Category>
+    <PreviewFile>Preview/CostumePackBanner.png</PreviewFile>
+    <MinimumMemoriaVersion>2025.07.04</MinimumMemoriaVersion>
+    <SubMod>
+        <Name>TranceSeek Compatibility</Name>
+        <InstallationPath>Compatibility/TranceSeek</InstallationPath>
+        <Description>Allows costumes to work with this mod.</Description>
+        <ActivateWithMod>Trance Seek</ActivateWithMod>
+        <Priority>1</Priority>
+    </SubMod>
+    <SubMod>
+        <Name>Alternate Fantasy Compatibility</Name>
+        <InstallationPath>Compatibility/AlternateFantasy</InstallationPath>
+        <Description>Allows costumes to work with this mod.</Description>
+        <ActivateWithMod>Alternate Fantasy</ActivateWithMod>
+        <Priority>1</Priority>
+    </SubMod>
+    <SubMod>
+        <Name>Ferny Fantasy Compatibility</Name>
+        <InstallationPath>Compatibility/FernyFantasyIX</InstallationPath>
+        <Description>Allows costumes to work with this mod.</Description>
+        <ActivateWithMod>Ferny Fantasy IX</ActivateWithMod>
+        <Priority>1</Priority>
+    </SubMod>
+    <SubMod>
+        <Name>Amazing Garnet Compatibility</Name>
+        <InstallationPath>Compatibility/AmazingGarnet/Vanilla</InstallationPath>
+        <Description>Allows costumes to work with Amazing Garnet in its Vanilla mode.</Description>
+        <ActivateWithMod>Amazing Garnet</ActivateWithMod>
+        <Priority>2</Priority>
+    </SubMod>
+    <SubMod>
+        <Name>Amazing Quina Compatibility</Name>
+        <InstallationPath>Compatibility/AmazingQuina/Vanilla</InstallationPath>
+        <Description>Allows costumes to work with Amazing Quina in its Vanilla mode.</Description>
+        <ActivateWithMod>Amazing Quina</ActivateWithMod>
+        <Priority>2</Priority>
+    </SubMod>
+    <SubMod>
+        <Name>Amazing Steiner Compatibility</Name>
+        <InstallationPath>Compatibility/AmazingSteiner/Vanilla</InstallationPath>
+        <Description>Allows costumes to work with Amazing Steiner in its Vanilla mode.</Description>
+        <ActivateWithMod>Amazing Steiner</ActivateWithMod>
+        <Priority>2</Priority>
+    </SubMod>
+    <SubMod>
+        <Name>Amazing Steiner Alternate Fantasy Compatibility</Name>
+        <InstallationPath>Compatibility/AmazingSteiner/AlternateFantasy</InstallationPath>
+        <Description>Allows costumes to work with Amazing Steiner when Alternate Fantasy is also active.</Description>
+        <ActivateWithMod>Amazing Steiner, Alternate Fantasy</ActivateWithMod>
+        <Priority>1</Priority>
+    </SubMod>
+    <SubMod>
+        <Name>Amazing Garnet Alternate Fantasy Compatibility</Name>
+        <InstallationPath>Compatibility/AmazingGarnet/AlternateFantasy</InstallationPath>
+        <Description>Allows costumes to work with Amazing Garnet when Alternate Fantasy is also active.</Description>
+        <ActivateWithMod>Amazing Garnet, Alternate Fantasy</ActivateWithMod>
+        <Priority>1</Priority>
+    </SubMod>
+    <SubMod>
+        <Name>Amazing Quina Alternate Fantasy Compatibility</Name>
+        <InstallationPath>Compatibility/AmazingQuina/AlternateFantasy</InstallationPath>
+        <Description>Allows costumes to work with Amazing Quina when Alternate Fantasy is also active.</Description>
+        <ActivateWithMod>Amazing Quina, Alternate Fantasy</ActivateWithMod>
+        <Priority>1</Priority>
+    </SubMod>
+
+    <Header>Zidane</Header>
+    <SubMod>
+        <Name>Vanilla (Field)</Name>
+        <InstallationPath>FieldModels/Zidane/Vanilla</InstallationPath>
+        <Description>Uses Zidane's vanilla field and battle model behavior.</Description>
+        <Group>Zidane</Group>
+    </SubMod>
+    <SubMod>
+        <Name>DFFOO Default (Field)</Name>
+        <InstallationPath>FieldModels/Zidane/DFFOO_Default</InstallationPath>
+        <Description>Uses the DFFOO Default field model variant for Zidane and his DFFOO Pluto for castle scene. This also changes his default battle model.</Description>
+        <PreviewFile>Preview/Zidane/DFFOO_Default.png</PreviewFile>
+        <Default/>
+        <Group>Zidane</Group>
+    </SubMod>
+    <SubMod>
+        <Name>DFFOO Pluto (Field)</Name>
+        <InstallationPath>FieldModels/Zidane/DFFOO_Pluto</InstallationPath>
+        <Description>Uses the DFFOO Pluto field model variant for Zidane and his DFFOO Pluto for castle scene. This also changes his default battle model.</Description>
+        <PreviewFile>Preview/Zidane/DFFOO_Pluto.png</PreviewFile>
+        <Group>Zidane</Group>
+    </SubMod>
+    <SubMod>
+        <Name>DFFOO Cloak (Field)</Name>
+        <InstallationPath>FieldModels/Zidane/DFFOO_Cloak</InstallationPath>
+        <Description>Uses the DFFOO Cloak field model variant for Zidane and his DFFOO Pluto for castle scene. This also changes his default battle model.</Description>
+        <PreviewFile>Preview/Zidane/DFFOO_Cloak.png</PreviewFile>
+        <Group>Zidane</Group>
+    </SubMod>
+    <Header>Garnet</Header>
+    <SubMod>
+        <Name>Vanilla (Field)</Name>
+        <InstallationPath>FieldModels/Garnet/Vanilla</InstallationPath>
+        <Description>Uses Garnet's vanilla field and battle model behavior.</Description>
+        <Group>Garnet</Group>
+    </SubMod>
+    <SubMod>
+        <Name>DFFOO Default (Field)</Name>
+        <InstallationPath>FieldModels/Garnet/DFFOO_Default</InstallationPath>
+        <Description>Uses the DFFOO Default field model variant for Garnet. This also changes her default battle model.</Description>
+        <PreviewFile>Preview/Garnet/DFFOO_Default.png</PreviewFile>
+        <Default/>
+        <Group>Garnet</Group>
+    </SubMod>
+    <SubMod>
+        <Name>DFFOO White Mage (Field)</Name>
+        <InstallationPath>FieldModels/Garnet/DFFOO_WhiteMage</InstallationPath>
+        <Description>Uses the DFFOO White Mage field model variant for Garnet. This also changes her default battle model.</Description>
+        <PreviewFile>Preview/Garnet/DFFOO_WhiteMage.png</PreviewFile>
+        <Group>Garnet</Group>
+    </SubMod>
+    <SubMod>
+        <Name>DFFOO Queen (Field)</Name>
+        <InstallationPath>FieldModels/Garnet/DFFOO_Queen</InstallationPath>
+        <Description>Uses the DFFOO Queen field model variant for Garnet. This also changes her default battle model.</Description>
+        <PreviewFile>Preview/Garnet/DFFOO_Queen.png</PreviewFile>
+        <Group>Garnet</Group>
+    </SubMod>
+
+    <Header>Vivi</Header>
+    <SubMod>
+        <Name>Vanilla (Field)</Name>
+        <InstallationPath>FieldModels/Vivi/Vanilla</InstallationPath>
+        <Description>Uses Vivi's vanilla field and battle model behavior.</Description>
+        <Group>Vivi</Group>
+    </SubMod>
+    <SubMod>
+        <Name>DFFOO Default (Field)</Name>
+        <InstallationPath>FieldModels/Vivi/DFFOO_Default</InstallationPath>
+        <Description>Uses the DFFOO Default field model variant for Vivi. This also changes his default battle model.</Description>
+        <PreviewFile>Preview/Vivi/DFFOO_Default.png</PreviewFile>
+        <Default/>
+        <Group>Vivi</Group>
+    </SubMod>
+    <SubMod>
+        <Name>DFFOO Amano (Field)</Name>
+        <InstallationPath>FieldModels/Vivi/DFFOO_Amano</InstallationPath>
+        <Description>Uses the DFFOO Amano field model variant for Vivi. This also changes his default battle model.</Description>
+        <PreviewFile>Preview/Vivi/DFFOO_Amano.png</PreviewFile>
+        <Group>Vivi</Group>
+    </SubMod>
+
+    <Header>Steiner</Header>
+    <SubMod>
+        <Name>Vanilla (Field)</Name>
+        <InstallationPath>FieldModels/Steiner/Vanilla</InstallationPath>
+        <Description>Uses Steiner's vanilla field and battle model behavior.</Description>
+        <Group>Steiner</Group>
+    </SubMod>
+    <SubMod>
+        <Name>DFFOO Default (Field)</Name>
+        <InstallationPath>FieldModels/Steiner/DFFOO_Default</InstallationPath>
+        <Description>Uses the DFFOO Default field model variant for Steiner. This also changes his default battle model.</Description>
+        <PreviewFile>Preview/Steiner/DFFOO_Default.png</PreviewFile>
+        <Default/>
+        <Group>Steiner</Group>
+    </SubMod>
+
+    <Header>Quina</Header>
+    <SubMod>
+        <Name>Vanilla (Field)</Name>
+        <InstallationPath>FieldModels/Quina/Vanilla</InstallationPath>
+        <Description>Uses Quina's vanilla field and battle model behavior.</Description>
+        <Group>Quina</Group>
+    </SubMod>
+    <SubMod>
+        <Name>DFFOO Default (Field)</Name>
+        <InstallationPath>FieldModels/Quina/DFFOO_Default</InstallationPath>
+        <Description>Uses the DFFOO Default field model variant for Quina. This also changes Quina's default battle model.</Description>
+        <PreviewFile>Preview/Quina/DFFOO_Default.png</PreviewFile>
+        <Default/>
+        <Group>Quina</Group>
+    </SubMod>
+
+    <Header>Freya</Header>
+    <SubMod>
+        <Name>Vanilla (Field)</Name>
+        <InstallationPath>FieldModels/Freya/Vanilla</InstallationPath>
+        <Description>Uses Freya's vanilla field and battle model behavior.</Description>
+        <Group>Freya</Group>
+    </SubMod>
+    <SubMod>
+        <Name>DFFOO Default (Field)</Name>
+        <InstallationPath>FieldModels/Freya/DFFOO_Default</InstallationPath>
+        <Description>Uses the DFFOO Default field model variant for Freya. This also changes her default battle model.</Description>
+        <PreviewFile>Preview/Freya/DFFOO_Default.png</PreviewFile>
+        <Default/>
+        <Group>Freya</Group>
+    </SubMod>
+    <SubMod>
+        <Name>Dark Freya (Field)</Name>
+        <InstallationPath>FieldModels/Freya/Dark_Freya</InstallationPath>
+        <Description>Uses the Dark Freya field model variant for Freya. This also changes her default battle model.</Description>
+        <PreviewFile>Preview/Freya/Dark_Freya.png</PreviewFile>
+        <Group>Freya</Group>
+    </SubMod>
+
+    <Header>Eiko</Header>
+    <SubMod>
+        <Name>Vanilla (Field)</Name>
+        <InstallationPath>FieldModels/Eiko/Vanilla</InstallationPath>
+        <Description>Uses Eiko's vanilla field and battle model behavior.</Description>
+        <Group>Eiko</Group>
+    </SubMod>
+    <SubMod>
+        <Name>DFFOO Default (Field)</Name>
+        <InstallationPath>FieldModels/Eiko/DFFOO_Default</InstallationPath>
+        <Description>Uses the DFFOO Default field model variant for Eiko. This also changes her default battle model.</Description>
+        <PreviewFile>Preview/Eiko/DFFOO_Default.png</PreviewFile>
+        <Default/>
+        <Group>Eiko</Group>
+    </SubMod>
+    <SubMod>
+        <Name>DFFOO Amano (Field)</Name>
+        <InstallationPath>FieldModels/Eiko/DFFOO_Amano</InstallationPath>
+        <Description>Uses the DFFOO Amano field model variant for Eiko. This also changes her default battle model.</Description>
+        <PreviewFile>Preview/Eiko/DFFOO_Amano.png</PreviewFile>
+        <Group>Eiko</Group>
+    </SubMod>
+
+    <Header>Amarant</Header>
+    <SubMod>
+        <Name>Vanilla (Field)</Name>
+        <InstallationPath>FieldModels/Amarant/Vanilla</InstallationPath>
+        <Description>Uses Amarant's vanilla field and battle model behavior.</Description>
+        <Group>Amarant</Group>
+    </SubMod>
+    <SubMod>
+        <Name>DFFOO Default (Field)</Name>
+        <InstallationPath>FieldModels/Amarant/DFFOO_Default</InstallationPath>
+        <Description>Uses the DFFOO Default field model variant for Amarant. This also changes his default battle model.</Description>
+        <PreviewFile>Preview/Amarant/DFFOO_Default.png</PreviewFile>
+        <Default/>
+        <Group>Amarant</Group>
+    </SubMod>
+    <SubMod>
+        <Name>DFFOO Amano (Field)</Name>
+        <InstallationPath>FieldModels/Amarant/DFFOO_Amano</InstallationPath>
+        <Description>Uses the DFFOO Amano field model variant for Amarant. This also changes his default battle model.</Description>
+        <PreviewFile>Preview/Amarant/DFFOO_Amano.png</PreviewFile>
+        <Group>Amarant</Group>
+    </SubMod>
+
+    <Header>Beatrix</Header>
+    <SubMod>
+        <Name>Vanilla (Field)</Name>
+        <InstallationPath>FieldModels/Beatrix/Vanilla</InstallationPath>
+        <Description>Uses Beatrix's vanilla field and battle model behavior.</Description>
+        <Group>Beatrix</Group>
+    </SubMod>
+    <SubMod>
+        <Name>DFFOO Default (Field)</Name>
+        <InstallationPath>FieldModels/Beatrix/DFFOO_Default</InstallationPath>
+        <Description>Uses the DFFOO Default field model variant for Beatrix. This also changes her default battle model.</Description>
+        <PreviewFile>Preview/Beatrix/DFFOO_Default.png</PreviewFile>
+        <Default/>
+        <Group>Beatrix</Group>
+    </SubMod>
+</Mod>
+
+<Mod>
 	<Name>Anniversary Portraits</Name>
 	<Version>0.9.3</Version>
 	<Priority>14</Priority>
