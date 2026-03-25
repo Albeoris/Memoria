@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <UsingTask AssemblyFile="$(SolutionDir)\References\Memoria.MSBuild.dll" TaskName="Memoria.MSBuild.Deploy" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -282,5 +284,8 @@
         <LogicalName>%(ReferenceCopyLocalPaths.DestinationSubDirectory)%(ReferenceCopyLocalPaths.Filename)%(ReferenceCopyLocalPaths.Extension)</LogicalName>
       </EmbeddedResource>
     </ItemGroup>
+  </Target>
+  <Target Name="AfterBuild">
+    <Deploy SolutionDir="$(SolutionDir)" TargetPath="$(TargetPath)" TargetDir="$(TargetDir)" TargetName="$(TargetName)" SourceFileName="$(TargetFileName)" DestinationFileName="FF9_Launcher.exe" CopyMdbSymbols="false" DeployToRootDirectory="true" />
   </Target>
 </Project>
