@@ -3662,14 +3662,16 @@ Part of the Kupo Mods suite, formerly known as Mog Add-ons.
 <Mod>
     <Name>CostumePack</Name>
     <Version>1.0.0</Version>
-    <Priority>1</Priority>
     <InstallationPath>CostumePack</InstallationPath>
     <ReleaseDateOriginal>25 Mar 2026</ReleaseDateOriginal>
     <ReleaseDate>25 Mar 2026</ReleaseDate>
     <Author>WarpedEdge and ChikoLad</Author>
     <Description>The purpose of the mod is to give the FFIX cast costumes either already in the game, from DFFOO, or any other ones made for them</Description>
-    <Category>Visual</Category>
+    <Website>https://www.nexusmods.com/finalfantasy9/mods/128</Website>
+	<DownloadUrl>https://github.com/WarpedEdge/ffix-mod-projects/releases/download/CostumePack-v1.0/CostumePack.zip</DownloadUrl>
     <PreviewFile>Preview/CostumePackBanner.png</PreviewFile>
+	<PreviewFileUrl>https://i.imgur.com/bpdlPxg.png</PreviewFileUrl>
+    <Category>Visual</Category>
     <MinimumMemoriaVersion>2025.07.04</MinimumMemoriaVersion>
     <SubMod>
         <Name>TranceSeek Compatibility</Name>
