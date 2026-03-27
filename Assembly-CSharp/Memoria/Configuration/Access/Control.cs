@@ -39,6 +39,19 @@ namespace Memoria
             public static Boolean PSXMovementMethod => Instance._control.PSXMovementMethod;
             public static Boolean AlwaysCaptureGamepad => Instance._control.AlwaysCaptureGamepad;
             public static Boolean SwapConfirmCancel => Instance._control.SwapConfirmCancel;
+            public static Int32 LeftStick => Instance._control.KeyCodeLeftStick;
+            public static Int32 RightStick => Instance._control.KeyCodeRightStick;
+            public static void SaveLeftStick(Int32 id)
+            {
+                Instance._control.KeyCodeLeftStick.Value = id;
+                Configuration.SaveValue("Control", Instance._control.KeyCodeLeftStick);
+            }
+
+            public static void SaveRightStick(Int32 id)
+            {
+                Instance._control.KeyCodeRightStick.Value = id;
+                Configuration.SaveValue("Control", Instance._control.KeyCodeRightStick);
+            }
         }
     }
 }
