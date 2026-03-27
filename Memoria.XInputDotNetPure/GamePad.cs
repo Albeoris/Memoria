@@ -353,7 +353,7 @@ namespace XInputDotNetPure
                 {
                     RefreshDevices();
                 }
-                if (jslDevices.Length > 0)
+                if (jslDevices?.Length > 0)
                 {
                     foreach (int device in jslDevices)
                     {
@@ -412,7 +412,7 @@ namespace XInputDotNetPure
                 if (forceReconnect) JSL.DisconnectAndDisposeAll();
                 int c = JSL.ConnectDevices();
                 jslDevices = new int[c > 0 ? c : 0];
-                JSL.GetConnectedDeviceHandles(jslDevices, jslDevices.Length);
+                if (c > 0) JSL.GetConnectedDeviceHandles(jslDevices, jslDevices.Length);
                 return jslDevices.Length != count;
             }
             catch (Exception e)
