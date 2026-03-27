@@ -108,7 +108,12 @@ public class btlseq
         cmd_DATA.IsShortRange = btl_util.IsAttackShortRange(cmd_DATA);
         if (Configuration.Battle.SFXRework)
         {
-            UnifiedBattleSequencer.BattleAction action = new UnifiedBattleSequencer.BattleAction(UnifiedBattleSequencer.EffectType.EnemySequence, pSeqNo);
+            UnifiedBattleSequencer.BattleAction action = null;
+            if (cmd_DATA.aa.Info.VfxAction != null)
+                action = new UnifiedBattleSequencer.BattleAction(cmd_DATA.aa.Info.VfxAction);
+            else
+                action = new UnifiedBattleSequencer.BattleAction(UnifiedBattleSequencer.EffectType.EnemySequence, pSeqNo);
+
             action.Execute(cmd_DATA);
         }
         else

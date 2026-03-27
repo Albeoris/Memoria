@@ -35,18 +35,28 @@ namespace Memoria.Data
             }
             foreach (Match formula in new Regex(@"\[code=(.*?)\](.*?)\[/code\]").Matches(input))
             {
-                if (String.Equals(formula.Groups[1].Value, "Condition"))
-                    set.Condition = formula.Groups[2].Value;
-                else if (String.Equals(formula.Groups[1].Value, "Patch"))
+                String codeType = formula.Groups[1].Value;
+                String codeContent = formula.Groups[2].Value;
+
+                if (String.Equals(codeType, "Condition"))
                 {
-                    set.CommandPatch = formula.Groups[2].Value;
+                    set.ConditionExpression = NCalcUtility.PrepareExpression(codeContent);
+                }
+                else if (String.Equals(codeType, "Patch"))
+                {
                     if (cmdId == BattleCommandId.None)
                         Log.Warning($"[{nameof(BattleCommandHelper)}] \"Patch\" cannot be used as a Global CMD feature");
+                    else
+                        set.CommandPatchExpression = NCalcUtility.PrepareExpression(codeContent);
                 }
-                else if (String.Equals(formula.Groups[1].Value, "Disable"))
-                    set.CommandDisable = formula.Groups[2].Value;
-                else if (String.Equals(formula.Groups[1].Value, "HardDisable"))
-                    set.CommandHardDisable = formula.Groups[2].Value;
+                else if (String.Equals(codeType, "Disable"))
+                {
+                    set.CommandDisableExpression = NCalcUtility.PrepareExpression(codeContent);
+                }
+                else if (String.Equals(codeType, "HardDisable"))
+                {
+                    set.CommandHardDisableExpression = NCalcUtility.PrepareExpression(codeContent);
+                }
             }
         }
 
@@ -131,27 +141,26 @@ namespace Memoria.Data
 
         private class FeatureSet
         {
-            public String Condition = null;
-            public String CommandPatch = null;
-            public String CommandDisable = null;
-            public String CommandHardDisable = null;
+            public Expression ConditionExpression = null;
+            public Expression CommandPatchExpression = null;
+            public Expression CommandDisableExpression = null;
+            public Expression CommandHardDisableExpression = null;
 
             public Boolean CheckCondition(BattleCommandId cmdId, BattleCommandMenu menu, PLAYER character, BattleUnit asUnit = null)
             {
-                if (String.IsNullOrEmpty(Condition))
-                    return true;
-                if (cmdId == BattleCommandId.None)
-                    return false;
-                Expression c = new Expression(Condition);
+                if (ConditionExpression == null)
+                    return cmdId != BattleCommandId.None;
+
+                Expression c = ConditionExpression;
                 InitializeExpression(ref c, cmdId, menu, character, asUnit);
                 return NCalcUtility.EvaluateNCalcCondition(c.Evaluate());
             }
 
             public BattleCommandId ApplyPatch(BattleCommandId cmdId, BattleCommandMenu menu, PLAYER character, BattleUnit asUnit = null)
             {
-                if (!String.IsNullOrEmpty(CommandPatch))
+                if (CommandPatchExpression != null)
                 {
-                    Expression e = new Expression(CommandPatch);
+                    Expression e = CommandPatchExpression;
                     InitializeExpression(ref e, cmdId, menu, character, asUnit);
                     Int64 val = NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
                     if (val >= 0 && CharacterCommands.Commands.ContainsKey((BattleCommandId)val))
@@ -162,16 +171,16 @@ namespace Memoria.Data
 
             public Int32 GetEnabledState(BattleCommandId cmdId, BattleCommandMenu menu, PLAYER character, BattleUnit asUnit = null)
             {
-                if (!String.IsNullOrEmpty(CommandHardDisable))
+                if (CommandHardDisableExpression != null)
                 {
-                    Expression e = new Expression(CommandHardDisable);
+                    Expression e = CommandHardDisableExpression;
                     InitializeExpression(ref e, cmdId, menu, character, asUnit);
                     if (NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), false))
                         return 0;
                 }
-                if (!String.IsNullOrEmpty(CommandDisable))
+                if (CommandDisableExpression != null)
                 {
-                    Expression e = new Expression(CommandDisable);
+                    Expression e = CommandDisableExpression;
                     InitializeExpression(ref e, cmdId, menu, character, asUnit);
                     if (NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), false))
                         return 1;
@@ -193,8 +202,6 @@ namespace Memoria.Data
                 }
                 e.Parameters["CommandId"] = (Int32)cmdId;
                 e.Parameters["CommandMenu"] = (Int32)menu;
-                e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
             }
         }
 

@@ -297,18 +297,6 @@ public static class btl_init
         }
         btlsys.btl_load_status |= ff9btl.LOAD_INITCHR;
         btl_init.SetupBattlePlayer();
-        if (btlsys.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_BACK_ATTACK)
-        {
-            for (BTL_DATA btl = btlsys.btl_list.next; btl != null; btl = btl.next)
-                if (btl.bi.player != 0)
-                    btl.cur.at = 0;
-        }
-        else if (btlsys.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_FIRST_ATTACK)
-        {
-            for (BTL_DATA btl = btlsys.btl_list.next; btl != null; btl = btl.next)
-                if (btl.bi.player == 0)
-                    btl.cur.at = 0;
-        }
     }
 
     public static void SetupBattlePlayer()
@@ -389,7 +377,7 @@ public static class btl_init
             btl.bi.t_gauge = 1;
             btl.trance = p.trance;
         }
-        btl.tar_bone = 0;
+        btl.tar_bone = FF9BattleDBHeightAndRadius.TryFindNewTargetBone(btl.dms_geo_id);
         btl.sa = p.sa;
         btl.saExtended = p.saExtended;
         btl.saMonster = new List<SupportingAbilityFeature>();
@@ -430,7 +418,10 @@ public static class btl_init
         {
             btl.max.at = btl_para.GetMaxATB(unit);
             if (FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_BACK_ATTACK)
+            {
                 btl.cur.at = 0;
+                btl.IsBackAttack = true;
+            }
             else if (FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_FIRST_ATTACK)
                 btl.cur.at = (Int16)(btl.max.at - 1);
             else
@@ -527,6 +518,11 @@ public static class btl_init
             BattleStatus current_stat = btl.stat.cur;
             btl.stat.permanent = 0;
             btl.stat.cur = 0;
+            if (FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_FIRST_ATTACK)
+            {
+                btl.cur.at = 0;
+                btl.IsBackAttack = true;
+            }
             btl_stat.MakeStatusesPermanent(unit, permanent_stat);
             btl_stat.AlterStatuses(unit, current_stat);
         }
