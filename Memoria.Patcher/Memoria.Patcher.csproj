@@ -3793,8 +3793,6 @@
     </None>
   </ItemGroup>
   <Target Name="MemoriaPatcherBeforeBuild" BeforeTargets="BeforeBuild">
-    <MSBuild Projects="..\Memoria.Debugger\Memoria.Debugger.csproj" Properties="Platform=x86" RunEachTargetSeparately="true" />
-    <MSBuild Projects="..\Memoria.Debugger\Memoria.Debugger.csproj" Properties="Platform=x64" RunEachTargetSeparately="true" />
     <MSBuild Projects="..\Memoria.Injection\Memoria.Injection.vcxproj" Properties="Platform=Win32" RunEachTargetSeparately="true" />
     <MSBuild Projects="..\Memoria.Injection\Memoria.Injection.vcxproj" Properties="Platform=x64" RunEachTargetSeparately="true" />
   </Target>
