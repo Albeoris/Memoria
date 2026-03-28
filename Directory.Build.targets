@@ -1,0 +1,5 @@
+<Project>
+  <Import
+    Project="$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg.targets"
+    Condition="Exists('$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg.targets')" />
+</Project>

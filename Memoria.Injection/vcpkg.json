@@ -1,0 +1,15 @@
+{
+  "name": "memoria-injection",
+  "version": "1.0.0",
+  "builtin-baseline": "120deac3062162151622ca4860575a33844ba10b",
+  "dependencies": [
+    "detours"
+  ],
+  "overrides": [
+    {
+      "name": "detours",
+      "version": "4.0.1",
+      "port-version": 8
+    }
+  ]
+}
