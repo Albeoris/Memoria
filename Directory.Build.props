@@ -5,5 +5,12 @@
         <EnableDefaultItems>false</EnableDefaultItems>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <Prefer32Bit>false</Prefer32Bit>
+        <!-- Priority 1: explicit env var (CI override) -->
+        <VcpkgRoot Condition="'$(VCPKG_INSTALLATION_ROOT)' != ''">$(VCPKG_INSTALLATION_ROOT)\</VcpkgRoot>
+        <!-- Priority 2: vcpkg bundled with Visual Studio -->
+        <VcpkgRoot Condition="'$(VcpkgRoot)' == '' and '$(VCToolsInstallDir)' != ''">$(VCToolsInstallDir)..\vcpkg\</VcpkgRoot>
+        <!-- Priority 3: submodule/local fallback -->
+        <VcpkgRoot Condition="'$(VcpkgRoot)' == ''">$(MSBuildThisFileDirectory)vcpkg\</VcpkgRoot>
     </PropertyGroup>
+    <Import Project="$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg.props" Condition="Exists('$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg.props')" />
 </Project>

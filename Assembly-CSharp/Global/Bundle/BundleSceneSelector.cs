@@ -10,20 +10,8 @@ public class BundleSceneSelector : MonoBehaviour
         WindowManager.AlignWindow();
         global::Debug.Log("10 BundleSceneSelector.Awake");
         Boolean flag = false;
-        String[] files = Directory.GetFiles("./", "*steam_appid.txt", SearchOption.AllDirectories);
-        String[] array = files;
-        for (Int32 i = 0; i < (Int32)array.Length; i++)
-        {
-            String fileName = array[i];
-            FileInfo fileInfo = new FileInfo(fileName);
-            if (fileInfo.IsReadOnly)
-            {
-                fileInfo.IsReadOnly = false;
-            }
-            fileInfo.Delete();
-        }
 
-        if (SteamSdkWrapper.SteamAPIRestartAppIfNecessary())
+        if (SteamSdkWrapper.SteamAPIRestartAppIfNecessary(377840))
         {
             Application.Quit();
             return;
