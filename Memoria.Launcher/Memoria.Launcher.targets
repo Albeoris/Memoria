@@ -8,10 +8,20 @@
     Targets run during the build phase, which is too late for VS to pick up the CWD.
   -->
   <PropertyGroup Condition="'$(Configuration)' == 'Debug' Or '$(Configuration)' == 'Release'">
-    <!-- 64-bit registry path (native view on 64-bit Windows) -->
-    <GamePath Condition="'$(GamePath)' == ''">$([MSBuild]::GetRegistryValue('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 377840', 'InstallLocation'))</GamePath>
-    <!-- 32-bit registry path (WOW6432Node fallback) -->
-    <GamePath Condition="'$(GamePath)' == ''">$([MSBuild]::GetRegistryValue('HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 377840', 'InstallLocation'))</GamePath>
+    <!-- Steam installation path (query both registry views) -->
+    <GamePath Condition="'$(GamePath)' == ''">$([MSBuild]::GetRegistryValueFromView(
+        'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 377840',
+        'InstallLocation',
+        null,
+        RegistryView.Registry64,
+        RegistryView.Registry32))</GamePath>
+    <!-- GOG fallback if Steam installation was not found (query both registry views) -->
+    <GamePath Condition="'$(GamePath)' == ''">$([MSBuild]::GetRegistryValueFromView(
+      'HKEY_LOCAL_MACHINE\SOFTWARE\GOG.com\Games\1375008492',
+      'path',
+      null,
+      RegistryView.Registry64,
+      RegistryView.Registry32))</GamePath>
     <GameLauncherPath Condition="'$(GamePath)' != ''">$(GamePath)\FF9_Launcher.exe</GameLauncherPath>
     <StartAction Condition="'$(StartAction)' == '' and '$(GameLauncherPath)' != ''">Program</StartAction>
     <StartProgram Condition="'$(StartProgram)' == '' and '$(GameLauncherPath)' != ''">$(GameLauncherPath)</StartProgram>
@@ -22,7 +32,7 @@
   <Target Name="ResolveGamePathForIDE" BeforeTargets="PrepareForBuild" Condition="'$(Configuration)' == 'Debug' Or '$(Configuration)' == 'Release'">
     <Message Text="Game Path: $(GamePath)" Importance="high" Condition="'$(GamePath)' != ''" />
     <Message Text="Game Launcher: $(GameLauncherPath)" Importance="high" Condition="'$(GameLauncherPath)' != ''" />
-    <Message Text="Warning: Could not find FF9 game path" Importance="high" Condition="'$(GamePath)' == ''" />
+    <Message Text="Warning: Could not find FF9 game path (Steam or GOG)" Importance="high" Condition="'$(GamePath)' == ''" />
   </Target>
 
 </Project>

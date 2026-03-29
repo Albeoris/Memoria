@@ -7,26 +7,35 @@ namespace Memoria.Patcher
     {
         public const String SteamRegistyPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 377840";
         public const String SteamGamePathTag = @"InstallLocation";
+        public const String GogRegistryPath = @"SOFTWARE\GOG.com\Games\1375008492";
+        public const String GogGamePathTag = @"path";
 
         public static GameLocationInfo TryLoad()
         {
-            return TryLoadLocation(RegistryView.Registry64) ?? TryLoadLocation(RegistryView.Registry32);
+            return TryLoadLocation(RegistryView.Registry64, SteamRegistyPath, SteamGamePathTag)
+                   ?? TryLoadLocation(RegistryView.Registry32, SteamRegistyPath, SteamGamePathTag)
+                   ?? TryLoadLocation(RegistryView.Registry64, GogRegistryPath, GogGamePathTag)
+                   ?? TryLoadLocation(RegistryView.Registry32, GogRegistryPath, GogGamePathTag);
         }
 
-        private static GameLocationInfo TryLoadLocation(RegistryView view)
+        private static GameLocationInfo TryLoadLocation(RegistryView view, String registryPath, String gamePathTag)
         {
             using (RegistryKey localMachine = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view))
-                return TryLoadLocation(localMachine);
+                return TryLoadLocation(localMachine, registryPath, gamePathTag);
         }
 
-        private static GameLocationInfo TryLoadLocation(RegistryKey localMachine)
+        private static GameLocationInfo TryLoadLocation(RegistryKey localMachine, String registryPath, String gamePathTag)
         {
-            using (RegistryKey registryKey = localMachine.OpenSubKey(SteamRegistyPath))
+            using (RegistryKey registryKey = localMachine.OpenSubKey(registryPath))
             {
                 if (registryKey == null)
                     return null;
 
-                GameLocationInfo result = new GameLocationInfo((String)registryKey.GetValue(SteamGamePathTag));
+                String gamePath = registryKey.GetValue(gamePathTag) as String;
+                if (String.IsNullOrWhiteSpace(gamePath))
+                    return null;
+
+                GameLocationInfo result = new GameLocationInfo(gamePath);
                 result.Validate();
 
                 return result;
@@ -45,12 +54,6 @@ namespace Memoria.Patcher
                             return false;
                     }
                 }
-
-                //var bak = new FileInfo("FF9_Launcher.bak");
-                //var exe = new FileInfo("FF9_Launcher.exe");
-                //
-                //if (bak.Exists && exe.Exists && bak.Length != exe.Length)
-                //    return false;
 
                 return true;
             }
