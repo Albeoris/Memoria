@@ -2,4 +2,35 @@
   <Import
     Project="$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg.targets"
     Condition="Exists('$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg.targets')" />
+  <!--
+    Copies missing game-managed DLLs from the Steam x64 installation into References\
+    before assembly references are resolved. Only files that do not already exist in
+    the References folder are copied, so subsequent builds are a no-op.
+  -->
+  <Target Name="CopyGameReferences" BeforeTargets="ResolveAssemblyReferences;CollectReferencesForDesignTime">
+    <PropertyGroup>
+      <_FF9InstallLocation>$([MSBuild]::GetRegistryValueFromView(
+          'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 377840',
+          'InstallLocation',
+          null,
+          RegistryView.Registry64,
+          RegistryView.Registry32))</_FF9InstallLocation>
+      <_FF9ManagedPath>$(_FF9InstallLocation)\x64\FF9_Data\Managed\</_FF9ManagedPath>
+      <_ReferencesDir>$(SolutionDir)References\</_ReferencesDir>
+    </PropertyGroup>
+    <Error Text="[CopyGameReferences] FF9 game installation not found. Please make sure you have installed via Steam and retry." Condition="'$(_FF9InstallLocation)' == '' and '$(CI)' != 'true'" />
+    <ItemGroup Condition="'$(_FF9InstallLocation)' != '' and Exists('$(_FF9ManagedPath)')">
+      <_FF9AllDlls Include="$(_FF9ManagedPath)Assembly-CSharp.dll" Condition="Exists('$(_FF9ManagedPath)Assembly-CSharp.dll')" />
+      <_FF9AllDlls Include="$(_FF9ManagedPath)Assembly-CSharp-firstpass.dll" Condition="Exists('$(_FF9ManagedPath)Assembly-CSharp-firstpass.dll')" />
+      <_FF9AllDlls Include="$(_FF9ManagedPath)mscorlib.dll"                 Condition="Exists('$(_FF9ManagedPath)mscorlib.dll')" />
+      <_FF9AllDlls Include="$(_FF9ManagedPath)System.Core.dll"              Condition="Exists('$(_FF9ManagedPath)System.Core.dll')" />
+      <_FF9AllDlls Include="$(_FF9ManagedPath)System.dll"                   Condition="Exists('$(_FF9ManagedPath)System.dll')" />
+      <_FF9AllDlls Include="$(_FF9ManagedPath)UnityEngine.dll"              Condition="Exists('$(_FF9ManagedPath)UnityEngine.dll')" />
+      <_FF9AllDlls Include="$(_FF9ManagedPath)UnityEngine.UI.dll"           Condition="Exists('$(_FF9ManagedPath)UnityEngine.UI.dll')" />
+      <_FF9AllDlls Include="$(_FF9ManagedPath)XInputDotNetPure.dll"         Condition="Exists('$(_FF9ManagedPath)XInputDotNetPure.dll')" />
+      <_FF9MissingDlls Include="@(_FF9AllDlls)" Condition="!Exists('$(_ReferencesDir)%(Filename)%(Extension)')" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_FF9MissingDlls)" DestinationFolder="$(_ReferencesDir)" Condition="'@(_FF9MissingDlls)' != ''" />
+    <Warning Text="[CopyGameReferences] FF9 game installation found and missing Reference DLLs have been copied over. Ready to build." Condition="'@(_FF9MissingDlls)' != '' and '$(CI)' != 'true'" />
+  </Target>
 </Project>
