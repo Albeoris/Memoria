@@ -70,26 +70,8 @@ namespace Memoria.MSBuild
                     compressedDataPosition = executableFile.Position;
 
                     Dictionary<String, UInt16> pathMap = new Dictionary<String, UInt16>(capacity: 400);
-                    AddPackFolder("StreamingAssets", "StreamingAssets", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    AddPackFolder("FF9_Data", "FF9_Data", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    AddPackFolder("Debugger", "Debugger", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    AddPackDLLs("", "{PLATFORM}\\FF9_Data\\Managed", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    AddPackOptionalFile("Launcher\\Memoria.Launcher.exe", "FF9_Launcher.exe", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    AddPackOptionalFile("Launcher\\Memoria.Launcher.exe.config", "FF9_Launcher.exe.config", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    AddPackOptionalFile("Launcher\\Memoria.SteamFix.exe", "Memoria.SteamFix.exe", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    AddPackOptionalFile("Launcher\\Memoria.ini", "Memoria.ini", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    AddPackOptionalFile("Launcher\\Settings.ini", "Settings.ini", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    AddPackOptionalFile("XInputDotNetPure.dll", "{PLATFORM}\\FF9_Data\\Managed\\XInputDotNetPure.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    AddPackOptionalFile("Newtonsoft.Json.dll", "{PLATFORM}\\FF9_Data\\Managed\\Newtonsoft.Json.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    AddPackOptionalFile("System.Runtime.Serialization.dll", "{PLATFORM}\\FF9_Data\\Managed\\System.Runtime.Serialization.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    AddPackOptionalFile("JoyShockLibrary\\x64\\JoyShockLibrary.dll", "x64\\FF9_Data\\Plugins\\JoyShockLibrary.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    AddPackOptionalFile("JoyShockLibrary\\x86\\JoyShockLibrary.dll", "x86\\FF9_Data\\Plugins\\JoyShockLibrary.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    AddPackOptionalFile("Global\\Sound\\SoLoud\\x64\\soloud.dll", "x64\\FF9_Data\\Plugins\\soloud.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    AddPackOptionalFile("Global\\Sound\\SoLoud\\x86\\soloud.dll", "x86\\FF9_Data\\Plugins\\soloud.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    AddPackOptionalFile("Global\\Sound\\SaXAudio\\x64\\SaXAudio.dll", "x64\\FF9_Data\\Plugins\\SaXAudio.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    AddPackOptionalFile("Global\\Sound\\SaXAudio\\x86\\SaXAudio.dll", "x86\\FF9_Data\\Plugins\\SaXAudio.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    AddPackOptionalFile("Global\\Sound\\SaXAudio\\x64\\XAudio2_9.dll", "x64\\XAudio2_9.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    AddPackOptionalFile("Global\\Sound\\SaXAudio\\x86\\XAudio2_9.dll", "x86\\XAudio2_9.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
+                    foreach (DeploymentFileDefinition file in DeploymentFileSet.Files)
+                        AddPackDefinition(file, compressStream, bw, pathMap, ref uncompressedDataSize);
 #if NEEDS_SIGNING
                     StartSigning();
 #endif
@@ -153,6 +135,30 @@ namespace Memoria.MSBuild
                 return;
 
             PrepairPackFile(sourceFile.FullName, targetFileRelativePath, output, bw, pathMap, ref uncompressedDataSize);
+        }
+
+        private void AddPackDefinition(DeploymentFileDefinition file, GZipStream output, BinaryWriter bw, Dictionary<String, UInt16> pathMap, ref Int64 uncompressedDataSize)
+        {
+            switch (file.Kind)
+            {
+                case DeploymentItemKind.Folder:
+                    AddPackFolder(file.SourceRelativePath, file.TargetRelativePath, output, bw, pathMap, ref uncompressedDataSize);
+                    break;
+                case DeploymentItemKind.ManagedDll:
+                    AddPackManagedDll(file.SourceRelativePath, file.TargetRelativePath, output, bw, pathMap, ref uncompressedDataSize);
+                    break;
+                case DeploymentItemKind.File:
+                    AddPackOptionalFile(file.SourceRelativePath, file.TargetRelativePath, output, bw, pathMap, ref uncompressedDataSize);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private void AddPackManagedDll(String sourceFileRelativePath, String targetFileRelativePath, GZipStream output, BinaryWriter bw, Dictionary<String, UInt16> pathMap, ref Int64 uncompressedDataSize)
+        {
+            AddPackOptionalFile(sourceFileRelativePath, targetFileRelativePath, output, bw, pathMap, ref uncompressedDataSize);
+            AddPackOptionalFile(sourceFileRelativePath + ".mdb", targetFileRelativePath + ".mdb", output, bw, pathMap, ref uncompressedDataSize);
         }
 
         private void AddPackDLLs(String sourceFolderRelativePath, String targetFolderRelativePath, GZipStream output, BinaryWriter bw, Dictionary<String, UInt16> pathMap, ref Int64 uncompressedDataSize)

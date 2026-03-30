@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <UsingTask AssemblyFile="$(SolutionDir)\References\Memoria.MSBuild.dll" TaskName="Memoria.MSBuild.Pack" Runtime="CLR4" />
+  <UsingTask AssemblyFile="$(SolutionDir)\References\Memoria.MSBuild.dll" TaskName="Memoria.MSBuild.Deploy" Runtime="CLR4" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -48,6 +49,7 @@
     <LangVersion>default</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <UpToDateCheckInput  Include="$(ProjectDir)\**\*.*" />
     <Compile Include="ConsoleProgressHandler.cs" />
     <Compile Include="GameInfo\GameLocationSteamRegistryProvider.cs" />
     <Compile Include="GameInfo\GameLocationInfo.cs" />
@@ -3792,10 +3794,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <Target Name="MemoriaPatcherBeforeBuild" BeforeTargets="BeforeBuild">
-    <MSBuild Projects="..\Memoria.Injection\Memoria.Injection.vcxproj" Properties="Platform=Win32" RunEachTargetSeparately="true" />
-    <MSBuild Projects="..\Memoria.Injection\Memoria.Injection.vcxproj" Properties="Platform=x64" RunEachTargetSeparately="true" />
-  </Target>
   <Target Name="MemoriaPatcherBeforePublish" BeforeTargets="Publish" Condition="'$(PublishSingleFile)' == 'true'">
     <MSBuild Projects="..\Assembly-CSharp\Assembly-CSharp.csproj" Properties="Platform=AnyCPU" RunEachTargetSeparately="true" />
   </Target>
@@ -3805,5 +3803,8 @@
       <NativeExecutableExtension Condition="'$(RuntimeIdentifier)' == '' or !$(RuntimeIdentifier.StartsWith('win'))"></NativeExecutableExtension>
     </PropertyGroup>
     <Pack SolutionDir="$(SolutionDir)" TargetPath="$(PublishDir)$(TargetName)$(NativeExecutableExtension)" TargetDir="$(TargetDir)" TargetName="$(TargetName)" />
+  </Target>
+  <Target Name="MemoriaPatcherDeployOutput" AfterTargets="Build">
+    <Deploy SolutionDir="$(SolutionDir)" OutputDir="$(SolutionDir)Output" GamePath="$(MemoriaGamePath)" />
   </Target>
 </Project>
