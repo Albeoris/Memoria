@@ -15,10 +15,16 @@
           null,
           RegistryView.Registry64,
           RegistryView.Registry32))</_FF9InstallLocation>
+        <_FF9InstallLocation Condition="'$(_FF9InstallLocation)' == ''">$([MSBuild]::GetRegistryValueFromView(
+          'HKEY_LOCAL_MACHINE\SOFTWARE\GOG.com\Games\1375008492',
+          'path',
+          null,
+          RegistryView.Registry64,
+          RegistryView.Registry32))</_FF9InstallLocation>
       <_FF9ManagedPath>$(_FF9InstallLocation)\x64\FF9_Data\Managed\</_FF9ManagedPath>
       <_ReferencesDir>$(SolutionDir)References\</_ReferencesDir>
     </PropertyGroup>
-    <Error Text="[CopyGameReferences] FF9 game installation not found. Please make sure you have installed via Steam and retry." Condition="'$(_FF9InstallLocation)' == '' and '$(CI)' != 'true'" />
+    <Error Text="[CopyGameReferences] FF9 game installation not found. Please make sure you have installed via Steam or GOG and retry." Condition="'$(_FF9InstallLocation)' == '' and '$(CI)' != 'true'" />
     <ItemGroup Condition="'$(_FF9InstallLocation)' != '' and Exists('$(_FF9ManagedPath)')">
       <_FF9AllDlls Include="$(_FF9ManagedPath)Assembly-CSharp.dll" Condition="Exists('$(_FF9ManagedPath)Assembly-CSharp.dll')" />
       <_FF9AllDlls Include="$(_FF9ManagedPath)Assembly-CSharp-firstpass.dll" Condition="Exists('$(_FF9ManagedPath)Assembly-CSharp-firstpass.dll')" />
