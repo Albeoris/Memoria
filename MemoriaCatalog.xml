@@ -3661,14 +3661,28 @@ Part of the Kupo Mods suite, formerly known as Mog Add-ons.
 
 <Mod>
     <Name>CostumePack</Name>
-    <Version>1.0.0</Version>
+    <Version>1.1</Version>
     <InstallationPath>CostumePack</InstallationPath>
-    <ReleaseDateOriginal>25 Mar 2026</ReleaseDateOriginal>
+    <ReleaseDateOriginal>31 Mar 2026</ReleaseDateOriginal>
     <ReleaseDate>25 Mar 2026</ReleaseDate>
     <Author>WarpedEdge and ChikoLad</Author>
     <Description>The purpose of the mod is to give the FFIX cast costumes either already in the game, from DFFOO, or any other ones made for them</Description>
+    <PatchNotes>
+    Fixed Issues:
+      - Freya Field model submod when used in battle (not the SA costume on) was flickering on her upper back
+      - Garnet DFFOO Default costume Trance was not using her Trance model
+      - Eiko models were pulling in weird ways
+      - Models disappearing in certain circumstances (tent in fields like Memoria location or Lifa Tree Elevator)
+      - Garnet's side of her face texture fragmenting (Will require testing with missing models from above)
+      - Kupo Heroes Pack support
+      - Garnet's costume model for DFFOO Default not having short hair variants work in battle
+      - Ferny Fantasy latest test release messed up commands
+      - Other various fixes
+    Known Issue:
+      - There is apparently an issue where for some reason in certain battles (there are quite a few) the Enemy AI scripts are looking for the stupid MODEL ID of the players instead of their Player ID which is stupid, BUT Tirlititi and DV may have a fix in the next Memoria Release
+    </PatchNotes>
     <Website>https://www.nexusmods.com/finalfantasy9/mods/128</Website>
-	<DownloadUrl>https://github.com/WarpedEdge/ffix-mod-projects/releases/download/CostumePack-v1.0/CostumePack.zip</DownloadUrl>
+	<DownloadUrl>https://github.com/WarpedEdge/ffix-mod-projects/releases/download/CostumePack-v1.1/CostumePack.zip</DownloadUrl>
     <PreviewFile>Preview/CostumePackBanner.png</PreviewFile>
 	<PreviewFileUrl>https://i.imgur.com/1GWlsW0.png</PreviewFileUrl>
     <Category>Visual</Category>
@@ -3734,6 +3748,20 @@ Part of the Kupo Mods suite, formerly known as Mog Add-ons.
         <InstallationPath>Compatibility/AmazingQuina/AlternateFantasy</InstallationPath>
         <Description>Allows costumes to work with Amazing Quina when Alternate Fantasy is also active.</Description>
         <ActivateWithMod>Amazing Quina, Alternate Fantasy</ActivateWithMod>
+        <Priority>1</Priority>
+    </SubMod>
+    <SubMod>
+        <Name>Kupo Heroes Pack Compatibility</Name>
+        <InstallationPath>Compatibility/KupoHeroPack/Vanilla</InstallationPath>
+        <Description>Allows costumes to work with Kupo Heroes Pack in Vanilla.</Description>
+        <ActivateWithMod>Kupo Heroes Pack</ActivateWithMod>
+        <Priority>2</Priority>
+    </SubMod>
+    <SubMod>
+        <Name>Kupo Heroes Pack Alternate Fantasy Compatibility</Name>
+        <InstallationPath>Compatibility/KupoHeroPack/AlternateFantasy</InstallationPath>
+        <Description>Allows costumes to work with Kupo Heroes Pack when Alternate Fantasy is also active.</Description>
+        <ActivateWithMod>Kupo Heroes Pack, Alternate Fantasy</ActivateWithMod>
         <Priority>1</Priority>
     </SubMod>
 
