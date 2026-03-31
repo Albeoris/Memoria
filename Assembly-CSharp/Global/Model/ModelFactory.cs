@@ -89,14 +89,6 @@ public static class ModelFactory
                     checkTextureOnDisc = false;
                 }
             }
-            if (SceneDirector.IsFieldScene())
-            {
-                if (CustomModelField.TryGetValue(new KeyValuePair<Int32, String>(FF9StateSystem.Common.FF9.fldMapNo, modelNameId), out String[] modelSwapEntry))
-                {
-                    ChangeModelTexture(model, modelSwapEntry);
-                    checkTextureOnDisc = false;
-                }
-            }
             if (checkTextureOnDisc)
             {
                 String texturePath = Path.GetDirectoryName(renameModelPath) + "/%.png";
@@ -199,6 +191,21 @@ public static class ModelFactory
         if (isBattle && battlebg.BattleRoot != null)
             model.transform.parent = battlebg.BattleRoot.transform;
         return model;
+    }
+
+    public static void PatchTextureModel(GameObject model, string modelname, byte actor_uid)
+    {
+        if (CustomModelField.Count == 0)
+            return;
+
+        Int32 FieldID = FF9StateSystem.Common.FF9.fldMapNo;
+        String KeyModelActor = $"{modelname}#{actor_uid}";
+        String[] NewTexturePath;
+
+        if (CustomModelField.TryGetValue(new KeyValuePair<Int32, String>(FieldID, KeyModelActor), out NewTexturePath)) // Change Texture on a specific actor_uid (see DataPatchers.cs)
+            ChangeModelTexture(model, NewTexturePath);
+        else if (CustomModelField.TryGetValue(new KeyValuePair<Int32, String>(FieldID, modelname), out NewTexturePath))
+            ChangeModelTexture(model, NewTexturePath);
     }
 
     public static Boolean IsUseAsEnemyCharacter(String path)

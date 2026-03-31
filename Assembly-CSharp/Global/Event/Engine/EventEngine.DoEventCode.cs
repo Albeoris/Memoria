@@ -1057,6 +1057,7 @@ public partial class EventEngine
                     String str = FF9BattleDB.GEO.GetValue(po.model);
 
                     po.go = ModelFactory.CreateModel(str, false, true, Configuration.Graphics.ElementsSmoothTexture);
+                    ModelFactory.PatchTextureModel(po.go, str, po.uid);
                     GeoTexAnim.addTexAnim(po.go, str);
                     if (ModelFactory.garnetShortHairTable.Contains(str))
                     {

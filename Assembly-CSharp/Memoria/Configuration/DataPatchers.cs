@@ -565,13 +565,30 @@ namespace Memoria
                 else if (String.Equals(entry[0], "SwapFieldModelTexture"))
                 {
                     // eg.: SwapFieldModelTexture 2250 GEO_MON_B3_093 CustomTextures/OeilvertGuardian/342_0.png CustomTextures/OeilvertGuardian/342_1.png CustomTextures/OeilvertGuardian/342_2.png CustomTextures/OeilvertGuardian/342_3.png CustomTextures/OeilvertGuardian/342_4.png CustomTextures/OeilvertGuardian/342_5.png
-                    List<string> TexturesList = new List<string>();
+                    //      SwapFieldModelTexture 257 GEO_NPC_F0_BMG 13 CustomTextures/BlackMageNo222/5468_0.png CustomTextures/BlackMageNo222/5468_1.png
+                    if (entry.Length < 3)
+                        continue;
+
                     if (!Int32.TryParse(entry[1], out Int32 fieldID))
                         continue;
-                    for (Int32 i = 3; i < entry.Length; i++)
+
+                    Int32 textureStartIndex = 3;
+                    Int32? actorId = null;
+
+                    if (entry.Length > 3 && Int32.TryParse(entry[3], out Int32 parsedOptionalArg))
+                    {
+                        actorId = parsedOptionalArg;
+                        textureStartIndex = 4;
+                    }
+
+                    List<string> TexturesList = new List<string>();
+                    for (Int32 i = textureStartIndex; i < entry.Length; i++)
                         TexturesList.Add(entry[i]);
+
+                    String modelKey = actorId.HasValue ? $"{entry[2]}#{actorId.Value}" : entry[2];
+
                     String[] TexturesCustomModel = TexturesList.ToArray();
-                    ModelFactory.CustomModelField[new KeyValuePair<Int32, String>(fieldID, entry[2])] = TexturesCustomModel;
+                    ModelFactory.CustomModelField[new KeyValuePair<Int32, String>(fieldID, modelKey)] = TexturesCustomModel;
                 }
             }
             if (shouldUpdateBattleStatus)
