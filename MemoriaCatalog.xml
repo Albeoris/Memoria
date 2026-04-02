@@ -3694,7 +3694,7 @@ Part of the Kupo Mods suite, formerly known as Mog Add-ons.
       - If shaders in the launcher are turned on then models will appear very dark (This is a Memoria side thing as that feature was before the model importer)
     Version 1.2
     Fixed Issues:
-    - Garnet's side of her face texture fragmenting
+      - Garnet's side of her face texture fragmenting
     Version 1.1
     Fixed Issues:
       - Freya Field model submod when used in battle (not the SA costume on) was flickering on her upper back
