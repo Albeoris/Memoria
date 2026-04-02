@@ -845,6 +845,27 @@ Include the new version ofNoHardcodedBattles.</PatchNotes>
 </Mod>
 
 <Mod>
+	<Name>FF9TheAfterYears</Name>
+	<Version>1.4</Version>
+	<InstallationPath>FF9TheAfterYears</InstallationPath>
+	<ReleaseDate>1 Apr 2026</ReleaseDate>
+	<ReleaseDateOriginal>1 Apr 2026</ReleaseDateOriginal>
+	<Author>DV</Author>
+	<Description>The adventure every FFIX fan has been dreaming of is finally here. Introducing... FFIX: The After Years!
+
+Embark on a brand-new journey as a mysterious new protagonist, fighting alongside the legendary companions who shaped your childhood memories! 
+
+To ensure the best possible experience and avoid any technical issues, starting a New Game is highly recommended. ^^
+
+Enjoy the ride!
+	</Description>
+	<Category>Gameplay</Category>
+	<DownloadUrl>https://files.dv-modding.fr/FF9TheAfterYears.zip</DownloadUrl>
+	<PreviewFileUrl>https://files.dv-modding.fr/hiddenstats/images/FF9TheAfterYears.jpg</PreviewFileUrl>
+	<PreviewFile>Thumbnail/Thumbnail.jpg</PreviewFile>
+</Mod>
+
+<Mod>
 	<Name>Playable Character Pack</Name>
 	<Version>1.7.0</Version>
 	<Priority>-22</Priority>
