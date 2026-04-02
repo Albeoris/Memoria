@@ -31,6 +31,11 @@ namespace SaXAudio
 #define CHAIN_ECHO 2
 #define POOL_SIZE_VOICES 50
 
+    static DOUBLE SamplesToMiB(const UINT64 samples)
+    {
+        return (DOUBLE)(samples * sizeof(FLOAT)) / (1024.0 * 1024.0);
+    }
+
     SaXAudio& SaXAudio::Instance = SaXAudio::getInstance();
 
     BOOL SaXAudio::Init()
@@ -258,9 +263,12 @@ namespace SaXAudio
             }
         }
 
-        // Return buffer to the pool
-        m_bufferPool.push_back(data->buffer);
-        Log(bankID, 0, "[RemoveBankEntry] Returned buffer size: " + to_string(data->buffer.Size / 1024) + "KB");
+        if (data->buffer.Data)
+        {
+            delete[] data->buffer.Data;
+            Log(bankID, 0, "[RemoveBankEntry] Freed buffer samples: " + to_string(data->buffer.Size) + " reason=no-cache");
+            data->buffer = { 0 };
+        }
 
         // onDecodedCallback guarantied to be called
         if (data->onDecodedCallback)
@@ -327,6 +335,17 @@ namespace SaXAudio
             if (it.second->BusID == busID)
                 it.second->Stop();
         }
+
+        for (UINT32 i = 0; i < 3; i++)
+        {
+            if (bus->descriptors[i].pEffect)
+            {
+                bus->descriptors[i].pEffect->Release();
+                bus->descriptors[i].pEffect = nullptr;
+            }
+        }
+        bus->effectChain.pEffectDescriptors = nullptr;
+        bus->effectChain.EffectCount = 0;
 
         bus->voice->DestroyVoice();
         m_buses.erase(busID);
@@ -396,45 +415,11 @@ namespace SaXAudio
         while (buffer.Size < length)
             buffer.Size <<= 1;
 
-        auto it = m_bufferPool.begin();
-        auto end = m_bufferPool.end();
-        auto candidate = end;
-        while (it != end)
-        {
-            if (it->Size == buffer.Size)
-            {
-                candidate = it;
-                break;
-            }
-            if (it->Size > buffer.Size && it->Size < buffer.Size * 4)
-            {
-                if (candidate == end)
-                    candidate = it;
-                else if (it->Size < candidate->Size)
-                    candidate = it;
-            }
-            it++;
-        }
-
-#ifdef LOGGING
-        static UINT64 totalSize = 0;
-        UINT64 poolSize = 0;
-        for (auto& it : m_bufferPool)
-            poolSize += it.Size;
-#endif // LOGGING
-
-        if (candidate != end)
-        {
-            Log(0, 0, "[GetBuffer] Found buffer size: " + to_string(candidate->Size / 1024) + "KB (" + to_string(buffer.Size / 1024) + "KB) pool size: " + to_string((poolSize - candidate->Size) / 1024) + "KB");
-            buffer = *candidate;
-            m_bufferPool.erase(candidate);
-            return buffer;
-        }
-
         buffer.Data = new FLOAT[buffer.Size];
 #ifdef LOGGING
+        static UINT64 totalSize = 0;
         totalSize += buffer.Size;
-        Log(0, 0, "[GetBuffer] Created buffer size: " + to_string(buffer.Size / 1024) + "KB total size: " + to_string(totalSize / 1024 / 1024) + "MB pool size: " + to_string(poolSize / 1024) + "KB");
+        Log(0, 0, "[GetBuffer] Created buffer samples: " + to_string(buffer.Size) + " totalSamples: " + to_string(totalSize) + " poolMiB: " + to_string(SamplesToMiB(0)) + " reason=no-cache");
 #endif // LOGGING
         return buffer;
     }
@@ -442,7 +427,10 @@ namespace SaXAudio
     void SaXAudio::ReturnBuffer(Buffer buffer)
     {
         lock_guard<mutex> bankLock(SaXAudio::Instance.m_bankMutex);
-        m_bufferPool.push_back(buffer);
+        if (!buffer.Data)
+            return;
+        delete[] buffer.Data;
+        Log(0, 0, "[ReturnBuffer] Freed buffer samples: " + to_string(buffer.Size) + " reason=no-cache");
     }
 
     UINT32 SaXAudio::AddBankData(Buffer buffer, UINT32 channels, UINT32 sampleRate, UINT32 totalSamples)
@@ -525,40 +513,23 @@ namespace SaXAudio
 
         BusData* bus = GetEntry(bus, m_buses, busID);
 
-        voice->EffectData.effectChain = { 3, voice->EffectData.descriptors };
+        voice->EffectData.effectChain = { 0, nullptr };
         voice->EffectData.descriptors[0] = { nullptr, false, data->channels };
         voice->EffectData.descriptors[1] = { nullptr, false, data->channels };
         voice->EffectData.descriptors[2] = { nullptr, false, data->channels };
 
-        HRESULT hr = XAudio2CreateReverb(&voice->EffectData.descriptors[CHAIN_REVERB].pEffect);
-        if (FAILED(hr))
-        {
-            Log(bankID, m_voiceCounter, "Failed to create reverb effect", hr);
-        }
-
-        hr = CreateFX(__uuidof(FXEQ), &voice->EffectData.descriptors[CHAIN_EQ].pEffect);
-        if (FAILED(hr))
-        {
-            Log(bankID, m_voiceCounter, "Failed to create EQ effect", hr);
-        }
-
-        FXECHO_INITDATA init = { 3000 };
-        hr = CreateFX(__uuidof(FXEcho), &voice->EffectData.descriptors[CHAIN_ECHO].pEffect, &init, sizeof(FXECHO_INITDATA));
-        if (FAILED(hr))
-        {
-            Log(bankID, m_voiceCounter, "Failed to create echo effect", hr);
-        }
+        HRESULT hr;
 
         if (bus && bus->voice)
         {
             XAUDIO2_SEND_DESCRIPTOR sendDesc { 0, bus->voice };
             XAUDIO2_VOICE_SENDS sends { 1, &sendDesc };
 
-            hr = m_XAudio->CreateSourceVoice(&voice->SourceVoice, &wfx, 0, XAUDIO2_MAX_FREQ_RATIO, voice, &sends, &voice->EffectData.effectChain);
+            hr = m_XAudio->CreateSourceVoice(&voice->SourceVoice, &wfx, 0, XAUDIO2_MAX_FREQ_RATIO, voice, &sends, nullptr);
         }
         else
         {
-            hr = m_XAudio->CreateSourceVoice(&voice->SourceVoice, &wfx, 0, XAUDIO2_MAX_FREQ_RATIO, voice, nullptr, &voice->EffectData.effectChain);
+            hr = m_XAudio->CreateSourceVoice(&voice->SourceVoice, &wfx, 0, XAUDIO2_MAX_FREQ_RATIO, voice, nullptr, nullptr);
         }
 
         if (FAILED(hr))
@@ -1166,6 +1137,17 @@ namespace SaXAudio
                 voice->SourceVoice->DestroyVoice();
                 voice->SourceVoice = nullptr;
             }
+
+            for (UINT32 i = 0; i < 3; i++)
+            {
+                if (voice->EffectData.descriptors[i].pEffect)
+                {
+                    voice->EffectData.descriptors[i].pEffect->Release();
+                    voice->EffectData.descriptors[i].pEffect = nullptr;
+                }
+            }
+            voice->EffectData.effectChain.pEffectDescriptors = nullptr;
+            voice->EffectData.effectChain.EffectCount = 0;
 
             // Callback
             if (voice->IsPlaying && OnFinishedCallback != nullptr)
