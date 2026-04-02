@@ -1463,13 +1463,7 @@
     <None Include="NCalc\Grammar\NCalc.g" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Global\Sound\SaXAudio\x64\SaXAudio.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Global\Sound\SaXAudio\x64\XAudio2_9.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Global\Sound\SaXAudio\x86\SaXAudio.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Global\Sound\SaXAudio\x86\XAudio2_9.dll">
