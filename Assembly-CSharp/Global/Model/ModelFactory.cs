@@ -61,6 +61,10 @@ public static class ModelFactory
             //model = ModelImporter.CreateCustomModelFromRawText(externalPath);
             if (model == null)
                 return null;
+
+            if (ModelsWithShaderFix.Contains(GetGEOID(GetNameFromFF9DBALL(Path.GetFileNameWithoutExtension(modelNameId))))) // To fix shader for some .fbx model
+                model.AddComponent<CustomFbxFlag>();
+
             Renderer[] renderers = model.GetComponentsInChildren<Renderer>();
             foreach (Renderer renderer in renderers)
                 ModelFactory.SetMatFilter(renderer.material, filtermode);
@@ -813,4 +817,6 @@ public static class ModelFactory
     };
 
     public static Dictionary<KeyValuePair<Int32, String>, String[]> CustomModelField = new Dictionary<KeyValuePair<Int32, String>, String[]>();
+    public class CustomFbxFlag : MonoBehaviour { }
+    public static HashSet<Int32> ModelsWithShaderFix = new HashSet<Int32>();
 }

@@ -536,6 +536,13 @@ namespace Memoria
 
                     FF9BattleDBHeightAndRadius.Data[ModelId] = [height, radius, boneneck, tar_bone];
                 }
+                else if (String.Equals(entry[0], "InvertShader"))
+                {
+                    // eg.: InvertShader 9000 9001 9002 9003
+                    for (Int32 i = 1; i < entry.Length; i++)
+                        if (Int32.TryParse(entry[i], out Int32 modelId))
+                            ModelFactory.ModelsWithShaderFix.Add(modelId);
+                }
                 else if (String.Equals(entry[0], "ModifyPlayerParty"))
                 {
                     // eg.: ModifyPlayerParty Add 40
