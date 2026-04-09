@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34714.143
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memoria.Launcher", "Memoria.Launcher\Memoria.Launcher.csproj", "{95BC3C2C-0C8B-41B6-92E8-49D301119BE8}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp\Assembly-CSharp.csproj", "{3FE6492C-C2E2-48EE-9AD6-B2D9A7D43C93}"
 	ProjectSection(ProjectDependencies) = postProject
 		{952700CD-A384-43A4-AC4B-52256F83836E} = {952700CD-A384-43A4-AC4B-52256F83836E}
@@ -16,8 +18,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memoria.Compiler", "Memoria.Compiler\Memoria.Compiler.csproj", "{0BD08E14-E15A-4762-A4BE-F988A5013FF6}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Memoria.Injection", "Memoria.Injection\Memoria.Injection.vcxproj", "{DE23C520-C1E9-4120-BDAE-4966C1DD7F8E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memoria.Launcher", "Memoria.Launcher\Memoria.Launcher.csproj", "{95BC3C2C-0C8B-41B6-92E8-49D301119BE8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Memoria.Patcher", "Memoria.Patcher\Memoria.Patcher.csproj", "{4BB1EB9A-F28E-448A-90F1-C5594B5F84F8}"
 	ProjectSection(ProjectDependencies) = postProject
