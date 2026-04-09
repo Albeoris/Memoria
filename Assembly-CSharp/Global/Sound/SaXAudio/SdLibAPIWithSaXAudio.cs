@@ -117,6 +117,16 @@ namespace Global.Sound.SaXAudio
 
         public override Int32 SdSoundSystem_RemoveData(Int32 bankID)
         {
+            List<Int32> keysToRemove = new List<Int32>();
+            foreach (KeyValuePair<Int32, Int32> mapping in sounds)
+            {
+                if (mapping.Value == bankID)
+                    keysToRemove.Add(mapping.Key);
+            }
+
+            foreach (Int32 soundID in keysToRemove)
+                sounds.Remove(soundID);
+
             SaXAudio.BankRemove(bankID);
             bankData.Remove(bankID);
             return 0;
@@ -127,6 +137,7 @@ namespace Global.Sound.SaXAudio
             if (!bankData.ContainsKey(bankID))
             {
                 Log.Warning($"The BankID {bankID} was not found");
+                return -1;
             }
             BankData data = bankData[bankID];
             Int32 busID = 0;
@@ -155,7 +166,7 @@ namespace Global.Sound.SaXAudio
             }
 
             Int32 soundID = SaXAudio.CreateVoice(bankID, busID);
-            if (soundID >= 0)
+            if (soundID > 0)
             {
                 if (data.LoopEnd > 0)
                 {
@@ -169,7 +180,8 @@ namespace Global.Sound.SaXAudio
             if (preset != null)
                 AudioEffectManager.ApplyPresetOnSound(preset.Value, soundID, data.Profile.Name);
 
-            sounds[soundID] = bankID;
+            if (soundID > 0)
+                sounds[soundID] = bankID;
             LastSoundID = soundID;
             return soundID;
         }
@@ -186,7 +198,12 @@ namespace Global.Sound.SaXAudio
 
         public override Int32 SdSoundSystem_SoundCtrl_Start(Int32 soundID, Int32 offsetTimeMSec)
         {
-            Int32 bankID = sounds[soundID];
+            if (!sounds.TryGetValue(soundID, out Int32 bankID))
+            {
+                Log.Warning($"[SaXAudio] Start requested for unknown soundID {soundID}");
+                return 0;
+            }
+
             HashSet<Int32> toDelete = new HashSet<Int32>();
             foreach (var sound in sounds)
             {
@@ -195,19 +212,31 @@ namespace Global.Sound.SaXAudio
                     toDelete.Add(sound.Key);
                     continue;
                 }
-                if (sound.Value == bankID && SaXAudio.GetPauseStack(soundID) == 0)
+                if (sound.Value == bankID && SaXAudio.GetPauseStack(sound.Key) == 0)
                 {
                     Double pos = SaXAudio.GetPositionTime(sound.Key);
                     if (pos < 0.01d)
                     {
+                        if (!bankData.TryGetValue(sound.Value, out BankData bank))
+                        {
+                            toDelete.Add(sound.Key);
+                            continue;
+                        }
+
                         // Prevent same sound to play more than once at very close interval (<10ms)
-                        SoundLib.Log($"Sound already playing ({bankData[sound.Value].Profile.ResourceID}). Stopping {sound.Key} pos {(Int32)(pos * 1000)}ms");
+                        SoundLib.Log($"Sound already playing ({bank.Profile.ResourceID}). Stopping {sound.Key} pos {(Int32)(pos * 1000)}ms");
                         SaXAudio.Stop(sound.Key);
                     }
                 }
             }
             foreach(Int32 key in toDelete)
                 sounds.Remove(key);
+
+            if (!SaXAudio.VoiceExist(soundID))
+            {
+                sounds.Remove(soundID);
+                return 0;
+            }
 
             return SaXAudio.StartAtTime(soundID, offsetTimeMSec / 1000f) ? 1 : 0;
         }
