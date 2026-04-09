@@ -166,7 +166,7 @@ namespace Global.Sound.SaXAudio
             }
 
             Int32 soundID = SaXAudio.CreateVoice(bankID, busID);
-            if (soundID >= 0)
+            if (soundID > 0)
             {
                 if (data.LoopEnd > 0)
                 {
