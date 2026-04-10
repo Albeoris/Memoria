@@ -206,7 +206,7 @@ public class SteamSdkWrapper : ISocialPlatform
 
     [DllImport("steamwrapper")]
     [return: MarshalAs(UnmanagedType.I1)]
-    public static extern Boolean SteamAPIRestartAppIfNecessary();
+    public static extern Boolean SteamAPIRestartAppIfNecessary(Int32 appId);
 
     public Boolean Initialized { get; private set; }
 

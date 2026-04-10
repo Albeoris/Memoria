@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34714.143
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memoria.Launcher", "Memoria.Launcher\Memoria.Launcher.csproj", "{95BC3C2C-0C8B-41B6-92E8-49D301119BE8}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp\Assembly-CSharp.csproj", "{3FE6492C-C2E2-48EE-9AD6-B2D9A7D43C93}"
 	ProjectSection(ProjectDependencies) = postProject
 		{952700CD-A384-43A4-AC4B-52256F83836E} = {952700CD-A384-43A4-AC4B-52256F83836E}
@@ -15,18 +17,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memoria.Prime", "Memoria.Pr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memoria.Compiler", "Memoria.Compiler\Memoria.Compiler.csproj", "{0BD08E14-E15A-4762-A4BE-F988A5013FF6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memoria.Debugger", "Memoria.Debugger\Memoria.Debugger.csproj", "{76DE77F2-484C-40DC-9F01-066E9369E2EA}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Memoria.Injection", "Memoria.Injection\Memoria.Injection.vcxproj", "{DE23C520-C1E9-4120-BDAE-4966C1DD7F8E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memoria.Launcher", "Memoria.Launcher\Memoria.Launcher.csproj", "{95BC3C2C-0C8B-41B6-92E8-49D301119BE8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Memoria.Patcher", "Memoria.Patcher\Memoria.Patcher.csproj", "{4BB1EB9A-F28E-448A-90F1-C5594B5F84F8}"
 	ProjectSection(ProjectDependencies) = postProject
 		{0BD08E14-E15A-4762-A4BE-F988A5013FF6} = {0BD08E14-E15A-4762-A4BE-F988A5013FF6}
 		{3FE6492C-C2E2-48EE-9AD6-B2D9A7D43C93} = {3FE6492C-C2E2-48EE-9AD6-B2D9A7D43C93}
 		{76CC5596-5D70-44A1-B7C6-3DF321517C58} = {76CC5596-5D70-44A1-B7C6-3DF321517C58}
-		{76DE77F2-484C-40DC-9F01-066E9369E2EA} = {76DE77F2-484C-40DC-9F01-066E9369E2EA}
 		{8E82C124-FFC6-4B99-B5A9-F65B657E3822} = {8E82C124-FFC6-4B99-B5A9-F65B657E3822}
 		{95BC3C2C-0C8B-41B6-92E8-49D301119BE8} = {95BC3C2C-0C8B-41B6-92E8-49D301119BE8}
 		{CBC800DF-4DE1-4CBC-9C97-98CBB375204F} = {CBC800DF-4DE1-4CBC-9C97-98CBB375204F}
@@ -80,6 +77,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Memoria.SteamFix", "Memoria
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memoria.XInputDotNetPure", "Memoria.XInputDotNetPure\Memoria.XInputDotNetPure.csproj", "{952700CD-A384-43A4-AC4B-52256F83836E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SaXAudio", "SaXAudio\SaXAudio.vcxproj", "{058FDE78-3FE3-4D64-8DC2-E7A961888C13}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -126,16 +125,6 @@ Global
 		{0BD08E14-E15A-4762-A4BE-F988A5013FF6}.Release|x64.Build.0 = Release|Any CPU
 		{0BD08E14-E15A-4762-A4BE-F988A5013FF6}.Release|x86.ActiveCfg = Release|Any CPU
 		{0BD08E14-E15A-4762-A4BE-F988A5013FF6}.Release|x86.Build.0 = Release|Any CPU
-		{76DE77F2-484C-40DC-9F01-066E9369E2EA}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{76DE77F2-484C-40DC-9F01-066E9369E2EA}.Debug|x64.ActiveCfg = Debug|x64
-		{76DE77F2-484C-40DC-9F01-066E9369E2EA}.Debug|x64.Build.0 = Debug|x64
-		{76DE77F2-484C-40DC-9F01-066E9369E2EA}.Debug|x86.ActiveCfg = Debug|x86
-		{76DE77F2-484C-40DC-9F01-066E9369E2EA}.Debug|x86.Build.0 = Debug|x86
-		{76DE77F2-484C-40DC-9F01-066E9369E2EA}.Release|Any CPU.ActiveCfg = Release|x86
-		{76DE77F2-484C-40DC-9F01-066E9369E2EA}.Release|x64.ActiveCfg = Release|x64
-		{76DE77F2-484C-40DC-9F01-066E9369E2EA}.Release|x64.Build.0 = Release|x64
-		{76DE77F2-484C-40DC-9F01-066E9369E2EA}.Release|x86.ActiveCfg = Release|x86
-		{76DE77F2-484C-40DC-9F01-066E9369E2EA}.Release|x86.Build.0 = Release|x86
 		{DE23C520-C1E9-4120-BDAE-4966C1DD7F8E}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{DE23C520-C1E9-4120-BDAE-4966C1DD7F8E}.Debug|x64.ActiveCfg = Debug|x64
 		{DE23C520-C1E9-4120-BDAE-4966C1DD7F8E}.Debug|x64.Build.0 = Debug|x64
@@ -240,6 +229,18 @@ Global
 		{952700CD-A384-43A4-AC4B-52256F83836E}.Release|x64.Build.0 = Release|Any CPU
 		{952700CD-A384-43A4-AC4B-52256F83836E}.Release|x86.ActiveCfg = Release|Any CPU
 		{952700CD-A384-43A4-AC4B-52256F83836E}.Release|x86.Build.0 = Release|Any CPU
+		{058FDE78-3FE3-4D64-8DC2-E7A961888C13}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{058FDE78-3FE3-4D64-8DC2-E7A961888C13}.Debug|Any CPU.Build.0 = Debug|x64
+		{058FDE78-3FE3-4D64-8DC2-E7A961888C13}.Debug|x64.ActiveCfg = Debug|x64
+		{058FDE78-3FE3-4D64-8DC2-E7A961888C13}.Debug|x64.Build.0 = Debug|x64
+		{058FDE78-3FE3-4D64-8DC2-E7A961888C13}.Debug|x86.ActiveCfg = Debug|Win32
+		{058FDE78-3FE3-4D64-8DC2-E7A961888C13}.Debug|x86.Build.0 = Debug|Win32
+		{058FDE78-3FE3-4D64-8DC2-E7A961888C13}.Release|Any CPU.ActiveCfg = Release|x64
+		{058FDE78-3FE3-4D64-8DC2-E7A961888C13}.Release|Any CPU.Build.0 = Release|x64
+		{058FDE78-3FE3-4D64-8DC2-E7A961888C13}.Release|x64.ActiveCfg = Release|x64
+		{058FDE78-3FE3-4D64-8DC2-E7A961888C13}.Release|x64.Build.0 = Release|x64
+		{058FDE78-3FE3-4D64-8DC2-E7A961888C13}.Release|x86.ActiveCfg = Release|Win32
+		{058FDE78-3FE3-4D64-8DC2-E7A961888C13}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

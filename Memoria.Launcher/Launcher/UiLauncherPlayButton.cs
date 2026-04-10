@@ -43,9 +43,23 @@ namespace Memoria.Launcher
 
             GetScreenResolution(out int width, out int height, monitor);
 
-            String workingDirectory = Path.GetFullPath(".\\" + (GameSettings.IsX64 ? "x64" : "x86"));
+            String gameArch = (GameSettings.IsX64 ? "x64" : "x86");
+            String workingDirectory = Path.GetFullPath(".\\" + gameArch);
             String executablePath = PrepareExecutableAndData(workingDirectory);
             String arguments = $"-runbylauncher -single-instance -monitor {monitor.ToString(CultureInfo.InvariantCulture)} -screen-width {width.ToString(CultureInfo.InvariantCulture)} -screen-height {height.ToString(CultureInfo.InvariantCulture)} -screen-fullscreen {(GameSettingsDisplay.WindowMode == 1 ? "1" : "0")} {(GameSettingsDisplay.WindowMode >= 2 ? "-popupwindow" : "")}";
+            String debugInjectorDestPath = Path.Combine(workingDirectory, "version.dll");
+
+            var appidPath = Path.Combine(".\\", "steam_appid.txt");
+            if (!File.Exists(appidPath)) File.WriteAllText(appidPath, "377840");
+
+            if (GameSettings.IsDebugMode)
+                File.Copy(
+                    Path.Combine(".\\Debugger", gameArch, "Memoria.Injection.dll"),
+                    debugInjectorDestPath,
+                    true
+                );
+            else if (File.Exists(debugInjectorDestPath))
+                File.Delete(debugInjectorDestPath);
 
             SetResourceReference(LabelProperty, "Launcher.Launch");
             StartGameProcess(executablePath, arguments);
@@ -187,35 +201,11 @@ namespace Memoria.Launcher
         }
 
         // Launch the game process with given args.
-        private void StartGameProcess(string exePath, string args)
+        private async void StartGameProcess(string exePath, string args)
         {
             ProcessStartInfo gameStartInfo = new ProcessStartInfo(exePath, args) { UseShellExecute = false };
-            if (GameSettings.IsDebugMode)
-                gameStartInfo.EnvironmentVariables["UNITY_GIVE_CHANCE_TO_ATTACH_DEBUGGER"] = "1";
-
             Process gameProcess = new Process { StartInfo = gameStartInfo };
             gameProcess.Start();
-
-            if (!GameSettings.IsDebugMode)
-                return;
-
-            Process debuggerProcess = Process.GetProcesses().FirstOrDefault(p => p.ProcessName.StartsWith("Memoria.Debugger"));
-            if (debuggerProcess != null)
-                return;
-
-            try
-            {
-                String debuggerDirectory = Path.Combine(Path.GetFullPath("Debugger"), (GameSettings.IsX64 ? "x64" : "x86"));
-                String debuggerPath = Path.Combine(debuggerDirectory, "Memoria.Debugger.exe");
-                String debuggerArgs = "10000"; // Timeout: 10 seconds
-                if (Directory.Exists(debuggerDirectory) && File.Exists(debuggerPath))
-                {
-                    ProcessStartInfo debuggerStartInfo = new ProcessStartInfo(debuggerPath, debuggerArgs) { WorkingDirectory = debuggerDirectory };
-                    debuggerProcess = new Process { StartInfo = debuggerStartInfo };
-                    debuggerProcess.Start();
-                }
-            }
-            catch { }
         }
 
         internal static async Task<Boolean> CheckUpdates(Window rootElement, ManualResetEvent cancelEvent, SettingsGrid_Vanilla gameSettings)
