@@ -30,9 +30,11 @@ namespace SaXAudio
         if (!SourceVoice || !BankData) return false;
         Log(BankID, VoiceID, "[Start] at: " + to_string(atSample) + (Looping ? " loop start: " + to_string(LoopStart) + " loop end: " + to_string(LoopEnd) : ""));
 
-        // Update position offset
+        XAUDIO2_VOICE_STATE state;
+        SourceVoice->GetState(&state);
+
         m_positionOffset = atSample;
-        if (IsPlaying)
+        if (IsPlaying || state.BuffersQueued > 0)
         {
             if (flush)
             {
@@ -40,8 +42,6 @@ namespace SaXAudio
                 SourceVoice->Stop();
                 SourceVoice->FlushSourceBuffers();
             }
-            XAUDIO2_VOICE_STATE state;
-            SourceVoice->GetState(&state);
             m_positionOffset -= state.SamplesPlayed;
         }
 
