@@ -61,6 +61,10 @@ public static class ModelFactory
             //model = ModelImporter.CreateCustomModelFromRawText(externalPath);
             if (model == null)
                 return null;
+
+            if (ModelsWithShaderFix.Contains(GetGEOID(GetNameFromFF9DBALL(Path.GetFileNameWithoutExtension(modelNameId))))) // To fix shader for some .fbx model
+                model.AddComponent<CustomFbxFlag>();
+
             Renderer[] renderers = model.GetComponentsInChildren<Renderer>();
             foreach (Renderer renderer in renderers)
                 ModelFactory.SetMatFilter(renderer.material, filtermode);
@@ -86,14 +90,6 @@ public static class ModelFactory
                     texture.name = name;
                     renderer.material.SetTexture("_MainTex", texture);
                     ModelFactory.SetMatFilter(renderer.material, Configuration.Graphics.ElementsSmoothTexture);
-                    checkTextureOnDisc = false;
-                }
-            }
-            if (SceneDirector.IsFieldScene())
-            {
-                if (CustomModelField.TryGetValue(new KeyValuePair<Int32, String>(FF9StateSystem.Common.FF9.fldMapNo, modelNameId), out String[] modelSwapEntry))
-                {
-                    ChangeModelTexture(model, modelSwapEntry);
                     checkTextureOnDisc = false;
                 }
             }
@@ -199,6 +195,21 @@ public static class ModelFactory
         if (isBattle && battlebg.BattleRoot != null)
             model.transform.parent = battlebg.BattleRoot.transform;
         return model;
+    }
+
+    public static void PatchTextureModel(GameObject model, string modelname, byte actor_uid)
+    {
+        if (CustomModelField.Count == 0)
+            return;
+
+        Int32 FieldID = FF9StateSystem.Common.FF9.fldMapNo;
+        String KeyModelActor = $"{modelname}#{actor_uid}";
+        String[] NewTexturePath;
+
+        if (CustomModelField.TryGetValue(new KeyValuePair<Int32, String>(FieldID, KeyModelActor), out NewTexturePath)) // Change Texture on a specific actor_uid (see DataPatchers.cs)
+            ChangeModelTexture(model, NewTexturePath);
+        else if (CustomModelField.TryGetValue(new KeyValuePair<Int32, String>(FieldID, modelname), out NewTexturePath))
+            ChangeModelTexture(model, NewTexturePath);
     }
 
     public static Boolean IsUseAsEnemyCharacter(String path)
@@ -806,4 +817,6 @@ public static class ModelFactory
     };
 
     public static Dictionary<KeyValuePair<Int32, String>, String[]> CustomModelField = new Dictionary<KeyValuePair<Int32, String>, String[]>();
+    public class CustomFbxFlag : MonoBehaviour { }
+    public static HashSet<Int32> ModelsWithShaderFix = new HashSet<Int32>();
 }

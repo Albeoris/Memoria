@@ -519,16 +519,83 @@ namespace Memoria
                         FF9BattleDB.Animation[ID[idindex]] = entry[entry.Length - 1];
                     }
                 }
+                else if (String.Equals(entry[0], "3DModelParameter"))
+                {
+                    // eg.: 3DModelParameter MODELID HEIGHT RADIUS BONENECK TARGET_BONE
+
+                    if (!Int32.TryParse(entry[1], out Int32 ModelId))
+                        continue;
+                    if (!Int32.TryParse(entry[2], out Int32 height))
+                        continue;
+                    if (!Int32.TryParse(entry[3], out Int32 radius))
+                        continue;
+                    if (!Int32.TryParse(entry[4], out Int32 boneneck))
+                        continue;
+                    if (!Int32.TryParse(entry[5], out Int32 tar_bone))
+                        tar_bone = 0;
+
+                    FF9BattleDBHeightAndRadius.Data[ModelId] = [height, radius, boneneck, tar_bone];
+                }
+                else if (String.Equals(entry[0], "InvertShader"))
+                {
+                    // eg.: InvertShader 9000 9001 9002 9003
+                    for (Int32 i = 1; i < entry.Length; i++)
+                        if (Int32.TryParse(entry[i], out Int32 modelId))
+                            ModelFactory.ModelsWithShaderFix.Add(modelId);
+                }
+                else if (String.Equals(entry[0], "ModifyPlayerParty"))
+                {
+                    // eg.: ModifyPlayerParty Add 40
+                    // eg.: ModifyPlayerParty Remove 30
+                    // eg.: ModifyPlayerParty Set 1 2 3 4
+
+                    Boolean add = String.Equals(entry[1], "Add");
+                    Boolean remove = String.Equals(entry[1], "Remove");
+                    Boolean set = String.Equals(entry[1], "Set");
+
+                    if (set)
+                        PartySettingUI.ForcedParty.Clear();
+
+                    for (Int32 i = 2; i < entry.Length; i++)
+                    {
+                        if (Int32.TryParse(entry[i], out Int32 charId))
+                        {
+                            if (set)
+                                PartySettingUI.ForcedParty.Add((CharacterId)charId);
+                            else if (add)
+                                PartySettingUI.AddCharacterForParty.Add((CharacterId)charId);
+                            else if (remove)
+                                PartySettingUI.AddCharacterForParty.Remove((CharacterId)charId);
+                        }
+                    }
+                }
                 else if (String.Equals(entry[0], "SwapFieldModelTexture"))
                 {
                     // eg.: SwapFieldModelTexture 2250 GEO_MON_B3_093 CustomTextures/OeilvertGuardian/342_0.png CustomTextures/OeilvertGuardian/342_1.png CustomTextures/OeilvertGuardian/342_2.png CustomTextures/OeilvertGuardian/342_3.png CustomTextures/OeilvertGuardian/342_4.png CustomTextures/OeilvertGuardian/342_5.png
-                    List<string> TexturesList = new List<string>();
+                    //      SwapFieldModelTexture 257 GEO_NPC_F0_BMG 13 CustomTextures/BlackMageNo222/5468_0.png CustomTextures/BlackMageNo222/5468_1.png
+                    if (entry.Length < 3)
+                        continue;
+
                     if (!Int32.TryParse(entry[1], out Int32 fieldID))
                         continue;
-                    for (Int32 i = 3; i < entry.Length; i++)
+
+                    Int32 textureStartIndex = 3;
+                    Int32? actorId = null;
+
+                    if (entry.Length > 3 && Int32.TryParse(entry[3], out Int32 parsedOptionalArg))
+                    {
+                        actorId = parsedOptionalArg;
+                        textureStartIndex = 4;
+                    }
+
+                    List<string> TexturesList = new List<string>();
+                    for (Int32 i = textureStartIndex; i < entry.Length; i++)
                         TexturesList.Add(entry[i]);
+
+                    String modelKey = actorId.HasValue ? $"{entry[2]}#{actorId.Value}" : entry[2];
+
                     String[] TexturesCustomModel = TexturesList.ToArray();
-                    ModelFactory.CustomModelField.Add(new KeyValuePair<Int32, String>(fieldID, entry[2]), TexturesCustomModel);
+                    ModelFactory.CustomModelField[new KeyValuePair<Int32, String>(fieldID, modelKey)] = TexturesCustomModel;
                 }
             }
             if (shouldUpdateBattleStatus)

@@ -300,10 +300,24 @@ public partial class BattleHUD : UIScene
         }
         else if (ButtonGroupState.ActiveGroup == AbilityGroupButton)
         {
-            if (CheckAbilityStatus(go.GetComponent<RecycleListItem>().ItemDataIndex) == AbilityStatus.Enable)
+            Int32 index = go.GetComponent<RecycleListItem>().ItemDataIndex;
+            Int32 abilityId;
+
+            if (_abilityIdList != null && index >= 0 && index < _abilityIdList.Count)
+                abilityId = _abilityIdList[index];
+            else
+                abilityId = CharacterCommands.Commands[_currentCommandId].ListEntry[index];
+
+            AbilityStatus AAstatus = AbilityStatus.None;
+            if (CommandIsMonsterTransformCommand(CurrentPlayerIndex, _currentCommandId, out BTL_DATA.MONSTER_TRANSFORM transform))
+                AAstatus = GetMonsterTransformAbilityState(abilityId);
+            else
+                AAstatus = GetAbilityState(abilityId);
+
+            if (AAstatus == AbilityStatus.Enable)
             {
                 FF9Sfx.FF9SFX_Play(103);
-                _currentSubMenuIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
+                _currentSubMenuIndex = index;
                 _abilityCursorMemorize[new PairCharCommand(CurrentPlayerIndex, _currentCommandId)] = _currentSubMenuIndex;
 
                 SetAbilityPanelVisibility(false, false);
@@ -412,7 +426,36 @@ public partial class BattleHUD : UIScene
         {
             if (_usingMainMenu)
                 return true;
-            if (!_hidingHud && ButtonGroupState.ActiveGroup == CommandGroupButton)
+
+            if (ButtonGroupState.ActiveGroup == AbilityGroupButton && AbilityPanel.activeSelf && Configuration.Battle.AASASorter)
+            {
+                Int32 currentIndex = _currentSubMenuIndex;
+
+                if (currentIndex >= 0 && currentIndex < _abilityIdList.Count)
+                {
+                    if (_battleSortingIndex == -1)
+                    {
+                        FF9Sfx.FF9SFX_Play(103);
+                        _battleSortingIndex = currentIndex;
+                        DisplayAbility();
+                    }
+                    else
+                    {
+                        FF9Sfx.FF9SFX_Play(103);
+                        Int32 idSource = _abilityIdList[_battleSortingIndex];
+                        Int32 idDest = _abilityIdList[currentIndex];
+                        _abilityIdList[_battleSortingIndex] = idDest;
+                        _abilityIdList[currentIndex] = idSource;
+                        PLAYER player = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex).Player;
+                        AbilitySorter.UpdateBattleOrder(player.Index, _currentCommandId, _abilityIdList);
+                        _battleSortingIndex = -1;
+                        DisplayAbility();
+                        _abilityScrollList.JumpToIndex(currentIndex, false);
+                    }
+                }
+                return true;
+            }
+            else if (!_hidingHud && ButtonGroupState.ActiveGroup == CommandGroupButton)
             {
                 if (ReadyQueue.Count > 1)
                 {
@@ -522,8 +565,48 @@ public partial class BattleHUD : UIScene
 
     public override Boolean OnKeyRightTrigger(GameObject go)
     {
-        if (base.OnKeyRightTrigger(go) && !_hidingHud && !AndroidTvOnKeyRightTrigger(go))
+        if (!base.OnKeyLeftTrigger(go))
+            return true;
+
+        if (ButtonGroupState.ActiveGroup == AbilityGroupButton && AbilityPanel.activeSelf && Configuration.Battle.AASASorter)
+        {
+            if (_battleSortingIndex != -1)
+            {
+                FF9Sfx.FF9SFX_Play(1047);
+                PLAYER player = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex).Player;
+                AbilitySorter.ResetBattleOrder(player.Index, _currentCommandId);
+                _battleSortingIndex = -1;
+                DisplayAbility();
+                _abilityScrollList.JumpToIndex(0, false);
+
+                return true;
+            }
+        }
+
+        if (!_hidingHud && !AndroidTvOnKeyRightTrigger(go))
             ProcessAutoBattleInput();
+        return true;
+    }
+
+    public override Boolean OnKeyLeftTrigger(GameObject go)
+    {
+        if (!base.OnKeyLeftTrigger(go))
+            return true;
+
+        if (ButtonGroupState.ActiveGroup == AbilityGroupButton && AbilityPanel.activeSelf && Configuration.Battle.AASASorter)
+        {
+            if (_battleSortingIndex != -1)
+            {
+                FF9Sfx.FF9SFX_Play(1047);
+                PLAYER player = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex).Player;
+                AbilitySorter.ResetBattleOrder(player.Index, _currentCommandId);
+                _battleSortingIndex = -1;
+                DisplayAbility();
+                _abilityScrollList.JumpToIndex(0, false);
+
+                return true;
+            }
+        }
         return true;
     }
 

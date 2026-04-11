@@ -1,4 +1,4 @@
-using Memoria.Assets;
+﻿using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Prime.IL;
@@ -269,6 +269,13 @@ namespace Memoria.Scripts
             return null;
         }
 
+        public static IEnumerable<Object> GetOverloadedMethods(Type overloadId)
+        {
+            foreach (Result result in s_result)
+                if (result.OverloadableMethodScripts.TryGetValue(overloadId, out Type scriptType))
+                    yield return scriptType.GetConstructor(Type.EmptyTypes).Invoke(null);
+        }
+
         private static void Initialize()
         {
             String currentDLL = null;
@@ -317,6 +324,70 @@ namespace Memoria.Scripts
                 }
 
                 BattleVoice.Initialize();
+                MergingScriptsCache.Initialize();
+
+                // Log the loaded scripts
+                Int32 totalScripts = 0;
+                List<String> logLines = new List<String>();
+
+                Dictionary<String, Int32> overloadCounts = new Dictionary<String, Int32>();
+                foreach (Result res in s_result)
+                {
+                    foreach (Type overloadType in res.OverloadableMethodScripts.Keys)
+                    {
+                        String name = overloadType.Name.Substring(1);
+                        if (!overloadCounts.ContainsKey(name))
+                            overloadCounts[name] = 0;
+                        overloadCounts[name]++;
+                        totalScripts++;
+                    }
+                }
+
+                if (overloadCounts.Count > 0)
+                {
+                    List<String> overloadDetails = new List<String>();
+                    foreach (var kvp in overloadCounts)
+                        overloadDetails.Add($"{kvp.Value} {kvp.Key}");
+
+                    String overloadStr = overloadDetails.Count > 1
+                        ? String.Join(", ", overloadDetails.Take(overloadDetails.Count - 1).ToArray()) + " and " + overloadDetails.Last()
+                        : overloadDetails[0];
+
+                    logLines.Add($"└> {overloadStr}");
+                }
+
+                foreach (Result res in s_result)
+                {
+                    // Extraire le nom du mod ("Memoria.Scripts.TranceSeek" devient "TranceSeek")
+                    String modName = Path.GetFileNameWithoutExtension(res.DLLPath);
+                    if (modName != null && modName.StartsWith("Memoria.Scripts."))
+                        modName = modName.Substring(16);
+                    else if (modName == "Memoria.Scripts")
+                        modName = "Memoria Base"; // Les scripts par défaut
+
+                    Int32 battleCount = res.BattleBaseScripts.Count(s => s != null) + res.BattleExtendedScripts.Count;
+                    if (battleCount > 0)
+                    {
+                        logLines.Add($"└> {battleCount} IBattleScript (from {modName})");
+                        totalScripts += battleCount;
+                    }
+
+                    if (res.StatusScripts.Count > 0)
+                    {
+                        logLines.Add($"└> {res.StatusScripts.Count} StatusScriptBase (from {modName})");
+                        totalScripts += res.StatusScripts.Count;
+                    }
+
+                    if (res.FieldAbilityScripts.Count > 0)
+                    {
+                        logLines.Add($"└> {res.FieldAbilityScripts.Count} FieldAbilityScriptBase (from {modName})");
+                        totalScripts += res.FieldAbilityScripts.Count;
+                    }
+                }
+
+                Log.Message($"[ScriptsLoader] {totalScripts} scripts loaded");
+                foreach (String line in logLines)
+                    Log.Message(line);
             }
             catch (Exception ex)
             {
