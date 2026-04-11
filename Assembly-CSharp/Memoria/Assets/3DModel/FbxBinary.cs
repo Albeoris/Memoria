@@ -77,7 +77,8 @@ namespace Memoria.Assets
 
         const string timePath1 = "FBXHeaderExtension";
         const string timePath2 = "CreationTimeStamp";
-        static readonly Stack<string> timePath = new Stack<string>([timePath1, timePath2]);
+        static string[] timePaths = [ timePath1, timePath2 ];
+        static readonly Stack<string> timePath = new Stack<string>(timePaths);
 
         // Gets a single timestamp component
         static int GetTimestampVar(FbxNode timestamp, string element)
