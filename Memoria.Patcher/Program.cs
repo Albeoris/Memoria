@@ -412,8 +412,10 @@ namespace Memoria.Patcher
                 else if (_filesForBackup.Contains(extension))
                 {
                     String backupPath = Path.ChangeExtension(outputPath, ".bak");
-                    if (!File.Exists(backupPath))
-                        File.Move(outputPath, backupPath);
+
+                    if (File.Exists(backupPath)) File.Delete(backupPath);
+
+                    File.Move(outputPath, backupPath);
                 }
                 else if (_iniFileName.Contains(outputName))
                 {
