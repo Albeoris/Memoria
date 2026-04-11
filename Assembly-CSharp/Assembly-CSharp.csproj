@@ -265,6 +265,7 @@
     <Compile Include="Global\EFFECT_GLOW.cs" />
     <Compile Include="Global\NormalSolver.cs" />
     <Compile Include="Global\Sound\SaXAudio\AudioEffectManager.cs" />
+    <Compile Include="Global\Sound\SaXAudio\EffectPreset.cs" />
     <Compile Include="Global\Sound\SaXAudio\SaXAudio.cs" />
     <Compile Include="Global\Sound\SaXAudio\SdLibAPIWithSaXAudio.cs" />
     <Compile Include="Global\SPS\BattleSPSSystem.cs" />

@@ -1094,7 +1094,7 @@ namespace SoundDebugRoom
                     if (GUILayout.Button("Enable All"))
                     {
                         presetChanged = true;
-                        soundViewController.CurrentEffect.Effects = AudioEffectManager.EffectPreset.Effect.All;
+                        soundViewController.CurrentEffect.Effects = EffectPreset.Effect.All;
 
                         soundViewController.SetReverb();
                         soundViewController.SetEq();
