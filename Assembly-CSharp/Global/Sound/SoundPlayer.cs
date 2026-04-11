@@ -47,7 +47,14 @@ public abstract class SoundPlayer
 
     public static void StaticCreateSound(SoundProfile soundProfile)
     {
-        if (soundProfile.SoundID > 0) return;
+        if (soundProfile.SoundID > 0)
+        {
+            if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) != 0)
+                return;
+
+            SoundLib.Log("CreateSound stale SoundID detected, recreating");
+            soundProfile.SoundID = 0;
+        }
 
         Int32 num = ISdLibAPIProxy.Instance.SdSoundSystem_CreateSound(soundProfile.BankID);
         if (num <= 0)
