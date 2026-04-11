@@ -45,6 +45,9 @@ namespace SaXAudio
             m_positionOffset -= state.SamplesPlayed;
         }
 
+        Fader::Instance.StopFade(m_volumeFadeID);
+        m_volumeFadeID = 0;
+
         // Set up buffer
         Buffer.PlayBegin = atSample;
         Buffer.PlayLength = 0; // Plays until the end
