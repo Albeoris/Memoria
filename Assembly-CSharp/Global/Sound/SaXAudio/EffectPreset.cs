@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using NCalc;
 
 namespace Global.Sound.SaXAudio
 {
@@ -42,6 +43,8 @@ namespace Global.Sound.SaXAudio
         public HashSet<String> ResourceIDs = new HashSet<String>();
         public String Condition = "";
 
+        public Expression CompiledCondition { get; private set; } = null;
+
         public EffectPreset() { }
 
         public Boolean IsBusInLayers(Int32 bus)
@@ -69,6 +72,15 @@ namespace Global.Sound.SaXAudio
             BattleIDs = null;
             BattleBgIDs = null;
             ResourceIDs = null;
+        }
+
+        public static Expression PrepareExpression(String code)
+        {
+            Expression e = new Expression(code);
+            e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+            e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+            e.EvaluateParameter += NCalcUtility.worldNCalcParameters;
+            return e;
         }
 
         public void ParseEntry(String[] raw, CsvMetaData metadata)
@@ -158,6 +170,17 @@ namespace Global.Sound.SaXAudio
             }
 
             Condition = raw[47];
+            if (!String.IsNullOrEmpty(Condition))
+            {
+                try
+                {
+                    CompiledCondition = PrepareExpression(Condition);
+                }
+                catch (Exception e)
+                {
+                    Memoria.Prime.Log.Warning($"[EffectPreset] Failed to compile condition '{Condition}' for preset '{Name}': {e.Message}");
+                }
+            }
         }
 
         public void WriteEntry(CsvWriter writer, CsvMetaData metadata)

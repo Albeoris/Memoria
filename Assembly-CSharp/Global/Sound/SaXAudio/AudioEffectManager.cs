@@ -88,25 +88,29 @@ namespace Global.Sound.SaXAudio
                 return null;
 
             EffectPreset preset = null;
-            if (resourceIDPresets.ContainsKey(profile.ResourceID))
-                preset = resourceIDPresets[profile.ResourceID];
 
-            // resourceIDs gets priority
-            if (preset != null && (String.IsNullOrEmpty(preset.Condition) || EvaluatePresetCondition(profile, preset.Condition, preset.Name)))
-                return preset;
+            // 1. resourceIDs gets priority
+            if (resourceIDPresets.TryGetValue(profile.ResourceID, out preset))
+                if (String.IsNullOrEmpty(preset.Condition) || EvaluatePresetCondition(profile, preset.CompiledCondition, preset.Name))
+                    return preset;
 
-            // then conditional
+            // 2. then conditional
             for (Int32 i = 0; i < conditionalPresets.Count; i++)
             {
                 preset = conditionalPresets[i];
-                if ((preset.Layers == EffectPreset.Layer.None || preset.IsBusInLayers(bus)) && EvaluatePresetCondition(profile, preset.Condition, preset.Name))
+
+                Boolean isBusValid = preset.Layers == EffectPreset.Layer.None || preset.IsBusInLayers(bus);
+                if (isBusValid && EvaluatePresetCondition(profile, preset.CompiledCondition, preset.Name))
                     return preset;
             }
 
-            // then filter current preset
+            // 3. then filter current preset
             preset = currentPreset;
-            if (preset != null && preset.IsBusInLayers(bus) && !String.IsNullOrEmpty(preset.Condition) && !EvaluatePresetCondition(profile, preset.Condition, preset.Name))
-                return new EffectPreset(); // empty preset because we want to exclude that particular sound
+            if (preset != null && preset.IsBusInLayers(bus))
+            {
+                if (!String.IsNullOrEmpty(preset.Condition) && !EvaluatePresetCondition(profile, preset.CompiledCondition, preset.Name))
+                    return new EffectPreset(); // empty preset because we want to exclude that particular sound
+            }
 
             return null;
         }
@@ -157,12 +161,10 @@ namespace Global.Sound.SaXAudio
             return null;
         }
 
-        public static Boolean EvaluatePresetCondition(SoundProfile profile, String condition, String presetName)
+        public static Boolean EvaluatePresetCondition(SoundProfile profile, Expression c, String presetName)
         {
-            Expression c = new Expression(condition);
-            c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-            c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-            c.EvaluateParameter += NCalcUtility.worldNCalcParameters;
+            if (c == null) return false;
+
             c.Parameters["SoundIndex"] = profile.SoundIndex;
             c.Parameters["ResourceID"] = profile.ResourceID;
             c.Parameters["SoundProfileType"] = profile.SoundProfileType;
@@ -181,7 +183,7 @@ namespace Global.Sound.SaXAudio
             }
             catch (Exception e)
             {
-                Log.Error($"[AudioEffectManager] Couldn't evaluate condition: '{condition.Trim()}' in preset '{presetName}'");
+                Log.Error($"[AudioEffectManager] Couldn't evaluate condition in preset '{presetName}'");
                 Log.Error(e);
             }
 
