@@ -297,7 +297,7 @@ namespace Global.Sound.SaXAudio
 
             if (watcher == null)
             {
-                watcher = new FileSystemWatcher("./", $"*{FILENAME}");
+                watcher = new FileSystemWatcher("./", Path.GetFileName(FILENAME));
                 watcher.IncludeSubdirectories = true;
                 watcher.NotifyFilter = NotifyFilters.LastWrite;
                 watcher.Changed += (sender, e) =>
