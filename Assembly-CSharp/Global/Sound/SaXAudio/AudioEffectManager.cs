@@ -254,7 +254,7 @@ namespace Global.Sound.SaXAudio
             {
                 if (folder.TryFindAssetInModOnDisc(FILENAME, out String fullPath))
                 {
-                    var presets = LoadPresets($"{Path.GetDirectoryName(fullPath)}\\");
+                    var presets = LoadPresets(folder.FolderPath);
                     foreach (var preset in presets.Values)
                     {
                         Boolean listed = false;
