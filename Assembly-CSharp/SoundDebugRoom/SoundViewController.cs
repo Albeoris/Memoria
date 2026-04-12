@@ -45,6 +45,7 @@ namespace SoundDebugRoom
                 return;
             }
             currentPlaylist = 0;
+            currentFilter = "";
             PlaylistInfo = "";
             PlaylistDetail = "";
             filteredPlaylist = null;
@@ -411,6 +412,7 @@ namespace SoundDebugRoom
         public void GenerateVoiceList(String modLocation)
         {
             currentVoiceMod = modLocation;
+            currentFilter = "";
             PlaylistInfo = "";
             PlaylistDetail = "";
             currentPlaylist = 0;
@@ -418,21 +420,11 @@ namespace SoundDebugRoom
             GeneratePlaylistData();
         }
 
-        public void FilterVoiceList(String filter)
+        public void FilterPlaylist(String filter)
         {
-            voiceFilter = filter;
+            currentFilter = filter;
             currentPlaylist = 0;
-
-            if (!ModVoiceDictionary.ContainsKey(currentVoiceMod))
-                return;
-
-            filteredPlaylist = ModVoiceDictionary[currentVoiceMod];
-            if (voiceFilter.Length > 0)
-            {
-                filteredPlaylist = filteredPlaylist.Where((p) => p.ResourceID.ToLower().Contains(voiceFilter.ToLower())).ToList();
-            }
-            if (filteredPlaylist.Count == 0)
-                filteredPlaylist = ModVoiceDictionary[currentVoiceMod];
+            filteredPlaylist = null;
             GeneratePlaylistData();
         }
 
@@ -491,34 +483,10 @@ namespace SoundDebugRoom
 
         public void NextPlayList()
         {
-            Int32 count = 0;
-            if (activeType == SoundProfileType.Music)
-            {
-                count = allMusicIndex.Count;
-            }
-            else if (activeType == SoundProfileType.SoundEffect)
-            {
-                count = allSoundEffectIndex.Count;
-            }
-            else if (activeType == SoundProfileType.Song)
-            {
-                count = allSongIndex.Count;
-            }
-            else if (activeType == SoundProfileType.Sfx)
-            {
-                SoundLib.LogWarning("Does not support SoundProfileType.Sfx");
-            }
-            else if (activeType == SoundProfileType.MovieAudio)
-            {
-                count = allMovieAudioIndex.Count;
-            }
-            else if (activeType == SoundProfileType.Voice && filteredPlaylist != null)
-            {
-                count = filteredPlaylist.Count;
-            }
-            Int32 num = (Int32)((count % 100 != 0) ? 1 : 0);
-            Int32 num2 = count / 100 + num;
-            if (currentPlaylist < num2 - 1)
+            if (activeType == SoundProfileType.Sfx) return;
+            Int32 count = filteredPlaylist != null ? filteredPlaylist.Count : 0;
+            Int32 maxPage = Math.Max(0, (count - 1) / 100);
+            if (currentPlaylist < maxPage)
             {
                 currentPlaylist++;
                 GeneratePlaylistData();
@@ -591,96 +559,61 @@ namespace SoundDebugRoom
 
         private List<SoundProfile> GetActiveTypePlaylist()
         {
-            List<Int32> list = null;
-            if (activeType == SoundProfileType.Music)
-            {
-                list = allMusicIndex;
-            }
-            else if (activeType == SoundProfileType.SoundEffect)
-            {
-                list = allSoundEffectIndex;
-            }
-            else if (activeType == SoundProfileType.Song)
-            {
-                list = allSongIndex;
-            }
-            else if (activeType == SoundProfileType.Sfx)
-            {
-                SoundLib.LogWarning("GetPlaylist does not support SoundProfileType.Sfx");
-            }
-            else if (activeType == SoundProfileType.MovieAudio)
-            {
-                list = allMovieAudioIndex;
-            }
-            else if (activeType == SoundProfileType.Voice && ModVoiceDictionary.ContainsKey(currentVoiceMod))
-            {
-                if (filteredPlaylist == null)
-                    FilterVoiceList(voiceFilter);
+            if (activeType == SoundProfileType.Sfx) return null;
 
-                Int32 index = Math.Min(currentPlaylist * 100, filteredPlaylist.Count - 1);
-                Int32 count = (100 + index) > filteredPlaylist.Count ? filteredPlaylist.Count - index : 100;
-                return filteredPlaylist.GetRange(index, count);
-            }
-            if (list == null)
+            if (filteredPlaylist == null)
             {
-                return null;
+                filteredPlaylist = new List<SoundProfile>();
+                if (activeType == SoundProfileType.Voice)
+                {
+                    if (ModVoiceDictionary.ContainsKey(currentVoiceMod))
+                    {
+                        var voices = ModVoiceDictionary[currentVoiceMod];
+                        if (String.IsNullOrEmpty(currentFilter))
+                            filteredPlaylist.AddRange(voices);
+                        else
+                            filteredPlaylist.AddRange(voices.Where(p => p.ResourceID.ToLower().Contains(currentFilter.ToLower())));
+                    }
+                }
+                else
+                {
+                    List<Int32> list = null;
+                    if (activeType == SoundProfileType.Music) list = allMusicIndex;
+                    else if (activeType == SoundProfileType.SoundEffect) list = allSoundEffectIndex;
+                    else if (activeType == SoundProfileType.Song) list = allSongIndex;
+                    else if (activeType == SoundProfileType.MovieAudio) list = allMovieAudioIndex;
+
+                    if (list != null)
+                    {
+                        foreach (Int32 id in list)
+                        {
+                            SoundProfile p = SoundMetaData.GetSoundProfile(id, activeType);
+                            if (String.IsNullOrEmpty(currentFilter) ||
+                                (p.Name != null && p.Name.ToLower().Contains(currentFilter.ToLower())) ||
+                                p.SoundIndex.ToString().Contains(currentFilter))
+                            {
+                                filteredPlaylist.Add(p);
+                            }
+                        }
+                    }
+                }
             }
-            if (currentPlaylist < 0)
-            {
-                return null;
-            }
-            if (currentPlaylist > list.Count)
-            {
-                return null;
-            }
-            Int32 num = currentPlaylist * 100;
-            List<SoundProfile> list2 = new List<SoundProfile>();
-            Int32 num2 = num;
-            while (num2 < num + 100 && num2 < list.Count)
-            {
-                list2.Add(SoundMetaData.GetSoundProfile(list[num2], activeType));
-                num2++;
-            }
-            return list2;
+
+            if (filteredPlaylist.Count == 0) return new List<SoundProfile>();
+            Int32 index = Math.Min(currentPlaylist * 100, Math.Max(0, filteredPlaylist.Count - 1));
+            Int32 count = Math.Min(100, filteredPlaylist.Count - index);
+            return filteredPlaylist.GetRange(index, count);
         }
 
         private void SetPlaylistInfo(List<SoundProfile> allSoundProfile)
         {
-            Int32 count = 0;
-            if (activeType == SoundProfileType.Music)
-            {
-                count = allMusicIndex.Count;
-            }
-            else if (activeType == SoundProfileType.SoundEffect)
-            {
-                count = allSoundEffectIndex.Count;
-            }
-            else if (activeType == SoundProfileType.Song)
-            {
-                count = allSongIndex.Count;
-            }
-            else if (activeType == SoundProfileType.Sfx)
-            {
-                SoundLib.LogWarning("SetPlaylistInfo does not support SoundProfileType.Sfx");
-            }
-            else if (activeType == SoundProfileType.MovieAudio)
-            {
-                count = allMovieAudioIndex.Count;
-            }
-            else if (activeType == SoundProfileType.Voice)
-            {
-                count = ModVoiceDictionary[currentVoiceMod].Where((p) => p.ResourceID.Contains(voiceFilter)).Count();
-            }
-            PlaylistInfo = currentPlaylist + 1 + "/" + (count / 100 + 1);
+            if (activeType == SoundProfileType.Sfx) return;
+
+            Int32 count = filteredPlaylist != null ? filteredPlaylist.Count : 0;
+            Int32 maxPage = Math.Max(1, (count - 1) / 100 + 1);
+            PlaylistInfo = (currentPlaylist + 1) + "/" + maxPage;
             Int32 num = currentPlaylist * 100;
-            PlaylistDetail = String.Concat(new Object[]
-            {
-                num + 1,
-                "-",
-                num + allSoundProfile.Count,
-                " of ",
-                count
-            });
+            PlaylistDetail = $"{num + (count > 0 ? 1 : 0)}-{num + allSoundProfile.Count} of {count}";
         }
 
         public List<String> GetSfxSoundPlaylist(Int32 specialEffectID)
@@ -783,8 +716,9 @@ namespace SoundDebugRoom
         public Dictionary<String, List<SoundProfile>> ModVoiceDictionary = new Dictionary<String, List<SoundProfile>>();
 
         private String currentVoiceMod = "";
+        public Boolean HasActiveVoiceMod => !String.IsNullOrEmpty(currentVoiceMod);
 
-        private String voiceFilter = "";
+        public String currentFilter = "";
 
         private SoundProfileType activeType = SoundProfileType.SoundEffect;
 

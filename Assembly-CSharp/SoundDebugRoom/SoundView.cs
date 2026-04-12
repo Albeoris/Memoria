@@ -1,6 +1,7 @@
 ﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.Common;
 using Global.Sound.SaXAudio;
+using Memoria.Data;
 using Memoria.Prime;
 using System;
 using System.Collections.Generic;
@@ -359,6 +360,7 @@ namespace SoundDebugRoom
                 if (GUILayout.Button("Sound Effect"))
                 {
                     soundViewController.SetActiveSoundType(SoundProfileType.SoundEffect);
+                    searchString = "";
                     soundSelectorScrollPosition = Vector2.zero;
                 }
                 if (GUILayout.Button("BGM"))
@@ -367,21 +369,25 @@ namespace SoundDebugRoom
                     soundViewController.SetPanning(PanningPosition);
                     soundViewController.SetPitch(PitchPosition);
                     soundViewController.SetVolume(SoundVolume);
+                    searchString = "";
                     soundSelectorScrollPosition = Vector2.zero;
                 }
                 if (GUILayout.Button("Song"))
                 {
                     soundViewController.SetActiveSoundType(SoundProfileType.Song);
+                    searchString = "";
                     soundSelectorScrollPosition = Vector2.zero;
                 }
                 if (GUILayout.Button("Sfx Sound"))
                 {
                     soundViewController.SetActiveSoundType(SoundProfileType.Sfx);
+                    searchString = "";
                     soundSelectorScrollPosition = Vector2.zero;
                 }
                 if (GUILayout.Button("Movie Audio"))
                 {
                     soundViewController.SetActiveSoundType(SoundProfileType.MovieAudio);
+                    searchString = "";
                     soundSelectorScrollPosition = Vector2.zero;
                 }
                 if (soundViewController.ModVoiceDictionary.Count > 0)
@@ -389,6 +395,7 @@ namespace SoundDebugRoom
                     if (GUILayout.Button("Mod Voices"))
                     {
                         soundViewController.SetActiveSoundType(SoundProfileType.Voice);
+                        searchString = "";
                         soundSelectorScrollPosition = Vector2.zero;
                     }
                 }
@@ -402,12 +409,14 @@ namespace SoundDebugRoom
                     if (GUILayout.Button("<"))
                     {
                         soundViewController.PreviousPlayList();
+                        searchString = "";
                         soundSelectorScrollPosition = Vector2.zero;
                     }
                     GUILayout.Label(soundViewController.PlaylistInfo, GUILayout.Width(width / 3f));
                     if (GUILayout.Button(">"))
                     {
                         soundViewController.NextPlayList();
+                        searchString = "";
                         soundSelectorScrollPosition = Vector2.zero;
                     }
                 }
@@ -961,17 +970,52 @@ namespace SoundDebugRoom
 
         private void BuildSfxSoundSelector()
         {
+            String search = GUILayout.TextField(searchString);
+            if (search != searchString)
+            {
+                searchString = search;
+            }
+
+            if (sfxSoundUIState == 1)
+            {
+                if (GUILayout.Button("Back"))
+                {
+                    sfxSoundUIState = 0;
+                    searchString = "";
+                }
+            }
+
             soundSelectorScrollPosition = GUILayout.BeginScrollView(soundSelectorScrollPosition, GUILayout.ExpandHeight(true));
+
             if (sfxSoundUIState == 0)
             {
                 foreach (Int32 num in soundViewController.AllSfxGroupSongIndex)
                 {
+                    String sfxName;
+                    if (Enum.IsDefined(typeof(SpecialEffect), num))
+                    {
+                        sfxName = ((SpecialEffect)num).ToString().Replace("__", " - ").Replace("_", " ");
+                        sfxName = $"{sfxName} ({num})";
+                    }
+                    else
+                    {
+                        sfxName = "EFX ID: " + num;
+                    }
+
+                    if (!String.IsNullOrEmpty(searchString) &&
+                        !sfxName.ToLower().Contains(searchString.ToLower()) &&
+                        !num.ToString().Contains(searchString))
+                    {
+                        continue;
+                    }
+
                     GUILayout.BeginHorizontal();
                     {
-                        if (GUILayout.Button("Load EFX ID: " + num))
+                        if (GUILayout.Button(sfxName))
                         {
                             CurrentSpecialEffectID = num;
                             sfxSoundUIState = 1;
+                            searchString = "";
                             soundViewController.LoadSfxSoundGroup(num);
                         }
                     }
@@ -983,17 +1027,20 @@ namespace SoundDebugRoom
                 List<String> sfxSoundPlaylist = soundViewController.GetSfxSoundPlaylist(CurrentSpecialEffectID);
                 GUILayout.BeginVertical();
                 {
-                    if (GUILayout.Button("Back"))
-                    {
-                        sfxSoundUIState = 0;
-                    }
                     for (Int32 i = 0; i < sfxSoundPlaylist.Count; i++)
                     {
-                        if (i == SoundLib.GetResidentSfxSoundCount())
+                        if (i == SoundLib.GetResidentSfxSoundCount() && String.IsNullOrEmpty(searchString))
                         {
                             GUILayout.Label("---- ---- ---- ----");
                         }
+
                         String text = sfxSoundPlaylist[i];
+
+                        if (!String.IsNullOrEmpty(searchString) && !text.ToLower().Contains(searchString.ToLower()))
+                        {
+                            continue;
+                        }
+
                         GUILayout.BeginHorizontal();
                         {
                             if (GUILayout.Button(text))
@@ -1015,8 +1062,7 @@ namespace SoundDebugRoom
 
         private void BuildVoiceSoundSelector()
         {
-            List<SoundProfile> voices = soundViewController.GetPlaylist();
-            if (voices == null || voices.Count == 0)
+            if (!soundViewController.HasActiveVoiceMod)
             {
                 soundSelectorScrollPosition = GUILayout.BeginScrollView(soundSelectorScrollPosition);
                 foreach (String mod in soundViewController.ModVoiceDictionary.Keys)
@@ -1026,24 +1072,28 @@ namespace SoundDebugRoom
                         if (GUILayout.Button(mod))
                         {
                             soundViewController.GenerateVoiceList(mod);
+                            searchString = "";
                         }
                     }
                     GUILayout.EndHorizontal();
                 }
+                GUILayout.EndScrollView();
             }
             else
             {
                 String search = GUILayout.TextField(searchString);
                 if (search != searchString)
                 {
-                    soundViewController.FilterVoiceList(search);
+                    searchString = search;
+                    soundViewController.FilterPlaylist(search);
                 }
-                searchString = search;
 
                 if (GUILayout.Button("Back"))
                 {
                     soundViewController.GenerateVoiceList("");
+                    searchString = "";
                 }
+
                 soundSelectorScrollPosition = GUILayout.BeginScrollView(soundSelectorScrollPosition);
                 List<SoundProfile> playlist = soundViewController.GetPlaylist();
                 if (playlist != null)
@@ -1058,12 +1108,19 @@ namespace SoundDebugRoom
                         GUILayout.EndHorizontal();
                     }
                 }
+                GUILayout.EndScrollView();
             }
-            GUILayout.EndScrollView();
         }
 
         private void BuildSoundSelector()
         {
+            String search = GUILayout.TextField(searchString);
+            if (search != searchString)
+            {
+                searchString = search;
+                soundViewController.FilterPlaylist(search);
+            }
+
             soundSelectorScrollPosition = GUILayout.BeginScrollView(soundSelectorScrollPosition);
             List<SoundProfile> playlist = soundViewController.GetPlaylist();
             if (playlist != null)
