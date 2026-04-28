@@ -756,7 +756,6 @@
     <Compile Include="Global\Field\Map\FieldMapInfo.cs" />
     <Compile Include="Global\Field\Map\FieldMapLocalMain.cs" />
     <Compile Include="Global\Field\Map\FieldMapName.cs" />
-    <Compile Include="Global\Field\Map\FieldMapSPSExtraOffset.cs" />
     <Compile Include="Global\Field\Map\FieldMapUIButton.cs" />
     <Compile Include="Global\Field\Map\Localize\FieldMapLocalizeAreaTitle.cs" />
     <Compile Include="Global\Field\Map\Localize\FieldMapLocalizeAreaTitleInfo.cs" />

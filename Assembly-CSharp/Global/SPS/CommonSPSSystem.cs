@@ -14,7 +14,6 @@ public class CommonSPSSystem
         foreach (SPSEffect sps in this.SpsList)
             if (sps.pngTexture == null) // SPS without their pngTexture initialised rely on the current TCB loaded in Vram; dismiss them
                 sps.Unload();
-        FieldMapInfo.fieldmapSPSExtraOffset.SetSPSOffset(newMapName, this.SpsList);
         this.LoadMapTextureInVram(newMapName);
     }
 
