@@ -22,7 +22,6 @@ public class FieldSPSSystem : HonoBehavior
         this._fieldMap = fieldMap;
         for (Int32 i = 0; i < SPSConst.FIELD_DEFAULT_OBJCOUNT; i++)
             this.InitSPSInstance(i);
-        FieldMapInfo.fieldmapSPSExtraOffset.SetSPSOffset(FF9StateSystem.Field.SceneName, Utility.SpsList);
         Utility.LoadMapTextureInVram(FF9StateSystem.Field.SceneName);
     }
 
