@@ -78,7 +78,6 @@ public class SPSEffect : MonoBehaviour
         this.scale = SPSConst.SCALE_ONE;
         this.rot = Vector3.zero;
         this.rotMode = 0;
-        this.zOffset = 0;
         this.posOffset = Vector3.zero;
         this.depthOffset = 0;
         this.useBattleFactors = false;
@@ -238,11 +237,6 @@ public class SPSEffect : MonoBehaviour
             prim.color = new Color(r / basef, g / basef, b / basef, 1f);
             this.spsPrims.Add(prim);
             reader.BaseStream.Seek(nextprimpos, SeekOrigin.Begin);
-
-            // TODO Check Native: #147
-            // Alexandria Castle/Library (the 3 versions)
-            if ((fldMapNo == 155 || fldMapNo == 1216 || fldMapNo == 1808) && base.name.Equals("SPS_0008"))
-                this.zOffset = 700;
         }
     }
 
@@ -308,7 +302,7 @@ public class SPSEffect : MonoBehaviour
                 isBehindCamera = true;
             localPos.z /= 4f;
             localPos.z += currentBgCamera.depthOffset;
-            base.transform.localPosition = new Vector3(localPos.x, localPos.y, localPos.z + this.zOffset);
+            base.transform.localPosition = new Vector3(localPos.x, localPos.y, localPos.z + this.depthOffset);
             base.transform.localScale = new Vector3(scalef, -scalef, 1f);
             base.transform.localRotation = Quaternion.Euler(this.rot.x, this.rot.y, -this.rot.z);
         }
@@ -512,7 +506,6 @@ public class SPSEffect : MonoBehaviour
     public Int32 scale;
     public Vector3 rot;
     public Int32 rotMode;
-    public Int32 zOffset;
     public Vector3 posOffset;
     public Int32 depthOffset;
     public Boolean useBattleFactors;
