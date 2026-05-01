@@ -845,24 +845,29 @@ Include the new version ofNoHardcodedBattles.</PatchNotes>
 </Mod>
 
 <Mod>
-	<Name>FF9TheAfterYears</Name>
+	<Name>Play As Ozma</Name>
 	<Version>1.4</Version>
-	<InstallationPath>FF9TheAfterYears</InstallationPath>
+	<InstallationPath>PlayAsOzma</InstallationPath>
 	<ReleaseDate>1 Apr 2026</ReleaseDate>
 	<ReleaseDateOriginal>1 Apr 2026</ReleaseDateOriginal>
 	<Author>DV</Author>
-	<Description>The adventure every FFIX fan has been dreaming of is finally here. Introducing... FFIX: The After Years!
+	<Description>This mod was the 2026 April Fool's prank (formerly titled FFIX: The After Years).
 
-Embark on a brand-new journey as a mysterious new protagonist, fighting alongside the legendary companions who shaped your childhood memories! 
+But behind the joke, there is indeed a real mod, which I am renaming 'Play As Ozma'!
 
-To ensure the best possible experience and avoid any technical issues, starting a New Game is highly recommended. ^^
+Starting with a small intro at the beginning of the game, it completely replaces Zidane with Ozma. This means:
+- His model has been modified for battle, field, and world map.
+- He possesses the exact same stats and spells as Ozma.
+- He has a 'near-identical' AI to the original boss (which will become even more accurate with the next Memoria update).
 
-Enjoy the ride!
-	</Description>
+The mod is fully playable from start to finish and includes script fixes to prevent softlocks (especially at the Iifa Tree and Ice Cavern).
+
+Just another stupid idea from DV... have fun! :)
+</Description>
 	<Category>Gameplay</Category>
-	<DownloadUrl>https://files.dv-modding.fr/FF9TheAfterYears.zip</DownloadUrl>
-	<PreviewFileUrl>https://files.dv-modding.fr/hiddenstats/images/FF9TheAfterYears.jpg</PreviewFileUrl>
+	<DownloadUrl>https://files.dv-modding.fr/PlayAsOzma.zip</DownloadUrl>
 	<PreviewFile>Thumbnail/Thumbnail.jpg</PreviewFile>
+	<PreviewFileUrl>https://files.dv-modding.fr/hiddenstats/images/PlayAsOzma.jpg</PreviewFileUrl>
 </Mod>
 
 <Mod>
@@ -2827,14 +2832,16 @@ New portraits for all characters, including supporting and background characters
 
 <Mod>
 	<Name>Playstation Sounds</Name>
-	<Version>2.2</Version>
+	<Version>2.3</Version>
 	<Priority>-25</Priority>
 	<InstallationPath>PlaystationSounds</InstallationPath>
 	<ReleaseDateOriginal>19 Mar 2022</ReleaseDateOriginal>
-	<ReleaseDate>27 Jun 2024</ReleaseDate>
+	<ReleaseDate>2 May 2026</ReleaseDate>
 	<Author>DV</Author>
-	<Description>Replace the sound assets by the PSX sounds (specially Battle + Tetra Master + Miscellaneous). More than 1540 sound files fixed!</Description>
-	<PatchNotes>Improved "Trance Spear" SFX : se510236, se510237, se510238, se510240, se510241 et se510242 (report by Quetzal and SamsamTS)</PatchNotes>
+	<Description>Tired of these crappy sounds in game ? Don't worry, this mod is simply the best to fix that : +1540 sound files fixed!
+	I encourage all players to get this mod, which is a major quality-of-life improvement for this port of FF9!
+	Replace the sound assets by the PSX sounds version (specially Battle + Tetra Master + Miscellaneous).</Description>
+	<PatchNotes>Improve the sound se000001, by removing a litte silence at the beginning.</PatchNotes>
 	<Category>Audio</Category>
 	<PreviewFileUrl>https://i.imgur.com/6EEBG0I.jpeg</PreviewFileUrl>
 	<Website>https://steamcommunity.com/app/377840/discussions/0/3189117724409401717/</Website>
