@@ -266,6 +266,7 @@
     <Compile Include="Global\NormalSolver.cs" />
     <Compile Include="Global\SavePageNamer.cs" />
     <Compile Include="Global\Sound\SaXAudio\AudioEffectManager.cs" />
+    <Compile Include="Global\Sound\SaXAudio\EffectPreset.cs" />
     <Compile Include="Global\Sound\SaXAudio\SaXAudio.cs" />
     <Compile Include="Global\Sound\SaXAudio\SdLibAPIWithSaXAudio.cs" />
     <Compile Include="Global\SPS\BattleSPSSystem.cs" />
@@ -759,7 +760,6 @@
     <Compile Include="Global\Field\Map\FieldMapInfo.cs" />
     <Compile Include="Global\Field\Map\FieldMapLocalMain.cs" />
     <Compile Include="Global\Field\Map\FieldMapName.cs" />
-    <Compile Include="Global\Field\Map\FieldMapSPSExtraOffset.cs" />
     <Compile Include="Global\Field\Map\FieldMapUIButton.cs" />
     <Compile Include="Global\Field\Map\Localize\FieldMapLocalizeAreaTitle.cs" />
     <Compile Include="Global\Field\Map\Localize\FieldMapLocalizeAreaTitleInfo.cs" />
