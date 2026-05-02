@@ -62,7 +62,7 @@ public static class ModelFactory
             if (model == null)
                 return null;
 
-            if (ModelsWithShaderFix.Contains(GetGEOID(GetNameFromFF9DBALL(Path.GetFileNameWithoutExtension(modelNameId))))) // To fix shader for some .fbx model
+            if (ModelsWithShaderFix.Contains(Int32.Parse(Path.GetFileName(renameModelPath)))) // To fix shader for some .fbx model
                 model.AddComponent<CustomFbxFlag>();
 
             Renderer[] renderers = model.GetComponentsInChildren<Renderer>();

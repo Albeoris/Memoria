@@ -538,10 +538,27 @@ namespace Memoria
                 }
                 else if (String.Equals(entry[0], "InvertShader"))
                 {
-                    // eg.: InvertShader 9000 9001 9002 9003
-                    for (Int32 i = 1; i < entry.Length; i++)
+                    // eg.: InvertShader Add 9001 9002
+                    // eg.: InvertShader Remove 98
+                    // eg.: InvertShader Set 9000
+
+                    Boolean add = String.Equals(entry[1], "Add");
+                    Boolean remove = String.Equals(entry[1], "Remove");
+                    Boolean set = String.Equals(entry[1], "Set");
+
+                    if (set)
+                        ModelFactory.ModelsWithShaderFix.Clear();
+
+                    for (Int32 i = 2; i < entry.Length; i++)
+                    {
                         if (Int32.TryParse(entry[i], out Int32 modelId))
-                            ModelFactory.ModelsWithShaderFix.Add(modelId);
+                        {
+                            if (remove)
+                                ModelFactory.ModelsWithShaderFix.Remove(modelId);
+                            else
+                                ModelFactory.ModelsWithShaderFix.Add(modelId);
+                        }
+                    }
                 }
                 else if (String.Equals(entry[0], "ModifyPlayerParty"))
                 {
