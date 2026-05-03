@@ -1834,50 +1834,44 @@ Compatible with Alternate Fantasy v6.8 only</Description>
 <Mod>
 	<Name>Ferny Fantasy IX</Name>
 	<Author>FernyFer</Author>
-	<Version>0.9</Version>
+	<Version>0.99.3</Version>
 	<InstallationPath>FernyFantasyIX</InstallationPath>
-	<ReleaseDate>2026-01-18</ReleaseDate>
+	<ReleaseDate>2026-05-02</ReleaseDate>
 	<ReleaseDateOriginal>2025-06-19</ReleaseDateOriginal>
-	<MinimumMemoriaVersion>2025-05-11</MinimumMemoriaVersion>
-	<PatchNotes>This mod is still in BETA - content "ends" at the end of Disc 3.</PatchNotes>
+	<MinimumMemoriaVersion>2025-07-13</MinimumMemoriaVersion>
+	<PatchNotes>Pre-Release</PatchNotes>
 	<PreviewFile>logo.png</PreviewFile>
 	<Category>Gameplay</Category>
+	<IncompatibleWith>Doppelgängers,No Exp Plus,1 Gem Support Ability Cost,New Game +,NoHardcodedBattles,Alternate Fantasy,Trance Seek,QualityOfLifa,Playable Character Pack,Kupo Heroes Pack,Tantalus,Perfect Stats,Beatrix Mod,NoHardCodedBattles,Chocobo Hot and Cold QoL,Black Cat - Endgame Shop,Artifacts,Amazing Abilities,Amazing Freya,Amazing Garnet,Amazing Quina, Amazing Steiner,Amazing Vivi,FernySupportTweaks,FernyTranceTweaks,Garnet is Main Character,Freya Game+,Mistake UI</IncompatibleWith>
 	<Description>A complete combat overhaul mod aimed to bring a new feel to the battle system and crank the difficulty up a few notches.
 
-This mod includes an overhaul of MANY systems, including brand new passives, character skills, tons of new items, mini-bosses, revamped boss battles,
-and so much more.This mod is a WIP and I highly appreciate any and all feedback you might have so that I can make it as great as it can be. I hope you enjoy what I've done!
+This mod includes an overhaul of MANY systems, including brand new passives, character skills, tons of new items, mini-bosses, revamped boss battles, and so much more. This has been a passion project of mine that I've worked on for over 2 years. I hope you enjoy what I've created.
 
 *** IMPORTANT ***
-This mod was balanced with `Active OR Wait ATB` mode in mind. Make sure to enable it to experience the mod the way it was intended to be played. Buff/debuff durations and
-boss mechanics are all tuned around these modes and using `Turn-Based` will lead to balance issues which will greatly impact the flow of combat if not set correctly.
+    * This mod is balanced with `TURN-BASED ATB` - changes the option in the launcher or in-game will result in the mod reverting itself back to TURN-BASED to
+	  stop itself from "breaking" the intended balance.
+
+    * Instructions to install a new Memoria Patcher are found in the `READ ME` within the mod folder or by checking out the mod's website.
+
+    * Do note that the custom patcher may cause bugs or errors with other FF9 `Gameplay` mods. "Most" Hud, UI, and sound mods should be perfectly safe.
 
 {Load Order, Incompatibility, and Credits}
 [Mods and Load Order:]
-    (1) Ferny Fantasy IX - 'Place above AF'
-    (2) Alternate Fantasy - 'REQUIRED'
-
-[Optional] 
-    * FernyDifficultyTweaks - Ferny Fantasy is already a significant difficulty spike compared to vanilla, only use this mod if you want even more challenge or to reduce the difficulty of Ferny Fantasy. Place it above FernyFantasy.
 
 [Optional]
-    * Kupo UI Suite - 'place my mod above theirs to use my custom title screen, otherwise, you can place Kupo UI Suite above mine to use one of their titles.'
+    * Kupo UI Suite - 'place my mod above theirs to use my custom huds, colors, menus, etc, otherwise, you can place Kupo UI Suite above mine to use their stuff. Do note, in this mod, anything under the `ITEM ICONOGRAPHY` is incompatible with my mod. Do NOT use those options.
 
 [Optional]
-    * All graphical and music mods are compatible with Ferny Fantasy.
+    * Most graphical and music mods are compatible with Ferny Fantasy. Due note, some people have reported bugs when pairing my mod with the `Mistwake` mod.
 
 [Incompatibility]
-My mod is not compatible with any of the following mods (more details in CREDITS section).
-    (1) Kupo Heroes Pack (see Credits)
-    (2) Amazing Vivi, Steiner, Garnet, etc. Series (See Credits)
-    (3) Amazing Abilities - Both mods replace "Healer" Support Ability
-    (4) David Bowie Edition - my mod REQUIRES Alternate Fantasy and AF is incompatible with DB.
-    (5) Trance Seek - Both aim to overhaul the game but in different ways. 
-    (5) FernySupportTweaks - Redundant to use with this mod as they do the same thing with support abilities.
-    (6) FernyTranceTweaks - Redundant to use with this mod as they do the same thing with support abilities.
+My mod is not compatible with the vast majority of "gameplay" mods - this includes mods that alter skills, adds/removes new playable characters, changes bosses, or the Chocograph rewards.
 
 [Known Bugs]
-    * Due to the way the full damage formula was overhauled in my mod, there is an unfortunate side effect where there is a micro-lag when the player deals damage or heals multiple party members with items or a heal spell. There really isn't much I can do to mitigate the problem this far into the mod development and is an unfortunate side-effect of my modding process.
-    * There is a bug in the memoria engine that causes passives to be randomly unequipped. This is not a bug with my mod, but one that the dev team of Memoria Engine are aware of and working on.
+    * When opening some Chocograph Treasures, the text popup for the reward is "off" - bug is strictly visual.
+	* In some cases, upon reloading a save, a character's passive abilities might get unequipped. This is a Memoria Engine level bug that will hopefully be fixed in the future.
+	* Using the speed hacks (2x, 4x, etc) can cause the loading of battles to soft-lock. I highly recommend DISABLING the speed up until after a battle has fully loaded in. This is a Memoria Engine bug, not a bug with my mod.
+	* There is a weird visual error when using `Return Magic` where the user will "return" an incorrect spell. This is strictly a visual bug, the mechanics behind it all are still working as intended. No idea where this is coming from or how to fix it, so I guess it's staying lol.
 
 [Credit]
 Credit will go to where it is rightfully deserved. I took a lot of the best ideas, skills, passives, spells, items, etc. of some of the above mentioned mods and combined them into my mod for maximum compatibility. They did amazing work with the mods they made, but there were some compatibility issues if you wanted to use them all AND Alternate Fantasy together. Now, with my mod, that is possible. I want to say thank you to the following:
@@ -1891,9 +1885,117 @@ Credit will go to where it is rightfully deserved. I took a lot of the best idea
 {DV} - Trance Seek mod author for assisting me with a handful of codes that I was having trouble with.
 
 {Tirlititi} - Alternate Fantasy mod author for his amazing work with Alternate Fantasy, assisting me with code, and of course all his contributions to the FF9 modding community. Seriously dude, thank you.
+
+[Shoutout to my Testers / Bug Killers]
+Without these people, my mod would not be as polished as it is. Thank you all for playing through the mod in its most broken state, being so patient, and being so thorough with your bug testing and reports!
+{Kinou - MVP}
+{Elliot - MVP}
+{Ferrishmoon - MPV}
+{Moonbeams - MVP}
+{Ragnaross - MVP}
+{ww0k - MVP}
+{Eemeli}
+{Abracabraxas}
+{Alruser}
+{Alymer}
+{Benji}
+{CheddarBung}
+{DoctorCommonSense}
+{Zodiac}
+{Kamei86}
+{Nimbulan}
+{Damzel35}
+{Darly}
+{Dweggi}
 	</Description>
+	<Header>Zidane Costumes</Header>
+	<SubMod>
+		<Name>Slick Black</Name>
+		<InstallationPath>Costumes/ZidaneBlack</InstallationPath>
+		<Description>New slick-black clothing for Zidane.</Description>
+        <PreviewFile>preview/SlickBlack.png</PreviewFile>
+        <Group>zidane</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Court of Blood</Name>
+		<InstallationPath>Costumes/CourtofBlood</InstallationPath>
+		<Description>I 'vant to suck your blood!</Description>
+        <PreviewFile>preview/CourtBlood.png</PreviewFile>
+        <Group>zidane</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Tree Hugger</Name>
+		<InstallationPath>Costumes/TreeHugger</InstallationPath>
+		<Description>Peace, love, nature, and all that.</Description>
+        <PreviewFile>preview/TreeHugger.png</PreviewFile>
+        <Group>zidane</Group>
+	</SubMod>
+    <SubMod>
+		<Name>Got Wood</Name>
+		<InstallationPath>Costumes/Gotwood</InstallationPath>
+		<Description>For that pumpkin spice season sort of feel.</Description>
+        <PreviewFile>preview/Gotwood.png</PreviewFile>
+        <Group>zidane</Group>
+	</SubMod>
+	<Header>Hud Options</Header>
+	<SubMod>
+		<Name>No Menu Dividers</Name>
+		<InstallationPath>DarkUI/NoDivMenu</InstallationPath>
+		<Description>Removes borders in menu windows.</Description>
+        <PreviewFile>preview/DivPreview.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>No Battle Dividers</Name>
+		<InstallationPath>DarkUI/NoDivBtl</InstallationPath>
+		<Description>Removes borders in battle UI.</Description>
+        <PreviewFile>preview/BattleDivs.png</PreviewFile>
+	</SubMod>
+	<Header>Hud and Dialogue Colors</Header>
+	<SubMod>
+		<Name>Dark Gray/Red</Name>
+		<InstallationPath>DarkUI/DarkerGreyBox</InstallationPath>
+		<Description>Like the name says... gray or red.</Description>
+        <PreviewFile>preview/Colors3.png</PreviewFile>
+		<Group>Dialogue</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Purple/Pinkish</Name>
+		<InstallationPath>DarkUI/DarkPurpleTextBox</InstallationPath>
+		<Description>Like the name says... purple or pink.</Description>
+        <PreviewFile>preview/Colors2.png</PreviewFile>
+		<Group>Dialogue</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Green/Blue</Name>
+		<InstallationPath>DarkUI/DarkGreen</InstallationPath>
+		<Description>Like the name says... green or blue.</Description>
+        <PreviewFile>preview/Colors1.png</PreviewFile>
+		<Group>Dialogue</Group>
+	</SubMod>
+	<Header>Menu Backgrounds</Header>
+	<SubMod>
+		<Name>Two Moons</Name>
+		<InstallationPath>DarkUI/TwoMoons</InstallationPath>
+		<Description>Replaces menu background.</Description>
+        <PreviewFile>preview/BGpreview1.png</PreviewFile>
+		<Group>BG</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Innocence</Name>
+		<InstallationPath>DarkUI/Vivi</InstallationPath>
+		<Description>Replaces menu background.</Description>
+        <PreviewFile>preview/BGpreview3.png</PreviewFile>
+		<Group>BG</Group>
+	</SubMod>
+	<SubMod>
+		<Name>War...war never changes.</Name>
+		<InstallationPath>DarkUI/BlackMages</InstallationPath>
+		<Description>Replaces menu background.</Description>
+        <PreviewFile>preview/BGpreview2.png</PreviewFile>
+		<Group>BG</Group>
+	</SubMod>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/117</Website>
-	<DownloadUrl>https://www.dropbox.com/scl/fi/6xpr123v7gooaoz94k5u6/FernyFantasyIX.zip?rlkey=zy4dtz009exgxdbshzqizvhed&amp;st=x9ao3d4p&amp;dl=1</DownloadUrl>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/e1su7fk9k8nmnagrt79fe/FernyFantasyIX.zip?rlkey=p37kimun90x591dzaspna9hb0&amp;st=ubs6160c&amp;dl=1</DownloadUrl>
 	<PreviewFileUrl>https://i.imgur.com/Hn25x1M.png</PreviewFileUrl>
 </Mod>
 
