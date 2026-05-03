@@ -15,6 +15,7 @@ public class VoicePlayer : SoundPlayer
     private static Dialog specialDialog;
     private static Int32 specialLastPlayed;
     private static Int32 specialCount = 0;
+    private static readonly List<HoldDialogRule> moddedHoldDialogRules = new List<HoldDialogRule>();
 
     public static Boolean closeDialogOnFinish = false;
 
@@ -149,10 +150,11 @@ public class VoicePlayer : SoundPlayer
             msgString.Contains("\n“") || // English
             msgString.Contains("\n「") || // Japanese
             msgString.Contains(":\n") || // German, French
+            msgString.Contains("\uFF1A\n") || // Chinese
             msgString.Contains("\n─") // Italian, Spanish
             ))
         {
-            String name = msgString.Split('\n')[0].Replace(":", "").Trim();
+            String name = msgString.Split('\n')[0].Replace(":", "").Replace("\uFF1A", "").Trim();
             candidates.Add($"Voices/{lang}/{FieldZoneId}/va_{messageNumber}_{name}{pageIndex}");
         }
 
@@ -481,7 +483,7 @@ public class VoicePlayer : SoundPlayer
         }
     }
 
-    public static Boolean HoldDialogUntilSoundEnds(Int32 zoneId, Int32 universalTextId, Int32 mapNo)
+    public static Boolean HoldDialogUntilSoundEnds(Int32 zoneId, Int32 textId, Int32 universalTextId, Int32 mapNo)
     {
         if (zoneId == 2 && mapNo >= 59 && mapNo <= 67) // 'I want to be your canary' stage (early game)
             return true;
@@ -493,7 +495,149 @@ public class VoicePlayer : SoundPlayer
             return true;
         if (zoneId == 484 && universalTextId == 165) // Mount Gulug: Kuja meets the party after Eiko defeated Zorn & Thorn ("How can that-")
             return true;
+        foreach (HoldDialogRule rule in moddedHoldDialogRules)
+            if (rule.Matches(zoneId, textId, mapNo))
+                return true;
         return false;
+    }
+
+    public static Boolean PatchHoldDialogRule(Boolean add, String zoneId, String textId, String mapNo = null)
+    {
+        if (!HoldDialogRule.TryParse(zoneId, textId, mapNo, out HoldDialogRule rule))
+            return false;
+        if (add)
+        {
+            if (!moddedHoldDialogRules.Contains(rule))
+                moddedHoldDialogRules.Add(rule);
+        }
+        else
+        {
+            moddedHoldDialogRules.RemoveAll(registeredRule => registeredRule.Equals(rule));
+        }
+        return true;
+    }
+
+    public static void ClearModdedHoldDialogRules()
+    {
+        moddedHoldDialogRules.Clear();
+    }
+
+    private struct HoldDialogRule : IEquatable<HoldDialogRule>
+    {
+        public readonly HoldDialogRange ZoneId;
+        public readonly HoldDialogRange TextId;
+        public readonly HoldDialogRange MapNo;
+
+        public HoldDialogRule(HoldDialogRange zoneId, HoldDialogRange textId, HoldDialogRange mapNo)
+        {
+            ZoneId = zoneId;
+            TextId = textId;
+            MapNo = mapNo;
+        }
+
+        public Boolean Matches(Int32 zoneId, Int32 textId, Int32 mapNo)
+        {
+            return ZoneId.Matches(zoneId) && TextId.Matches(textId) && MapNo.Matches(mapNo);
+        }
+
+        public static Boolean TryParse(String zoneId, String textId, String mapNo, out HoldDialogRule rule)
+        {
+            rule = default;
+            if (!HoldDialogRange.TryParse(zoneId, false, out HoldDialogRange zoneRange))
+                return false;
+            if (!HoldDialogRange.TryParse(textId, false, out HoldDialogRange textRange))
+                return false;
+            if (!HoldDialogRange.TryParse(mapNo, true, out HoldDialogRange mapRange))
+                return false;
+            rule = new HoldDialogRule(zoneRange, textRange, mapRange);
+            return true;
+        }
+
+        public Boolean Equals(HoldDialogRule other)
+        {
+            return ZoneId.Equals(other.ZoneId) && TextId.Equals(other.TextId) && MapNo.Equals(other.MapNo);
+        }
+
+        public override Boolean Equals(System.Object obj)
+        {
+            return obj is HoldDialogRule other && Equals(other);
+        }
+
+        public override Int32 GetHashCode()
+        {
+            unchecked
+            {
+                Int32 hash = ZoneId.GetHashCode();
+                hash = (hash * 397) ^ TextId.GetHashCode();
+                hash = (hash * 397) ^ MapNo.GetHashCode();
+                return hash;
+            }
+        }
+    }
+
+    private struct HoldDialogRange : IEquatable<HoldDialogRange>
+    {
+        private readonly Int32 min;
+        private readonly Int32 max;
+
+        private HoldDialogRange(Int32 min, Int32 max)
+        {
+            this.min = min;
+            this.max = max;
+        }
+
+        public Boolean Matches(Int32 value)
+        {
+            return value >= min && value <= max;
+        }
+
+        public static Boolean TryParse(String token, Boolean allowEmpty, out HoldDialogRange range)
+        {
+            range = new HoldDialogRange(Int32.MinValue, Int32.MaxValue);
+            if (String.IsNullOrEmpty(token) || token.Trim().Length == 0)
+                return allowEmpty;
+            token = token.Trim();
+            if (String.Equals(token, "*", StringComparison.OrdinalIgnoreCase) || String.Equals(token, "Any", StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            Int32 separatorIndex = token.IndexOf('-', 1);
+            if (separatorIndex >= 0)
+            {
+                if (!Int32.TryParse(token.Substring(0, separatorIndex), out Int32 minValue) || !Int32.TryParse(token.Substring(separatorIndex + 1), out Int32 maxValue))
+                    return false;
+                if (minValue > maxValue)
+                {
+                    Int32 swap = minValue;
+                    minValue = maxValue;
+                    maxValue = swap;
+                }
+                range = new HoldDialogRange(minValue, maxValue);
+                return true;
+            }
+
+            if (!Int32.TryParse(token, out Int32 value))
+                return false;
+            range = new HoldDialogRange(value, value);
+            return true;
+        }
+
+        public Boolean Equals(HoldDialogRange other)
+        {
+            return min == other.min && max == other.max;
+        }
+
+        public override Boolean Equals(System.Object obj)
+        {
+            return obj is HoldDialogRange other && Equals(other);
+        }
+
+        public override Int32 GetHashCode()
+        {
+            unchecked
+            {
+                return (min * 397) ^ max;
+            }
+        }
     }
 
     public void PauseAllSounds()
