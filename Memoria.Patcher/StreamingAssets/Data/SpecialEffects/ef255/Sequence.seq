@@ -1,0 +1,10 @@
+// Shared sequence of SFX Cook
+
+PlaySound: Sound=2807
+PlaySound: Sound=2808
+PlaySound: Sound=2809
+Wait: Time=30
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=4

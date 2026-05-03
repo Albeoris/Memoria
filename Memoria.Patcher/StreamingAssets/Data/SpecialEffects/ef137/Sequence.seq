@@ -1,0 +1,10 @@
+// Shared sequence of SFX Revive__Single
+
+PlaySound: Sound=478
+PlaySound: Sound=471
+PlaySound: Sound=467
+Wait: Time=25
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=30

@@ -1,0 +1,10 @@
+// Shared sequence of SFX Eat
+
+PlaySound: Sound=2810
+PlaySound: Sound=2811
+PlaySound: Sound=2812
+Wait: Time=30
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=4

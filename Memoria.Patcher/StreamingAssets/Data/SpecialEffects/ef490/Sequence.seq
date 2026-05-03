@@ -1,0 +1,24 @@
+// Shared sequence of SFX Dragons_Crest
+
+PlaySound: Sound=1550
+PlaySound: Sound=1551
+PlaySound: Sound=1552
+Wait: Time=46
+PlaySound: Sound=2590
+PlaySound: Sound=2591
+PlaySound: Sound=2592
+Wait: Time=54
+PlaySound: Sound=2593
+PlaySound: Sound=2594
+PlaySound: Sound=2595
+Wait: Time=7
+ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
+SetBackgroundIntensity: Intensity=0 ; Time=1 ; HoldDuration=35
+Wait: Time=35
+ShowMesh: Char=Everyone ; Enable=True ; IsDisappear=True
+SetBackgroundIntensity: Intensity=1 ; Time=1
+Wait: Time=16
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=8

@@ -1,0 +1,53 @@
+// Shared sequence of SFX Lava_Gun_x6
+
+PlaySound: Sound=2374
+PlaySound: Sound=2375
+PlaySound: Sound=2376
+Wait: Time=5
+PlayAnimation: Char=AllTargets ; Anim=MP_DAMAGE1
+Wait: Time=1
+PlaySound: Sound=2377
+PlaySound: Sound=2378
+PlaySound: Sound=2379
+Wait: Time=2
+PlaySound: Sound=2374
+PlaySound: Sound=2375
+PlaySound: Sound=2376
+Wait: Time=5
+PlayAnimation: Char=AllTargets ; Anim=MP_DAMAGE1
+Wait: Time=1
+PlaySound: Sound=2377
+PlaySound: Sound=2378
+PlaySound: Sound=2379
+Wait: Time=2
+PlaySound: Sound=2374
+PlaySound: Sound=2375
+PlaySound: Sound=2376
+Wait: Time=5
+PlayAnimation: Char=AllTargets ; Anim=MP_DAMAGE1
+Wait: Time=1
+PlaySound: Sound=2377
+PlaySound: Sound=2378
+PlaySound: Sound=2379
+Wait: Time=2
+PlaySound: Sound=2374
+PlaySound: Sound=2375
+PlaySound: Sound=2376
+Wait: Time=5
+PlayAnimation: Char=AllTargets ; Anim=MP_DAMAGE1
+Wait: Time=1
+PlaySound: Sound=2377
+PlaySound: Sound=2378
+PlaySound: Sound=2379
+Wait: Time=2
+EffectPoint: Char=AllTargets ; Type=Effect
+PlaySound: Sound=2374
+PlaySound: Sound=2375
+PlaySound: Sound=2376
+Wait: Time=6
+PlaySound: Sound=2377
+PlaySound: Sound=2378
+PlaySound: Sound=2379
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=10

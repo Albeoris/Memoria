@@ -1,0 +1,39 @@
+// Shared sequence of SFX Roulette
+
+PlaySound: Sound=1010
+Wait: Time=12
+PlaySound: Sound=1010
+Wait: Time=11
+PlaySound: Sound=1010
+Wait: Time=10
+PlaySound: Sound=1010
+Wait: Time=9
+PlaySound: Sound=1010
+Wait: Time=8
+PlaySound: Sound=1010
+Wait: Time=7
+PlaySound: Sound=1010
+Wait: Time=6
+PlaySound: Sound=1010
+Wait: Time=9
+PlaySound: Sound=1010
+Wait: Time=3
+PlaySound: Sound=1010
+Wait: Time=18
+PlaySound: Sound=1010
+Wait: Time=22
+PlaySound: Sound=1894
+PlaySound: Sound=1895
+PlaySound: Sound=1896
+Wait: Time=48
+PlaySound: Sound=1897
+PlaySound: Sound=1898
+PlaySound: Sound=1899
+Wait: Time=2
+PlaySound: Sound=1900
+PlaySound: Sound=1901
+PlaySound: Sound=1902
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=12

@@ -1,0 +1,10 @@
+// Shared sequence of SFX Heavy
+
+PlaySound: Sound=597
+PlaySound: Sound=589
+PlaySound: Sound=580
+Wait: Time=16
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=10
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=43

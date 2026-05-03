@@ -1,0 +1,18 @@
+// Shared sequence of SFX Psychokinesis_Garland
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=60
+PlaySound: Sound=1001
+PlaySound: Sound=1002
+PlaySound: Sound=1003
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 1000.0, 0.0) ; Time=20 ; MoveHeight=True
+Wait: Time=35
+PlaySound: Sound=1004
+PlaySound: Sound=1005
+PlaySound: Sound=1006
+MoveToPosition: Char=AllTargets ; AbsolutePosition=Default ; Time=3 ; MoveHeight=True
+Wait: Time=2
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=1
+SetBackgroundIntensity: Intensity=1 ; Time=16

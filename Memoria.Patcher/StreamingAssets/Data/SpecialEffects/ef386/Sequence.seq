@@ -1,0 +1,14 @@
+// Shared sequence of SFX Countdown__Multi
+
+PlaySound: Sound=2318
+PlaySound: Sound=2319
+PlaySound: Sound=2320
+Wait: Time=40
+PlaySound: Sound=2321
+PlaySound: Sound=2322
+PlaySound: Sound=2323
+Wait: Time=30
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=10
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=10

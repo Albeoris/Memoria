@@ -1,0 +1,10 @@
+// Shared sequence of SFX Magic_Tag
+
+PlaySound: Sound=962
+PlaySound: Sound=963
+PlaySound: Sound=964
+Wait: Time=10
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=1

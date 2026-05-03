@@ -1,0 +1,10 @@
+// Shared sequence of SFX Gradual_Petrify
+
+PlaySound: Sound=319
+PlaySound: Sound=317
+PlaySound: Sound=316
+Wait: Time=10
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=24
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=24

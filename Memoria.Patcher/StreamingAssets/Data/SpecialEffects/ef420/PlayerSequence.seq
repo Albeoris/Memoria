@@ -1,0 +1,10 @@
+// Player sequence of SFX Special_Deathguise_Death
+
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=Special_Deathguise_Death ; Reflect=True
+WaitSFXLoaded: SFX=Special_Deathguise_Death ; Reflect=True
+PlaySFX: SFX=Special_Deathguise_Death ; Reflect=True
+WaitSFXDone: SFX=Special_Deathguise_Death ; Reflect=True
+MoveToPosition: Char=Caster ; AbsolutePosition=Default ; MoveHeight=True ; Time=0
+ShowMesh: Char=Caster ; Enable=True ; IsDisappear=True

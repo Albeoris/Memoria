@@ -1,0 +1,12 @@
+// Shared sequence of SFX Absorb
+
+PlaySound: Sound=2368
+PlaySound: Sound=2369
+PlaySound: Sound=2370
+Wait: Time=20
+EffectPoint: Char=AllTargets ; Type=Effect
+PlaySound: Sound=2371
+PlaySound: Sound=2372
+PlaySound: Sound=2373
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure

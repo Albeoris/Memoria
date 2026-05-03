@@ -1,0 +1,63 @@
+Shader "Hidden/Unlit/Text 1" {
+	Properties {
+		_MainTex ("Alpha (A)", 2D) = "white" { }
+	}
+	SubShader { 
+		LOD 200
+		Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+		Pass {
+			Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+			ZWrite Off
+			Cull Off
+			Blend SrcAlpha OneMinusSrcAlpha
+			Offset -1, -1
+			GpuProgramID 15459
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "color" Color
+					Bind "texcoord" TexCoord0
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 4 [_ClipRange0]
+					"vs_2_0
+						dcl_position v0
+						dcl_color v1
+						dcl_texcoord v2
+						dp4 oPos.x, c0, v0
+						dp4 oPos.y, c1, v0
+						dp4 oPos.z, c2, v0
+						dp4 oPos.w, c3, v0
+						mad oT1.xy, v0, c4.zwzw, c4
+						mov oD0, v1
+						mov oT0.xy, v2
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Vector 0 [_ClipArgs0]
+					SetTexture 0 [_MainTex] 2D 0
+					"ps_2_0
+						def c1, 1, 0, 0, 0
+						dcl v0
+						dcl t0.xy
+						dcl t1.xy
+						dcl_2d s0
+						texld r0, t0, s0
+						abs r0.xy, t1
+						add r0.xy, -r0, c1.x
+						mul r0.xy, r0, c0
+						min_sat r1.w, r0.y, r0.x
+						mul_pp r0.x, r0.w, v0.w
+						mul_pp r0.w, r1.w, r0.x
+						mov_pp r0.xyz, v0
+						mov_pp oC0, r0
+						
+						"
+				}
+			}
+		}
+	}
+	Fallback "Unlit/Text"
+}

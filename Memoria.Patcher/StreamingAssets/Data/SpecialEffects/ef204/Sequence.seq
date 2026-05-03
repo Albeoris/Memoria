@@ -1,0 +1,16 @@
+// Shared sequence of SFX Meteorite
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=53
+PlaySound: Sound=703
+PlaySound: Sound=699
+PlaySound: Sound=695
+Wait: Time=24
+PlaySound: Sound=720
+PlaySound: Sound=716
+PlaySound: Sound=712
+Wait: Time=17
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+SetBackgroundIntensity: Intensity=1 ; Time=8
+Wait: Time=12

@@ -1,0 +1,10 @@
+// Shared sequence of SFX Dust_Storm
+
+PlaySound: Sound=1447
+PlaySound: Sound=1448
+PlaySound: Sound=1449
+Wait: Time=60
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

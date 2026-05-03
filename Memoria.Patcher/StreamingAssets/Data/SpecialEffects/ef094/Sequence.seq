@@ -1,0 +1,21 @@
+// Shared sequence of SFX Death
+
+PlaySound: Sound=1891
+PlaySound: Sound=1892
+PlaySound: Sound=1893
+Wait: Time=20
+PlaySound: Sound=1894
+PlaySound: Sound=1895
+PlaySound: Sound=1896
+Wait: Time=48
+PlaySound: Sound=1897
+PlaySound: Sound=1898
+PlaySound: Sound=1899
+Wait: Time=2
+PlaySound: Sound=1900
+PlaySound: Sound=1901
+PlaySound: Sound=1902
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=12

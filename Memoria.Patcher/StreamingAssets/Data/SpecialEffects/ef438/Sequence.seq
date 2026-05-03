@@ -1,0 +1,18 @@
+// Shared sequence of SFX Special_Silver_Dragon_Death
+
+ShowMesh: Char=AllPlayers ; Enable=False ; IsDisappear=True
+PlaySound: Sound=2849
+PlaySound: Sound=2850
+PlaySound: Sound=2851
+Wait: Time=25
+ShowMesh: Char=Caster ; Enable=False ; IsDisappear=True
+SetBackgroundIntensity: Intensity=0.5 ; Time=8 ; HoldDuration=10
+Wait: Time=6
+PlaySound: Sound=2852
+PlaySound: Sound=2853
+PlaySound: Sound=2854
+Wait: Time=4
+SetBackgroundIntensity: Intensity=1 ; Time=32
+Wait: Time=64
+ShowMesh: Char=AllPlayers ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllPlayers ; Enable=True ; Time=12

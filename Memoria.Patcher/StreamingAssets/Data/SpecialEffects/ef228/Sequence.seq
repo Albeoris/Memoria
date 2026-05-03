@@ -1,0 +1,10 @@
+// Shared sequence of SFX Frog_Drop
+
+PlaySound: Sound=2517
+PlaySound: Sound=2518
+PlaySound: Sound=2519
+Wait: Time=8
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=32
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

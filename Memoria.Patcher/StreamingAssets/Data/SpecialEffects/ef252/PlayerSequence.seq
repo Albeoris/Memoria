@@ -1,0 +1,6 @@
+// Player sequence of SFX Special_Flee
+
+LoadSFX: SFX=Special_Flee
+WaitSFXLoaded: SFX=Special_Flee
+PlaySFX: SFX=Special_Flee
+WaitSFXDone: SFX=Special_Flee

@@ -1,0 +1,833 @@
+Shader "WorldMap/Mobile/VertexLit" {
+	Properties {
+		_MainTex ("Base (RGB)", 2D) = "white" { }
+	}
+	SubShader { 
+		LOD 80
+		Tags { "RenderType"="Opaque" }
+		Pass {
+			Tags { "LIGHTMODE"="Vertex" "RenderType"="Opaque" }
+			GpuProgramID 195181
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+					Matrix 20 [glstate_matrix_invtrans_modelview0] 3
+					Matrix 16 [glstate_matrix_mvp]
+					Vector 24 [_MainTex_ST]
+					Vector 23 [glstate_lightmodel_ambient]
+					Vector 0 [unity_LightColor0]
+					Vector 1 [unity_LightColor1]
+					Vector 2 [unity_LightColor2]
+					Vector 3 [unity_LightColor3]
+					Vector 4 [unity_LightColor4]
+					Vector 5 [unity_LightColor5]
+					Vector 6 [unity_LightColor6]
+					Vector 7 [unity_LightColor7]
+					Vector 8 [unity_LightPosition0]
+					Vector 9 [unity_LightPosition1]
+					Vector 10 [unity_LightPosition2]
+					Vector 11 [unity_LightPosition3]
+					Vector 12 [unity_LightPosition4]
+					Vector 13 [unity_LightPosition5]
+					Vector 14 [unity_LightPosition6]
+					Vector 15 [unity_LightPosition7]
+					VectorInt 0 [unity_VertexLightParams] 4
+					"vs_2_0
+						def c25, 0, 1, 0.5, 0
+						dcl_position v0
+						dcl_normal v1
+						dcl_texcoord v2
+						dp3 r0.x, c20, v1
+						dp3 r0.y, c21, v1
+						dp3 r0.z, c22, v1
+						nrm r1.xyz, r0
+						mov r0.xyz, c23
+						loop aL, i0
+						dp3 r0.w, r1, c8[aL]
+						max r0.w, r0.w, c25.x
+						mul r2.xyz, r0.w, c0[aL]
+						mul r2.xyz, r2, c25.z
+						min r2.xyz, r2, c25.y
+						add r0.xyz, r0, r2
+						endloop
+						max r0.xyz, r0, c25.x
+						min oD0.xyz, r0, c25.y
+						mad oT0.xy, v2, c24, c24.zwzw
+						mad r0, v0.xyzx, c25.yyyx, c25.xxxy
+						dp4 oPos.w, c19, r0
+						dp4 oPos.x, c16, r0
+						dp4 oPos.y, c17, r0
+						dp4 oPos.z, c18, r0
+						mov oD0.w, c25.y
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "POINT" }
+					Bind "vertex" Vertex
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+					Matrix 31 [glstate_matrix_invtrans_modelview0] 3
+					Matrix 28 [glstate_matrix_modelview0] 3
+					Matrix 24 [glstate_matrix_mvp]
+					Vector 35 [_MainTex_ST]
+					Vector 34 [glstate_lightmodel_ambient]
+					Vector 16 [unity_LightAtten0]
+					Vector 17 [unity_LightAtten1]
+					Vector 18 [unity_LightAtten2]
+					Vector 19 [unity_LightAtten3]
+					Vector 20 [unity_LightAtten4]
+					Vector 21 [unity_LightAtten5]
+					Vector 22 [unity_LightAtten6]
+					Vector 23 [unity_LightAtten7]
+					Vector 0 [unity_LightColor0]
+					Vector 1 [unity_LightColor1]
+					Vector 2 [unity_LightColor2]
+					Vector 3 [unity_LightColor3]
+					Vector 4 [unity_LightColor4]
+					Vector 5 [unity_LightColor5]
+					Vector 6 [unity_LightColor6]
+					Vector 7 [unity_LightColor7]
+					Vector 8 [unity_LightPosition0]
+					Vector 9 [unity_LightPosition1]
+					Vector 10 [unity_LightPosition2]
+					Vector 11 [unity_LightPosition3]
+					Vector 12 [unity_LightPosition4]
+					Vector 13 [unity_LightPosition5]
+					Vector 14 [unity_LightPosition6]
+					Vector 15 [unity_LightPosition7]
+					VectorInt 0 [unity_VertexLightParams] 4
+					"vs_2_0
+						def c36, 1, 0, 0.5, 0
+						dcl_position v0
+						dcl_normal v1
+						dcl_texcoord v2
+						dp3 r0.x, c31, v1
+						dp3 r0.y, c32, v1
+						dp3 r0.z, c33, v1
+						nrm r1.xyz, r0
+						mad r0, v0.xyzx, c36.xxxy, c36.yyyx
+						dp4 r2.x, c28, r0
+						dp4 r2.y, c29, r0
+						dp4 r2.z, c30, r0
+						mov r3.xyz, c34
+						loop aL, i0
+						mad r4.xyz, r2, -c8[aL].w, c8[aL]
+						dp3 r1.w, r4, r4
+						rsq r2.w, r1.w
+						mul r4.xyz, r2.w, r4
+						dp3 r2.w, r1, r4
+						mul r3.w, c8[aL].w, c8[aL].w
+						slt r3.w, -r3.w, r3.w
+						slt r4.x, c16[aL].w, r1.w
+						mul r3.w, r3.w, r4.x
+						mul r1.w, r1.w, c16[aL].z
+						add r1.w, r1.w, c36.x
+						rcp r1.w, r1.w
+						mad r1.w, r3.w, -r1.w, r1.w
+						mul r1.w, r1.w, c36.z
+						max r2.w, r2.w, c36.y
+						mul r4.xyz, r2.w, c0[aL]
+						mul r4.xyz, r1.w, r4
+						min r4.xyz, r4, c36.x
+						add r3.xyz, r3, r4
+						endloop
+						dp4 oPos.w, c27, r0
+						max r1.xyz, r3, c36.y
+						min oD0.xyz, r1, c36.x
+						mad oT0.xy, v2, c35, c35.zwzw
+						dp4 oPos.x, c24, r0
+						dp4 oPos.y, c25, r0
+						dp4 oPos.z, c26, r0
+						mov oD0.w, c36.x
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "SPOT" }
+					Bind "vertex" Vertex
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+					Matrix 39 [glstate_matrix_invtrans_modelview0] 3
+					Matrix 36 [glstate_matrix_modelview0] 3
+					Matrix 32 [glstate_matrix_mvp]
+					Vector 43 [_MainTex_ST]
+					Vector 42 [glstate_lightmodel_ambient]
+					Vector 16 [unity_LightAtten0]
+					Vector 17 [unity_LightAtten1]
+					Vector 18 [unity_LightAtten2]
+					Vector 19 [unity_LightAtten3]
+					Vector 20 [unity_LightAtten4]
+					Vector 21 [unity_LightAtten5]
+					Vector 22 [unity_LightAtten6]
+					Vector 23 [unity_LightAtten7]
+					Vector 0 [unity_LightColor0]
+					Vector 1 [unity_LightColor1]
+					Vector 2 [unity_LightColor2]
+					Vector 3 [unity_LightColor3]
+					Vector 4 [unity_LightColor4]
+					Vector 5 [unity_LightColor5]
+					Vector 6 [unity_LightColor6]
+					Vector 7 [unity_LightColor7]
+					Vector 8 [unity_LightPosition0]
+					Vector 9 [unity_LightPosition1]
+					Vector 10 [unity_LightPosition2]
+					Vector 11 [unity_LightPosition3]
+					Vector 12 [unity_LightPosition4]
+					Vector 13 [unity_LightPosition5]
+					Vector 14 [unity_LightPosition6]
+					Vector 15 [unity_LightPosition7]
+					Vector 24 [unity_SpotDirection0]
+					Vector 25 [unity_SpotDirection1]
+					Vector 26 [unity_SpotDirection2]
+					Vector 27 [unity_SpotDirection3]
+					Vector 28 [unity_SpotDirection4]
+					Vector 29 [unity_SpotDirection5]
+					Vector 30 [unity_SpotDirection6]
+					Vector 31 [unity_SpotDirection7]
+					VectorInt 0 [unity_VertexLightParams] 4
+					"vs_2_0
+						def c44, 1, 0, 0.5, 0
+						dcl_position v0
+						dcl_normal v1
+						dcl_texcoord v2
+						dp3 r0.x, c39, v1
+						dp3 r0.y, c40, v1
+						dp3 r0.z, c41, v1
+						nrm r1.xyz, r0
+						mad r0, v0.xyzx, c44.xxxy, c44.yyyx
+						dp4 r2.x, c36, r0
+						dp4 r2.y, c37, r0
+						dp4 r2.z, c38, r0
+						mov r3.xyz, c42
+						loop aL, i0
+						mad r4.xyz, r2, -c8[aL].w, c8[aL]
+						dp3 r1.w, r4, r4
+						rsq r2.w, r1.w
+						mul r4.xyz, r2.w, r4
+						dp3 r2.w, r1, r4
+						mul r3.w, c8[aL].w, c8[aL].w
+						slt r3.w, -r3.w, r3.w
+						slt r4.w, c16[aL].w, r1.w
+						mul r3.w, r3.w, r4.w
+						mul r1.w, r1.w, c16[aL].z
+						add r1.w, r1.w, c44.x
+						rcp r1.w, r1.w
+						mad r1.w, r3.w, -r1.w, r1.w
+						dp3 r3.w, r4, c24[aL]
+						max r3.w, r3.w, c44.y
+						add r3.w, r3.w, -c16[aL].x
+						mul r3.w, r3.w, c16[aL].y
+						max r3.w, r3.w, c44.y
+						min r3.w, r3.w, c44.x
+						mul r1.w, r1.w, r3.w
+						mul r1.w, r1.w, c44.z
+						max r2.w, r2.w, c44.y
+						mul r4.xyz, r2.w, c0[aL]
+						mul r4.xyz, r1.w, r4
+						min r4.xyz, r4, c44.x
+						add r3.xyz, r3, r4
+						endloop
+						dp4 oPos.w, c35, r0
+						max r1.xyz, r3, c44.y
+						min oD0.xyz, r1, c44.x
+						mad oT0.xy, v2, c43, c43.zwzw
+						dp4 oPos.x, c32, r0
+						dp4 oPos.y, c33, r0
+						dp4 oPos.z, c34, r0
+						mov oD0.w, c44.x
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					SetTexture 0 [_MainTex] 2D 0
+					"ps_2_0
+						dcl v0
+						dcl t0.xy
+						dcl_2d s0
+						texld_pp r0, t0, s0
+						mul_pp r0.xyz, r0, v0
+						mul_pp r1.w, r0.w, v0.w
+						add_pp r1.xyz, r0, r0
+						mov_pp oC0, r1
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "POINT" }
+					SetTexture 0 [_MainTex] 2D 0
+					"ps_2_0
+						dcl v0
+						dcl t0.xy
+						dcl_2d s0
+						texld_pp r0, t0, s0
+						mul_pp r0.xyz, r0, v0
+						mul_pp r1.w, r0.w, v0.w
+						add_pp r1.xyz, r0, r0
+						mov_pp oC0, r1
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "SPOT" }
+					SetTexture 0 [_MainTex] 2D 0
+					"ps_2_0
+						dcl v0
+						dcl t0.xy
+						dcl_2d s0
+						texld_pp r0, t0, s0
+						mul_pp r0.xyz, r0, v0
+						mul_pp r1.w, r0.w, v0.w
+						add_pp r1.xyz, r0, r0
+						mov_pp oC0, r1
+						
+						"
+				}
+			}
+		}
+		Pass {
+			Tags { "LIGHTMODE"="VertexLM" "RenderType"="Opaque" }
+			GpuProgramID 254837
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "color" Color
+					Bind "texcoord" TexCoord0
+					Bind "texcoord1" TexCoord1
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 5 [_MainTex_ST]
+					Vector 4 [unity_LightmapST]
+					"vs_2_0
+						def c6, 0, 1, 0, 0
+						dcl_position v0
+						dcl_color v1
+						dcl_texcoord1 v2
+						dcl_texcoord v3
+						max r0, v1, c6.x
+						min oD0, r0, c6.y
+						mad oT0.xy, v2, c4, c4.zwzw
+						mad oT1.xy, v3, c5, c5.zwzw
+						mad r0, v0.xyzx, c6.yyyx, c6.xxxy
+						dp4 oPos.x, c0, r0
+						dp4 oPos.y, c1, r0
+						dp4 oPos.z, c2, r0
+						dp4 oPos.w, c3, r0
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					SetTexture 0 [unity_Lightmap] 2D 0
+					SetTexture 1 [_MainTex] 2D 1
+					"ps_2_0
+						dcl v0
+						dcl t0.xy
+						dcl t1.xy
+						dcl_2d s0
+						dcl_2d s1
+						texld_pp r0, t0, s0
+						texld_pp r1, t1, s1
+						mul_pp r0.xyz, r0, r1
+						mul_pp r1.w, r1.w, v0.w
+						add_pp r1.xyz, r0, r0
+						mov_pp oC0, r1
+						
+						"
+				}
+			}
+		}
+		Pass {
+			Tags { "LIGHTMODE"="VertexLMRGBM" "RenderType"="Opaque" }
+			GpuProgramID 295230
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "color" Color
+					Bind "texcoord" TexCoord0
+					Bind "texcoord1" TexCoord1
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 5 [_MainTex_ST]
+					Vector 4 [unity_LightmapST]
+					"vs_2_0
+						def c6, 0, 1, 0, 0
+						dcl_position v0
+						dcl_color v1
+						dcl_texcoord1 v2
+						dcl_texcoord v3
+						max r0, v1, c6.x
+						min oD0, r0, c6.y
+						mad oT0.xy, v2, c4, c4.zwzw
+						mad oT1.xy, v3, c5, c5.zwzw
+						mad r0, v0.xyzx, c6.yyyx, c6.xxxy
+						dp4 oPos.x, c0, r0
+						dp4 oPos.y, c1, r0
+						dp4 oPos.z, c2, r0
+						dp4 oPos.w, c3, r0
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					SetTexture 0 [unity_Lightmap] 2D 0
+					SetTexture 1 [_MainTex] 2D 1
+					"ps_2_0
+						def c0, 4, 0, 0, 0
+						dcl v0
+						dcl t0.xy
+						dcl t1.xy
+						dcl_2d s0
+						dcl_2d s1
+						texld_pp r0, t0, s0
+						texld_pp r1, t1, s1
+						mul_pp r0.xyz, r0.w, r0
+						add_pp r0.xyz, r0, r0
+						mul_pp r0.xyz, r0, r1
+						mul_pp r1.w, r1.w, v0.w
+						mul_pp r1.xyz, r0, c0.x
+						mov_pp oC0, r1
+						
+						"
+				}
+			}
+		}
+		Pass {
+			Name "SHADOWCASTER"
+			Tags { "LIGHTMODE"="SHADOWCASTER" "SHADOWSUPPORT"="true" "RenderType"="Opaque" }
+			Cull Off
+			Offset 1, 1
+			GpuProgramID 60184
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Keywords { "SHADOWS_DEPTH" }
+					Bind "vertex" Vertex
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 4 [unity_LightShadowBias]
+					"vs_2_0
+						def c5, 1, 0, 0, 0
+						dcl_position v0
+						mad r0, v0.xyzx, c5.xxxy, c5.yyyx
+						dp4 r1.w, c3, r0
+						rcp r2.x, r1.w
+						mul r2.x, r2.x, c4.x
+						max r2.x, r2.x, c5.y
+						min r2.x, r2.x, c5.x
+						dp4 r2.y, c2, r0
+						add r2.x, r2.x, r2.y
+						max r2.y, r2.x, c5.y
+						lrp r1.z, c4.y, r2.y, r2.x
+						dp4 r1.x, c0, r0
+						dp4 r1.y, c1, r0
+						mov oT0, r1
+						mov oPos, r1
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "SHADOWS_CUBE" }
+					Bind "vertex" Vertex
+					Matrix 4 [_Object2World] 3
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 7 [_LightPositionRange]
+					"vs_2_0
+						dcl_position v0
+						dp4 r0.x, c4, v0
+						dp4 r0.y, c5, v0
+						dp4 r0.z, c6, v0
+						add oT0.xyz, r0, -c7
+						dp4 oPos.x, c0, v0
+						dp4 oPos.y, c1, v0
+						dp4 oPos.z, c2, v0
+						dp4 oPos.w, c3, v0
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Keywords { "SHADOWS_DEPTH" }
+					"ps_2_0
+						dcl t0
+						rcp r0.w, t0.w
+						mul r0, r0.w, t0.z
+						mov oC0, r0
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "SHADOWS_CUBE" }
+					Vector 0 [_LightPositionRange]
+					"ps_2_0
+						dcl t0.xyz
+						dp3 r0.w, t0, t0
+						rsq r0.x, r0.w
+						rcp r0.x, r0.x
+						mul r0, r0.x, c0.w
+						mov oC0, r0
+						
+						"
+				}
+			}
+		}
+		Pass {
+			Name "SHADOWCOLLECTOR"
+			Tags { "LIGHTMODE"="SHADOWCOLLECTOR" "RenderType"="Opaque" }
+			GpuProgramID 93570
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Keywords { "SHADOWS_NATIVE" }
+					Bind "vertex" Vertex
+					Matrix 19 [_Object2World]
+					Matrix 23 [glstate_matrix_modelview0] 3
+					Matrix 15 [glstate_matrix_mvp]
+					Matrix 0 [unity_World2Shadow0]
+					Matrix 4 [unity_World2Shadow1]
+					Matrix 8 [unity_World2Shadow2]
+					Matrix 12 [unity_World2Shadow3] 3
+					"vs_2_0
+						dcl_position v0
+						dp4 oPos.x, c15, v0
+						dp4 oPos.y, c16, v0
+						dp4 oPos.z, c17, v0
+						dp4 oPos.w, c18, v0
+						dp4 r0.x, c25, v0
+						mov oT4.w, -r0.x
+						dp4 r0.w, c22, v0
+						dp4 r0.x, c19, v0
+						dp4 r0.y, c20, v0
+						dp4 r0.z, c21, v0
+						dp4 oT0.x, c0, r0
+						dp4 oT0.y, c1, r0
+						dp4 oT0.z, c2, r0
+						dp4 oT1.x, c4, r0
+						dp4 oT1.y, c5, r0
+						dp4 oT1.z, c6, r0
+						dp4 oT2.x, c8, r0
+						dp4 oT2.y, c9, r0
+						dp4 oT2.z, c10, r0
+						dp4 oT3.x, c12, r0
+						dp4 oT3.y, c13, r0
+						dp4 oT3.z, c14, r0
+						mov oT4.xyz, r0
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "SHADOWS_SPLIT_SPHERES" "SHADOWS_NATIVE" }
+					Bind "vertex" Vertex
+					Matrix 19 [_Object2World]
+					Matrix 23 [glstate_matrix_modelview0] 3
+					Matrix 15 [glstate_matrix_mvp]
+					Matrix 0 [unity_World2Shadow0]
+					Matrix 4 [unity_World2Shadow1]
+					Matrix 8 [unity_World2Shadow2]
+					Matrix 12 [unity_World2Shadow3] 3
+					"vs_2_0
+						dcl_position v0
+						dp4 oPos.x, c15, v0
+						dp4 oPos.y, c16, v0
+						dp4 oPos.z, c17, v0
+						dp4 oPos.w, c18, v0
+						dp4 r0.x, c25, v0
+						mov oT4.w, -r0.x
+						dp4 r0.w, c22, v0
+						dp4 r0.x, c19, v0
+						dp4 r0.y, c20, v0
+						dp4 r0.z, c21, v0
+						dp4 oT0.x, c0, r0
+						dp4 oT0.y, c1, r0
+						dp4 oT0.z, c2, r0
+						dp4 oT1.x, c4, r0
+						dp4 oT1.y, c5, r0
+						dp4 oT1.z, c6, r0
+						dp4 oT2.x, c8, r0
+						dp4 oT2.y, c9, r0
+						dp4 oT2.z, c10, r0
+						dp4 oT3.x, c12, r0
+						dp4 oT3.y, c13, r0
+						dp4 oT3.z, c14, r0
+						mov oT4.xyz, r0
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "SHADOWS_NATIVE" "SHADOWS_SINGLE_CASCADE" }
+					Bind "vertex" Vertex
+					Matrix 19 [_Object2World]
+					Matrix 23 [glstate_matrix_modelview0] 3
+					Matrix 15 [glstate_matrix_mvp]
+					Matrix 0 [unity_World2Shadow0]
+					Matrix 4 [unity_World2Shadow1]
+					Matrix 8 [unity_World2Shadow2]
+					Matrix 12 [unity_World2Shadow3] 3
+					"vs_2_0
+						dcl_position v0
+						dp4 oPos.x, c15, v0
+						dp4 oPos.y, c16, v0
+						dp4 oPos.z, c17, v0
+						dp4 oPos.w, c18, v0
+						dp4 r0.x, c25, v0
+						mov oT4.w, -r0.x
+						dp4 r0.w, c22, v0
+						dp4 r0.x, c19, v0
+						dp4 r0.y, c20, v0
+						dp4 r0.z, c21, v0
+						dp4 oT0.x, c0, r0
+						dp4 oT0.y, c1, r0
+						dp4 oT0.z, c2, r0
+						dp4 oT1.x, c4, r0
+						dp4 oT1.y, c5, r0
+						dp4 oT1.z, c6, r0
+						dp4 oT2.x, c8, r0
+						dp4 oT2.y, c9, r0
+						dp4 oT2.z, c10, r0
+						dp4 oT3.x, c12, r0
+						dp4 oT3.y, c13, r0
+						dp4 oT3.z, c14, r0
+						mov oT4.xyz, r0
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "SHADOWS_SPLIT_SPHERES" "SHADOWS_NATIVE" "SHADOWS_SINGLE_CASCADE" }
+					Bind "vertex" Vertex
+					Matrix 19 [_Object2World]
+					Matrix 23 [glstate_matrix_modelview0] 3
+					Matrix 15 [glstate_matrix_mvp]
+					Matrix 0 [unity_World2Shadow0]
+					Matrix 4 [unity_World2Shadow1]
+					Matrix 8 [unity_World2Shadow2]
+					Matrix 12 [unity_World2Shadow3] 3
+					"vs_2_0
+						dcl_position v0
+						dp4 oPos.x, c15, v0
+						dp4 oPos.y, c16, v0
+						dp4 oPos.z, c17, v0
+						dp4 oPos.w, c18, v0
+						dp4 r0.x, c25, v0
+						mov oT4.w, -r0.x
+						dp4 r0.w, c22, v0
+						dp4 r0.x, c19, v0
+						dp4 r0.y, c20, v0
+						dp4 r0.z, c21, v0
+						dp4 oT0.x, c0, r0
+						dp4 oT0.y, c1, r0
+						dp4 oT0.z, c2, r0
+						dp4 oT1.x, c4, r0
+						dp4 oT1.y, c5, r0
+						dp4 oT1.z, c6, r0
+						dp4 oT2.x, c8, r0
+						dp4 oT2.y, c9, r0
+						dp4 oT2.z, c10, r0
+						dp4 oT3.x, c12, r0
+						dp4 oT3.y, c13, r0
+						dp4 oT3.z, c14, r0
+						mov oT4.xyz, r0
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Keywords { "SHADOWS_NATIVE" }
+					Vector 3 [_LightShadowData]
+					Vector 2 [_LightSplitsFar]
+					Vector 1 [_LightSplitsNear]
+					Vector 0 [_ProjectionParams]
+					SetTexture 0 [_ShadowMapTexture] 2D 0
+					"ps_2_0
+						def c4, 0, 1, 255, 0.00392156886
+						dcl t0.xyz
+						dcl t1.xyz
+						dcl t2.xyz
+						dcl t3.xyz
+						dcl t4
+						dcl_2d s0
+						add r0, t4.w, -c2
+						cmp r0, r0, c4.x, c4.y
+						add r1, t4.w, -c1
+						cmp r0, r1, r0, c4.x
+						mul r1.xyz, r0.y, t1
+						mad r1.xyz, t0, r0.x, r1
+						mad r0.xyz, t2, r0.z, r1
+						mad r0.xyz, t3, r0.w, r0
+						mov r0.w, c4.y
+						texldp_pp r0, r0, s0
+						mov r0.y, c4.y
+						lrp_pp r1.x, r0.x, r0.y, c3.x
+						mad_sat r0.x, t4.w, c3.z, c3.w
+						add_sat_pp r1.x, r0.x, r1.x
+						mad r0.x, t4.w, -c0.w, r0.y
+						mul r0.xy, r0.x, c4.yzxw
+						frc r0.xy, r0
+						mad_pp r1.z, r0.y, -c4.w, r0.x
+						mov_pp r1.w, r0.y
+						mov r1.y, c4.y
+						mov_pp oC0, r1
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "SHADOWS_SPLIT_SPHERES" "SHADOWS_NATIVE" }
+					Vector 6 [_LightShadowData]
+					Vector 4 [_ProjectionParams]
+					Vector 7 [unity_ShadowFadeCenterAndType]
+					Vector 0 [unity_ShadowSplitSpheres0]
+					Vector 1 [unity_ShadowSplitSpheres1]
+					Vector 2 [unity_ShadowSplitSpheres2]
+					Vector 3 [unity_ShadowSplitSpheres3]
+					Vector 5 [unity_ShadowSplitSqRadii]
+					SetTexture 0 [_ShadowMapTexture] 2D 0
+					"ps_2_0
+						def c8, 0, 1, -0, -1
+						def c9, 1, 255, 0.00392156886, 0
+						dcl t0.xyz
+						dcl t1.xyz
+						dcl t2.xyz
+						dcl t3.xyz
+						dcl t4
+						dcl_2d s0
+						add r0.xyz, t4, -c0
+						dp3 r0.x, r0, r0
+						add r1.xyz, t4, -c1
+						dp3 r0.y, r1, r1
+						add r1.xyz, t4, -c2
+						dp3 r0.z, r1, r1
+						add r1.xyz, t4, -c3
+						dp3 r0.w, r1, r1
+						add r0, r0, -c5
+						cmp r1.xyz, r0, c8.z, c8.w
+						cmp r0, r0, c8.x, c8.y
+						add r2.xy, r1, r0.yzxw
+						add r2.z, r1.z, r0.w
+						max r0.yzw, r2.wzyx, c8.x
+						mul r1.xyz, r0.w, t1
+						mad r1.xyz, t0, r0.x, r1
+						mad r1.xyz, t2, r0.z, r1
+						mad r0.xyz, t3, r0.y, r1
+						mov r0.w, c8.y
+						texldp_pp r0, r0, s0
+						mov r0.y, c8.y
+						lrp_pp r1.x, r0.x, r0.y, c6.x
+						add r2.xyz, t4, -c7
+						dp3 r0.x, r2, r2
+						rsq r0.x, r0.x
+						rcp r0.x, r0.x
+						mad_sat r0.x, r0.x, c6.z, c6.w
+						add_sat_pp r1.x, r0.x, r1.x
+						mad r0.x, t4.w, -c4.w, r0.y
+						mul r0.xy, r0.x, c9
+						frc r0.xy, r0
+						mad_pp r1.z, r0.y, -c9.z, r0.x
+						mov_pp r1.w, r0.y
+						mov r1.y, c8.y
+						mov_pp oC0, r1
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "SHADOWS_NATIVE" "SHADOWS_SINGLE_CASCADE" }
+					Vector 3 [_LightShadowData]
+					Vector 2 [_LightSplitsFar]
+					Vector 1 [_LightSplitsNear]
+					Vector 0 [_ProjectionParams]
+					SetTexture 0 [_ShadowMapTexture] 2D 0
+					"ps_2_0
+						def c4, 0, 1, 255, 0.00392156886
+						dcl t0.xyz
+						dcl t1.xyz
+						dcl t2.xyz
+						dcl t3.xyz
+						dcl t4
+						dcl_2d s0
+						add r0, t4.w, -c2
+						cmp r0, r0, c4.x, c4.y
+						add r1, t4.w, -c1
+						cmp r0, r1, r0, c4.x
+						mul r1.xyz, r0.y, t1
+						mad r1.xyz, t0, r0.x, r1
+						mad r0.xyz, t2, r0.z, r1
+						mad r0.xyz, t3, r0.w, r0
+						mov r0.w, c4.y
+						texldp_pp r0, r0, s0
+						mov r0.y, c4.y
+						lrp_pp r1.x, r0.x, r0.y, c3.x
+						mad_sat r0.x, t4.w, c3.z, c3.w
+						add_sat_pp r1.x, r0.x, r1.x
+						mad r0.x, t4.w, -c0.w, r0.y
+						mul r0.xy, r0.x, c4.yzxw
+						frc r0.xy, r0
+						mad_pp r1.z, r0.y, -c4.w, r0.x
+						mov_pp r1.w, r0.y
+						mov r1.y, c4.y
+						mov_pp oC0, r1
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "SHADOWS_SPLIT_SPHERES" "SHADOWS_NATIVE" "SHADOWS_SINGLE_CASCADE" }
+					Vector 6 [_LightShadowData]
+					Vector 4 [_ProjectionParams]
+					Vector 7 [unity_ShadowFadeCenterAndType]
+					Vector 0 [unity_ShadowSplitSpheres0]
+					Vector 1 [unity_ShadowSplitSpheres1]
+					Vector 2 [unity_ShadowSplitSpheres2]
+					Vector 3 [unity_ShadowSplitSpheres3]
+					Vector 5 [unity_ShadowSplitSqRadii]
+					SetTexture 0 [_ShadowMapTexture] 2D 0
+					"ps_2_0
+						def c8, 0, 1, -0, -1
+						def c9, 1, 255, 0.00392156886, 0
+						dcl t0.xyz
+						dcl t1.xyz
+						dcl t2.xyz
+						dcl t3.xyz
+						dcl t4
+						dcl_2d s0
+						add r0.xyz, t4, -c0
+						dp3 r0.x, r0, r0
+						add r1.xyz, t4, -c1
+						dp3 r0.y, r1, r1
+						add r1.xyz, t4, -c2
+						dp3 r0.z, r1, r1
+						add r1.xyz, t4, -c3
+						dp3 r0.w, r1, r1
+						add r0, r0, -c5
+						cmp r1.xyz, r0, c8.z, c8.w
+						cmp r0, r0, c8.x, c8.y
+						add r2.xy, r1, r0.yzxw
+						add r2.z, r1.z, r0.w
+						max r0.yzw, r2.wzyx, c8.x
+						mul r1.xyz, r0.w, t1
+						mad r1.xyz, t0, r0.x, r1
+						mad r1.xyz, t2, r0.z, r1
+						mad r0.xyz, t3, r0.y, r1
+						mov r0.w, c8.y
+						texldp_pp r0, r0, s0
+						mov r0.y, c8.y
+						lrp_pp r1.x, r0.x, r0.y, c6.x
+						add r2.xyz, t4, -c7
+						dp3 r0.x, r2, r2
+						rsq r0.x, r0.x
+						rcp r0.x, r0.x
+						mad_sat r0.x, r0.x, c6.z, c6.w
+						add_sat_pp r1.x, r0.x, r1.x
+						mad r0.x, t4.w, -c4.w, r0.y
+						mul r0.xy, r0.x, c9
+						frc r0.xy, r0
+						mad_pp r1.z, r0.y, -c9.z, r0.x
+						mov_pp r1.w, r0.y
+						mov r1.y, c8.y
+						mov_pp oC0, r1
+						
+						"
+				}
+			}
+		}
+	}
+}

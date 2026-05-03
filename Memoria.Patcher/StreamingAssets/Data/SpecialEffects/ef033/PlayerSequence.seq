@@ -1,0 +1,8 @@
+// Player sequence of SFX Smoke
+
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=Smoke ; Reflect=True
+WaitSFXLoaded: SFX=Smoke ; Reflect=True
+PlaySFX: SFX=Smoke ; Reflect=True
+WaitSFXDone: SFX=Smoke ; Reflect=True

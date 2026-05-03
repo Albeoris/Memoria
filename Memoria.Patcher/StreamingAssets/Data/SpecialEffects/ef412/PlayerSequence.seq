@@ -1,0 +1,30 @@
+// Player sequence of SFX Thunder_Slash_2
+
+WaitAnimation: Char=Caster
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=Thunder_Slash_2 ; Reflect=True
+SetBackgroundIntensity: Intensity=0.3125 ; Time=9
+PlayAnimation: Char=Caster ; Anim=MP_SET
+WaitAnimation: Char=Caster
+MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=1175 ; UseCollisionRadius=True ; Anim=MP_RUN
+Turn: Char=Caster ; BaseAngle=AllTargets ; Time=10
+WaitMove: Char=Caster
+MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=450 ; UseCollisionRadius=True ; Anim=MP_RUN_TO_ATTACK
+WaitMove: Char=Caster
+StartThread
+	Wait: Time=6
+	WaitSFXLoaded: SFX=Thunder_Slash_2 ; Reflect=True
+	PlaySFX: SFX=Thunder_Slash_2 ; Reflect=True
+	WaitSFXDone: SFX=Thunder_Slash_2 ; Reflect=True
+EndThread
+PlayAnimation: Char=Caster ; Anim=MP_ATTACK
+WaitAnimation: Char=Caster
+MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Anim=MP_BACK
+Turn: Char=Caster ; BaseAngle=Default ; Time=4
+WaitMove: Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+SetBackgroundIntensity: Intensity=1 ; Time=16
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect

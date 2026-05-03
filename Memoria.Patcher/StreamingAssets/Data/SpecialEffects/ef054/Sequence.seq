@@ -1,0 +1,12 @@
+// Shared sequence of SFX Blowup
+
+PlaySound: Sound=1518
+PlaySound: Sound=1519
+PlaySound: Sound=1520
+Wait: Time=10
+PlaySound: Sound=1521
+PlaySound: Sound=1522
+PlaySound: Sound=1523
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure

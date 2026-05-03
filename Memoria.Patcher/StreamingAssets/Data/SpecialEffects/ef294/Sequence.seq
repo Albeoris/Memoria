@@ -1,0 +1,20 @@
+// Shared sequence of SFX Boomerang
+
+PlaySound: Sound=1912
+PlaySound: Sound=1913
+PlaySound: Sound=1914
+Wait: Time=49
+PlaySound: Sound=1915
+PlaySound: Sound=1916
+PlaySound: Sound=1917
+Wait: Time=8
+PlaySound: Sound=1918
+PlaySound: Sound=1919
+PlaySound: Sound=1920
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+PlaySound: Sound=1921
+PlaySound: Sound=1922
+PlaySound: Sound=1923
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=24

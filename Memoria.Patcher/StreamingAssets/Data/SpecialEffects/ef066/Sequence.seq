@@ -1,0 +1,24 @@
+// Shared sequence of SFX Thunder__Multi
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=46
+PlaySound: Sound=151
+PlaySound: Sound=138
+PlaySound: Sound=245
+Wait: Time=4
+PlaySound: Sound=151
+PlaySound: Sound=138
+PlaySound: Sound=245
+Wait: Time=4
+PlaySound: Sound=151
+PlaySound: Sound=138
+PlaySound: Sound=245
+Wait: Time=4
+PlaySound: Sound=151
+PlaySound: Sound=138
+PlaySound: Sound=245
+Wait: Time=4
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=14
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=16
+SetBackgroundIntensity: Intensity=1 ; Time=8

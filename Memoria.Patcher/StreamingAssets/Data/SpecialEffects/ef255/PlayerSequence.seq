@@ -1,0 +1,26 @@
+// Player sequence of SFX Cook
+
+WaitAnimation: Char=Caster
+StartThread: Condition=AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
+	WaitMove: Char=Caster
+EndThread
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=Cook ; Reflect=True
+WaitSFXLoaded: SFX=Cook ; Reflect=True
+PlayAnimation: Char=Caster ; Anim=MP_SPECIAL1
+WaitAnimation: Char=Caster
+PlaySFX: SFX=Cook ; Reflect=True
+WaitSFXDone: SFX=Cook ; Reflect=True
+ActivateReflect
+WaitReflect
+StartThread: Condition=AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK
+	WaitMove: Char=Caster
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

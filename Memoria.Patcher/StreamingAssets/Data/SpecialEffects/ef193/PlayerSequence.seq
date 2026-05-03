@@ -1,0 +1,23 @@
+// Player sequence of SFX No_Mercy__Single
+
+WaitAnimation: Char=Caster
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=No_Mercy__Single ; Reflect=True
+WaitSFXLoaded: SFX=No_Mercy__Single ; Reflect=True
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+WaitAnimation: Char=Caster
+PlaySFX: SFX=No_Mercy__Single ; Reflect=True
+Turn: Char=Caster ; BaseAngle=FirstTarget ; Time=5
+StartThread
+	PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
+EndThread
+Wait: Time=32
+PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitSFXDone: SFX=No_Mercy__Single ; Reflect=True
+ActivateReflect
+WaitReflect

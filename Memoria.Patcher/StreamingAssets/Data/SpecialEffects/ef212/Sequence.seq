@@ -1,0 +1,12 @@
+// Shared sequence of SFX Fire_Sword
+
+PlaySound: Sound=2433
+PlaySound: Sound=2434
+Wait: Time=15
+PlaySound: Sound=77
+PlaySound: Sound=67
+PlaySound: Sound=58
+Wait: Time=5
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure

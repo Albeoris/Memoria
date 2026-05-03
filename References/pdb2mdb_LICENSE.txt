@@ -1,0 +1,4 @@
+https://gist.github.com/jbevain/ba23149da8369e4a966f#file-pdb2mdb-exe
+
+    pdb2mdb is licensed under the Microsoft Public License (Ms-PL).
+    Mono.Cecil is licensed under the MIT/X11.

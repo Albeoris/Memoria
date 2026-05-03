@@ -1,0 +1,20 @@
+// Shared sequence of SFX Cherry_Blossom
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=16 ; HoldDuration=125
+PlaySound: Sound=1550
+PlaySound: Sound=1551
+PlaySound: Sound=1552
+Wait: Time=46
+PlaySound: Sound=1153
+PlaySound: Sound=1154
+PlaySound: Sound=1232
+Wait: Time=29
+PlaySound: Sound=1170
+PlaySound: Sound=1171
+PlaySound: Sound=1172
+Wait: Time=10
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=32
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=8
+SetBackgroundIntensity: Intensity=1 ; Time=8

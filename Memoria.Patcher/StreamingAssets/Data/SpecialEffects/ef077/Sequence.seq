@@ -1,0 +1,10 @@
+// Shared sequence of SFX Blizzara__Multi
+
+PlaySound: Sound=327
+PlaySound: Sound=326
+PlaySound: Sound=341
+Wait: Time=32
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=12

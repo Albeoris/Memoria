@@ -1,0 +1,32 @@
+// Shared sequence of SFX Bahamut__Short
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=19
+ShowMesh: Char=AllNonTargets ; Enable=False ; IsDisappear=True
+StartThread: Condition=SFXUseCamera && AreTargetsPlayers
+	ShiftWorld: Angle=(0, 180, 0)
+EndThread
+Wait: Time=3
+PlaySound: Sound=2271
+PlaySound: Sound=2272
+PlaySound: Sound=2273
+PlaySound: Sound=2274
+Wait: Time=14
+PlaySound: Sound=2277
+PlaySound: Sound=2278
+PlaySound: Sound=2275
+PlaySound: Sound=2276
+Wait: Time=2
+SetBackgroundIntensity: Intensity=0 ; Time=0 ; HoldDuration=12
+Wait: Time=12
+SetBackgroundIntensity: Intensity=0.6796875 ; Time=12 ; HoldDuration=81
+Wait: Time=52
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=17
+SetBackgroundIntensity: Intensity=1 ; Time=12
+StartThread: Condition=SFXUseCamera && AreTargetsPlayers
+	ShiftWorld: Angle=(0, 0, 0)
+EndThread
+ShowMesh: Char=AllNonTargets ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllNonTargets ; Enable=True ; Time=12

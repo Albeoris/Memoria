@@ -1,0 +1,14 @@
+// Shared sequence of SFX Everyones_Grudge
+
+PlaySound: Sound=2053
+PlaySound: Sound=2054
+PlaySound: Sound=2055
+Wait: Time=10
+PlaySound: Sound=2056
+PlaySound: Sound=2057
+PlaySound: Sound=2058
+Wait: Time=5
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

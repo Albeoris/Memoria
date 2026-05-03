@@ -1,0 +1,20 @@
+// Shared sequence of SFX Flare_Sword
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=15
+PlaySound: Sound=2433
+PlaySound: Sound=2434
+Wait: Time=15
+PlaySound: Sound=1387
+PlaySound: Sound=1388
+PlaySound: Sound=1389
+ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
+SetBackgroundIntensity: Intensity=0 ; Time=1 ; HoldDuration=85
+Wait: Time=10
+ShowMesh: Char=Everyone ; Enable=True ; IsDisappear=True
+Wait: Time=67
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=8
+SetBackgroundIntensity: Intensity=1 ; Time=8
+Wait: Time=3
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=12

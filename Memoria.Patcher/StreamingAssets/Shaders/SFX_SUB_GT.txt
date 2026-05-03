@@ -1,0 +1,75 @@
+Shader "SFX_SUB_GT" {
+	Properties {
+		_MainTex ("Texture0", 2D) = "White" { }
+		_TexParam ("TexParam", Vector) = (0,0,255,255)
+		_Color ("Color", Color) = (2,2,2,1)
+		_Threshold ("Threshold", Float) = 0.0295
+	}
+	SubShader { 
+		Tags { "ForceSupported"="true" "RenderType"="Overlay" }
+		Pass {
+			Tags { "ForceSupported"="true" "RenderType"="Overlay" }
+			ZWrite Off
+			Cull Off
+			Blend One One
+			BlendOp RevSub
+			GpuProgramID 27400
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "color" Color
+					Bind "texcoord" TexCoord0
+					Matrix 0 [glstate_matrix_projection]
+					Vector 6 [_Color]
+					Vector 4 [_ProjectionParams]
+					Vector 5 [_TexParam]
+					"vs_2_0
+						def c7, 20, 1, 0, 0
+						dcl_position v0
+						dcl_color v1
+						dcl_texcoord v2
+						mov r0.zw, c7.y
+						mov r1.x, c7.x
+						add r1.x, r1.x, c4.y
+						add r1.z, -r1.x, v0.z
+						mov r0.xy, -r1.z
+						mov r1.xyw, v0
+						dp4 r2.x, c0, r1
+						dp4 r2.y, c1, r1
+						dp4 r2.z, c2, r1
+						dp4 r2.w, c3, r1
+						mul r0, r0, r2
+						rcp r1.x, r0.w
+						mul r0, r0, r1.x
+						max r0.z, r0.z, c7.z
+						mov oPos.xyw, r0
+						min oPos.z, r0.z, c7.y
+						mul r0.xyz, v1, c6
+						mul oD0.xyz, r0, v1.w
+						add r0.xy, v2, c5
+						rcp r1.x, c5.z
+						rcp r1.y, c5.w
+						mul oT0.xy, r0, r1
+						mov oD0.w, c7.y
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					SetTexture 0 [_MainTex] 2D 0
+					"ps_2_0
+						dcl v0
+						dcl t0.xy
+						dcl_2d s0
+						texld r0, t0, s0
+						mul r0, r0, v0
+						mov oC0, r0
+						
+						"
+				}
+			}
+		}
+	}
+	Fallback "Diffuse"
+}

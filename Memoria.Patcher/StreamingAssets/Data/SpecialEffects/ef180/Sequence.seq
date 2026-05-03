@@ -1,0 +1,10 @@
+// Shared sequence of SFX Aero
+
+PlaySound: Sound=496
+PlaySound: Sound=492
+PlaySound: Sound=519
+Wait: Time=55
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=17
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=10

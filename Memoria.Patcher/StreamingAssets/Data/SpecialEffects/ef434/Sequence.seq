@@ -1,0 +1,21 @@
+// Shared sequence of SFX Tidal_Wave
+
+PlaySound: Sound=1530
+PlaySound: Sound=1531
+PlaySound: Sound=1532
+Wait: Time=6
+SetBackgroundIntensity: Intensity=0 ; Time=9 ; HoldDuration=66
+Wait: Time=12
+PlaySound: Sound=1533
+PlaySound: Sound=1534
+PlaySound: Sound=1535
+PlayAnimation: Char=AllTargets ; Anim=MP_DAMAGE1
+Wait: Time=16
+PlayAnimation: Char=AllTargets ; Anim=MP_DAMAGE1
+Wait: Time=15
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=11
+SetBackgroundIntensity: Intensity=1 ; Time=26
+Wait: Time=9

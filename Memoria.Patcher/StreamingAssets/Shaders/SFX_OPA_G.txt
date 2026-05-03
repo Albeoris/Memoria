@@ -1,0 +1,59 @@
+Shader "SFX_OPA_G" {
+	Properties {
+		_Color ("Color", Color) = (2,2,2,1)
+		_Threshold ("Threshold", Float) = 0.0295
+	}
+	SubShader { 
+		Tags { "ForceSupported"="true" "RenderType"="Overlay" }
+		Pass {
+			Tags { "ForceSupported"="true" "RenderType"="Overlay" }
+			Cull Off
+			Blend SrcAlpha OneMinusSrcAlpha
+			GpuProgramID 101
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "color" Color
+					Matrix 0 [glstate_matrix_projection]
+					Vector 5 [_Color]
+					Vector 4 [_ProjectionParams]
+					"vs_2_0
+						def c6, 20, 1, 0, 0
+						dcl_position v0
+						dcl_color v1
+						mov r0.zw, c6.y
+						mov r1.x, c6.x
+						add r1.x, r1.x, c4.y
+						add r1.z, -r1.x, v0.z
+						mov r0.xy, -r1.z
+						mov r1.xyw, v0
+						dp4 r2.x, c0, r1
+						dp4 r2.y, c1, r1
+						dp4 r2.z, c2, r1
+						dp4 r2.w, c3, r1
+						mul r0, r0, r2
+						rcp r1.x, r0.w
+						mul r0, r0, r1.x
+						max r0.z, r0.z, c6.z
+						mov oPos.xyw, r0
+						min oPos.z, r0.z, c6.y
+						mul r0.xyz, v1, c5
+						mul oD0.xyz, r0, v1.w
+						mov oD0.w, c6.y
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					"ps_2_0
+						dcl v0
+						mov oC0, v0
+						
+						"
+				}
+			}
+		}
+	}
+	Fallback "Diffuse"
+}

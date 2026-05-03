@@ -1,0 +1,12 @@
+// Shared sequence of SFX Blizzard_Sword
+
+PlaySound: Sound=2433
+PlaySound: Sound=2434
+Wait: Time=15
+PlaySound: Sound=2613
+PlaySound: Sound=2614
+PlaySound: Sound=2615
+Wait: Time=21
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=14
+EffectPoint: Char=Everyone ; Type=Figure

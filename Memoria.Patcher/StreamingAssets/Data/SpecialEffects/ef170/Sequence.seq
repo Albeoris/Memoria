@@ -1,0 +1,14 @@
+// Shared sequence of SFX Snowstorm
+
+PlaySound: Sound=2077
+PlaySound: Sound=2078
+PlaySound: Sound=2079
+Wait: Time=8
+PlaySound: Sound=2080
+PlaySound: Sound=2081
+PlaySound: Sound=2082
+Wait: Time=5
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=10

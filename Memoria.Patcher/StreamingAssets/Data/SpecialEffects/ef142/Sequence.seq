@@ -1,0 +1,12 @@
+// Shared sequence of SFX Curaga__Single
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=57
+PlaySound: Sound=473
+PlaySound: Sound=468
+PlaySound: Sound=461
+Wait: Time=40
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=17
+EffectPoint: Char=Everyone ; Type=Figure
+SetBackgroundIntensity: Intensity=1 ; Time=8
+Wait: Time=10

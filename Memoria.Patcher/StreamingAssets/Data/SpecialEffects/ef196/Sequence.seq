@@ -1,0 +1,10 @@
+// Shared sequence of SFX Curse__Multi
+
+PlaySound: Sound=578
+PlaySound: Sound=573
+PlaySound: Sound=526
+Wait: Time=10
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=42
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=30

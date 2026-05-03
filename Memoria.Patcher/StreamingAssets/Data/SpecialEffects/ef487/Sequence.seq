@@ -1,0 +1,26 @@
+// Shared sequence of SFX Ragtime_Wrong
+
+PlaySound: Sound=2315
+PlaySound: Sound=2316
+PlaySound: Sound=2317
+Wait: Time=4
+EffectPoint: Char=AllTargets ; Type=Effect
+PlayAnimation: Char=AllTargets ; Anim=MP_DAMAGE2
+Wait: Time=1
+StartThread: TargetLoop=True
+	StartThread: Condition=TargetIsPlayer
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 0.0, -500.0) ; Time=5
+		WaitAnimation: Char=AllTargets
+		PlayAnimation: Char=AllTargets ; MP_GET_UP_DISABLE
+		Wait: Time=24
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 0.0, 500.0) ; Time=10
+	EndThread
+	StartThread: Condition=!TargetIsPlayer
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 0.0, 500.0) ; Time=5
+		Wait: Time=28
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 0.0, -500.0) ; Time=10
+	EndThread
+	Wait: Time=2
+EndThread
+Wait: Time=10
+EffectPoint: Char=Everyone ; Type=Figure

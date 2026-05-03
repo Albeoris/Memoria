@@ -1,0 +1,19 @@
+LIBRARY "version"
+EXPORTS
+    GetFileVersionInfoSizeA=My_GetFileVersionInfoSizeA
+    GetFileVersionInfoSizeW=My_GetFileVersionInfoSizeW
+    GetFileVersionInfoA=My_GetFileVersionInfoA
+    GetFileVersionInfoW=My_GetFileVersionInfoW
+    VerQueryValueA=My_VerQueryValueA
+    VerQueryValueW=My_VerQueryValueW
+    GetFileVersionInfoByHandle=My_GetFileVersionInfoByHandle
+    GetFileVersionInfoExA=My_GetFileVersionInfoExA
+    GetFileVersionInfoExW=My_GetFileVersionInfoExW
+    GetFileVersionInfoSizeExA=My_GetFileVersionInfoSizeExA
+    GetFileVersionInfoSizeExW=My_GetFileVersionInfoSizeExW
+    VerFindFileA=My_VerFindFileA
+    VerFindFileW=My_VerFindFileW
+    VerInstallFileA=My_VerInstallFileA
+    VerInstallFileW=My_VerInstallFileW
+    VerLanguageNameA=My_VerLanguageNameA
+    VerLanguageNameW=My_VerLanguageNameW

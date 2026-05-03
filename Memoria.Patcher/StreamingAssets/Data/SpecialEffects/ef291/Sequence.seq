@@ -1,0 +1,25 @@
+// Shared sequence of SFX Raining_Swords
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=121
+PlaySound: Sound=1924
+PlaySound: Sound=1925
+PlaySound: Sound=1926
+Wait: Time=50
+PlaySound: Sound=1927
+PlaySound: Sound=1928
+PlaySound: Sound=1929
+Wait: Time=25
+PlaySound: Sound=1930
+PlaySound: Sound=1931
+PlaySound: Sound=1932
+Wait: Time=27
+PlaySound: Sound=1933
+PlaySound: Sound=1934
+PlaySound: Sound=1935
+Wait: Time=19
+SetBackgroundIntensity: Intensity=1 ; Time=1
+Wait: Time=14
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

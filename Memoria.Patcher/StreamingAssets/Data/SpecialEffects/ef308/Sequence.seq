@@ -1,0 +1,42 @@
+// Shared sequence of SFX Doomsday
+
+PlaySound: Sound=1111
+PlaySound: Sound=1216
+PlaySound: Sound=1217
+PlaySound: Sound=1218
+Wait: Time=1
+SetBackgroundIntensity: Intensity=0 ; Time=12 ; HoldDuration=205
+Wait: Time=7
+ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
+Wait: Time=96
+PlaySound: Sound=1112
+PlaySound: Sound=1219
+PlaySound: Sound=1220
+PlaySound: Sound=1221
+Wait: Time=74
+PlaySound: Sound=1131
+PlaySound: Sound=1222
+PlaySound: Sound=1223
+PlaySound: Sound=1224
+Wait: Time=24
+ShowMesh: Char=Everyone ; Enable=True ; IsDisappear=True
+Wait: Time=1
+SetBackgroundIntensity: Intensity=0.75 ; Time=0 ; HoldDuration=30
+Wait: Time=30
+SetBackgroundIntensity: Intensity=0 ; Time=14 ; HoldDuration=77
+Wait: Time=40
+ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
+Wait: Time=2
+PlaySound: Sound=1132
+PlaySound: Sound=1225
+PlaySound: Sound=1226
+PlaySound: Sound=1227
+Wait: Time=34
+ShowMesh: Char=Everyone ; Enable=True ; IsDisappear=True
+Wait: Time=1
+SetBackgroundIntensity: Intensity=1 ; Time=0
+Wait: Time=23
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=23
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=8

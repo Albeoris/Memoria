@@ -1,0 +1,10 @@
+// Shared sequence of SFX Octopus_Suction
+
+PlaySound: Sound=2243
+PlaySound: Sound=2244
+PlaySound: Sound=2245
+Wait: Time=70
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=24
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=8

@@ -1,0 +1,921 @@
+﻿<Window
+    x:Class="Memoria.Launcher.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:launcher="clr-namespace:Memoria.Launcher"
+    Title="{DynamicResource Settings.LauncherWindowTitle}"
+    Width="1000"
+    Height="700"
+    BorderThickness="1"
+    BorderBrush="#2fff"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="None"
+    AllowsTransparency="True"
+    Background="Transparent"
+    DataContext="{Binding RelativeSource={RelativeSource Self}}"
+    AllowDrop="True"
+    DragEnter="MainWindow_DragEnter"
+    DragOver="MainWindow_DragOver"
+    DragLeave="MainWindow_DragLeave"
+    Drop="MainWindow_Drop"
+    >
+
+    <Grid x:Name="MainWindowGrid">
+        <!-- Background Image -->
+        <Image x:Name="Launcher"
+            Stretch="UniformToFill"
+            VerticalAlignment="Top"
+            MouseDown="Launcher_MouseDown"
+            RenderOptions.BitmapScalingMode="HighQuality"
+            Source="/images/new_launcher_bg.jpg" />
+
+        <Image x:Name="LogoImage"
+            Height="250"
+            UseLayoutRounding="True"
+            VerticalAlignment="Top"
+            HorizontalAlignment="Left"
+            Margin="20,-53,0,0"
+            MouseDown="Launcher_MouseDown"
+            RenderOptions.BitmapScalingMode="HighQuality"
+            Source="/images/FF9_logo.png" />
+
+        <Button Width="45"
+                Height="28"
+                BorderThickness="0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Click="CloseButton_Click">
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
+                        <Path Width="10" Height="10" Data="M0,0L10,10M10,0L0,10" Stroke="White" />
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Background" Value="#6AAA"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#E81123"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+
+        <TabControl
+            x:Name="ContentTabControl"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
+            Width="960"
+            Height="520"
+            UseLayoutRounding="True"
+            Margin="0,0,0,22"
+            Background="Transparent"
+            BorderBrush="Transparent"
+            BorderThickness="0"
+            PreviewMouseLeftButtonUp="Tabs_SelectionChanged"
+            Padding="0">
+
+            <!-- Settings Tab -->
+            <TabItem x:Name="menuSettings"
+                Height="45"
+                Header="{DynamicResource Settings.menuSettings}"
+                Style="{StaticResource MainTabs}" >
+                <Border Style="{StaticResource TransparentGridStyle}" Padding="0,0,20,0">
+                    <Grid UseLayoutRounding="False">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"  />
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <launcher:SettingsGrid_Presets x:Name="SettingsGrid_Presets"
+                            Grid.Column="0"  
+                            Margin="20,15,0,0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top" />
+
+                        <launcher:SettingsGrid_VanillaDisplay x:Name="GameSettingsDisplay"
+                            Grid.Column="0"
+                            Margin="20,73,0,0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top" />
+
+                        <launcher:SettingsGrid_Display x:Name="SettingsGrid_Display"
+                            Grid.Column="0"
+                            Margin="20,190,0,0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top" />
+
+                        <launcher:SettingsGrid_Main x:Name="SettingsGrid_Main"
+                            Grid.Column="1"
+                            Margin="20,15,0,0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top" />
+
+                        <launcher:SettingsGrid_Main2 x:Name="SettingsGrid_Main2"
+                            Grid.Column="2"
+                            Margin="20,15,0,0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top" />
+                    </Grid>
+                </Border>
+            </TabItem>
+
+            <!-- Cheats Tab -->
+            <TabItem x:Name="menuCheats"
+                Height="45"
+                Header="{DynamicResource Settings.menuCheats}"
+                Style="{StaticResource MainTabs}" >
+                <Border Style="{StaticResource TransparentGridStyle}" Padding="0,0,20,0">
+                    <Grid UseLayoutRounding="False">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"  />
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <launcher:SettingsGrid_Cheats x:Name="SettingsGrid_Cheats"
+                            Grid.Column="0"  
+                            Margin="20,15,0,0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top" />
+                        <launcher:SettingsGrid_Cheats2 x:Name="SettingsGrid_Cheats2"
+                            Grid.Column="1"
+                            Margin="20,15,0,0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top" />
+                    </Grid>
+                </Border>
+            </TabItem>
+
+            <!-- Advanced Tab -->
+            <TabItem x:Name="menuAdvanced"
+                Height="45"
+                Header="{DynamicResource Settings.menuAdvanced}"
+                Style="{StaticResource MainTabs}" >
+                <Border Style="{StaticResource TransparentGridStyle}" Padding="0,0,20,0">
+                    <Grid UseLayoutRounding="False">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"  />
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <launcher:SettingsGrid_Vanilla x:Name="GameSettings"
+                            Grid.Column="0"  
+                            Margin="20,15,0,0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top" />
+
+                        <launcher:SettingsGrid_Advanced x:Name="SettingsGrid_Advanced"
+                            Grid.Column="0"  
+                            Margin="20,184,0,0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top" />
+
+                        <launcher:SettingsGrid_Advanced2 x:Name="SettingsGrid_Advanced2"
+                            Grid.Column="1"  
+                            Margin="20,15,0,0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top" />
+
+                        <launcher:SettingsGrid_Advanced3 x:Name="SettingsGrid_Advanced3"
+                            Grid.Column="2"
+                            Margin="20,15,0,0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top" />
+
+                        <Button Name="ModelViewerButton"
+                            Content="{DynamicResource Launcher.ModelViewer}"
+                            Style="{StaticResource ButtonStyle2}"
+                            Grid.Column="0"
+                            Height="35"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Bottom"
+                            Margin="20,0,0,20"
+                            Click="ModelViewerButton_Click"/>
+
+                        <Button Name="NewPresetButton"
+                            Content="{DynamicResource Launcher.CreatePreset}"
+                            Style="{StaticResource ButtonStyle2}"
+                            Grid.Column="1"
+                            Height="35"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Bottom"
+                            Margin="20,0,0,20"
+                            Click="SavePreset_Click"/>
+
+                        <StackPanel
+                            Orientation="Vertical"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Bottom"
+                            Grid.Column="2"
+                            Margin="20,0,0,20" >
+                            <TextBlock x:Name="CopyLogButton_StatusMessage"
+                                Visibility="Collapsed"
+                                HorizontalAlignment="Center"
+                                Background="Black"
+                                Padding="5"
+                                FontSize="14"
+                                TextWrapping="Wrap"
+                                Foreground="Green" />
+                            <Button Name="CopyLogButton"
+                                Content="{DynamicResource Launcher.CopyLogButton}"
+                                Style="{StaticResource ButtonStyle2}"
+                                Height="35"
+                                Click="CopyLogButton_Click"/>
+
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </TabItem>
+
+            <!-- Mods Tab -->
+            <TabItem x:Name="ModManagerTab"
+                Height="45"
+                Header="{DynamicResource Settings.menuMods}"
+                Tag="16"
+                Style="{StaticResource MainTabs}" >
+                <Border Style="{StaticResource TransparentGridStyle}">
+                    <Grid>
+                        <Grid>
+                            <Grid Background="Transparent">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto" MinHeight="100"  />
+                                    <RowDefinition />
+                                    <RowDefinition Height="auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="267*" />
+                                    <ColumnDefinition Width="51*"/>
+                                    <ColumnDefinition Width="232*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TabControl
+                                    x:Name="tabCtrlMain"
+                                    Grid.Row="0"
+                                    Grid.RowSpan="2"
+                                    Grid.Column="0"
+                                    Margin="13,13,0,5"
+                                    Padding="0,6,0,10"
+                                    BorderThickness="0"
+                                    Background="Transparent"
+                                    SelectedIndex="0"
+                                    Grid.ColumnSpan="2" >
+                                    <TabItem x:Name="tabCtrlMods"
+                                        Style="{StaticResource subtab}">
+                                        <TabItem.Header>
+                                            <TextBlock
+                                                x:Name="tabMyMods"
+                                                Padding="15,3,15,3"
+                                                Text="My Mods"
+                                                FontFamily="{StaticResource CenturyGothic}"
+                                                FontSize="18"
+                                                />
+                                        </TabItem.Header>
+                                        <Border Background="{StaticResource LightGreyUI}" Margin="2,2,8,0" Padding="6" CornerRadius="6">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="*" />
+                                                    <RowDefinition Height="auto" />
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel
+                                                    x:Name="stackButtons"
+                                                    Grid.Column="0"
+                                                    HorizontalAlignment="Left"
+                                                    VerticalAlignment="Stretch">
+                                                    <Button x:Name="btnReorganize"
+                                                        Style="{StaticResource ToolButtonStyle}"
+                                                        Margin="0,0,0,3"
+                                                        Click="OnClickReorganize"
+                                                        TabIndex="21"
+                                                        ToolTip="Auto-organize mods by priority" >
+                                                        <Image Source="/images/btnReorganize.png"/>
+                                                    </Button>
+                                                    <Button x:Name="btnMoveUp"
+                                                        Style="{StaticResource ToolButtonStyle}"
+                                                        Margin="0,3,0,3"
+                                                        Click="OnClickMoveUp"
+                                                        MouseRightButtonUp="OnClickSendTop"
+                                                        TabIndex="21"
+                                                        ToolTip="Move Up/Right-Click to Move to Top" >
+                                                        <Image Source="/images/btnMoveUpimg.png"/>
+                                                    </Button>
+                                                    <Button
+                                                        x:Name="btnMoveDown"
+                                                        Style="{StaticResource ToolButtonStyle}"
+                                                        Margin="0,3,0,3"
+                                                        Click="OnClickMoveDown"
+                                                        MouseRightButtonDown="OnClickSendBottom"
+                                                        TabIndex="22"
+                                                        ToolTip="Move Down/Right-Click to Move to Bottom" >
+                                                        <Image Source="/images/btnMoveDownimg.png"/>
+                                                    </Button>
+                                                    <Button
+                                                        x:Name="btnUninstall"
+                                                        Style="{StaticResource ToolButtonStyle}"
+                                                        Margin="0,3,0,3"
+                                                        Click="OnClickUninstall"
+                                                        MouseRightButtonDown="OnClickUninstall"
+                                                        TabIndex="28"
+                                                        ToolTip="Uninstall Mod(s)" >
+                                                        <Image Source="/images/btnUninstallimg.png"/>
+                                                    </Button>
+                                                </StackPanel>
+                                                <ListView x:Name="lstMods"
+                                                    Margin="6,0,0,0"
+                                                    Grid.Column="1"
+                                                    ItemsSource="{Binding ModListInstalled}"
+                                                    ScrollViewer.CanContentScroll="False"
+                                                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                                    PreviewMouseLeftButtonDown="ListView_PreviewMouseLeftButtonDown"
+                                                    PreviewMouseMove="ListView_PreviewMouseMove"
+                                                    MouseMove="ListView_MouseMove"
+                                                    PreviewMouseLeftButtonUp="ListView_PreviewMouseLeftButtonUp"
+                                                    MouseLeave="ListView_MouseLeave">
+                                                    <ListView.View>
+                                                        <GridView>
+                                                            <GridViewColumn
+                                                                x:Name="colMyModsActive">
+                                                                <GridViewColumn.CellTemplate>
+                                                                    <DataTemplate>
+                                                                        <CheckBox
+                                                                            Style="{StaticResource CheckBoxStyle}"
+                                                                            HorizontalAlignment="Center"
+                                                                            IsChecked="{Binding IsActive, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                                            Click="CheckBox_Click"
+                                                                            IsTabStop="False" />
+                                                                    </DataTemplate>
+                                                                </GridViewColumn.CellTemplate>
+                                                                <GridViewColumn.HeaderTemplate>
+                                                                    <DataTemplate>
+                                                                        <TextBlock
+                                                                            Text="✅"
+                                                                            FontFamily="{StaticResource NotoEmoji}" />
+                                                                    </DataTemplate>
+                                                                </GridViewColumn.HeaderTemplate>
+                                                            </GridViewColumn>
+                                                            <!--
+                                                            <GridViewColumn
+                                                                x:Name="colMyModsPriority"
+                                                                DisplayMemberBinding="{Binding Priority}" >
+                                                                <GridViewColumn.HeaderTemplate>
+                                                                    <DataTemplate>
+                                                                        <TextBlock
+                                                                            Text="⮝⮟"
+                                                                            FontFamily="{StaticResource Overpass}" />
+                                                                    </DataTemplate>
+                                                                </GridViewColumn.HeaderTemplate>
+                                                            </GridViewColumn>
+                                                            -->
+                                                            <GridViewColumn
+                                                                x:Name="colMyModsIcons"
+                                                                Header="" >
+                                                                <GridViewColumn.CellTemplate>
+                                                                    <DataTemplate>
+                                                                        <StackPanel Orientation="Horizontal">
+                                                                            <Button x:Name="colMyModsUpdateText"
+                                                                            Padding="0,3,0,0"
+                                                                                FontFamily="{StaticResource NotoEmoji}"
+                                                                                Content="{Binding UpdateIcon}"
+                                                                                FontWeight="Black"
+                                                                                ToolTip="{Binding UpdateTooltip}"
+                                                                                ToolTipService.InitialShowDelay="10"
+                                                                                Effect="{StaticResource ButtondropShadowEffect}"
+                                                                                Style="{StaticResource ButtonStyleLabel}"
+                                                                                Foreground="#efd525"
+                                                                                Cursor="Hand"
+                                                                                Click="UpdateIcon_Click"/>
+                                                                            <Label x:Name="colMyModsIncompText"
+                                                                                Padding="0,3,0,0"
+                                                                                FontFamily="{StaticResource NotoEmoji}"
+                                                                                Content="{Binding IncompIcon}"
+                                                                                ToolTip="{Binding ActiveIncompatibleMods}"
+                                                                                ToolTipService.InitialShowDelay="10"
+                                                                                ToolTipService.BetweenShowDelay="0"
+                                                                                Effect="{StaticResource ButtondropShadowEffect}"
+                                                                                Foreground="#f51818" />
+                                                                        </StackPanel>
+                                                                    </DataTemplate>
+                                                                </GridViewColumn.CellTemplate>
+                                                            </GridViewColumn>
+                                                            <GridViewColumn
+                                                                x:Name="colMyModsName"
+                                                                Header="Name" >
+                                                                <GridViewColumn.HeaderContainerStyle>
+                                                                    <Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
+                                                                        <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                                                    </Style>
+                                                                </GridViewColumn.HeaderContainerStyle>
+                                                                <GridViewColumn.CellTemplate>
+                                                                    <DataTemplate>
+                                                                        <StackPanel Orientation="Horizontal">
+                                                                            <TextBlock x:Name="colMyModsNameText"
+                                                                                Text="{Binding Name}" />
+                                                                            <TextBlock x:Name="colMyModsVersionText"
+                                                                                Text="{Binding CurrentVersion}"
+                                                                                Margin="4,0,0,0"
+                                                                                VerticalAlignment="Bottom"
+                                                                                Foreground="#888"
+                                                                                FontSize="12"/>
+                                                                        </StackPanel>
+                                                                    </DataTemplate>
+                                                                </GridViewColumn.CellTemplate>
+                                                            </GridViewColumn>
+                                                            <GridViewColumn
+                                                                x:Name="colMyModsCategory"
+                                                                DisplayMemberBinding="{Binding Category}"
+                                                                Header="Category">
+                                                                <GridViewColumn.HeaderContainerStyle>
+                                                                    <Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
+                                                                        <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                                                    </Style>
+                                                                </GridViewColumn.HeaderContainerStyle>
+                                                            </GridViewColumn>
+                                                        </GridView>
+                                                    </ListView.View>
+                                                </ListView>
+                                            </Grid>
+                                        </Border>
+                                    </TabItem>
+                                    <TabItem x:Name="tabCtrlCatalog"
+                                        Margin="0,0,4,0"
+                                        HorizontalAlignment="Right"
+                                        Style="{StaticResource subtab}" >
+                                        <TabItem.Header>
+                                            <TextBlock
+                                                x:Name="tabCatalog"
+                                                Padding="15,3,15,3"
+                                                Text="Mod Catalog"
+                                                FontFamily="{StaticResource CenturyGothic}"
+                                                FontSize="18" />
+                                        </TabItem.Header>
+                                        <Border Background="{StaticResource LightGreyUI}" Margin="2,2,8,0" Padding="6" CornerRadius="6">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="*" />
+                                                    <RowDefinition Height="auto" />
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel
+                                                    Grid.Column="0"
+                                                    HorizontalAlignment="Left"
+                                                    VerticalAlignment="Top">
+                                                    <Button x:Name="btnDownload"
+                                                        Click="OnClickDownload"
+                                                        Margin="0,0,0,3"
+                                                        MouseRightButtonDown="OnClickDownload"
+                                                        TabIndex="11"
+                                                        IsEnabled="false"
+                                                        Style="{StaticResource ToolButtonStyle}"
+                                                        ToolTip="Download/Update Selected Mod(s)" >
+                                                        <Image Source="/images/btnDownloadimg.png" />
+                                                    </Button>
+                                                    <Button x:Name="btnPriority"
+                                                        Margin="0,3,0,3"
+                                                        MouseRightButtonDown="OnClickPriority"
+                                                        TabIndex="12"
+                                                        IsEnabled="true"
+                                                        Style="{StaticResource ToolButtonStyle}"
+                                                        Cursor="Arrow"
+                                                        Opacity="0" >
+                                                    </Button>
+                                                </StackPanel>
+                                                <ListView x:Name="lstCatalogMods"
+                                                    Margin="6,0,0,0"
+                                                    Grid.Column="1"
+                                                    ItemsSource="{Binding ModListCatalog}"
+                                                    ScrollViewer.CanContentScroll="False"
+                                                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                                    PreviewMouseLeftButtonDown="ListView_PreviewMouseLeftButtonDown"
+                                                    PreviewMouseMove="ListView_PreviewMouseMove"
+                                                    MouseMove="ListView_MouseMove"
+                                                    PreviewMouseLeftButtonUp="ListView_PreviewMouseLeftButtonUp"
+                                                    MouseLeave="ListView_MouseLeave">
+                                                    <ListView.ItemContainerStyle>
+                                                        <Style TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
+                                                            <EventSetter Event="MouseDoubleClick" Handler="OnCatalogListDoubleClick"/>
+                                                        </Style>
+                                                    </ListView.ItemContainerStyle>
+                                                    <ListView.View>
+                                                        <GridView>
+                                                            <GridViewColumn x:Name="colCatalogInstalled">
+                                                                <GridViewColumn.HeaderTemplate>
+                                                                    <DataTemplate>
+                                                                        <TextBlock Text="✅" FontFamily="{StaticResource NotoEmoji}" />
+                                                                    </DataTemplate>
+                                                                </GridViewColumn.HeaderTemplate>
+                                                                <GridViewColumn.CellTemplate>
+                                                                    <DataTemplate>
+                                                                        <TextBlock Text="{Binding Installed}" FontFamily="{StaticResource NotoEmoji}" />
+                                                                    </DataTemplate>
+                                                                </GridViewColumn.CellTemplate>
+                                                            </GridViewColumn>
+                                                            <GridViewColumn
+                                                                x:Name="colCatalogName"
+                                                                DisplayMemberBinding="{Binding Name}"
+                                                                Header="Name">
+                                                                <GridViewColumn.HeaderContainerStyle>
+                                                                    <Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
+                                                                        <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                                                    </Style>
+                                                                </GridViewColumn.HeaderContainerStyle>
+                                                            </GridViewColumn>
+                                                            <GridViewColumn
+                                                                x:Name="colCatalogCategory"
+                                                                DisplayMemberBinding="{Binding Category}"
+                                                                Header="Category">
+                                                                <GridViewColumn.HeaderContainerStyle>
+                                                                    <Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
+                                                                        <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                                                    </Style>
+                                                                </GridViewColumn.HeaderContainerStyle>
+                                                            </GridViewColumn>
+                                                            <GridViewColumn
+                                                                x:Name="colCatalogAuthor"
+                                                                DisplayMemberBinding="{Binding Author}"
+                                                                Header="Author(s)">
+                                                                <GridViewColumn.HeaderContainerStyle>
+                                                                    <Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
+                                                                        <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                                                    </Style>
+                                                                </GridViewColumn.HeaderContainerStyle>
+                                                            </GridViewColumn>
+                                                        </GridView>
+                                                    </ListView.View>
+                                                </ListView>
+                                                <StackPanel x:Name="btnCancelStackpanel"
+                                                    Height="0"
+                                                    Grid.Row="1"
+                                                    Grid.Column="0"
+                                                    Margin="0,0,0,0"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Stretch">
+                                                    <Button x:Name="btnCancel"
+                                                        Style="{StaticResource ToolButtonStyle}"
+                                                        Click="OnClickCancelAll"
+                                                        MouseRightButtonDown="OnClickCancelAll"
+                                                        Margin="0,0,0,3"
+                                                        TabIndex="14"
+                                                        ToolTip="Cancel Current Downloads"
+                                                        ToolTipService.ShowOnDisabled="True"  >
+                                                        <Image Source="/images/btnCancelimg.png" />
+                                                    </Button>
+                                                </StackPanel>
+                                                <ListView x:Name="lstDownloads"
+                                                    Margin="6,0,0,0"
+                                                    Grid.Row="1"
+                                                    Grid.Column="1"
+                                                    MinHeight="0"
+                                                    MaxHeight="100"
+                                                    Height="0"
+                                                    ItemsSource="{Binding DownloadList, UpdateSourceTrigger=PropertyChanged}">
+                                                    <ListView.View>
+                                                        <GridView>
+                                                            <GridViewColumn
+                                                                x:Name="colDownloadName"
+                                                                Width="200"
+                                                                DisplayMemberBinding="{Binding Name}"
+                                                                Header="Mod" />
+                                                            <GridViewColumn
+                                                                x:Name="colDownloadProgress"
+                                                                Width="100"
+                                                                Header="Progress">
+                                                                <GridViewColumn.CellTemplate>
+                                                                    <DataTemplate>
+                                                                        <ProgressBar
+                                                                            Width="100"
+                                                                            Height="10"
+                                                                            Opacity="1"
+                                                                            Margin="0,5,0,0"
+                                                                            Foreground="{DynamicResource BrushAccentColor}"
+                                                                            Value="{Binding PercentComplete}" />
+                                                                    </DataTemplate>
+                                                                </GridViewColumn.CellTemplate>
+                                                            </GridViewColumn>
+                                                            <GridViewColumn
+                                                                x:Name="colDownloadSpeed"
+                                                                Width="100"
+                                                                DisplayMemberBinding="{Binding DownloadSpeed}"
+                                                                Header="Speed" />
+                                                            <GridViewColumn
+                                                                x:Name="colDownloadTimeLeft"
+                                                                Width="75"
+                                                                DisplayMemberBinding="{Binding RemainingTime}"
+                                                                Header="Time Left" />
+                                                        </GridView>
+                                                    </ListView.View>
+                                                </ListView>
+                                            </Grid>
+                                        </Border>
+                                    </TabItem>
+                                </TabControl>
+
+                                <TabControl
+                                    x:Name="GroupModInfoWrapper"
+                                    Grid.Row="0"
+                                    Grid.RowSpan="2"
+                                    Grid.Column="2"
+                                    Margin="0,13,15,15"
+                                    Padding="0"
+                                    BorderThickness="0"
+                                    Background="{StaticResource LightGreyUI}"
+                                    SelectedIndex="0">
+                                    <TabItem x:Name="GroupModInfo"
+                                        Style="{StaticResource GroupModInfo}"
+                                        Foreground="{StaticResource WhiteUI}"
+                                        Grid.Row="1"
+                                        Height="0"
+                                        Padding="0"
+                                        Margin="0">
+                                        <TabItem.Header>
+                                            <TextBlock
+                                                x:Name="tabyMods"
+                                                Padding="0"
+                                                Text="Installed Mods" 
+                                                Background="#333" />
+                                        </TabItem.Header>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition x:Name="ModInfo" Height="*" />
+                                                <RowDefinition x:Name="ModOptions" Height="auto" MaxHeight="0" />
+                                            </Grid.RowDefinitions>
+                                            <Grid x:Name="gridOuterMod"
+                                                  Grid.Row="0"
+                                                  Margin="0">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="auto" MinHeight="20" MaxHeight="150" />
+                                                    <RowDefinition Height="auto" />
+                                                    <RowDefinition Height="1*" />
+                                                </Grid.RowDefinitions>
+                                                <Image x:Name="PreviewModImage"
+                                                    Grid.Row="0"
+                                                    Height="auto"
+                                                    VerticalAlignment="Center"
+                                                    Source="Images/Gradient.png"
+                                                    RenderOptions.BitmapScalingMode="HighQuality"
+                                                    Stretch="UniformToFill"
+                                                    />
+                                                <Button x:Name="PreviewModWebsite"
+                                                    Grid.Row="0"
+                                                    VerticalAlignment="Bottom"
+                                                    HorizontalAlignment="Right"
+                                                    Margin="0,0,5,5"
+                                                    Cursor="Hand"
+                                                    Click="OnClickWebsite"
+                                                    Content="Website"
+                                                    IsEnabled="False"
+                                                    Style="{StaticResource OpenLinkStyle}"
+                                                />
+                                                <Grid x:Name="PreviewModCategoryTagline"
+                                                    VerticalAlignment="Top"
+                                                    HorizontalAlignment="left"
+                                                    Margin="5,5,2,2"
+                                                    Visibility="Visible" >
+                                                    <!-- Looks like a button with a border -->
+                                                    <Border x:Name="border"
+                                                        CornerRadius="6"
+                                                        BorderThickness="0"
+                                                        BorderBrush="#4888"
+                                                        Background="#e222" />
+                                                    <TextBlock
+                                                        x:Name="PreviewModCategory"
+                                                        Margin="6,1,6,3"
+                                                        Style="{StaticResource ModInfoDetailsStyle}"
+                                                        TextAlignment="Right"
+                                                        Foreground="#fccc"
+                                                        Text="Category" />
+                                                </Grid>
+                                                <Grid x:Name="gridModName" 
+                                                    Grid.Row="1"
+                                                    Margin="7,0,7,0">
+                                                    <WrapPanel Grid.Row="0">
+                                                        <TextBlock
+                                                            x:Name="PreviewModName"
+                                                            MinWidth="20"
+                                                            Style="{StaticResource ModTitleStyle}"
+                                                            VerticalAlignment="Bottom"
+                                                            Text="---" />
+                                                        <TextBlock
+                                                            x:Name="PreviewModVersion"
+                                                            Margin="0"
+                                                            Style="{StaticResource ModVersionStyle}"
+                                                            VerticalAlignment="Bottom"
+                                                            Text="" />
+                                                    </WrapPanel>
+                                                </Grid>
+
+                                                <ScrollViewer
+                                                    Grid.Row="2"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalScrollBarVisibility="Auto"
+                                                    Margin="7,0,0,7">
+                                                    <Grid x:Name="gridModInfo" Margin="0,0,0,3">
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="auto" />
+                                                            <RowDefinition Height="auto" />
+                                                            <RowDefinition Height="auto" />
+                                                            <RowDefinition Height="auto" />
+                                                            <RowDefinition Height="auto" />
+                                                            <RowDefinition Height="auto" />
+                                                            <RowDefinition Height="auto" />
+                                                        </Grid.RowDefinitions>
+
+                                                        <WrapPanel
+                                                            Grid.Row="0"
+                                                            Margin="0,4,0,0">
+                                                            <Grid Width="375">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="1*" />
+                                                                    <ColumnDefinition Width="1*" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <WrapPanel
+                                                                    Grid.Column="0"
+                                                                    Grid.ColumnSpan="2" >
+                                                                    <TextBlock
+                                                                        x:Name="CaptionModAuthor"
+                                                                        Style="{StaticResource ModInfoLabelStyle}"
+                                                                        VerticalAlignment="Bottom"
+                                                                        Text="Author(s):" />
+                                                                    <TextBlock
+                                                                        x:Name="PreviewModAuthor"
+                                                                        Style="{StaticResource ModInfoDetailsStyle}"
+                                                                        VerticalAlignment="Bottom"
+                                                                        Text="" />
+                                                                </WrapPanel>
+                                                            </Grid>
+                                                        </WrapPanel>
+                                                        <WrapPanel
+                                                            Grid.Row="1"
+                                                            Margin="0">
+                                                            <Grid Width="375">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="1*" />
+                                                                    <ColumnDefinition Width="1*" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <WrapPanel Grid.Column="0" >
+                                                                    <TextBlock x:Name="CaptionModRelease"
+                                                                    Style="{StaticResource ModInfoLabelStyle}"
+                                                                    VerticalAlignment="Bottom"
+                                                                    Text="Updated:" />
+                                                                    <TextBlock x:Name="PreviewModRelease"
+                                                                    Style="{StaticResource ModInfoDetailsStyle}"
+                                                                    VerticalAlignment="Bottom"
+                                                                    Text="🞨" />
+                                                                </WrapPanel>
+                                                                <WrapPanel Grid.Column="1" HorizontalAlignment="Right">
+                                                                    <TextBlock x:Name="CaptionModReleaseOriginal"
+                                                                    Style="{StaticResource ModInfoLabelStyle}"
+                                                                    VerticalAlignment="Bottom"
+                                                                    Text="Released:" />
+                                                                    <TextBlock x:Name="PreviewModReleaseOriginal"
+                                                                    Style="{StaticResource ModInfoDetailsStyle}"
+                                                                    VerticalAlignment="Bottom"
+                                                                    Text="🞨" />
+                                                                </WrapPanel>
+                                                            </Grid>
+                                                        </WrapPanel>
+
+                                                        <Grid x:Name="ContentScroll" Grid.Row="2">
+                                                            <Grid>
+                                                                <Grid.RowDefinitions>
+                                                                    <RowDefinition Height="auto" />
+                                                                    <RowDefinition Height="auto" />
+                                                                    <RowDefinition Height="auto" />
+                                                                </Grid.RowDefinitions>
+                                                                <WrapPanel
+                                                                    Grid.Row="0"
+                                                                    Height="auto">
+                                                                    <Grid Margin="0,10,0,0" >
+                                                                        <Border
+                                                                            Grid.Row="0"
+                                                                            BorderThickness="3,0,0,0"
+                                                                            BorderBrush="#333"
+                                                                            Margin="0,0,0,0"/>
+                                                                        <TextBlock
+                                                                            x:Name="PreviewModDescription"
+                                                                            Style="{StaticResource ModDescriptionStyle}"
+                                                                            Margin="10,0,6,0"
+                                                                            Text="No description"
+                                                                            Cursor="Hand"
+                                                                            MouseLeftButtonUp="OnClickDescription"/>
+                                                                    </Grid>
+                                                                </WrapPanel>
+                                                                <Grid x:Name="ReleaseNotesBlock"
+                                                                    Grid.Row="2"
+                                                                    HorizontalAlignment="Stretch">
+                                                                    <WrapPanel
+                                                                        Background="{StaticResource DarkGreyUI}"
+                                                                        Margin="0,10,6,0"
+                                                                        Visibility="Visible"
+                                                                        Cursor="Hand"
+                                                                        MouseLeftButtonUp="OnClickDescription">
+                                                                        <DockPanel>
+                                                                            <TextBlock x:Name="CaptionModReleaseNotes"
+                                                                                Style="{StaticResource ModInfoLabelStyle}"
+                                                                                Margin="5,5,0,5"
+                                                                                VerticalAlignment="Bottom"
+                                                                                Text="Release notes:" />
+                                                                        </DockPanel>
+                                                                        <TextBlock
+                                                                            x:Name="PreviewModReleaseNotes"
+                                                                            Style="{StaticResource ModInfoDetailsStyle}"
+                                                                            Margin="5,5,5,5"
+                                                                            VerticalAlignment="Bottom"
+                                                                            Text="" />
+                                                                    </WrapPanel>
+                                                                </Grid>
+                                                            </Grid>
+                                                        </Grid>
+                                                    </Grid>
+                                                </ScrollViewer>
+                                            </Grid>
+                                            <Grid x:Name="ModOptionsGrid" Grid.Row="1" MaxHeight="513">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="auto"/>
+                                                    <RowDefinition Height="1*"/>
+                                                </Grid.RowDefinitions>
+                                                <Border x:Name="ModOptionsHeaderButton" Grid.Row="0" Padding="5" Cursor="Hand">
+                                                    <Grid>
+                                                        <Image Source="images/modOptions.png" Width="22" Height="22" Margin="3,0,0,0" HorizontalAlignment="Left" Opacity="0.8"/>
+                                                        <Label x:Name="ModOptionsHeaderLabel"
+                                                               Content="{DynamicResource ModEditor.SubModPanel}"
+                                                               FontFamily="{StaticResource CenturyGothic}"
+                                                               Foreground="{StaticResource WhiteUI}"
+                                                               FontSize="16"
+                                                               VerticalAlignment="Center"
+                                                               Margin="28,0,0,0"/>
+                                                        <Label x:Name="ModOptionsHeaderArrow"
+                                                               FontFamily="Segoe UI"
+                                                               Foreground="{StaticResource WhiteUI}"
+                                                               FontSize="16"
+                                                               VerticalAlignment="Center"
+                                                               HorizontalAlignment="Right"
+                                                               Content="▲"/>
+                                                    </Grid>
+                                                    <Border.Style>
+                                                        <Style>
+                                                            <Setter Property="Border.Background" Value="#3CCC"/>
+                                                            <Style.Triggers>
+                                                                <Trigger Property="Border.IsMouseOver" Value="True">
+                                                                    <Setter Property="Border.Background" Value="#5CCC"/>
+                                                                </Trigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                </Border>
+                                                <ScrollViewer x:Name="ModOptionsScrollViewer" Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                                                    <StackPanel Margin="7,7,7,3" x:Name="ModOptionsPanel"/>
+                                                </ScrollViewer>
+                                            </Grid>
+                                        </Grid>
+                                    </TabItem>
+                                </TabControl>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Border>
+            </TabItem>
+        </TabControl>
+
+        <!-- Play Button -->
+        <launcher:UiLauncherPlayButton x:Name="PlayButton"
+            Width="260"
+            Height="70"
+            Margin="0,46,20,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top" />
+
+        <TextBlock x:Name="Nameandversion"
+            Text="{DynamicResource Settings.MemoriaEngine}"
+            Foreground="#6fff"
+            FontSize="15"
+            FontWeight="Normal"
+            FontFamily="{DynamicResource CenturyGothic}"
+            Margin="22,0,0,2"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom"
+            Cursor="Hand"
+            MouseUp="ShowReleaseNotes"/>
+
+        <Border x:Name="dropBackground" Background="#d000" Visibility="Hidden">
+            <Label
+                x:Name="dropLabel"
+                Content="Install mod(s)"
+                Foreground="{StaticResource WhiteUI}"
+                FontSize="16"
+                FontWeight="Normal"
+                FontFamily="{DynamicResource CenturyGothic}"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"/>
+        </Border>
+    </Grid>
+</Window>

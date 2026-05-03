@@ -1,0 +1,6 @@
+// Shared sequence of SFX Special_Curaga
+
+PlaySound: Sound=473
+PlaySound: Sound=468
+PlaySound: Sound=461
+Wait: Time=67

@@ -1,0 +1,18 @@
+// Shared sequence of SFX Doom
+
+PlaySound: Sound=1524
+PlaySound: Sound=1525
+PlaySound: Sound=1526
+Wait: Time=43
+SetBackgroundIntensity: Intensity=0.375 ; Time=16 ; HoldDuration=72
+Wait: Time=29
+PlaySound: Sound=1527
+PlaySound: Sound=1528
+PlaySound: Sound=1529
+Wait: Time=30
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=1
+SetBackgroundIntensity: Intensity=1 ; Time=16
+Wait: Time=11

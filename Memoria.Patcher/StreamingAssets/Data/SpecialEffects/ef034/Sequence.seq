@@ -1,0 +1,9 @@
+// Shared sequence of SFX Special_Krakens_Arm_Death
+
+PlaySound: Sound=1820
+PlaySound: Sound=1821
+PlaySound: Sound=1822
+Wait: Time=20
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure

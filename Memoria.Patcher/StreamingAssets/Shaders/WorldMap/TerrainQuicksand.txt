@@ -1,0 +1,110 @@
+Shader "WorldMap/TerrainQuicksand" {
+	Properties {
+		_MainTex ("Texture", 2D) = "white" { }
+		_DetailTex ("Detail", 2D) = "white" { }
+		_AlphaDetail ("Alpha Detail", Range(0,1)) = 0.5
+		_DetailMinDistance ("Min Distance of Detail", Range(0,1)) = 0.8
+		_Brightness ("Brightness", Range(0,5)) = 0
+		_MyTuner ("MyTuner", Range(0,5)) = 0
+	}
+	SubShader { 
+		Tags { "LIGHTMODE"="Vertex" }
+		Pass {
+			Tags { "LIGHTMODE"="Vertex" }
+			GpuProgramID 8776
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "texcoord" TexCoord0
+					Matrix 7 [glstate_matrix_modelview0] 3
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 14 [_DetailTex_ST]
+					Vector 13 [_MainTex_ST]
+					Vector 10 [glstate_lightmodel_ambient]
+					Vector 12 [unity_FogEnd]
+					Vector 11 [unity_FogStart]
+					Vector 4 [unity_LightColor0]
+					Vector 5 [unity_LightColor1]
+					Vector 6 [unity_LightColor2]
+					"vs_2_0
+						def c15, 1, 0, 0.5, 0
+						dcl_position v0
+						dcl_texcoord v1
+						mad r0, v0.xyzx, c15.xxxy, c15.yyyx
+						dp4 oPos.x, c0, r0
+						dp4 oPos.y, c1, r0
+						mad oT0.xy, v1, c13, c13.zwzw
+						mad oT1.xy, v1, c14, c14.zwzw
+						add r1.xyz, c10, c10
+						mov r2.z, c15.z
+						mad r1.xyz, c4.x, r2.z, r1
+						mad r1.xyz, c5.x, r2.z, r1
+						mad oD0.xyz, c6.x, r2.z, r1
+						dp4 r1.w, c3, r0
+						rcp r1.x, r1.w
+						dp4 r1.z, c2, r0
+						mul oT2.y, r1.x, r1.z
+						mov oPos.zw, r1
+						dp4 r1.x, c7, r0
+						dp4 r1.y, c8, r0
+						dp4 r1.z, c9, r0
+						dp3 r0.x, r1, r1
+						rsq r0.x, r0.x
+						rcp r0.x, r0.x
+						add r0.x, -r0.x, c12.x
+						mov r1.x, c12.x
+						add r0.y, r1.x, -c11.x
+						rcp r0.y, r0.y
+						mul r0.x, r0.y, r0.x
+						max r0.x, r0.x, c15.y
+						min oT2.x, r0.x, c15.x
+						mov oD0.w, c15.x
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Float 1 [_AlphaDetail]
+					Float 3 [_Brightness]
+					Float 2 [_DetailMinDistance]
+					Vector 0 [unity_FogColor]
+					SetTexture 0 [_MainTex] 2D 0
+					SetTexture 1 [_DetailTex] 2D 1
+					"ps_2_0
+						def c4, 1, -1, 0, 0
+						dcl t0.xy
+						dcl t1.xy
+						dcl v0.xyz
+						dcl t2.xy
+						dcl_2d s0
+						dcl_2d s1
+						mov r0.xy, c4
+						add r0.z, r0.y, c3.x
+						add r0.x, r0.x, -c2.x
+						rcp r0.x, r0.x
+						add r0.w, t2.y, -c2.x
+						mad r0.x, r0.w, -r0.x, c4.x
+						mad r0.z, r0.x, r0.z, c4.x
+						add r0.y, r0.y, c1.x
+						mad r0.x, r0.x, r0.y, c4.x
+						texld r1, t1, s1
+						texld r2, t0, s0
+						mul r1.xyz, r1, r2
+						lrp r3.xyz, r0.x, r2, r1
+						lrp r4.xyz, c1.x, r2, r1
+						mul r1.xyz, r4, c3.x
+						mul r0.xyz, r0.z, r3
+						cmp r0.xyz, r0.w, r0, r1
+						mad r0.xyz, r0, v0, -c0
+						mad_pp r0.xyz, t2.x, r0, c0
+						mov_pp r0.w, c4.x
+						mov_pp oC0, r0
+						
+						"
+				}
+			}
+		}
+	}
+	Fallback "VertexLit"
+}

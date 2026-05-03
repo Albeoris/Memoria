@@ -1,0 +1,22 @@
+// Shared sequence of SFX Mirror
+
+PlaySound: Sound=1083
+PlaySound: Sound=1084
+PlaySound: Sound=1085
+Wait: Time=8
+PlaySound: Sound=1086
+PlaySound: Sound=1087
+PlaySound: Sound=1088
+Wait: Time=12
+PlaySound: Sound=1089
+PlaySound: Sound=1090
+PlaySound: Sound=1091
+Wait: Time=12
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=6
+PlaySound: Sound=1092
+PlaySound: Sound=1093
+PlaySound: Sound=1094
+Wait: Time=9
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

@@ -1,0 +1,25 @@
+// Shared sequence of SFX Special_Nova_Dragon_Death
+
+ShowMesh: Char=AllPlayers ; Enable=False ; IsDisappear=True
+PlaySound: Sound=2855
+PlaySound: Sound=2856
+PlaySound: Sound=2857
+Wait: Time=1
+SetBackgroundIntensity: Intensity=0.5 ; Time=0 ; HoldDuration=45
+Wait: Time=12
+PlaySound: Sound=2858
+PlaySound: Sound=2859
+PlaySound: Sound=2860
+Wait: Time=33
+SetBackgroundIntensity: Intensity=0 ; Time=4 ; HoldDuration=6
+ShowMesh: Char=Caster ; Enable=False ; IsDisappear=True
+Wait: Time=5
+PlaySound: Sound=2861
+PlaySound: Sound=2862
+PlaySound: Sound=2863
+Wait: Time=1
+SetBackgroundIntensity: Intensity=0.5 ; Time=0 ; HoldDuration=122
+Wait: Time=122
+SetBackgroundIntensity: Intensity=1 ; Time=16
+ShowMesh: Char=AllPlayers ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllPlayers ; Enable=True ; Time=12

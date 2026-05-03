@@ -1,0 +1,10 @@
+// Shared sequence of SFX Dispel
+
+PlaySound: Sound=157
+PlaySound: Sound=141
+PlaySound: Sound=251
+Wait: Time=20
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=12

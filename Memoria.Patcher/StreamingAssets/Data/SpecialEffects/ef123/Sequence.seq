@@ -1,0 +1,10 @@
+// Shared sequence of SFX Protect
+
+PlaySound: Sound=156
+PlaySound: Sound=140
+PlaySound: Sound=250
+Wait: Time=20
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

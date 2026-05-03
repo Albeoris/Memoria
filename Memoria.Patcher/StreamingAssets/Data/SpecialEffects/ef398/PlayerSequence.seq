@@ -1,0 +1,15 @@
+// Player sequence of SFX Charge
+
+WaitAnimation: Char=Caster
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+PlayAnimation: Char=Caster ; Anim=MP_SPECIAL1
+StartThread
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=Idle
+EndThread
+Wait: Time=9
+LoadSFX: SFX=Charge ; Reflect=True
+WaitSFXLoaded: SFX=Charge ; Reflect=True
+PlaySFX: SFX=Charge ; Reflect=True
+WaitSFXDone: SFX=Charge ; Reflect=True

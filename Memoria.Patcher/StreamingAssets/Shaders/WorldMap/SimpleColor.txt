@@ -1,0 +1,38 @@
+Shader "WorldMap/SimpleColor" {
+	SubShader { 
+		LOD 100
+		Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+		Pass {
+			Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+			Blend SrcAlpha OneMinusSrcAlpha
+			Offset -1, -1
+			GpuProgramID 2908
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "color" Color
+					Matrix 0 [glstate_matrix_mvp]
+					"vs_2_0
+						dcl_position v0
+						dcl_color v1
+						dp4 oPos.x, c0, v0
+						dp4 oPos.y, c1, v0
+						dp4 oPos.z, c2, v0
+						dp4 oPos.w, c3, v0
+						mov oD0, v1
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					"ps_2_0
+						dcl v0
+						mov_pp oC0, v0
+						
+						"
+				}
+			}
+		}
+	}
+}

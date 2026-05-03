@@ -1,0 +1,13 @@
+// Sequence of the command Change
+
+WaitAnimation: Char=Caster
+Message: Text=[CastName] ; Priority=1 ; Title=True
+StartThread: Condition=CasterRow == 0 ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
+EndThread
+StartThread: Condition=CasterRow == 1 ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK
+EndThread
+WaitMove: Char=Caster
+EffectPoint: Char=AllTargets ; Type=Effect
+PlayAnimation: Char=Caster ; Anim=Idle

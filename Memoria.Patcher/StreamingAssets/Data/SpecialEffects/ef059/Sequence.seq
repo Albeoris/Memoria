@@ -1,0 +1,12 @@
+// Shared sequence of SFX Trouble_Juice
+
+PlaySound: Sound=1815
+PlaySound: Sound=1816
+Wait: Time=5
+PlaySound: Sound=1817
+PlaySound: Sound=1818
+PlaySound: Sound=1819
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=5

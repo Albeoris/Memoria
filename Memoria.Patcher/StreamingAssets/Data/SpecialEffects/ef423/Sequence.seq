@@ -1,0 +1,20 @@
+// Shared sequence of SFX Mind_Blast
+
+PlaySound: Sound=1248
+PlaySound: Sound=1249
+PlaySound: Sound=1250
+Wait: Time=52
+PlaySound: Sound=2334
+PlaySound: Sound=2335
+PlaySound: Sound=2336
+Wait: Time=5
+EffectPoint: Char=AllTargets ; Type=Effect
+PlaySound: Sound=1215
+PlaySound: Sound=1228
+PlaySound: Sound=1229
+Wait: Time=7
+PlaySound: Sound=1730
+PlaySound: Sound=1731
+PlaySound: Sound=1732
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure

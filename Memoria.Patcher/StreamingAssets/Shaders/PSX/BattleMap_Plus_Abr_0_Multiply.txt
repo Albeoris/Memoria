@@ -1,0 +1,139 @@
+Shader "PSX/BattleMap_Plus_Abr_0_Multiply" {
+	Properties {
+		_Color ("Tint Color", Color) = (0.5,0.5,0.5,0.5)
+		_MainTex ("Particle Texture", 2D) = "white" { }
+		_InvFade ("Soft Particles Factor", Range(0.01,3)) = 1
+		_Intensity ("Intensity", Float) = 128
+	}
+	SubShader { 
+		Tags { "QUEUE"="AlphaTest+3" "IGNOREPROJECTOR"="true" "RenderType"="TransparentCutout" }
+		Pass {
+			Tags { "QUEUE"="AlphaTest+3" "IGNOREPROJECTOR"="true" "RenderType"="TransparentCutout" }
+			Blend Zero SrcColor
+			ColorMask RGB
+			GpuProgramID 30279
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Keywords { "SOFTPARTICLES_OFF" }
+					Bind "vertex" Vertex
+					Bind "color" Color
+					Bind "texcoord" TexCoord0
+					Matrix 0 [glstate_matrix_modelview0]
+					Matrix 4 [glstate_matrix_projection]
+					Vector 9 [_MainTex_ST]
+					Vector 8 [_ProjectionParams]
+					"vs_2_0
+						def c10, 20, 1, 60000, 0
+						dcl_position v0
+						dcl_color v1
+						dcl_texcoord v2
+						dp4 r0.x, c0, v0
+						dp4 r0.y, c1, v0
+						dp4 r0.w, c3, v0
+						dp4 r0.z, c2, v0
+						dp4 r1.x, c7, r0
+						rcp r1.x, r1.x
+						dp4 r2.x, c4, r0
+						dp4 r2.y, c5, r0
+						mov r3.xyw, r0
+						mul oPos.xy, r1.x, r2
+						mov r0.xw, c10.xyzy
+						add r0.x, r0.x, c8.y
+						add r3.z, -r0.x, r0.z
+						sge r0.x, r0.z, -r0.x
+						dp4 r0.y, c7, r3
+						dp4 r0.z, c6, r3
+						rcp r0.y, r0.y
+						mul r0.z, r0.y, r0.z
+						add r1.xy, -r0.zwzw, c10.zyzw
+						mad oPos.zw, r0.x, r1.xyxy, r0
+						mad oT0.xy, v2, c9, c9.zwzw
+						mov oD0, v1
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "SOFTPARTICLES_ON" }
+					Bind "vertex" Vertex
+					Bind "color" Color
+					Bind "texcoord" TexCoord0
+					Matrix 0 [glstate_matrix_modelview0]
+					Matrix 4 [glstate_matrix_projection]
+					Vector 9 [_MainTex_ST]
+					Vector 8 [_ProjectionParams]
+					"vs_2_0
+						def c10, 20, 1, 60000, 0
+						dcl_position v0
+						dcl_color v1
+						dcl_texcoord v2
+						dp4 r0.x, c0, v0
+						dp4 r0.y, c1, v0
+						dp4 r0.w, c3, v0
+						dp4 r0.z, c2, v0
+						dp4 r1.x, c7, r0
+						rcp r1.x, r1.x
+						dp4 r2.x, c4, r0
+						dp4 r2.y, c5, r0
+						mov r3.xyw, r0
+						mul oPos.xy, r1.x, r2
+						mov r0.xw, c10.xyzy
+						add r0.x, r0.x, c8.y
+						add r3.z, -r0.x, r0.z
+						sge r0.x, r0.z, -r0.x
+						dp4 r0.y, c7, r3
+						dp4 r0.z, c6, r3
+						rcp r0.y, r0.y
+						mul r0.z, r0.y, r0.z
+						add r1.xy, -r0.zwzw, c10.zyzw
+						mad oPos.zw, r0.x, r1.xyxy, r0
+						mad oT0.xy, v2, c9, c9.zwzw
+						mov oD0, v1
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Keywords { "SOFTPARTICLES_OFF" }
+					Vector 0 [_Color]
+					Float 1 [_Intensity]
+					SetTexture 0 [_MainTex] 2D 0
+					"ps_2_0
+						def c2, 0.0078125, 0, 0, 0
+						dcl v0
+						dcl t0.xy
+						dcl_2d s0
+						texld r0, t0, s0
+						mul r1, v0, c0
+						mul_pp r0, r0, r1
+						mov r1.x, c1.x
+						mul r1.x, r1.x, c2.x
+						mul_pp r0.xyz, r0, r1.x
+						mov_pp oC0, r0
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "SOFTPARTICLES_ON" }
+					Vector 0 [_Color]
+					Float 1 [_Intensity]
+					SetTexture 0 [_MainTex] 2D 0
+					"ps_2_0
+						def c2, 0.0078125, 0, 0, 0
+						dcl v0
+						dcl t0.xy
+						dcl_2d s0
+						texld r0, t0, s0
+						mul r1, v0, c0
+						mul_pp r0, r0, r1
+						mov r1.x, c1.x
+						mul r1.x, r1.x, c2.x
+						mul_pp r0.xyz, r0, r1.x
+						mov_pp oC0, r0
+						
+						"
+				}
+			}
+		}
+	}
+}

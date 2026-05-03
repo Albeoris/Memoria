@@ -1,0 +1,13 @@
+// Shared sequence of SFX Bubbles
+
+PlaySound: Sound=1820
+PlaySound: Sound=1821
+PlaySound: Sound=1822
+Wait: Time=20
+PlaySound: Sound=1823
+PlaySound: Sound=1824
+PlaySound: Sound=1825
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

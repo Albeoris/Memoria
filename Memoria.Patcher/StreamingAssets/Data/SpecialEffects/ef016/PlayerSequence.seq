@@ -1,0 +1,8 @@
+// Player sequence of SFX Instant
+
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=Instant ; Reflect=True
+WaitSFXLoaded: SFX=Instant ; Reflect=True
+PlaySFX: SFX=Instant ; Reflect=True
+WaitSFXDone: SFX=Instant ; Reflect=True

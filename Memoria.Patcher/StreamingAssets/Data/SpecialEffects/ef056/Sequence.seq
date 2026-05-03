@@ -1,0 +1,12 @@
+// Shared sequence of SFX Comet
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=64
+PlaySound: Sound=145
+PlaySound: Sound=165
+PlaySound: Sound=257
+Wait: Time=40
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=12
+SetBackgroundIntensity: Intensity=1 ; Time=8

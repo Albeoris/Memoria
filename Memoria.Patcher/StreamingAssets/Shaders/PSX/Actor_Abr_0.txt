@@ -1,0 +1,95 @@
+Shader "PSX/Actor_Abr_0" {
+	Properties {
+		_MainTex ("Texture", 2D) = "black" { }
+		_Color ("Tint", Color) = (1,1,1,1)
+		_Slice ("Slice", Float) = 40960
+	}
+	SubShader { 
+		Tags { "QUEUE"="Transparent+1" "IGNOREPROJECTOR"="true" "RenderType"="Transparent+1" }
+		Pass {
+			Tags { "QUEUE"="Transparent+1" "IGNOREPROJECTOR"="true" "RenderType"="Transparent+1" }
+			Blend SrcAlpha OneMinusSrcAlpha
+			GpuProgramID 45127
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "color" Color
+					Bind "texcoord" TexCoord0
+					Matrix 8 [_MatrixRT]
+					Matrix 0 [_Object2World]
+					Matrix 4 [unity_MatrixVP]
+					Vector 12 [_Color]
+					Float 16 [_DepthOffset]
+					Float 14 [_OffsetX]
+					Float 15 [_OffsetY]
+					Float 13 [_ViewDistance]
+					Float 30 [_MulX]
+					Float 31 [_MulY]
+					"vs_2_0
+						def c17, 0, -112, -1, 0.25
+						def c18, 0.00625000000, 0.00892857183, 0, 0
+						dcl_position v0
+						dcl_color v1
+						dcl_texcoord v2
+						mov r0.yw, c17.xxzz
+						dp4 r1.x, c1, v0
+						mov r1.y, -r1.x
+						dp4 r1.z, c2, v0
+						dp4 r1.x, c0, v0
+						dp4 r1.w, c3, v0
+						dp4 r2.x, c10, r1
+						rcp r2.y, r2.x
+						mul r2.y, r2.y, c13.x
+						dp4 r2.z, c9, r1
+						mul r2.w, r2.y, r2.z
+						mad r2.z, r2.z, r2.y, c17.y
+						mov r0.x, -r2.w
+						add r0.z, r2.w, r2.z
+						slt r2.z, r2.x, c17.x
+						mov r2.w, c17.w
+						mad r3.z, r2.x, r2.w, c16.x
+						mad r3.xy, r2.z, r0.wzzw, r0.yxzw
+						mov oT1.z, r3.x
+						dp4 r0.x, c8, r1
+						dp4 r3.w, c11, r1
+						mov oT1.xyw, r1
+						mul r3.x, r2.y, r0.x
+						dp4 oPos.z, c6, r3
+						dp4 oPos.w, c7, r3
+						dp4 r0.x, c4, r3
+						dp4 r0.y, c5, r3
+						
+						mov r1.x, c30.x
+						mov r1.y, c31.x
+						mad oPos.y, c15.x, r1.y, r0.y
+						mad oPos.x, c14.x, r1.x, r0.x
+						mul oD0, v1, c12
+						mov oT0.xy, v2
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Float 0 [_Slice]
+					SetTexture 0 [_MainTex] 2D 0
+					"ps_2_0
+						def c1, 0.5, 0, 0, 0
+						dcl_pp t0.xy
+						dcl t1.xyz
+						dcl_2d s0
+						mov r0, t1.z
+						add r1, -t1.y, c0.x
+						texkill r0
+						texkill r1
+						texld_pp r0, t0, s0
+						mul_pp r0.xyz, r0.w, r0
+						mov_pp r0.w, c1.x
+						mov_pp oC0, r0
+						
+						"
+				}
+			}
+		}
+	}
+}

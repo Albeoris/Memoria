@@ -1,0 +1,9 @@
+// Shared sequence of SFX Flame_1
+
+PlaySound: Sound=584
+PlaySound: Sound=575
+Wait: Time=24
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=16

@@ -1,0 +1,12 @@
+// Shared sequence of SFX Waterga
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=72
+PlaySound: Sound=2607
+PlaySound: Sound=2608
+PlaySound: Sound=2609
+Wait: Time=30
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20
+SetBackgroundIntensity: Intensity=1 ; Time=8

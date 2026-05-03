@@ -1,0 +1,896 @@
+#####################################################################################################
+##  
+##  Wiki pages also document how this file works:
+##  - Supporting Ability features: https://github.com/Albeoris/Memoria/wiki/Supporting-ability-features
+##  - Active Ability features: https://github.com/Albeoris/Memoria/wiki/Active-ability-features
+##  - Documentation for the formula format: https://github.com/Albeoris/Memoria/wiki/NCalc-formulas
+##  
+#####################################################################################################
+## 
+##  The format for coding Supporting Ability features is the following:
+##  >SA {ID} {Comment}
+##  {Feature Type 1} {Feature Arguments 1 (possibly on multiple lines)}
+##  {Feature Type 2} {Feature Arguments 2 (possibly on multiple lines)}
+##  etc...
+##  
+#####################################################################################################
+## 
+##  The format for coding Active Ability features is the following:
+##  >AA {ID} {Comment}
+##  {Feature 1}
+##  {Feature 2}
+##  etc...
+##  
+#####################################################################################################
+##  
+##  Generic comments should be placed at the beginning of the file
+##  The 64 supporting abilities must be defined in the main AbilityFeatures.txt
+##  However, only a part of them can be present in AbilityFeatures.txt of mod folders
+##  
+##  A special group of features can be optionally defined using ">SA Global" or ">SA GlobalLast"
+##  Features in these global blocks will always apply, even when no Supporting Ability is active
+##  These Global feature blocks can be used to link features with pieces of equipment
+##  The "Global" block applies before other supporting abilities while "GlobalLast" applies after
+##  
+##  Similarly, other specialfeatures can be optionally defined using ">SA GlobalEnemy" or ">SA GlobalEnemyLast"
+##  Features in these global blocks will be used by enemies instead of player characters
+##  Enemy features can be only of type "StatusInit", "Ability" or "Command"
+##  
+##  Features of active abilities are optional; there can be features for each one of them or for none
+##  
+#####################################################################################################
+##  
+##  It is important for the keywords ">SA", ">AA" and for the feature types to be at the start of a new line
+##  The ID of a ">SA" must be a number corresponding to the supporting ability
+##  (0 is the first one, Auto-Reflect by default; 63 is Void, unused by default)
+##  The ID of a ">AA" must be a number corresponding to the active ability
+##  (0 is Void; 191 is Doomsday Sword, the last one that is used by default)
+##  
+##  Optionally, writing "+" after the ID cumulates the features across mods:
+##  Without "+", all the features tied to that ability's ID that are defined in mods of lower priorities are cleared
+##  With "+", the features defined are added on top of the base features
+##  Generally, it is better to use this option for ">SA Global+"
+##  (eg. to keep Healing Rod's effect when adding an unrelated global effect)
+##  
+##  Everything on the same line after the ID and the optional "+" is ignored
+##  
+#####################################################################################################
+##                                                                                                 ##
+##                                       SUPPORTING ABILITIES                                      ##
+##                                                                                                 ##
+#####################################################################################################
+##  
+##  There are 6 different feature types for supporting abilities:
+##  
+##  Permanent -> Applies as soon as the ability is enabled (refreshes when equipment changes),
+##    typically for stat modifications of a player character
+##    Arguments:
+##      [code=Condition] {Formula} [/code] -> Define a condition for the feature to apply
+##      [code={Prop.}] {Formula} [/code]   -> Modify the property according to the formula
+##  
+##  BattleStart -> Applies when a battle is triggered, at the moment of picking the start type,
+##    typically for changing the chances to have a back attack or preemptive start type
+##    Arguments:
+##      [code=Condition] {Formula} [/code] -> Define a condition for the feature to apply
+##      [code={Prop.}] {Formula} [/code]   -> Modify the property according to the formula
+##      PreemptivePriority {DELTA}         -> Use "PreemptivePriority +1" for letting preemptive have
+##                                        priority over back attacks (in case both random checks pass)
+##  
+##  StatusInit -> Applies a status modification at the start of each battle
+##    Arguments:
+##      [code=Condition] {Formula} [/code]                   -> Define a condition for the feature to apply
+##      AutoStatus {Status Name}                             -> Let the character have a permanent status
+##      InitialStatus {Status Name}                          -> Let the character start the battle with a status
+##      ResistStatus {Status Name}                           -> Let the character be immune to a status
+##      InitialATB {ATB Pourcent}                            -> Fill the character's ATB at start (100 for a full gauge)
+##      [code=PartialResist{Status Name}] {Formula} [/code]  -> Let the character have a status-specific evasion
+##                                                          0.0: no bonus evasion -- 1.0: always evade that status
+##      [code=DurationFactor{Status Name}] {Formula} [/code] -> Change the duration of specific statuses for the character
+##                                                          1.0: normal duration
+##  
+##  Ability -> Apply an effect at some point during an ability's effect calculation
+##    typically for increasing the power of some attacks or triggering a reaction
+##    Arguments:
+##      EvenImmobilized                    -> (Try to) apply the feature even if the SA user has a
+##                                        status amongst Death, Petrify, Venom, Stop, Freeze, Jump
+##      AsTarget                           -> Apply the feature if the SA user is one of the target(s)
+##                                        instead of being the caster (default)
+##      When{Moment}                       -> Pick the moment to apply the feature amongst these:
+##                                        WhenBattleScriptStart (before the CS script is called)
+##                                        WhenHitRateSetup (right before hit rate/evasion checks)
+##                                        WhenCalcDamage (right before calculating HPDamage using
+##                                                        Attack, AttackPower and DefensePower)
+##                                        WhenSteal (when a successful steal occurs)
+##                                        WhenBattleScriptEnd (right after the CS script is called)
+##                                        WhenEffectDone (default option - after the damage are dealt)
+##      [code=Condition] {Formula} [/code] -> Define a condition for the feature to apply
+##      [code={Prop.}] {Formula} [/code]   -> Modify the property according to the formula
+##      DisableSA {ID 1} {ID 2}...         -> Disable the "Ability" features of the specified SA
+##                                        for the rest of the ability's effect calculation
+##                                        (even for a different moment but not for a different target)
+##  
+##  Command -> Apply an effect when a battle command is executed by anyone on anywho
+##    typically for letting a character cover an ally or modifying a flag before visual effect
+##    Arguments:
+##      EvenImmobilized                    -> (Try to) apply the feature even if the SA user has a
+##                                        status amongst Death, Petrify, Venom, Stop, Freeze, Jump
+##      [code=Condition] {Formula} [/code] -> Define a condition for the feature to apply
+##      [code={Prop.}] {Formula} [/code]   -> Modify the property according to the formula
+##  
+##  BattleResult -> Apply an effect at the end of a battle
+##    typically for improving the rewards of a battle
+##    Arguments:
+##      When{Moment}                       -> Pick the moment to apply the feature amongst these:
+##                                        WhenBattleEnd (applies even if there is no reward screen)
+##                                        WhenRewardAll (modifies rewards of the whole team)
+##                                        WhenRewardSingle (default - modifies rewards of the SA user)
+##                                          (Note that "WhenRewardAll" only applies once even if
+##                                           there are several users of the same SA in the team)
+##      [code=Condition] {Formula} [/code] -> Define a condition for the feature to apply
+##      [code={Prop.}] {Formula} [/code]   -> Modify the property according to the formula
+##  
+#####################################################################################################
+##  
+##  The properties that can be modified are the following ones:
+##  
+##  Permanent:
+##    MaxHP, MaxMP, Speed, Strength, Magic, Spirit, Defence, Evade,
+##    MagicDefence, MagicEvade, PlayerCategory, MPCostFactor,
+##    MaxHPLimit, MaxMPLimit, MaxDamageLimit, MaxMPDamageLimit,
+##    PlayerPermanentStatus
+##  
+##  BattleStart:
+##    BackAttack (chances of having a back attack, with 0 for 0% and 255 for 100%)
+##    Preemptive (chances of having a back attack, with 0 for 0% and 255 for 100%)
+##  
+##  Ability:
+##    CasterHP, CasterMP, CasterATB, CasterTrance, CasterCurrentStatus, CasterPermanentStatus,
+##    CasterResistStatus, CasterHalfElement, CasterGuardElement, CasterAbsorbElement, CasterWeakElement,
+##    CasterBonusElement, CasterRow, CasterSpeed, CasterStrength, CasterMagic, CasterSpirit, CasterDefence,
+##    CasterEvade, CasterMagicDefence, CasterMagicEvade, CasterIsStrengthModified, CasterIsMagicModified,
+##    CasterIsDefenceModified, CasterIsEvadeModified, CasterIsMagicDefenceModified,
+##    CasterIsMagicEvadeModified, CasterCriticalRateBonus, CasterCriticalRateWeakening,
+##    CasterMaxDamageLimit, CasterMaxMPDamageLimit, CasterBonusExp, CasterBonusGil, CasterBonusCard
+##    (+ same as above for the target, eg. TargetHP),
+##    EffectCasterFlags, CasterHPDamage, CasterMPDamage, EffectTargetFlags, HPDamage, MPDamage,
+##    FigureInfo, Power, AbilityStatus, AbilityElement, AbilityElementForBonus, IsShortRanged,
+##    AbilityCategory, AbilityFlags, Attack, AttackPower, DefencePower, StatusRate, HitRate,
+##    Evade, EffectFlags, DamageModifierCount, TranceIncrease, ItemSteal, Gil, IsDrain, EatResult
+##    BattleBonusAP,
+##    Counter (formula defines the Ability ID of the counter),
+##    ReturnMagic (formula should return 0),
+##    AutoItem (formula defines the Item ID of the counter)
+##  
+##  Command:
+##    Power, AbilityStatus, AbilityElement, AbilityElementForBonus, IsShortRanged, AbilityCategory,
+##    AbilityFlags, IsReflectNull, IsMeteorMiss, IsShortSummon, TryCover, ScriptId, HitRate,
+##    CommandTargetId, BattleBonusAP,
+##    Counter (formula defines the Ability ID of the counter),
+##    (+ same as Ability modifiable properties for the ability user, eg. HP or CurrentStatus)
+##  
+##  BattleResult:
+##    HP, MP, Status, BonusAP, BonusCard, BonusExp, BonusGil, BonusItem1, BonusItemCount1,
+##    BonusItem2, BonusItemCount2, BonusItem3, BonusItemCount3, BonusItem4, BonusItemCount4,
+##    BonusItem5, BonusItemCount5, BonusItem6, BonusItemCount6,
+##    FleeGil (Gil reward of all the enemies, even not killed, divided by 10)
+##  
+#####################################################################################################
+##  
+##  The formulas can include these variables and functions
+##  
+##  Common:
+##    GetRandom(min, max)              -> Return a random number between min and max-1
+##    GetRandom()                      -> Same as GetRandom(0, 256)
+##    GetRandomBit(number)             -> Return a random bit of the number seen as a binary number
+##    GetAbilityUsageCount(ability ID) -> Return the number of times the player used an ability
+##    GetItemCount(item ID)            -> Return the number of items owned by the player (works also on cards and key items)
+##    HasKeyItem(item ID)              -> Return if the player has a specific key item
+##    CheckAnyStatus(list, condition)  -> Check if any status of the conditions is in the list (same as "(list & condition) != 0")
+##    CheckAllStatus(list, condition)  -> Check if all the statuses of the conditions are in the list (same as "(list & condition) == condition")
+##    CombineStatuses(list, addition)  -> Add all the additional statuses to the list (same as "list | addition")
+##    RemoveStatuses(list, removal)    -> Remove all the statuses from the list (same as "list & ~removal")
+##                                   Note that "condition", "addition" or "removal" above can be a comma-separated list
+##    BattleFilter(characters, player flag, targetable flag, status filter)
+##                                     └> Filter all the existing battle units by different kinds of filters
+##                                   "characters" is a bit flags identifying the units
+##                                    eg. 1 for the first player character, 16 for the first enemy, 17 for both
+##                                   "player flag" must be 0 for keeping only enemies, 1 for allies or -1 for both
+##                                   "targetable" must be 1 for keeping only targetable units
+##                                   "status filter" must be a list of filtering out statuses (eg. BattleStatus_Death will filter out dead units)
+##    GetPartyMemberLevel(number)      -> Return the level of the n-th party member, with n being between 0 and 3 inclusively
+##    GetPartyMemberIndex(number)      -> Return the Character Index of the n-th party member (see the different "CharacterId" below)
+##    GetUnitProperty(CharacterIndex, 'Formula')
+##                                     └> Retrieve properties of neither the caster nor the target.
+##										Works also with CustomStatus to read specific variables.
+##										Eg : GetUnitProperty(CharacterId_Steiner, 'StatusProperty CustomStatus21 Duelist')
+##	  IsCharacterInParty(CharacterIndex) -> Check if the character is present in the current party.
+##    GetCategoryKillCount(category)   -> Return the number of enemies of the specified category that were defeated by the player
+##                                   0 for Humanoids, 1 for Beasts, 2 for Devils,     3 for Dragons,
+##                                   4 for Undeads,   5 for Stones, 6 for Souls/Bugs, 7 for Flying/Birds
+##    GetModelKillCount(model ID)      -> Return the number of enemies with a specific model that were defeated by the player
+##    GetEventGlobalByte(ID)		   -> Return the value from a global variable (eg. GetEventGlobalByte(1500) to read VARL_GenUInt8_1500)
+##    GetMemoriaVector(ID, index)      -> Return the value from a vector (from the MemoriaDictionary HW function)
+##    GetMemoriaDictionary(ID, index)  -> Return the value from a dictionary (from the MemoriaDictionary HW function)
+##    HasKilledCharacter(killerID, CharacterIndexkilled)			   
+##                                     └> Check if the unit (based on BattleUunit.Id) has K.Oed a player in battle.
+##    Gil                              -> The number of gil owned by the player
+##    FrogCount                        -> The number of frogs catched
+##    StealCount                       -> The number of successful steals
+##    EscapeCount                      -> The number of successful flees (either way)
+##    TonberryCount                    -> The number of Tonberries killed
+##    TetraMasterWinCount              -> The number of Tetra Master wins
+##    TetraMasterLossCount             -> The number of Tetra Master losses
+##    TetraMasterDrawCount             -> The number of Tetra Master draws
+##    GameTime                         -> The total duration of the played game, in seconds
+##    BattleId                         -> The ID of the current battle
+##    FieldId                          -> The ID of the current field
+##    IsRandomBattle                   -> Whether the current battle is a random battle (excluding friendly and Ragtime encounters)
+##    IsFriendlyBattle                 -> Whether the current battle is a friendly battle
+##    IsRagtimeBattle                  -> Whether the current battle is a Ragtime encounter
+##    CurrentPartyCount                -> The total number of player characters in the battle
+##    CurrentEnemyCount                -> The total number of enemies in the battle
+##    CurrentPartyAverageLevel         -> The average level of the fighting party members
+##    IsBattlePreemptive               -> Whether the current battle started as a preemptive
+##    IsBattleBackAttack               -> Whether the current battle started as a back attack
+##    ScenarioCounter                  -> The scenario counter, see https://github.com/Albeoris/Memoria/wiki/Scenario-counter
+##    IsGarnetDepressed                -> Whether Garnet is in a depression state
+##    BattleBonusAP                    -> The AP given by the current battle
+##    UseSFXRework                     -> Whether the SFX Rework system is activated or not
+##    MemoriaLog(formula)              -> To debug your expression, in the Memoria.Log file.
+##  
+##  Permanent:
+##    HP, MP, Level, Exp, CharacterIndex, SerialNumber, WeaponId, HeadId, WristId, ArmorId, AccessoryId
+##    HasSA(support ability ID),
+##    CanUseAbility(ability ID),
+##    HasLearntAbility(ability ID),
+##    HasLearntSupport(support ability ID),
+##    (+ modifiable properties)
+##  
+##  BattleStart: only the common informations
+##  
+##  StatusInit:
+##    MaxHP, MaxMP, MaxATB, HP, MP, ATB, Trance, InTrance, ModelId, CurrentStatus, PermanentStatus,
+##    ResistStatus, HalfElement, GuardElement, AbsorbElement, WeakElement, BonusElement, WeaponPower,
+##    WeaponRate, WeaponElement, WeaponStatus, WeaponCategory, WeaponId, HeadId, WristId, ArmorId,
+##    AccessoryId, SerialNumber, Row, Position, SummonCount, IsPlayer, IsSlave, IsOutOfReach, Level, Exp,
+##    Speed, Strength, Magic, Spirit, Defence, Evade, MagicDefence, MagicEvade, PlayerCategory, Category,
+##    CharacterIndex, IsStrengthModified, IsMagicModified, IsEvadeModified, IsDefenceModified,
+##    IsMagicDefenceModified, IsMagicEvadeModified, CriticalRateBonus, CriticalRateWeakening,
+##    IsAlternateStand,
+##    HasSA(support ability ID),
+##    CanUseAbility(ability ID),
+##    HasLearntAbility(ability ID),
+##    HasLearntSupport(support ability ID)
+##  
+##  Ability:
+##    All those of "StatusInit" for both the caster and the target (eg. CasterMaxHP or TargetMaxHP),
+##    ReflectFactor, StatusesInflicted, CommandId, AbilityId, ScriptId, ItemUseId, WeaponThrowShape,
+##    SpecialEffectId, TargetType, IsATBCommand, IsAbilityMultiTarget, IsShortSummon, IsSpellReflected,
+##    IsCovered, IsDodged, IsReflectNull, MPCost, CalcMainCounter, CommandTargetCount,
+##    (+ the other modifiable properties, except for "ClearStatus" and "ClearAutoStatus")
+##  
+##  Command:
+##    All those of "StatusInit" for both the caster and the target, except in the condition formula,
+##    All those of "StatusInit" for the SA user (that can be neither the caster nor a target),
+##    CommandId, AbilityId, ItemUseId, WeaponThrowShape, SpecialEffectId, TargetType, IsATBCommand,
+##    IsAbilityMultiTarget, IsSpellReflected, IsCovered, IsDodged, IsCounterableCommand, MPCost, CalcMainCounter,
+##    IsCasterWellDefined, IsTargeted, IsSingleTarget, IsSelfTarget, IsTheCaster, IsAllyOfTarget,
+##    IsAllyOfCaster, IsEnemyOfTarget, IsEnemyOfCaster, AreCasterAndTargetEnemies, AreCasterAndTargetAllies,
+##    (+ the other modifiable properties)
+##    Note that:
+##      "CasterMaxHP" and such should only be used in formulas if "IsCasterWellDefined" is true
+##      "TargetMaxHP" and such should only be used in formulas if "IsSingleTarget" is true
+##  
+##  BattleResult:
+##    Level, Exp, CharacterIndex, MaxHP, MaxMP, Speed, Strength, Magic, Spirit, Defence, Evade,
+##    MagicDefence, MagicEvade, PlayerCategory, MPCostFactor, WeaponId, HeadId, WristId, ArmorId,
+##    AccessoryId, IsFlee, IsFleeByLuck,
+##    HasSA(support ability ID),
+##    CanUseAbility(ability ID),
+##    HasLearntAbility(ability ID),
+##    HasLearntSupport(support ability ID),
+##    (+ modifiable properties)
+##  
+#####################################################################################################
+##  
+##  Examples:
+##  
+##  
+##  Make the claws Avenger start the battle with Doom
+##  Also triggers a counter-attack with the sword Defender when the character is defending
+##  Also make the staff Mace of Zeus reduce MP cost of all spells to 0
+##  Also make blinded characters be mistaken on their single-target actions
+##  Also make the Rosetta Ring give a partial protection against Heat (50% bonus evasion and reduce duration to 50%)
+##  
+##  >SA Global+
+##  StatusInit [code=Condition] WeaponId == RegularItem_Avenger [/code] InitialStatus Doom
+##  Ability AsTarget
+##   [code=Condition] TargetWeaponId == RegularItem_Defender && CheckAnyStatus(TargetCurrentStatus, BattleStatus_Defend) && IsCounterableCommand && CasterIsPlayer != TargetIsPlayer && (AbilityCategory & 8) != 0 [/code]
+##   [code=Counter] BattleAbilityId_Attack [/code]
+##   DisableSA 36 54 56
+##  Permanent [code=Condition] WeaponId == RegularItem_MaceOfZeus [/code] [code=MPCostFactor] 0 [/code]
+##  Command EvenImmobilized
+##   [code=Condition] IsTheCaster && IsSingleTarget && !IsSelfTarget && CheckAnyStatus(CurrentStatus, BattleStatus_Blind) [/code]
+##   [code=CommandTargetId] TargetPosition < CasterPosition ? GetRandomBit(BattleFilter((1 << CasterPosition) - 1, TargetIsPlayer ? 1 : 0, 1, BattleStatus_Jump)) : GetRandomBit(BattleFilter(256 - 2 * (1 << CasterPosition), TargetIsPlayer ? 1 : 0, 1, BattleStatus_Jump)) [/code]
+##  StatusInit [code=Condition] AccessoryId == RegularItem_RosettaRing [/code] [code=PartialResistHeat] 0.5 [/code] [code=DurationFactorHeat] 0.5 [/code]
+##  
+##  
+##  Make all the enemies start with Haste if the party average level is above 50
+##  Also scale their damage according to the number of enemies of the same kind that were defeated by the player
+##  
+##  >SA GlobalEnemy+
+##  StatusInit [code=Condition] CurrentPartyAverageLevel >= 50.0 [/code] InitialStatus Haste
+##  Ability WhenCalcDamage EvenImmobilized
+##   [code=Condition] CasterIsPlayer != TargetIsPlayer [/code]
+##   [code=Attack] Attack + Attack * GetModelKillCount(CasterModelId) / 50 [/code]
+##  
+##  
+##  Give Auto-Shell or Auto-Protect depending on which one is the most useful
+##  and give both if Defence == MagicDefence
+##  
+##  >SA 0
+##  StatusInit [code=Condition] Defence <= MagicDefence [/code] AutoStatus Protect
+##  StatusInit [code=Condition] MagicDefence <= Defence [/code] AutoStatus Shell
+##  
+##  
+##  Save the user from fatal damage at the cost of half of the trance gauge (max is 255),
+##  and add Berserk, Vanish and Reflect permanently when doing so
+##  Note how the "EffectTargetFlags" check verifies that the ability deals damage but doesn't heal
+##  Also note that the effect triggers both if the user is in trance and if s/he is not
+##  
+##  >SA 1
+##  Ability AsTarget WhenBattleScriptEnd
+##  [code=Condition] HPDamage >= TargetHP && TargetTrance >= 128 && CasterIsPlayer != TargetIsPlayer
+##                && (EffectTargetFlags & CalcFlag_HpDamageOrHeal) == CalcFlag_HpAlteration [/code]
+##  [code=TranceIncrease] -128 [/code]
+##  [code=TargetPermanentStatus] CombineStatuses(TargetPermanentStatus, BattleStatus_Berserk, BattleStatus_Vanish, BattleStatus_Reflect) [/code]
+##  [code=HPDamage] 0 [/code]
+##  
+##  
+##  Make battles 1/2 preemptives, 1/4 back attacks (the preemptive check has to fail)
+##  and also give Long Reach to all the player's characters
+##  
+##  >SA 2
+##  BattleStart PreemptivePriority +1
+##  [code=Preemptive] 128 [/code]
+##  [code=BackAttack] 128 [/code]
+##  Command EvenImmobilized
+##  [code=Condition] IsAllyOfCaster [/code]
+##  [code=IsShortRanged] false [/code]
+##  
+##  
+##  Cast Cura as a counter on an ally that uses an ability on the SA user
+##  Note that the user doesn't need to know the spell to use it as a counter (but it costs MP)
+##  Note also that it will trigger on any command, including counters, thus potentially looping
+##  
+##  >SA 3
+##  Ability AsTarget
+##  [code=Condition] CasterIsPlayer == TargetIsPlayer && CasterHP < CasterMaxHP
+##                && CasterCharacterIndex != TargetCharacterIndex [/code]
+##  [code=Counter] BattleAbilityId_Cura [/code]
+##  
+##  
+##  Give a 1.5x, 2.5x or 5x bonus experience depending on the user's level
+##  Note that using floating point arithmetic instead of integer arithmetic
+##  will round the result to the closest integral value instead of flooring it
+##  The format "{condition} ? {formula 1} : {formula 2}" uses the 1st formula
+##  if the condition is satisfied and uses the 2nd formula if not
+##  
+##  >SA 4
+##  BattleResult [code=BonusExp] Level < 40 ? 1.5 * BonusExp :
+##                              (Level < 80 ? 2.5 * BonusExp
+##                                          : 5 * BonusExp) [/code]
+##  
+#####################################################################################################
+##  
+##  Constants
+##  
+##  The different statuses are:
+##   BattleStatus_Petrify		BattleStatus_Venom		BattleStatus_Virus			BattleStatus_Silence
+##   BattleStatus_Blind			BattleStatus_Trouble	BattleStatus_Zombie			BattleStatus_EasyKill
+##   BattleStatus_Death			BattleStatus_LowHP		BattleStatus_Confuse		BattleStatus_Berserk
+##   BattleStatus_Stop			BattleStatus_AutoLife	BattleStatus_Trance			BattleStatus_Defend
+##   BattleStatus_Poison		BattleStatus_Sleep		BattleStatus_Regen			BattleStatus_Haste
+##   BattleStatus_Slow			BattleStatus_Float		BattleStatus_Shell			BattleStatus_Protect
+##   BattleStatus_Heat			BattleStatus_Freeze		BattleStatus_Vanish			BattleStatus_Doom
+##   BattleStatus_Mini			BattleStatus_Reflect	BattleStatus_Jump			BattleStatus_GradualPetrify
+##   + several shorthands for multiple statuses (eg. BattleStatus_PreventCounter)
+##   see https://github.com/Albeoris/Memoria/blob/main/Assembly-CSharp/Memoria/Data/Battle/BattleStatus.cs
+##  
+##  The different elements are:
+##   EffectElement_Fire			EffectElement_Cold		EffectElement_Thunder		EffectElement_Earth
+##   EffectElement_Aqua			EffectElement_Wind		EffectElement_Holy			EffectElement_Darkness
+##  
+##  The followings can be used for "CharacterIndex":
+##   CharacterId_Zidane			CharacterId_Vivi		CharacterId_Garnet			CharacterId_Steiner
+##   CharacterId_Freya			CharacterId_Quina		CharacterId_Eiko			CharacterId_Amarant
+##   CharacterId_Cinna			CharacterId_Marcus		CharacterId_Blank			CharacterId_Beatrix
+##  
+##  The followings can be used for "PlayerCategory":
+##   CharacterCategory_Male				CharacterCategory_Female
+##   CharacterCategory_Terra			CharacterCategory_Gaia
+##   CharacterCategory_Subpc
+##  
+##  The followings can be used for "Category" (most likely "TargetCategory"):
+##   EnemyCategory_Humanoid		EnemyCategory_Beast		EnemyCategory_Devil			EnemyCategory_Dragon
+##   EnemyCategory_Undead		EnemyCategory_Stone		EnemyCategory_Soul			EnemyCategory_Flight
+##  
+##  The followings can be used for "CommandId":
+##   BattleCommandId_Attack		BattleCommandId_Steal	BattleCommandId_Item		BattleCommandId_SummonGarnet
+##   etc...
+##   see https://github.com/Albeoris/Memoria/blob/main/Assembly-CSharp/Memoria/Data/Battle/BattleCommandId.cs
+##  
+##  The followings can be used for "AbilityId":
+##   BattleAbilityId_Void		BattleAbilityId_Cure	BattleAbilityId_Cura		BattleAbilityId_Curaga
+##   etc...
+##   see https://github.com/Albeoris/Memoria/blob/main/Assembly-CSharp/Memoria/Data/Battle/BattleAbilityId.cs
+##  
+##  The different items are:
+##   RegularItem_Hammer			RegularItem_Dagger		RegularItem_MageMasher		RegularItem_MythrilDagger
+##   etc...
+##   see https://github.com/Albeoris/Memoria/blob/main/Assembly-CSharp/Memoria/Data/Battle/RegularItem.cs
+##  
+##  The different Tetra Master (or Triple Triad) cards are:
+##   TetraMasterCardId_Goblin	TetraMasterCardId_Fang	TetraMasterCardId_Skeleton	TetraMasterCardId_Flan
+##   etc...
+##   see https://github.com/Albeoris/Memoria/blob/main/Assembly-CSharp/Memoria/Data/TetraMaster/TetraMasterCardId.cs
+##  
+##  The different "EffectCasterFlags" and "EffectTargetFlags" are:
+##   CalcFlag_HpAlteration	-> Ability deals HP damage
+##   CalcFlag_HpRecovery	-> Ability heals HP instead of damaging (both bits are set)
+##   CalcFlag_Critical		-> Critical strike connected
+##   CalcFlag_MpAlteration	-> Ability deals MP damage
+##   CalcFlag_MpRecovery	-> Ability heals MP instead of damaging (both bits are set)
+##   CalcFlag_HpDamageOrHeal -> Shorthand for CalcFlag_HpAlteration | CalcFlag_HpRecovery
+##   CalcFlag_MpDamageOrHeal -> Shorthand for CalcFlag_MpAlteration | CalcFlag_MpRecovery
+##  
+##  The different "EffectFlags" are:
+##   BattleCalcFlags_Miss		-> Ability has missed
+##   BattleCalcFlags_Dodge		-> Ability is dodged (usually together with miss)
+##   BattleCalcFlags_MpAttack	-> MP Attack, consume 1/8 of CasterMaxMP at the end of the effect
+##   BattleCalcFlags_Absorb		-> Target absorbs the element
+##   BattleCalcFlags_TrueFB		-> Unknown/unused
+##   BattleCalcFlags_FalseFB	-> Unknown/unused
+##   BattleCalcFlags_Guard		-> Target is guarded
+##   BattleCalcFlags_DirectHP	-> Direct HP damage, such as Matra Magic that brings HP to a specific number (and doesn't show damage numbers)
+##   BattleCalcFlags_AddStat	-> Add Status, add the caster's weapon status at the end of the effect, before damage
+##  
+#####################################################################################################
+##                                                                                                 ##
+##                                        ACTIVE ABILITIES                                         ##
+##                                                                                                 ##
+#####################################################################################################
+##  
+##  Active ability features work similarly as supporting ability features but consist of [code][/code] tags only
+##  Most of the time, formulas should use the format "{condition} ? {formula 1} : {formula 2}" in order to be efficient
+##  
+##  There are 10 possible different tags:
+##  
+##  [code=Patch] {Formula} [/code]              -> Swap the ability with another one
+##                                             This affects the ability in battles but also in the menu
+##  
+##  [code=Priority] {Formula} [/code]           -> Change the command's priority, to make it trigger as soon as inputted
+##  
+##  [code=GilCost] {Formula} [/code]            -> Add a gil cost to the cast of the ability
+##  
+##  [code=ItemRequirement] {Formulas} [/code]   -> Add item requirement(s) to the cast of the ability, without using it (them) directly
+##                                             There can be several formulas separated by a semi-colon ;
+##                                             Formulas go 2 by 2, with the 1st one defining the item ID and the 2nd one defining the item amount (default: 1)
+##  
+##  [code=Power] {Formula} [/code]              -> Dynamically change the ability's power
+##  
+##  [code=HitRate] {Formula} [/code]            -> Dynamically change the ability's hit rate
+##  
+##  [code=Element] {Formula} [/code]            -> Dynamically change the ability's element
+##  
+##  [code=Status] {Formula} [/code]             -> Dynamically change the ability's status
+##  
+##  [code=Target] {Formula} [/code]             -> Redefine the command's target(s)
+##  
+##  [code=SpecialEffect] {Formula} [/code]      -> Dynamically change the ability's special effect
+##  
+#####################################################################################################
+##  
+##  The feature "Patch" applies at any time
+##  Its formula may include the same variables and functions as a "Permanent" supporting ability feature
+##  
+##  The feature "Priority" applies as soon as a command is sent (either as a player input or as a reaction)
+##  Its formula may include the same variables and functions as below for the other features
+##  
+##  The other features apply when the command starts, on the tick before the "Command" supporting ability features take effect
+##  before the setup of a few informations ("IsCovered" will always return false, for example)
+##  Their formulas may include these variables and functions:
+##    Common variables and functions, IsSingleTarget, IsSelfTarget, AreCasterAndTargetEnemies, AreCasterAndTargetAllies,
+##    CasterMaxHP, CasterMaxMP, CasterMaxATB, CasterHP, CasterMP, CasterATB, CasterTrance, CasterInTrance, CasterModelId,
+##    CasterCurrentStatus, CasterPermanentStatus, CasterResistStatus, CasterHalfElement, CasterGuardElement, CasterAbsorbElement,
+##    CasterWeakElement, CasterBonusElement, CasterWeaponPower, CasterWeaponRate, CasterWeaponElement, CasterWeaponStatus,
+##    CasterWeaponCategory, CasterWeaponId, CasterHeadId, CasterWristId, CasterArmorId, CasterAccessoryId,
+##    CasterSerialNumber, CasterRow, CasterPosition, CasterSummonCount, CasterIsPlayer, CasterIsSlave, CasterIsOutOfReach,
+##    CasterLevel, CasterExp, CasterSpeed, CasterStrength, CasterMagic, CasterSpirit, CasterDefence, CasterEvade,
+##    CasterMagicDefence, CasterMagicEvade, CasterPlayerCategory, CasterCategory, CasterCharacterIndex,
+##    CasterIsStrengthModified, CasterIsMagicModified, CasterIsEvadeModified, CasterIsDefenceModified,
+##    CasterIsMagicDefenceModified, CasterIsMagicEvadeModified, CasterCriticalRateBonus, CasterCriticalRateWeakening,
+##    CasterMaxDamageLimit, CasterMaxMPDamageLimit,
+##    CasterHasSA(support ability ID),
+##    CasterCanUseAbility(ability ID),
+##    CasterHasLearntAbility(ability ID),
+##    CasterHasLearntSupport(support ability ID)
+##    CommandId, AbilityId, ScriptId, Power, AbilityStatus, AbilityElement, AbilityElementForBonus,
+##    ItemUseId, WeaponThrowShape, SpecialEffectId, TargetType, IsATBCommand, IsAbilityMultiTarget, IsShortSummon,
+##    IsSpellReflected, IsCovered, IsDodged, IsShortRanged, IsReflectNull, IsMeteorMiss, AbilityCategory, MPCost,
+##    AbilityFlags, CommandTargetId, CalcMainCounter
+##  
+#####################################################################################################
+##  
+##  Examples:
+##  
+##  
+##  Alternate between Fenrir (Earth) and Fenrir (Wind) when casting it, 
+##  instead of patching the ability depending on Eiko's accessory
+##  
+##  >AA 66 Fenrir
+##  [code=Patch] GetAbilityUsageCount(66) <= GetAbilityUsageCount(67) ? 66 : 67 [/code]
+##  
+##  
+##  Curse elemental weaknesses using Amarant's weapon element when applicable,
+##  and a random element if Amarant's weapon has none
+##  Both of these formulas are valid for picking a random element
+##  
+##  >AA 129 Curse (single)
+##  [code=Element] CasterWeaponElement != 0 ? CasterWeaponElement : (1 << GetRandom(0, 8)) [/code]
+##  >AA 137 Curse (multi)
+##  [code=Element] CasterWeaponElement != 0 ? CasterWeaponElement : GetRandomBit(255) [/code]
+##  
+##  
+##  Have summons take priority over the other commands, once per character per battle
+##  
+##  >AA 49 Shiva
+##  [code=Priority] CasterSummonCount <= 1 ? 1 : -1 [/code]
+##  >AA 51 Ifrit
+##  [code=Priority] CasterSummonCount <= 1 ? 1 : -1 [/code]
+##  >AA 53 Ramuh
+##  [code=Priority] CasterSummonCount <= 1 ? 1 : -1 [/code]
+##  etc...
+##  
+##  
+##  Have Shell upgrade to Mighty Guard if Concentrate is equipped
+##  Note that returning the value -1 will not apply any change
+##  
+##  >AA 11 Shell
+##  [code=Patch] HasSA(33) ? BattleAbilityId_MightyGuard : -1 [/code]
+##  
+##  
+##  Have Haste upgrade to a party-wide spell if Concentrate is equipped
+##  Note that the SFX Rework system allows to use the special effect Haste (89) on multiple targets
+##  but it has to be switched to Carbuncle's Emerald effect (506) if that system is deactivated
+##  
+##  >AA 13 Haste
+##  [code=Target] HasSA(33) ? BattleUnitFilter(CandidateIsPlayer == CasterIsPlayer && CandidateIsTargetable && !CheckAnyStatus(CandidateCurrentStatus, BattleStatus_Death, BattleStatus_Jump)) : -1 [/code]
+##  [code=SpecialEffect] HasSA(33) ? (UseSFXRework ? 89 : 506) : -1 [/code]
+##  
+##  
+##  Have a custom Mix ability requiring 2 Ores + 1 other random jewel
+##  The actual ability effect has to be coded in a custom battle script
+##  (see https://github.com/Albeoris/Memoria/wiki/External-Battle-scripts)
+##  
+##  >AA 200 Mix Jewels
+##  [code=Power] RegularItem_Garnet + GetRandom(0, 12) [/code]
+##  [code=ItemRequirement] RegularItem_Ore ; 2 ; Power ; 1 [/code]
+##  
+#####################################################################################################
+
+>SA Global Healing Rod's effect
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] CasterWeaponId == RegularItem_HealingRod && AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Undead) == 0 && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_ZombieEffect) [/code]
+[code=EffectTargetFlags] EffectTargetFlags | CalcFlag_HpRecovery [/code]
+
+_____________________________________________________________________________________________________
+
+>SA 0 Auto-Reflect
+StatusInit AutoStatus Reflect
+
+>SA 1 Auto-Float
+StatusInit AutoStatus Float
+
+>SA 2 Auto-Haste
+StatusInit AutoStatus Haste
+
+>SA 3 Auto-Regen
+StatusInit AutoStatus Regen
+
+>SA 4 Auto-Life
+StatusInit InitialStatus AutoLife
+
+>SA 5 HP+10%
+Permanent [code=MaxHP] MaxHP + MaxHP / 10 [/code]
+
+>SA 6 HP+20%
+Permanent [code=MaxHP] MaxHP + MaxHP / 5 [/code]
+
+>SA 7 MP+10%
+Permanent [code=MaxMP] MaxMP + MaxMP / 10 [/code]
+
+>SA 8 MP+20%
+Permanent [code=MaxMP] MaxMP + MaxMP / 5 [/code]
+
+>SA 9 Accuracy+
+Ability WhenHitRateSetup EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack [/code]
+[code=HitRate] 100 [/code]
+[code=Evade] 0 [/code]
+DisableSA 10
+
+>SA 10 Distract
+Ability AsTarget WhenHitRateSetup EvenImmobilized
+[code=Condition] ScriptId <= 8 || ScriptId == 101 [/code]
+[code=HitRate] HitRate / 2 [/code]
+
+>SA 11 Long Reach
+Ability WhenBattleScriptStart EvenImmobilized
+[code=IsShortRanged] false [/code]
+
+>SA 12 MP Attack
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && CasterMP > 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+[code=EffectFlags] EffectFlags | BattleCalcFlags_MpAttack [/code]
+
+>SA 13 Bird Killer
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Flight) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+DisableSA 13 14 15 16 17 18 19 20
+
+>SA 14 Bug Killer
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Soul) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+DisableSA 13 14 15 16 17 18 19 20
+
+>SA 15 Stone Killer
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Stone) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+DisableSA 13 14 15 16 17 18 19 20
+
+>SA 16 Undead Killer
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Undead) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+DisableSA 13 14 15 16 17 18 19 20
+
+>SA 17 Dragon Killer
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Dragon) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+DisableSA 13 14 15 16 17 18 19 20
+
+>SA 18 Devil Killer
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Devil) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+DisableSA 13 14 15 16 17 18 19 20
+
+>SA 19 Beast Killer
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Beast) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+DisableSA 13 14 15 16 17 18 19 20
+
+>SA 20 Man Eater
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Humanoid) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+DisableSA 13 14 15 16 17 18 19 20
+
+>SA 21 High Jump
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] ScriptId == 48 || ScriptId == 83 [/code]
+[code=Attack] Attack + Attack / 3 [/code]
+
+>SA 22 Master Thief (effect is coded in 0058_StealScript.cs)
+
+>SA 23 Steal Gil
+Ability WhenSteal EvenImmobilized
+[code=Gil] Gil + GetRandom(0, 1 + CasterLevel * TargetLevel / 4) [/code]
+
+>SA 24 Healer
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Undead) == 0 && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_ZombieEffect) [/code]
+[code=EffectTargetFlags] EffectTargetFlags | CalcFlag_HpRecovery [/code]
+
+>SA 25 Add Status
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] AbilityId == BattleAbilityId_Attack && GetRandom(0, 100) < CasterWeaponRate && CasterIsPlayer != TargetIsPlayer [/code]
+[code=EffectFlags] EffectFlags | BattleCalcFlags_AddStat [/code]
+
+>SA 26 Gamble Defence
+Ability AsTarget WhenCalcDamage EvenImmobilized
+[code=Condition] ScriptId <= 8 || ScriptId == 39 || ScriptId == 100 || ScriptId == 102 || ScriptId == 107 [/code]
+[code=DefencePower] GetRandom(0, 2 * DefencePower) [/code]
+
+>SA 27 Chemist
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] ScriptId == 69 || ScriptId == 70 [/code]
+[code=Attack] 2 * Attack [/code]
+
+>SA 28 Power Throw
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] ScriptId == 42 [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 29 Power Up
+Ability WhenBattleScriptEnd EvenImmobilized
+[code=Condition] ScriptId == 37 [/code]
+[code=HPDamage] 2 * HPDamage [/code]
+[code=MPDamage] 2 * MPDamage [/code]
+
+>SA 30 Reflect-Null
+Command EvenImmobilized
+[code=Condition] IsTheCaster [/code]
+[code=IsReflectNull] true [/code]
+
+>SA 31 Reflectx2
+Ability WhenBattleScriptEnd EvenImmobilized
+[code=Condition] IsSpellReflected [/code]
+[code=HPDamage] 2 * HPDamage [/code]
+
+>SA 32 Mag Elem Null
+Command EvenImmobilized
+[code=Condition] IsTheCaster && AbilityId != BattleAbilityId_Attack [/code]
+[code=AbilityElement] 0 [/code]
+
+>SA 33 Concentrate
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] ScriptId == 10 || ScriptId == 13 [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
+
+>SA 34 Half MP
+Permanent [code=MPCostFactor] MPCostFactor / 2 [/code]
+
+>SA 35 High Tide
+Ability AsTarget WhenBattleScriptStart EvenImmobilized
+[code=TranceIncrease] TargetSpirit [/code]
+
+>SA 36 Counter
+Ability AsTarget
+[code=Condition] IsCounterableCommand && CasterIsPlayer != TargetIsPlayer && (AbilityCategory & 8) != 0 && (TargetHasSA(39) ? 2 * TargetSpirit : TargetSpirit) > GetRandom(0, 100) [/code]
+[code=Counter] 176 [/code]
+DisableSA 36 54 56
+
+>SA 37 Cover
+Command
+[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) [/code]
+[code=TryCover] !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Death, BattleStatus_Petrify) && CheckAnyStatus(TargetCurrentStatus, BattleStatus_LowHP) [/code]
+
+>SA 38 Protect Girls
+Command
+[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) [/code]
+[code=TryCover] !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Death, BattleStatus_Petrify) && (TargetPlayerCategory & CharacterCategory_Female) != 0 && TargetHP < TargetMaxHP / 2 [/code]
+
+>SA 39 Eye 4 Eye (effect is coded in SA 36)
+
+>SA 40 Body Temp
+StatusInit ResistStatus Freeze ResistStatus Heat
+
+>SA 41 Alert
+BattleStart [code=BackAttack] 0 [/code]
+
+>SA 42 Initiative
+BattleStart [code=Preemptive] 85 [/code]
+
+>SA 43 Level Up
+BattleResult [code=BonusExp] BonusExp + BonusExp / 2 [/code]
+
+>SA 44 Ability Up
+BattleResult [code=BonusAP] 2 * BonusAP [/code]
+
+>SA 45 Millionaire
+BattleResult WhenRewardAll [code=BonusGil] BonusGil + BonusGil / 2 [/code]
+
+>SA 46 Flee-Gil
+BattleResult WhenBattleEnd
+[code=Condition] IsFleeByLuck [/code]
+[code=BonusGil] FleeGil [/code]
+
+>SA 47 Guardian Mog
+BattleResult WhenBattleEnd [code=Status] 0 [/code]
+
+>SA 48 Insomniac
+StatusInit ResistStatus Sleep
+
+>SA 49 Antibody
+StatusInit ResistStatus Poison ResistStatus Venom
+
+>SA 50 Bright Eyes
+StatusInit ResistStatus Blind
+
+>SA 51 Loudmouth
+StatusInit ResistStatus Silence
+
+>SA 52 Restore HP
+Ability AsTarget
+[code=Condition] CasterIsPlayer != TargetIsPlayer && (HPDamage != 0 || (EffectFlags & BattleCalcFlags_DirectHP) != 0) && TargetHP != 0 && CheckAnyStatus(TargetCurrentStatus, BattleStatus_LowHP) [/code]
+[code=TargetHP] TargetHP + TargetMaxHP / 2 [/code]
+
+>SA 53 Jelly
+StatusInit ResistStatus Petrify ResistStatus GradualPetrify
+
+>SA 54 Return Magic
+Ability AsTarget
+[code=Condition] IsCounterableCommand && CasterIsPlayer != TargetIsPlayer && (AbilityCategory & 128) != 0 [/code]
+[code=ReturnMagic] 0 [/code]
+DisableSA 36 54 56
+
+>SA 55 Absorb MP
+Ability AsTarget
+[code=Condition] CasterIsPlayer != TargetIsPlayer && (HPDamage != 0 || (EffectFlags & BattleCalcFlags_DirectHP) != 0) [/code]
+[code=TargetMP] Min(TargetMaxMP, TargetMP + MPCost) [/code]
+
+>SA 56 Auto-Potion
+Ability AsTarget
+[code=Condition] IsCounterableCommand && CasterIsPlayer != TargetIsPlayer && (HPDamage != 0 || (EffectFlags & BattleCalcFlags_DirectHP) != 0) [/code]
+[code=AutoItem] GetItemCount(RegularItem_Potion) != 0 ? RegularItem_Potion : RegularItem_HiPotion [/code]
+DisableSA 36 54 56
+
+>SA 57 Locomotion
+StatusInit ResistStatus Stop
+
+>SA 58 Clear Headed
+StatusInit ResistStatus Confuse
+
+>SA 59 Boost
+Command EvenImmobilized
+[code=Condition] IsTheCaster [/code]
+[code=IsShortSummon] false [/code]
+
+>SA 60 Odin’s Sword
+Ability WhenBattleScriptEnd EvenImmobilized
+[code=Condition] ScriptId == 87 && (EffectFlags & (BattleCalcFlags_Miss | BattleCalcFlags_Guard)) != 0 [/code]
+[code=EffectFlags] EffectFlags & 65470 [/code]
+[code=EffectTargetFlags] EffectTargetFlags | CalcFlag_HpAlteration [/code]
+[code=HPDamage] (IsShortSummon ? 0.666667 : 1.0) * (GetRandom(CasterMagic, CasterMagic + (CasterLevel + CasterMagic) / 8 + 1) * Max(1, 100 + Power - GetItemCount(RegularItem_Ore) - TargetMagicDefence)) [/code]
+
+>SA 61 Mug
+Ability WhenSteal EvenImmobilized
+[code=EffectTargetFlags] EffectTargetFlags | CalcFlag_HpAlteration [/code]
+[code=HPDamage] GetRandom(0, CasterLevel * TargetLevel / 2) [/code]
+[code=AbilityCategory] (AbilityCategory & 191) | 8 [/code]
+
+>SA 62 Bandit (effect is coded in 0058_StealScript.cs)
+
+>SA 63 Void
+
+_____________________________________________________________________________________________________
+
+>AA 46 Meteor (make it miss based on caster's level and spirit)
+[code=SpecialEffect] (CasterLevel / 2 + CasterSpirit >= GetRandom(0, 100)) ? 134 : 143 [/code]
+
+>AA 66 Fenrir (swap to the wind version if Maiden's Prayer is equipped)
+[code=Patch] AccessoryId == RegularItem_MaidenPrayer ? 67 : -1 [/code]
+
+>AA 68 Carbuncle (swap to different versions depending on the jewel equipped)
+[code=Patch] AccessoryId == RegularItem_Diamond ? 71 : (AccessoryId == RegularItem_Moonstone ? 70 : (AccessoryId == RegularItem_Emerald ? 69 : -1)) [/code]
+
+>AA 82 Roulette (use a random target, targeting a living enemy with 50% chances and a living ally with 50% chances)
+[code=Target] GetRandomBit(BattleFilter(255, GetRandom(0, 2), 1, BattleStatus_Death)) [/code]
+
+>AA 93 Angel's Snack (fail completly if there is not enough item for everyone)
+[code=ItemRequirement] Power ; CommandTargetCount [/code]
+
+>AA 126 Spare Change (single)
+[code=GilCost] Power * CasterLevel [/code]
+
+>AA 134 Spare Change (multi)
+[code=GilCost] Power * CasterLevel [/code]
+
+>AA 129 Curse (single)
+[code=Element] 1 << GetRandom(0, 8) [/code]
+
+>AA 137 Curse (multi)
+[code=Element] 1 << GetRandom(0, 8) [/code]
+
+_____________________________________________________________________________________________________
+
+>CMD 31 Magic Sword
+[code=HardDisable] !IsCharacterInParty(CharacterId_Vivi) [/code]

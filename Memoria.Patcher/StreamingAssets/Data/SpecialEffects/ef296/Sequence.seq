@@ -1,0 +1,24 @@
+// Shared sequence of SFX Dragon_Breath
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=16 ; HoldDuration=126
+PlaySound: Sound=1550
+PlaySound: Sound=1551
+PlaySound: Sound=1552
+Wait: Time=46
+PlaySound: Sound=2523
+PlaySound: Sound=2524
+PlaySound: Sound=2525
+Wait: Time=16
+PlaySound: Sound=2526
+PlaySound: Sound=2527
+PlaySound: Sound=2528
+Wait: Time=20
+PlaySound: Sound=2529
+PlaySound: Sound=2530
+PlaySound: Sound=2531
+Wait: Time=24
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=8
+SetBackgroundIntensity: Intensity=1 ; Time=8

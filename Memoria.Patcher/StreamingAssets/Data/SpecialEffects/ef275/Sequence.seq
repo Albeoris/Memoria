@@ -1,0 +1,9 @@
+// Shared sequence of SFX Virus_Combo
+
+PlaySound: Sound=947
+PlaySound: Sound=948
+PlaySound: Sound=949
+Wait: Time=10
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure

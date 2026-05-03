@@ -1,0 +1,10 @@
+// Shared sequence of SFX Annoyntment
+
+PlaySound: Sound=968
+PlaySound: Sound=969
+PlaySound: Sound=970
+Wait: Time=20
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=1

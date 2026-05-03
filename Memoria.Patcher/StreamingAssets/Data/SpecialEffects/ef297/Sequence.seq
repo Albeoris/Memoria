@@ -1,0 +1,32 @@
+// Shared sequence of SFX Pumpkin_Head
+
+PlaySound: Sound=1055
+PlaySound: Sound=1056
+PlaySound: Sound=1057
+Wait: Time=3
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1, 1.07, 1) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1, 0.93, 1) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1, 0.93, 1) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1, 1.07, 1) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1, 1.07, 1) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1, 0.93, 1) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1, 1.04, 1) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1, 0.96, 1) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1, 1.02, 1) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1, 0.98, 1) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=1 ; ScaleShadow=True ; Time=0
+Wait: Time=13
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=24

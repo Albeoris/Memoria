@@ -1,0 +1,67 @@
+// Player sequence of SFX Psychokinesis
+
+WaitAnimation: Char=Caster
+StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
+	WaitMove: Char=Caster
+EndThread
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+SetBackgroundIntensity: Intensity=0.5 ; Time=20
+StartThread: Condition=IsSingleTarget ; Sync=True
+	LoadSFX: SFX=Psychokinesis ; Reflect=True
+	StartThread: Condition=ItemUseId == 255 ; Sync=True
+		PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
+		WaitAnimation: Char=Caster
+		PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
+		Channel
+		WaitSFXLoaded: SFX=Psychokinesis ; Reflect=True
+		WaitAnimation: Char=Caster
+		StopChannel
+		PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+		WaitAnimation: Char=Caster
+	EndThread
+	StartThread: Condition=ItemUseId != 255 ; Sync=True
+		PlayAnimation: Char=Caster ; Anim=MP_ITEM1
+		WaitAnimation: Char=Caster
+		WaitSFXLoaded: SFX=Psychokinesis ; Reflect=True
+	EndThread
+	PlaySFX: SFX=Psychokinesis ; Reflect=True
+	WaitSFXDone: SFX=Psychokinesis ; Reflect=True
+EndThread
+StartThread: Condition=!IsSingleTarget ; Sync=True
+	StartThread: Condition=ItemUseId == 255 ; Sync=True
+		PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
+		WaitAnimation: Char=Caster
+		PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
+		Channel
+		WaitAnimation: Char=Caster
+		WaitAnimation: Char=Caster
+		StopChannel
+		PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+		WaitAnimation: Char=Caster
+	EndThread
+	StartThread: Condition=ItemUseId != 255 ; Sync=True
+		PlayAnimation: Char=Caster ; Anim=MP_ITEM1
+		WaitAnimation: Char=Caster
+	EndThread
+	StartThread: TargetLoop=True ; Chain=True ; Sync=True
+		LoadSFX: SFX=Psychokinesis ; Reflect=True ; UseCamera=False
+		WaitSFXLoaded: SFX=Psychokinesis ; Reflect=True
+		PlaySFX: SFX=Psychokinesis ; Reflect=True
+		Wait: Time=10
+	EndThread
+	WaitSFXDone: SFX=Psychokinesis ; Reflect=True
+EndThread
+ActivateReflect
+WaitReflect
+StartThread: Condition=CasterRow == 0 && AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK
+	WaitMove: Char=Caster
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

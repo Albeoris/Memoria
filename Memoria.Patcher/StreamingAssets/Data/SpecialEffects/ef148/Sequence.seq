@@ -1,0 +1,14 @@
+// Shared sequence of SFX Delta_Attack
+
+PlaySound: Sound=509
+PlaySound: Sound=506
+PlaySound: Sound=485
+Wait: Time=22
+PlaySound: Sound=503
+PlaySound: Sound=498
+PlaySound: Sound=495
+Wait: Time=42
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=24
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=24

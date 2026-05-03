@@ -1,0 +1,5 @@
+// Shared sequence of SFX SFX_Attack_Lamia_Flute
+
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure

@@ -1,0 +1,54 @@
+// Shared sequence of SFX Photon
+
+PlaySound: Sound=2102
+PlaySound: Sound=2103
+Wait: Time=1
+PlaySound: Sound=2102
+PlaySound: Sound=2103
+Wait: Time=3
+PlaySound: Sound=2102
+PlaySound: Sound=2103
+Wait: Time=1
+PlaySound: Sound=2102
+PlaySound: Sound=2103
+Wait: Time=3
+PlaySound: Sound=2102
+PlaySound: Sound=2103
+Wait: Time=1
+PlaySound: Sound=2102
+PlaySound: Sound=2103
+Wait: Time=3
+PlaySound: Sound=2102
+PlaySound: Sound=2103
+Wait: Time=1
+PlaySound: Sound=2102
+PlaySound: Sound=2103
+Wait: Time=3
+PlaySound: Sound=2102
+PlaySound: Sound=2103
+Wait: Time=1
+PlaySound: Sound=2104
+PlaySound: Sound=2105
+PlaySound: Sound=2102
+PlaySound: Sound=2103
+Wait: Time=3
+PlaySound: Sound=2102
+PlaySound: Sound=2103
+Wait: Time=1
+PlaySound: Sound=2102
+PlaySound: Sound=2103
+Wait: Time=19
+PlaySound: Sound=2102
+PlaySound: Sound=2103
+PlaySound: Sound=2102
+PlaySound: Sound=2103
+PlaySound: Sound=2102
+PlaySound: Sound=2103
+Wait: Time=18
+EffectPoint: Char=AllTargets ; Type=Effect
+PlaySound: Sound=2106
+PlaySound: Sound=2107
+PlaySound: Sound=2108
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

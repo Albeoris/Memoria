@@ -1,0 +1,55 @@
+# This file contains a set of learnable Garnet's abilities.
+# You can set any number of different items.
+# Use 0 for a void ability, AA:X for active abilities and SA:X for passive abilities.
+# -----------------------------------
+# Id;AP
+# Ability;Int32
+# -----------------------------------
+AA:49;20;# Shiva
+AA:51;35;# Ifrit
+AA:53;30;# Ramuh
+AA:55;30;# Atomos
+AA:58;30;# Odin
+AA:60;40;# Leviathan
+AA:62;80;# Bahamut
+AA:64;100;# Ark
+AA:1;30;# Cure
+AA:2;50;# Cura
+AA:3;155;# Curaga
+AA:5;30;# Life
+AA:7;25;# Scan
+AA:8;15;# Panacea
+AA:9;25;# Stona
+AA:11;35;# Shell
+AA:12;30;# Protect
+AA:14;30;# Silence
+AA:15;40;# Mini
+AA:16;20;# Reflect
+AA:17;35;# Confuse
+AA:18;30;# Berserk
+AA:19;40;# Blind
+AA:20;20;# Float
+SA:0;75;# Auto-Reflect
+SA:1;20;# Auto-Float
+SA:2;55;# Auto-Haste
+SA:3;35;# Auto-Regen
+SA:4;105;# Auto-Life
+SA:8;45;# MP+20%
+SA:24;30;# Healer
+SA:27;15;# Chemist
+SA:30;45;# Reflect-Null
+SA:33;80;# Concentrate
+SA:34;125;# Half MP
+SA:35;30;# High Tide
+SA:40;25;# Body Temp
+SA:43;50;# Level Up
+SA:44;60;# Ability Up
+SA:48;25;# Insomniac
+SA:49;15;# Antibody
+SA:51;20;# Loudmouth
+SA:53;40;# Jelly
+SA:56;20;# Auto-Potion
+SA:57;30;# Locomotion
+SA:58;25;# Clear Headed
+SA:59;190;# Boost
+SA:60;50;# Odin’s Sword

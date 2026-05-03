@@ -1,0 +1,16 @@
+// Shared sequence of SFX Flaming_Sword
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=73
+PlaySound: Sound=2014
+PlaySound: Sound=2015
+PlaySound: Sound=2016
+Wait: Time=17
+PlaySound: Sound=1209
+PlaySound: Sound=1210
+PlaySound: Sound=1211
+Wait: Time=24
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20
+SetBackgroundIntensity: Intensity=1 ; Time=8

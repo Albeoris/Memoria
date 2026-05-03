@@ -1,0 +1,14 @@
+// Shared sequence of SFX Leaf_Swirl
+
+PlaySound: Sound=2023
+PlaySound: Sound=2024
+PlaySound: Sound=2025
+Wait: Time=21
+PlaySound: Sound=2026
+PlaySound: Sound=2027
+PlaySound: Sound=2028
+Wait: Time=3
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=12

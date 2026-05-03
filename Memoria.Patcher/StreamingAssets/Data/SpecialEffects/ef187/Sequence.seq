@@ -1,0 +1,13 @@
+// Shared sequence of SFX Mustard_Bomb
+
+PlaySound: Sound=2435
+PlaySound: Sound=2436
+PlaySound: Sound=2437
+Wait: Time=85
+EffectPoint: Char=AllTargets ; Type=Effect
+PlaySound: Sound=2438
+PlaySound: Sound=2439
+PlaySound: Sound=2440
+Wait: Time=42
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

@@ -1,0 +1,21 @@
+// Shared sequence of SFX Wave
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=73
+PlaySound: Sound=1095
+PlaySound: Sound=1096
+PlaySound: Sound=1097
+Wait: Time=24
+PlaySound: Sound=1101
+PlaySound: Sound=1102
+PlaySound: Sound=1103
+Wait: Time=1
+PlaySound: Sound=1104
+PlaySound: Sound=1105
+PlaySound: Sound=1106
+Wait: Time=4
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=32
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=12
+SetBackgroundIntensity: Intensity=1 ; Time=8
+Wait: Time=8

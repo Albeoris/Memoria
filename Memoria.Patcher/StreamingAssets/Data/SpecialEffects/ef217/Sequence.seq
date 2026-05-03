@@ -1,0 +1,17 @@
+// Shared sequence of SFX Thundaga_Sword
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=16
+PlaySound: Sound=2433
+PlaySound: Sound=2434
+Wait: Time=15
+PlaySound: Sound=2619
+PlaySound: Sound=2620
+PlaySound: Sound=2621
+Wait: Time=1
+SetBackgroundIntensity: Intensity=0 ; Time=0 ; HoldDuration=56
+Wait: Time=40
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=4
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=12
+SetBackgroundIntensity: Intensity=1 ; Time=8

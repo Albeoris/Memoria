@@ -1,0 +1,73 @@
+Shader "mShaders/mWipe1" {
+	Properties {
+		_tex0 ("Texture1", 2D) = "white" { }
+		_tex1 ("Texture2", 2D) = "white" { }
+	}
+	SubShader { 
+		Tags { "QUEUE"="Geometry" }
+		Pass {
+			Tags { "QUEUE"="Geometry" }
+			GpuProgramID 12544
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "texcoord" TexCoord0
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 4 [_tex0_ST]
+					"vs_3_0
+						def c5, 1, 0, 0, 0
+						dcl_position v0
+						dcl_texcoord v1
+						dcl_position o0
+						dcl_color o1
+						dcl_color1 o2
+						dcl_texcoord o3.xy
+						mad o3.xy, v1, c4, c4.zwzw
+						dp4 r0.x, c0, v0
+						dp4 r0.y, c1, v0
+						dp4 r0.z, c2, v0
+						dp4 r0.w, c3, v0
+						mov o0, r0
+						mov o2, r0
+						mov o1, c5.x
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Vector 0 [_Time]
+					SetTexture 0 [_tex0] 2D 0
+					SetTexture 1 [_tex1] 2D 1
+					"ps_3_0
+						def c1, 1.5915494, 0.5, 6.28318548, -3.14159274
+						def c2, -0.200000003, -2, 3, 2
+						def c3, 1, 0, 0, 0
+						dcl_texcoord v0.xy
+						dcl_2d s0
+						dcl_2d s1
+						mov r0.xy, c1
+						mad r0.x, c0.x, r0.x, r0.y
+						frc r0.x, r0.x
+						mad r0.x, r0.x, c1.z, c1.w
+						sincos r1.y, r0.x
+						add r0.x, r1.y, c2.x
+						add_sat r0.x, r0.x, r0.x
+						mad r0.y, r0.x, c2.y, c2.z
+						mul r0.x, r0.x, r0.x
+						mul r0.x, r0.x, r0.y
+						mad r0.y, v0.x, c2.w, c2.y
+						mad_sat r0.x, r0.x, c2.z, r0.y
+						texld r1, v0, s0
+						texld r2, v0, s1
+						add r0.yzw, r1.xxyz, -r2.xxyz
+						mad_pp oC0.xyz, r0.x, r0.yzww, r2
+						mov_pp oC0.w, c3.x
+						
+						"
+				}
+			}
+		}
+	}
+	Fallback "VertexLit"
+}

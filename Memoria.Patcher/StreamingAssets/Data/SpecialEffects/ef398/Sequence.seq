@@ -1,0 +1,8 @@
+// Shared sequence of SFX Charge
+
+PlaySound: Sound=1683
+PlaySound: Sound=1684
+PlaySound: Sound=1685
+Wait: Time=30
+EffectPoint: Char=AllTargets ; Type=Effect
+EffectPoint: Char=Everyone ; Type=Figure

@@ -1,0 +1,87 @@
+Shader "Color Space/YCbCrtoRGB Chroma Key" {
+	Properties {
+		_YTex ("Y (RGB)", 2D) = "black" { }
+		_CrTex ("Cr (RGB)", 2D) = "gray" { }
+		_CbTex ("Cb (RGB)", 2D) = "gray" { }
+		[YCbCr]  _KeyYCbCr ("Chroma Key Color", Vector) = (0,0,0,-0.6)
+		[YCbCrPriority]  _YCbCRDeltaScale ("YCbCr priority", Vector) = (0.1,1,1,1)
+		_LowThreshold ("Low threashold", Range(0,1)) = 0.2
+		_HighThreshold ("High threashold", Range(0,1)) = 0.25
+	}
+	SubShader { 
+		Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+		Pass {
+			Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+			ZWrite Off
+			Blend SrcAlpha OneMinusSrcAlpha
+			GpuProgramID 9154
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "texcoord" TexCoord0
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 8 [_CbTex_ST]
+					Float 6 [_HighThreshold]
+					Float 5 [_LowThreshold]
+					Vector 4 [_YCbCRDeltaScale]
+					Vector 7 [_YTex_ST]
+					"vs_2_0
+						dcl_position v0
+						dcl_texcoord v1
+						dp4 oPos.x, c0, v0
+						dp4 oPos.y, c1, v0
+						dp4 oPos.z, c2, v0
+						dp4 oPos.w, c3, v0
+						mad oT0.xy, v1, c7, c7.zwzw
+						mad oT1.xy, v1, c8, c8.zwzw
+						mov r0.w, c4.w
+						mul r0.x, r0.w, c5.x
+						mad r0.y, c6.x, r0.w, -r0.x
+						mov oT1.z, -r0.x
+						rcp oT1.w, r0.y
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Vector 0 [_KeyYCbCr]
+					Vector 1 [_YCbCRDeltaScale]
+					SetTexture 0 [_YTex] 2D 0
+					SetTexture 1 [_CbTex] 2D 1
+					SetTexture 2 [_CrTex] 2D 2
+					"ps_2_0
+						def c2, 1, 0, 0, 0
+						def c3, 1.16438282, 1.59602737, 0, -0.870785177
+						def c4, 1.16438282, -0.812968731, -0.39176172, 0.529593766
+						def c5, 1.16438282, 0, 2.01723433, -1.08139062
+						dcl_pp t0.xy
+						dcl_pp t1
+						dcl_2d s0
+						dcl_2d s1
+						dcl_2d s2
+						texld_pp r0, t0, s0
+						texld_pp r1, t1, s2
+						texld_pp r2, t1, s1
+						mov_pp r0.x, r0.w
+						mov_pp r0.y, r1.w
+						mov_pp r0.z, r2.w
+						add_pp r1.xyz, r0, -c0
+						mul_pp r1.xyz, r1, c1
+						dp3_pp r1.x, r1, r1
+						rsq_pp r1.x, r1.x
+						rcp_pp r1.x, r1.x
+						add_pp r1.x, r1.x, t1.z
+						mul_pp r1.w, r1.x, t1.w
+						mov_pp r0.w, c2.x
+						dp4_pp r1.x, c3, r0
+						dp4_pp r1.y, c4, r0
+						dp4_pp r1.z, c5, r0
+						mov_pp oC0, r1
+						
+						"
+				}
+			}
+		}
+	}
+}

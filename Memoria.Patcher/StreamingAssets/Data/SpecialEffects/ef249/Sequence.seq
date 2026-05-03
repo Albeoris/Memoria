@@ -1,0 +1,10 @@
+// Shared sequence of SFX Flee_Skill
+
+PlaySound: Sound=1119
+PlaySound: Sound=1120
+PlaySound: Sound=1121
+Wait: Time=16
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=24
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=24

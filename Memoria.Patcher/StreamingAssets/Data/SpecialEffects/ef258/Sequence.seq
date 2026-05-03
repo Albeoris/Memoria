@@ -1,0 +1,10 @@
+// Shared sequence of SFX Rise
+
+PlaySound: Sound=1909
+PlaySound: Sound=1910
+PlaySound: Sound=1911
+Wait: Time=5
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

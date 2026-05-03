@@ -1,0 +1,15 @@
+// Shared sequence of SFX LV3_Def_less
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=109
+PlaySound: Sound=1686
+PlaySound: Sound=1687
+PlaySound: Sound=1688
+Wait: Time=81
+PlaySound: Sound=1689
+PlaySound: Sound=1690
+PlaySound: Sound=1691
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=12
+SetBackgroundIntensity: Intensity=1 ; Time=8

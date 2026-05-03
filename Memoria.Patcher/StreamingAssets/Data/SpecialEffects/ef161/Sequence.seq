@@ -1,0 +1,14 @@
+// Shared sequence of SFX Blaster
+
+PlaySound: Sound=1806
+PlaySound: Sound=1807
+PlaySound: Sound=1808
+Wait: Time=14
+PlaySound: Sound=1809
+PlaySound: Sound=1810
+PlaySound: Sound=1811
+Wait: Time=20
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=10

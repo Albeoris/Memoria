@@ -1,0 +1,27 @@
+// Shared sequence of SFX Special_Ozma_Death
+
+ShowMesh: Char=AllPlayers ; Enable=False ; IsDisappear=True
+PlaySound: Sound=2892
+PlaySound: Sound=2893
+PlaySound: Sound=2894
+PlaySound: Sound=2895
+Wait: Time=1
+SetBackgroundIntensity: Intensity=0.5 ; Time=32 ; HoldDuration=55
+Wait: Time=55
+PlaySound: Sound=2896
+PlaySound: Sound=2897
+PlaySound: Sound=2898
+PlaySound: Sound=2899
+SetBackgroundIntensity: Intensity=0 ; Time=1 ; HoldDuration=36
+Wait: Time=36
+PlaySound: Sound=2900
+PlaySound: Sound=2901
+PlaySound: Sound=2902
+PlaySound: Sound=2903
+ShowMesh: Char=Caster ; Enable=False ; IsDisappear=True
+SetBackgroundIntensity: Intensity=0.5 ; Time=1 ; HoldDuration=82
+Wait: Time=82
+SetBackgroundIntensity: Intensity=1 ; Time=32
+Wait: Time=62
+ShowMesh: Char=AllPlayers ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllPlayers ; Enable=True ; Time=12

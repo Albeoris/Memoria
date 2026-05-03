@@ -1,0 +1,134 @@
+Shader "Color Space/YCrCbtoRGB Split Alpha" {
+	Properties {
+		_YTex ("Y (RGB)", 2D) = "black" { }
+		_CrTex ("Cr (RGB)", 2D) = "gray" { }
+		_CbTex ("Cb (RGB)", 2D) = "gray" { }
+		[KeywordEnum(Vertical, Horizontal)]  Mode ("Alpha Mode", Float) = 0
+	}
+	SubShader { 
+		Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+		Pass {
+			Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+			ZWrite Off
+			Blend SrcAlpha OneMinusSrcAlpha
+			ColorMask RGB
+			GpuProgramID 814
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Keywords { "MODE_VERTICAL" }
+					Bind "vertex" Vertex
+					Bind "texcoord" TexCoord0
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 5 [_CbTex_ST]
+					Vector 4 [_YTex_ST]
+					"vs_2_0
+						def c6, 1, 0.5, 0, 0
+						dcl_position v0
+						dcl_texcoord v1
+						dp4 oPos.x, c0, v0
+						dp4 oPos.y, c1, v0
+						dp4 oPos.z, c2, v0
+						dp4 oPos.w, c3, v0
+						mad r0.xy, v1, c6, c6.zyzw
+						mad oT0.xy, r0, c4, c4.zwzw
+						mad oT2.xy, r0, c5, c5.zwzw
+						mul r0.xy, v1, c6
+						mad oT1.xy, r0, c4, c4.zwzw
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "MODE_HORIZONTAL" }
+					Bind "vertex" Vertex
+					Bind "texcoord" TexCoord0
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 5 [_CbTex_ST]
+					Vector 4 [_YTex_ST]
+					"vs_2_0
+						def c6, 0.5, 1, 0, 0
+						dcl_position v0
+						dcl_texcoord v1
+						dp4 oPos.x, c0, v0
+						dp4 oPos.y, c1, v0
+						dp4 oPos.z, c2, v0
+						dp4 oPos.w, c3, v0
+						mad r0.xy, v1, c6, c6.xzzw
+						mad oT0.xy, r0, c4, c4.zwzw
+						mad oT2.xy, r0, c5, c5.zwzw
+						mul r0.xy, v1, c6
+						mad oT1.xy, r0, c4, c4.zwzw
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Keywords { "MODE_VERTICAL" }
+					SetTexture 0 [_YTex] 2D 0
+					SetTexture 1 [_CbTex] 2D 1
+					SetTexture 2 [_CrTex] 2D 2
+					"ps_2_0
+						def c0, 1, -0.0627451017, 1.16438353, 0
+						def c1, 1.16438282, 1.59602737, 0, -0.870785177
+						def c2, 1.16438282, -0.812968731, -0.39176172, 0.529593766
+						def c3, 1.16438282, 0, 2.01723433, -1.08139062
+						dcl_pp t0.xy
+						dcl_pp t1.xy
+						dcl_pp t2.xy
+						dcl_2d s0
+						dcl_2d s1
+						dcl_2d s2
+						texld r0, t1, s0
+						texld_pp r1, t0, s0
+						texld_pp r2, t2, s2
+						texld_pp r3, t2, s1
+						add r0.x, r0.w, c0.y
+						mul_pp r0.w, r0.x, c0.z
+						mov_pp r1.x, r1.w
+						mov_pp r1.y, r2.w
+						mov_pp r1.z, r3.w
+						mov_pp r1.w, c0.x
+						dp4_pp r0.x, c1, r1
+						dp4_pp r0.y, c2, r1
+						dp4_pp r0.z, c3, r1
+						mov_pp oC0, r0
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "MODE_HORIZONTAL" }
+					SetTexture 0 [_YTex] 2D 0
+					SetTexture 1 [_CbTex] 2D 1
+					SetTexture 2 [_CrTex] 2D 2
+					"ps_2_0
+						def c0, 1, -0.0627451017, 1.16438353, 0
+						def c1, 1.16438282, 1.59602737, 0, -0.870785177
+						def c2, 1.16438282, -0.812968731, -0.39176172, 0.529593766
+						def c3, 1.16438282, 0, 2.01723433, -1.08139062
+						dcl_pp t0.xy
+						dcl_pp t1.xy
+						dcl_pp t2.xy
+						dcl_2d s0
+						dcl_2d s1
+						dcl_2d s2
+						texld r0, t1, s0
+						texld_pp r1, t0, s0
+						texld_pp r2, t2, s2
+						texld_pp r3, t2, s1
+						add r0.x, r0.w, c0.y
+						mul_pp r0.w, r0.x, c0.z
+						mov_pp r1.x, r1.w
+						mov_pp r1.y, r2.w
+						mov_pp r1.z, r3.w
+						mov_pp r1.w, c0.x
+						dp4_pp r0.x, c1, r1
+						dp4_pp r0.y, c2, r1
+						dp4_pp r0.z, c3, r1
+						mov_pp oC0, r0
+						
+						"
+				}
+			}
+		}
+	}
+}

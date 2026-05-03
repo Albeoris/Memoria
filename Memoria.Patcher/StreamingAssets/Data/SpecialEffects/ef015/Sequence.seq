@@ -1,0 +1,9 @@
+// Shared sequence of SFX Full_Life
+
+PlaySound: Sound=53
+PlaySound: Sound=46
+PlaySound: Sound=92
+Wait: Time=19
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure

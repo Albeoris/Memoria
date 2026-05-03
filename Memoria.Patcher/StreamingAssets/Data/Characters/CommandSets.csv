@@ -1,0 +1,28 @@
+#! IncludeId
+#! IncludeFullSet
+# This file contains character command sets.
+# You must set at least 20 different items.
+# -----------------------------------------------
+# Id	;Attack	;Defend	;Regular 1	;Regular 2	;Item	;Change	;Attack(Trance)	;Defend(Trance)	;Trance 1	;Trance 2	;Item(Trance)	;Change(Trance)
+# Int32	;Int32	;Int32	;Int32		;Int32		;Int32	;Int32	;Int32			;Int32			;Int32		;Int32		;Int32			;Int32
+# -----------------------------------------------
+0		;1		;4		;2			;25			;14		;7		;1				;4				;2			;26			;14				;7				;# Zidane: Steal, Skill, Steal, Dyne
+1		;1		;4		;22			;13			;14		;7		;1				;4				;23			;13			;14				;7				;# Vivi: Blk Mag, Focus, Dbl Blk, Focus
+2		;1		;4		;16			;17			;14		;7		;1				;4				;18			;17			;14				;7				;# Garnet: Summon, Wht Mag, Eidolon, Wht Mag
+3		;1		;4		;30			;31			;14		;7		;1				;4				;30			;31			;14				;7				;# Steiner: Swd Art, Swd Mag, Swd Art, Swd Mag
+4		;1		;4		;3			;27			;14		;7		;1				;4				;12			;27			;14				;7				;# Freya: Jump, Dragon, Jump 2, Dragon
+5		;1		;4		;8			;24			;14		;7		;1				;4				;9			;24			;14				;7				;# Quina: Eat, Blu Mag, Cook, Blu Mag
+6		;1		;4		;19			;20			;14		;7		;1				;4				;21			;20			;14				;7				;# Eiko: Wht Mag, Summon, Dbl Wht, Summon
+7		;1		;4		;28			;15			;14		;7		;1				;4				;29			;15			;14				;7				;# Amarant: Flair, Throw, Elan, Throw
+8		;1		;4		;2			;0			;14		;7		;1				;4				;2			;0			;14				;7				;# Cinna1: Steal, None, Steal, None
+9		;1		;4		;2			;0			;14		;7		;1				;4				;2			;0			;14				;7				;# Cinna2: Steal, None, Steal, None
+10		;1		;4		;2			;0			;14		;7		;1				;4				;2			;0			;14				;7				;# Marcus1: Steal, None, Steal, None
+11		;1		;4		;2			;0			;14		;7		;1				;4				;2			;0			;14				;7				;# Marcus2: Steal, None, Steal, None
+12		;1		;4		;2			;0			;14		;7		;1				;4				;2			;0			;14				;7				;# Blank1: Steal, None, Steal, None
+13		;1		;4		;2			;0			;14		;7		;1				;4				;2			;0			;14				;7				;# Blank2: Steal, None, Steal, None
+14		;1		;4		;32			;34			;14		;7		;1				;4				;32			;34			;14				;7				;# Beatrix1: Seiken, Wht Mag, Seiken, Wht Mag
+15		;1		;4		;33			;34			;14		;7		;1				;4				;33			;34			;14				;7				;# Beatrix2: Seiken, Wht Mag, Seiken, Wht Mag
+16		;1		;4		;41			;0			;14		;7		;1				;4				;41			;0			;14				;7				;# Zidane(stage): SFX, None, SFX, None
+17		;1		;4		;44			;0			;14		;7		;1				;4				;44			;0			;14				;7				;# Cinna(stage): SFX, None, SFX, None
+18		;1		;4		;43			;0			;14		;7		;1				;4				;43			;0			;14				;7				;# Marcus(stage): SFX, None, SFX, None
+19		;1		;4		;42			;0			;14		;7		;1				;4				;42			;0			;14				;7				;# Blank(stage): SFX, None, SFX, None

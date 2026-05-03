@@ -1,0 +1,15 @@
+// Shared sequence of SFX Counter_Horn
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=54
+PlaySound: Sound=1191
+PlaySound: Sound=1192
+PlaySound: Sound=1193
+Wait: Time=7
+PlaySound: Sound=1236
+PlaySound: Sound=1237
+PlaySound: Sound=1238
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=27
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20
+SetBackgroundIntensity: Intensity=1 ; Time=8

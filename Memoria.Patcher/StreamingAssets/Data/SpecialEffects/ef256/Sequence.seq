@@ -1,0 +1,20 @@
+// Shared sequence of SFX Solution
+
+PlaySound: Sound=2228
+PlaySound: Sound=2229
+PlaySound: Sound=2230
+Wait: Time=10
+PlayAnimation: Char=AllTargets ; Anim=MP_DAMAGE1
+Wait: Time=2
+PlaySound: Sound=2231
+PlaySound: Sound=2232
+PlaySound: Sound=2233
+Wait: Time=14
+PlaySound: Sound=2234
+PlaySound: Sound=2235
+PlaySound: Sound=2236
+Wait: Time=5
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

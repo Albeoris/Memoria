@@ -1,0 +1,10 @@
+// Shared sequence of SFX Thunder_Slash_2
+
+PlaySound: Sound=530
+PlaySound: Sound=523
+PlaySound: Sound=565
+Wait: Time=1
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=3
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=40

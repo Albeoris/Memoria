@@ -1,0 +1,10 @@
+// Shared sequence of SFX Climhazzard_3
+
+PlaySound: Sound=1258
+PlaySound: Sound=1259
+PlaySound: Sound=1260
+Wait: Time=16
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=16

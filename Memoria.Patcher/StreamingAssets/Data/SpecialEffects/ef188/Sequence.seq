@@ -1,0 +1,9 @@
+// Shared sequence of SFX Darkside_1
+
+PlaySound: Sound=508
+PlaySound: Sound=505
+PlaySound: Sound=484
+Wait: Time=1
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=18
+EffectPoint: Char=AllTargets ; Type=Figure

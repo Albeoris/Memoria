@@ -1,0 +1,69 @@
+Shader "WorldMap/TwisterCore_Abr_0" {
+	Properties {
+		_Color ("Main Color", Color) = (1,1,1,1)
+		_MainTex ("Texture", 2D) = "black" { }
+	}
+	SubShader { 
+		Tags { "QUEUE"="Geometry" "IGNOREPROJECTOR"="true" }
+		Pass {
+			Tags { "QUEUE"="Geometry" "IGNOREPROJECTOR"="true" }
+			GpuProgramID 59483
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "color" Color
+					Bind "texcoord" TexCoord0
+					Matrix 4 [glstate_matrix_modelview0] 3
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 8 [unity_FogEnd]
+					Vector 7 [unity_FogStart]
+					"vs_2_0
+						def c9, 0, 1, 0, 0
+						dcl_position v0
+						dcl_color v1
+						dcl_texcoord v2
+						dp4 oPos.x, c0, v0
+						dp4 oPos.y, c1, v0
+						dp4 oPos.z, c2, v0
+						dp4 oPos.w, c3, v0
+						dp4 r0.x, c4, v0
+						dp4 r0.y, c5, v0
+						dp4 r0.z, c6, v0
+						dp3 r0.x, r0, r0
+						rsq r0.x, r0.x
+						rcp r0.x, r0.x
+						add r0.x, -r0.x, c8.x
+						mov r1.x, c8.x
+						add r0.y, r1.x, -c7.x
+						rcp r0.y, r0.y
+						mul r0.x, r0.y, r0.x
+						max r0.x, r0.x, c9.x
+						min oT2.x, r0.x, c9.y
+						mov oD0, v1
+						mov oT0.xy, v2
+						mov oT2.y, c9.y
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Vector 0 [unity_FogColor]
+					SetTexture 0 [_MainTex] 2D 0
+					"ps_2_0
+						dcl v0
+						dcl_pp t0.xy
+						dcl t2.x
+						dcl_2d s0
+						texld r0, t0, s0
+						mad r0.xyz, r0, v0, -c0
+						mul_pp r1.w, r0.w, v0.w
+						mad_pp r1.xyz, t2.x, r0, c0
+						mov_pp oC0, r1
+						
+						"
+				}
+			}
+		}
+	}
+}

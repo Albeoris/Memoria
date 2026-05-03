@@ -1,0 +1,10 @@
+// Shared sequence of SFX Lightning
+
+PlaySound: Sound=610
+PlaySound: Sound=609
+PlaySound: Sound=605
+Wait: Time=25
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=14
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=12

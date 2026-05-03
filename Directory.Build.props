@@ -1,0 +1,19 @@
+<Project>
+    <PropertyGroup>
+        <SolutionDir Condition="'$(SolutionDir)' == ''">$(MSBuildThisFileDirectory)</SolutionDir>
+        <LangVersion>latest</LangVersion>
+        <EnableDefaultItems>false</EnableDefaultItems>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <Prefer32Bit>false</Prefer32Bit>
+        <!-- Priority 1: explicit env var (CI override) -->
+        <VcpkgRoot Condition="'$(VCPKG_INSTALLATION_ROOT)' != ''">$(VCPKG_INSTALLATION_ROOT)\</VcpkgRoot>
+        <!-- Priority 2: derive from MSBuildToolsPath, which IS always set -->
+        <!--   MSBuildToolsPath = e.g. C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\ -->
+        <!--   We walk up to the VS root:  ..\..\..\  = VC\vcpkg                                                   -->
+        <_VSRootFromTools>$([System.IO.Path]::GetFullPath('$(MSBuildToolsPath)\..\..\..\..\'))</_VSRootFromTools>
+        <VcpkgRoot Condition="'$(VcpkgRoot)' == '' and Exists('$(_VSRootFromTools)VC\vcpkg\')">$(_VSRootFromTools)VC\vcpkg\</VcpkgRoot>
+        <!-- Priority 3: submodule/local fallback -->
+        <VcpkgRoot Condition="'$(VcpkgRoot)' == ''">$(MSBuildThisFileDirectory)vcpkg\</VcpkgRoot>
+    </PropertyGroup>
+    <Import Project="$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg.props" Condition="Exists('$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg.props')" />
+</Project>

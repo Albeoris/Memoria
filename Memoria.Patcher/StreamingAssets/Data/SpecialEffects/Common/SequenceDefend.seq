@@ -1,0 +1,6 @@
+// Sequence of the command Defend
+
+WaitAnimation: Char=Caster
+Message: Text=[CastName] ; Priority=1 ; Title=True
+EffectPoint: Char=AllTargets ; Type=Effect
+PlayAnimation: Char=Caster ; Anim=Idle

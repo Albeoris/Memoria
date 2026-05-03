@@ -1,0 +1,10 @@
+// Shared sequence of SFX Twister
+
+PlaySound: Sound=490
+PlaySound: Sound=483
+PlaySound: Sound=504
+Wait: Time=50
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=24
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=8

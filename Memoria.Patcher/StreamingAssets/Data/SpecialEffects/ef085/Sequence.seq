@@ -1,0 +1,10 @@
+// Shared sequence of SFX Chakra__Single
+
+PlaySound: Sound=187
+PlaySound: Sound=173
+PlaySound: Sound=1457
+Wait: Time=20
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=2
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=5

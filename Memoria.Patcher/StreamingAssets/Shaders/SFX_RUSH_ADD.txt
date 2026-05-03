@@ -1,0 +1,76 @@
+Shader "SFX_RUSH_ADD" {
+	Properties {
+		_MainTex ("Base (RGB)", 2D) = "black" { }
+		_Center ("Center", Vector) = (0.5,0.5,0,0)
+		_Param ("Param", Vector) = (1,1,1,1)
+	}
+	SubShader { 
+		LOD 200
+		Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+		Pass {
+			Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+			ZTest Always
+			ZWrite Off
+			Cull Off
+			Blend One One
+			GpuProgramID 56353
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "texcoord" TexCoord0
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 4 [_Center]
+					Vector 5 [_Param]
+					"vs_2_0
+						dcl_position v0
+						dcl_texcoord v1
+						dp4 oPos.x, c0, v0
+						dp4 oPos.y, c1, v0
+						dp4 oPos.z, c2, v0
+						dp4 oPos.w, c3, v0
+						add r0.xy, v1, -c4
+						mul oT0.xy, r0, c5.y
+						mov oD0, c5.z
+						mov oT0.zw, c4.xyxy
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Vector 0 [_Param]
+					SetTexture 0 [_MainTex] 2D 0
+					"ps_2_0
+						def c1, 0.159154937, 0.5, 6.28318548, -3.14159274
+						def c2, 1, -1, 0, 0
+						def c3, -1.55009923e-006, -2.17013894e-005, 0.00260416674, 0.00026041668
+						def c4, -0.020833334, -0.125, 1, 0.5
+						dcl v0
+						dcl t0
+						dcl_2d s0
+						mul r0.w, t0.y, t0.y
+						mad r0.x, t0.x, t0.x, r0.w
+						rsq r0.x, r0.x
+						rcp r0.x, r0.x
+						mul r0.x, r0.x, c0.x
+						mad r0.x, r0.x, c1.x, c1.y
+						frc r0.x, r0.x
+						mad r0.x, r0.x, c1.z, c1.w
+						sincos r1.y, r0.x, c3, c4
+						sincos r0.xy, r1.y, c3, c4
+						mul r1.xy, r0, c2
+						mul r0.y, r0.y, t0.x
+						mad r0.y, t0.y, r0.x, r0.y
+						dp2add r0.x, t0, r1, c2.z
+						add r1.x, r0.x, t0.z
+						add r1.y, r0.y, t0.w
+						texld r0, r1, s0
+						mul_pp r0, r0, v0
+						mov_pp oC0, r0
+						
+						"
+				}
+			}
+		}
+	}
+}

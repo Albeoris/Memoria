@@ -1,0 +1,8 @@
+// Player sequence of SFX Green_Smoke
+
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=Green_Smoke ; Reflect=True
+WaitSFXLoaded: SFX=Green_Smoke ; Reflect=True
+PlaySFX: SFX=Green_Smoke ; Reflect=True
+WaitSFXDone: SFX=Green_Smoke ; Reflect=True

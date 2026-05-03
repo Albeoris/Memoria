@@ -1,0 +1,20 @@
+// Shared sequence of SFX Thievery
+
+PlaySound: Sound=2453
+PlaySound: Sound=2454
+PlaySound: Sound=2455
+Wait: Time=50
+PlaySound: Sound=2456
+PlaySound: Sound=2457
+Wait: Time=8
+PlaySound: Sound=2458
+PlaySound: Sound=2459
+Wait: Time=42
+PlaySound: Sound=2460
+PlaySound: Sound=2461
+PlaySound: Sound=2462
+Wait: Time=50
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=10

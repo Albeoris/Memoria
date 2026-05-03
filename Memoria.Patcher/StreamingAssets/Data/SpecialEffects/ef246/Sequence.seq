@@ -1,0 +1,14 @@
+// Shared sequence of SFX Meo_Twister
+
+PlaySound: Sound=1846
+PlaySound: Sound=1847
+PlaySound: Sound=1848
+Wait: Time=20
+PlaySound: Sound=1849
+PlaySound: Sound=1850
+PlaySound: Sound=1851
+Wait: Time=10
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=10

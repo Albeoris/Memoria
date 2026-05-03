@@ -1,0 +1,14 @@
+// Shared sequence of SFX Hypnotize
+
+PlaySound: Sound=1936
+PlaySound: Sound=1937
+PlaySound: Sound=1938
+Wait: Time=10
+PlaySound: Sound=1939
+PlaySound: Sound=1940
+PlaySound: Sound=1941
+Wait: Time=10
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=17
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

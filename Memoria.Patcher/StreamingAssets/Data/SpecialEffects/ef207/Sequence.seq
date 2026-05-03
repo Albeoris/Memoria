@@ -1,0 +1,10 @@
+// Shared sequence of SFX Stock_Break_1
+
+PlaySound: Sound=711
+PlaySound: Sound=708
+PlaySound: Sound=687
+Wait: Time=1
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=4
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=19

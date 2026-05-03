@@ -1,0 +1,8 @@
+// Player sequence of SFX Spear_Trance
+
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=Spear_Trance ; Reflect=True
+WaitSFXLoaded: SFX=Spear_Trance ; Reflect=True
+PlaySFX: SFX=Spear_Trance ; Reflect=True
+WaitSFXDone: SFX=Spear_Trance ; Reflect=True

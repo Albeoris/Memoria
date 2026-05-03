@@ -1,0 +1,9 @@
+// Shared sequence of SFX Float__Multi
+
+PlaySound: Sound=276
+PlaySound: Sound=265
+PlaySound: Sound=179
+Wait: Time=34
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure

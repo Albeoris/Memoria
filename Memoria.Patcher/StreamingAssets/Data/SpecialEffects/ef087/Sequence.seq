@@ -1,0 +1,20 @@
+// Shared sequence of SFX Holy
+
+SetBackgroundIntensity: Intensity=0 ; Time=4 ; HoldDuration=121
+ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
+PlaySound: Sound=382
+PlaySound: Sound=379
+PlaySound: Sound=357
+Wait: Time=64
+PlaySound: Sound=200
+PlaySound: Sound=209
+PlaySound: Sound=210
+Wait: Time=14
+ShowMesh: Char=Everyone ; Enable=True ; IsDisappear=True
+Wait: Time=18
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=24
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=1
+SetBackgroundIntensity: Intensity=1 ; Time=8
+Wait: Time=7

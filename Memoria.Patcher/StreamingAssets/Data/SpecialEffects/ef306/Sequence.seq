@@ -1,0 +1,6 @@
+// Shared sequence of SFX Green_Smoke
+
+PlaySound: Sound=1071
+PlaySound: Sound=1072
+PlaySound: Sound=1073
+Wait: Time=20

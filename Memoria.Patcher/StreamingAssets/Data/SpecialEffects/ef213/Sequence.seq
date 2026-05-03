@@ -1,0 +1,12 @@
+// Shared sequence of SFX Fira_Sword
+
+PlaySound: Sound=2433
+PlaySound: Sound=2434
+Wait: Time=15
+PlaySound: Sound=97
+PlaySound: Sound=87
+PlaySound: Sound=38
+Wait: Time=32
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=14
+EffectPoint: Char=Everyone ; Type=Figure

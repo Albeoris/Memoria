@@ -1,0 +1,10 @@
+// Shared sequence of SFX Might
+
+PlaySound: Sound=190
+PlaySound: Sound=175
+PlaySound: Sound=160
+Wait: Time=40
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=20
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=10

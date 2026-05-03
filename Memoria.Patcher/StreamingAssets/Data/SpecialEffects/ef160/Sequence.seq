@@ -1,0 +1,10 @@
+// Shared sequence of SFX Web
+
+PlaySound: Sound=571
+PlaySound: Sound=560
+PlaySound: Sound=554
+Wait: Time=37
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=8

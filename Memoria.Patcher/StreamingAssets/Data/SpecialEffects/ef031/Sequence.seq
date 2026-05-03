@@ -1,0 +1,11 @@
+// Shared sequence of SFX Explosion
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=78
+PlaySound: Sound=141
+PlaySound: Sound=2068
+Wait: Time=27
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=35
+SetBackgroundIntensity: Intensity=1 ; Time=8

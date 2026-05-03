@@ -1,0 +1,13 @@
+// Shared sequence of SFX Shock_3
+
+PlaySound: Sound=547
+PlaySound: Sound=539
+PlaySound: Sound=598
+Wait: Time=36
+PlaySound: Sound=581
+PlaySound: Sound=574
+PlaySound: Sound=529
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=15
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

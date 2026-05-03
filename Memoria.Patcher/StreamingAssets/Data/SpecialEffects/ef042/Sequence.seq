@@ -1,0 +1,10 @@
+// Shared sequence of SFX Silence__Single
+
+PlaySound: Sound=222
+PlaySound: Sound=205
+PlaySound: Sound=289
+Wait: Time=11
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=10

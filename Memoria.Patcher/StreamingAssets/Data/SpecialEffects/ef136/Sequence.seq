@@ -1,0 +1,9 @@
+// Shared sequence of SFX Spare_Change__Multi
+
+PlaySound: Sound=454
+PlaySound: Sound=445
+PlaySound: Sound=439
+Wait: Time=8
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=27
+EffectPoint: Char=Everyone ; Type=Figure

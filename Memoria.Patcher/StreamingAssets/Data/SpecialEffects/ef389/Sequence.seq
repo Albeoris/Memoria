@@ -1,0 +1,33 @@
+// Shared sequence of SFX Spear_Trance
+
+PlaySound: Sound=1233
+PlaySound: Sound=1234
+PlaySound: Sound=1235
+Wait: Time=5
+PlaySound: Sound=1161
+PlaySound: Sound=1162
+PlaySound: Sound=1163
+PlaySound: Sound=1233
+PlaySound: Sound=1234
+PlaySound: Sound=1235
+Wait: Time=5
+PlaySound: Sound=1161
+PlaySound: Sound=1162
+PlaySound: Sound=1163
+PlaySound: Sound=1233
+PlaySound: Sound=1234
+PlaySound: Sound=1235
+Wait: Time=5
+PlaySound: Sound=1161
+PlaySound: Sound=1162
+PlaySound: Sound=1163
+EffectPoint: Char=AllTargets ; Type=Effect
+PlaySound: Sound=1233
+PlaySound: Sound=1234
+PlaySound: Sound=1235
+Wait: Time=5
+PlaySound: Sound=1161
+PlaySound: Sound=1162
+PlaySound: Sound=1163
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure

@@ -1,0 +1,10 @@
+// Shared sequence of SFX Stone
+
+PlaySound: Sound=696
+PlaySound: Sound=693
+PlaySound: Sound=721
+Wait: Time=4
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=8
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=18

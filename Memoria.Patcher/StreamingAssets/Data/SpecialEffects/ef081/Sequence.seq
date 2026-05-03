@@ -1,0 +1,13 @@
+// Shared sequence of SFX Mighty_Guard
+
+StartThread: TargetLoop=True ; Chain=True ; Sync=True
+	PlaySound: Sound=244
+	PlaySound: Sound=231
+	PlaySound: Sound=211
+	Wait: Time=13
+EndThread
+Wait: Time=30
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=27
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

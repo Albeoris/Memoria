@@ -1,0 +1,72 @@
+EXPORTS
+	Create
+	Release
+
+	StopEngine
+	StartEngine
+
+	PlayWavFile
+	PlayOggFile
+	
+	PauseAll
+	ResumeAll
+	StopAll
+	Protect
+	
+    BankAddWav
+    BankLoadWavFile
+	BankAddOgg
+	BankLoadOggFile
+	BankRemove
+	BankAutoRemove
+	
+	CreateVoice
+	VoiceExist
+
+	CreateBus
+	RemoveBus
+	
+	Start
+	StartAtSample
+	StartAtTime
+	Stop
+	
+	Pause
+	Resume
+	GetPauseStack
+
+	SetMasterVolume
+	SetVolume
+	SetSpeed
+	SetPanning
+	SetLooping
+	SetLoopPoints
+
+	GetMasterVolume
+	GetVolume
+	GetSpeed
+	GetPanning
+	GetLooping
+    GetLoopStart
+    GetLoopEnd
+
+	SetReverb
+	RemoveReverb
+
+	SetEq
+	RemoveEq
+
+	SetEcho
+	RemoveEcho
+	
+	GetPositionSample
+	GetPositionTime
+
+    GetTotalSample
+    GetTotalTime
+	GetSampleRate
+	GetChannelCount
+	GetVoiceCount
+	GetBankCount
+	
+	SetOnFinishedCallback

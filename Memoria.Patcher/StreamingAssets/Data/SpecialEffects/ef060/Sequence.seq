@@ -1,0 +1,10 @@
+// Shared sequence of SFX Rainbow_Storm
+
+PlaySound: Sound=292
+PlaySound: Sound=273
+PlaySound: Sound=197
+Wait: Time=20
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=2
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=5

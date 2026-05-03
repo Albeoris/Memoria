@@ -1,0 +1,10 @@
+// Shared sequence of SFX Thousand_Needles
+
+PlaySound: Sound=196
+PlaySound: Sound=178
+PlaySound: Sound=167
+Wait: Time=20
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=35

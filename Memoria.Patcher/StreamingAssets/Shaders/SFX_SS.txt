@@ -1,0 +1,39 @@
+Shader "SFX_SS" {
+	Properties {
+		_MainTex ("Texture0", 2D) = "White" { }
+		_TexParam ("TexParam", Vector) = (1,1,1,1)
+	}
+	SubShader { 
+		Pass {
+			GpuProgramID 6654
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "texcoord" TexCoord0
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 4 [_MainTex_ST]
+					"vs_2_0
+						dcl_position v0
+						dcl_texcoord v1
+						dp4 oPos.x, c0, v0
+						dp4 oPos.y, c1, v0
+						dp4 oPos.z, c2, v0
+						dp4 oPos.w, c3, v0
+						mad oT0.xy, v1, c4, c4.zwzw
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					"ps_2_0
+						def c0, 1, 0, 0, 1
+						mov_pp oC0, c0
+						
+						"
+				}
+			}
+		}
+	}
+	Fallback Off
+}

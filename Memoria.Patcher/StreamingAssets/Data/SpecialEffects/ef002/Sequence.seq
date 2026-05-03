@@ -1,0 +1,12 @@
+// Shared sequence of SFX Fira__Single
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=54
+PlaySound: Sound=97
+PlaySound: Sound=87
+PlaySound: Sound=38
+Wait: Time=32
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=14
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=8
+SetBackgroundIntensity: Intensity=1 ; Time=8

@@ -1,0 +1,55 @@
+# This file contains a set of learnable Eiko's abilities.
+# You can set any number of different items.
+# Use 0 for a void ability, AA:X for active abilities and SA:X for passive abilities.
+# -----------------------------------
+# Id;AP
+# Ability;Int32
+# -----------------------------------
+AA:68;35;# Carbuncle
+AA:66;55;# Fenrir
+AA:72;40;# Phoenix
+AA:74;120;# Madeen
+AA:1;20;# Cure
+AA:2;40;# Cura
+AA:3;80;# Curaga
+AA:4;25;# Regen
+AA:5;35;# Life
+AA:6;90;# Full-Life
+AA:8;15;# Panacea
+AA:9;25;# Stona
+AA:10;80;# Esuna
+AA:11;20;# Shell
+AA:12;20;# Protect
+AA:13;30;# Haste
+AA:14;25;# Silence
+AA:15;35;# Mini
+AA:16;25;# Reflect
+AA:20;25;# Float
+AA:21;35;# Dispel
+AA:22;25;# Might
+AA:23;50;# Jewel
+AA:24;110;# Holy
+SA:0;70;# Auto-Reflect
+SA:1;25;# Auto-Float
+SA:2;65;# Auto-Haste
+SA:3;35;# Auto-Regen
+SA:4;100;# Auto-Life
+SA:7;15;# MP+10%
+SA:8;50;# MP+20%
+SA:24;20;# Healer
+SA:30;55;# Reflect-Null
+SA:33;90;# Concentrate
+SA:34;120;# Half MP
+SA:35;30;# High Tide
+SA:40;20;# Body Temp
+SA:43;65;# Level Up
+SA:44;55;# Ability Up
+SA:47;30;# Guardian Mog
+SA:48;25;# Insomniac
+SA:49;20;# Antibody
+SA:51;15;# Loudmouth
+SA:53;35;# Jelly
+SA:56;30;# Auto-Potion
+SA:57;15;# Locomotion
+SA:58;15;# Clear Headed
+SA:59;150;# Boost

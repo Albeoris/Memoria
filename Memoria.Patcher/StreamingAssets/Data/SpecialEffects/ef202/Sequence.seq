@@ -1,0 +1,10 @@
+// Shared sequence of SFX Poison__Multi
+
+PlaySound: Sound=545
+PlaySound: Sound=537
+PlaySound: Sound=595
+Wait: Time=35
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=15

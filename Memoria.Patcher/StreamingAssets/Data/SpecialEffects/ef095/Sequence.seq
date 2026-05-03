@@ -1,0 +1,14 @@
+// Shared sequence of SFX Water__Multi
+
+PlaySound: Sound=191
+PlaySound: Sound=176
+PlaySound: Sound=162
+Wait: Time=9
+MOVE_WATER: Char=AllTargets ; Type=Multi ; Time=26
+Wait: Time=30
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=2
+MoveToPosition: Char=AllTargets ; AbsolutePosition=Default ; MoveHeight=True ; Time=3
+Wait: Time=10
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=32

@@ -1,0 +1,22 @@
+// Shared sequence of SFX Viral_Smoke
+
+PlaySound: Sound=1182
+PlaySound: Sound=1183
+PlaySound: Sound=1184
+Wait: Time=18
+PlaySound: Sound=1182
+PlaySound: Sound=1183
+PlaySound: Sound=1184
+Wait: Time=18
+PlaySound: Sound=1182
+PlaySound: Sound=1183
+PlaySound: Sound=1184
+Wait: Time=18
+PlaySound: Sound=1182
+PlaySound: Sound=1183
+PlaySound: Sound=1184
+Wait: Time=10
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=24

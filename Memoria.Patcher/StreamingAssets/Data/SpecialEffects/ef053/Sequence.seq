@@ -1,0 +1,14 @@
+// Shared sequence of SFX Burning_Oil
+
+PlaySound: Sound=2469
+PlaySound: Sound=2470
+PlaySound: Sound=2471
+Wait: Time=15
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=5
+PlaySound: Sound=2472
+PlaySound: Sound=2473
+PlaySound: Sound=2474
+Wait: Time=17
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=40

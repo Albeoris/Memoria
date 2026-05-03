@@ -1,0 +1,14 @@
+// Shared sequence of SFX Snowflakes
+
+PlaySound: Sound=2463
+PlaySound: Sound=2464
+PlaySound: Sound=2465
+Wait: Time=15
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=5
+PlaySound: Sound=2466
+PlaySound: Sound=2467
+PlaySound: Sound=2468
+Wait: Time=17
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=40

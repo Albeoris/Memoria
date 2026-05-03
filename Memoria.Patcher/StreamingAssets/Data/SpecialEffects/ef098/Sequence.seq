@@ -1,0 +1,128 @@
+// Shared sequence of SFX Demi__Single
+
+PlaySound: Sound=161
+PlaySound: Sound=143
+PlaySound: Sound=254
+Wait: Time=2
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 61.0, 0.0) ; MoveHeight=True ; Time=0
+ChangeSize: Char=AllTargets ; Size=0.8 ; ScaleShadow=True ; Time=2
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 54.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 48.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 45.0, 0.0) ; MoveHeight=True ; Time=0
+ChangeSize: Char=AllTargets ; Size=0.6 ; ScaleShadow=True ; Time=5
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 44.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 44.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 44.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 44.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 44.0, 0.0) ; MoveHeight=True ; Time=0
+ChangeSize: Char=AllTargets ; Size=0.5 ; ScaleShadow=True ; Time=7
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 41.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 34.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 25.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 15.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 1.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -10.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -21.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 25.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -21.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -14.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -5.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 5.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 14.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 21.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 24.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 25.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 21.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 14.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 4.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -4.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -14.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -21.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -24.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -25.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -21.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -14.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -5.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 5.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 14.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 21.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 24.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 25.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -44.0, 0.0) ; MoveHeight=True ; Time=0
+ChangeSize: Char=AllTargets ; Size=0.8 ; ScaleShadow=True ; Time=5
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -49.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -54.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -57.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -59.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -58.0, 0.0) ; MoveHeight=True ; Time=0
+ChangeSize: Char=AllTargets ; Size=1 ; ScaleShadow=True ; Time=10
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -53.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -47.0, 0.0) ; MoveHeight=True ; Time=0
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -37.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -29.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -20.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -10.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -8.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -5.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -3.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; AbsolutePosition=Default ; MoveHeight=True ; Time=0
+Wait: Time=8
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=16

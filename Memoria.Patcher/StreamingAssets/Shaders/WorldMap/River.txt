@@ -1,0 +1,67 @@
+Shader "WorldMap/River" {
+	Properties {
+		_MainTex ("Pixel", 2D) = "white" { }
+		_ClutTex ("Clut", 2D) = "white" { }
+		_IndexOffset ("Index Offset", Float) = 1
+	}
+	SubShader { 
+		Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+		Pass {
+			Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+			ZTest Always
+			ZWrite Off
+			GpuProgramID 44413
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "texcoord" TexCoord0
+					Matrix 0 [glstate_matrix_mvp]
+					"vs_2_0
+						dcl_position v0
+						dcl_texcoord v1
+						dp4 oPos.x, c0, v0
+						dp4 oPos.y, c1, v0
+						dp4 oPos.z, c2, v0
+						dp4 oPos.w, c3, v0
+						mov oT0.xy, v1
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Float 0 [_IndexOffset]
+					SetTexture 0 [_MainTex] 2D 0
+					SetTexture 1 [_ClutTex] 2D 1
+					"ps_2_0
+						def c1, 255, -0.0235294122, 0.166666672, 6
+						def c2, 0.0625, 0.00390625, 0, 0
+						dcl_pp t0.xy
+						dcl_2d s0
+						dcl_2d s1
+						texld r0, t0, s0
+						mov r1.w, c1.x
+						mad r0.y, r0.x, r1.w, c0.x
+						mul r0.z, r0.y, c1.z
+						abs r0.z, r0.z
+						frc r0.z, r0.z
+						cmp r0.y, r0.y, r0.z, -r0.z
+						mul r0.y, r0.y, c1.w
+						mul r0.z, r0.x, c1.x
+						add r0.x, r0.x, c1.y
+						cmp r0.x, r0.x, r0.z, r0.y
+						mul r0.y, r0.x, c2.x
+						abs r0.y, r0.y
+						frc r0.y, r0.y
+						cmp r1.x, r0.x, r0.y, -r0.y
+						mul r1.y, r0.x, c2.y
+						texld r0, r1, s1
+						mov oC0, r0
+						
+						"
+				}
+			}
+		}
+	}
+	Fallback "Diffuse"
+}

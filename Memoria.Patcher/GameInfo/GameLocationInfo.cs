@@ -1,0 +1,63 @@
+using System;
+using System.Diagnostics;
+using System.IO;
+
+namespace Memoria.Patcher
+{
+    public sealed class GameLocationInfo
+    {
+        public readonly String RootDirectory;
+        public readonly String ManagedPathX64;
+        public readonly String ManagedPathX86;
+        public readonly String StreamingAssetsPath;
+        public readonly String EmbeddedAssetPath;
+
+        public static readonly String LauncherName = @"FF9_Launcher.exe";
+        private static readonly String ManagedRelativePathX64 = Path.Combine("x64", "FF9_Data", "Managed");
+        private static readonly String ManagedRelativePathX86 = Path.Combine("x86", "FF9_Data", "Managed");
+        private static readonly String StreamingAssetsRelativePath = @"StreamingAssets";
+        private static readonly String EmbeddedAssetRelativePath = @"FF9_Data";
+
+        public String LauncherPath => Path.Combine(RootDirectory, LauncherName);
+
+        public GameLocationInfo(String rootDirectory)
+        {
+            RootDirectory = rootDirectory;
+            ManagedPathX64 = Path.Combine(rootDirectory, ManagedRelativePathX64);
+            ManagedPathX86 = Path.Combine(rootDirectory, ManagedRelativePathX86);
+            StreamingAssetsPath = Path.Combine(rootDirectory, StreamingAssetsRelativePath);
+            EmbeddedAssetPath = Path.Combine(rootDirectory, EmbeddedAssetRelativePath);
+        }
+
+        public void Validate()
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("V ");
+            Console.ResetColor();
+            Console.WriteLine($"Path found: {LauncherPath}");
+            if (!File.Exists(LauncherPath))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Error: File not found: {LauncherPath}");
+                Console.ResetColor();
+                throw new FileNotFoundException(LauncherPath, LauncherPath);
+            }
+        }
+
+        public Boolean FixSteamOverlay(Boolean fix)
+        {
+            String fixerPath = Path.Combine(RootDirectory, "Memoria.SteamFix.exe");
+            if (!File.Exists(fixerPath))
+                return false;
+
+            Console.WriteLine(fix ? "Re-enabling Steam overlay fix." : "Disabling Steam overlay fix.");
+            Process process;
+            if (fix)
+                process = Process.Start(new ProcessStartInfo(fixerPath, @$" ""{LauncherPath}"" ") { Verb = "runas" });
+            else
+                process = Process.Start(new ProcessStartInfo(fixerPath) { Verb = "runas" });
+            process.WaitForExit();
+            return true;
+        }
+    }
+}

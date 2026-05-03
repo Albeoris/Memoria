@@ -1,0 +1,10 @@
+// Player sequence of SFX Special_Necron_Death
+
+SetVariable: Variable=cmd_status ; Value=&65533 ; Reflect=True
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=Special_Necron_Death ; Reflect=True
+WaitSFXLoaded: SFX=Special_Necron_Death ; Reflect=True
+PlaySFX: SFX=Special_Necron_Death ; Reflect=True
+WaitSFXDone: SFX=Special_Necron_Death ; Reflect=True
+SetVariable: Variable=cmd_status ; Value=|2 ; Reflect=True

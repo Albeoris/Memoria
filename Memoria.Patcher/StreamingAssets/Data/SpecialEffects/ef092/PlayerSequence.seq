@@ -1,0 +1,31 @@
+// Player sequence of SFX Armor_Break
+
+WaitAnimation: Char=Caster
+StartThread: Condition=AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
+	WaitMove: Char=Caster
+EndThread
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=Armor_Break ; Reflect=True
+WaitSFXLoaded: SFX=Armor_Break ; Reflect=True
+PlayAnimation: Char=Caster ; Anim=MP_IDLE_TO_CHANT
+WaitAnimation: Char=Caster
+PlaySFX: SFX=Armor_Break ; Reflect=True
+PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
+Wait: Time=26
+PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+WaitAnimation: Char=Caster
+WaitSFXDone: SFX=Armor_Break ; Reflect=True
+ActivateReflect
+WaitReflect
+StartThread: Condition=AreCasterAndSelectedTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK
+	WaitMove: Char=Caster
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitTurn: Char=Caster

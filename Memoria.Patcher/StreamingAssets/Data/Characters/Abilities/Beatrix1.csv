@@ -1,0 +1,55 @@
+# This file contains a set of learnable Beatrix1's abilities.
+# You can set any number of different items.
+# Use 0 for a void ability, AA:X for active abilities and SA:X for passive abilities.
+# -----------------------------------
+# Id;AP
+# Ability;Int32
+# -----------------------------------
+AA:149;0;# Thunder Slash
+AA:150;0;# Stock Break
+AA:151;0;# Climhazzard
+AA:152;0;# Shock
+AA:2;0;# Cura
+AA:5;0;# Life
+AA:6;0;# Full-Life
+AA:10;0;# Esuna
+AA:14;0;# Silence
+AA:16;0;# Reflect
+AA:19;0;# Blind
+AA:24;0;# Holy
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
+0;0;# Void
