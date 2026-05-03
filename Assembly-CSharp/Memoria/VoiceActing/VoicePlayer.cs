@@ -149,10 +149,11 @@ public class VoicePlayer : SoundPlayer
             msgString.Contains("\n“") || // English
             msgString.Contains("\n「") || // Japanese
             msgString.Contains(":\n") || // German, French
+            msgString.Contains("\uFF1A\n") || // Chinese
             msgString.Contains("\n─") // Italian, Spanish
             ))
         {
-            String name = msgString.Split('\n')[0].Replace(":", "").Trim();
+            String name = msgString.Split('\n')[0].Replace(":", "").Replace("\uFF1A", "").Trim();
             candidates.Add($"Voices/{lang}/{FieldZoneId}/va_{messageNumber}_{name}{pageIndex}");
         }
 
@@ -483,6 +484,8 @@ public class VoicePlayer : SoundPlayer
 
     public static Boolean HoldDialogUntilSoundEnds(Int32 zoneId, Int32 universalTextId, Int32 mapNo)
     {
+        if (Configuration.VoiceActing.HoldScriptClosedDialogsUntilVoiceEnds)
+            return true;
         if (zoneId == 2 && mapNo >= 59 && mapNo <= 67) // 'I want to be your canary' stage (early game)
             return true;
         if (zoneId == 187) // Ending scene (Vivi monologue and stage afterwards)

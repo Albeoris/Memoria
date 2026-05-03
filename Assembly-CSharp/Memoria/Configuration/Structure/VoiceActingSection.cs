@@ -10,6 +10,7 @@ namespace Memoria
             public readonly IniValue<Boolean> LogVoiceActing;
             public readonly IniValue<Boolean> StopVoiceWhenDialogDismissed;
             public readonly IniValue<Boolean> AutoDismissDialogAfterCompletion;
+            public readonly IniValue<Boolean> HoldScriptClosedDialogsUntilVoiceEnds;
             public readonly IniValue<Int32> ForceMessageSpeed;
             public readonly IniValue<Int32> ForceLanguage;
             public readonly IniValue<Int32> Volume;
@@ -19,6 +20,7 @@ namespace Memoria
                 LogVoiceActing = BindBoolean(nameof(LogVoiceActing), false);
                 StopVoiceWhenDialogDismissed = BindBoolean(nameof(StopVoiceWhenDialogDismissed), false);
                 AutoDismissDialogAfterCompletion = BindBoolean(nameof(AutoDismissDialogAfterCompletion), false);
+                HoldScriptClosedDialogsUntilVoiceEnds = BindBoolean(nameof(HoldScriptClosedDialogsUntilVoiceEnds), false);
                 ForceMessageSpeed = BindInt32(nameof(ForceMessageSpeed), -1);
                 ForceLanguage = BindInt32(nameof(ForceLanguage), -1);
                 Volume = BindInt32(nameof(Volume), 100);
