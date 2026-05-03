@@ -845,32 +845,6 @@ Include the new version ofNoHardcodedBattles.</PatchNotes>
 </Mod>
 
 <Mod>
-	<Name>Play As Ozma</Name>
-	<Version>1.4</Version>
-	<InstallationPath>PlayAsOzma</InstallationPath>
-	<ReleaseDate>1 Apr 2026</ReleaseDate>
-	<ReleaseDateOriginal>1 Apr 2026</ReleaseDateOriginal>
-	<Author>DV</Author>
-	<Description>This mod was the 2026 April Fool's prank (formerly titled FFIX: The After Years).
-
-But behind the joke, there is indeed a real mod, which I am renaming 'Play As Ozma'!
-
-Starting with a small intro at the beginning of the game, it completely replaces Zidane with Ozma. This means:
-- His model has been modified for battle, field, and world map.
-- He possesses the exact same stats and spells as Ozma.
-- He has a 'near-identical' AI to the original boss (which will become even more accurate with the next Memoria update).
-
-The mod is fully playable from start to finish and includes script fixes to prevent softlocks (especially at the Iifa Tree and Ice Cavern).
-
-Just another stupid idea from DV... have fun! :)
-</Description>
-	<Category>Gameplay</Category>
-	<DownloadUrl>https://files.dv-modding.fr/PlayAsOzma.zip</DownloadUrl>
-	<PreviewFile>Thumbnail/Thumbnail.jpg</PreviewFile>
-	<PreviewFileUrl>https://files.dv-modding.fr/hiddenstats/images/PlayAsOzma.jpg</PreviewFileUrl>
-</Mod>
-
-<Mod>
 	<Name>Playable Character Pack</Name>
 	<Version>1.7.0</Version>
 	<Priority>-22</Priority>
@@ -2764,12 +2738,13 @@ Originally released as part of Kupo Mods formerly Mog-Addons
 </Mod>
 
 <Mod>
-	<Name>Mistwake UI</Name>
-	<Version>1.0</Version>
-	<Priority>5</Priority>
-	<InstallationPath>MistwakeUI</InstallationPath>
-	<Author>Daniel Vilela / dkPsycho</Author>
-	<ReleaseDate>2025-06-23</ReleaseDate>
+	<Name>MistwakeUI - English Version</Name>
+	<Version>2.5</Version>
+	<InstallationPath>MistwakeUI - English Version</InstallationPath>
+	<Category>UI</Category>
+	<Author>dkPsycho / Daniel</Author>
+	<Priority>5.1</Priority>
+	<ReleaseDate>2026-05-03</ReleaseDate>
 	<ReleaseDateOriginal>2025-06-23</ReleaseDateOriginal>
 	<Description>Mistwake UI is more than just a visual overhaul of Final Fantasy IX — it’s a tribute.
 Created by fans who grew up mesmerized by every detail of this masterpiece, the mod was born out of a desire to give back for the impact the game had on our lives. With a respectful and meticulous reinterpretation, we aimed to honor everything that made FFIX a classic of the 2000s, enhancing its beauty through a fresh perspective.
@@ -2777,15 +2752,98 @@ Created by fans who grew up mesmerized by every detail of this masterpiece, the 
 This version includes:
 
 A redesigned look for menus, interface, dialogue boxes, and other refined elements
-New portraits for all characters, including side characters and extras
 Exclusive new artwork for each of the 8 protagonists at the moment they are recruited
 New background illustrations for the title screen, Game Over, and disc transitions
 New map name presentations, now accompanied by icons that represent each location
-Mistwake is a love letter to the world of Gaia — and a gift to everyone who, like us, was moved by it.
+New portraits for all characters, including side characters, NPCs and extras
 
-PT-BR
-
-Mistwake UI é mais do que uma repaginação visual de Final Fantasy IX — é uma homenagem.
+</Description>
+	<PatchNotes>IMPORTANT: To experience the mod in its most refined form, we recommend using the Newsreader 14pt font. It is not enabled by default, but it is included in the mod package. Simply install the font and select it manually in the Memoria launcher settings to enjoy all the visual elegance that Mistwake offers.</PatchNotes>
+	<MinimumMemoriaVersion>2025.05.12</MinimumMemoriaVersion>
+	<Category>UI</Category>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/124</Website>
+	<PreviewFile>preview/Capa.png</PreviewFile>
+	<PreviewFileUrl>teste</PreviewFileUrl>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/stkbs38nq72bc4vmt4l3w/MistwakeUI-English-Version.zip?rlkey=posuxfqkxvqkwxkoip31gim3y&st=b9uz2cjy&dl=0</DownloadUrl>
+	<Header>UI Interfaces</Header>
+	<SubMod>
+		<Name>Visual: Default Interface</Name>
+		<InstallationPath>Options/Default Interface</InstallationPath>
+		<Group>f-interface</Group>
+		<Description>Keeps the default vanilla game interface.</Description>
+		<PreviewFile>preview/Visual2.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Default/>
+		<Name>Visual: Mistwake New Interface</Name>
+		<InstallationPath>Options/Mistwake New Interface</InstallationPath>
+		<Group>f-interface</Group>
+		<Description>Change for New interface Mistwake.</Description>
+		<PreviewFile>preview/Visual1.png</PreviewFile>
+		<Default/>
+	</SubMod>
+	<Header>UI Themes</Header>
+	<SubMod>
+		<Default/>
+		<Name>Visual: Mistwake Portraits</Name>
+		<InstallationPath>Options/Mistwake Portraits</InstallationPath>
+		<Description>New portraits for all main characters, secondary characters, and NPCs.</Description>
+		<PreviewFile>preview/Visua3.png</PreviewFile>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Default/>
+		<Name>Visual: Mistwake Portraits in Dialogues</Name>
+		<InstallationPath>Options/Mistwake Portraits in Dialogues</InstallationPath>
+		<Description>Add portraits of the main characters, supporting characters, and NPCs in the dialogue boxes.</Description>
+		<PreviewFile>preview/Visual4.png</PreviewFile>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Default/>
+		<Name>Visual: Mistwake Icons Items</Name>
+		<InstallationPath>Options/Mistwake Icons Items</InstallationPath>
+		<Description>Replaces all item icons with visuals based on the official artwork.</Description>
+		<PreviewFile>preview/Visual5.png</PreviewFile>
+		<Default/>
+	</SubMod>
+	<Header>Text Options</Header>
+	<SubMod>
+		<Default/>
+		<Name>Speaker Name Mistwake (Deafult)</Name>
+		<InstallationPath>Options/Text Options/Speaker Name Mistwake</InstallationPath>
+		<Description>Default MistwakeUI Speaker Names</Description>
+		<PreviewFile>preview/Speaker 1.png</PreviewFile>
+		<Priority>4</Priority>
+		<Group>Speaker</Group>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Name>Speaker Name Yellow</Name>
+		<InstallationPath>Options/Text Options/Speaker Name Yellow</InstallationPath>
+		<Description>Adds a Chocobo Yellow Color for Speakers in Dialogue</Description>
+		<PreviewFile>preview/Speaker 2.png</PreviewFile>
+		<Priority>4</Priority>
+		<Group>Speaker</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Speaker Name Teal</Name>
+		<InstallationPath>Options/Text Options/Speaker Name Teal</InstallationPath>
+		<Description>Adds a Vivid Teal Color for Speakers in Dialogue</Description>
+		<PreviewFile>preview/Speaker 3.png</PreviewFile>
+		<Priority>4</Priority>
+		<Group>Speaker</Group>
+	</SubMod>
+</Mod>
+<Mod>
+	<Name>MistwakeUI - Versão Português</Name>
+	<Version>2.5</Version>
+	<InstallationPath>MistwakeUI - Versão Português</InstallationPath>
+	<Author>dkPsycho / Daniel</Author>
+	<Priority>5.2</Priority>
+	<ReleaseDate>02-05-2026</ReleaseDate>
+	<ReleaseDateOriginal>23-06-2025</ReleaseDateOriginal>
+	<Description>Mistwake UI é mais do que uma repaginação visual de Final Fantasy IX — é uma homenagem.
 Criado por fãs que cresceram encantados com cada detalhe dessa obra-prima, o mod nasceu do desejo de retribuir o impacto que o jogo teve em nossas vidas. Com uma releitura respeitosa e detalhista, buscamos valorizar tudo o que fez de FFIX um clássico dos anos 2000, exaltando sua beleza com um novo olhar.
 
 Esta versão inclui:
@@ -2794,37 +2852,68 @@ Novos retratos para todos os personagens, incluindo secundários e extras
 Novas artes exclusivas para cada um dos 8 protagonistas no momento em que são recrutados
 Novas artes de fundo, para a tela inicial, Game Over e transições de disco
 Novas apresentações dos nomes de mapas, agora acompanhadas por ícones que representam cada local
+Novos 100+ retratos de personanagens secundários e NPCs
+
+Atualização 2.5
+
+Adicionado +40 novos retratos de NPCs
+Adicionado todos os novos ícones de armaduras, acessórios e itens chave
+Todos os ícones das armas foram remodelados e melhorados
+Adicionado a opção de usar a nova interface mistwake ou interface padrão
+Adicionado a opção de ao pegar qualquer item no mapa a mensagem mostra
+além do nome do item também mostra o ícone correspondente
+
 
 Mistwake é uma carta de amor ao mundo de Gaia — e um presente para todos que, como nós, se emocionaram com ele.
 </Description>
-	<PatchNotes>IMPORTANT: To experience the mod in its most refined form, we recommend using the Newsreader 14pt font. It is not enabled by default, but it is included in the mod package. Simply install it and select it manually in the Memoria launcher settings to enjoy all the visual elegance that Mistwake offers.
-
-PT-BR
-
-IMPORTANTE: Para vivenciar o mod em sua forma mais refinada, recomendamos o uso da fonte Newsreader 14pt. Ela não está ativada por padrão, mas está inclusa no pacote do mod. Basta instalá-la e selecioná-la manualmente nas configurações no launcher do Memoria e aproveitar toda a elegância visual que Mistwake propõe.</PatchNotes>
+	<PatchNotes>IMPORTANTE: Para vivenciar o mod em sua forma mais refinada, recomendamos o uso da fonte Newsreader 14pt. Ela não está ativada por padrão, mas está inclusa no pacote do mod. Basta instalá-la e selecioná-la manualmente nas configurações no launcher do Memoria e aproveitar toda a elegância visual que Mistwake propõe.</PatchNotes>
 	<MinimumMemoriaVersion>2025.05.12</MinimumMemoriaVersion>
 	<Category>UI</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/104</Website>
 	<PreviewFile>preview/Capa.png</PreviewFile>
-	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/104/104-1750651533-1890299274.png</PreviewFileUrl>
-	<DownloadUrl>https://www.dropbox.com/scl/fi/28hn1wkp6lsbufbb7vrhj/Mistwake-UI.zip?rlkey=h2o5y0fqw1qd716dxby7lfk5u&amp;st=vbdwg5ca&amp;dl=1</DownloadUrl>
-	<Header>UI Themes</Header>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/104/104-1773890946-1529715671.png</PreviewFileUrl>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/c7jzqx00ol2u9rxgfh4u9/MistwakeUI-Vers-o-Portugu-s.zip?rlkey=yg4njxcks1fkc89xzwnsjesmu&st=s447bm48&dl=0</DownloadUrl>
+	<Header>UI Interfaces</Header>
 	<SubMod>
 		<Default/>
-		<Name>Visual: Mistwake Interface</Name>
-		<InstallationPath>Opcionais/Mistwake Interface</InstallationPath>
-		<Description>Novo visual para menus, interface, caixa de diálogo e outros elementos.
-New look for menus, interface, dialog boxes, and other elements.</Description>
+		<Name>Visual: Mistwake Nova Interface</Name>
+		<InstallationPath>Opcionais/Mistwake Nova Interface</InstallationPath>
+		<Description>Troca o visual da interface, menu, imagens dos personagens para a novas imagens.</Description>
+		<Group>f-interface</Group>
 		<PreviewFile>preview/Visual1.png</PreviewFile>
 		<Default/>
 	</SubMod>
 	<SubMod>
+		<Name>Visual: Mistwake Interface Padrão</Name>
+		<InstallationPath>Opcionais/Mistwake Interface Padrão</InstallationPath>
+		<Description>Mantém o visual padrão original do jogo.</Description>
+		<Group>f-interface</Group>
+		<PreviewFile>preview/Visual2.png</PreviewFile>
+	</SubMod>
+	<Header>UI Visuais</Header>
+	<SubMod>
 		<Default/>
 		<Name>Visual: Mistwake Retratos</Name>
 		<InstallationPath>Opcionais/Mistwake Retratos</InstallationPath>
-		<Description>Novos retratos para todos os personagens, incluindo secundários e extras.
-New portraits for all characters, including supporting and background characters.</Description>
-		<PreviewFile>preview/Visual2.png</PreviewFile>
+		<Description>Novos retratos para todos os personagens principais, secundários, NPCs e extras.</Description>
+		<PreviewFile>preview/Visual3.png</PreviewFile>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Default/>
+		<Name>Visual: Mistwake Retratos nos Diálogos</Name>
+		<InstallationPath>Opcionais/Mistwake Retratos nos Diálogos</InstallationPath>
+		<Description>Adiciona retratos dos personagens principais, secundários e npcs nas caixas de diálogos.
+IMPORTANTE: Se ativar esta opção é OBRIGATÓRIO ativar a opção acima "Mistwake Retratos".</Description>
+		<PreviewFile>preview/Visual4.png</PreviewFile>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Default/>
+		<Name>Visual: Mistwake Ícones dos Itens</Name>
+		<InstallationPath>Opcionais/Mistwake Ícones dos Itens</InstallationPath>
+		<Description>Troca o visual de todos os ícones padrão dos itens para o visual das arworks oficiais.</Description>
+		<PreviewFile>preview/visual5.png</PreviewFile>
 		<Default/>
 	</SubMod>
 </Mod>
@@ -2832,16 +2921,14 @@ New portraits for all characters, including supporting and background characters
 
 <Mod>
 	<Name>Playstation Sounds</Name>
-	<Version>2.3</Version>
+	<Version>2.2</Version>
 	<Priority>-25</Priority>
 	<InstallationPath>PlaystationSounds</InstallationPath>
 	<ReleaseDateOriginal>19 Mar 2022</ReleaseDateOriginal>
-	<ReleaseDate>2 May 2026</ReleaseDate>
+	<ReleaseDate>27 Jun 2024</ReleaseDate>
 	<Author>DV</Author>
-	<Description>Tired of these crappy sounds in game ? Don't worry, this mod is simply the best to fix that : +1540 sound files fixed!
-	I encourage all players to get this mod, which is a major quality-of-life improvement for this port of FF9!
-	Replace the sound assets by the PSX sounds version (specially Battle + Tetra Master + Miscellaneous).</Description>
-	<PatchNotes>Improve the sound se000001, by removing a litte silence at the beginning.</PatchNotes>
+	<Description>Replace the sound assets by the PSX sounds (specially Battle + Tetra Master + Miscellaneous). More than 1540 sound files fixed!</Description>
+	<PatchNotes>Improved "Trance Spear" SFX : se510236, se510237, se510238, se510240, se510241 et se510242 (report by Quetzal and SamsamTS)</PatchNotes>
 	<Category>Audio</Category>
 	<PreviewFileUrl>https://i.imgur.com/6EEBG0I.jpeg</PreviewFileUrl>
 	<Website>https://steamcommunity.com/app/377840/discussions/0/3189117724409401717/</Website>
@@ -3685,316 +3772,6 @@ Part of the Kupo Mods suite, formerly known as Mog Add-ons.
 		<Group>g-port-extra</Group>
 		<PreviewFile>preview/psxlike.jpg</PreviewFile>
 	</SubMod>	
-</Mod>
-
-<Mod>
-    <Name>CostumePack</Name>
-    <Version>1.2</Version>
-    <InstallationPath>CostumePack</InstallationPath>
-    <ReleaseDateOriginal>25 Mar 2026</ReleaseDateOriginal>
-    <ReleaseDate>2 Apr 2026</ReleaseDate>
-    <Author>WarpedEdge and ChikoLad</Author>
-    <Description>The purpose of the mod is to give the FFIX cast costumes either already in the game, from DFFOO, or any other ones made for them</Description>
-    <PatchNotes>
-    Known Issue:
-      - There is apparently an issue where for some reason in certain battles (there are quite a few) the Enemy AI scripts are looking for the stupid MODEL ID of the players instead of their Player ID which is stupid, BUT Tirlititi and DV may have a fix in the next Memoria Release
-      - If shaders in the launcher are turned on then models will appear very dark (This is a Memoria side thing as that feature was before the model importer)
-    Version 1.2
-    Fixed Issues:
-      - Garnet's side of her face texture fragmenting
-    Version 1.1
-    Fixed Issues:
-      - Freya Field model submod when used in battle (not the SA costume on) was flickering on her upper back
-      - Garnet DFFOO Default costume Trance was not using her Trance model
-      - Eiko models were pulling in weird ways
-      - Models disappearing in certain circumstances (tent in fields like Memoria location or Lifa Tree Elevator)
-      - Kupo Heroes Pack support
-      - Garnet's costume model for DFFOO Default not having short hair variants work in battle
-      - Ferny Fantasy latest test release messed up commands
-      - Other various fixes
-    </PatchNotes>
-    <Website>https://www.nexusmods.com/finalfantasy9/mods/128</Website>
-	<DownloadUrl>https://github.com/WarpedEdge/ffix-mod-projects/releases/download/CostumePack-v1.2/CostumePack.zip</DownloadUrl>
-    <PreviewFile>Preview/CostumePackBanner.png</PreviewFile>
-	<PreviewFileUrl>https://i.imgur.com/1GWlsW0.png</PreviewFileUrl>
-    <Category>Visual</Category>
-    <MinimumMemoriaVersion>2025.07.04</MinimumMemoriaVersion>
-    <SubMod>
-        <Name>TranceSeek Compatibility</Name>
-        <InstallationPath>Compatibility/TranceSeek</InstallationPath>
-        <Description>Allows costumes to work with this mod.</Description>
-        <ActivateWithMod>Trance Seek</ActivateWithMod>
-        <Priority>1</Priority>
-    </SubMod>
-    <SubMod>
-        <Name>Alternate Fantasy Compatibility</Name>
-        <InstallationPath>Compatibility/AlternateFantasy</InstallationPath>
-        <Description>Allows costumes to work with this mod.</Description>
-        <ActivateWithMod>Alternate Fantasy</ActivateWithMod>
-        <Priority>1</Priority>
-    </SubMod>
-    <SubMod>
-        <Name>Ferny Fantasy Compatibility</Name>
-        <InstallationPath>Compatibility/FernyFantasyIX</InstallationPath>
-        <Description>Allows costumes to work with this mod.</Description>
-        <ActivateWithMod>Ferny Fantasy IX</ActivateWithMod>
-        <Priority>1</Priority>
-    </SubMod>
-    <SubMod>
-        <Name>Amazing Garnet Compatibility</Name>
-        <InstallationPath>Compatibility/AmazingGarnet/Vanilla</InstallationPath>
-        <Description>Allows costumes to work with Amazing Garnet in its Vanilla mode.</Description>
-        <ActivateWithMod>Amazing Garnet</ActivateWithMod>
-        <Priority>2</Priority>
-    </SubMod>
-    <SubMod>
-        <Name>Amazing Quina Compatibility</Name>
-        <InstallationPath>Compatibility/AmazingQuina/Vanilla</InstallationPath>
-        <Description>Allows costumes to work with Amazing Quina in its Vanilla mode.</Description>
-        <ActivateWithMod>Amazing Quina</ActivateWithMod>
-        <Priority>2</Priority>
-    </SubMod>
-    <SubMod>
-        <Name>Amazing Steiner Compatibility</Name>
-        <InstallationPath>Compatibility/AmazingSteiner/Vanilla</InstallationPath>
-        <Description>Allows costumes to work with Amazing Steiner in its Vanilla mode.</Description>
-        <ActivateWithMod>Amazing Steiner</ActivateWithMod>
-        <Priority>2</Priority>
-    </SubMod>
-    <SubMod>
-        <Name>Amazing Steiner Alternate Fantasy Compatibility</Name>
-        <InstallationPath>Compatibility/AmazingSteiner/AlternateFantasy</InstallationPath>
-        <Description>Allows costumes to work with Amazing Steiner when Alternate Fantasy is also active.</Description>
-        <ActivateWithMod>Amazing Steiner, Alternate Fantasy</ActivateWithMod>
-        <Priority>1</Priority>
-    </SubMod>
-    <SubMod>
-        <Name>Amazing Garnet Alternate Fantasy Compatibility</Name>
-        <InstallationPath>Compatibility/AmazingGarnet/AlternateFantasy</InstallationPath>
-        <Description>Allows costumes to work with Amazing Garnet when Alternate Fantasy is also active.</Description>
-        <ActivateWithMod>Amazing Garnet, Alternate Fantasy</ActivateWithMod>
-        <Priority>1</Priority>
-    </SubMod>
-    <SubMod>
-        <Name>Amazing Quina Alternate Fantasy Compatibility</Name>
-        <InstallationPath>Compatibility/AmazingQuina/AlternateFantasy</InstallationPath>
-        <Description>Allows costumes to work with Amazing Quina when Alternate Fantasy is also active.</Description>
-        <ActivateWithMod>Amazing Quina, Alternate Fantasy</ActivateWithMod>
-        <Priority>1</Priority>
-    </SubMod>
-    <SubMod>
-        <Name>Kupo Heroes Pack Compatibility</Name>
-        <InstallationPath>Compatibility/KupoHeroPack/Vanilla</InstallationPath>
-        <Description>Allows costumes to work with Kupo Heroes Pack in Vanilla.</Description>
-        <ActivateWithMod>Kupo Heroes Pack</ActivateWithMod>
-        <Priority>2</Priority>
-    </SubMod>
-    <SubMod>
-        <Name>Kupo Heroes Pack Alternate Fantasy Compatibility</Name>
-        <InstallationPath>Compatibility/KupoHeroPack/AlternateFantasy</InstallationPath>
-        <Description>Allows costumes to work with Kupo Heroes Pack when Alternate Fantasy is also active.</Description>
-        <ActivateWithMod>Kupo Heroes Pack, Alternate Fantasy</ActivateWithMod>
-        <Priority>1</Priority>
-    </SubMod>
-
-    <Header>Zidane</Header>
-    <SubMod>
-        <Name>Vanilla (Field)</Name>
-        <InstallationPath>FieldModels/Zidane/Vanilla</InstallationPath>
-        <Description>Uses Zidane's vanilla field and battle model behavior.</Description>
-        <Group>Zidane</Group>
-    </SubMod>
-    <SubMod>
-        <Name>DFFOO Default (Field)</Name>
-        <InstallationPath>FieldModels/Zidane/DFFOO_Default</InstallationPath>
-        <Description>Uses the DFFOO Default field model variant for Zidane and his DFFOO Pluto for castle scene. This also changes his default battle model.</Description>
-        <PreviewFile>Preview/Zidane/DFFOO_Default.png</PreviewFile>
-        <Default/>
-        <Group>Zidane</Group>
-    </SubMod>
-    <SubMod>
-        <Name>DFFOO Pluto (Field)</Name>
-        <InstallationPath>FieldModels/Zidane/DFFOO_Pluto</InstallationPath>
-        <Description>Uses the DFFOO Pluto field model variant for Zidane and his DFFOO Pluto for castle scene. This also changes his default battle model.</Description>
-        <PreviewFile>Preview/Zidane/DFFOO_Pluto.png</PreviewFile>
-        <Group>Zidane</Group>
-    </SubMod>
-    <SubMod>
-        <Name>DFFOO Cloak (Field)</Name>
-        <InstallationPath>FieldModels/Zidane/DFFOO_Cloak</InstallationPath>
-        <Description>Uses the DFFOO Cloak field model variant for Zidane and his DFFOO Pluto for castle scene. This also changes his default battle model.</Description>
-        <PreviewFile>Preview/Zidane/DFFOO_Cloak.png</PreviewFile>
-        <Group>Zidane</Group>
-    </SubMod>
-    <Header>Garnet</Header>
-    <SubMod>
-        <Name>Vanilla (Field)</Name>
-        <InstallationPath>FieldModels/Garnet/Vanilla</InstallationPath>
-        <Description>Uses Garnet's vanilla field and battle model behavior.</Description>
-        <Group>Garnet</Group>
-    </SubMod>
-    <SubMod>
-        <Name>DFFOO Default (Field)</Name>
-        <InstallationPath>FieldModels/Garnet/DFFOO_Default</InstallationPath>
-        <Description>Uses the DFFOO Default field model variant for Garnet. This also changes her default battle model.</Description>
-        <PreviewFile>Preview/Garnet/DFFOO_Default.png</PreviewFile>
-        <Default/>
-        <Group>Garnet</Group>
-    </SubMod>
-    <SubMod>
-        <Name>DFFOO White Mage (Field)</Name>
-        <InstallationPath>FieldModels/Garnet/DFFOO_WhiteMage</InstallationPath>
-        <Description>Uses the DFFOO White Mage field model variant for Garnet. This also changes her default battle model.</Description>
-        <PreviewFile>Preview/Garnet/DFFOO_WhiteMage.png</PreviewFile>
-        <Group>Garnet</Group>
-    </SubMod>
-    <SubMod>
-        <Name>DFFOO Queen (Field)</Name>
-        <InstallationPath>FieldModels/Garnet/DFFOO_Queen</InstallationPath>
-        <Description>Uses the DFFOO Queen field model variant for Garnet. This also changes her default battle model.</Description>
-        <PreviewFile>Preview/Garnet/DFFOO_Queen.png</PreviewFile>
-        <Group>Garnet</Group>
-    </SubMod>
-
-    <Header>Vivi</Header>
-    <SubMod>
-        <Name>Vanilla (Field)</Name>
-        <InstallationPath>FieldModels/Vivi/Vanilla</InstallationPath>
-        <Description>Uses Vivi's vanilla field and battle model behavior.</Description>
-        <Group>Vivi</Group>
-    </SubMod>
-    <SubMod>
-        <Name>DFFOO Default (Field)</Name>
-        <InstallationPath>FieldModels/Vivi/DFFOO_Default</InstallationPath>
-        <Description>Uses the DFFOO Default field model variant for Vivi. This also changes his default battle model.</Description>
-        <PreviewFile>Preview/Vivi/DFFOO_Default.png</PreviewFile>
-        <Default/>
-        <Group>Vivi</Group>
-    </SubMod>
-    <SubMod>
-        <Name>DFFOO Amano (Field)</Name>
-        <InstallationPath>FieldModels/Vivi/DFFOO_Amano</InstallationPath>
-        <Description>Uses the DFFOO Amano field model variant for Vivi. This also changes his default battle model.</Description>
-        <PreviewFile>Preview/Vivi/DFFOO_Amano.png</PreviewFile>
-        <Group>Vivi</Group>
-    </SubMod>
-
-    <Header>Steiner</Header>
-    <SubMod>
-        <Name>Vanilla (Field)</Name>
-        <InstallationPath>FieldModels/Steiner/Vanilla</InstallationPath>
-        <Description>Uses Steiner's vanilla field and battle model behavior.</Description>
-        <Group>Steiner</Group>
-    </SubMod>
-    <SubMod>
-        <Name>DFFOO Default (Field)</Name>
-        <InstallationPath>FieldModels/Steiner/DFFOO_Default</InstallationPath>
-        <Description>Uses the DFFOO Default field model variant for Steiner. This also changes his default battle model.</Description>
-        <PreviewFile>Preview/Steiner/DFFOO_Default.png</PreviewFile>
-        <Default/>
-        <Group>Steiner</Group>
-    </SubMod>
-
-    <Header>Quina</Header>
-    <SubMod>
-        <Name>Vanilla (Field)</Name>
-        <InstallationPath>FieldModels/Quina/Vanilla</InstallationPath>
-        <Description>Uses Quina's vanilla field and battle model behavior.</Description>
-        <Group>Quina</Group>
-    </SubMod>
-    <SubMod>
-        <Name>DFFOO Default (Field)</Name>
-        <InstallationPath>FieldModels/Quina/DFFOO_Default</InstallationPath>
-        <Description>Uses the DFFOO Default field model variant for Quina. This also changes Quina's default battle model.</Description>
-        <PreviewFile>Preview/Quina/DFFOO_Default.png</PreviewFile>
-        <Default/>
-        <Group>Quina</Group>
-    </SubMod>
-
-    <Header>Freya</Header>
-    <SubMod>
-        <Name>Vanilla (Field)</Name>
-        <InstallationPath>FieldModels/Freya/Vanilla</InstallationPath>
-        <Description>Uses Freya's vanilla field and battle model behavior.</Description>
-        <Group>Freya</Group>
-    </SubMod>
-    <SubMod>
-        <Name>DFFOO Default (Field)</Name>
-        <InstallationPath>FieldModels/Freya/DFFOO_Default</InstallationPath>
-        <Description>Uses the DFFOO Default field model variant for Freya. This also changes her default battle model.</Description>
-        <PreviewFile>Preview/Freya/DFFOO_Default.png</PreviewFile>
-        <Default/>
-        <Group>Freya</Group>
-    </SubMod>
-    <SubMod>
-        <Name>Dark Freya (Field)</Name>
-        <InstallationPath>FieldModels/Freya/Dark_Freya</InstallationPath>
-        <Description>Uses the Dark Freya field model variant for Freya. This also changes her default battle model.</Description>
-        <PreviewFile>Preview/Freya/Dark_Freya.png</PreviewFile>
-        <Group>Freya</Group>
-    </SubMod>
-
-    <Header>Eiko</Header>
-    <SubMod>
-        <Name>Vanilla (Field)</Name>
-        <InstallationPath>FieldModels/Eiko/Vanilla</InstallationPath>
-        <Description>Uses Eiko's vanilla field and battle model behavior.</Description>
-        <Group>Eiko</Group>
-    </SubMod>
-    <SubMod>
-        <Name>DFFOO Default (Field)</Name>
-        <InstallationPath>FieldModels/Eiko/DFFOO_Default</InstallationPath>
-        <Description>Uses the DFFOO Default field model variant for Eiko. This also changes her default battle model.</Description>
-        <PreviewFile>Preview/Eiko/DFFOO_Default.png</PreviewFile>
-        <Default/>
-        <Group>Eiko</Group>
-    </SubMod>
-    <SubMod>
-        <Name>DFFOO Amano (Field)</Name>
-        <InstallationPath>FieldModels/Eiko/DFFOO_Amano</InstallationPath>
-        <Description>Uses the DFFOO Amano field model variant for Eiko. This also changes her default battle model.</Description>
-        <PreviewFile>Preview/Eiko/DFFOO_Amano.png</PreviewFile>
-        <Group>Eiko</Group>
-    </SubMod>
-
-    <Header>Amarant</Header>
-    <SubMod>
-        <Name>Vanilla (Field)</Name>
-        <InstallationPath>FieldModels/Amarant/Vanilla</InstallationPath>
-        <Description>Uses Amarant's vanilla field and battle model behavior.</Description>
-        <Group>Amarant</Group>
-    </SubMod>
-    <SubMod>
-        <Name>DFFOO Default (Field)</Name>
-        <InstallationPath>FieldModels/Amarant/DFFOO_Default</InstallationPath>
-        <Description>Uses the DFFOO Default field model variant for Amarant. This also changes his default battle model.</Description>
-        <PreviewFile>Preview/Amarant/DFFOO_Default.png</PreviewFile>
-        <Default/>
-        <Group>Amarant</Group>
-    </SubMod>
-    <SubMod>
-        <Name>DFFOO Amano (Field)</Name>
-        <InstallationPath>FieldModels/Amarant/DFFOO_Amano</InstallationPath>
-        <Description>Uses the DFFOO Amano field model variant for Amarant. This also changes his default battle model.</Description>
-        <PreviewFile>Preview/Amarant/DFFOO_Amano.png</PreviewFile>
-        <Group>Amarant</Group>
-    </SubMod>
-
-    <Header>Beatrix</Header>
-    <SubMod>
-        <Name>Vanilla (Field)</Name>
-        <InstallationPath>FieldModels/Beatrix/Vanilla</InstallationPath>
-        <Description>Uses Beatrix's vanilla field and battle model behavior.</Description>
-        <Group>Beatrix</Group>
-    </SubMod>
-    <SubMod>
-        <Name>DFFOO Default (Field)</Name>
-        <InstallationPath>FieldModels/Beatrix/DFFOO_Default</InstallationPath>
-        <Description>Uses the DFFOO Default field model variant for Beatrix. This also changes her default battle model.</Description>
-        <PreviewFile>Preview/Beatrix/DFFOO_Default.png</PreviewFile>
-        <Default/>
-        <Group>Beatrix</Group>
-    </SubMod>
 </Mod>
 
 <Mod>
