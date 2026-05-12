@@ -1,6 +1,7 @@
 ﻿using Memoria.Prime;
 using System;
 using System.Collections;
+using System.Threading;
 using UnityEngine;
 
 public class ControllerWatcher : PersistenSingleton<ControllerWatcher>
@@ -9,11 +10,22 @@ public class ControllerWatcher : PersistenSingleton<ControllerWatcher>
     private const int DBT_DEVICEARRIVAL = 0x8000;
     private const int DBT_DEVICEREMOVECOMPLETE = 0x8004;
 
-    private Boolean isConnect = true;
+    private static Boolean isConnect = true;
+    private static Int32 tries = 1;
+
+    private static Thread refreshThread = new Thread(RefreshControllers);
 
     public void Start()
     {
         WindowProc.OnMessage += OnMessage;
+    }
+
+    public void StartRefresh()
+    {
+        if(refreshThread.IsAlive)
+            refreshThread.Abort();
+        refreshThread = new Thread(RefreshControllers);
+        refreshThread.Start();
     }
 
     private void OnMessage(uint msg, IntPtr wParam, IntPtr lParam)
@@ -24,43 +36,50 @@ public class ControllerWatcher : PersistenSingleton<ControllerWatcher>
             {
                 case DBT_DEVICEARRIVAL:
                     isConnect = true;
-                    StopCoroutine("RefreshControllers");
-                    StartCoroutine("RefreshControllers");
+                    tries = 10;
+                    StartRefresh();
                     break;
                 case DBT_DEVICEREMOVECOMPLETE:
                     isConnect = false;
-                    StopCoroutine("RefreshControllers");
-                    StartCoroutine("RefreshControllers");
+                    tries = 1;
+                    StartRefresh();
                     break;
             }
         }
     }
 
-    private IEnumerator RefreshControllers()
+    private static void RefreshControllers()
     {
-        Int32 tries = isConnect ? 10 : 1;
-        Boolean hasChanged = false;
-        while (tries-- > 0)
+        try
         {
-            yield return new WaitForSeconds(0.5f);
-            hasChanged = XInputDotNetPure.GamePad.RefreshDevices();
-            if (hasChanged) break;
-        }
+            Boolean hasChanged = false;
+            while (tries-- > 0)
+            {
+                Thread.Sleep(500);
+                hasChanged = XInputDotNetPure.GamePad.RefreshDevices();
+                if (hasChanged) break;
+            }
 
-        if (hasChanged) Log.Message($"[ControllerWatcher] Device {(isConnect ? "connected" : "disconnected")}");
-        else if (isConnect) Log.Message($"[ControllerWatcher] Couldn't connect device");
+            if (hasChanged) Log.Message($"[ControllerWatcher] Device {(isConnect ? "connected" : "disconnected")}");
+            else if (isConnect) Log.Message($"[ControllerWatcher] Couldn't connect device");
 
-        if (!isConnect && hasChanged && !PersistenSingleton<UIManager>.Instance.IsPause)
-        {
-            // Pause the game if a controller has been disconnected
-            UIManager.Instance.GetSceneFromState(UIManager.Instance.State).OnKeyPause(null);
+            if (!isConnect && hasChanged && !PersistenSingleton<UIManager>.Instance.IsPause)
+            {
+                // Pause the game if a controller has been disconnected
+                UIManager.Instance.GetSceneFromState(UIManager.Instance.State).OnKeyPause(null);
+            }
+            if (hasChanged && isConnect)
+            {
+                Thread.Sleep(500);
+                // Refresh one last time for DualSense over Bluetooth
+                XInputDotNetPure.GamePad.RefreshDevices(true);
+            }
         }
-        if (hasChanged && isConnect)
+        catch(ThreadAbortException) { }
+        catch(Exception e)
         {
-            yield return new WaitForSeconds(0.5f);
-            // Refresh one last time for DualSense over Bluetooth
-            XInputDotNetPure.GamePad.RefreshDevices(true);
+            Log.Warning($"[ControllerWatcher] Couldn't refresh devices");
+            Log.Warning(e);
         }
-        yield break;
     }
 }
