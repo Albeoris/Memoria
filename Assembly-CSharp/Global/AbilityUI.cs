@@ -81,6 +81,8 @@ public class AbilityUI : UIScene
     [NonSerialized]
     private GOMenuBackground _background;
 
+    private Int32 _sortingSourceIndex = -1; // For Ability Sorter
+
     public static Color[] BoostedAbilityColor = new Color[]
     {
         new Color(1f, 1f, 1f),
@@ -105,6 +107,15 @@ public class AbilityUI : UIScene
         this.saIdList = new List<Int32>();
         this.equipmentPartInAbilityDict = new Dictionary<Int32, Int32>();
         this.equipmentIdInAbilityDict = new Dictionary<Int32, RegularItem[]>();
+    }
+
+    private void Update() // [DV] Maybe we can improve that ? Instead of using the Update method...
+    {
+        if (!this.isActiveAndEnabled || _sortingSourceIndex == -1)
+            return;
+
+        if (UIManager.Input.L2Down || UIManager.Input.R2Down)
+            this.ResetSorter();
     }
 
     public override void Show(SceneVoidDelegate afterFinished = null)
@@ -551,6 +562,14 @@ public class AbilityUI : UIScene
     {
         if (!base.OnKeyCancel(go))
             return true;
+        if (_sortingSourceIndex != -1)
+        {
+            FF9Sfx.FF9SFX_Play(101);
+            _sortingSourceIndex = -1;
+            if (ButtonGroupState.ActiveGroup == ActionAbilityGroupButton) DisplayAA();
+            else DisplaySA();
+            return true;
+        }
         if (ButtonGroupState.ActiveGroup == SubMenuGroupButton)
         {
             FF9Sfx.FF9SFX_Play(101);
@@ -799,6 +818,104 @@ public class AbilityUI : UIScene
             this.ToggleMultipleTarget();
         }
         return true;
+    }
+
+    public override Boolean OnKeyMenu(GameObject go)
+    {
+        if (!base.OnKeyMenu(go)) return true;
+
+        if ((ButtonGroupState.ActiveGroup == ActionAbilityGroupButton || ButtonGroupState.ActiveGroup == SupportAbilityGroupButton) && Configuration.Battle.AASASorter)
+        {
+            int currentIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
+
+            if (_sortingSourceIndex == -1)
+            {
+                FF9Sfx.FF9SFX_Play(103);
+                _sortingSourceIndex = currentIndex;
+
+                if (ButtonGroupState.ActiveGroup == ActionAbilityGroupButton) DisplayAA();
+                else DisplaySA();
+            }
+            else
+            {
+                FF9Sfx.FF9SFX_Play(103);
+                PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
+
+                if (ButtonGroupState.ActiveGroup == ActionAbilityGroupButton)
+                {
+                    int idSource = this.aaIdList[_sortingSourceIndex];
+                    int idDest = this.aaIdList[currentIndex];
+
+                    this.aaIdList[_sortingSourceIndex] = idDest;
+                    this.aaIdList[currentIndex] = idSource;
+
+                    if (Configuration.Battle.AASASorter)
+                        AbilitySorter.UpdateMenuAA(player.Index, this.aaIdList);
+
+                    _sortingSourceIndex = -1;
+                    DisplayAA();
+                    this.currentAbilityIndex = currentIndex;
+                    this.activeAbilityScrollList.JumpToIndex(currentIndex, false);
+                }
+                else if (ButtonGroupState.ActiveGroup == SupportAbilityGroupButton)
+                {
+                    int idSource = this.saIdList[_sortingSourceIndex];
+                    int idDest = this.saIdList[currentIndex];
+
+                    this.saIdList[_sortingSourceIndex] = idDest;
+                    this.saIdList[currentIndex] = idSource;
+
+                    if (Configuration.Battle.AASASorter)
+                        AbilitySorter.UpdateMenuSA(player.Index, this.saIdList);
+
+                    _sortingSourceIndex = -1;
+
+                    DisplaySA();
+                    this.currentAbilityIndex = currentIndex;
+                    this.supportAbilityScrollList.JumpToIndex(currentIndex, false);
+                }
+
+                _sortingSourceIndex = -1;
+                return true;
+            }
+        }
+        return true;
+    }
+
+    private void ResetSorter()
+    {
+        if (_sortingSourceIndex != -1)
+        {
+            PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
+
+            FF9Sfx.FF9SFX_Play(1047);
+
+            if (ButtonGroupState.ActiveGroup == ActionAbilityGroupButton)
+            {
+                AbilitySorter.ResetMenuAA(player.Index);
+            }
+            else if (ButtonGroupState.ActiveGroup == SupportAbilityGroupButton)
+            {
+                AbilitySorter.ResetMenuSA(player.Index);
+            }
+
+            _sortingSourceIndex = -1;
+
+            this.InitialData();
+
+            if (ButtonGroupState.ActiveGroup == ActionAbilityGroupButton)
+            {
+                this.DisplayAA();
+                this.currentAbilityIndex = 0;
+                this.activeAbilityScrollList.JumpToIndex(0, false);
+            }
+            else if (ButtonGroupState.ActiveGroup == SupportAbilityGroupButton)
+            {
+                this.DisplaySA();
+                this.currentAbilityIndex = 0;
+                this.supportAbilityScrollList.JumpToIndex(0, false);
+            }
+        }
     }
 
     public override Boolean OnItemSelect(GameObject go)
@@ -1075,6 +1192,11 @@ public class AbilityUI : UIScene
             itemListDetailHud.Button.Help.Enable = true;
             itemListDetailHud.Button.Help.Text = FF9TextTool.ActionAbilityHelpDescription(patchedId);
         }
+        if (_sortingSourceIndex == index && ButtonGroupState.ActiveGroup == ActionAbilityGroupButton)
+        {
+            itemListDetailHud.NameLabel.color = FF9TextTool.Cyan;
+            itemListDetailHud.NumberLabel.color = FF9TextTool.Cyan;
+        }
     }
 
     private BattleAbilityId PatchAbility(BattleAbilityId id)
@@ -1182,6 +1304,12 @@ public class AbilityUI : UIScene
             detailWithIconHud.Button.Help.Text = FF9TextTool.SupportAbilityHelpDescription(supportId);
             ButtonGroupState.RefreshHelpDialog();
         }
+        if (_sortingSourceIndex == index && ButtonGroupState.ActiveGroup == SupportAbilityGroupButton)
+        {
+            detailWithIconHud.NameLabel.color = FF9TextTool.Cyan;
+            detailWithIconHud.NumberLabel.color = FF9TextTool.Cyan;
+            detailWithIconHud.IconSprite.color = FF9TextTool.Cyan;
+        }
     }
 
     private void DisplayTarget(PLAYER onlySelfMode = null)
@@ -1248,6 +1376,12 @@ public class AbilityUI : UIScene
         BattleAbilityId patchedId = this.PatchAbility(ff9abil.GetActiveAbilityFromAbilityId(abilityId));
         AA_DATA patchedAbil = FF9BattleDB.CharacterActions[patchedId];
 
+        if (BattleAbilityHelper.IsAbilityDisabledInMenu(patchedId, player))
+            return AbilityType.CantSpell;
+
+        if (BattleAbilityHelper.IsAbilityHardDisabledInMenu(patchedId, player))
+            return AbilityType.NoDraw;
+
         if (!this.equipmentPartInAbilityDict.ContainsKey(abilityId))
         {
             Int32 index = ff9abil.FF9Abil_GetIndex(player, abilityId);
@@ -1277,7 +1411,10 @@ public class AbilityUI : UIScene
             return AbilityType.NoDraw;
 
         if (player.saBanish.Contains(ff9abil.GetSupportAbilityFromAbilityId(abilityId)))
-            return player.saForced.Contains(ff9abil.GetSupportAbilityFromAbilityId(abilityId)) ? AbilityType.CantDisable : AbilityType.CantSpell;
+            if (!ff9abil.FF9Abil_IsMaster(player, abilityId) && !equipmentPartInAbilityDict.ContainsKey(abilityId))
+                return AbilityType.NoDraw;
+            else
+                return player.saForced.Contains(ff9abil.GetSupportAbilityFromAbilityId(abilityId)) ? AbilityType.CantDisable : AbilityType.CantSpell;
 
         if (Configuration.Battle.LockEquippedAbilities == 1 || Configuration.Battle.LockEquippedAbilities == 3)
         {
@@ -1467,6 +1604,11 @@ public class AbilityUI : UIScene
                     this.equipmentIdInAbilityDict[abilId][i] = itemId;
                 }
             }
+        }
+        if (Configuration.Battle.AASASorter)
+        {
+            AbilitySorter.SortMenuAA(player.Index, this.aaIdList);
+            AbilitySorter.SortMenuSA(player.Index, this.saIdList);
         }
         this.isAAEnable = !IsSubMenuDisabledByMainMenu(true) && player.cur.hp > 0 && (player.status & BattleStatusConst.CannotUseAbilityInMenu) == 0 && this.aaIdList.Count > 0 && FF9StateSystem.EventState.gEventGlobal[FF9FABIL_EVENT_NOMAGIC] == 0;
         this.isSAEnable = !IsSubMenuDisabledByMainMenu(false) && ff9abil.FF9Abil_HasSA(player);

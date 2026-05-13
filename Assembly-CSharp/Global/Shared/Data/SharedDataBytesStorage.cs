@@ -79,6 +79,27 @@ public class SharedDataBytesStorage : ISharedDataStorage
         MetaData.FilePath = Application.persistentDataPath + saveFolder + "/" + fileName;
     }
 
+    public static int CurrentSavePage = 0;
+
+    public static void UpdatePathForPage()
+    {
+        MetaData.FilePath = null;
+        SetPCPath();
+
+        if (CurrentSavePage > 0)
+        {
+            // Example : EncryptedSavedData/ExtraSave_1/SavedData_ww.dat
+            string extraFolder = "ExtraSave_" + CurrentSavePage;
+            string newDir = Path.Combine(MetaData.DirPath, extraFolder);
+
+            if (!Directory.Exists(newDir))
+                Directory.CreateDirectory(newDir);
+
+            string fileName = Path.GetFileName(MetaData.FilePath);
+            MetaData.FilePath = Path.Combine(newDir, fileName);
+        }
+    }
+
     private void SetOtherPlatformPath()
     {
         MetaData.FilePath = AssetManagerUtil.GetPersistentDataPath() + "/EncryptedSavedData/SavedData.dat";
@@ -727,19 +748,68 @@ public class SharedDataBytesStorage : ISharedDataStorage
 
     public override void Autoload(ISharedDataStorage.OnAutoloadFinish onFinishDelegate)
     {
+        int cachedPage = CurrentSavePage;
+
+        if (cachedPage != 0)
+        {
+            CurrentSavePage = 0;
+            MetaData.FilePath = null;
+            SetPCPath();
+        }
+
         JSONClass rootNode = this.Load(true, -1, -1);
+
+        if (cachedPage != 0)
+        {
+            CurrentSavePage = cachedPage;
+            UpdatePathForPage();
+        }
+
         onFinishDelegate(rootNode);
     }
 
     public override void Autosave(JSONClass rootNode, ISharedDataStorage.OnAutosaveFinish onFinishDelegate)
     {
+        int cachedPage = CurrentSavePage;
+
+        // If we are not on Page 0, we force the path to the root
+        if (cachedPage != 0)
+        {
+            CurrentSavePage = 0;
+            MetaData.FilePath = null;
+            SetPCPath();
+        }
+
         Boolean isSuccess = this.Save(true, -1, -1, rootNode);
+
+        if (cachedPage != 0)
+        {
+            CurrentSavePage = cachedPage;
+            UpdatePathForPage();
+        }
+
         onFinishDelegate(isSuccess);
     }
 
     public override void HasAutoload(ISharedDataStorage.OnHasAutoloadFinish onFinishDelegate)
     {
+        int cachedPage = CurrentSavePage;
+
+        if (cachedPage != 0)
+        {
+            CurrentSavePage = 0;
+            MetaData.FilePath = null;
+            SetPCPath();
+        }
+
         JSONClass a = this.Load(true, -1, -1);
+
+        if (cachedPage != 0)
+        {
+            CurrentSavePage = cachedPage;
+            UpdatePathForPage();
+        }
+
         onFinishDelegate(a != null);
     }
 

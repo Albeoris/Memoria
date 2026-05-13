@@ -828,7 +828,7 @@ public class BattleResultUI : UIScene
             characterHUD.ExpCaptionLabel.fixedAlignment = true;
             characterHUD.NextLvCaptionLabel.Label.fixedAlignment = true;
         }
-        this.GilAndItemPhrasePanel.GetChild(0).GetChild(1).GetChild(0).GetComponent<UILabel>().rightAnchor.Set(1f, -32);
+        this.GilAndItemPhrasePanel.GetChild(0).GetChild(1).GetChild(0).GetComponent<UILabel>().rightAnchor.Set(1f, -32); // [TODO] DV : Need to be fixed (the first letter of the word only appears), seen with Tirlititi
         this.ReceiveGilPanel.GetChild(0).GetComponent<UILabel>().fixedAlignment = true;
         this.CurrentGilPanel.GetChild(0).GetComponent<UILabel>().fixedAlignment = true;
         this.AllPanel.GetChild(3).GetChild(1).GetChild(3).GetComponent<UILabel>().rightAnchor.Set(1f, -40);
