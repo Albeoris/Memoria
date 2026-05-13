@@ -238,6 +238,10 @@ namespace Global.Sound.SaXAudio
                 return 0;
             }
 
+            // [DV] Fix looping sounds when re-using the same sound between fields, mostly for ambiant sounds (eg: Prima Vista machines)
+            if (bankData.TryGetValue(bankID, out BankData data) && data.LoopEnd > 0) 
+                SaXAudio.SetLooping(soundID, true);
+
             return SaXAudio.StartAtTime(soundID, offsetTimeMSec / 1000f) ? 1 : 0;
         }
 
