@@ -48,7 +48,7 @@ namespace Memoria.Launcher
             ["SwordplayAssistance", "_swordplayassistance", "SwordplayAssistance", "Hacks", 1, 2, 1],
             ["FrogCatchingIncrement", "_frogcatchingincrement", "FrogCatchingIncrement", "Hacks", 1, 100, 1],
 
-            ["AudioBackend", "_audiobackend", "Backend", "Audio", 0, 1, 1],
+            ["AudioBackend", "_audiobackend", "Backend", "Audio", 2, 1, 1],
             ["WorldSmoothTexture", "_worldsmoothtexture", "WorldSmoothTexture", "Graphics", 0, 1, 1],
             ["BattleSmoothTexture", "_battlesmoothtexture", "BattleSmoothTexture", "Graphics", 0, 1, 1],
             ["ElementsSmoothTexture", "_elementssmoothtexture", "ElementsSmoothTexture", "Graphics", 0, 1, 1],
