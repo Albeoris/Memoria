@@ -3791,13 +3791,18 @@ Part of the Kupo Mods suite, formerly known as Mog Add-ons.
 
 <Mod>
     <Name>CostumePack</Name>
-    <Version>1.2</Version>
+    <Version>1.3</Version>
     <InstallationPath>CostumePack</InstallationPath>
     <ReleaseDateOriginal>25 Mar 2026</ReleaseDateOriginal>
     <ReleaseDate>2 Apr 2026</ReleaseDate>
     <Author>WarpedEdge and ChikoLad</Author>
     <Description>The purpose of the mod is to give the FFIX cast costumes either already in the game, from DFFOO, or any other ones made for them</Description>
     <PatchNotes>
+    Known Issues:
+      - There is apparently an issue where for some reason in certain battles (there are quite a few) the Enemy AI scripts are looking for the stupid MODEL ID of the players instead of their Player ID which is stupid, BUT Tirlititi and DV may have a fix in the next Memoria Release
+      - If shaders in the launcher are turned on then models will appear very dark (This is a Memoria side thing as that feature was before the model importer)
+        - The next Release of Memoria should address this with a new invert shader feature
+    Version 1.3
     Known Issue:
       - There is apparently an issue where for some reason in certain battles (there are quite a few) the Enemy AI scripts are looking for the stupid MODEL ID of the players instead of their Player ID which is stupid, BUT Tirlititi and DV may have a fix in the next Memoria Release
       - If shaders in the launcher are turned on then models will appear very dark (This is a Memoria side thing as that feature was before the model importer)
