@@ -101,6 +101,7 @@
     <Compile Include="Launcher\IniFile.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Launcher\SettingsGrid_Vanilla.cs" />
+    <Compile Include="Launcher\AppLogger.cs" />
     <Compile Include="Launcher\Utils.cs" />
     <Compile Include="Launcher\UiLauncherPlayButton.cs" />
     <Compile Include="Launcher\UiLauncherButton.xaml.cs">
@@ -275,6 +276,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="NLog" Version="6.1.3" />
     <PackageReference Include="SharpCompress" Version="0.40.0" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

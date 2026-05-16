@@ -783,9 +783,9 @@ namespace Memoria.Launcher
                     ext = "zip";
                 }
                 downloadingPath = Mod.INSTALLATION_TMP + "/" + (mod.InstallationPath ?? mod.Name) + "." + ext;
-                downloadClient = new ThrottledWebClient();
-                downloadClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadLoop);
-                downloadClient.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadEnd);
+                downloadClient = new ThrottledHttpClient();
+                downloadClient.DownloadProgressChanged += DownloadLoop;
+                downloadClient.DownloadFileCompleted += DownloadEnd;
                 downloadClient.DownloadFileAsync(new Uri(mod.DownloadUrl), downloadingPath);
             });
             downloadThread.Start();
@@ -793,7 +793,7 @@ namespace Memoria.Launcher
             lstDownloads.Height = 100;
             btnCancelStackpanel.Height = 100;
         }
-        private void DownloadLoop(Object sender, DownloadProgressChangedEventArgs e)
+        private void DownloadLoop(Object sender, ThrottledDownloadProgressChangedEventArgs e)
         {
             Dispatcher.BeginInvoke((MethodInvoker)delegate
             {
@@ -812,7 +812,10 @@ namespace Memoria.Launcher
                     }
 
                     downloadingMod.DownloadSpeed = $"{dlSpeed} {measurement}/{(String)Lang.Res["Measurement.SecondAbbr"]}";
-                    downloadingMod.RemainingTime = $"{TimeSpan.FromSeconds(Math.Round((e.TotalBytesToReceive - e.BytesReceived) * timeSpan / e.BytesReceived)):g}";
+                    if (e.BytesReceived > 0 && e.TotalBytesToReceive > 0)
+                        downloadingMod.RemainingTime = $"{TimeSpan.FromSeconds(Math.Round((e.TotalBytesToReceive - e.BytesReceived) * timeSpan / e.BytesReceived)):g}";
+                    else
+                        downloadingMod.RemainingTime = "";
                 }
                 catch (NullReferenceException) // added to catch a race condition that sometimes occures where Ui tries to update but download has finished
                 {
@@ -1093,8 +1096,8 @@ namespace Memoria.Launcher
             ReadCatalog();
             downloadCatalogThread = new Thread(() =>
             {
-                downloadCatalogClient = new WebClient();
-                downloadCatalogClient.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadCatalogEnd);
+                downloadCatalogClient = new ThrottledHttpClient();
+                downloadCatalogClient.DownloadFileCompleted += DownloadCatalogEnd;
                 downloadCatalogClient.DownloadFileAsync(new Uri(CATALOG_URL), CATALOG_PATH + ".tmp");
             });
             downloadCatalogThread.Start();
@@ -1797,8 +1800,8 @@ namespace Memoria.Launcher
         private DateTime downloadBytesTime;
         private Thread downloadThread;
         private Thread downloadCatalogThread;
-        private WebClient downloadClient;
-        private WebClient downloadCatalogClient;
+        private ThrottledHttpClient downloadClient;
+        private ThrottledHttpClient downloadCatalogClient;
         private object ascendingSortedColumn = null;
 
         private const String CATALOG_PATH = "./ModCatalog.xml";
