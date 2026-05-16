@@ -621,3 +621,6 @@ cmake-build*/
 
 # vcpkg
 vcpkg_installed/
+
+# VS Code C# Dev Kit
+*.lscache
