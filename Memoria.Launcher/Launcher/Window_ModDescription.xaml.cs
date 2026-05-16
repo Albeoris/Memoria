@@ -19,7 +19,7 @@ namespace Memoria.Launcher
             InitializeComponent();
 
             ModNameLabel.Content = mod.Name;
-            Document.Blocks.Clear();
+            Document.Document.Blocks.Clear();
             String plainText = $"#{Lang.Res["ModEditor.Description"]}\n{mod.Description}";
             if (!String.IsNullOrEmpty(mod.PatchNotes))
                 plainText = $"{plainText}\n#{Lang.Res["ModEditor.ReleaseNotes"]}\n{mod.PatchNotes}";
@@ -37,7 +37,7 @@ namespace Memoria.Launcher
                             Margin = new Thickness(0, 10, 0, 10),
                             Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aeee"))
                         };
-                        Document.Blocks.Add(p);
+                        Document.Document.Blocks.Add(p);
                         paragraph = "";
                     }
                     ListItem item = new ListItem(new Paragraph(new Run(line.TrimStart(['-', ' ']))));
@@ -47,7 +47,7 @@ namespace Memoria.Launcher
                         list = new List();
                         list.Padding = new Thickness(0, 0, 0, 0);
                         list.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aeee"));
-                        Document.Blocks.Add(list);
+                        Document.Document.Blocks.Add(list);
                     }
                     list.ListItems.Add(item);
                 }
@@ -60,7 +60,7 @@ namespace Memoria.Launcher
                             Margin = new Thickness(0, 10, 0, 10),
                             Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aeee"))
                         };
-                        Document.Blocks.Add(p1);
+                        Document.Document.Blocks.Add(p1);
                         paragraph = "";
                     }
                     list = null;
@@ -69,7 +69,7 @@ namespace Memoria.Launcher
                         Margin = new Thickness(0, 20, 0, 10),
                         FontSize = 20
                     };
-                    Document.Blocks.Add(p);
+                    Document.Document.Blocks.Add(p);
                 }
                 else
                 {
@@ -85,7 +85,7 @@ namespace Memoria.Launcher
                     Margin = new Thickness(0, 10, 0, 10),
                     Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aeee"))
                 };
-                Document.Blocks.Add(p);
+                Document.Document.Blocks.Add(p);
             }
             if (!String.IsNullOrEmpty(mod.DownloadUrl))
             {
@@ -95,7 +95,7 @@ namespace Memoria.Launcher
                 {
                     Process.Start(e.Uri.ToString());
                 };
-                Document.Blocks.Add(new Paragraph(link) { Margin = new Thickness(0, 10, 0, 10), });
+                Document.Document.Blocks.Add(new Paragraph(link) { Margin = new Thickness(0, 10, 0, 10), });
             }
         }
 
@@ -124,13 +124,9 @@ namespace Memoria.Launcher
 
         private void DocumentScrollViewer_PreviewMouseWheel(Object sender, MouseWheelEventArgs e)
         {
-            FlowDocumentScrollViewer o = (FlowDocumentScrollViewer)sender;
-            ScrollViewer scrollViewer = o.Template?.FindName("PART_ContentHost", o) as ScrollViewer;
-            if (scrollViewer is not null)
-            {
-                double offset = scrollViewer.VerticalOffset - (e.Delta / 3f);
-                scrollViewer.ScrollToVerticalOffset(offset < 0 ? 0 : offset > scrollViewer.ExtentHeight ? scrollViewer.ExtentHeight : offset);
-            }
+            ScrollViewer scrollViewer = (ScrollViewer)sender;
+            double offset = scrollViewer.VerticalOffset - (e.Delta / 3f);
+            scrollViewer.ScrollToVerticalOffset(offset < 0 ? 0 : offset > scrollViewer.ExtentHeight ? scrollViewer.ExtentHeight : offset);
         }
     }
 }
