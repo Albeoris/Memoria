@@ -68,3 +68,28 @@ jobs:
       with:
         name: Memoria-Patcher-Osx-x64
         path: Output/osx-x64/Memoria.Patcher
+    - name: Rename output files
+      run: |
+        mv "Output/linux-x64/Memoria.Patcher" "Output/linux-x64/Memoria.Patcher-linux-x64"
+        mv "Output/osx-x64/Memoria.Patcher" "Output/osx-x64/Memoria.Patcher-osx-x64"
+    - name: Release Memoria.Patcher (Canary)
+      uses: softprops/action-gh-release@v2
+      with:
+        name: Memoria (Canary)
+        files: |
+          Output/win-x64/Memoria.Patcher.exe
+          Output/linux-x64/Memoria.Patcher-linux-x64
+          Output/osx-x64/Memoria.Patcher-osx-x64
+        generate_release_notes: true
+        draft: false
+        prerelease: true
+        tag_name: canary
+        overwrite_files: true
+        body: |
+          This is a canary build. Please be aware it may be prone to crashing and is NOT tested by anyone. Use this build AT YOUR OWN RISK!
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Move canary tag to this commit
+      uses: richardsimko/update-tag@v1
+      with:
+        tag_name: canary
