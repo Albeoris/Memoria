@@ -7,6 +7,7 @@ using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using UnityEngine;
 
@@ -132,6 +133,27 @@ public class VoicePlayer : SoundPlayer
         List<String> candidates = new List<String>();
         String lang = Localization.CurrentSymbol;
         String pageIndex = dialog.SubPage.Count > 1 ? $"_P{Math.Max(0, dialog.CurrentPage - 1)}" : "";
+
+        // if hunt is ending due to Zidane Died (584), zidane & Fraya Died (585) or timer expired (583)
+        // we want to stop all the other voices that are playing for the hunt to avoid overlap and confusion,
+        // but we don't want to stop the voice for these two messages since they are the ones indicating the end of the hunt.
+        if (FieldZoneId == 276 && (messageNumber == 584 || messageNumber == 585 || messageNumber == 583)) {
+            // need to fetch the dialogs and stop them.
+            lock (soundOfDialog)
+            {
+                List<Dialog> keys = soundOfDialog.Keys.ToList();
+                specialMessageIds.TryGetValue(Localization.CurrentSymbol, out Int32[] numbers);
+                foreach (Dialog d in keys)
+                {
+                    if (d != null && !(
+                        d.Id == numbers[3] ||
+                        d.Id == numbers[4] ||
+                        d.Id == numbers[5]
+                    ))
+                        FieldZoneReleaseVoice(d, true);
+                }
+            }
+        }            
 
         // Path for the hunt/hot and cold
         String specialAppend = GetSpecialAppend(FieldZoneId, messageNumber);
@@ -302,14 +324,15 @@ public class VoicePlayer : SoundPlayer
 
     private static Dictionary<String, Int32[]> specialMessageIds = new Dictionary<String, Int32[]>()
     {
-        // Hunt, H&C start, H&C points
-        {"US", [540, 228, 301]},
-        {"UK", [540, 228, 301]},
-        {"JP", [560, 227, 306]},
-        {"GR", [560, 228, 307]},
-        {"FR", [550, 228, 307]},
-        {"IT", [560, 228, 307]},
-        {"ES", [552, 228, 307]}
+        // Hunt, H&C start, H&C points, hunt end zidane died, hunt end zidane&fraya died, hunt end timer expired
+        {"US", [540, 228, 301, 585, 584, 583]},
+        {"UK", [540, 228, 301, 585, 584, 583]},
+        //@todo add the hunt end message id's for other languages once we have them
+        {"JP", [560, 227, 306, 0, 0 ,0]},
+        {"GR", [560, 228, 307, 0, 0 ,0]},
+        {"FR", [550, 228, 307, 0, 0 ,0]},
+        {"IT", [560, 228, 307, 0, 0 ,0]},
+        {"ES", [552, 228, 307, 0, 0 ,0]}
     };
     private static String GetSpecialAppend(Int32 FieldZoneId, Int32 messageNumber)
     {
