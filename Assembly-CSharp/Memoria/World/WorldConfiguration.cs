@@ -1,4 +1,4 @@
-﻿using Memoria.Assets;
+using Memoria.Assets;
 using Memoria.Prime;
 using Memoria.Prime.CSV;
 using Memoria.Prime.Text;
@@ -94,6 +94,7 @@ namespace Memoria
         {
             _customPlaceModifier.Clear();
             _customEffectModifier.Clear();
+            _customEffectSounds.Clear();
             _customMistModifier.Clear();
             _customDiscModifier.Clear();
             _customRainModifier.Clear();
@@ -220,6 +221,14 @@ namespace Memoria
             return false;
         }
 
+        public static String GetEffectSoundPath(WorldEffect eff)
+        {
+            String path;
+            if (_customEffectSounds.TryGetValue(eff, out path))
+                return path;
+            return null;
+        }
+
         public static Boolean UseMist()
         {
             // Custom usage condition
@@ -240,15 +249,16 @@ namespace Memoria
             return (Byte)(ff9.w_frameScenePtr >= 11090 ? 4 : 1);
         }
 
-        public static void GetRainParameters(out Byte rainStrength, out Int32 rainSpeed)
+        public static void GetRainParameters(out Byte rainStrength, out Int32 rainSpeed, out String rainSoundPath)
         {
             rainStrength = 0;
             rainSpeed = 0;
+            rainSoundPath = null;
             // Custom usage setting
             if (_customRainModifier.Count > 0)
             {
                 foreach (RainModifier modifier in _customRainModifier)
-                    modifier.RainUpdate(ref rainStrength, ref rainSpeed);
+                    modifier.RainUpdate(ref rainStrength, ref rainSpeed, ref rainSoundPath);
                 return;
             }
             // Default usage setting
@@ -365,7 +375,7 @@ namespace Memoria
                 if (String.Equals(codeMatches[i].Groups[1].Value, "Place"))
                     doneSomething = LoadWorldEnvironmentDictionaryToken(args, _customPlaceModifier) || doneSomething;
                 else if (String.Equals(codeMatches[i].Groups[1].Value, "Effect"))
-                    doneSomething = LoadWorldEnvironmentDictionaryToken(args, _customEffectModifier) || doneSomething;
+                    doneSomething = LoadWorldEnvironmentEffectToken(args) || doneSomething;
                 else if (String.Equals(codeMatches[i].Groups[1].Value, "Mist"))
                     doneSomething = LoadWorldEnvironmentSimpleToken(args, _customMistModifier) || doneSomething;
                 else if (String.Equals(codeMatches[i].Groups[1].Value, "Disc4"))
@@ -408,6 +418,50 @@ namespace Memoria
                     modifier._condition.Add(args[1].Substring("[Condition=".Length, args[1].Length - "[Condition=]".Length));
                     return true;
                 }
+            }
+            return false;
+        }
+
+        private static Boolean LoadWorldEnvironmentEffectToken(String[] args)
+        {
+            if (args.Length == 0)
+                return false;
+            WorldEffect key;
+            if (String.Equals(args[0], "Clear"))
+            {
+                _customEffectModifier.Clear();
+                _customEffectSounds.Clear();
+                return true;
+            }
+            if (args[0].TryEnumParse(out key) && args.Length >= 2)
+            {
+                if (String.Equals(args[1], "Clear"))
+                {
+                    _customEffectModifier.Remove(key);
+                    _customEffectSounds.Remove(key);
+                    return true;
+                }
+                Boolean doneSomething = false;
+                for (Int32 i = 1; i < args.Length; i++)
+                {
+                    if (args[i].StartsWith("[Condition=") && args[i].EndsWith("]"))
+                    {
+                        ConditionalModifier modifier;
+                        if (!_customEffectModifier.TryGetValue(key, out modifier))
+                        {
+                            modifier = new ConditionalModifier();
+                            _customEffectModifier.Add(key, modifier);
+                        }
+                        modifier._condition.Add(args[i].Substring("[Condition=".Length, args[i].Length - "[Condition=]".Length));
+                        doneSomething = true;
+                    }
+                    else if (args[i].StartsWith("[Sound=") && args[i].EndsWith("]"))
+                    {
+                        _customEffectSounds[key] = args[i].Substring("[Sound=".Length, args[i].Length - "[Sound=]".Length);
+                        doneSomething = true;
+                    }
+                }
+                return doneSomething;
             }
             return false;
         }
@@ -490,6 +544,10 @@ namespace Memoria
                 {
                     if (Int32.TryParse(args[i].Substring("[RainStrength=".Length, args[i].Length - "[RainStrength=]".Length), out coord))
                         modifier._rainMaxStrength = (Byte)coord;
+                }
+                else if (args[i].StartsWith("[RainSound=") && args[i].EndsWith("]"))
+                {
+                    modifier._rainSoundPath = args[i].Substring("[RainSound=".Length, args[i].Length - "[RainSound=]".Length);
                 }
             }
             modifierList.Add(modifier);
@@ -655,8 +713,9 @@ namespace Memoria
             public Single _radiusSmall = ff9.S(992);
             public Byte _rainMaxStrength = 64;
             public Int32 _rainSpeed = 64;
+            public String _rainSoundPath = null;
 
-            public void RainUpdate(ref Byte rainStrength, ref Int32 rainSpeed)
+            public void RainUpdate(ref Byte rainStrength, ref Int32 rainSpeed, ref String rainSoundPath)
             {
                 if (HasCondition && !IsActive)
                     return;
@@ -672,6 +731,8 @@ namespace Memoria
                 {
                     rainStrength = strength;
                     rainSpeed = _rainSpeed;
+                    if (!String.IsNullOrEmpty(_rainSoundPath))
+                        rainSoundPath = _rainSoundPath;
                 }
             }
         }
@@ -705,6 +766,7 @@ namespace Memoria
 
         private static Dictionary<WorldPlace, ConditionalModifier> _customPlaceModifier = new Dictionary<WorldPlace, ConditionalModifier>();
         private static Dictionary<WorldEffect, ConditionalModifier> _customEffectModifier = new Dictionary<WorldEffect, ConditionalModifier>();
+        private static Dictionary<WorldEffect, String> _customEffectSounds = new Dictionary<WorldEffect, String>();
         private static ConditionalModifier _customMistModifier = new ConditionalModifier();
         private static ConditionalModifier _customDiscModifier = new ConditionalModifier();
         private static List<RainModifier> _customRainModifier = new List<RainModifier>();

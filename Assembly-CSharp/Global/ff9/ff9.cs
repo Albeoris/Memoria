@@ -3384,6 +3384,42 @@ public static class ff9
         // The effect is located at the Wind Shrine but has no visual (on PSX version as well)
         //ff9.w_effectServiceSP(WorldEffect.WindShrine);
         //ff9.w_effectUpdateSP(WorldEffect.WindShrine);
+
+        // Service custom effect sounds (proximity-based volume)
+        ff9.w_effectServiceSound(WorldEffect.SandStorm, ff9.w_effectTwisPos);
+        ff9.w_effectServiceSound(WorldEffect.Memoria, ff9.w_effectLastPos);
+        ff9.w_effectServiceSound(WorldEffect.FireShrine, new Vector3(ff9.S(311680), 0f, ff9.S(-191323)));
+        ff9.w_effectServiceSound(WorldEffect.WaterShrine, new Vector3(ff9.S(299201), 0f, ff9.S(-93859)));
+        ff9.w_effectServiceSound(WorldEffect.AlexandriaWaterfall, new Vector3(ff9.S(345560), 0f, ff9.S(-173564)));
+        ff9.w_effectServiceSound(WorldEffect.Windmill, ff9.w_effectMillPos);
+    }
+
+    public static void w_effectServiceSound(WorldEffect effect, Vector3 effectPosition)
+    {
+        String soundPath = WorldConfiguration.GetEffectSoundPath(effect);
+        if (String.IsNullOrEmpty(soundPath))
+            return;
+
+        String key = effect.ToString();
+        if (WorldConfiguration.UseWorldEffect(effect))
+        {
+            Single dist = Vector3.Distance(ff9.w_moveActorPtr.RealPosition, effectPosition);
+            Single maxDist = ff9.S(16000); // Audible radius in world units
+            if (dist < maxDist)
+            {
+                Single vol = 1f - (dist / maxDist);
+                vol = Math.Min(1f, Math.Max(0f, vol));
+                ff9.w_worldSoundService.Update(key, soundPath, vol);
+            }
+            else
+            {
+                ff9.w_worldSoundService.Stop(key);
+            }
+        }
+        else
+        {
+            ff9.w_worldSoundService.Stop(key);
+        }
     }
 
     public static void w_effectServiceSP(WorldEffect no)
@@ -3649,6 +3685,8 @@ public static class ff9
         ff9.w_frameCounterReady = 0;
         ff9.w_framePhase = 0;
         ff9.w_frameRain = false;
+        ff9.w_frameRainSoundPlaying = false;
+        ff9.w_worldSoundService = new Memoria.WorldSoundService();
         ff9.w_frameCloud = true;
         ff9.w_frameInternalSwitchEnable = true;
         ff9.w_frameShadowOTOffset = 0;
@@ -8980,18 +9018,30 @@ public static class ff9
         }
         Byte rainStrength;
         Int32 rainSpeed;
-        WorldConfiguration.GetRainParameters(out rainStrength, out rainSpeed);
+        String rainSoundPath;
+        WorldConfiguration.GetRainParameters(out rainStrength, out rainSpeed, out rainSoundPath);
         if (rainStrength > 0)
         {
             ff9.rainRenderer.SetRainParam(rainStrength, rainSpeed);
             ff9.w_frameRain = true;
             FF9StateSystem.Common.FF9.btl_rain = (Byte)(rainStrength >> 4);
+            if (!String.IsNullOrEmpty(rainSoundPath))
+            {
+                ff9.w_frameRainSoundPlaying = true;
+                Single vol = Math.Min(1f, rainStrength / 64f);
+                ff9.w_worldSoundService.Update("Rain", rainSoundPath, vol);
+            }
         }
         else
         {
             ff9.w_frameRain = false;
             ff9.rainRenderer.SetRainParam(0, 0);
             FF9StateSystem.Common.FF9.btl_rain = 0;
+            if (ff9.w_frameRainSoundPlaying)
+            {
+                ff9.w_frameRainSoundPlaying = false;
+                ff9.w_worldSoundService.Stop("Rain");
+            }
         }
     }
 
@@ -10051,6 +10101,10 @@ public static class ff9
     public static Byte w_frameDisc;
 
     public static Boolean w_frameRain;
+
+    public static Boolean w_frameRainSoundPlaying;
+
+    public static Memoria.WorldSoundService w_worldSoundService;
 
     public static Boolean w_frameCloud;
 
