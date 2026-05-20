@@ -98,6 +98,7 @@ namespace Memoria
             _customMistModifier.Clear();
             _customDiscModifier.Clear();
             _customRainModifier.Clear();
+            _defaultRainSoundPath = null;
             _customLightModifier.Clear();
             _customTitleModifier.Clear();
             try
@@ -278,6 +279,7 @@ namespace Memoria
                     {
                         rainStrength = (Byte)(str >> 4);
                         rainSpeed = 64;
+                        rainSoundPath = _defaultRainSoundPath;
                     }
                 }
             }
@@ -490,6 +492,14 @@ namespace Memoria
             if (String.Equals(args[0], "Clear"))
             {
                 modifierList.Clear();
+                _defaultRainSoundPath = null;
+                return true;
+            }
+            // Allow setting rain sound without replacing the default rain behavior
+            // e.g. "Rain [RainSound=SE/rain_loop]"
+            if (args[0].StartsWith("[RainSound=") && args[0].EndsWith("]"))
+            {
+                _defaultRainSoundPath = args[0].Substring("[RainSound=".Length, args[0].Length - "[RainSound=]".Length);
                 return true;
             }
             if (!String.Equals(args[0], "Add"))
@@ -767,6 +777,7 @@ namespace Memoria
         private static Dictionary<WorldPlace, ConditionalModifier> _customPlaceModifier = new Dictionary<WorldPlace, ConditionalModifier>();
         private static Dictionary<WorldEffect, ConditionalModifier> _customEffectModifier = new Dictionary<WorldEffect, ConditionalModifier>();
         private static Dictionary<WorldEffect, String> _customEffectSounds = new Dictionary<WorldEffect, String>();
+        private static String _defaultRainSoundPath = null;
         private static ConditionalModifier _customMistModifier = new ConditionalModifier();
         private static ConditionalModifier _customDiscModifier = new ConditionalModifier();
         private static List<RainModifier> _customRainModifier = new List<RainModifier>();
