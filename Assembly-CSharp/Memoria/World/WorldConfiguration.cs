@@ -230,6 +230,12 @@ namespace Memoria
             return null;
         }
 
+        /// <summary>
+        /// Stores the rain sound path for use in battle scenes.
+        /// Set by the world map rain system when rain is active, cleared when it stops.
+        /// </summary>
+        public static String BattleRainSoundPath { get; set; }
+
         public static Boolean UseMist()
         {
             // Custom usage condition

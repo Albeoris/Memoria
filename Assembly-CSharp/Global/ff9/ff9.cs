@@ -3686,7 +3686,10 @@ public static class ff9
         ff9.w_framePhase = 0;
         ff9.w_frameRain = false;
         ff9.w_frameRainSoundPlaying = false;
-        ff9.w_worldSoundService = new Memoria.WorldSoundService();
+        if (ff9.w_worldSoundService != null)
+            ff9.w_worldSoundService.StopAll();
+        else
+            ff9.w_worldSoundService = new Memoria.WorldSoundService();
         ff9.w_frameCloud = true;
         ff9.w_frameInternalSwitchEnable = true;
         ff9.w_frameShadowOTOffset = 0;
@@ -9031,6 +9034,7 @@ public static class ff9
                 Single vol = Math.Min(1f, rainStrength / 64f);
                 ff9.w_worldSoundService.Update("Rain", rainSoundPath, vol);
             }
+            WorldConfiguration.BattleRainSoundPath = rainSoundPath;
         }
         else
         {
@@ -9042,6 +9046,7 @@ public static class ff9
                 ff9.w_frameRainSoundPlaying = false;
                 ff9.w_worldSoundService.Stop("Rain");
             }
+            WorldConfiguration.BattleRainSoundPath = null;
         }
     }
 

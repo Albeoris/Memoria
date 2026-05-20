@@ -58,6 +58,7 @@ namespace Memoria
             {
                 Log.Error($"[WorldSoundPlayer] Failed to load sound: {_currentPath}");
                 _soundProfile = null;
+                _isLoaded = true; // Mark as loaded to prevent retry loop
                 return;
             }
             _isLoaded = true;

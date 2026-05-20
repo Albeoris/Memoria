@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Common;
 using FF9;
+using Memoria;
 using Memoria.Scripts;
 using System;
 using UnityEngine;
@@ -16,6 +17,11 @@ public class BattleRainRenderer : MonoBehaviour
             this.nf_BbgRainFlag = this.maxRain;
         }
         this.mat = ShadersLoader.CreateShaderMaterial("SPS/SPSRain");
+        if (this.nf_BbgRainFlag > 0 && !String.IsNullOrEmpty(WorldConfiguration.BattleRainSoundPath))
+        {
+            this._rainSoundPlayer = new WorldSoundPlayer();
+            this._rainSoundPlayer.Load(WorldConfiguration.BattleRainSoundPath);
+        }
     }
 
     public void nf_BbgRain()
@@ -31,7 +37,19 @@ public class BattleRainRenderer : MonoBehaviour
         }
         if (this.nf_BbgRainFlag == 0)
         {
+            if (this._rainSoundPlaying)
+            {
+                this._rainSoundPlaying = false;
+                this._rainSoundPlayer?.Stop();
+            }
             return;
+        }
+        // Play rain sound if loaded
+        if (this._rainSoundPlayer != null)
+        {
+            Single vol = Math.Min(1f, this.nf_BbgRainFlag / 16f);
+            this._rainSoundPlayer.Play(vol);
+            this._rainSoundPlaying = true;
         }
         GL.PushMatrix();
         this.mat.SetPass(0);
@@ -103,4 +121,13 @@ public class BattleRainRenderer : MonoBehaviour
     private Material mat;
 
     private Int32 randSeed = -1;
+
+    private WorldSoundPlayer _rainSoundPlayer;
+
+    private Boolean _rainSoundPlaying;
+
+    private void OnDestroy()
+    {
+        _rainSoundPlayer?.Unload();
+    }
 }
