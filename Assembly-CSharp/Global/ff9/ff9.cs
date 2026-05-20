@@ -3410,15 +3410,18 @@ public static class ff9
                 Single vol = 1f - (dist / maxDist);
                 vol = Math.Min(1f, Math.Max(0f, vol));
                 ff9.w_worldSoundService.Update(key, soundPath, vol);
+                WorldConfiguration.BattleEffectSounds[key] = new WorldConfiguration.BattleEffectSound { SoundPath = soundPath, Volume = vol };
             }
             else
             {
                 ff9.w_worldSoundService.Stop(key);
+                WorldConfiguration.BattleEffectSounds.Remove(key);
             }
         }
         else
         {
             ff9.w_worldSoundService.Stop(key);
+            WorldConfiguration.BattleEffectSounds.Remove(key);
         }
     }
 

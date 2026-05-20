@@ -236,6 +236,18 @@ namespace Memoria
         /// </summary>
         public static String BattleRainSoundPath { get; set; }
 
+        /// <summary>
+        /// Stores active effect sound paths and their volumes for use in battle scenes.
+        /// Set by the world map effect sound system, cleared when effects go out of range.
+        /// </summary>
+        public static Dictionary<String, BattleEffectSound> BattleEffectSounds { get; } = new Dictionary<String, BattleEffectSound>();
+
+        public class BattleEffectSound
+        {
+            public String SoundPath;
+            public Single Volume;
+        }
+
         public static Boolean UseMist()
         {
             // Custom usage condition

@@ -3,6 +3,7 @@ using FF9;
 using Memoria;
 using Memoria.Scripts;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BattleRainRenderer : MonoBehaviour
@@ -17,10 +18,18 @@ public class BattleRainRenderer : MonoBehaviour
             this.nf_BbgRainFlag = this.maxRain;
         }
         this.mat = ShadersLoader.CreateShaderMaterial("SPS/SPSRain");
+        // Load rain sound for battle
         if (this.nf_BbgRainFlag > 0 && !String.IsNullOrEmpty(WorldConfiguration.BattleRainSoundPath))
         {
             this._rainSoundPlayer = new WorldSoundPlayer();
             this._rainSoundPlayer.Load(WorldConfiguration.BattleRainSoundPath);
+        }
+        // Load effect sounds that were active when battle started
+        foreach (KeyValuePair<String, WorldConfiguration.BattleEffectSound> kvp in WorldConfiguration.BattleEffectSounds)
+        {
+            WorldSoundPlayer player = new WorldSoundPlayer();
+            player.Load(kvp.Value.SoundPath);
+            this._effectSoundPlayers.Add(new BattleEffectSoundEntry { Player = player, Volume = kvp.Value.Volume });
         }
     }
 
@@ -51,6 +60,9 @@ public class BattleRainRenderer : MonoBehaviour
             this._rainSoundPlayer.Play(vol);
             this._rainSoundPlaying = true;
         }
+        // Play effect sounds that were active on the world map
+        foreach (BattleEffectSoundEntry entry in this._effectSoundPlayers)
+            entry.Player.Play(entry.Volume);
         GL.PushMatrix();
         this.mat.SetPass(0);
         GL.Begin(7);
@@ -126,8 +138,19 @@ public class BattleRainRenderer : MonoBehaviour
 
     private Boolean _rainSoundPlaying;
 
+    private List<BattleEffectSoundEntry> _effectSoundPlayers = new List<BattleEffectSoundEntry>();
+
+    private class BattleEffectSoundEntry
+    {
+        public WorldSoundPlayer Player;
+        public Single Volume;
+    }
+
     private void OnDestroy()
     {
         _rainSoundPlayer?.Unload();
+        foreach (BattleEffectSoundEntry entry in _effectSoundPlayers)
+            entry.Player.Unload();
+        _effectSoundPlayers.Clear();
     }
 }
