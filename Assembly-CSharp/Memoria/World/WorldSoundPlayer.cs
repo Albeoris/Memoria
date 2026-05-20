@@ -48,6 +48,7 @@ namespace Memoria
                 Pitch = 1f
             };
 
+            SoundLib.Log($"[WorldSoundPlayer] Loading sound: ResourceID={resourcePath}, resolved akb path=Sounds/{resourcePath}.akb, ogg path=Sounds/{resourcePath}.ogg");
             SoundLoaderProxy.Instance.Load(_soundProfile, OnLoadComplete, null);
         }
 
@@ -56,11 +57,13 @@ namespace Memoria
             _isLoading = false;
             if (profile == null || profile.BankID == 0)
             {
+                SoundLib.Log($"[WorldSoundPlayer] FAILED to load sound: {_currentPath}");
                 Log.Error($"[WorldSoundPlayer] Failed to load sound: {_currentPath}");
                 _soundProfile = null;
                 _isLoaded = true; // Mark as loaded to prevent retry loop
                 return;
             }
+            SoundLib.Log($"[WorldSoundPlayer] Successfully loaded sound: {_currentPath} (BankID={profile.BankID})");
             _isLoaded = true;
         }
 
