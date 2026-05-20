@@ -153,7 +153,7 @@ public class VoicePlayer : SoundPlayer
                         FieldZoneReleaseVoice(d, true);
                 }
             }
-        }
+        }            
 
         // Path for the hunt/hot and cold
         String specialAppend = GetSpecialAppend(FieldZoneId, messageNumber);
