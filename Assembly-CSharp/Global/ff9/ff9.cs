@@ -6682,6 +6682,7 @@ public static class ff9
             Int32 attributeNum = s_musicID.attr;
             for (Int32 i = 0; i < s_musicID.figure; i++)
             {
+                Memoria.Prime.Log.Message($"[WorldSE] Playing default SE: seno={seno}, soundId={s_musicID.id[i]}, resource=Sounds/SE/se{s_musicID.id[i]:D6}.akb");
                 FF9Snd.ff9wldsnd_sndeffect_play(s_musicID.id[i], attributeNum, vol, 127);
                 attributeNum >>= 1;
             }
