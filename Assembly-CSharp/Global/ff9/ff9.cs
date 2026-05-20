@@ -3690,7 +3690,7 @@ public static class ff9
         ff9.w_frameRain = false;
         ff9.w_frameRainSoundPlaying = false;
         if (ff9.w_worldSoundService != null)
-            ff9.w_worldSoundService.StopAll();
+            ff9.w_worldSoundService.UnloadAll();
         else
             ff9.w_worldSoundService = new Memoria.WorldSoundService();
         ff9.w_frameCloud = true;
@@ -8978,6 +8978,11 @@ public static class ff9
             ff9.w_worldLocDistance[i] = (Int32)ff9.SquareRoot0(num * num + num2 * num2);
             if (!WorldConfiguration.UseWorldEffect(WorldEffect.SandStorm) && i == 0)
                 ff9.w_worldLocDistance[0] = 100;
+            // Skip default SE if a custom sound is configured for this effect
+            if (i == 0 && !String.IsNullOrEmpty(WorldConfiguration.GetEffectSoundPath(WorldEffect.SandStorm)))
+                continue;
+            if (i == 2 && !String.IsNullOrEmpty(WorldConfiguration.GetEffectSoundPath(WorldEffect.WaterShrine)))
+                continue;
             Int32 num3 = ff9.w_worldLocDistance[i];
             if (num3 < 63)
             {
