@@ -6,6 +6,10 @@ on:
     - main
   workflow_dispatch:
 
+env:
+  # VCPKG: Enable Binary Caching
+  VCPKG_BINARY_SOURCES: clear;nuget,github,readwrite
+
 jobs:
   build:
     runs-on: windows-latest
@@ -32,6 +36,15 @@ jobs:
         key: nuget-${{ runner.os }}-${{ hashFiles('**/packages.config', '**/*.csproj') }}
         restore-keys: |
           nuget-${{ runner.os }}-
+
+    - name: Setup Github Package Registry
+      shell: pwsh
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+            nuget sources add -Name github -Source "https://nuget.pkg.github.com/${env:GITHUB_REPOSITORY_OWNER}/index.json" -Username ${env:GITHUB_REPOSITORY_OWNER} -Password ${env:GITHUB_TOKEN} -StorePasswordInClearText
+            nuget setApiKey ${env:GITHUB_TOKEN} -Source "https://nuget.pkg.github.com/${env:GITHUB_REPOSITORY_OWNER}/index.json"
+            nuget sources list
 
     - name: NuGet restore
       run: nuget restore Memoria.sln
