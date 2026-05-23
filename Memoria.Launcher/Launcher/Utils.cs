@@ -7,10 +7,12 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
@@ -918,28 +920,191 @@ namespace Memoria.Launcher
 
     #region ThrottledWeb
 
-    public class ThrottledWebClient : WebClient
+    public sealed class ThrottledDownloadProgressChangedEventArgs : EventArgs
     {
-        private Timer _timer;
+        public ThrottledDownloadProgressChangedEventArgs(Int64 bytesReceived, Int64 totalBytesToReceive)
+        {
+            BytesReceived = bytesReceived;
+            TotalBytesToReceive = totalBytesToReceive;
+        }
+
+        public Int64 BytesReceived { get; }
+        public Int64 TotalBytesToReceive { get; }
+
+        public Int32 ProgressPercentage
+        {
+            get
+            {
+                if (TotalBytesToReceive <= 0)
+                    return 0;
+
+                Double progress = BytesReceived * 100d / TotalBytesToReceive;
+                return (Int32)Math.Max(0, Math.Min(100, Math.Round(progress)));
+            }
+        }
+    }
+
+    public class ThrottledHttpClient : IDisposable
+    {
+        private static readonly NLog.Logger _log = AppLogger.GetLogger();
+
+        private readonly HttpClient _client;
+        private readonly Timer _timer;
+        private readonly object _stateLock = new object();
+        private CancellationTokenSource _downloadCts;
+        private bool _isBusy;
         private bool _updatePending;
 
-        public ThrottledWebClient()
+        public event EventHandler<ThrottledDownloadProgressChangedEventArgs> DownloadProgressChanged;
+        public event AsyncCompletedEventHandler DownloadFileCompleted;
+
+        public bool IsBusy
         {
+            get
+            {
+                lock (_stateLock)
+                    return _isBusy;
+            }
+        }
+
+        public ThrottledHttpClient()
+        {
+            HttpClientHandler handler = new HttpClientHandler
+            {
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+            };
+
+            _client = new HttpClient(handler, disposeHandler: true);
+            _client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0");
+
             _timer = new Timer(100);
             _timer.Elapsed += OnTimerElapsed;
             _timer.Start();
         }
 
-        protected override void OnDownloadProgressChanged(DownloadProgressChangedEventArgs e)
+        public void CancelAsync()
         {
-            if (!_updatePending)
+            lock (_stateLock)
             {
-                _updatePending = true;
-                base.OnDownloadProgressChanged(e);
+                _downloadCts?.Cancel();
             }
         }
 
-        private void OnTimerElapsed(object sender, ElapsedEventArgs e)
+        public void DownloadFileAsync(Uri address, String fileName)
+        {
+            _log.Info("Requesting {Uri}", address);
+
+            CancellationTokenSource cts;
+            lock (_stateLock)
+            {
+                if (_isBusy)
+                    throw new InvalidOperationException("A download is already in progress.");
+
+                _downloadCts = new CancellationTokenSource();
+                cts = _downloadCts;
+                _isBusy = true;
+            }
+
+            _ = DownloadFileInternalAsync(address, fileName, cts);
+        }
+
+        private async Task DownloadFileInternalAsync(Uri address, String fileName, CancellationTokenSource cts)
+        {
+            Exception error = null;
+            bool cancelled = false;
+
+            try
+            {
+                using (HttpResponseMessage response = await _client.GetAsync(address, HttpCompletionOption.ResponseHeadersRead, cts.Token).ConfigureAwait(false))
+                {
+                    response.EnsureSuccessStatusCode();
+                    LogResponse(response, address);
+
+                    Int64 totalBytes = response.Content.Headers.ContentLength ?? -1;
+                    Int64 bytesReceived = 0;
+
+                    using (Stream input = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                    using (FileStream output = File.Create(fileName))
+                    {
+                        Byte[] buffer = new Byte[32 * 1024];
+                        Int32 read;
+                        while ((read = await input.ReadAsync(buffer, 0, buffer.Length, cts.Token).ConfigureAwait(false)) > 0)
+                        {
+                            await output.WriteAsync(buffer, 0, read, cts.Token).ConfigureAwait(false);
+                            bytesReceived += read;
+                            RaiseDownloadProgressChanged(bytesReceived, totalBytes);
+                        }
+                    }
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                cancelled = true;
+                _log.Warn("Download was cancelled for {Uri}.", address);
+            }
+            catch (Exception ex)
+            {
+                error = ex;
+                _log.Error(ex, "Download failed for {Uri}.", address);
+            }
+            finally
+            {
+                lock (_stateLock)
+                {
+                    _isBusy = false;
+                    if (ReferenceEquals(_downloadCts, cts))
+                    {
+                        _downloadCts.Dispose();
+                        _downloadCts = null;
+                    }
+                }
+
+                if (error == null && !cancelled)
+                    _log.Info("Download completed successfully for {Uri}.", address);
+
+                DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(error, cancelled, null));
+            }
+        }
+
+        private void RaiseDownloadProgressChanged(Int64 bytesReceived, Int64 totalBytesToReceive)
+        {
+            if (_updatePending)
+                return;
+
+            _updatePending = true;
+            DownloadProgressChanged?.Invoke(this, new ThrottledDownloadProgressChangedEventArgs(bytesReceived, totalBytesToReceive));
+        }
+
+        private void LogResponse(HttpResponseMessage response, Uri uri)
+        {
+            Int32 status = (Int32)response.StatusCode;
+            if (status >= 400)
+                _log.Warn("HTTP {StatusCode} ({StatusDescription}) for {Uri}", status, response.ReasonPhrase, uri);
+            else
+                _log.Info("HTTP {StatusCode} for {Uri} - Content-Type: {ContentType}, Content-Length: {ContentLength}",
+                    status,
+                    uri,
+                    response.Content.Headers.ContentType,
+                    response.Content.Headers.ContentLength ?? -1);
+        }
+
+        public void Dispose()
+        {
+            lock (_stateLock)
+            {
+                _downloadCts?.Cancel();
+                _downloadCts?.Dispose();
+                _downloadCts = null;
+                _isBusy = false;
+            }
+
+            _timer.Stop();
+            _timer.Elapsed -= OnTimerElapsed;
+            _timer.Dispose();
+            _client.Dispose();
+        }
+
+        private void OnTimerElapsed(Object sender, ElapsedEventArgs e)
         {
             _updatePending = false;
         }

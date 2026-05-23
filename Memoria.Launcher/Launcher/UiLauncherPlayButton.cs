@@ -367,16 +367,17 @@ namespace Memoria.Launcher
         public String TargetName;
         public String TargetPath;
 
-        public void ReadFromResponse(string url, WebResponse response)
+        public void ReadFromResponse(string url, HttpResponseMessage response)
         {
             Url = url;
-            ContentLength = response.ContentLength;
-            LastModified = ((HttpWebResponse)response).LastModified;
+            ContentLength = response.Content.Headers.ContentLength ?? -1;
+            LastModified = response.Content.Headers.LastModified?.UtcDateTime ?? DateTime.MinValue;
         }
     }
 
     public sealed class Downloader
     {
+        private static readonly HttpClient _httpClient = new HttpClient();
         private readonly ManualResetEvent _cancelEvent;
 
         public event Action<long> DownloadProgress;
@@ -393,11 +394,10 @@ namespace Memoria.Launcher
             if (_cancelEvent.WaitOne(0))
                 return result;
 
-            WebRequest request = WebRequest.Create(url);
-            request.Method = "HEAD";
-
-            using (WebResponse resp = await request.GetResponseAsync())
+            using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Head, url))
+            using (HttpResponseMessage resp = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false))
             {
+                resp.EnsureSuccessStatusCode();
                 if (_cancelEvent.WaitOne(0))
                     return result;
 
@@ -420,8 +420,7 @@ namespace Memoria.Launcher
             if (_cancelEvent.WaitOne(0))
                 return;
 
-            using (HttpClient client = new HttpClient())
-            using (Stream input = await client.GetStreamAsync(url))
+            using (Stream input = await _httpClient.GetStreamAsync(url).ConfigureAwait(false))
                 await CopyAsync(input, output, _cancelEvent, DownloadProgress);
         }
 
