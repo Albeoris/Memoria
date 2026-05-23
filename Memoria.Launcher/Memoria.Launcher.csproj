@@ -202,6 +202,7 @@
       <TargetPath>SteamPreset.ini</TargetPath>
     </EmbeddedResource>
     <EmbeddedResource Include="Ini\Settings.ini">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Settings.ini</TargetPath>
     </EmbeddedResource>
     <EmbeddedResource Include="7za.exe">
