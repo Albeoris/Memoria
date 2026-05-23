@@ -15,6 +15,8 @@
     Background="Transparent"
     DataContext="{Binding RelativeSource={RelativeSource Self}}"
     AllowDrop="True"
+    UseLayoutRounding="True"
+    SnapsToDevicePixels="True"
     DragEnter="MainWindow_DragEnter"
     DragOver="MainWindow_DragOver"
     DragLeave="MainWindow_DragLeave"
@@ -85,7 +87,7 @@
                 Header="{DynamicResource Settings.menuSettings}"
                 Style="{StaticResource MainTabs}" >
                 <Border Style="{StaticResource TransparentGridStyle}" Padding="0,0,20,0">
-                    <Grid UseLayoutRounding="False">
+                    <Grid UseLayoutRounding="True">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"  />
                             <ColumnDefinition Width="*"/>
@@ -130,7 +132,7 @@
                 Header="{DynamicResource Settings.menuCheats}"
                 Style="{StaticResource MainTabs}" >
                 <Border Style="{StaticResource TransparentGridStyle}" Padding="0,0,20,0">
-                    <Grid UseLayoutRounding="False">
+                    <Grid UseLayoutRounding="True">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"  />
                             <ColumnDefinition Width="*"/>
@@ -156,7 +158,7 @@
                 Header="{DynamicResource Settings.menuAdvanced}"
                 Style="{StaticResource MainTabs}" >
                 <Border Style="{StaticResource TransparentGridStyle}" Padding="0,0,20,0">
-                    <Grid UseLayoutRounding="False">
+                    <Grid UseLayoutRounding="True">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"  />
                             <ColumnDefinition Width="*"/>
@@ -688,9 +690,9 @@
                                                         Background="#e222" />
                                                     <TextBlock
                                                         x:Name="PreviewModCategory"
-                                                        Margin="6,1,6,3"
+                                                        Margin="6,1,8,3"
                                                         Style="{StaticResource ModInfoDetailsStyle}"
-                                                        TextAlignment="Right"
+                                                        TextWrapping="NoWrap"
                                                         Foreground="#fccc"
                                                         Text="Category" />
                                                 </Grid>
@@ -716,9 +718,11 @@
                                                 <ScrollViewer
                                                     Grid.Row="2"
                                                     HorizontalAlignment="Stretch"
+                                                    HorizontalScrollBarVisibility="Disabled"
                                                     VerticalScrollBarVisibility="Auto"
-                                                    Margin="7,0,0,7">
-                                                    <Grid x:Name="gridModInfo" Margin="0,0,0,3">
+                                                    Padding="0,0,14,0"
+                                                    Margin="7,0,7,7">
+                                                    <Grid x:Name="gridModInfo" Margin="0,0,8,3">
                                                         <Grid.RowDefinitions>
                                                             <RowDefinition Height="auto" />
                                                             <RowDefinition Height="auto" />
@@ -729,60 +733,57 @@
                                                             <RowDefinition Height="auto" />
                                                         </Grid.RowDefinitions>
 
-                                                        <WrapPanel
+                                                        <Grid
                                                             Grid.Row="0"
-                                                            Margin="0,4,0,0">
-                                                            <Grid Width="375">
-                                                                <Grid.ColumnDefinitions>
-                                                                    <ColumnDefinition Width="1*" />
-                                                                    <ColumnDefinition Width="1*" />
-                                                                </Grid.ColumnDefinitions>
-                                                                <WrapPanel
-                                                                    Grid.Column="0"
-                                                                    Grid.ColumnSpan="2" >
-                                                                    <TextBlock
-                                                                        x:Name="CaptionModAuthor"
-                                                                        Style="{StaticResource ModInfoLabelStyle}"
-                                                                        VerticalAlignment="Bottom"
-                                                                        Text="Author(s):" />
-                                                                    <TextBlock
-                                                                        x:Name="PreviewModAuthor"
-                                                                        Style="{StaticResource ModInfoDetailsStyle}"
-                                                                        VerticalAlignment="Bottom"
-                                                                        Text="" />
-                                                                </WrapPanel>
-                                                            </Grid>
-                                                        </WrapPanel>
-                                                        <WrapPanel
+                                                            Margin="0,4,6,0"
+                                                            HorizontalAlignment="Stretch">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="*" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBlock
+                                                                Grid.Column="0"
+                                                                x:Name="CaptionModAuthor"
+                                                                Style="{StaticResource ModInfoLabelStyle}"
+                                                                VerticalAlignment="Top"
+                                                                Text="Author(s):" />
+                                                            <TextBlock
+                                                                Grid.Column="1"
+                                                                x:Name="PreviewModAuthor"
+                                                                Style="{StaticResource ModInfoDetailsStyle}"
+                                                                VerticalAlignment="Top"
+                                                                TextWrapping="Wrap"
+                                                                Text="" />
+                                                        </Grid>
+                                                        <Grid
                                                             Grid.Row="1"
-                                                            Margin="0">
-                                                            <Grid Width="375">
-                                                                <Grid.ColumnDefinitions>
-                                                                    <ColumnDefinition Width="1*" />
-                                                                    <ColumnDefinition Width="1*" />
-                                                                </Grid.ColumnDefinitions>
-                                                                <WrapPanel Grid.Column="0" >
-                                                                    <TextBlock x:Name="CaptionModRelease"
-                                                                    Style="{StaticResource ModInfoLabelStyle}"
-                                                                    VerticalAlignment="Bottom"
-                                                                    Text="Updated:" />
-                                                                    <TextBlock x:Name="PreviewModRelease"
-                                                                    Style="{StaticResource ModInfoDetailsStyle}"
-                                                                    VerticalAlignment="Bottom"
-                                                                    Text="🞨" />
-                                                                </WrapPanel>
-                                                                <WrapPanel Grid.Column="1" HorizontalAlignment="Right">
-                                                                    <TextBlock x:Name="CaptionModReleaseOriginal"
-                                                                    Style="{StaticResource ModInfoLabelStyle}"
-                                                                    VerticalAlignment="Bottom"
-                                                                    Text="Released:" />
-                                                                    <TextBlock x:Name="PreviewModReleaseOriginal"
-                                                                    Style="{StaticResource ModInfoDetailsStyle}"
-                                                                    VerticalAlignment="Bottom"
-                                                                    Text="🞨" />
-                                                                </WrapPanel>
-                                                            </Grid>
-                                                        </WrapPanel>
+                                                            Margin="0,0,6,0"
+                                                            HorizontalAlignment="Stretch">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="*" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <WrapPanel Grid.Column="0">
+                                                                <TextBlock x:Name="CaptionModRelease"
+                                                                Style="{StaticResource ModInfoLabelStyle}"
+                                                                VerticalAlignment="Bottom"
+                                                                Text="Updated:" />
+                                                                <TextBlock x:Name="PreviewModRelease"
+                                                                Style="{StaticResource ModInfoDetailsStyle}"
+                                                                VerticalAlignment="Bottom"
+                                                                Text="🞨" />
+                                                            </WrapPanel>
+                                                            <WrapPanel Grid.Column="1" HorizontalAlignment="Right">
+                                                                <TextBlock x:Name="CaptionModReleaseOriginal"
+                                                                Style="{StaticResource ModInfoLabelStyle}"
+                                                                VerticalAlignment="Bottom"
+                                                                Text="Released:" />
+                                                                <TextBlock x:Name="PreviewModReleaseOriginal"
+                                                                Style="{StaticResource ModInfoDetailsStyle}"
+                                                                VerticalAlignment="Bottom"
+                                                                Text="🞨" />
+                                                            </WrapPanel>
+                                                        </Grid>
 
                                                         <Grid x:Name="ContentScroll" Grid.Row="2">
                                                             <Grid>
@@ -812,26 +813,31 @@
                                                                 <Grid x:Name="ReleaseNotesBlock"
                                                                     Grid.Row="2"
                                                                     HorizontalAlignment="Stretch">
-                                                                    <WrapPanel
+                                                                    <Grid
                                                                         Background="{StaticResource DarkGreyUI}"
-                                                                        Margin="0,10,6,0"
+                                                                        Margin="0,10,14,0"
                                                                         Visibility="Visible"
                                                                         Cursor="Hand"
                                                                         MouseLeftButtonUp="OnClickDescription">
-                                                                        <DockPanel>
-                                                                            <TextBlock x:Name="CaptionModReleaseNotes"
-                                                                                Style="{StaticResource ModInfoLabelStyle}"
-                                                                                Margin="5,5,0,5"
-                                                                                VerticalAlignment="Bottom"
-                                                                                Text="Release notes:" />
-                                                                        </DockPanel>
+                                                                        <Grid.RowDefinitions>
+                                                                            <RowDefinition Height="Auto" />
+                                                                            <RowDefinition Height="Auto" />
+                                                                        </Grid.RowDefinitions>
+                                                                        <TextBlock x:Name="CaptionModReleaseNotes"
+                                                                            Grid.Row="0"
+                                                                            Style="{StaticResource ModInfoLabelStyle}"
+                                                                            Margin="5,5,5,0"
+                                                                            VerticalAlignment="Bottom"
+                                                                            Text="Release notes:" />
                                                                         <TextBlock
                                                                             x:Name="PreviewModReleaseNotes"
+                                                                            Grid.Row="1"
                                                                             Style="{StaticResource ModInfoDetailsStyle}"
                                                                             Margin="5,5,5,5"
+                                                                            TextWrapping="Wrap"
                                                                             VerticalAlignment="Bottom"
                                                                             Text="" />
-                                                                    </WrapPanel>
+                                                                    </Grid>
                                                                 </Grid>
                                                             </Grid>
                                                         </Grid>
@@ -854,7 +860,7 @@
                                                                VerticalAlignment="Center"
                                                                Margin="28,0,0,0"/>
                                                         <Label x:Name="ModOptionsHeaderArrow"
-                                                               FontFamily="Segoe UI"
+                                                               FontFamily="Tahoma"
                                                                Foreground="{StaticResource WhiteUI}"
                                                                FontSize="16"
                                                                VerticalAlignment="Center"
