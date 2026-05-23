@@ -828,7 +828,7 @@ namespace Memoria.Launcher
         private String FindModRoot(String archivePath, String preferedRootName = null)
         {
             String[] lookUpFiles = [Mod.DESCRIPTION_FILE, "Memoria.ini", "DictionaryPatch.txt", "FF9_Data", "StreamingAssets"];
-            using (IArchive archive = ArchiveFactory.Open(archivePath))
+            using (IArchive archive = ArchiveFactory.OpenArchive(archivePath))
             {
                 foreach (var entry in archive.Entries)
                 {

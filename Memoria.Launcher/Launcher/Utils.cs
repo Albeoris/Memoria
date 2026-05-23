@@ -831,7 +831,7 @@ namespace Memoria.Launcher
             {
                 return;
             }
-            using (var archive = ArchiveFactory.Open(archivePath))
+            using (var archive = ArchiveFactory.OpenArchive(archivePath))
             {
                 int total = 0;
                 foreach (var entry in archive.Entries)
