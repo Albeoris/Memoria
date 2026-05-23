@@ -97,6 +97,7 @@ namespace Memoria.Launcher
                 tabCtrlMain.SelectedIndex = 1;
             UpdateModDetails((Mod)null);
             CheckOutdatedAndIncompatibleMods();
+            UpdateLauncherTheme();
 
             // add tooltip style to manager's buttons
             UiGrid.MakeTooltip(btnReorganize, "ModEditor.TooltipReorganize", "", "hand");
@@ -141,7 +142,7 @@ namespace Memoria.Launcher
                     UpdateModSettings();
                     UpdateLauncherTheme();
                 }
-                else if(date < new DateTime(2025, 07, 13))
+                else if (date < new DateTime(2025, 07, 13))
                 {
                     // Make sure to use the new back-end
                     IniFile.MemoriaIni.SetSetting("Audio", "Backend", "1");
@@ -351,12 +352,12 @@ namespace Memoria.Launcher
 
                     // Extract the archive
                     // TODO language:
-                    dropLabel.Content = $"Extracting '{Path.GetFileName(filename)}'";
+                    dropLabel.Content = $"Extracting '{Path.GetFileName(filename)}'\n(Right click to cancel)";
                     Mod modInfo = await InstallModFromArchive(filename, null, (progress) =>
                     {
                         Dispatcher.BeginInvoke(() =>
                         {
-                            dropLabel.Content = $"Extracting '{Path.GetFileName(filename)}' - {progress}%";
+                            dropLabel.Content = $"Extracting '{Path.GetFileName(filename)}' - {progress}%\n(Right click to cancel)";
                         });
                     });
 
@@ -380,6 +381,11 @@ namespace Memoria.Launcher
             {
                 dropBackground.Visibility = Visibility.Hidden;
             }
+        }
+        private void CancelExtraction(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+            ExtractionCancellationToken.Cancel();
         }
 
         private void ShowTemporaryMessage(string message, bool success)

@@ -30,8 +30,7 @@ namespace Memoria.Launcher
                 "Settings.ShaderDropboxChoice1",
                 "Settings.ShaderDropboxChoice2",
                 "Settings.ShaderDropboxChoice3",
-                "Settings.ShaderDropboxChoice4",
-                "Settings.ShaderDropboxChoice5"
+                "Settings.ShaderDropboxChoice4"
             ];
             CreateCombobox("ShaderFieldChoice", comboboxchoices, 50, "Settings.FieldShader", "Settings.FieldShader_Tooltip", "shader_comparison2.jpg");
 
@@ -40,8 +39,7 @@ namespace Memoria.Launcher
                 "Settings.ShaderDropboxChoice1",
                 "Settings.ShaderDropboxChoice2",
                 "Settings.ShaderDropboxChoice3",
-                "Settings.ShaderDropboxChoice4",
-                "Settings.ShaderDropboxChoice5"
+                "Settings.ShaderDropboxChoice4"
             ];
             CreateCombobox("ShaderBattleChoice", comboboxchoices, 50, "Settings.BattleShader", "Settings.BattleShader_Tooltip", "shader_comparison2.jpg");
 
