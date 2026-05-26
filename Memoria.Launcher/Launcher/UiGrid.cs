@@ -20,7 +20,7 @@ namespace Memoria.Launcher
         public UiGrid()
         {
             SetCols(100);
-            Width = 293;
+            Width = 290;
             Margin = new Thickness(0);
         }
 

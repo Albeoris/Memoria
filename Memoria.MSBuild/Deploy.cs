@@ -389,14 +389,17 @@ namespace Memoria.MSBuild
 
                 foreach (DeploymentFileDefinition file in DeploymentFileSet.Files)
                 {
-                    if (file.Kind != DeploymentItemKind.File)
+                    if (file.Kind != DeploymentItemKind.File && file.Kind != DeploymentItemKind.InitialFile)
                         continue;
 
                     String sourceItem = Path.Combine(_deployTask.TargetDir, file.SourceRelativePath);
                     if (!File.Exists(sourceItem))
                         continue;
 
-                    QueuePlatformCopies(sourceItem, file.TargetRelativePath);
+                    if (file.Kind == DeploymentItemKind.InitialFile)
+                        QueuePlatformCopiesIfNotExists(sourceItem, file.TargetRelativePath);
+                    else
+                        QueuePlatformCopies(sourceItem, file.TargetRelativePath);
                 }
             }
 
@@ -417,6 +420,9 @@ namespace Memoria.MSBuild
                             break;
                         case DeploymentItemKind.File:
                             BeginCopyOutputFile(file.SourceRelativePath, file.TargetRelativePath);
+                            break;
+                        case DeploymentItemKind.InitialFile:
+                            BeginCopyInitialOutputFile(file.SourceRelativePath, file.TargetRelativePath);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -461,6 +467,47 @@ namespace Memoria.MSBuild
                     return;
 
                 QueuePlatformCopies(sourceItem, destinationRelativePath);
+            }
+
+            private void BeginCopyInitialOutputFile(String sourceRelativePath, String destinationRelativePath)
+            {
+                String sourceItem = Path.Combine(_outputDir, sourceRelativePath);
+                if (!File.Exists(sourceItem))
+                    return;
+
+                QueuePlatformCopiesIfNotExists(sourceItem, destinationRelativePath);
+            }
+
+            private void QueuePlatformCopiesIfNotExists(String sourceItem, String destinationRelativePath)
+            {
+                if (destinationRelativePath.Contains("{PLATFORM}"))
+                {
+                    if (_hasX64)
+                        QueueCopyIfNotExists(sourceItem, Path.Combine(_rootDirectory, destinationRelativePath.Replace("{PLATFORM}", "x64")), logSuccess: true);
+
+                    if (_hasX86)
+                        QueueCopyIfNotExists(sourceItem, Path.Combine(_rootDirectory, destinationRelativePath.Replace("{PLATFORM}", "x86")), logSuccess: true);
+
+                    return;
+                }
+
+                if (destinationRelativePath.StartsWith("x64\\", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (_hasX64)
+                        QueueCopyIfNotExists(sourceItem, Path.Combine(_rootDirectory, destinationRelativePath), logSuccess: true);
+
+                    return;
+                }
+
+                if (destinationRelativePath.StartsWith("x86\\", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (_hasX86)
+                        QueueCopyIfNotExists(sourceItem, Path.Combine(_rootDirectory, destinationRelativePath), logSuccess: true);
+
+                    return;
+                }
+
+                QueueCopyIfNotExists(sourceItem, Path.Combine(_rootDirectory, destinationRelativePath), logSuccess: true);
             }
 
             private void QueuePlatformCopies(String sourceItem, String destinationRelativePath)
@@ -515,6 +562,17 @@ namespace Memoria.MSBuild
                 String source = sourceItem;
                 String target = targetItem;
                 _tasks.Add(Task.Factory.StartNew(() => CopyFile(source, target, logSuccess)));
+            }
+
+            private void QueueCopyIfNotExists(String sourceItem, String targetItem, Boolean logSuccess)
+            {
+                String source = sourceItem;
+                String target = targetItem;
+                _tasks.Add(Task.Factory.StartNew(() =>
+                {
+                    if (!File.Exists(target))
+                        CopyFile(source, target, logSuccess);
+                }));
             }
 
             public void EndCopy()

@@ -37,6 +37,7 @@ namespace Memoria
             // Apply patches; the default folder (out of any mod folder) is ignored
             try
             {
+                global::VoicePlayer.ClearModdedHoldDialogRules();
                 foreach (AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
                 {
                     if (String.IsNullOrEmpty(folder.FolderPath))
@@ -368,6 +369,38 @@ namespace Memoria
                                 EventEngine.moogleFldMap.Remove(fldid);
                         }
                     }
+                }
+                else if (String.Equals(entry[0], "VoiceActingHoldDialog"))
+                {
+                    // eg.: VoiceActingHoldDialog Add 4 126
+                    // eg.: VoiceActingHoldDialog Add 4 126 100
+                    // eg.: VoiceActingHoldDialog Add 4 120-130 100-105
+                    // Format: [Add|Remove|Set] FieldZoneId TextId [MapNo], where TextId matches the voice file number va_<TextId>
+                    Int32 valueIndex = 1;
+                    Boolean add = true;
+                    Boolean set = false;
+                    if (String.Equals(entry[valueIndex], "Set"))
+                    {
+                        set = true;
+                        valueIndex++;
+                    }
+                    else if (String.Equals(entry[valueIndex], "Add"))
+                    {
+                        add = true;
+                        valueIndex++;
+                    }
+                    else if (String.Equals(entry[valueIndex], "Remove"))
+                    {
+                        add = false;
+                        valueIndex++;
+                    }
+                    if (entry.Length < valueIndex + 2)
+                        continue;
+                    if (set)
+                        global::VoicePlayer.ClearModdedHoldDialogRules();
+                    String mapNo = entry.Length > valueIndex + 2 ? entry[valueIndex + 2] : null;
+                    if (!global::VoicePlayer.PatchHoldDialogRule(add, entry[valueIndex], entry[valueIndex + 1], mapNo))
+                        Log.Message("[DataPatchers] Invalid VoiceActingHoldDialog entry: " + s);
                 }
                 else if (String.Equals(entry[0], "BattleMapModel"))
                 {

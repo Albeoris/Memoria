@@ -2,7 +2,7 @@
 
     <Style x:Key="ButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="Foreground" Value="{DynamicResource WhiteUI}"/>
-        <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="FontFamily" Value="Tahoma"/>
         <Setter Property="FontWeight" Value="Medium"/>
         <Setter Property="FontSize" Value="13"/>
         <Setter Property="Template">
@@ -49,7 +49,7 @@
 
     <Style x:Key="ButtonStyleRed" TargetType="{x:Type Button}">
         <Setter Property="Foreground" Value="{DynamicResource WhiteUI}"/>
-        <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="FontFamily" Value="Tahoma"/>
         <Setter Property="FontWeight" Value="Medium"/>
         <Setter Property="FontSize" Value="13"/>
         <Setter Property="Template">
