@@ -6,7 +6,8 @@ namespace Memoria.MSBuild
     {
         Folder,
         ManagedDll,
-        File
+        File,
+        InitialFile
     }
 
     internal sealed class DeploymentFileDefinition
@@ -36,8 +37,11 @@ namespace Memoria.MSBuild
             new DeploymentFileDefinition(DeploymentItemKind.File, @"Launcher\Memoria.Launcher.exe", @"FF9_Launcher.exe"),
             new DeploymentFileDefinition(DeploymentItemKind.File, @"Launcher\Memoria.Launcher.exe.config", @"FF9_Launcher.exe.config"),
             new DeploymentFileDefinition(DeploymentItemKind.File, @"Launcher\Memoria.SteamFix.exe", @"Memoria.SteamFix.exe"),
-            new DeploymentFileDefinition(DeploymentItemKind.File, @"Launcher\Memoria.ini", @"Memoria.ini"),
-            new DeploymentFileDefinition(DeploymentItemKind.File, @"Launcher\Settings.ini", @"Settings.ini"),
+            new DeploymentFileDefinition(DeploymentItemKind.File, @"Launcher\NLog.dll", @"NLog.dll"),
+            new DeploymentFileDefinition(DeploymentItemKind.File, @"Launcher\SharpCompress.dll", @"SharpCompress.dll"),
+            new DeploymentFileDefinition(DeploymentItemKind.File, @"Launcher\ZstdSharp.dll", @"ZstdSharp.dll"),
+            new DeploymentFileDefinition(DeploymentItemKind.InitialFile, @"Launcher\Memoria.ini", @"Memoria.ini"),
+            new DeploymentFileDefinition(DeploymentItemKind.InitialFile, @"Launcher\Settings.ini", @"Settings.ini"),
             new DeploymentFileDefinition(DeploymentItemKind.File, @"XInputDotNetPure.dll", @"{PLATFORM}\FF9_Data\Managed\XInputDotNetPure.dll"),
             new DeploymentFileDefinition(DeploymentItemKind.File, @"Newtonsoft.Json.dll", @"{PLATFORM}\FF9_Data\Managed\Newtonsoft.Json.dll"),
             new DeploymentFileDefinition(DeploymentItemKind.File, @"System.Runtime.Serialization.dll", @"{PLATFORM}\FF9_Data\Managed\System.Runtime.Serialization.dll"),
