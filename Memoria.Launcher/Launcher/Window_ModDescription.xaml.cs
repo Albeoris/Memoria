@@ -17,6 +17,9 @@ namespace Memoria.Launcher
         public Window_ModDescription(Mod mod)
         {
             InitializeComponent();
+            Document.PreviewMouseLeftButtonUp += Document_PreviewMouseLeftButtonUp;
+            Document.PreviewMouseMove += Document_PreviewMouseMove;
+            Document.MouseLeave += Document_MouseLeave;
 
             ModNameLabel.Content = mod.Name;
             Document.Document.Blocks.Clear();
@@ -91,12 +94,111 @@ namespace Memoria.Launcher
             {
                 Hyperlink link = new Hyperlink(new Run("\n" + (String)Lang.Res["ModEditor.DirectDownload"]));
                 link.NavigateUri = new Uri(mod.DownloadUrl);
-                link.RequestNavigate += (s, e) =>
-                {
-                    Process.Start(e.Uri.ToString());
-                };
+                link.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#4493f8"));
+                link.TextDecorations = TextDecorations.Underline;
+                link.Cursor = Cursors.Hand;
+                link.Click += OnHyperlinkClick;
                 Document.Document.Blocks.Add(new Paragraph(link) { Margin = new Thickness(0, 10, 0, 10), });
             }
+        }
+
+        private static Hyperlink TryGetHyperlink(TextPointer pointer)
+        {
+            if (pointer?.Parent is Hyperlink hyperlink)
+                return hyperlink;
+
+            if (pointer?.Parent is Run run && run.Parent is Hyperlink runHyperlink)
+                return runHyperlink;
+
+            return null;
+        }
+
+        private void UpdateDocumentCursor(Point position)
+        {
+            TextPointer pointer = Document.GetPositionFromPoint(position, true);
+            Hyperlink hyperlink = TryGetHyperlink(pointer);
+            Document.Cursor = hyperlink?.NavigateUri != null ? Cursors.Hand : Cursors.Arrow;
+        }
+
+        private static void OpenUrl(String url)
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                return;
+            }
+            catch
+            {
+                // Fall back for Wine/Proton setups where shell execution is unreliable.
+            }
+
+            try
+            {
+                Process.Start(new ProcessStartInfo("cmd", $"/c start \"\" \"{url}\"")
+                {
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                });
+                return;
+            }
+            catch
+            {
+                // Try Linux host openers next.
+            }
+
+            try
+            {
+                Process.Start(new ProcessStartInfo("xdg-open", url)
+                {
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                });
+                return;
+            }
+            catch
+            {
+                // Last fallback for some Linux desktop stacks.
+            }
+
+            try
+            {
+                Process.Start(new ProcessStartInfo("gio", $"open \"{url}\"")
+                {
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                });
+            }
+            catch
+            {
+                // Ignore if no opener is available.
+            }
+        }
+
+        private static void OnHyperlinkClick(Object sender, RoutedEventArgs e)
+        {
+            if (sender is Hyperlink hyperlink && hyperlink.NavigateUri != null)
+                OpenUrl(hyperlink.NavigateUri.AbsoluteUri);
+        }
+
+        private void Document_PreviewMouseLeftButtonUp(Object sender, MouseButtonEventArgs e)
+        {
+            TextPointer pointer = Document.GetPositionFromPoint(e.GetPosition(Document), true);
+            Hyperlink hyperlink = TryGetHyperlink(pointer);
+            if (hyperlink?.NavigateUri == null)
+                return;
+
+            OpenUrl(hyperlink.NavigateUri.AbsoluteUri);
+            e.Handled = true;
+        }
+
+        private void Document_PreviewMouseMove(Object sender, MouseEventArgs e)
+        {
+            UpdateDocumentCursor(e.GetPosition(Document));
+        }
+
+        private void Document_MouseLeave(Object sender, MouseEventArgs e)
+        {
+            Document.Cursor = Cursors.Arrow;
         }
 
         private void Close(Object sender, RoutedEventArgs e)
