@@ -63,10 +63,13 @@ Note: This is **not** affiliated with the Memoria Project, a 2023 Proof-of-conce
 >
 > If you prefer to use an automated approach, this gist is also available:
 >
-> `bash -c "$(curl -sL https://gist.githubusercontent.com/dotaxis/1ad1c64baa7ad9c1dabcb255ea6257ae/raw/memoria.sh)"`
+> ```bash
+> bash -c "$(curl -sL https://gist.githubusercontent.com/dotaxis/1ad1c64baa7ad9c1dabcb255ea6257ae/raw/memoria.sh)"
+> ```
 
 - Download `Memoria.Patcher-linux-x64` from which ever release channel you prefer
 - Copy the file inside your game directory (next to `FF9_Launcher.exe` )
+- Open a terminal session in your game path ( or `cd` to its path )
 - `chmod +x Memoria.Patcher-linux-x64 && ./Memoria.Patcher-linux-x64`
 - Launch the game and enjoy
 
@@ -78,6 +81,7 @@ Note: This is **not** affiliated with the Memoria Project, a 2023 Proof-of-conce
 
 - Download `Memoria.Patcher-osx-x64` from which ever release channel you prefer
 - Copy the file inside your game directory (next to `FF9_Launcher.exe` )
+- Open a terminal session in your game path ( or `cd` to its path )
 - `chmod +x Memoria.Patcher-osx-x64 && ./Memoria.Patcher-osx-x64`
 - Launch the game and enjoy
 
