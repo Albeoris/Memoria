@@ -949,6 +949,7 @@ namespace Memoria.Launcher
         private static readonly NLog.Logger _log = AppLogger.GetLogger();
 
         private readonly HttpClient _client;
+        private readonly HttpClient _dohFallbackClient;
         private readonly Timer _timer;
         private readonly object _stateLock = new object();
         private CancellationTokenSource _downloadCts;
@@ -970,6 +971,7 @@ namespace Memoria.Launcher
         public ThrottledHttpClient()
         {
             _client = HttpClients.CreateDownloadClient();
+            _dohFallbackClient = HttpClients.CreateDownloadDohFallbackClient();
 
             _timer = new Timer(100);
             _timer.Elapsed += OnTimerElapsed;
@@ -1009,7 +1011,7 @@ namespace Memoria.Launcher
 
             try
             {
-                using (HttpResponseMessage response = await _client.GetAsync(address, HttpCompletionOption.ResponseHeadersRead, cts.Token).ConfigureAwait(false))
+                using (HttpResponseMessage response = await HttpClients.GetWithDohFallbackAsync(_client, _dohFallbackClient, address, HttpCompletionOption.ResponseHeadersRead, cts.Token).ConfigureAwait(false))
                 {
                     response.EnsureSuccessStatusCode();
                     LogResponse(response, address);
@@ -1096,6 +1098,7 @@ namespace Memoria.Launcher
             _timer.Elapsed -= OnTimerElapsed;
             _timer.Dispose();
             _client.Dispose();
+            _dohFallbackClient.Dispose();
         }
 
         private void OnTimerElapsed(Object sender, ElapsedEventArgs e)

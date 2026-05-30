@@ -37,6 +37,8 @@ namespace Memoria.MSBuild
             new DeploymentFileDefinition(DeploymentItemKind.File, @"Launcher\Memoria.Launcher.exe", @"FF9_Launcher.exe"),
             new DeploymentFileDefinition(DeploymentItemKind.File, @"Launcher\Memoria.Launcher.exe.config", @"FF9_Launcher.exe.config"),
             new DeploymentFileDefinition(DeploymentItemKind.File, @"Launcher\Memoria.SteamFix.exe", @"Memoria.SteamFix.exe"),
+            new DeploymentFileDefinition(DeploymentItemKind.File, @"Launcher\Ae.Dns.Client.dll", @"Ae.Dns.Client.dll"),
+            new DeploymentFileDefinition(DeploymentItemKind.File, @"Launcher\Ae.Dns.Protocol.dll", @"Ae.Dns.Protocol.dll"),
             new DeploymentFileDefinition(DeploymentItemKind.File, @"Launcher\NLog.dll", @"NLog.dll"),
             new DeploymentFileDefinition(DeploymentItemKind.File, @"Launcher\SharpCompress.dll", @"SharpCompress.dll"),
             new DeploymentFileDefinition(DeploymentItemKind.File, @"Launcher\ZstdSharp.dll", @"ZstdSharp.dll"),
