@@ -969,13 +969,7 @@ namespace Memoria.Launcher
 
         public ThrottledHttpClient()
         {
-            HttpClientHandler handler = new HttpClientHandler
-            {
-                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-            };
-
-            _client = new HttpClient(handler, disposeHandler: true);
-            _client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0");
+            _client = HttpClients.CreateDownloadClient();
 
             _timer = new Timer(100);
             _timer.Elapsed += OnTimerElapsed;

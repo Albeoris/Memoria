@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -41,10 +42,9 @@ namespace Memoria.Launcher
             {
                 // Load the release page from github and parse it into a changelog
                 String url = "https://github.com/Albeoris/Memoria/releases";
-                using (HttpClient client = new())
+                using (CancellationTokenSource timeout = new CancellationTokenSource(TimeSpan.FromSeconds(5)))
                 {
-                    client.Timeout = TimeSpan.FromSeconds(5);
-                    using (var response = await client.GetAsync(url))
+                    using (var response = await HttpClients.Shared.GetAsync(url, timeout.Token))
                     {
                         response.EnsureSuccessStatusCode();
                         changeLogHtml = await response.Content.ReadAsStringAsync();

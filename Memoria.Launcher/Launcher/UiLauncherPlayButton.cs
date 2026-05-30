@@ -377,7 +377,7 @@ namespace Memoria.Launcher
 
     public sealed class Downloader
     {
-        private static readonly HttpClient _httpClient = new HttpClient();
+        private static readonly HttpClient _httpClient = HttpClients.Shared;
         private readonly ManualResetEvent _cancelEvent;
 
         public event Action<long> DownloadProgress;

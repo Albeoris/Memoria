@@ -102,6 +102,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Launcher\SettingsGrid_Vanilla.cs" />
     <Compile Include="Launcher\AppLogger.cs" />
+    <Compile Include="Launcher\HttpClients.cs" />
     <Compile Include="Launcher\Utils.cs" />
     <Compile Include="Launcher\UiLauncherPlayButton.cs" />
     <Compile Include="Launcher\UiLauncherButton.xaml.cs">
