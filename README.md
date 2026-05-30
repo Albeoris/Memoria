@@ -63,7 +63,7 @@ Note: This is **not** affiliated with the Memoria Project, a 2023 Proof-of-conce
 >
 > If you prefer to use an automated approach, this gist is also available:
 >
-> ```
+> ```bash
 > bash -c "$(curl -sL https://gist.githubusercontent.com/dotaxis/1ad1c64baa7ad9c1dabcb255ea6257ae/raw/memoria.sh)"
 > ```
 
