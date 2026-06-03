@@ -395,17 +395,14 @@ namespace Memoria.Launcher
             if (_cancelEvent.WaitOne(0))
                 return result;
 
-            HttpResponseMessage response;
-            try
-            {
-                using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Head, url))
-                    response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
-            }
-            catch (Exception ex) when (HttpClients.ShouldRetryWithDoh(ex, CancellationToken.None))
-            {
-                using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Head, url))
-                    response = await _dohFallbackClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
-            }
+            Uri uri = new Uri(url, UriKind.Absolute);
+            HttpResponseMessage response = await HttpClients.SendWithDohFallbackAsync(
+                _httpClient,
+                _dohFallbackClient,
+                HttpMethod.Head,
+                uri,
+                HttpCompletionOption.ResponseHeadersRead,
+                CancellationToken.None).ConfigureAwait(false);
 
             using (response)
             {
@@ -432,15 +429,12 @@ namespace Memoria.Launcher
             if (_cancelEvent.WaitOne(0))
                 return;
 
-            Stream input;
-            try
-            {
-                input = await _httpClient.GetStreamAsync(url).ConfigureAwait(false);
-            }
-            catch (Exception ex) when (HttpClients.ShouldRetryWithDoh(ex, CancellationToken.None))
-            {
-                input = await _dohFallbackClient.GetStreamAsync(url).ConfigureAwait(false);
-            }
+            Uri uri = new Uri(url, UriKind.Absolute);
+            Stream input = await HttpClients.GetStreamWithDohFallbackAsync(
+                _httpClient,
+                _dohFallbackClient,
+                uri,
+                CancellationToken.None).ConfigureAwait(false);
 
             using (input)
                 await CopyAsync(input, output, _cancelEvent, DownloadProgress);

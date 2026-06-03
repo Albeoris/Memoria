@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -10,9 +11,12 @@ namespace Memoria.Launcher
 {
     internal static class HttpClients
     {
+        private static readonly NLog.Logger _log = AppLogger.GetLogger();
         private const String DefaultUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0";
         private static readonly Uri _cloudflareDohEndpoint = new Uri("https://cloudflare-dns.com/");
         private static readonly Uri _googleDohEndpoint = new Uri("https://dns.google/");
+        private const String ResolverSystem = "system-dns";
+        private const String ResolverDohRacer = "doh-racer(cloudflare+google)";
 
         private static readonly Lazy<HttpClient> _shared = new Lazy<HttpClient>(CreateShared, isThreadSafe: true);
         private static readonly Lazy<HttpClient> _sharedDohFallback = new Lazy<HttpClient>(CreateDohFallbackShared, isThreadSafe: true);
@@ -85,13 +89,109 @@ namespace Memoria.Launcher
 
         public static async Task<HttpResponseMessage> GetWithDohFallbackAsync(HttpClient primaryClient, HttpClient fallbackClient, Uri uri, HttpCompletionOption completionOption, CancellationToken cancellationToken)
         {
+            _log.Info("HTTP GET {Uri} via {Resolver}", uri, ResolverSystem);
             try
             {
-                return await primaryClient.GetAsync(uri, completionOption, cancellationToken).ConfigureAwait(false);
+                HttpResponseMessage response = await primaryClient.GetAsync(uri, completionOption, cancellationToken).ConfigureAwait(false);
+                LogResponse(response, uri, ResolverSystem);
+                return response;
             }
             catch (Exception ex) when (ShouldRetryWithDoh(ex, cancellationToken))
             {
-                return await fallbackClient.GetAsync(uri, completionOption, cancellationToken).ConfigureAwait(false);
+                _log.Warn(ex, "HTTP GET failed for {Uri} via {Resolver}; retrying via {FallbackResolver}", uri, ResolverSystem, ResolverDohRacer);
+                try
+                {
+                    HttpResponseMessage response = await fallbackClient.GetAsync(uri, completionOption, cancellationToken).ConfigureAwait(false);
+                    LogResponse(response, uri, ResolverDohRacer);
+                    return response;
+                }
+                catch (Exception fallbackEx)
+                {
+                    _log.Error(fallbackEx, "HTTP GET failed for {Uri} via {FallbackResolver}", uri, ResolverDohRacer);
+                    throw;
+                }
+            }
+        }
+
+        public static async Task<HttpResponseMessage> SendWithDohFallbackAsync(HttpClient primaryClient, HttpClient fallbackClient, HttpMethod method, Uri uri, HttpCompletionOption completionOption, CancellationToken cancellationToken)
+        {
+            _log.Info("HTTP {Method} {Uri} via {Resolver}", method, uri, ResolverSystem);
+            try
+            {
+                HttpResponseMessage response = await SendAsync(primaryClient, method, uri, completionOption, cancellationToken).ConfigureAwait(false);
+                LogResponse(response, uri, ResolverSystem);
+                return response;
+            }
+            catch (Exception ex) when (ShouldRetryWithDoh(ex, cancellationToken))
+            {
+                _log.Warn(ex, "HTTP {Method} failed for {Uri} via {Resolver}; retrying via {FallbackResolver}", method, uri, ResolverSystem, ResolverDohRacer);
+                try
+                {
+                    HttpResponseMessage response = await SendAsync(fallbackClient, method, uri, completionOption, cancellationToken).ConfigureAwait(false);
+                    LogResponse(response, uri, ResolverDohRacer);
+                    return response;
+                }
+                catch (Exception fallbackEx)
+                {
+                    _log.Error(fallbackEx, "HTTP {Method} failed for {Uri} via {FallbackResolver}", method, uri, ResolverDohRacer);
+                    throw;
+                }
+            }
+        }
+
+        public static async Task<Stream> GetStreamWithDohFallbackAsync(HttpClient primaryClient, HttpClient fallbackClient, Uri uri, CancellationToken cancellationToken)
+        {
+            _log.Info("HTTP GET(stream) {Uri} via {Resolver}", uri, ResolverSystem);
+            try
+            {
+                Stream stream = await primaryClient.GetStreamAsync(uri).ConfigureAwait(false);
+                _log.Info("HTTP GET(stream) opened for {Uri} via {Resolver}", uri, ResolverSystem);
+                return stream;
+            }
+            catch (Exception ex) when (ShouldRetryWithDoh(ex, cancellationToken))
+            {
+                _log.Warn(ex, "HTTP GET(stream) failed for {Uri} via {Resolver}; retrying via {FallbackResolver}", uri, ResolverSystem, ResolverDohRacer);
+                try
+                {
+                    Stream stream = await fallbackClient.GetStreamAsync(uri).ConfigureAwait(false);
+                    _log.Info("HTTP GET(stream) opened for {Uri} via {Resolver}", uri, ResolverDohRacer);
+                    return stream;
+                }
+                catch (Exception fallbackEx)
+                {
+                    _log.Error(fallbackEx, "HTTP GET(stream) failed for {Uri} via {FallbackResolver}", uri, ResolverDohRacer);
+                    throw;
+                }
+            }
+        }
+
+        private static async Task<HttpResponseMessage> SendAsync(HttpClient client, HttpMethod method, Uri uri, HttpCompletionOption completionOption, CancellationToken cancellationToken)
+        {
+            using (HttpRequestMessage request = new HttpRequestMessage(method, uri))
+                return await client.SendAsync(request, completionOption, cancellationToken).ConfigureAwait(false);
+        }
+
+        private static void LogResponse(HttpResponseMessage response, Uri uri, String resolver)
+        {
+            Int32 status = (Int32)response.StatusCode;
+            if (status >= 400)
+            {
+                _log.Warn("HTTP {StatusCode} ({StatusDescription}) for {Uri} via {Resolver} - Content-Type: {ContentType}, Content-Length: {ContentLength}",
+                    status,
+                    response.ReasonPhrase,
+                    uri,
+                    resolver,
+                    response.Content.Headers.ContentType,
+                    response.Content.Headers.ContentLength ?? -1);
+            }
+            else
+            {
+                _log.Info("HTTP {StatusCode} for {Uri} via {Resolver} - Content-Type: {ContentType}, Content-Length: {ContentLength}",
+                    status,
+                    uri,
+                    resolver,
+                    response.Content.Headers.ContentType,
+                    response.Content.Headers.ContentLength ?? -1);
             }
         }
     }
