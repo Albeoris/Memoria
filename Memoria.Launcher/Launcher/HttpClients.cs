@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Ae.Dns.Client;
@@ -20,19 +21,20 @@ namespace Memoria.Launcher
 
         private static readonly Lazy<HttpClient> _shared = new Lazy<HttpClient>(CreateShared, isThreadSafe: true);
         private static readonly Lazy<HttpClient> _sharedDohFallback = new Lazy<HttpClient>(CreateDohFallbackShared, isThreadSafe: true);
+        private static readonly ConditionalWeakTable<HttpClient, HttpClient> _fallbackClients = new ConditionalWeakTable<HttpClient, HttpClient>();
 
         public static HttpClient Shared => _shared.Value;
-        public static HttpClient SharedDohFallback => _sharedDohFallback.Value;
 
         public static HttpClient CreateDownloadClient()
         {
             HttpClientHandler handler = CreateDefaultHandler();
             HttpClient client = new HttpClient(handler, disposeHandler: true);
             ApplyDefaultHeaders(client);
+            _fallbackClients.GetValue(client, _ => CreateDohFallbackClient());
             return client;
         }
 
-        public static HttpClient CreateDownloadDohFallbackClient()
+        private static HttpClient CreateDohFallbackClient()
         {
             HttpClientHandler httpHandler = CreateDefaultHandler();
 
@@ -63,7 +65,7 @@ namespace Memoria.Launcher
 
         private static HttpClient CreateDohFallbackShared()
         {
-            return CreateDownloadDohFallbackClient();
+            return CreateDohFallbackClient();
         }
 
         private static HttpClientHandler CreateDefaultHandler()
@@ -87,8 +89,9 @@ namespace Memoria.Launcher
             return !(exception is OperationCanceledException);
         }
 
-        public static async Task<HttpResponseMessage> GetWithDohFallbackAsync(HttpClient primaryClient, HttpClient fallbackClient, Uri uri, HttpCompletionOption completionOption, CancellationToken cancellationToken)
+        public static async Task<HttpResponseMessage> GetWithDohFallbackAsync(HttpClient primaryClient, Uri uri, HttpCompletionOption completionOption, CancellationToken cancellationToken)
         {
+            HttpClient fallbackClient = GetFallbackClient(primaryClient);
             _log.Info("HTTP GET {Uri} via {Resolver}", uri, ResolverSystem);
             try
             {
@@ -113,8 +116,9 @@ namespace Memoria.Launcher
             }
         }
 
-        public static async Task<HttpResponseMessage> SendWithDohFallbackAsync(HttpClient primaryClient, HttpClient fallbackClient, HttpMethod method, Uri uri, HttpCompletionOption completionOption, CancellationToken cancellationToken)
+        public static async Task<HttpResponseMessage> SendWithDohFallbackAsync(HttpClient primaryClient, HttpMethod method, Uri uri, HttpCompletionOption completionOption, CancellationToken cancellationToken)
         {
+            HttpClient fallbackClient = GetFallbackClient(primaryClient);
             _log.Info("HTTP {Method} {Uri} via {Resolver}", method, uri, ResolverSystem);
             try
             {
@@ -139,8 +143,9 @@ namespace Memoria.Launcher
             }
         }
 
-        public static async Task<Stream> GetStreamWithDohFallbackAsync(HttpClient primaryClient, HttpClient fallbackClient, Uri uri, CancellationToken cancellationToken)
+        public static async Task<Stream> GetStreamWithDohFallbackAsync(HttpClient primaryClient, Uri uri, CancellationToken cancellationToken)
         {
+            HttpClient fallbackClient = GetFallbackClient(primaryClient);
             _log.Info("HTTP GET(stream) {Uri} via {Resolver}", uri, ResolverSystem);
             try
             {
@@ -169,6 +174,14 @@ namespace Memoria.Launcher
         {
             using (HttpRequestMessage request = new HttpRequestMessage(method, uri))
                 return await client.SendAsync(request, completionOption, cancellationToken).ConfigureAwait(false);
+        }
+
+        private static HttpClient GetFallbackClient(HttpClient primaryClient)
+        {
+            if (ReferenceEquals(primaryClient, _shared.Value))
+                return _sharedDohFallback.Value;
+
+            return _fallbackClients.GetValue(primaryClient, _ => CreateDohFallbackClient());
         }
 
         private static void LogResponse(HttpResponseMessage response, Uri uri, String resolver)

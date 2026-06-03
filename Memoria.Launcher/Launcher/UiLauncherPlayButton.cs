@@ -378,7 +378,6 @@ namespace Memoria.Launcher
     public sealed class Downloader
     {
         private static readonly HttpClient _httpClient = HttpClients.Shared;
-        private static readonly HttpClient _dohFallbackClient = HttpClients.SharedDohFallback;
         private readonly ManualResetEvent _cancelEvent;
 
         public event Action<long> DownloadProgress;
@@ -398,7 +397,6 @@ namespace Memoria.Launcher
             Uri uri = new Uri(url, UriKind.Absolute);
             HttpResponseMessage response = await HttpClients.SendWithDohFallbackAsync(
                 _httpClient,
-                _dohFallbackClient,
                 HttpMethod.Head,
                 uri,
                 HttpCompletionOption.ResponseHeadersRead,
@@ -432,7 +430,6 @@ namespace Memoria.Launcher
             Uri uri = new Uri(url, UriKind.Absolute);
             Stream input = await HttpClients.GetStreamWithDohFallbackAsync(
                 _httpClient,
-                _dohFallbackClient,
                 uri,
                 CancellationToken.None).ConfigureAwait(false);
 
