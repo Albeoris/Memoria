@@ -824,57 +824,107 @@ namespace Memoria.Launcher
 
     public static class ExtractorSharpCompress
     {
+        private static readonly NLog.Logger _log = AppLogger.GetLogger();
+
         // This is slow with some archives (7zip)
         public static void ExtractAllFileFromArchive(string archivePath, string extractTo, CancellationToken cancellationToken, Action<int> progressCallbak = null)
         {
             if (!File.Exists(archivePath))
             {
+                _log.Warn("Extraction skipped because archive was not found. Archive: {ArchivePath}", archivePath);
                 return;
             }
-            using (var archive = ArchiveFactory.OpenArchive(archivePath))
-            {
-                int total = 0;
-                foreach (var entry in archive.Entries)
-                    if (!entry.IsDirectory) total++;
 
-                int current = 0;
-                foreach (var entry in archive.Entries)
+            _log.Info("Starting archive extraction (SharpCompress). Archive: {ArchivePath}, Destination: {Destination}", archivePath, extractTo);
+            try
+            {
+                using (var archive = ArchiveFactory.OpenArchive(archivePath))
                 {
+                    int total = 0;
+                    foreach (var entry in archive.Entries)
+                        if (!entry.IsDirectory) total++;
+
+                    int current = 0;
+                    foreach (var entry in archive.Entries)
+                    {
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            _log.Warn("Archive extraction cancelled by token. Archive: {ArchivePath}, Destination: {Destination}, ExtractedEntries: {ExtractedEntries}, TotalEntries: {TotalEntries}", archivePath, extractTo, current, total);
+                            break;
+                        }
+
+                        if (!entry.IsDirectory)
+                        {
+                            try
+                            {
+                                entry.WriteToDirectory(extractTo, new ExtractionOptions()
+                                {
+                                    ExtractFullPath = true,
+                                    Overwrite = true
+                                });
+                            }
+                            catch (Exception ex)
+                            {
+                                _log.Error(ex, "Failed extracting archive entry. Archive: {ArchivePath}, Destination: {Destination}, Entry: {EntryKey}", archivePath, extractTo, entry.Key);
+                                throw;
+                            }
+
+                            current++;
+                            progressCallbak?.Invoke((int)(100 * current / total));
+                        }
+                    }
+
                     if (cancellationToken.IsCancellationRequested)
                     {
-                        break;
+                        if (Directory.Exists(extractTo))
+                        {
+                            try
+                            {
+                                Directory.Delete(extractTo, true);
+                                _log.Info("Cleaned extraction destination after cancellation. Destination: {Destination}", extractTo);
+                            }
+                            catch (Exception ex)
+                            {
+                                _log.Warn(ex, "Failed to cleanup extraction destination after cancellation. Destination: {Destination}", extractTo);
+                            }
+                        }
                     }
 
-                    if (!entry.IsDirectory)
-                    {
-                        entry.WriteToDirectory(extractTo, new ExtractionOptions()
-                        {
-                            ExtractFullPath = true,
-                            Overwrite = true
-                        });
-                        current++;
-                        progressCallbak?.Invoke((int)(100 * current / total));
-                    }
+                    _log.Info("Archive extraction completed (SharpCompress). Archive: {ArchivePath}, Destination: {Destination}, ExtractedEntries: {ExtractedEntries}, TotalEntries: {TotalEntries}", archivePath, extractTo, current, total);
                 }
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    Directory.Delete(extractTo, true);
-                }
+            }
+            catch (Exception ex)
+            {
+                _log.Error(ex, "Archive extraction failed (SharpCompress). Archive: {ArchivePath}, Destination: {Destination}", archivePath, extractTo);
+                throw;
             }
         }
     }
 
     public static class Extractor
     {
+        private static readonly NLog.Logger _log = AppLogger.GetLogger();
+
         private const String SevenZipPath = "7za.exe";
         public static void ExtractAllFileFromArchive(string archivePath, string extractTo, CancellationToken cancellationToken, Action<int> progressCallbak = null)
         {
             if (!File.Exists(archivePath))
+            {
+                _log.Warn("Extraction skipped because archive was not found. Archive: {ArchivePath}", archivePath);
                 return;
+            }
+
+            _log.Info("Starting archive extraction (7za). Archive: {ArchivePath}, Destination: {Destination}", archivePath, extractTo);
 
             if (!File.Exists(SevenZipPath))
             {
                 using Stream input = Assembly.GetExecutingAssembly().GetManifestResourceStream("7za.exe");
+                if (input == null)
+                {
+                    _log.Error("Unable to extract embedded 7za.exe resource. Archive: {ArchivePath}", archivePath);
+                    throw new FileNotFoundException("Embedded 7za.exe resource was not found.", SevenZipPath);
+                }
+
                 using FileStream output = File.Create(SevenZipPath);
                 input.CopyTo(output);
             }
@@ -885,15 +935,26 @@ namespace Memoria.Launcher
                 process.StartInfo.FileName = SevenZipPath;
                 process.StartInfo.Arguments = $@"x -bsp1 -aoa -o""{extractTo}"" ""{archivePath}""";
                 process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.RedirectStandardError = true;
                 process.StartInfo.CreateNoWindow = true;
                 process.StartInfo.UseShellExecute = false;
 
                 String error = null;
+                String stderr = null;
                 process.OutputDataReceived += (s, e) =>
                 {
                     if (cancellationToken.IsCancellationRequested)
                     {
-                        process.Kill();
+                        try
+                        {
+                            if (!process.HasExited)
+                                process.Kill();
+                        }
+                        catch (Exception ex)
+                        {
+                            _log.Warn(ex, "Failed to kill 7za process after cancellation. Archive: {ArchivePath}", archivePath);
+                        }
+
                         return;
                     }
 
@@ -905,12 +966,35 @@ namespace Memoria.Launcher
                         progressCallbak?.Invoke(progress);
                 };
 
+                process.ErrorDataReceived += (s, e) =>
+                {
+                    string data = e.Data ?? "";
+                    if (!String.IsNullOrWhiteSpace(data))
+                        stderr = data;
+                };
+
                 process.Start();
                 process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
                 process.WaitForExit();
 
-                if (error != null) throw new FileFormatException(error);
+                if (error != null)
+                {
+                    _log.Error("7za reported archive format error. Archive: {ArchivePath}, Destination: {Destination}, Error: {Error}", archivePath, extractTo, error);
+                    throw new FileFormatException(error);
+                }
+
+                if (process.ExitCode != 0)
+                {
+                    String failure = !String.IsNullOrWhiteSpace(stderr)
+                        ? stderr
+                        : $"7za exited with code {process.ExitCode}.";
+                    _log.Error("7za extraction failed. Archive: {ArchivePath}, Destination: {Destination}, ExitCode: {ExitCode}, Error: {Error}", archivePath, extractTo, process.ExitCode, failure);
+                    throw new InvalidOperationException(failure);
+                }
+
                 progressCallbak?.Invoke(100);
+                _log.Info("Archive extraction completed (7za). Archive: {ArchivePath}, Destination: {Destination}", archivePath, extractTo);
             }
             if (File.Exists(SevenZipPath))
                 File.Delete(SevenZipPath);
