@@ -969,13 +969,7 @@ namespace Memoria.Launcher
 
         public ThrottledHttpClient()
         {
-            HttpClientHandler handler = new HttpClientHandler
-            {
-                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-            };
-
-            _client = new HttpClient(handler, disposeHandler: true);
-            _client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0");
+            _client = HttpClients.CreateDownloadClient();
 
             _timer = new Timer(100);
             _timer.Elapsed += OnTimerElapsed;
@@ -1015,10 +1009,9 @@ namespace Memoria.Launcher
 
             try
             {
-                using (HttpResponseMessage response = await _client.GetAsync(address, HttpCompletionOption.ResponseHeadersRead, cts.Token).ConfigureAwait(false))
+                using (HttpResponseMessage response = await HttpClients.GetWithDohFallbackAsync(_client, address, HttpCompletionOption.ResponseHeadersRead, cts.Token).ConfigureAwait(false))
                 {
                     response.EnsureSuccessStatusCode();
-                    LogResponse(response, address);
 
                     Int64 totalBytes = response.Content.Headers.ContentLength ?? -1;
                     Int64 bytesReceived = 0;
@@ -1073,19 +1066,6 @@ namespace Memoria.Launcher
 
             _updatePending = true;
             DownloadProgressChanged?.Invoke(this, new ThrottledDownloadProgressChangedEventArgs(bytesReceived, totalBytesToReceive));
-        }
-
-        private void LogResponse(HttpResponseMessage response, Uri uri)
-        {
-            Int32 status = (Int32)response.StatusCode;
-            if (status >= 400)
-                _log.Warn("HTTP {StatusCode} ({StatusDescription}) for {Uri}", status, response.ReasonPhrase, uri);
-            else
-                _log.Info("HTTP {StatusCode} for {Uri} - Content-Type: {ContentType}, Content-Length: {ContentLength}",
-                    status,
-                    uri,
-                    response.Content.Headers.ContentType,
-                    response.Content.Headers.ContentLength ?? -1);
         }
 
         public void Dispose()
