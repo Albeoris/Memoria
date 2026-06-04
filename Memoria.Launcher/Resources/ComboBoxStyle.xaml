@@ -175,7 +175,7 @@
         <Setter Property="Background" Value="{DynamicResource BrushLightColorFaded}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource BrushLightColorNormal}"/>
         <Setter Property="Foreground" Value="{DynamicResource BrushDarkTextColor}"/>
-        <Setter Property="FontFamily" Value="Tahoma"/>
+        <Setter Property="FontFamily" Value="{StaticResource Overpass}"/>
         <Setter Property="FontWeight" Value="Medium"/>
         <Setter Property="FontSize" Value="13"/>
         <Setter Property="BorderThickness" Value="1"/>
