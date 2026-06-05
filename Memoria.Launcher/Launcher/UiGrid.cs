@@ -81,6 +81,25 @@ namespace Memoria.Launcher
         }
         private static HashSet<string> ImageResourceNames = GetImageResourceNames();
 
+        private static void ApplyTooltipTextRendering(TextBlock textBlock)
+        {
+            // Force a bundled font so glyph metrics/spacing are consistent across platforms.
+            FontFamily tooltipFont = Application.Current.TryFindResource("Overpass") as FontFamily;
+            if (tooltipFont != null)
+                textBlock.FontFamily = tooltipFont;
+        }
+
+        private static void ApplyTooltipTextWrapLayout(TextBlock textBlock, Double maxWidth)
+        {
+            textBlock.MaxWidth = maxWidth;
+            textBlock.Loaded += (sender, e) =>
+            {
+                textBlock.Measure(new Size(Double.PositiveInfinity, Double.PositiveInfinity));
+                Double desiredWidth = Math.Ceiling(textBlock.DesiredSize.Width);
+                textBlock.Width = Math.Min(Math.Max(desiredWidth, 0), maxWidth);
+            };
+        }
+
         public static void MakeTooltip(FrameworkElement uiElement, String text = "", String imageName = "", String curstorType = "mog", PlacementMode placement = PlacementMode.Bottom)
         {
             if (text != "" || imageName != "")
@@ -90,6 +109,7 @@ namespace Memoria.Launcher
                     Orientation = Orientation.Vertical,
                     Margin = new Thickness(0)
                 };
+                Boolean hasHelpIcon = false;
                 try
                 {
                     Image helpIcon = new Image
@@ -101,6 +121,7 @@ namespace Memoria.Launcher
                         Margin = new Thickness(0, 5, 0, 0)
                     };
                     tooltipStackPanel.Children.Add(helpIcon);
+                    hasHelpIcon = true;
                 }
                 catch { }
 
@@ -118,13 +139,14 @@ namespace Memoria.Launcher
                     tooltipTextBlock = new TextBlock
                     {
                         Opacity = 1,
-                        MaxWidth = 275,
                         FontSize = 14,
                         TextWrapping = TextWrapping.Wrap,
                         HorizontalAlignment = HorizontalAlignment.Left,
                         Effect = dropShadow,
-                        Margin = new Thickness(0)
+                        Margin = hasHelpIcon ? new Thickness(0, 5, 0, 0) : new Thickness(0)
                     };
+                    ApplyTooltipTextRendering(tooltipTextBlock);
+                    ApplyTooltipTextWrapLayout(tooltipTextBlock, 275);
                     if (Lang.Res.Contains(text))
                     {
                         tooltipTextBlock.SetResourceReference(TextBlock.TextProperty, text);
@@ -175,7 +197,10 @@ namespace Memoria.Launcher
                                 }
 
                                 if (tooltipTextBlock != null && tooltipImage.Width > 275)
+                                {
                                     tooltipTextBlock.MaxWidth = tooltipImage.Width;
+                                    tooltipTextBlock.Width = tooltipImage.Width;
+                                }
                             };
                             BitmapImage bitmap = new BitmapImage();
                             bitmap.BeginInit();
@@ -287,12 +312,13 @@ namespace Memoria.Launcher
                 Text = "The quick brown fox jumps over the lazy dog",
                 Opacity = 1,
                 Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C8C8C8")),
-                MaxWidth = 275,
                 FontSize = 24,
                 TextWrapping = TextWrapping.Wrap,
                 Effect = dropShadow,
                 Margin = new Thickness(0)
             };
+            ApplyTooltipTextRendering(tooltipTextBlock);
+            ApplyTooltipTextWrapLayout(tooltipTextBlock, 275);
             tooltipStackPanel.Children.Add(tooltipTextBlock);
 
             Border bottomrightBorder = new Border
