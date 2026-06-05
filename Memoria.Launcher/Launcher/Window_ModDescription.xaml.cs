@@ -37,18 +37,22 @@ namespace Memoria.Launcher
                     {
                         Paragraph p = new Paragraph(new Run(paragraph.Trim()))
                         {
-                            Margin = new Thickness(0, 10, 0, 10),
+                            Margin = new Thickness(),
+                            Padding = new Thickness(0, 0, 0, 10),
                             Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aeee"))
                         };
                         Document.Document.Blocks.Add(p);
                         paragraph = "";
                     }
-                    ListItem item = new ListItem(new Paragraph(new Run(line.TrimStart(['-', ' ']))));
-                    item.Margin = new Thickness(20, 0, 0, 0);
+                    ListItem item = new ListItem(new Paragraph(new Run("• " + line.TrimStart(['-', ' ']))));
+                    item.Margin = new Thickness();
+                    item.Padding = new Thickness(20, 0, 0, 5);
                     if (list == null)
                     {
                         list = new List();
-                        list.Padding = new Thickness(0, 0, 0, 0);
+                        list.MarkerStyle = TextMarkerStyle.None;
+                        list.Margin = new Thickness();
+                        list.Padding = new Thickness(0, 10, 0, 10);
                         list.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aeee"));
                         Document.Document.Blocks.Add(list);
                     }
@@ -60,7 +64,8 @@ namespace Memoria.Launcher
                     {
                         Paragraph p1 = new Paragraph(new Run(paragraph.Trim()))
                         {
-                            Margin = new Thickness(0, 10, 0, 10),
+                            Margin = new Thickness(),
+                            Padding = new Thickness(0, 0, 0, 10),
                             Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aeee"))
                         };
                         Document.Document.Blocks.Add(p1);
@@ -69,7 +74,8 @@ namespace Memoria.Launcher
                     list = null;
                     Paragraph p = new Paragraph(new Run(line.TrimStart('#')))
                     {
-                        Margin = new Thickness(0, 20, 0, 10),
+                        Margin = new Thickness(),
+                        Padding = new Thickness(0, 0, 0, 10),
                         FontSize = 20
                     };
                     Document.Document.Blocks.Add(p);
@@ -85,7 +91,8 @@ namespace Memoria.Launcher
             {
                 Paragraph p = new Paragraph(new Run(paragraph.Trim()))
                 {
-                    Margin = new Thickness(0, 10, 0, 10),
+                    Margin = new Thickness(),
+                    Padding = new Thickness(0, 0, 0, 10),
                     Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aeee"))
                 };
                 Document.Document.Blocks.Add(p);
@@ -98,7 +105,7 @@ namespace Memoria.Launcher
                 link.TextDecorations = TextDecorations.Underline;
                 link.Cursor = Cursors.Hand;
                 link.Click += OnHyperlinkClick;
-                Document.Document.Blocks.Add(new Paragraph(link) { Margin = new Thickness(0, 10, 0, 10), });
+                Document.Document.Blocks.Add(new Paragraph(link) { Margin = new Thickness(), Padding = new Thickness(0, 0, 0, 10), });
             }
         }
 
