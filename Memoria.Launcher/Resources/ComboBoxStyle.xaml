@@ -175,9 +175,10 @@
         <Setter Property="Background" Value="{DynamicResource BrushLightColorFaded}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource BrushLightColorNormal}"/>
         <Setter Property="Foreground" Value="{DynamicResource BrushDarkTextColor}"/>
-        <Setter Property="FontFamily" Value="Tahoma"/>
+        <Setter Property="FontFamily" Value="{StaticResource Overpass}"/>
         <Setter Property="FontWeight" Value="Medium"/>
         <Setter Property="FontSize" Value="13"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
@@ -208,7 +209,7 @@
                     <Grid>
                         <Border Name="HighLight" CornerRadius="3" Background="{DynamicResource BrushAccentColorHover}" Opacity="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" SnapsToDevicePixels="true"/>
                         <Border Name="Border" CornerRadius="3" Padding="8,5,8,5" SnapsToDevicePixels="true">
-                            <ContentPresenter />
+                            <ContentPresenter VerticalAlignment="Center"/>
                         </Border>
                     </Grid>
                     <ControlTemplate.Triggers>

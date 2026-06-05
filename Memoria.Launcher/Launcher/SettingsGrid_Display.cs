@@ -61,7 +61,7 @@ namespace Memoria.Launcher
                 }
                 catch { }
             }
-            CreateCombobox("FontChoice", fontNames, 25, "Settings.FontChoice", "Settings.FontChoice_Tooltip", "", true);
+            CreateCombobox("FontChoice", fontNames, 45, "Settings.FontChoice", "Settings.FontChoice_Tooltip", "", true);
 
         }
     }

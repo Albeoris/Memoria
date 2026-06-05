@@ -452,9 +452,12 @@ namespace Memoria.Launcher
             textbloc.Foreground = TextColor;
             Border border = new Border();
             textbloc.FontSize = FontSizeNormal;
+            textbloc.HorizontalAlignment = HorizontalAlignment.Left;
+            textbloc.TextAlignment = TextAlignment.Left;
             textbloc.VerticalAlignment = VerticalAlignment.Center;
             textbloc.Margin = new Thickness(0);
             textbloc.Padding = new Thickness(0, 4, 0, 6);
+            border.HorizontalAlignment = HorizontalAlignment.Stretch;
             border.VerticalAlignment = VerticalAlignment.Center;
             border.SetValue(RowProperty, Row);
             border.SetValue(ColumnProperty, 0);
@@ -552,6 +555,8 @@ namespace Memoria.Launcher
                 MakeFontPreview(comboBox);
             comboBox.Margin = CommonMargin;
             comboBox.Height = ComboboxHeight;
+            comboBox.HorizontalAlignment = HorizontalAlignment.Right;
+            comboBox.VerticalAlignment = VerticalAlignment.Center;
             if (selectByName)
                 comboBox.SetBinding(Selector.SelectedItemProperty, new Binding(property) { Mode = BindingMode.TwoWay });
             else
@@ -560,6 +565,14 @@ namespace Memoria.Launcher
             comboBox.SetValue(ColumnProperty, firstColumn);
             comboBox.SetValue(RowSpanProperty, 1);
             comboBox.SetValue(ColumnSpanProperty, MaxColumns - firstColumn);
+            comboBox.Loaded += (sender, e) =>
+            {
+                comboBox.Width = Math.Max(0, ActualWidth * (MaxColumns - firstColumn) / MaxColumns);
+            };
+            SizeChanged += (sender, e) =>
+            {
+                comboBox.Width = Math.Max(0, ActualWidth * (MaxColumns - firstColumn) / MaxColumns);
+            };
             comboBox.MouseEnter += (sender, e) =>
             {
                 comboBox.Focus();
@@ -592,9 +605,10 @@ namespace Memoria.Launcher
             slider.IsSnapToTickEnabled = true;
             slider.TickPlacement = TickPlacement.None;
             slider.SetValue(RowProperty, Row);
-            slider.SetValue(ColumnProperty, firstColumn + 6);
+            Int32 sliderFirstColumn = firstColumn + 6;
+            slider.SetValue(ColumnProperty, sliderFirstColumn);
             slider.SetValue(RowSpanProperty, 1);
-            slider.SetValue(ColumnSpanProperty, (MaxColumns - firstColumn));
+            slider.SetValue(ColumnSpanProperty, Math.Max(0, MaxColumns - sliderFirstColumn));
             slider.MouseWheel += (sender, e) =>
             {
                 slider.Value = Math.Max(Math.Min(slider.Value + Math.Sign(e.Delta) * tickFrequency, max), min);
