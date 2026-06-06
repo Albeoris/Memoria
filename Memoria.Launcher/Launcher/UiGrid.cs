@@ -81,6 +81,25 @@ namespace Memoria.Launcher
         }
         private static HashSet<string> ImageResourceNames = GetImageResourceNames();
 
+        private static void ApplyTooltipTextRendering(TextBlock textBlock)
+        {
+            // Force a bundled font so glyph metrics/spacing are consistent across platforms.
+            FontFamily tooltipFont = Application.Current.TryFindResource("Overpass") as FontFamily;
+            if (tooltipFont != null)
+                textBlock.FontFamily = tooltipFont;
+        }
+
+        private static void ApplyTooltipTextWrapLayout(TextBlock textBlock, Double maxWidth)
+        {
+            textBlock.MaxWidth = maxWidth;
+            textBlock.Loaded += (sender, e) =>
+            {
+                textBlock.Measure(new Size(Double.PositiveInfinity, Double.PositiveInfinity));
+                Double desiredWidth = Math.Ceiling(textBlock.DesiredSize.Width);
+                textBlock.Width = Math.Min(Math.Max(desiredWidth, 0), maxWidth);
+            };
+        }
+
         public static void MakeTooltip(FrameworkElement uiElement, String text = "", String imageName = "", String curstorType = "mog", PlacementMode placement = PlacementMode.Bottom)
         {
             if (text != "" || imageName != "")
@@ -90,6 +109,7 @@ namespace Memoria.Launcher
                     Orientation = Orientation.Vertical,
                     Margin = new Thickness(0)
                 };
+                Boolean hasHelpIcon = false;
                 try
                 {
                     Image helpIcon = new Image
@@ -101,6 +121,7 @@ namespace Memoria.Launcher
                         Margin = new Thickness(0, 5, 0, 0)
                     };
                     tooltipStackPanel.Children.Add(helpIcon);
+                    hasHelpIcon = true;
                 }
                 catch { }
 
@@ -118,13 +139,14 @@ namespace Memoria.Launcher
                     tooltipTextBlock = new TextBlock
                     {
                         Opacity = 1,
-                        MaxWidth = 275,
                         FontSize = 14,
                         TextWrapping = TextWrapping.Wrap,
                         HorizontalAlignment = HorizontalAlignment.Left,
                         Effect = dropShadow,
-                        Margin = new Thickness(0)
+                        Margin = hasHelpIcon ? new Thickness(0, 5, 0, 0) : new Thickness(0)
                     };
+                    ApplyTooltipTextRendering(tooltipTextBlock);
+                    ApplyTooltipTextWrapLayout(tooltipTextBlock, 275);
                     if (Lang.Res.Contains(text))
                     {
                         tooltipTextBlock.SetResourceReference(TextBlock.TextProperty, text);
@@ -175,7 +197,10 @@ namespace Memoria.Launcher
                                 }
 
                                 if (tooltipTextBlock != null && tooltipImage.Width > 275)
+                                {
                                     tooltipTextBlock.MaxWidth = tooltipImage.Width;
+                                    tooltipTextBlock.Width = tooltipImage.Width;
+                                }
                             };
                             BitmapImage bitmap = new BitmapImage();
                             bitmap.BeginInit();
@@ -287,12 +312,13 @@ namespace Memoria.Launcher
                 Text = "The quick brown fox jumps over the lazy dog",
                 Opacity = 1,
                 Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C8C8C8")),
-                MaxWidth = 275,
                 FontSize = 24,
                 TextWrapping = TextWrapping.Wrap,
                 Effect = dropShadow,
                 Margin = new Thickness(0)
             };
+            ApplyTooltipTextRendering(tooltipTextBlock);
+            ApplyTooltipTextWrapLayout(tooltipTextBlock, 275);
             tooltipStackPanel.Children.Add(tooltipTextBlock);
 
             Border bottomrightBorder = new Border
@@ -426,9 +452,12 @@ namespace Memoria.Launcher
             textbloc.Foreground = TextColor;
             Border border = new Border();
             textbloc.FontSize = FontSizeNormal;
+            textbloc.HorizontalAlignment = HorizontalAlignment.Left;
+            textbloc.TextAlignment = TextAlignment.Left;
             textbloc.VerticalAlignment = VerticalAlignment.Center;
             textbloc.Margin = new Thickness(0);
             textbloc.Padding = new Thickness(0, 4, 0, 6);
+            border.HorizontalAlignment = HorizontalAlignment.Stretch;
             border.VerticalAlignment = VerticalAlignment.Center;
             border.SetValue(RowProperty, Row);
             border.SetValue(ColumnProperty, 0);
@@ -526,6 +555,8 @@ namespace Memoria.Launcher
                 MakeFontPreview(comboBox);
             comboBox.Margin = CommonMargin;
             comboBox.Height = ComboboxHeight;
+            comboBox.HorizontalAlignment = HorizontalAlignment.Right;
+            comboBox.VerticalAlignment = VerticalAlignment.Center;
             if (selectByName)
                 comboBox.SetBinding(Selector.SelectedItemProperty, new Binding(property) { Mode = BindingMode.TwoWay });
             else
@@ -534,6 +565,14 @@ namespace Memoria.Launcher
             comboBox.SetValue(ColumnProperty, firstColumn);
             comboBox.SetValue(RowSpanProperty, 1);
             comboBox.SetValue(ColumnSpanProperty, MaxColumns - firstColumn);
+            comboBox.Loaded += (sender, e) =>
+            {
+                comboBox.Width = Math.Max(0, ActualWidth * (MaxColumns - firstColumn) / MaxColumns);
+            };
+            SizeChanged += (sender, e) =>
+            {
+                comboBox.Width = Math.Max(0, ActualWidth * (MaxColumns - firstColumn) / MaxColumns);
+            };
             comboBox.MouseEnter += (sender, e) =>
             {
                 comboBox.Focus();
@@ -566,9 +605,10 @@ namespace Memoria.Launcher
             slider.IsSnapToTickEnabled = true;
             slider.TickPlacement = TickPlacement.None;
             slider.SetValue(RowProperty, Row);
-            slider.SetValue(ColumnProperty, firstColumn + 6);
+            Int32 sliderFirstColumn = firstColumn + 6;
+            slider.SetValue(ColumnProperty, sliderFirstColumn);
             slider.SetValue(RowSpanProperty, 1);
-            slider.SetValue(ColumnSpanProperty, (MaxColumns - firstColumn));
+            slider.SetValue(ColumnSpanProperty, Math.Max(0, MaxColumns - sliderFirstColumn));
             slider.MouseWheel += (sender, e) =>
             {
                 slider.Value = Math.Max(Math.Min(slider.Value + Math.Sign(e.Delta) * tickFrequency, max), min);

@@ -3794,8 +3794,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <Target Name="MemoriaPatcherBeforeBuild" BeforeTargets="Build" Condition="'$(DesignTimeBuild)' != 'true'">
+    <MSBuild Projects="..\Assembly-CSharp\Assembly-CSharp.csproj" Properties="Configuration=$(Configuration);Platform=AnyCPU" RunEachTargetSeparately="true" />
+  </Target>
   <Target Name="MemoriaPatcherBeforePublish" BeforeTargets="Publish" Condition="'$(PublishSingleFile)' == 'true'">
-    <MSBuild Projects="..\Assembly-CSharp\Assembly-CSharp.csproj" Properties="Platform=AnyCPU" RunEachTargetSeparately="true" />
+    <MSBuild Projects="..\Assembly-CSharp\Assembly-CSharp.csproj" Properties="Configuration=$(Configuration);Platform=AnyCPU" RunEachTargetSeparately="true" />
   </Target>
   <Target Name="MemoriaPatcherAfterPublish" AfterTargets="Publish" Condition="'$(PublishSingleFile)' == 'true'">
     <PropertyGroup>

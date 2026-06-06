@@ -377,7 +377,7 @@ namespace Memoria.Launcher
 
     public sealed class Downloader
     {
-        private static readonly HttpClient _httpClient = new HttpClient();
+        private static readonly HttpClient _httpClient = HttpClients.Shared;
         private readonly ManualResetEvent _cancelEvent;
 
         public event Action<long> DownloadProgress;
@@ -394,14 +394,21 @@ namespace Memoria.Launcher
             if (_cancelEvent.WaitOne(0))
                 return result;
 
-            using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Head, url))
-            using (HttpResponseMessage resp = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false))
+            Uri uri = new Uri(url, UriKind.Absolute);
+            HttpResponseMessage response = await HttpClients.SendWithDohFallbackAsync(
+                _httpClient,
+                HttpMethod.Head,
+                uri,
+                HttpCompletionOption.ResponseHeadersRead,
+                CancellationToken.None).ConfigureAwait(false);
+
+            using (response)
             {
-                resp.EnsureSuccessStatusCode();
+                response.EnsureSuccessStatusCode();
                 if (_cancelEvent.WaitOne(0))
                     return result;
 
-                result.ReadFromResponse(url, resp);
+                result.ReadFromResponse(url, response);
                 return result;
             }
         }
@@ -420,7 +427,13 @@ namespace Memoria.Launcher
             if (_cancelEvent.WaitOne(0))
                 return;
 
-            using (Stream input = await _httpClient.GetStreamAsync(url).ConfigureAwait(false))
+            Uri uri = new Uri(url, UriKind.Absolute);
+            Stream input = await HttpClients.GetStreamWithDohFallbackAsync(
+                _httpClient,
+                uri,
+                CancellationToken.None).ConfigureAwait(false);
+
+            using (input)
                 await CopyAsync(input, output, _cancelEvent, DownloadProgress);
         }
 
