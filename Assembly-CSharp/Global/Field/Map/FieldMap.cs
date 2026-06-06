@@ -302,6 +302,7 @@ public class FieldMap : HonoBehavior
         {
             currentCounterNumber = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
             Log.Message("Map: " + FF9StateSystem.Common.FF9.fldMapNo + " | Scenario counter: " + PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR));
+            PlayerWindow.UpdateTitle();
         }
     }
 
@@ -411,8 +412,7 @@ public class FieldMap : HonoBehavior
         this.walkMesh.UpdateActiveCameraWalkmesh();
         SmoothCamDelay = 4;
         SmoothCamActive = (!SmoothCamExcludeMaps.Contains(FF9StateSystem.Common.FF9.fldMapNo));
-        String camIdxIfCam = this.scene.cameraList.Count > 1 ? "-" + this.camIdx : "";
-        PlayerWindow.Instance.SetTitle($"Map: {FF9StateSystem.Common.FF9.fldMapNo}{camIdxIfCam} ({FF9StateSystem.Common.FF9.mapNameStr}) | Index/Counter: {PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR)}/{PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR)} | Loc: {FF9StateSystem.Common.FF9.fldLocNo}");
+        PlayerWindow.UpdateTitle();
         if (dbug) Log.Message(" |_ SetCurrentCameraIndex | ShaderMulX: " + ShaderMulX + " | bgCamera.depthOffset: " + bgCamera.depthOffset + " | bgCamera.vrpMaxX " + bgCamera.vrpMaxX + " | bgCamera.depthOffset: " + bgCamera.depthOffset + " | this.scene.maxX: " + this.scene.maxX);
     }
 

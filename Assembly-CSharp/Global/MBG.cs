@@ -305,7 +305,7 @@ public class MBG : HonoBehavior
         SceneDirector.ToggleFadeAll(true);
         FPSManager.SetTargetFPS(this.tempTargetFrameRate);
         //PlayerWindow.Instance.SetTitle(String.Empty);
-        PlayerWindow.Instance.SetTitle($"Map: {FF9StateSystem.Common.FF9.fldMapNo} ({FF9StateSystem.Common.FF9.mapNameStr}) | Index/Counter: {PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR)}/{PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR)} | Loc: {FF9StateSystem.Common.FF9.fldLocNo}");
+        PlayerWindow.UpdateTitle();
 
         vib.VIB_actuatorReset(0);
         this.movieMaterial.Transparency = 0f;
