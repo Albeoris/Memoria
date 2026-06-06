@@ -57,7 +57,7 @@ namespace Memoria.Launcher
                 Document.Document.Blocks.Clear();
                 Paragraph p = new Paragraph(new Run($"Couldn't load the changelog."))
                 {
-                    Margin = new Thickness(0, 20, 0, 20),
+                    Padding = new Thickness(0, 0, 0, 10),
                     Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aeee"))
                 };
                 Document.Document.Blocks.Add(p);
@@ -89,7 +89,8 @@ namespace Memoria.Launcher
                     {
                         Paragraph p = new Paragraph(new Run($"Version {version}"))
                         {
-                            Margin = new Thickness(0, 20, 0, 20),
+                            Margin = new Thickness(),
+                            Padding = new Thickness(0, 10, 0, 10),
                             FontSize = 26
                         };
 
@@ -123,7 +124,8 @@ namespace Memoria.Launcher
                         {
                             Paragraph p = new Paragraph(new Run(plainText))
                             {
-                                Margin = new Thickness(0, 20, 0, 10),
+                                Margin = new Thickness(),
+                                Padding = new Thickness(0, 20, 0, 10),
                                 FontSize = 20
                             };
                             Document.Document.Blocks.Add(p);
@@ -136,16 +138,19 @@ namespace Memoria.Launcher
                         }
                         if (trimmed.StartsWith("<li>"))
                         {
-                            Paragraph p = new Paragraph(new Run(plainText));
+                            Paragraph p = new Paragraph(new Run("• " + plainText));
                             ListItem item = new ListItem(p)
                             {
                                 Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aeee"))
                             };
-                            item.Margin = new Thickness(20 + indent * 20, 0, 0, 0);
+                            item.Margin = new Thickness();
+                            item.Padding = new Thickness(indent * 10, 0, 0, 5);
                             if (list == null)
                             {
                                 list = new List();
-                                list.Padding = new Thickness(0, 0, 0, 0);
+                                list.MarkerStyle = TextMarkerStyle.None;
+                                list.Margin = new Thickness();
+                                list.Padding = new Thickness();
                                 Document.Document.Blocks.Add(list);
                             }
                             list.ListItems.Add(item);
@@ -162,7 +167,8 @@ namespace Memoria.Launcher
                         {
                             Paragraph p = new Paragraph(new Run(plainText))
                             {
-                                Margin = new Thickness(0, 10, 0, 10),
+                                Margin = new Thickness(),
+                                Padding = new Thickness(0, 10, 0, 10),
                                 Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aeee"))
                             };
                             Document.Document.Blocks.Add(p);
@@ -176,7 +182,7 @@ namespace Memoria.Launcher
                 Document.Document.Blocks.Clear();
                 Paragraph p = new Paragraph(new Run($"Couldn't parse the changelog."))
                 {
-                    Margin = new Thickness(0, 20, 0, 20),
+                    Padding = new Thickness(0, 0, 0, 10),
                     Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aeee"))
                 };
                 Document.Document.Blocks.Add(p);
