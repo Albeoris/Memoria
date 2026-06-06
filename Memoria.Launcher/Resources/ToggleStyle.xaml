@@ -4,7 +4,7 @@
         <Setter Property="BorderBrush" Value="{StaticResource BrushLightColorNormal}"/>
         <Setter Property="Foreground" Value="{StaticResource {x:Static SystemColors.ControlTextBrushKey}}"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="FontFamily" Value="Tahoma"/>
+        <Setter Property="FontFamily" Value="{StaticResource Overpass}"/>
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="Foreground" Value="{StaticResource BrushLightColorNormal}"/>
         <Setter Property="Template">

@@ -1483,5 +1483,9 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
+  <Target Name="AssemblyCSharpBuildSaXAudio" BeforeTargets="Build" Condition="'$(DesignTimeBuild)' != 'true'">
+    <MSBuild Projects="..\SaXAudio\SaXAudio.vcxproj" Properties="Configuration=$(Configuration);Platform=Win32" RunEachTargetSeparately="true" />
+    <MSBuild Projects="..\SaXAudio\SaXAudio.vcxproj" Properties="Configuration=$(Configuration);Platform=x64" RunEachTargetSeparately="true" />
+  </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

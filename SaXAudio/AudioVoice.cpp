@@ -137,7 +137,6 @@ namespace SaXAudio
         Log(BankID, VoiceID, "[Stop] fade: " + to_string(fade));
 
         IsPlaying = false;
-        Looping = false;
 
         Fader::Instance.StopFade(m_volumeFadeID);
         m_volumeFadeID = 0;

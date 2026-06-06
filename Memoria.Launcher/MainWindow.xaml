@@ -860,7 +860,7 @@
                                                                VerticalAlignment="Center"
                                                                Margin="28,0,0,0"/>
                                                         <Label x:Name="ModOptionsHeaderArrow"
-                                                               FontFamily="Tahoma"
+                                                               FontFamily="{StaticResource Overpass}"
                                                                Foreground="{StaticResource WhiteUI}"
                                                                FontSize="16"
                                                                VerticalAlignment="Center"
