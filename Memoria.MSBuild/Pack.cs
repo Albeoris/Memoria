@@ -148,6 +148,7 @@ namespace Memoria.MSBuild
                     AddPackManagedDll(file.SourceRelativePath, file.TargetRelativePath, output, bw, pathMap, ref uncompressedDataSize);
                     break;
                 case DeploymentItemKind.File:
+                case DeploymentItemKind.InitialFile:
                     AddPackOptionalFile(file.SourceRelativePath, file.TargetRelativePath, output, bw, pathMap, ref uncompressedDataSize);
                     break;
                 default:

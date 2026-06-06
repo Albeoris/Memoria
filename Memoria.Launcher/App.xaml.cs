@@ -10,6 +10,8 @@ namespace Memoria.Launcher
 {
     public partial class App : Application
     {
+        private static readonly NLog.Logger _log = AppLogger.GetLogger();
+
         protected override void OnStartup(StartupEventArgs e)
         {
             SubscribeUnhandledExceptions();
@@ -52,6 +54,7 @@ namespace Memoria.Launcher
 
         private void HandleException(Exception ex)
         {
+            _log.Fatal(ex, "Unhandled exception");
             var message = "A critical error occurred during the operation of the program." + Environment.NewLine +
                           "Further work of the program may lead to data corruption. The application will be closed." + Environment.NewLine +
                           "Please press Ctrl+C to copy the exception details, and contact the author to fix the problem." + Environment.NewLine +
