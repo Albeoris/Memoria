@@ -172,7 +172,7 @@
 
                         <launcher:SettingsGrid_Advanced x:Name="SettingsGrid_Advanced"
                             Grid.Column="0"  
-                            Margin="20,184,0,0"
+                            Margin="20,220,0,0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top" />
 
