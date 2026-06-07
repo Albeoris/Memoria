@@ -307,6 +307,14 @@ namespace NCalc
             if (name == "WorldDisc") args.Result = (Int32)ff9.w_frameDisc;
         };
 
+        public static Expression PrepareExpression(String code)
+        {
+            Expression e = new Expression(code);
+            e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+            e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+            return e;
+        }
+
         public static void InitializeExpressionPlayer(ref Expression expr, PLAYER play)
         {
             expr.Parameters["Name"] = play.Name;
@@ -374,6 +382,11 @@ namespace NCalc
                 {
                     Int32 saId = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)SupportAbility.Void);
                     args.Result = ff9abil.FF9Abil_IsMaster(play, ff9abil.GetAbilityIdFromSupportAbility((SupportAbility)saId));
+                }
+                else if (name == "HasSupportAbilityInData" && args.Parameters.Length == 1)
+                {
+                    Int32 saId = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)SupportAbility.Void);
+                    args.Result = ff9abil.FF9Abil_GetIndex(play, ff9abil.GetAbilityIdFromSupportAbility((SupportAbility)saId)) >= 0;
                 }
             };
         }
