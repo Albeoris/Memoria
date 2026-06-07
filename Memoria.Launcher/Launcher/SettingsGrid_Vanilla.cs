@@ -21,6 +21,7 @@ namespace Memoria.Launcher
             CreateCheckbox("IsX64", "x64", "Settings.Xsixfour_Tooltip", 0, "IsX64Enabled");
             CreateCheckbox("IsDebugMode", "Settings.Debuggable", "Settings.Debuggable_Tooltip");
             CreateCheckbox("CheckUpdates", "Settings.CheckUpdates", "Settings.CheckUpdates_Tooltip");
+            CreateCombobox("UpdateChannel", ["Stable", "Canary"], 50, "Settings.UpdateChannel", "Settings.UpdateChannel_Tooltip", "", true);
 
             String OSversion = $"{Environment.OSVersion}";
             if (OSversion.Contains("Windows") && string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WINELOADER")))
@@ -78,14 +79,14 @@ namespace Memoria.Launcher
             }
         }
 
-        public String[] DownloadMirrors
+        public String UpdateChannel
         {
-            get { return _downloadMirrors; }
+            get { return _updateChannel; }
             set
             {
-                if (_downloadMirrors != value)
+                if (!String.Equals(_updateChannel, value, StringComparison.Ordinal))
                 {
-                    _downloadMirrors = value;
+                    _updateChannel = value;
                     OnPropertyChanged();
                 }
             }
@@ -212,6 +213,9 @@ namespace Memoria.Launcher
                         }
                         break;
                     }
+                    case nameof(UpdateChannel):
+                        iniFile.SetSetting("Memoria", propertyName, UpdateChannel);
+                        break;
                     case nameof(LauncherLanguage):
                         iniFile.SetSetting("Memoria", propertyName, Lang.LauncherLanguageList[LauncherLanguage]);
                         break;
@@ -228,7 +232,7 @@ namespace Memoria.Launcher
         private Boolean _isX64Enabled = true;
         private Boolean _isDebugMode;
         private Boolean _checkUpdates = true;
-        private String[] _downloadMirrors;
+        private String _updateChannel = "Stable";
 
         public void LoadSettings()
         {
@@ -261,16 +265,7 @@ namespace Memoria.Launcher
                 value = iniFile.GetSetting("Memoria", nameof(AutoRunGame), "false");
                 AutoRunGame = App.AutoRunGame || (Boolean.TryParse(value, out var autoRunGame) && autoRunGame);
 
-                value = iniFile.GetSetting("Memoria", nameof(DownloadMirrors));
-                if (String.IsNullOrEmpty(value))
-                {
-                    _downloadMirrors = ["https://github.com/Albeoris/Memoria/releases/latest/download/Memoria.Patcher.exe"];
-                    //if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "ru") _downloadMirrors = ["https://ff9.ffrtt.ru/rus/FF9RU.exe", "https://ff9.ffrtt.ru/rus/Memoria.Patcher.exe"];
-                }
-                else
-                {
-                    _downloadMirrors = value.Split(',');
-                }
+                _updateChannel = iniFile.GetSetting("Memoria", nameof(UpdateChannel), "Stable");
 
                 value = iniFile.GetSetting("Memoria", "LauncherLanguage", Lang.LangName);
                 _launcherlanguage = 0;
@@ -288,7 +283,7 @@ namespace Memoria.Launcher
                 OnPropertyChanged(nameof(IsX64Enabled));
                 OnPropertyChanged(nameof(IsDebugMode));
                 OnPropertyChanged(nameof(CheckUpdates));
-                OnPropertyChanged(nameof(DownloadMirrors));
+                OnPropertyChanged(nameof(UpdateChannel));
                 OnPropertyChanged(nameof(LauncherLanguage));
             }
             catch (Exception ex)
