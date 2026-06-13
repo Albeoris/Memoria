@@ -730,6 +730,8 @@ namespace Memoria.Launcher
                 accessors = typeof(Mod).GetProperty("Author")?.GetAccessors();
             else if (sender == colCatalogCategory.Header)
                 accessors = typeof(Mod).GetProperty("Category")?.GetAccessors();
+            else if (sender == colCatalogReleaseDate.Header)
+                accessors = typeof(Mod).GetProperty("ReleaseDate")?.GetAccessors();
             else if (sender == colCatalogInstalled.Header)
                 accessors = typeof(Mod).GetProperty("Installed")?.GetAccessors();
             if (accessors != null)
@@ -1114,6 +1116,8 @@ namespace Memoria.Launcher
                 using (StreamReader reader = new StreamReader(input))
                     Mod.LoadModDescriptions(reader, ModListCatalog);
                 UpdateCatalogInstallationState();
+                SortCatalog(typeof(Mod).GetProperty("ReleaseDate")?.GetGetMethod(), false);
+                ascendingSortedColumn = null;
             }
             catch (Exception err)
             {
@@ -1784,6 +1788,11 @@ namespace Memoria.Launcher
             header.SetResourceReference(ContentProperty, "ModEditor.Category");
             header.Click += OnClickCatalogHeader;
             colCatalogCategory.Header = header;
+
+            header = new GridViewColumnHeader();
+            header.SetResourceReference(ContentProperty, "ModEditor.Release");
+            header.Click += OnClickCatalogHeader;
+            colCatalogReleaseDate.Header = header;
 
             header = new GridViewColumnHeader() { Content = "" };
             header.Click += OnClickCatalogHeader;

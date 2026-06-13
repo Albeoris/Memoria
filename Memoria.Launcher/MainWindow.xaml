@@ -551,6 +551,16 @@
                                                                     </Style>
                                                                 </GridViewColumn.HeaderContainerStyle>
                                                             </GridViewColumn>
+                                                            <GridViewColumn
+                                                                x:Name="colCatalogReleaseDate"
+                                                                DisplayMemberBinding="{Binding ReleaseDate}"
+                                                                Header="Release Date">
+                                                                <GridViewColumn.HeaderContainerStyle>
+                                                                    <Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
+                                                                        <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                                                    </Style>
+                                                                </GridViewColumn.HeaderContainerStyle>
+                                                            </GridViewColumn>
                                                         </GridView>
                                                     </ListView.View>
                                                 </ListView>
