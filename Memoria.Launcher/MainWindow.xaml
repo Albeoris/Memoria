@@ -501,7 +501,8 @@
                                                     PreviewMouseMove="ListView_PreviewMouseMove"
                                                     MouseMove="ListView_MouseMove"
                                                     PreviewMouseLeftButtonUp="ListView_PreviewMouseLeftButtonUp"
-                                                    MouseLeave="ListView_MouseLeave">
+                                                    MouseLeave="ListView_MouseLeave"
+                                                    SizeChanged="LstCatalogMods_SizeChanged">
                                                     <ListView.ItemContainerStyle>
                                                         <Style TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
                                                             <EventSetter Event="MouseDoubleClick" Handler="OnCatalogListDoubleClick"/>
