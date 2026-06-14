@@ -2383,6 +2383,7 @@ Good luck!</Description>
 	<Priority>-21</Priority>
 	<InstallationPath>GarnetIsMainCharacter</InstallationPath>
 	<Author>piano221</Author>
+	<ReleaseDate>2024-10-07</ReleaseDate>
 	<ReleaseDateOriginal>2021-04-05</ReleaseDateOriginal>
 	<Description>This mod allow you to change Zidane for Garnet as the field main character.
 
@@ -2403,6 +2404,7 @@ Currently, this mod must be installed manually from its website:
 	<Priority>-20</Priority>
 	<InstallationPath>FreyaGamePlus</InstallationPath>
 	<Author>ChikoLad</Author>
+	<ReleaseDate>2020-07-30</ReleaseDate>
 	<ReleaseDateOriginal>2020-07-30</ReleaseDateOriginal>
 	<Description>Freya Game+ is a Final Fantasy IX mod that allows you to have Freya in your party at almost all times throughout the game.
 This mod removes the need to do any save editing or setting personal restrictions if you want to do a Freya Solo Run.</Description>
@@ -3394,6 +3396,7 @@ Please notify if you notice problems</PatchNotes>
 	<Version>8.3</Version>
 	<Priority>-26</Priority>
 	<InstallationPath>MoguriSoundtrack</InstallationPath>
+	<ReleaseDate>2019-01-01</ReleaseDate>
 	<ReleaseDateOriginal>2019-01-01</ReleaseDateOriginal>
 	<Author>Pontus Hultgren, Ze_PilOt</Author>
 	<Description>Orchestral version for 13 songs, reinterpreted by Pontus Hultgren</Description>
@@ -3676,6 +3679,7 @@ A component of Mods Kupo Library formerly Mog Add-ons</Description>
 	<Version>1.0</Version>
 	<Priority>-30</Priority>
 	<Author>Caledor</Author>
+	<ReleaseDate>2023-01-23</ReleaseDate>
 	<ReleaseDateOriginal>2021-05-12</ReleaseDateOriginal>
 	<Description>[Already integrated in Moguri 9.0] Chocographs remade from scratch by taking actual screenshots in FF9 Steam modded with Moguri Mod 8.2.</Description>
 	<Category>Visual</Category>
@@ -3691,6 +3695,7 @@ A component of Mods Kupo Library formerly Mog Add-ons</Description>
 	<Version>1.0</Version>
 	<Priority>12</Priority>
 	<Author>Lykon</Author>
+	<ReleaseDate>2020-05-16</ReleaseDate>
 	<ReleaseDateOriginal>2020-05-16</ReleaseDateOriginal>
 	<Description>This is a simple mod that slightly tweaks the portrait shown in the main menu.</Description>
 	<Category>Visual</Category>
@@ -4146,6 +4151,8 @@ Placeholder art - Marcus by nanpou0406 &amp; Cinna Concept Art.
 	<Name>No Cutscene</Name>
 	<Version>0.5</Version>
 	<Priority>-24</Priority>
+	<ReleaseDate>2021-04-24</ReleaseDate>
+	<ReleaseDateOriginal>2021-04-24</ReleaseDateOriginal>
 	<InstallationPath>NoCutsceneMemoria</InstallationPath>
 	<Author>Tirlititi</Author>
 	<Description>Removes most of cutscenes from the game for speedrunning purpose.</Description>
@@ -4344,7 +4351,8 @@ All changes made to the mode are adjustable as options:
 	<Version>1.1</Version>
 	<Priority>15</Priority>
 	<InstallationPath>BetterCardDrop</InstallationPath>
-	<ReleaseDateOriginal>2024-06-27</ReleaseDateOriginal>
+	<ReleaseDate>2024-06-27</ReleaseDate>
+	<ReleaseDateOriginal>2024-05-12</ReleaseDateOriginal>
 	<Author>DV</Author>
 	<SubMod>
 		<Name>Drop x2</Name>
