@@ -120,8 +120,8 @@ Snouz - syncronization</Description>
 	<Priority>-17</Priority>
 	<InstallationPath>AlternateFantasy</InstallationPath>
 	<Author>Tirlititi</Author>
-	<ReleaseDateOriginal>4 Aug 2016</ReleaseDateOriginal>
-	<ReleaseDate>19 May 2025</ReleaseDate>
+	<ReleaseDateOriginal>2016-08-04</ReleaseDateOriginal>
+	<ReleaseDate>2025-05-19</ReleaseDate>
 	<MinimumMemoriaVersion>2025-05-11</MinimumMemoriaVersion>
 	<PatchNotes>Hotfix for compatibility with Memoria v2025.05.11
 Includes a couple of undocumented features of the upcoming v7.0</PatchNotes>
@@ -147,7 +147,7 @@ More informations can be found on the mod's webpage.</Description>
 	<Priority>-19</Priority>
 	<InstallationPath>BeatrixMod</InstallationPath>
 	<Author>Tirlititi</Author>
-	<ReleaseDate>10 May 2021</ReleaseDate>
+	<ReleaseDate>2021-05-10</ReleaseDate>
 	<IncompatibleWith>Alternate Fantasy, Trance Seek</IncompatibleWith>
 	<Description>Allow the optional recruitment of Beatrix as a permanent character.
 She must be met in Alexandria once the Hilda Gard III is obtained and before moving to Terra.
@@ -164,8 +164,8 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 	<Version>0.3.36.2</Version>
 	<Priority>4</Priority>
 	<InstallationPath>TranceSeek</InstallationPath>
-	<ReleaseDateOriginal>28 Jan 2022</ReleaseDateOriginal>
-	<ReleaseDate>5 Sep 2025</ReleaseDate>
+	<ReleaseDateOriginal>2022-01-28</ReleaseDateOriginal>
+	<ReleaseDate>2025-09-05</ReleaseDate>
 	<MinimumMemoriaVersion>2025-05-12</MinimumMemoriaVersion>
 	<Author>DV</Author>
 	<IncompatibleWith>Alternate Fantasy,Amazing Quina,Beatrix Mod,Black Cat - Endgame Shop,David Bowie Edition,Freya Game+,Garnet is Main Character,Perfect Stats,Play As Kuja,Playable Character Pack,Tantalus</IncompatibleWith>
@@ -335,8 +335,8 @@ Not supported language : Japanese (a lot of things get deleted... need to wait u
 	<Version>1.1</Version>
 	<Priority>3</Priority>
 	<Author>DV</Author>
-	<ReleaseDateOriginal>29 May 2025</ReleaseDateOriginal>
-	<ReleaseDate>29 May 2025</ReleaseDate>
+	<ReleaseDateOriginal>2025-05-29</ReleaseDateOriginal>
+	<ReleaseDate>2025-05-29</ReleaseDate>
 	<InstallationPath>NoHardcodedBattles</InstallationPath>
 	<IncompatibleWith>AlternateFantasy, Trance Seek, David Bowie Edition</IncompatibleWith>
 	<Category>Gameplay</Category>
@@ -355,8 +355,8 @@ Fix a very specific soft lock against Prison Cage, Black Waltz 3 and Mistodon.</
 	<Name>New Game +</Name>
 	<Version>1.1</Version>
 	<InstallationPath>NewGamePlus</InstallationPath>
-	<ReleaseDate>13 Nov 2025</ReleaseDate>
-	<ReleaseDateOriginal>11 Nov 2025</ReleaseDateOriginal>
+	<ReleaseDate>2025-11-13</ReleaseDate>
+	<ReleaseDateOriginal>2025-11-11</ReleaseDateOriginal>
 	<Author>DV</Author>
 	<Description>This mod adds a new menu that lets you restart the game using your existing save!
 You can choose to reset (or not) the following options:
@@ -402,8 +402,8 @@ Also, this mod is made to be very friendly with other mods, such as Alternate Fa
 	<Version>1.4</Version>
 	<Priority>-23</Priority>
 	<InstallationPath>QualityOfLifa</InstallationPath>
-	<ReleaseDate>8 Jul 2025</ReleaseDate>
-	<ReleaseDateOriginal>30 Apr 2025</ReleaseDateOriginal>
+	<ReleaseDate>2025-07-08</ReleaseDate>
+	<ReleaseDateOriginal>2025-04-30</ReleaseDateOriginal>
 	<Author>DV</Author>
 	<Category>Gameplay</Category>
 	<PreviewFileUrl>https://i.ibb.co/20DxpHXN/Quality-Of-Lifa.jpg</PreviewFileUrl>
@@ -724,8 +724,8 @@ Useful as a dedicated override for mods that edit Barrel_38, Barrel_41, or Barre
 	<Version>1.1</Version>
 	<Priority>-15</Priority>
 	<InstallationPath>Doppelgängers</InstallationPath>
-	<ReleaseDate>06 Jul 2025</ReleaseDate>
-	<ReleaseDateOriginal>21 Jun 2025</ReleaseDateOriginal>
+	<ReleaseDate>2025-07-06</ReleaseDate>
+	<ReleaseDateOriginal>2025-06-21</ReleaseDateOriginal>
 	<Author>Tetra Gomez, NocturnalHanna and DV</Author>
 	<Category>Gameplay</Category>
 	<PreviewFileUrl>https://i.ibb.co/ccc19T9S/Doppelgangers.jpg</PreviewFileUrl>
@@ -848,8 +848,8 @@ Include the new version ofNoHardcodedBattles.</PatchNotes>
 	<Name>Play As Ozma</Name>
 	<Version>1.4</Version>
 	<InstallationPath>PlayAsOzma</InstallationPath>
-	<ReleaseDate>1 Apr 2026</ReleaseDate>
-	<ReleaseDateOriginal>1 Apr 2026</ReleaseDateOriginal>
+	<ReleaseDate>2026-04-01</ReleaseDate>
+	<ReleaseDateOriginal>2026-04-01</ReleaseDateOriginal>
 	<Author>DV</Author>
 	<Description>This mod was the 2026 April Fool's prank (formerly titled FFIX: The After Years).
 
@@ -875,8 +875,8 @@ Just another stupid idea from DV... have fun! :)
 	<Version>1.7.0</Version>
 	<Priority>-22</Priority>
 	<InstallationPath>PlayableCharacterPack</InstallationPath>
-	<ReleaseDateOriginal>9 Nov 2022</ReleaseDateOriginal>
-	<ReleaseDate>27 June 2025</ReleaseDate>
+	<ReleaseDateOriginal>2022-11-09</ReleaseDateOriginal>
+	<ReleaseDate>2025-06-27</ReleaseDate>
 	<MinimumMemoriaVersion>2025-05-11</MinimumMemoriaVersion>
 	<Author>Tirlititi / WarpedEdge</Author>
 	<Description>Adds new playable characters to the roster.
@@ -2005,8 +2005,8 @@ Without these people, my mod would not be as polished as it is. Thank you all fo
 	<Priority>2</Priority>
 	<Author>FernyFer</Author>
 	<InstallationPath>FernySupportTweaks</InstallationPath>
-	<ReleaseDate>July 2, 2025</ReleaseDate>
-	<ReleaseDateOriginal>June 2, 2025</ReleaseDateOriginal>
+	<ReleaseDate>2025-07-02</ReleaseDate>
+	<ReleaseDateOriginal>2025-06-02</ReleaseDateOriginal>
 	<MinimumMemoriaVersion>2025-05-11</MinimumMemoriaVersion>
 	<Description>Changes some Support Abilities to be "subjectively" more useful! You can enable as many as you want. 
 
@@ -2937,8 +2937,8 @@ New portraits for all characters, including supporting and background characters
 	<Version>2.3</Version>
 	<Priority>-25</Priority>
 	<InstallationPath>PlaystationSounds</InstallationPath>
-	<ReleaseDateOriginal>19 Mar 2022</ReleaseDateOriginal>
-	<ReleaseDate>2 May 2026</ReleaseDate>
+	<ReleaseDateOriginal>2022-03-19</ReleaseDateOriginal>
+	<ReleaseDate>2026-05-02</ReleaseDate>
 	<Author>DV</Author>
 	<Description>Tired of these crappy sounds in game ? Don't worry, this mod is simply the best to fix that : +1540 sound files fixed!
 	I encourage all players to get this mod, which is a major quality-of-life improvement for this port of FF9!
@@ -2955,8 +2955,8 @@ New portraits for all characters, including supporting and background characters
     <Version>1.3.0</Version>
     <Priority></Priority>
     <InstallationPath>GaiaBlessTheSoundtrack</InstallationPath>
-    <ReleaseDate>August 18, 2025</ReleaseDate>
-    <ReleaseDateOriginal>July 07, 2025</ReleaseDateOriginal>
+    <ReleaseDate>2025-08-18</ReleaseDate>
+    <ReleaseDateOriginal>2025-07-07</ReleaseDateOriginal>
     <Author>Ehrgeiz</Author>
     <Description>Replaces the battle music with either remixes of original songs (from FFIX) or tracks from other video games (both original &amp; remixed). Multiple choices for a single track to choose from, as Ferny would say "Best of both worlds!", enjoy! 
 --Echoes of Gaia (formerly known as "Specific Fights") is an optional music expansion that replaces all battle music with individual songs, giving FFIX the epic feeling of a remake we've longed deserved (And probably will never get).
@@ -3793,8 +3793,8 @@ Part of the Kupo Mods suite, formerly known as Mog Add-ons.
     <Name>CostumePack</Name>
     <Version>1.3</Version>
     <InstallationPath>CostumePack</InstallationPath>
-    <ReleaseDateOriginal>25 Mar 2026</ReleaseDateOriginal>
-    <ReleaseDate>2 Apr 2026</ReleaseDate>
+    <ReleaseDateOriginal>2026-03-25</ReleaseDateOriginal>
+    <ReleaseDate>2026-04-02</ReleaseDate>
     <Author>WarpedEdge and ChikoLad</Author>
     <Description>The purpose of the mod is to give the FFIX cast costumes either already in the game, from DFFOO, or any other ones made for them</Description>
     <PatchNotes>
@@ -4158,8 +4158,8 @@ Placeholder art - Marcus by nanpou0406 &amp; Cinna Concept Art.
 	<Version>2.1</Version>
 	<Priority>16</Priority>
 	<InstallationPath>TripleTriad</InstallationPath>
-	<ReleaseDate>17 Jul 2025</ReleaseDate>
-	<ReleaseDateOriginal>25 Apr 2023</ReleaseDateOriginal>
+	<ReleaseDate>2025-07-17</ReleaseDate>
+	<ReleaseDateOriginal>2023-04-25</ReleaseDateOriginal>
 	<Author>DV</Author>
 	<Category>Visual</Category>
 	<PreviewFile>Thumbnail/tripletriad.png</PreviewFile>
@@ -4465,8 +4465,8 @@ Eredeti telepítő: Evin</Description>
 	<PreviewFile>preview/pt1.png</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/82/82-1748996941-950777641.png</PreviewFileUrl>
 	<Author>dkPsycho/Brtraducoes</Author>
-	<ReleaseDate>01/06/2025</ReleaseDate>
-	<ReleaseDateOriginal>02/09/2022</ReleaseDateOriginal>
+	<ReleaseDate>2025-06-01</ReleaseDate>
+	<ReleaseDateOriginal>2022-09-02</ReleaseDateOriginal>
 	<InstallationPath>Tradução Português Brasil</InstallationPath>
 	<Category>Translation</Category>
 	<Website>https://steamcommunity.com/sharedfiles/filedetails/?id=2111796362</Website>
@@ -4505,8 +4505,8 @@ Eredeti telepítő: Evin</Description>
 	<Author>Plasquar</Author>
 	<InstallationPath>ModernGerman</InstallationPath>
 	<Category>Translation</Category>
-	<ReleaseDateOriginal>12 Feb 2025</ReleaseDateOriginal>
-	<ReleaseDate>12 Feb 2025</ReleaseDate>
+	<ReleaseDateOriginal>2025-02-12</ReleaseDateOriginal>
+	<ReleaseDate>2025-02-12</ReleaseDate>
 	<MinimumMemoriaVersion>2024-08-18</MinimumMemoriaVersion>
 	<Description>Diese Mod behebt ein paar Rechtschreibfehler und aktualisiert die deutsche Übersetzung von FF9 auf die neue deutsche Rechtschreibung.
  Beispiel: "Wir müßen hier weg!" -> "Wir müssen hier weg!".
@@ -4520,8 +4520,8 @@ Eredeti telepítő: Evin</Description>
 	<Priority>19</Priority>
 	<InstallationPath>ReTradFr</InstallationPath>
 	<Author>Lunalesca</Author>
-	<ReleaseDate>23 June 2025</ReleaseDate>
-	<ReleaseDateOriginal>30 March 2023</ReleaseDateOriginal>
+	<ReleaseDate>2025-06-23</ReleaseDate>
+	<ReleaseDateOriginal>2023-03-30</ReleaseDateOriginal>
 	<Description>French retranslation.
 Retraduction complète de tous les textes du jeu.</Description>
 	<PatchNotes>Version 7.0 :
@@ -4609,8 +4609,8 @@ Note: this mod doesn't support automatic installation yet. Download it from its 
     <Version>1.0</Version>
     <Priority>21</Priority>
     <Category>Translation</Category>
-    <ReleaseDateOriginal>02.05.2026</ReleaseDateOriginal>
-    <ReleaseDate>02.05.2026</ReleaseDate>
+    <ReleaseDateOriginal>2026-05-02</ReleaseDateOriginal>
+    <ReleaseDate>2026-05-02</ReleaseDate>
     <InstallationPath>TranslationRu_Textures</InstallationPath>
     <Description>Данный мод добавляет локализацию наименований городов/локаций. Для некоторых локаций есть несколько версий перевода, например:
 	с японского Неспящий город Трено, с английского Тёмный город Трено,
