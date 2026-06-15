@@ -501,7 +501,8 @@
                                                     PreviewMouseMove="ListView_PreviewMouseMove"
                                                     MouseMove="ListView_MouseMove"
                                                     PreviewMouseLeftButtonUp="ListView_PreviewMouseLeftButtonUp"
-                                                    MouseLeave="ListView_MouseLeave">
+                                                    MouseLeave="ListView_MouseLeave"
+                                                    SizeChanged="LstCatalogMods_SizeChanged">
                                                     <ListView.ItemContainerStyle>
                                                         <Style TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
                                                             <EventSetter Event="MouseDoubleClick" Handler="OnCatalogListDoubleClick"/>
@@ -545,6 +546,16 @@
                                                                 x:Name="colCatalogAuthor"
                                                                 DisplayMemberBinding="{Binding Author}"
                                                                 Header="Author(s)">
+                                                                <GridViewColumn.HeaderContainerStyle>
+                                                                    <Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
+                                                                        <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                                                    </Style>
+                                                                </GridViewColumn.HeaderContainerStyle>
+                                                            </GridViewColumn>
+                                                            <GridViewColumn
+                                                                x:Name="colCatalogReleaseDate"
+                                                                DisplayMemberBinding="{Binding ReleaseDate}"
+                                                                Header="Release Date">
                                                                 <GridViewColumn.HeaderContainerStyle>
                                                                     <Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
                                                                         <Setter Property="HorizontalContentAlignment" Value="Left" />

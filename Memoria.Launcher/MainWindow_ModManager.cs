@@ -606,6 +606,53 @@ namespace Memoria.Launcher
 
         private GridViewColumn priorityColumn = null;
 
+        private void LstCatalogMods_SizeChanged(Object sender, SizeChangedEventArgs e)
+        {
+            AutoSizeCatalogColumns();
+        }
+
+        private void AutoSizeCatalogColumns()
+        {
+            if (!(lstCatalogMods.View is GridView))
+                return;
+
+            Double viewportWidth = lstCatalogMods.ActualWidth - SystemParameters.VerticalScrollBarWidth - 18;
+            if (viewportWidth <= 0)
+                return;
+
+            Double installedWidth = 34;
+            Double priorityWidth = priorityColumn != null ? priorityColumn.Width : 0;
+            Double availableWidth = viewportWidth - installedWidth - priorityWidth;
+            if (availableWidth <= 0)
+                return;
+
+            Double minName = 140;
+            Double minCategory = 110;
+            Double minAuthor = 130;
+            Double minReleaseDate = 120;
+            Double minTotal = minName + minCategory + minAuthor + minReleaseDate;
+
+            if (availableWidth <= minTotal)
+            {
+                Double scale = availableWidth / minTotal;
+                colCatalogName.Width = minName * scale;
+                colCatalogCategory.Width = minCategory * scale;
+                colCatalogAuthor.Width = minAuthor * scale;
+                colCatalogReleaseDate.Width = minReleaseDate * scale;
+            }
+            else
+            {
+                Double extra = availableWidth - minTotal;
+                Double totalWeight = 12;
+                colCatalogName.Width = minName + extra * 4 / totalWeight;
+                colCatalogCategory.Width = minCategory + extra * 2.5 / totalWeight;
+                colCatalogAuthor.Width = minAuthor + extra * 3 / totalWeight;
+                colCatalogReleaseDate.Width = minReleaseDate + extra * 2.5 / totalWeight;
+            }
+
+            colCatalogInstalled.Width = installedWidth;
+        }
+
         private void OnClickPriority(Object sender, RoutedEventArgs e)
         {
             if (priorityColumn != null) return;
@@ -636,6 +683,7 @@ namespace Memoria.Launcher
                 }
             }
             UpdateCatalogPriorities();
+            AutoSizeCatalogColumns();
         }
 
         private void UpdateCatalogPriorities()
@@ -730,6 +778,8 @@ namespace Memoria.Launcher
                 accessors = typeof(Mod).GetProperty("Author")?.GetAccessors();
             else if (sender == colCatalogCategory.Header)
                 accessors = typeof(Mod).GetProperty("Category")?.GetAccessors();
+            else if (sender == colCatalogReleaseDate.Header)
+                accessors = typeof(Mod).GetProperty("ReleaseDate")?.GetAccessors();
             else if (sender == colCatalogInstalled.Header)
                 accessors = typeof(Mod).GetProperty("Installed")?.GetAccessors();
             if (accessors != null)
@@ -1114,6 +1164,16 @@ namespace Memoria.Launcher
                 using (StreamReader reader = new StreamReader(input))
                     Mod.LoadModDescriptions(reader, ModListCatalog);
                 UpdateCatalogInstallationState();
+                ModListCatalog = new ObservableCollection<Mod>(ModListCatalog
+                    .OrderBy(mod => mod.Category == null)
+                    .ThenBy(mod => mod.Category)
+                    .ThenBy(mod => mod.Name == null)
+                    .ThenBy(mod => mod.Name)
+                    .ThenByDescending(mod => mod.ReleaseDate == null)
+                    .ThenByDescending(mod => mod.ReleaseDate));
+                lstCatalogMods.ItemsSource = ModListCatalog;
+                ascendingSortedColumn = null;
+                AutoSizeCatalogColumns();
             }
             catch (Exception err)
             {
@@ -1784,6 +1844,11 @@ namespace Memoria.Launcher
             header.SetResourceReference(ContentProperty, "ModEditor.Category");
             header.Click += OnClickCatalogHeader;
             colCatalogCategory.Header = header;
+
+            header = new GridViewColumnHeader();
+            header.SetResourceReference(ContentProperty, "ModEditor.Release");
+            header.Click += OnClickCatalogHeader;
+            colCatalogReleaseDate.Header = header;
 
             header = new GridViewColumnHeader() { Content = "" };
             header.Click += OnClickCatalogHeader;
