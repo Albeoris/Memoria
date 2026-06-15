@@ -1164,7 +1164,14 @@ namespace Memoria.Launcher
                 using (StreamReader reader = new StreamReader(input))
                     Mod.LoadModDescriptions(reader, ModListCatalog);
                 UpdateCatalogInstallationState();
-                SortCatalog(typeof(Mod).GetProperty("ReleaseDate")?.GetGetMethod(), false);
+                ModListCatalog = new ObservableCollection<Mod>(ModListCatalog
+                    .OrderBy(mod => mod.Category == null)
+                    .ThenBy(mod => mod.Category)
+                    .ThenBy(mod => mod.Name == null)
+                    .ThenBy(mod => mod.Name)
+                    .ThenByDescending(mod => mod.ReleaseDate == null)
+                    .ThenByDescending(mod => mod.ReleaseDate));
+                lstCatalogMods.ItemsSource = ModListCatalog;
                 ascendingSortedColumn = null;
                 AutoSizeCatalogColumns();
             }
