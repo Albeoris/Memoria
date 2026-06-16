@@ -46,6 +46,7 @@ DeletePresetCaption = "Удалить предустановку?"
 OK = "OK"
 Cancel = "Отмена"
 Auto = "Авто"
+SearchModsPlaceholder = "ПОИСК ПО НАЗВАНИЮ"
 />
 
 <Settings

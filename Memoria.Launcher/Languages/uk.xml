@@ -46,6 +46,7 @@ DeletePresetCaption = "Видалити стиль?"
 OK = "ОК"
 Cancel = "Скасувати"
 Auto = "Авто"
+SearchModsPlaceholder = "ПОШУК ЗА НАЗВОЮ"
 />
 
 <Settings

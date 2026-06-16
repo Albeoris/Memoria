@@ -46,6 +46,7 @@ DeletePresetCaption = "プリセットを削除しますか?"
 OK = "OK"
 Cancel = "キャンセル"
 Auto = "自動"
+SearchModsPlaceholder = "名前で検索"
 />
 
 <Settings

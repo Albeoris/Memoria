@@ -46,6 +46,7 @@ DeletePresetCaption = "刪除預設？"
 OK = "確定"
 Cancel = "取消"
 Auto = "自動"
+SearchModsPlaceholder = "按名稱搜尋"
 />
 
 <Settings

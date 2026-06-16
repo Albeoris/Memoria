@@ -57,6 +57,44 @@ namespace Memoria.Launcher
 
         private CancellationTokenSource ExtractionCancellationToken = new CancellationTokenSource();
 
+        private ICollectionView _modListInstalledView;
+        private string _searchText = "";
+
+        private ICollectionView _modListCatalogView;
+        private string _searchCatalogText = "";
+
+        public string SearchModsText
+        {
+            get { return _searchText; }
+            set
+            {
+                if (_searchText != value)
+                {
+                    _searchText = value;
+                    if (_modListInstalledView != null)
+                    {
+                        _modListInstalledView.Refresh();
+                    }
+                }
+            }
+        }
+
+        public string SearchCatalogText
+        {
+            get { return _searchCatalogText; }
+            set
+            {
+                if (_searchCatalogText != value)
+                {
+                    _searchCatalogText = value;
+                    if (_modListCatalogView != null)
+                    {
+                        _modListCatalogView.Refresh();
+                    }
+                }
+            }
+        }
+
 
         private void ModManagerWindow_KeyUp(Object sender, System.Windows.Input.KeyEventArgs e)
         {
@@ -72,6 +110,9 @@ namespace Memoria.Launcher
                 AnimateMargin(LogoImage, new Thickness(20, -53, 0, 0), new Thickness(20, -20, 0, 0), TimeSpan.FromMilliseconds(500));
                 AnimateHeight(LogoImage, 250, 125, TimeSpan.FromMilliseconds(500));
                 previousTabWasMod = true;
+
+                // Refresh placeholders when Mods tab is selected
+                RefreshModsPlaceholders();
             }
             else if (previousTabWasMod && !ModManagerTab.IsSelected)
             {
@@ -80,7 +121,93 @@ namespace Memoria.Launcher
                 AnimateHeight(LogoImage, 125, 250, TimeSpan.FromMilliseconds(500));
                 previousTabWasMod = false;
             }
+
+            // Also refresh placeholders when inner tabs change
+            if (tabCtrlMain != null)
+            {
+                RefreshModsPlaceholders();
+            }
         }
+
+        public void RefreshModsPlaceholders()
+        {
+            // Refresh BOTH placeholders when language changes
+            if (txtSearchMods != null)
+            {
+                TextBoxHelper.RefreshPlaceholder(txtSearchMods);
+            }
+            if (txtSearchCatalog != null)
+            {
+                TextBoxHelper.RefreshPlaceholder(txtSearchCatalog);
+            }
+        }
+
+        public void InitializeModsListView()
+        {
+            // Create a CollectionViewSource for the ModListInstalled
+            _modListInstalledView = CollectionViewSource.GetDefaultView(ModListInstalled);
+
+            // Set up the filter
+            _modListInstalledView.Filter = ModFilter;
+
+            // Bind the view to the ListView
+            lstMods.ItemsSource = _modListInstalledView;
+        }
+
+        private bool ModFilter(object obj)
+        {
+            if (string.IsNullOrEmpty(_searchText))
+                return true;
+
+            Mod mod = obj as Mod;
+            if (mod == null || mod.Name == null)
+                return true;
+
+            // Case-insensitive search in mod name
+            return mod.Name.IndexOf(_searchText, StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        private void TxtSearchMods_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender is TextBox textBox)
+            {
+                SearchModsText = textBox.Text ?? "";
+            }
+        }
+
+        public void InitializeCatalogListView()
+        {
+            // Create a CollectionViewSource for the ModListCatalog
+            _modListCatalogView = CollectionViewSource.GetDefaultView(ModListCatalog);
+
+            // Set up the filter
+            _modListCatalogView.Filter = CatalogModFilter;
+
+            // Bind the view to the ListView
+            lstCatalogMods.ItemsSource = _modListCatalogView;
+        }
+
+        private bool CatalogModFilter(object obj)
+        {
+            if (string.IsNullOrEmpty(_searchCatalogText))
+                return true;
+
+            Mod mod = obj as Mod;
+            if (mod == null || mod.Name == null)
+                return true;
+
+            // Case-insensitive search in mod name
+            return mod.Name.IndexOf(_searchCatalogText, StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        private void TxtSearchCatalog_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender is TextBox textBox)
+            {
+                SearchCatalogText = textBox.Text ?? "";
+            }
+        }
+
         private void AnimateHeight(FrameworkElement element, double from, double to, TimeSpan duration)
         {
             DoubleAnimation heightAnimation = new DoubleAnimation
@@ -1171,7 +1298,7 @@ namespace Memoria.Launcher
                     .ThenBy(mod => mod.Name)
                     .ThenByDescending(mod => mod.ReleaseDate == null)
                     .ThenByDescending(mod => mod.ReleaseDate));
-                lstCatalogMods.ItemsSource = ModListCatalog;
+                InitializeCatalogListView();
                 ascendingSortedColumn = null;
                 AutoSizeCatalogColumns();
             }
@@ -1660,7 +1787,7 @@ namespace Memoria.Launcher
                 return ascending ? ac.CompareTo(bc) : -ac.CompareTo(bc);
             });
             ModListCatalog = new ObservableCollection<Mod>(catalogList);
-            lstCatalogMods.ItemsSource = ModListCatalog;
+            InitializeCatalogListView();
         }
 
         public void LoadModSettings()

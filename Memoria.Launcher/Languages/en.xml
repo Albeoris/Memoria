@@ -46,6 +46,7 @@ DeletePresetCaption = "Delete preset?"
 OK = "OK"
 Cancel = "Cancel"
 Auto = "Auto"
+SearchModsPlaceholder = "SEARCH BY NAME"
 />
 
 <Settings
