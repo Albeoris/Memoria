@@ -516,7 +516,10 @@ public class BGSCENE_DEF
         foreach (BGOVERLAY_DEF bgOverlay in this.overlayList)
         {
             bgsStr += $"OVERLAY\n";
-            bgsStr += ExportMemoriaBGXOverlay(bgOverlay, fileName);
+            // Write overlay PNGs NEXT TO the .bgx, not the process CWD (the game root).
+            // ExportMemoriaBGXOverlay derives the .bgx "Image:" ref with Path.GetFileName(),
+            // so it stays bare/relative while the file lands in the field folder.
+            bgsStr += ExportMemoriaBGXOverlay(bgOverlay, folder + fileName);
         }
         foreach (BGANIM_DEF bgAnim in this.animList)
         {
