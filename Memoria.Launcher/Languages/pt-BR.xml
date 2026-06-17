@@ -46,6 +46,7 @@ DeletePresetCaption = "Apagar pré-definição?"
 OK = "OK"
 Cancel = "Cancelar"
 Auto = "Auto"
+SearchModsPlaceholder = "PROCURAR POR NOME"
 />
 
 <Settings

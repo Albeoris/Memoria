@@ -279,8 +279,8 @@
                                         <Border Background="{StaticResource LightGreyUI}" Margin="2,2,8,0" Padding="6" CornerRadius="6">
                                             <Grid>
                                                 <Grid.RowDefinitions>
-                                                    <RowDefinition Height="*" />
                                                     <RowDefinition Height="auto" />
+                                                    <RowDefinition Height="*" />
                                                 </Grid.RowDefinitions>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="auto" />
@@ -288,9 +288,11 @@
                                                 </Grid.ColumnDefinitions>
                                                 <StackPanel
                                                     x:Name="stackButtons"
+                                                    Grid.Row="0"
+                                                    Grid.RowSpan="2"
                                                     Grid.Column="0"
                                                     HorizontalAlignment="Left"
-                                                    VerticalAlignment="Stretch">
+                                                    VerticalAlignment="Top">
                                                     <Button x:Name="btnReorganize"
                                                         Style="{StaticResource ToolButtonStyle}"
                                                         Margin="0,0,0,3"
@@ -329,10 +331,24 @@
                                                         <Image Source="/images/btnUninstallimg.png"/>
                                                     </Button>
                                                 </StackPanel>
+                                                <TextBox
+                                                    x:Name="txtSearchMods"
+                                                    Grid.Row="0"
+                                                    Grid.Column="1"
+                                                    Margin="6,0,0,6"
+                                                    TextChanged="TxtSearchMods_TextChanged"
+                                                    launcher:TextBoxHelper.Placeholder="Launcher.SearchModsPlaceholder"
+                                                    Padding="8,6,8,6"
+                                                    FontSize="14"
+                                                    Foreground="#ccc"
+                                                    Background="#222"
+                                                    BorderBrush="#444"
+                                                    BorderThickness="1"
+                                                    CaretBrush="#ccc" />
                                                 <ListView x:Name="lstMods"
                                                     Margin="6,0,0,0"
+                                                    Grid.Row="1"
                                                     Grid.Column="1"
-                                                    ItemsSource="{Binding ModListInstalled}"
                                                     ScrollViewer.CanContentScroll="False"
                                                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                                     PreviewMouseLeftButtonDown="ListView_PreviewMouseLeftButtonDown"
@@ -460,6 +476,7 @@
                                         <Border Background="{StaticResource LightGreyUI}" Margin="2,2,8,0" Padding="6" CornerRadius="6">
                                             <Grid>
                                                 <Grid.RowDefinitions>
+                                                    <RowDefinition Height="auto" />
                                                     <RowDefinition Height="*" />
                                                     <RowDefinition Height="auto" />
                                                 </Grid.RowDefinitions>
@@ -468,6 +485,8 @@
                                                     <ColumnDefinition Width="*" />
                                                 </Grid.ColumnDefinitions>
                                                 <StackPanel
+                                                    Grid.Row="0"
+                                                    Grid.RowSpan="3"
                                                     Grid.Column="0"
                                                     HorizontalAlignment="Left"
                                                     VerticalAlignment="Top">
@@ -491,10 +510,24 @@
                                                         Opacity="0" >
                                                     </Button>
                                                 </StackPanel>
+                                                <TextBox
+                                                    x:Name="txtSearchCatalog"
+                                                    Grid.Row="0"
+                                                    Grid.Column="1"
+                                                    Margin="6,0,0,6"
+                                                    TextChanged="TxtSearchCatalog_TextChanged"
+                                                    launcher:TextBoxHelper.Placeholder="Launcher.SearchModsPlaceholder"
+                                                    Padding="8,6,8,6"
+                                                    FontSize="14"
+                                                    Foreground="#ccc"
+                                                    Background="#222"
+                                                    BorderBrush="#444"
+                                                    BorderThickness="1"
+                                                    CaretBrush="#ccc" />
                                                 <ListView x:Name="lstCatalogMods"
                                                     Margin="6,0,0,0"
+                                                    Grid.Row="1"
                                                     Grid.Column="1"
-                                                    ItemsSource="{Binding ModListCatalog}"
                                                     ScrollViewer.CanContentScroll="False"
                                                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                                     PreviewMouseLeftButtonDown="ListView_PreviewMouseLeftButtonDown"
@@ -567,11 +600,11 @@
                                                 </ListView>
                                                 <StackPanel x:Name="btnCancelStackpanel"
                                                     Height="0"
-                                                    Grid.Row="1"
+                                                    Grid.Row="2"
                                                     Grid.Column="0"
                                                     Margin="0,0,0,0"
                                                     HorizontalAlignment="Right"
-                                                    VerticalAlignment="Stretch">
+                                                    VerticalAlignment="Top">
                                                     <Button x:Name="btnCancel"
                                                         Style="{StaticResource ToolButtonStyle}"
                                                         Click="OnClickCancelAll"
@@ -585,7 +618,7 @@
                                                 </StackPanel>
                                                 <ListView x:Name="lstDownloads"
                                                     Margin="6,0,0,0"
-                                                    Grid.Row="1"
+                                                    Grid.Row="2"
                                                     Grid.Column="1"
                                                     MinHeight="0"
                                                     MaxHeight="100"

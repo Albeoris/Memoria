@@ -46,6 +46,7 @@ DeletePresetCaption = "Vorgabe löschen?"
 OK = "OK"
 Cancel = "Abbrechen"
 Auto = "Auto"
+SearchModsPlaceholder = "SUCHE NACH NAMEN"
 />
 
 <Settings
