@@ -46,7 +46,7 @@ DeletePresetCaption = "Ön ayar silinsin mi?"
 OK = "TAMAM"
 Cancel = "İptal"
 Auto = "Otomatik"
-SearchModsPlaceholder = "ADA GÖRE ARA"
+SearchModsPlaceholder = "ISIM GÖRE ARAMA"
 />
 
 <Settings
