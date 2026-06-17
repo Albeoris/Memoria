@@ -4,6 +4,7 @@ using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Data;
 using Memoria.Assets;
+using Memoria;
 
 public class PLAYER
 {
@@ -23,6 +24,7 @@ public class PLAYER
         this.saForced = new HashSet<SupportAbility>();
         this.saBanish = new HashSet<SupportAbility>();
         this.saHidden = new HashSet<SupportAbility>();
+        this.saPreview = new HashSet<SupportAbility>();
         this.mpCostFactor = 100;
         this.maxHpLimit = ff9play.FF9PLAY_HP_MAX;
         this.maxMpLimit = ff9play.FF9PLAY_MP_MAX;
@@ -130,6 +132,8 @@ public class PLAYER
         {
             if (String.IsNullOrEmpty(_name))
                 _name = FF9TextTool.CharacterDefaultName(info.slot_no);
+            if (Configuration.Hacks.DisableNameChoice == 2)
+                return FF9TextTool.CharacterDefaultName(info.slot_no);
             return _name;
         }
         set => _name = value;
@@ -192,6 +196,7 @@ public class PLAYER
     public HashSet<SupportAbility> saForced;
     public HashSet<SupportAbility> saBanish;
     public HashSet<SupportAbility> saHidden;
+    public HashSet<SupportAbility> saPreview;
 
     // Custom fields
     public Int16 mpCostFactor;

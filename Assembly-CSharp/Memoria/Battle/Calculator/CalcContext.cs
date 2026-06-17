@@ -49,9 +49,9 @@ namespace Memoria
                 Int32 previousCount = _damageModifierCount;
                 Int32 delta = value - previousCount;
                 _damageModifierCount = value;
-                if (BattleCalculator.DamageModifierScript != null)
+                if (MergingScriptsCache.DamageModifier.HasLoaded)
                 {
-                    BattleCalculator.DamageModifierScript.OnDamageModifierChange(_calculator, previousCount, delta);
+                    MergingScriptsCache.DamageModifier.OnDamageModifierChange(_calculator, previousCount, delta);
                 }
                 else
                 {
@@ -73,9 +73,9 @@ namespace Memoria
 
         public void DecreaseAttackDrastically()
         {
-            if (BattleCalculator.DamageModifierScript != null)
+            if (MergingScriptsCache.DamageModifier.HasLoaded)
             {
-                BattleCalculator.DamageModifierScript.OnDamageDrasticReduction(_calculator);
+                MergingScriptsCache.DamageModifier.OnDamageDrasticReduction(_calculator);
             }
             else
             {
