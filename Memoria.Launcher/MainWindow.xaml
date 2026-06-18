@@ -397,6 +397,14 @@
                                                                 <GridViewColumn.CellTemplate>
                                                                     <DataTemplate>
                                                                         <StackPanel Orientation="Horizontal">
+                                                                            <Image x:Name="colMyModsUpdateImage"
+                                                                                Source="/images/alert_update.png"
+                                                                                Width="16"
+                                                                                Height="16"
+                                                                                Margin="0,2,2,0"
+                                                                                VerticalAlignment="Center"
+                                                                                Visibility="{Binding UpdateIcon, Converter={StaticResource StringToVisibilityConverter}}"
+                                                                                Effect="{StaticResource ButtondropShadowEffect}" />
                                                                             <Button x:Name="colMyModsUpdateText"
                                                                             Padding="0,3,0,0"
                                                                                 FontFamily="{StaticResource NotoEmoji}"
@@ -549,9 +557,18 @@
                                                                         <TextBlock Text="✅" FontFamily="{StaticResource NotoEmoji}" />
                                                                     </DataTemplate>
                                                                 </GridViewColumn.HeaderTemplate>
-                                                                <GridViewColumn.CellTemplate>
+                                                                 <GridViewColumn.CellTemplate>
                                                                     <DataTemplate>
-                                                                        <TextBlock Text="{Binding Installed}" FontFamily="{StaticResource NotoEmoji}" />
+                                                                        <StackPanel Orientation="Horizontal">
+                                                                            <Image Source="/images/alert_update.png"
+                                                                                Width="16"
+                                                                                Height="16"
+                                                                                Margin="0,2,2,0"
+                                                                                VerticalAlignment="Center"
+                                                                                Visibility="{Binding IsOutdated, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                                                Effect="{StaticResource ButtondropShadowEffect}" />
+                                                                            <TextBlock Text="{Binding Installed}" FontFamily="{StaticResource NotoEmoji}" />
+                                                                        </StackPanel>
                                                                     </DataTemplate>
                                                                 </GridViewColumn.CellTemplate>
                                                             </GridViewColumn>

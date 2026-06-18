@@ -241,6 +241,13 @@ namespace Memoria.Launcher
                 AreThereModUpdates = false;
                 AreThereModIncompatibilies = false;
 
+                // Reset IsOutdated flag for all catalog mods
+                foreach (Mod catalog_mod in ModListCatalog)
+                {
+                    if (catalog_mod != null)
+                        catalog_mod.IsOutdated = false;
+                }
+
                 foreach (Mod mod in ModListInstalled)
                 {
                     if (mod == null || mod.Name == null)
@@ -251,6 +258,7 @@ namespace Memoria.Launcher
                     mod.UpdateTooltip = null;
                     mod.IncompIcon = null;
                     mod.ActiveIncompatibleMods = null;
+                    mod.IsOutdated = false;
 
                     if (((mod.Name == "Moguri Mod" || mod.Name == "MoguriFiles") && mod.InstallationPath.Contains("MoguriFiles")) || (mod.Name == "Moguri - 3D textures" && mod.InstallationPath.Contains("Moguri_3Dtextures")))
                     {
@@ -747,7 +755,7 @@ namespace Memoria.Launcher
             if (viewportWidth <= 0)
                 return;
 
-            Double installedWidth = 34;
+            Double installedWidth = 60;
             Double priorityWidth = priorityColumn != null ? priorityColumn.Width : 0;
             Double availableWidth = viewportWidth - installedWidth - priorityWidth;
             if (availableWidth <= 0)
