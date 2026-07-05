@@ -20,7 +20,18 @@
                             <Border >
                                 <StackPanel x:Name="contentwrap" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                                     <Image x:Name="IncompatImage" Source="/images/alert_incompat.png" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type TabItem}}, Path=Tag}" Height="16" Margin="0" Visibility="Collapsed" />
-                                    <Image x:Name="UpdateImage" Source="/images/alert_update.png" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type TabItem}}, Path=Tag}" Height="16" Margin="0" Visibility="Collapsed" />
+                                    <TextBlock x:Name="UpdateEmoji"
+                                               Text="⏫"
+                                               FontFamily="{DynamicResource NotoEmoji}"
+                                               FontSize="14"
+                                               Foreground="#efd525"
+                                               Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type TabItem}}, Path=Tag}"
+                                               Height="16"
+                                               LineHeight="16"
+                                               TextAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Margin="0,0,2,0"
+                                               Visibility="Collapsed" />
                                     <ContentPresenter x:Name="content" 
                                         ContentSource="Header"
                                         VerticalAlignment="Center"
@@ -56,7 +67,7 @@
                                 <Condition Binding="{Binding AreThereModUpdates}" Value="True" />
                             </MultiDataTrigger.Conditions>
                             <MultiDataTrigger.Setters>
-                                <Setter TargetName="UpdateImage" Property="Visibility" Value="Visible" />
+                                <Setter TargetName="UpdateEmoji" Property="Visibility" Value="Visible" />
                             </MultiDataTrigger.Setters>
                         </MultiDataTrigger>
 
