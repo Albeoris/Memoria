@@ -43,6 +43,7 @@ namespace Memoria.Launcher
         };
 
         private readonly string UpdateEmoji = "⏫";
+        private readonly string NewEmoji = "🆕";
         private readonly string ConflictEmoji = "✖️";
         private readonly string WaitingEmoji = "⌛";
         private readonly string InstalledEmoji = "✔️";
@@ -330,8 +331,6 @@ namespace Memoria.Launcher
                     }
                 }
 
-                colMyModsIcons.Width = colMyModsIcons.ActualWidth;
-                colMyModsIcons.Width = double.NaN;
                 lstMods.Items.Refresh();
             }
             catch (Exception ex)
@@ -381,7 +380,7 @@ namespace Memoria.Launcher
 
         private void UpdateIcon_Click(object sender, RoutedEventArgs e)
         {
-            Mod installedMod = (sender as Button)?.DataContext as Mod;
+            Mod installedMod = (sender as FrameworkElement)?.DataContext as Mod;
             if (installedMod == null || installedMod.Name == null)
                 return;
 
@@ -747,7 +746,7 @@ namespace Memoria.Launcher
             if (viewportWidth <= 0)
                 return;
 
-            Double installedWidth = 34;
+            Double installedWidth = 60;
             Double priorityWidth = priorityColumn != null ? priorityColumn.Width : 0;
             Double availableWidth = viewportWidth - installedWidth - priorityWidth;
             if (availableWidth <= 0)
@@ -1290,6 +1289,10 @@ namespace Memoria.Launcher
                 using (Stream input = File.OpenRead(CATALOG_PATH))
                 using (StreamReader reader = new StreamReader(input))
                     Mod.LoadModDescriptions(reader, ModListCatalog);
+
+                // Preserve existing behavior for highlighting recently released and not yet installed mods.
+                CalculateNewModStatus();
+
                 UpdateCatalogInstallationState();
                 ModListCatalog = new ObservableCollection<Mod>(ModListCatalog
                     .OrderBy(mod => mod.Category == null)
@@ -1305,6 +1308,25 @@ namespace Memoria.Launcher
             catch (Exception err)
             {
                 MessageBox.Show(err.Message, "Error", MessageBoxButton.OK);
+            }
+        }
+
+        private void CalculateNewModStatus()
+        {
+            DateTime ninetyDaysAgo = DateTime.Now.AddDays(-14);
+
+            foreach (Mod mod in ModListCatalog)
+            {
+                if (mod == null || String.IsNullOrEmpty(mod.ReleaseDate))
+                {
+                    mod.IsNew = false;
+                    continue;
+                }
+
+                if (DateTime.TryParseExact(mod.ReleaseDate, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime releaseDate))
+                    mod.IsNew = releaseDate >= ninetyDaysAgo;
+                else
+                    mod.IsNew = false;
             }
         }
 
@@ -1742,6 +1764,8 @@ namespace Memoria.Launcher
 
         private void UpdateCatalogInstallationState()
         {
+            Boolean areThereNewMods = false;
+
             foreach (Mod mod in ModListCatalog)
             {
                 if (Mod.SearchMod(DownloadList, mod) != null)
@@ -1753,7 +1777,12 @@ namespace Memoria.Launcher
 
                 else
                     mod.Installed = "";
+
+                if (mod.IsNewAndNotInstalled)
+                    areThereNewMods = true;
             }
+
+            AreThereNewMods = areThereNewMods;
             lstCatalogMods.Items.Refresh();
         }
 

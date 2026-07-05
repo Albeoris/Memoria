@@ -101,6 +101,17 @@ namespace Memoria.Launcher
             }
         }
 
+        private Boolean _areThereNewMods;
+        public Boolean AreThereNewMods
+        {
+            get => _areThereNewMods;
+            set
+            {
+                _areThereNewMods = value;
+                OnPropertyChanged(nameof(AreThereNewMods));
+            }
+        }
+
 
         ////////////////
         // CHECKBOXES //

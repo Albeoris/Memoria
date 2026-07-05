@@ -237,7 +237,7 @@
             <TabItem x:Name="ModManagerTab"
                 Height="45"
                 Header="{DynamicResource Settings.menuMods}"
-                Tag="16"
+                Tag="22"
                 Style="{StaticResource MainTabs}" >
                 <Border Style="{StaticResource TransparentGridStyle}">
                     <Grid>
@@ -356,6 +356,12 @@
                                                     MouseMove="ListView_MouseMove"
                                                     PreviewMouseLeftButtonUp="ListView_PreviewMouseLeftButtonUp"
                                                     MouseLeave="ListView_MouseLeave">
+                                                    <ListView.ItemContainerStyle>
+                                                        <Style TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
+                                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                                        </Style>
+                                                    </ListView.ItemContainerStyle>
                                                     <ListView.View>
                                                         <GridView>
                                                             <GridViewColumn
@@ -365,6 +371,7 @@
                                                                         <CheckBox
                                                                             Style="{StaticResource CheckBoxStyle}"
                                                                             HorizontalAlignment="Center"
+                                                                            VerticalAlignment="Center"
                                                                             IsChecked="{Binding IsActive, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                                             Click="CheckBox_Click"
                                                                             IsTabStop="False" />
@@ -374,7 +381,8 @@
                                                                     <DataTemplate>
                                                                         <TextBlock
                                                                             Text="✅"
-                                                                            FontFamily="{StaticResource NotoEmoji}" />
+                                                                            FontFamily="{StaticResource NotoEmoji}"
+                                                                            FontSize="18" />
                                                                     </DataTemplate>
                                                                 </GridViewColumn.HeaderTemplate>
                                                             </GridViewColumn>
@@ -396,29 +404,68 @@
                                                                 Header="" >
                                                                 <GridViewColumn.CellTemplate>
                                                                     <DataTemplate>
-                                                                        <StackPanel Orientation="Horizontal">
-                                                                            <Button x:Name="colMyModsUpdateText"
-                                                                            Padding="0,3,0,0"
-                                                                                FontFamily="{StaticResource NotoEmoji}"
-                                                                                Content="{Binding UpdateIcon}"
-                                                                                FontWeight="Black"
-                                                                                ToolTip="{Binding UpdateTooltip}"
-                                                                                ToolTipService.InitialShowDelay="10"
-                                                                                Effect="{StaticResource ButtondropShadowEffect}"
-                                                                                Style="{StaticResource ButtonStyleLabel}"
-                                                                                Foreground="#efd525"
-                                                                                Cursor="Hand"
-                                                                                Click="UpdateIcon_Click"/>
-                                                                            <Label x:Name="colMyModsIncompText"
-                                                                                Padding="0,3,0,0"
-                                                                                FontFamily="{StaticResource NotoEmoji}"
-                                                                                Content="{Binding IncompIcon}"
-                                                                                ToolTip="{Binding ActiveIncompatibleMods}"
-                                                                                ToolTipService.InitialShowDelay="10"
-                                                                                ToolTipService.BetweenShowDelay="0"
-                                                                                Effect="{StaticResource ButtondropShadowEffect}"
-                                                                                Foreground="#f51818" />
-                                                                        </StackPanel>
+                                                                        <Grid HorizontalAlignment="Stretch" MinWidth="22">
+                                                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                                <TextBlock x:Name="colMyModsUpdateText"
+                                                                                    FontFamily="{StaticResource NotoEmoji}"
+                                                                                    FontSize="18"
+                                                                                    Text="{Binding UpdateIcon}"
+                                                                                    FontWeight="Black"
+                                                                                    Width="22"
+                                                                                    Height="22"
+                                                                                    TextAlignment="Center"
+                                                                                    LineHeight="22"
+                                                                                    VerticalAlignment="Center"
+                                                                                    ToolTip="{Binding UpdateTooltip}"
+                                                                                    ToolTipService.InitialShowDelay="10"
+                                                                                    Effect="{StaticResource ButtondropShadowEffect}"
+                                                                                    Foreground="#efd525"
+                                                                                    Cursor="Hand"
+                                                                                    MouseLeftButtonUp="UpdateIcon_Click">
+                                                                                    <TextBlock.Style>
+                                                                                        <Style TargetType="TextBlock">
+                                                                                            <Setter Property="Visibility" Value="Visible" />
+                                                                                            <Style.Triggers>
+                                                                                                <DataTrigger Binding="{Binding UpdateIcon}" Value="{x:Null}">
+                                                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                                                </DataTrigger>
+                                                                                                <DataTrigger Binding="{Binding UpdateIcon}" Value="">
+                                                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                                                </DataTrigger>
+                                                                                            </Style.Triggers>
+                                                                                        </Style>
+                                                                                    </TextBlock.Style>
+                                                                                </TextBlock>
+                                                                                <TextBlock x:Name="colMyModsIncompText"
+                                                                                    FontFamily="{StaticResource NotoEmoji}"
+                                                                                    FontSize="18"
+                                                                                    Text="{Binding IncompIcon}"
+                                                                                    Width="22"
+                                                                                    Height="22"
+                                                                                    TextAlignment="Center"
+                                                                                    LineHeight="22"
+                                                                                    VerticalAlignment="Center"
+                                                                                    ToolTip="{Binding ActiveIncompatibleMods}"
+                                                                                    ToolTipService.InitialShowDelay="10"
+                                                                                    ToolTipService.BetweenShowDelay="0"
+                                                                                    Effect="{StaticResource ButtondropShadowEffect}"
+                                                                                    Foreground="#f51818">
+                                                                                    <TextBlock.Style>
+                                                                                        <Style TargetType="TextBlock">
+                                                                                            <Setter Property="Visibility" Value="Visible" />
+                                                                                            <Style.Triggers>
+                                                                                                <DataTrigger Binding="{Binding IncompIcon}" Value="{x:Null}">
+                                                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                                                </DataTrigger>
+                                                                                                <DataTrigger Binding="{Binding IncompIcon}" Value="">
+                                                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                                                </DataTrigger>
+                                                                                            </Style.Triggers>
+                                                                                        </Style>
+                                                                                    </TextBlock.Style>
+                                                                                </TextBlock>
+                                                                            </StackPanel>
+                                                                        </Grid>
                                                                     </DataTemplate>
                                                                 </GridViewColumn.CellTemplate>
                                                             </GridViewColumn>
@@ -432,13 +479,14 @@
                                                                 </GridViewColumn.HeaderContainerStyle>
                                                                 <GridViewColumn.CellTemplate>
                                                                     <DataTemplate>
-                                                                        <StackPanel Orientation="Horizontal">
+                                                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                                                             <TextBlock x:Name="colMyModsNameText"
-                                                                                Text="{Binding Name}" />
+                                                                                Text="{Binding Name}"
+                                                                                VerticalAlignment="Center" />
                                                                             <TextBlock x:Name="colMyModsVersionText"
                                                                                 Text="{Binding CurrentVersion}"
                                                                                 Margin="4,0,0,0"
-                                                                                VerticalAlignment="Bottom"
+                                                                                VerticalAlignment="Center"
                                                                                 Foreground="#888"
                                                                                 FontSize="12"/>
                                                                         </StackPanel>
@@ -538,6 +586,7 @@
                                                     SizeChanged="LstCatalogMods_SizeChanged">
                                                     <ListView.ItemContainerStyle>
                                                         <Style TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
+                                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                                                             <EventSetter Event="MouseDoubleClick" Handler="OnCatalogListDoubleClick"/>
                                                         </Style>
                                                     </ListView.ItemContainerStyle>
@@ -546,12 +595,46 @@
                                                             <GridViewColumn x:Name="colCatalogInstalled">
                                                                 <GridViewColumn.HeaderTemplate>
                                                                     <DataTemplate>
-                                                                        <TextBlock Text="✅" FontFamily="{StaticResource NotoEmoji}" />
+                                                                        <TextBlock Text="✅" FontFamily="{StaticResource NotoEmoji}" FontSize="18" />
                                                                     </DataTemplate>
                                                                 </GridViewColumn.HeaderTemplate>
                                                                 <GridViewColumn.CellTemplate>
                                                                     <DataTemplate>
-                                                                        <TextBlock Text="{Binding Installed}" FontFamily="{StaticResource NotoEmoji}" />
+                                                                        <Grid HorizontalAlignment="Stretch">
+                                                                            <Grid HorizontalAlignment="Center" Width="22">
+                                                                                <TextBlock Text="🆕"
+                                                                                    FontFamily="{StaticResource NotoEmoji}"
+                                                                                    FontSize="18"
+                                                                                    FontWeight="Normal"
+                                                                                    Foreground="#efd525"
+                                                                                    Effect="{StaticResource ButtondropShadowEffect}"
+                                                                                    VerticalAlignment="Center"
+                                                                                    TextAlignment="Center">
+                                                                                    <TextBlock.Style>
+                                                                                        <Style TargetType="TextBlock">
+                                                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                                                            <Style.Triggers>
+                                                                                                <DataTrigger Binding="{Binding IsNewAndNotInstalled}" Value="True">
+                                                                                                    <Setter Property="Visibility" Value="Visible" />
+                                                                                                </DataTrigger>
+                                                                                            </Style.Triggers>
+                                                                                        </Style>
+                                                                                    </TextBlock.Style>
+                                                                                </TextBlock>
+                                                                                <TextBlock Text="{Binding Installed}" FontFamily="{StaticResource NotoEmoji}" FontSize="18" TextAlignment="Center" VerticalAlignment="Center">
+                                                                                    <TextBlock.Style>
+                                                                                        <Style TargetType="TextBlock">
+                                                                                            <Setter Property="Visibility" Value="Visible" />
+                                                                                            <Style.Triggers>
+                                                                                                <DataTrigger Binding="{Binding IsNewAndNotInstalled}" Value="True">
+                                                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                                                </DataTrigger>
+                                                                                            </Style.Triggers>
+                                                                                        </Style>
+                                                                                    </TextBlock.Style>
+                                                                                </TextBlock>
+                                                                            </Grid>
+                                                                        </Grid>
                                                                     </DataTemplate>
                                                                 </GridViewColumn.CellTemplate>
                                                             </GridViewColumn>

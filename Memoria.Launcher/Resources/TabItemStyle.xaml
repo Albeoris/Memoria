@@ -23,17 +23,30 @@
                                     <TextBlock x:Name="UpdateEmoji"
                                                Text="⏫"
                                                FontFamily="{DynamicResource NotoEmoji}"
-                                               FontSize="14"
+                                               FontSize="18"
                                                Foreground="#efd525"
                                                Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type TabItem}}, Path=Tag}"
-                                               Height="16"
-                                               LineHeight="16"
+                                               Height="22"
+                                               LineHeight="22"
                                                TextAlignment="Center"
                                                VerticalAlignment="Center"
-                                               Margin="0,0,2,0"
+                                               Margin="3,0,0,0"
+                                               Visibility="Collapsed" />
+                                    <TextBlock x:Name="NewEmoji"
+                                               Text="🆕"
+                                               FontFamily="{DynamicResource NotoEmoji}"
+                                               FontSize="18"
+                                               Foreground="#efd525"
+                                               Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type TabItem}}, Path=Tag}"
+                                               Height="22"
+                                               LineHeight="22"
+                                               TextAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Margin="3,0,0,0"
                                                Visibility="Collapsed" />
                                     <ContentPresenter x:Name="content" 
                                         ContentSource="Header"
+                                        Margin="0,0,0,0"
                                         VerticalAlignment="Center"
                                         TextBlock.FontSize="{TemplateBinding FontSize}"
                                         TextBlock.FontFamily="{DynamicResource CenturyGothic}"
@@ -68,6 +81,17 @@
                             </MultiDataTrigger.Conditions>
                             <MultiDataTrigger.Setters>
                                 <Setter TargetName="UpdateEmoji" Property="Visibility" Value="Visible" />
+                                <Setter TargetName="content" Property="Margin" Value="6,0,0,0" />
+                            </MultiDataTrigger.Setters>
+                        </MultiDataTrigger>
+
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding AreThereNewMods}" Value="True" />
+                            </MultiDataTrigger.Conditions>
+                            <MultiDataTrigger.Setters>
+                                <Setter TargetName="NewEmoji" Property="Visibility" Value="Visible" />
+                                <Setter TargetName="content" Property="Margin" Value="6,0,0,0" />
                             </MultiDataTrigger.Setters>
                         </MultiDataTrigger>
 
