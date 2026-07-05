@@ -1313,7 +1313,7 @@ namespace Memoria.Launcher
 
         private void CalculateNewModStatus()
         {
-            DateTime ninetyDaysAgo = DateTime.Now.AddDays(-14);
+            DateTime daysAgoFromNow = DateTime.Now.AddDays(-14);
 
             foreach (Mod mod in ModListCatalog)
             {
@@ -1324,7 +1324,7 @@ namespace Memoria.Launcher
                 }
 
                 if (DateTime.TryParseExact(mod.ReleaseDate, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime releaseDate))
-                    mod.IsNew = releaseDate >= ninetyDaysAgo;
+                    mod.IsNew = releaseDate >= daysAgoFromNow;
                 else
                     mod.IsNew = false;
             }
