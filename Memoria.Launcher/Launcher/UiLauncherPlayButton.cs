@@ -308,11 +308,18 @@ namespace Memoria.Launcher
             return false;
         }
 
+        private static String GetPatcherDownloadUrl(String updateChannel)
+        {
+            if (String.Equals(updateChannel, "Canary", StringComparison.OrdinalIgnoreCase))
+                return "https://github.com/Albeoris/Memoria/releases/download/canary/Memoria.Patcher.exe";
+
+            return "https://github.com/Albeoris/Memoria/releases/latest/download/Memoria.Patcher.exe";
+        }
 
         private static async Task<LinkedList<HttpFileInfo>> FindUpdatesInfo(String applicationDirectory, ManualResetEvent cancelEvent, SettingsGrid_Vanilla gameSettings)
         {
             Downloader downloader = new Downloader(cancelEvent);
-            String[] urls = gameSettings.DownloadMirrors;
+            String[] urls = [GetPatcherDownloadUrl(gameSettings.UpdateChannel)];
 
             LinkedList<HttpFileInfo> list = new LinkedList<HttpFileInfo>();
             Dictionary<String, LinkedListNode<HttpFileInfo>> dic = new Dictionary<String, LinkedListNode<HttpFileInfo>>(urls.Length);

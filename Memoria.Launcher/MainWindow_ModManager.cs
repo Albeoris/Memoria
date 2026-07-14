@@ -43,6 +43,7 @@ namespace Memoria.Launcher
         };
 
         private readonly string UpdateEmoji = "⏫";
+        private readonly string NewEmoji = "🆕";
         private readonly string ConflictEmoji = "✖️";
         private readonly string WaitingEmoji = "⌛";
         private readonly string InstalledEmoji = "✔️";
@@ -56,6 +57,44 @@ namespace Memoria.Launcher
         public static String[] SupportedArchives { get; } = [".rar", ".unrar", ".zip", ".bzip2", ".gzip", ".tar", ".7z", ".lzip", ".gz"];
 
         private CancellationTokenSource ExtractionCancellationToken = new CancellationTokenSource();
+
+        private ICollectionView _modListInstalledView;
+        private string _searchText = "";
+
+        private ICollectionView _modListCatalogView;
+        private string _searchCatalogText = "";
+
+        public string SearchModsText
+        {
+            get { return _searchText; }
+            set
+            {
+                if (_searchText != value)
+                {
+                    _searchText = value;
+                    if (_modListInstalledView != null)
+                    {
+                        _modListInstalledView.Refresh();
+                    }
+                }
+            }
+        }
+
+        public string SearchCatalogText
+        {
+            get { return _searchCatalogText; }
+            set
+            {
+                if (_searchCatalogText != value)
+                {
+                    _searchCatalogText = value;
+                    if (_modListCatalogView != null)
+                    {
+                        _modListCatalogView.Refresh();
+                    }
+                }
+            }
+        }
 
 
         private void ModManagerWindow_KeyUp(Object sender, System.Windows.Input.KeyEventArgs e)
@@ -72,6 +111,9 @@ namespace Memoria.Launcher
                 AnimateMargin(LogoImage, new Thickness(20, -53, 0, 0), new Thickness(20, -20, 0, 0), TimeSpan.FromMilliseconds(500));
                 AnimateHeight(LogoImage, 250, 125, TimeSpan.FromMilliseconds(500));
                 previousTabWasMod = true;
+
+                // Refresh placeholders when Mods tab is selected
+                RefreshModsPlaceholders();
             }
             else if (previousTabWasMod && !ModManagerTab.IsSelected)
             {
@@ -80,7 +122,93 @@ namespace Memoria.Launcher
                 AnimateHeight(LogoImage, 125, 250, TimeSpan.FromMilliseconds(500));
                 previousTabWasMod = false;
             }
+
+            // Also refresh placeholders when inner tabs change
+            if (tabCtrlMain != null)
+            {
+                RefreshModsPlaceholders();
+            }
         }
+
+        public void RefreshModsPlaceholders()
+        {
+            // Refresh BOTH placeholders when language changes
+            if (txtSearchMods != null)
+            {
+                TextBoxHelper.RefreshPlaceholder(txtSearchMods);
+            }
+            if (txtSearchCatalog != null)
+            {
+                TextBoxHelper.RefreshPlaceholder(txtSearchCatalog);
+            }
+        }
+
+        public void InitializeModsListView()
+        {
+            // Create a CollectionViewSource for the ModListInstalled
+            _modListInstalledView = CollectionViewSource.GetDefaultView(ModListInstalled);
+
+            // Set up the filter
+            _modListInstalledView.Filter = ModFilter;
+
+            // Bind the view to the ListView
+            lstMods.ItemsSource = _modListInstalledView;
+        }
+
+        private bool ModFilter(object obj)
+        {
+            if (string.IsNullOrEmpty(_searchText))
+                return true;
+
+            Mod mod = obj as Mod;
+            if (mod == null || mod.Name == null)
+                return true;
+
+            // Case-insensitive search in mod name
+            return mod.Name.IndexOf(_searchText, StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        private void TxtSearchMods_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender is TextBox textBox)
+            {
+                SearchModsText = textBox.Text ?? "";
+            }
+        }
+
+        public void InitializeCatalogListView()
+        {
+            // Create a CollectionViewSource for the ModListCatalog
+            _modListCatalogView = CollectionViewSource.GetDefaultView(ModListCatalog);
+
+            // Set up the filter
+            _modListCatalogView.Filter = CatalogModFilter;
+
+            // Bind the view to the ListView
+            lstCatalogMods.ItemsSource = _modListCatalogView;
+        }
+
+        private bool CatalogModFilter(object obj)
+        {
+            if (string.IsNullOrEmpty(_searchCatalogText))
+                return true;
+
+            Mod mod = obj as Mod;
+            if (mod == null || mod.Name == null)
+                return true;
+
+            // Case-insensitive search in mod name
+            return mod.Name.IndexOf(_searchCatalogText, StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        private void TxtSearchCatalog_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender is TextBox textBox)
+            {
+                SearchCatalogText = textBox.Text ?? "";
+            }
+        }
+
         private void AnimateHeight(FrameworkElement element, double from, double to, TimeSpan duration)
         {
             DoubleAnimation heightAnimation = new DoubleAnimation
@@ -203,8 +331,6 @@ namespace Memoria.Launcher
                     }
                 }
 
-                colMyModsIcons.Width = colMyModsIcons.ActualWidth;
-                colMyModsIcons.Width = double.NaN;
                 lstMods.Items.Refresh();
             }
             catch (Exception ex)
@@ -254,7 +380,7 @@ namespace Memoria.Launcher
 
         private void UpdateIcon_Click(object sender, RoutedEventArgs e)
         {
-            Mod installedMod = (sender as Button)?.DataContext as Mod;
+            Mod installedMod = (sender as FrameworkElement)?.DataContext as Mod;
             if (installedMod == null || installedMod.Name == null)
                 return;
 
@@ -606,6 +732,53 @@ namespace Memoria.Launcher
 
         private GridViewColumn priorityColumn = null;
 
+        private void LstCatalogMods_SizeChanged(Object sender, SizeChangedEventArgs e)
+        {
+            AutoSizeCatalogColumns();
+        }
+
+        private void AutoSizeCatalogColumns()
+        {
+            if (!(lstCatalogMods.View is GridView))
+                return;
+
+            Double viewportWidth = lstCatalogMods.ActualWidth - SystemParameters.VerticalScrollBarWidth - 18;
+            if (viewportWidth <= 0)
+                return;
+
+            Double installedWidth = 60;
+            Double priorityWidth = priorityColumn != null ? priorityColumn.Width : 0;
+            Double availableWidth = viewportWidth - installedWidth - priorityWidth;
+            if (availableWidth <= 0)
+                return;
+
+            Double minName = 140;
+            Double minCategory = 110;
+            Double minAuthor = 130;
+            Double minReleaseDate = 120;
+            Double minTotal = minName + minCategory + minAuthor + minReleaseDate;
+
+            if (availableWidth <= minTotal)
+            {
+                Double scale = availableWidth / minTotal;
+                colCatalogName.Width = minName * scale;
+                colCatalogCategory.Width = minCategory * scale;
+                colCatalogAuthor.Width = minAuthor * scale;
+                colCatalogReleaseDate.Width = minReleaseDate * scale;
+            }
+            else
+            {
+                Double extra = availableWidth - minTotal;
+                Double totalWeight = 12;
+                colCatalogName.Width = minName + extra * 4 / totalWeight;
+                colCatalogCategory.Width = minCategory + extra * 2.5 / totalWeight;
+                colCatalogAuthor.Width = minAuthor + extra * 3 / totalWeight;
+                colCatalogReleaseDate.Width = minReleaseDate + extra * 2.5 / totalWeight;
+            }
+
+            colCatalogInstalled.Width = installedWidth;
+        }
+
         private void OnClickPriority(Object sender, RoutedEventArgs e)
         {
             if (priorityColumn != null) return;
@@ -636,6 +809,7 @@ namespace Memoria.Launcher
                 }
             }
             UpdateCatalogPriorities();
+            AutoSizeCatalogColumns();
         }
 
         private void UpdateCatalogPriorities()
@@ -730,6 +904,8 @@ namespace Memoria.Launcher
                 accessors = typeof(Mod).GetProperty("Author")?.GetAccessors();
             else if (sender == colCatalogCategory.Header)
                 accessors = typeof(Mod).GetProperty("Category")?.GetAccessors();
+            else if (sender == colCatalogReleaseDate.Header)
+                accessors = typeof(Mod).GetProperty("ReleaseDate")?.GetAccessors();
             else if (sender == colCatalogInstalled.Header)
                 accessors = typeof(Mod).GetProperty("Installed")?.GetAccessors();
             if (accessors != null)
@@ -1113,11 +1289,44 @@ namespace Memoria.Launcher
                 using (Stream input = File.OpenRead(CATALOG_PATH))
                 using (StreamReader reader = new StreamReader(input))
                     Mod.LoadModDescriptions(reader, ModListCatalog);
+
+                // Preserve existing behavior for highlighting recently released and not yet installed mods.
+                CalculateNewModStatus();
+
                 UpdateCatalogInstallationState();
+                ModListCatalog = new ObservableCollection<Mod>(ModListCatalog
+                    .OrderBy(mod => mod.Category == null)
+                    .ThenBy(mod => mod.Category)
+                    .ThenBy(mod => mod.Name == null)
+                    .ThenBy(mod => mod.Name)
+                    .ThenByDescending(mod => mod.ReleaseDate == null)
+                    .ThenByDescending(mod => mod.ReleaseDate));
+                InitializeCatalogListView();
+                ascendingSortedColumn = null;
+                AutoSizeCatalogColumns();
             }
             catch (Exception err)
             {
                 MessageBox.Show(err.Message, "Error", MessageBoxButton.OK);
+            }
+        }
+
+        private void CalculateNewModStatus()
+        {
+            DateTime daysAgoFromNow = DateTime.Now.AddDays(-14);
+
+            foreach (Mod mod in ModListCatalog)
+            {
+                if (mod == null || String.IsNullOrEmpty(mod.ReleaseDate))
+                {
+                    mod.IsNew = false;
+                    continue;
+                }
+
+                if (DateTime.TryParseExact(mod.ReleaseDate, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime releaseDate))
+                    mod.IsNew = releaseDate >= daysAgoFromNow;
+                else
+                    mod.IsNew = false;
             }
         }
 
@@ -1555,6 +1764,8 @@ namespace Memoria.Launcher
 
         private void UpdateCatalogInstallationState()
         {
+            Boolean areThereNewMods = false;
+
             foreach (Mod mod in ModListCatalog)
             {
                 if (Mod.SearchMod(DownloadList, mod) != null)
@@ -1566,7 +1777,12 @@ namespace Memoria.Launcher
 
                 else
                     mod.Installed = "";
+
+                if (mod.IsNewAndNotInstalled)
+                    areThereNewMods = true;
             }
+
+            AreThereNewMods = areThereNewMods;
             lstCatalogMods.Items.Refresh();
         }
 
@@ -1600,7 +1816,7 @@ namespace Memoria.Launcher
                 return ascending ? ac.CompareTo(bc) : -ac.CompareTo(bc);
             });
             ModListCatalog = new ObservableCollection<Mod>(catalogList);
-            lstCatalogMods.ItemsSource = ModListCatalog;
+            InitializeCatalogListView();
         }
 
         public void LoadModSettings()
@@ -1784,6 +2000,11 @@ namespace Memoria.Launcher
             header.SetResourceReference(ContentProperty, "ModEditor.Category");
             header.Click += OnClickCatalogHeader;
             colCatalogCategory.Header = header;
+
+            header = new GridViewColumnHeader();
+            header.SetResourceReference(ContentProperty, "ModEditor.Release");
+            header.Click += OnClickCatalogHeader;
+            colCatalogReleaseDate.Header = header;
 
             header = new GridViewColumnHeader() { Content = "" };
             header.Click += OnClickCatalogHeader;
