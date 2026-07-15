@@ -3376,6 +3376,47 @@ Please notify if you notice problems</PatchNotes>
 </Mod>
 
 <Mod>
+	<Name>Melodies of Metal</Name>
+	<Version>1.1</Version>
+	<InstallationPath>Melodies of Metal</InstallationPath>
+	<ReleaseDate>2026-07-04</ReleaseDate>
+	<ReleaseDateOriginal>2026-06-20</ReleaseDateOriginal>
+	<Author>josias7c5</Author>
+	<Description>Melodies of Metal is an unofficial fan-made soundtrack tribute mod for Final Fantasy IX.
+
+It includes 99 in-game soundtrack replacement files based on 97 unique Heavy Metal cover arrangements created by The Melody Arcade, used with permission, and carefully converted and configured to work in-game.
+
+This Memoria version uses OGG audio files and can be enabled or disabled directly through the Memoria Mod Manager.
+
+Manual Hades Workshop import is no longer required for this version.
+
+This project was created as a tribute to the legendary Nobuo Uematsu and to the unforgettable world of Final Fantasy IX.
+
+Some legends deserve to be remembered.
+Others deserve to be played louder.</Description>
+
+	<PatchNotes>Version 1.1 adds native Memoria Mod Manager support.
+
+The mod can now be installed, enabled, disabled, and managed directly through the Memoria launcher.
+
+This version uses OGG audio files with Memoria's PriorityToOGG option enabled.
+
+Manual Hades Workshop import is no longer required when using this Memoria version.
+
+The package includes the same 99 in-game soundtrack replacements from Version 1.0, based on 97 unique Heavy Metal cover arrangements created by The Melody Arcade and used with permission.
+
+This version also includes updated documentation for Memoria installation, technical notes, song replacement list, changelog, credits, license, and version information.</PatchNotes>
+
+	<Category>Music</Category>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/134</Website>
+	<PreviewFile>Artwork/Melodies of Metal.png</PreviewFile>
+	<DownloadFormat>Zip</DownloadFormat>
+	<DownloadUrl>https://github.com/josias7c5/Melodies-of-Metal/releases/download/v1.1/Melodies_of_Metal_Memoria_v1.1.zip</DownloadUrl>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/134/134-1781966932-2123509564.png</PreviewFileUrl>
+	<IncompatibleWith>Gaia Bless the Soundtrack, Songs of Memories, Moguri Alt Soundtrack</IncompatibleWith>
+</Mod>
+
+<Mod>
 	<Name>KupoMail</Name>
 	<Version>0.2</Version>
 	<InstallationPath>KupoMail</InstallationPath>
