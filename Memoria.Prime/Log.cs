@@ -55,6 +55,20 @@ namespace Memoria.Prime
             Instance.Write('E', 0, FormatException(ex, format, args));
         }
 
+        public static void Trace(String format, params Object[] args)
+        {
+#if DEBUG
+            Instance.Write('T', 1, format, args);
+#endif
+        }
+
+        public static void Trace(Exception ex, String format = null, params Object[] args)
+        {
+#if DEBUG
+            Instance.Write('T', 1, FormatException(ex, format, args));
+#endif
+        }
+
         private static String FormatException(Exception ex, String format, params Object[] args)
         {
             StringBuilder sb = new StringBuilder(256);
