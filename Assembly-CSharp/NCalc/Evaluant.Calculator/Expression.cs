@@ -1,9 +1,9 @@
 ﻿using Antlr.Runtime;
 using NCalc.Domain;
+using Memoria.Prime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
@@ -104,7 +104,7 @@ namespace NCalc
                 foreach (string key in keysToRemove)
                 {
                     compiledExpressions.Remove(key);
-                    Trace.TraceInformation("Cache entry released: " + key);
+                    Log.Trace("[NCalc::Expression] Cache entry released: " + key);
                 }
             }
             finally
@@ -127,7 +127,7 @@ namespace NCalc
 
                     if (compiledExpressions.ContainsKey(expression))
                     {
-                        Trace.TraceInformation("Expression retrieved from cache: " + expression);
+                        Log.Trace("[NCalc::Expression] Expression retrieved from cache: " + expression);
                         var wr = compiledExpressions[expression];
                         logicalExpression = wr.Target as LogicalExpression;
 
@@ -169,7 +169,7 @@ namespace NCalc
 
                     CleanCache();
 
-                    Trace.TraceInformation("Expression added to cache: " + expression);
+                    Log.Trace("[NCalc::Expression] Expression added to cache: " + expression);
                 }
             }
 
