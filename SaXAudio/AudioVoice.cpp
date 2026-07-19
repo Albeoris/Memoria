@@ -620,6 +620,10 @@ namespace SaXAudio
         }
         Log(BankID, VoiceID, "[OnBufferEnd] Voice finished playing");
 
-        SaXAudio::Instance.RemoveVoice(VoiceID);
+        INT32 voiceID = VoiceID;
+        thread cleanupThread([voiceID]() {
+            SaXAudio::Instance.RemoveVoice(voiceID);
+            });
+        cleanupThread.detach();
     }
 }
