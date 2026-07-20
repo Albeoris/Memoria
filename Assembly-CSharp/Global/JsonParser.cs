@@ -1268,7 +1268,10 @@ public class JsonParser : ISharedDataParser
                 if (playerClass["sa"] != null || playerClass["sa_extended"] != null)
                 {
                     player.sa[0] = player.sa[1] = 0u;
-                    player.saExtended.Clear();
+                    player.saForced.Clear();
+                    player.saBanish.Clear();
+                    player.saHidden.Clear();
+                    player.saPreview.Clear();
                     if (playerClass["sa"] != null)
                     {
                         for (Int32 j = 0; j < playerClass["sa"].Count && j < player.sa.Length; j++)
