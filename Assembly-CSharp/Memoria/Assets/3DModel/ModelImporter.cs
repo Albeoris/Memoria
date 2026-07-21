@@ -24,6 +24,7 @@ namespace Memoria.Assets
         {
             public Vector2[][] uv;
             public String[] texturePath;
+            public Texture2D[] textureAtlas;
         }
 
         private class CustomModelAnimated
@@ -68,6 +69,7 @@ namespace Memoria.Assets
                 baseMesh.vert = new Vector3[geometries.Count][];
                 baseMesh.tri = new Int32[geometries.Count][];
                 texture.uv = new Vector2[geometries.Count][];
+                texture.textureAtlas = new Texture2D[materials.Count];
                 anim.bw = new BoneWeight[geometries.Count][];
                 extra.normal = new Vector3[geometries.Count][];
                 extra.tangent = new Vector4[geometries.Count][];
@@ -118,11 +120,59 @@ namespace Memoria.Assets
                         anim.boneScale[i] = bone.Scale;
                     }
                 }
+                FbxUdimTexture[] udimTextures = new FbxUdimTexture[materials.Count];
+                String[] udimTexturePaths = new String[materials.Count];
+                Dictionary<String, FbxUdimTexture> udimTextureCache = new Dictionary<String, FbxUdimTexture>(StringComparer.Ordinal);
                 for (Int32 i = 0; i < materials.Count; i++)
                 {
                     baseMesh.shader[i] = materials[i].Shader;
                     if (materials[i].TexturePath != null)
-                        texture.texturePath[i] = AssetManager.UsePathWithDefaultFolder(folderPath, materials[i].TexturePath);
+                    {
+                        if (!FbxUdimTexture.IsUdimPath(materials[i].TexturePath))
+                        {
+                            texture.texturePath[i] = AssetManager.UsePathWithDefaultFolder(folderPath, materials[i].TexturePath);
+                        }
+                        else
+                        {
+                            if (!FbxUdimTexture.TryResolvePath(folderPath, materials[i].TexturePath, out String safeTexturePath, out String texturePath, out String pathError))
+                            {
+                                DestroyUdimTextures(udimTextureCache.Values);
+                                Log.Error($"Cannot import UDIM texture '{texturePath}' referenced by FBX '{completePath}': {pathError}");
+                                return null;
+                            }
+                            if (!hasTexture)
+                            {
+                                DestroyUdimTextures(udimTextureCache.Values);
+                                Log.Error($"Cannot import UDIM texture '{texturePath}' referenced by FBX '{completePath}': the model has no UV coordinates");
+                                return null;
+                            }
+                            if (!udimTextureCache.TryGetValue(safeTexturePath, out FbxUdimTexture udimTexture))
+                            {
+                                if (!FbxUdimTexture.TryCreate(safeTexturePath, out udimTexture, out String error))
+                                {
+                                    DestroyUdimTextures(udimTextureCache.Values);
+                                    Log.Error($"Cannot import UDIM texture '{texturePath}' referenced by FBX '{completePath}': {error}");
+                                    return null;
+                                }
+                                udimTextureCache.Add(safeTexturePath, udimTexture);
+                            }
+                            udimTextures[i] = udimTexture;
+                            udimTexturePaths[i] = texturePath;
+                            texture.textureAtlas[i] = udimTexture.Texture;
+                        }
+                    }
+                }
+                for (Int32 i = 0; i < geometries.Count; i++)
+                {
+                    Int32 materialIndex = baseMesh.matIndex[i];
+                    if (materialIndex < 0 || materialIndex >= udimTextures.Length || udimTextures[materialIndex] == null)
+                        continue;
+                    if (!udimTextures[materialIndex].TryRemapUVs(texture.uv[i], out String error))
+                    {
+                        DestroyUdimTextures(udimTextureCache.Values);
+                        Log.Error($"Cannot import UDIM texture '{udimTexturePaths[materialIndex]}' referenced by FBX '{completePath}': mesh '{geometries[i].Name}' {error}");
+                        return null;
+                    }
                 }
                 if (!hasTexture)
                     texture = null;
@@ -361,7 +411,9 @@ namespace Memoria.Assets
                 materials[i] = ShadersLoader.CreateShaderMaterial(GetShaderPathFromType(baseMesh.shader[i], PersistenSingleton<EventEngine>.Instance.gMode));
                 if (materials[i] == null)
                     throw new FileNotFoundException($"Unknown shader {baseMesh.shader[i]}");
-                if (!String.IsNullOrEmpty(texture?.texturePath?[i]))
+                if (texture?.textureAtlas?[i] != null)
+                    materials[i].mainTexture = texture.textureAtlas[i];
+                else if (!String.IsNullOrEmpty(texture?.texturePath?[i]))
                     materials[i].mainTexture = AssetManager.LoadFromDisc<Texture2D>(texture.texturePath[i]);
             }
             for (Int32 i = 0; i < meshCount; i++)
@@ -416,6 +468,12 @@ namespace Memoria.Assets
                 return (mode == 3 ? "WorldMap/SPS_Abr_" : "PSX/FieldSPS_Abr_") + abrType;
             }
             return shaderType;
+        }
+
+        private static void DestroyUdimTextures(IEnumerable<FbxUdimTexture> textures)
+        {
+            foreach (FbxUdimTexture texture in textures)
+                texture.Destroy();
         }
     }
 }
