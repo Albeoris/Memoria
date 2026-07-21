@@ -234,10 +234,6 @@ namespace Memoria.Assets
                 return false;
             }
 
-            Single cellWidth = _tileWidth + GutterSize * 2;
-            Single cellHeight = _tileHeight + GutterSize * 2;
-            Single atlasWidth = cellWidth * _columnCount;
-            Single atlasHeight = cellHeight * _rowCount;
             for (Int32 i = 0; i < uvs.Length; i++)
             {
                 Vector2 uv = uvs[i];
@@ -247,9 +243,64 @@ namespace Memoria.Assets
                     error = $"UV {i} ({uv.x}, {uv.y}) is outside the discovered {_columnCount}x{_rowCount} UDIM layout";
                     return false;
                 }
-                uv.x = (column * cellWidth + GutterSize + localU * _tileWidth) / atlasWidth;
-                uv.y = (row * cellHeight + GutterSize + localV * _tileHeight) / atlasHeight;
-                uvs[i] = uv;
+                uvs[i] = RemapUV(column, row, localU, localV);
+            }
+            return true;
+        }
+
+        public Boolean ContainsTile(Int32 tileNumber)
+        {
+            return TryGetTilePosition(tileNumber, out _, out _);
+        }
+
+        public Boolean TryPrepareBlinkUVs(Vector2[] sourceUVs, Int32 openTileNumber, Int32 closedTileNumber, out Vector2[] openUVs, out Vector2[] closedUVs, out Int32 blinkVertexCount, out String error)
+        {
+            openUVs = null;
+            closedUVs = null;
+            blinkVertexCount = 0;
+            error = null;
+            if (sourceUVs == null)
+            {
+                error = "the mesh has no UV coordinates";
+                return false;
+            }
+            if (!TryGetTilePosition(openTileNumber, out Int32 openColumn, out Int32 openRow))
+            {
+                error = $"open tile {openTileNumber} is unavailable in the discovered UDIM layout";
+                return false;
+            }
+            if (!TryGetTilePosition(closedTileNumber, out _, out _))
+            {
+                error = $"closed tile {closedTileNumber} is unavailable in the discovered UDIM layout";
+                return false;
+            }
+
+            openUVs = new Vector2[sourceUVs.Length];
+            closedUVs = new Vector2[sourceUVs.Length];
+            for (Int32 i = 0; i < sourceUVs.Length; i++)
+            {
+                Vector2 sourceUV = sourceUVs[i];
+                if (!TryGetTileCoordinate(sourceUV.x, _columnCount, out Int32 column, out Single localU) ||
+                    !TryGetTileCoordinate(sourceUV.y, _rowCount, out Int32 row, out Single localV))
+                {
+                    error = $"UV {i} ({sourceUV.x}, {sourceUV.y}) is outside the discovered {_columnCount}x{_rowCount} UDIM layout";
+                    openUVs = null;
+                    closedUVs = null;
+                    blinkVertexCount = 0;
+                    return false;
+                }
+
+                Vector2 atlasUV = RemapUV(column, row, localU, localV);
+                closedUVs[i] = atlasUV;
+                if (GetTileNumber(column, row) == closedTileNumber)
+                {
+                    openUVs[i] = RemapUV(openColumn, openRow, localU, localV);
+                    blinkVertexCount++;
+                }
+                else
+                {
+                    openUVs[i] = atlasUV;
+                }
             }
             return true;
         }
@@ -279,6 +330,36 @@ namespace Memoria.Assets
                 localValue = 1f;
             }
             return coordinate >= 0 && coordinate < tileCount;
+        }
+
+        private Boolean TryGetTilePosition(Int32 tileNumber, out Int32 column, out Int32 row)
+        {
+            Int32 tileIndex = tileNumber - FirstTileNumber;
+            if (tileIndex < 0)
+            {
+                column = -1;
+                row = -1;
+                return false;
+            }
+            column = tileIndex % TilesPerRow;
+            row = tileIndex / TilesPerRow;
+            return column < _columnCount && row < _rowCount;
+        }
+
+        private static Int32 GetTileNumber(Int32 column, Int32 row)
+        {
+            return FirstTileNumber + row * TilesPerRow + column;
+        }
+
+        private Vector2 RemapUV(Int32 column, Int32 row, Single localU, Single localV)
+        {
+            Single cellWidth = _tileWidth + GutterSize * 2;
+            Single cellHeight = _tileHeight + GutterSize * 2;
+            Single atlasWidth = cellWidth * _columnCount;
+            Single atlasHeight = cellHeight * _rowCount;
+            return new Vector2(
+                (column * cellWidth + GutterSize + localU * _tileWidth) / atlasWidth,
+                (row * cellHeight + GutterSize + localV * _tileHeight) / atlasHeight);
         }
 
         private static String GetSafeTextureName(String fileName)

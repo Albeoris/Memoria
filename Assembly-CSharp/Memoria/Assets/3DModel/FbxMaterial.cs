@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Memoria.Assets
 {
     /// <summary>API for Material / Texture nodes</summary>
     public class FbxMaterial
     {
+        public const String BlinkOpenUdimProperty = "MemoriaBlinkOpenUDIM";
+        public const String BlinkClosedUdimProperty = "MemoriaBlinkClosedUDIM";
+
         public readonly FbxNode MaterialNode;
         public readonly FbxNode TextureNode = null;
 
@@ -38,6 +42,27 @@ namespace Memoria.Assets
                     break;
                 }
             }
+        }
+
+        public Boolean HasProperty(String propertyName)
+        {
+            return GetProperty(propertyName) != null;
+        }
+
+        public Boolean TryGetInt32Property(String propertyName, out Int32 value)
+        {
+            value = 0;
+            FbxNode property = GetProperty(propertyName);
+            if (property == null || property.Properties.Count < 5 || property.Properties[4] == null)
+                return false;
+
+            String valueText = Convert.ToString(property.Properties[4], CultureInfo.InvariantCulture);
+            return Int32.TryParse(valueText, NumberStyles.Integer, CultureInfo.InvariantCulture, out value);
+        }
+
+        private FbxNode GetProperty(String propertyName)
+        {
+            return MaterialNode?["Properties70"]?["P", propertyName];
         }
     }
 }
