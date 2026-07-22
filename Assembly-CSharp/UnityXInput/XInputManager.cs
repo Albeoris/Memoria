@@ -43,10 +43,11 @@ namespace UnityXInput
             playerIndexSet = false;
             for (Int32 i = 0; i <= 3; i++)
             {
-                if (XInputDotNetPure.GamePad.GetState(playerIndex).IsConnected)
+                PlayerIndex candidate = (PlayerIndex)i;
+                if (XInputDotNetPure.GamePad.GetState(candidate).IsConnected)
                 {
                     UnityEngine.Input.ResetInputAxes();
-                    playerIndex = (PlayerIndex)i;
+                    playerIndex = candidate;
                     playerIndexSet = true;
                     break;
                 }
