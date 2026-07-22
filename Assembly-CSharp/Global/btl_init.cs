@@ -1,6 +1,7 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria;
+using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
 using System;
@@ -282,6 +283,7 @@ public static class btl_init
                 {
                     GeoTexAnim.geoTexAnimPlay(btl.texanimptr, 2);
                 }
+                FbxUdimBlink.SynchronizeBattleState(btl);
                 if (!FF9StateSystem.Battle.isDebug)
                     objList = objList.next;
                 btlIndex++;
@@ -636,6 +638,7 @@ public static class btl_init
         {
             GeoTexAnim.geoTexAnimPlay(btl.texanimptr, 2);
         }
+        FbxUdimBlink.SynchronizeBattleState(btl);
         btl_sys.AddCharacter(btl);
         // Part of SetupBattlePlayer
         SetupBattlePlayerSingle(btl, (Int32)btl.original_pos[0], battle_start_type_tags.BTL_START_NORMAL_ATTACK);

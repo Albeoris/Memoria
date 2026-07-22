@@ -1,4 +1,5 @@
 using Assets.Scripts.Common;
+using Memoria.Assets;
 using System;
 using System.Collections;
 using System.Linq;
@@ -55,6 +56,7 @@ public class GeoTexAnim : HonoBehavior
         this.TextureAnim.geotex[anum].lastframe = 4096;
         if (anum == 0)
             this.TextureAnim.geotex[2].flags &= unchecked((Byte)~3);
+        FbxUdimBlink.SynchronizeTextureAnimation(gameObject, this.TextureAnim);
     }
 
     public static void geoTexAnimPlay(GEOTEXHEADER tab, Int32 anum)
@@ -73,6 +75,7 @@ public class GeoTexAnim : HonoBehavior
         this.TextureAnim.geotex[anum].flags |= 3;
         this.TextureAnim.geotex[anum].frame = 0;
         this.TextureAnim.geotex[anum].lastframe = 4096;
+        FbxUdimBlink.SynchronizeTextureAnimation(gameObject, this.TextureAnim);
     }
 
     public static void geoTexAnimPlayOnce(GEOTEXHEADER tab, Int32 anum)
@@ -89,6 +92,7 @@ public class GeoTexAnim : HonoBehavior
         if (!this._isLoaded)
             return;
         this.TextureAnim.geotex[anum].flags &= unchecked((Byte)~3);
+        FbxUdimBlink.SynchronizeTextureAnimation(gameObject, this.TextureAnim);
     }
 
     public static void geoTexAnimStop(GEOTEXHEADER tab, Int32 anum)

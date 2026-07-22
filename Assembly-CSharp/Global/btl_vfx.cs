@@ -198,6 +198,7 @@ public static class btl_vfx
             btl.ChangeModel(btl.originalGo, btl_init.GetModelID(serialNo, isTrance));
             GeoTexAnim.geoTexAnimPlay(btl.texanimptr, 2);
         }
+        FbxUdimBlink.SynchronizeBattleState(btl);
         btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect", btl);
         btl_mot.SetPlayerDefMotion(btl, serialNo, isTrance);
         BattlePlayerCharacter.InitAnimation(btl);

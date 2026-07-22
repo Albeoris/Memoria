@@ -1,12 +1,13 @@
 ﻿using System;
+using Memoria.Data;
 using UnityEngine;
 
 namespace Memoria.Assets
 {
     public sealed class FbxUdimBlink : MonoBehaviour
     {
-        private const Single MinimumBlinkDelay = 2.5f;
-        private const Single MaximumBlinkDelay = 6f;
+        private const Single MinimumBlinkDelay = 1.5f;
+        private const Single MaximumBlinkDelay = 4f;
         private const Single ClosedEyeDuration = 0.12f;
 
         [SerializeField]
@@ -14,6 +15,7 @@ namespace Memoria.Assets
         private Single _nextBlinkTime;
         private Single _openEyeTime;
         private Boolean _eyesClosed;
+        private EyeMode _eyeMode;
 
         public void Initialize(SkinnedMeshRenderer[] renderers, Mesh[] meshes, Vector2[][] openUVs, Vector2[][] closedUVs)
         {
@@ -31,9 +33,7 @@ namespace Memoria.Assets
 
                 _targets[targetIndex++] = new BlinkTarget(renderers[i], meshes[i], openUVs[i], closedUVs[i]);
             }
-            ApplyUVs(false);
-            _eyesClosed = false;
-            ScheduleNextBlink();
+            SetEyeMode(EyeMode.Automatic, true);
         }
 
         public static Boolean Transfer(GameObject sourceRoot, GameObject destinationRoot, SkinnedMeshRenderer[] sourceRenderers, SkinnedMeshRenderer[] destinationRenderers)
@@ -70,13 +70,47 @@ namespace Memoria.Assets
 
             if (destinationBlink == null)
                 destinationBlink = destinationRoot.AddComponent<FbxUdimBlink>();
-            destinationBlink.InitializeTransferredTargets(transferredTargets);
+            destinationBlink.InitializeTransferredTargets(transferredTargets, sourceBlink._eyeMode);
             return true;
+        }
+
+        internal static void SynchronizeBattleState(BTL_DATA battle)
+        {
+            if (battle == null)
+                return;
+
+            SetBattleEyesClosed(battle, btl_stat.CheckStatus(battle, BattleStatus.Death));
+        }
+
+        internal static void SetBattleEyesClosed(BTL_DATA battle, Boolean eyesClosed)
+        {
+            if (battle == null)
+                return;
+
+            EyeMode eyeMode = eyesClosed ? EyeMode.ForcedClosed : EyeMode.Automatic;
+            SetEyeMode(battle.originalGo, eyeMode);
+            SetEyeMode(battle.tranceGo, eyeMode);
+            SetEyeMode(battle.gameObject, eyeMode);
+        }
+
+        internal static void SynchronizeTextureAnimation(GameObject root, GEOTEXHEADER textureAnimation)
+        {
+            if (root == null || textureAnimation?.geotex == null || textureAnimation.geotex.Length <= 2)
+                return;
+
+            if (IsTextureAnimationActive(textureAnimation, 2))
+                SetEyeMode(root, EyeMode.Automatic);
+            else if (IsTextureAnimationActive(textureAnimation, 0))
+                SetEyeMode(root, EyeMode.ForcedClosed);
+            else
+                SetEyeMode(root, EyeMode.ForcedOpen);
         }
 
         private void Update()
         {
             if (_targets == null)
+                return;
+            if (_eyeMode != EyeMode.Automatic)
                 return;
 
             Single currentTime = Time.realtimeSinceStartup;
@@ -104,9 +138,7 @@ namespace Memoria.Assets
             if (_targets == null)
                 return;
 
-            ApplyUVs(false);
-            _eyesClosed = false;
-            ScheduleNextBlink();
+            ApplyEyeMode();
         }
 
         private void OnDisable()
@@ -123,13 +155,33 @@ namespace Memoria.Assets
             _targets = null;
         }
 
-        private void InitializeTransferredTargets(BlinkTarget[] targets)
+        private void InitializeTransferredTargets(BlinkTarget[] targets, EyeMode sourceEyeMode)
         {
             _targets = targets;
-            _eyesClosed = false;
-            ApplyUVs(false);
-            ScheduleNextBlink();
+            _eyeMode = sourceEyeMode;
+            GeoTexAnim textureAnimation = GetComponent<GeoTexAnim>();
+            if (textureAnimation?.TextureAnim != null)
+                SynchronizeTextureAnimation(gameObject, textureAnimation.TextureAnim);
+            SetEyeMode(_eyeMode, true);
             enabled = true;
+        }
+
+        private void ApplyEyeMode()
+        {
+            Boolean useClosedUVs = _eyeMode == EyeMode.ForcedClosed;
+            ApplyUVs(useClosedUVs);
+            _eyesClosed = useClosedUVs;
+            if (_eyeMode == EyeMode.Automatic)
+                ScheduleNextBlink();
+        }
+
+        private void SetEyeMode(EyeMode eyeMode, Boolean forceApply)
+        {
+            if (!forceApply && _eyeMode == eyeMode)
+                return;
+
+            _eyeMode = eyeMode;
+            ApplyEyeMode();
         }
 
         private void ScheduleNextBlink()
@@ -160,6 +212,21 @@ namespace Memoria.Assets
             return null;
         }
 
+        private static Boolean IsTextureAnimationActive(GEOTEXHEADER textureAnimation, Int32 animationIndex)
+        {
+            return animationIndex >= 0
+                && animationIndex < textureAnimation.geotex.Length
+                && textureAnimation.geotex[animationIndex] != null
+                && (textureAnimation.geotex[animationIndex].flags & 1) != 0;
+        }
+
+        private static void SetEyeMode(GameObject root, EyeMode eyeMode)
+        {
+            FbxUdimBlink blink = root != null ? root.GetComponent<FbxUdimBlink>() : null;
+            if (blink != null && blink._targets != null)
+                blink.SetEyeMode(eyeMode, false);
+        }
+
         private static void Remove(FbxUdimBlink blink)
         {
             if (blink == null)
@@ -167,6 +234,13 @@ namespace Memoria.Assets
 
             blink._targets = null;
             blink.enabled = false;
+        }
+
+        private enum EyeMode
+        {
+            Automatic,
+            ForcedOpen,
+            ForcedClosed
         }
 
         [Serializable]

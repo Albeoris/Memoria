@@ -443,6 +443,7 @@ namespace FF9
                 GeoTexAnim.geoTexAnimStop(btl.tranceTexanimptr, 2);
                 GeoTexAnim.geoTexAnimPlayOnce(btl.tranceTexanimptr, 0);
             }
+            FbxUdimBlink.SetBattleEyesClosed(btl, true);
             Boolean cancelDeath = false;
             foreach (BattleStatusId statusId in btl.stat.cur.ToStatusList())
                 if (btl.stat.effects.TryGetValue(statusId, out StatusScriptBase effect))
@@ -450,6 +451,7 @@ namespace FF9
                         cancelDeath = true;
             if (cancelDeath)
             {
+                FbxUdimBlink.SetBattleEyesClosed(btl, false);
                 FF9StateSystem.Settings.SetHPFull();
                 if (!cancelMonsterTransform)
                     btl_mot.SetDefaultIdle(btl);

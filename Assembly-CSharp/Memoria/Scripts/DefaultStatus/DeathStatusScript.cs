@@ -1,4 +1,5 @@
 ﻿using System;
+using Memoria.Assets;
 using Memoria.Data;
 using FF9;
 using Object = System.Object;
@@ -59,6 +60,7 @@ namespace Memoria.DefaultScripts
                 if (btl.bi.player != 0)
                     GeoTexAnim.geoTexAnimPlay(btl.tranceTexanimptr, 2);
             }
+            FbxUdimBlink.SetBattleEyesClosed(btl, false);
             if (!btl_util.IsBtlUsingCommand(btl, out CMD_DATA cmd) || !btl_util.IsCommandDeclarable(cmd.cmd_no))
                 btl.sel_mode = 0;
             foreach (BattleStatusId oprStatus in (Target.PermanentStatus & BattleStatusConst.OprCount & BattleStatusId.Death.GetStatData().ClearOnApply).ToStatusList())

@@ -1,5 +1,6 @@
 ﻿using FF9;
 using Memoria;
+using Memoria.Assets;
 using Memoria.Data;
 using System;
 using System.Collections.Generic;
@@ -79,6 +80,7 @@ public class BattlePlayerCharacter : MonoBehaviour
         btl.gameObject = ModelFactory.CreateModel(btlParam.ModelId, true, true, Configuration.Graphics.ElementsSmoothTexture);
         btl.originalGo = btl.gameObject;
         BattlePlayerCharacter.CreateTranceModel(btl, btlParam.TranceModelId);
+        FbxUdimBlink.SynchronizeBattleState(btl);
         if (p.info.serial_no == CharacterSerialNumber.ZIDANE_SWORD)
         {
             BattlePlayerCharacter.HideZidaneOrichalcum(btl.gameObject);
