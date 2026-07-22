@@ -182,6 +182,17 @@ namespace Memoria.Assets
                             List<Keyframe> keys_y = new List<Keyframe>();
                             List<Keyframe> keys_z = new List<Keyframe>();
                             List<Keyframe> keys_w = new List<Keyframe>();
+
+                            List<Keyframe> keys_xIT = new List<Keyframe>();
+                            List<Keyframe> keys_yIT = new List<Keyframe>();
+                            List<Keyframe> keys_zIT = new List<Keyframe>();
+                            List<Keyframe> keys_wIT = new List<Keyframe>();
+
+                            List<Keyframe> keys_xOT = new List<Keyframe>();
+                            List<Keyframe> keys_yOT = new List<Keyframe>();
+                            List<Keyframe> keys_zOT = new List<Keyframe>();
+                            List<Keyframe> keys_wOT = new List<Keyframe>();
+
                             ta.transformType = localType;
                             foreach (JSONNode frameNode in rotArray.Childs)
                             {
@@ -216,7 +227,48 @@ namespace Memoria.Assets
                                     fa.pos.w = keyNode.AsFloat;
                                     keys_w.Add(new Keyframe(time, fa.pos.w));
                                 }
-                                // TODO: read inward/outward tangent (with keys "xInnerTangent", "xOuterTangent", etc.)
+
+                                if (frameClass.Dict.TryGetValue("xInnerTangent", out keyNode))
+                                {
+                                    fa.posInnerTangent.x = keyNode.AsFloat;
+                                    keys_xIT.Add(new Keyframe(time, fa.posInnerTangent.x));
+                                }
+                                if (frameClass.Dict.TryGetValue("yInnerTangent", out keyNode))
+                                {
+                                    fa.posInnerTangent.y = keyNode.AsFloat;
+                                    keys_yIT.Add(new Keyframe(time, fa.posInnerTangent.y));
+                                }
+                                if (frameClass.Dict.TryGetValue("zInnerTangent", out keyNode))
+                                {
+                                    fa.posInnerTangent.z = keyNode.AsFloat;
+                                    keys_zIT.Add(new Keyframe(time, fa.posInnerTangent.z));
+                                }
+                                if (frameClass.Dict.TryGetValue("wInnerTangent", out keyNode))
+                                {
+                                    fa.posInnerTangent.w = keyNode.AsFloat;
+                                    keys_wIT.Add(new Keyframe(time, fa.posInnerTangent.w));
+                                }
+
+                                if (frameClass.Dict.TryGetValue("xOuterTangent", out keyNode))
+                                {
+                                    fa.posOuterTangent.x = keyNode.AsFloat;
+                                    keys_xOT.Add(new Keyframe(time, fa.posOuterTangent.x));
+                                }
+                                if (frameClass.Dict.TryGetValue("yOuterTangent", out keyNode))
+                                {
+                                    fa.posOuterTangent.y = keyNode.AsFloat;
+                                    keys_yOT.Add(new Keyframe(time, fa.posOuterTangent.y));
+                                }
+                                if (frameClass.Dict.TryGetValue("zOuterTangent", out keyNode))
+                                {
+                                    fa.posOuterTangent.z = keyNode.AsFloat;
+                                    keys_zOT.Add(new Keyframe(time, fa.posOuterTangent.z));
+                                }
+                                if (frameClass.Dict.TryGetValue("wOuterTangent", out keyNode))
+                                {
+                                    fa.posOuterTangent.w = keyNode.AsFloat;
+                                    keys_wOT.Add(new Keyframe(time, fa.posOuterTangent.w));
+                                }
                             }
                             if (!keys_x.IsNullOrEmpty())
                             {
@@ -238,6 +290,49 @@ namespace Memoria.Assets
                                 animCurve = new AnimationCurve(keys_w.ToArray());
                                 clip.SetCurve(boneName, typeof(Transform), localType + ".w", animCurve);
                             }
+
+                            if (!keys_xIT.IsNullOrEmpty())
+                            {
+                                animCurve = new AnimationCurve(keys_xIT.ToArray());
+                                clip.SetCurve(boneName, typeof(Transform), localType + ".xInnerTangent", animCurve);
+                            }
+                            if (!keys_yIT.IsNullOrEmpty())
+                            {
+                                animCurve = new AnimationCurve(keys_yIT.ToArray());
+                                clip.SetCurve(boneName, typeof(Transform), localType + ".yInnerTangent", animCurve);
+                            }
+                            if (!keys_zIT.IsNullOrEmpty())
+                            {
+                                animCurve = new AnimationCurve(keys_zIT.ToArray());
+                                clip.SetCurve(boneName, typeof(Transform), localType + ".zInnerTangent", animCurve);
+                            }
+                            if (!keys_wIT.IsNullOrEmpty())
+                            {
+                                animCurve = new AnimationCurve(keys_wIT.ToArray());
+                                clip.SetCurve(boneName, typeof(Transform), localType + ".wInnerTangent", animCurve);
+                            }
+
+                            if (!keys_xOT.IsNullOrEmpty())
+                            {
+                                animCurve = new AnimationCurve(keys_xOT.ToArray());
+                                clip.SetCurve(boneName, typeof(Transform), localType + ".xOuterTangent", animCurve);
+                            }
+                            if (!keys_yOT.IsNullOrEmpty())
+                            {
+                                animCurve = new AnimationCurve(keys_yOT.ToArray());
+                                clip.SetCurve(boneName, typeof(Transform), localType + ".yOuterTangent", animCurve);
+                            }
+                            if (!keys_zOT.IsNullOrEmpty())
+                            {
+                                animCurve = new AnimationCurve(keys_zOT.ToArray());
+                                clip.SetCurve(boneName, typeof(Transform), localType + ".zOuterTangent", animCurve);
+                            }
+                            if (!keys_wOT.IsNullOrEmpty())
+                            {
+                                animCurve = new AnimationCurve(keys_wOT.ToArray());
+                                clip.SetCurve(boneName, typeof(Transform), localType + ".wOuterTangent", animCurve);
+                            }
+
                             ta.frameAnimList.AddRange(faDict.Values);
                             ba.transformAnimList.Add(ta);
                         }
