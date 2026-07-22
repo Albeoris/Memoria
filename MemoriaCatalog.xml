@@ -3418,15 +3418,15 @@ This version also includes updated documentation for Memoria installation, techn
 
 <Mod>
 	<Name>KupoMail</Name>
-	<Version>0.2</Version>
+	<Version>1</Version>
 	<InstallationPath>KupoMail</InstallationPath>
 	<Author>Aurora Rosalia</Author>
 	<ReleaseDateOriginal>2025-07-10</ReleaseDateOriginal>
-	<ReleaseDate>2025-07-21</ReleaseDate>
+	<ReleaseDate>2026-07-22</ReleaseDate>
 	<Description>A mod that brings voice acting to Final Fantasy IX. The Demo covers all the way up to Lindblum but the full release will cover the whole game.</Description>
 	<Category>Voice Acting</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/110?tab=posts</Website>
-	<DownloadUrl>https://drive.usercontent.google.com/download?id=1T2x1MfpYfHtZMCzpSvPbKPa7C4HGV1fu&amp;export=download&amp;confirm=t</DownloadUrl>
+	<DownloadUrl>https://drive.usercontent.google.com/download?id=1xk4-gu2Qwb-FnCYa9gAuyPaVnK_i3wZF&amp;export=download&amp;confirm=t</DownloadUrl>
 	<PreviewFileUrl>https://i.imgur.com/dhhsFxv.jpeg</PreviewFileUrl>
 	<LauncherBackground>LauncherBackground.jpg</LauncherBackground>
 	<LauncherColor>ea9c9c</LauncherColor>
