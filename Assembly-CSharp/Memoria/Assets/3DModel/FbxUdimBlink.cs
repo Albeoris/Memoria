@@ -12,8 +12,8 @@ namespace Memoria.Assets
 
         [SerializeField]
         private BlinkTarget[] _targets;
-        private Single _nextBlinkTime;
-        private Single _openEyeTime;
+        private Single _timeUntilNextBlink;
+        private Single _closedEyeTimeRemaining;
         private Boolean _eyesClosed;
         private EyeMode _eyeMode;
 
@@ -112,11 +112,15 @@ namespace Memoria.Assets
                 return;
             if (_eyeMode != EyeMode.Automatic)
                 return;
+            UIManager uiManager = PersistenSingleton<UIManager>.Instance;
+            if (uiManager != null && uiManager.IsPause)
+                return;
 
-            Single currentTime = Time.realtimeSinceStartup;
+            Single elapsedTime = Time.unscaledDeltaTime;
             if (_eyesClosed)
             {
-                if (currentTime < _openEyeTime)
+                _closedEyeTimeRemaining -= elapsedTime;
+                if (_closedEyeTimeRemaining > 0f)
                     return;
 
                 // Keep the open UVs until the next blink.
@@ -124,12 +128,16 @@ namespace Memoria.Assets
                 _eyesClosed = false;
                 ScheduleNextBlink();
             }
-            else if (currentTime >= _nextBlinkTime)
+            else
             {
+                _timeUntilNextBlink -= elapsedTime;
+                if (_timeUntilNextBlink > 0f)
+                    return;
+
                 // Show the closed eyes for a moment.
                 ApplyUVs(true);
                 _eyesClosed = true;
-                _openEyeTime = currentTime + ClosedEyeDuration;
+                _closedEyeTimeRemaining = ClosedEyeDuration;
             }
         }
 
@@ -186,7 +194,7 @@ namespace Memoria.Assets
 
         private void ScheduleNextBlink()
         {
-            _nextBlinkTime = Time.realtimeSinceStartup + UnityEngine.Random.Range(MinimumBlinkDelay, MaximumBlinkDelay);
+            _timeUntilNextBlink = UnityEngine.Random.Range(MinimumBlinkDelay, MaximumBlinkDelay);
         }
 
         private void ApplyUVs(Boolean useClosedUVs)
