@@ -296,6 +296,7 @@ namespace Memoria
 
         public Boolean IsCasterSameDirectionTarget()
         {
+            // Dummied ; [DV] => Don't work for back attack, create a bool for BTL_DATA instead : btl.Data.IsBackAttack
             // Doesn't take running away or Confuse into account but takes back attack into account
             return Math.Abs(Caster.Data.evt.rotBattle.eulerAngles.y - Target.Data.evt.rotBattle.eulerAngles.y) < 0.1;
         }
@@ -619,7 +620,7 @@ namespace Memoria
 
         public void BonusBackstabAndPenaltyLongDistance()
         {
-            if (IsCasterSameDirectionTarget() || Target.IsRunningAway())
+            if (Target.Data.IsBackAttack || Target.IsRunningAway())
                 ++Context.DamageModifierCount;
 
             // Note that there are two weapon categories: SHORT_RANGE and LONG_RANGE

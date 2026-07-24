@@ -7,6 +7,7 @@ using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 #pragma warning disable 169
@@ -271,8 +272,12 @@ public static class ff9play
         FF9Play_UpdateSA(play);
     }
 
-    public static void FF9Play_Update(PLAYER play)
+    public static void FF9Play_Update(PLAYER play, Boolean IsPreview = false)
     {
+        uint PlayGemsPreview = 0;
+        if (IsPreview)
+            PlayGemsPreview = play.cur.capa;
+
         play.max.hp = play.basis.max_hp;
         play.max.mp = play.basis.max_mp;
         play.max.capa = play.basis.max_capa;
@@ -327,12 +332,17 @@ public static class ff9play
         play.maxDamageLimit = ff9play.FF9PLAY_DAMAGE_MAX;
         play.maxMpDamageLimit = ff9play.FF9PLAY_MPDAMAGE_MAX;
 
-        FF9Play_SAFeature_Update(play);
+        FF9Play_SAFeature_Update(play, IsPreview);
 
         foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(play))
             saFeature.TriggerOnEnable(play);
 
-        ff9abil.CalculateGemsPlayer(play);
+        EquipmentHelper.TriggerOnEnable(play);
+
+        if (IsPreview)
+            play.cur.capa = PlayGemsPreview;
+        else
+            ff9abil.CalculateGemsPlayer(play);
 
         if (play.max.hp > play.maxHpLimit)
             play.max.hp = play.maxHpLimit;
@@ -344,8 +354,8 @@ public static class ff9play
             play.cur.mp = play.max.mp;
     }
 
-    public static void FF9Play_SAFeature_Update(PLAYER play)
-    {
+    public static void FF9Play_SAFeature_Update(PLAYER play, Boolean IsPreview = false)
+    {      
         HashSet<SupportAbility> OldSAForced = new HashSet<SupportAbility>();
         foreach (SupportAbility OldSA in play.saForced)
             OldSAForced.Add(OldSA);
@@ -353,18 +363,44 @@ public static class ff9play
         play.saForced.Clear();
         play.saBanish.Clear();
         play.saHidden.Clear();
+        play.saPreview.Clear();
 
         foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledGlobalSA(play))
             saFeature.TriggerSpecialSA(play);
 
-        foreach (SupportAbility SaForcedToReset in OldSAForced)
-            if (!play.saForced.Contains(SaForcedToReset))
-                ff9abil.DisableAllHierarchyFromSA(play, SaForcedToReset);
+        EquipmentHelper.TriggerSpecialFeature(play);
 
-        foreach (SupportAbility SaBanish in play.saBanish)
-            ff9abil.FF9Abil_SetEnableSA(play, SaBanish, false);
-        foreach (SupportAbility SaForced in play.saForced)
-            ff9abil.FF9Abil_SetEnableSA(play, SaForced, true);
+        if (IsPreview)
+        {
+            foreach (SupportAbility Sa in play.saExtended)
+                play.saPreview.Add(Sa);
+            foreach (SupportAbility SaForced in play.saForced)
+                play.saPreview.Add(SaForced);
+            foreach (SupportAbility SaBanish in play.saBanish)
+                if (play.saPreview.Contains(SaBanish))
+                    play.saPreview.Remove(SaBanish);
+
+            foreach (SupportAbility SaForcedToReset in OldSAForced)
+                if (!play.saForced.Contains(SaForcedToReset))
+                    foreach (SupportAbility SAtoReset in ff9abil.GetHierarchyFromAnySA(SaForcedToReset))
+                        if (play.saPreview.Contains(SaForcedToReset))
+                            play.saPreview.Remove(SaForcedToReset);
+        }
+        else
+        {
+            foreach (SupportAbility SaForcedToReset in OldSAForced)
+                if (!play.saForced.Contains(SaForcedToReset))
+                {
+                    //FF9Sfx.FF9SFX_Play(1043);
+                    ff9abil.DisableAllHierarchyFromSA(play, SaForcedToReset);
+                }
+
+            foreach (SupportAbility SaBanish in play.saBanish)
+                ff9abil.FF9Abil_SetEnableSA(play, SaBanish, false);
+            foreach (SupportAbility SaForced in play.saForced)
+                if (!ff9abil.FF9Abil_IsEnableSA(play, SaForced))
+                    ff9abil.FF9Abil_SetEnableSA(play, SaForced, true);
+        }
     }
 
     public static CharacterId CharacterOldIndexToID(CharacterOldIndex characterIndex)

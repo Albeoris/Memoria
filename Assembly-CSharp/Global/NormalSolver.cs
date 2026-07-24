@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static ModelFactory;
 // To have a good looking shading on low poly character model, We need to 'smooth' out the normal vector on character model.
 // This operation are pretty slow and Ideally should perform on a worker-thread.
 
@@ -21,7 +22,7 @@ public static class NormalSolver
     ///     The smoothing angle. Note that triangles that already share
     ///     the same vertex will be smooth regardless of the angle! 
     /// </param>
-    public static void RecalculateNormals(this Mesh mesh, float angle)
+    public static void RecalculateNormals(this Mesh mesh, float angle, bool flipNormal = false)
     {
         //UnweldVertices(mesh);
 
@@ -121,7 +122,7 @@ public static class NormalSolver
                     }
                 }
 
-                normals[lhsEntry.VertexIndex] = sum.normalized;
+                normals[lhsEntry.VertexIndex] = flipNormal ? -sum.normalized : sum.normalized;
             }
         }
 
@@ -193,13 +194,15 @@ public static class NormalSolver
         {
             var meshFilter = renderer.GetComponent<MeshFilter>();
             var skinnedMesh = renderer.GetComponent<SkinnedMeshRenderer>();
+            bool flipNormal = renderer.GetComponentInParent<CustomFbxFlag>() != null;
+
             if (meshFilter)
             {
                 var originMesh = meshFilter.sharedMesh;
                 var smoothedMesh = new Mesh();
                 CopyMesh(originMesh, smoothedMesh);
                 smoothedMesh.RecalculateNormals();
-                smoothedMesh.RecalculateNormals(120);
+                smoothedMesh.RecalculateNormals(120, flipNormal);
                 meshFilter.sharedMesh = smoothedMesh;
             }
             else if (skinnedMesh)
@@ -208,7 +211,7 @@ public static class NormalSolver
                 var smoothedMesh = new Mesh();
                 CopyMesh(originMesh, smoothedMesh);
                 smoothedMesh.RecalculateNormals();
-                smoothedMesh.RecalculateNormals(120);
+                smoothedMesh.RecalculateNormals(120, flipNormal);
                 skinnedMesh.sharedMesh = smoothedMesh;
             }
         }
@@ -231,9 +234,11 @@ public static class NormalSolver
         {
             var originMesh = renderer.sharedMesh;
             var smoothedMesh = new Mesh();
+            bool flipNormal = renderer.GetComponentInParent<CustomFbxFlag>() != null;
+
             CopyMesh(originMesh, smoothedMesh);
             smoothedMesh.RecalculateNormals();
-            smoothedMesh.RecalculateNormals(120);
+            smoothedMesh.RecalculateNormals(120, flipNormal);
             renderer.sharedMesh = smoothedMesh;
         }
     }
@@ -252,9 +257,11 @@ public static class NormalSolver
             {
                 var originMesh = meshFilter.sharedMesh;
                 var smoothedMesh = new Mesh();
+                bool flipNormal = renderer.GetComponentInParent<CustomFbxFlag>() != null;
+
                 CopyMesh(originMesh, smoothedMesh);
                 smoothedMesh.RecalculateNormals();
-                smoothedMesh.RecalculateNormals(120);
+                smoothedMesh.RecalculateNormals(120, flipNormal);
                 meshFilter.sharedMesh = smoothedMesh;
             }
         }

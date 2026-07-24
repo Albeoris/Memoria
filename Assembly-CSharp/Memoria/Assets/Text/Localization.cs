@@ -478,6 +478,17 @@ namespace Memoria.Assets
                     { "IT", "[b]Abilità[/b]" }
                 }
             },
+            { "MobLoot", new Dictionary<String, String>()
+                {
+                    { "US", "Rewards" },
+                    { "UK", "Rewards" },
+                    { "JP", "報酬" },
+                    { "ES", "Recompensas" },
+                    { "FR", "Récompenses" },
+                    { "GR", "Belohnungen" },
+                    { "IT", "Ricompense" }
+                }
+            },
         };
     }
 }
