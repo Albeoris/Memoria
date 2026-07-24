@@ -9,7 +9,7 @@ namespace Memoria.Launcher
     public sealed partial class Lang
     {
         public static String LangName = "en";
-        public static ResourceDictionary Res => Application.Current.Resources;
+        public static ResourceDictionary Res { get; } = new ResourceDictionary();
 
         public static String[] LauncherLanguageList = { "en", "de", "es", "fr", "it", "jp", "pt-BR", "ru", "tr", "uk", "zh-CN", "zh-TW" };
 
@@ -71,7 +71,14 @@ namespace Memoria.Launcher
             {
                 foreach (XmlAttribute at in node.Attributes)
                 {
-                    Application.Current.Resources[$"{node.Name}.{at.Name}"] = at.Value;
+                    string key = $"{node.Name}.{at.Name}";
+                    string value = at.Value;
+
+                    // Add to Application.Resources for XAML bindings to work
+                    Application.Current.Resources[key] = value;
+
+                    // Also add to our language-only dictionary
+                    Res[key] = value;
                 }
             }
         }
