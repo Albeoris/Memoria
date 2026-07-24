@@ -4,6 +4,9 @@ on:
   push:
     branches:
     - main
+  pull_request:
+    branches:
+    - main
   workflow_dispatch:
 
 env:
@@ -90,10 +93,12 @@ jobs:
         name: Memoria-Patcher-Osx-x64
         path: Output/osx-x64/Memoria.Patcher
     - name: Rename output files
+      if: github.event_name != 'pull_request'
       run: |
         mv "Output/linux-x64/Memoria.Patcher" "Output/linux-x64/Memoria.Patcher-linux-x64"
         mv "Output/osx-x64/Memoria.Patcher" "Output/osx-x64/Memoria.Patcher-osx-x64"
     - name: Release Memoria.Patcher (Canary)
+      if: github.event_name != 'pull_request'
       uses: softprops/action-gh-release@v2
       with:
         name: Memoria (Canary)
@@ -111,6 +116,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Move canary tag to this commit
+      if: github.event_name != 'pull_request'
       uses: richardsimko/update-tag@v1
       with:
         tag_name: canary
