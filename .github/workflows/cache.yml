@@ -1,0 +1,55 @@
+name: Cache Dependencies
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 */6 * *"
+
+env:
+  GIT_REDIRECT_STDERR: 2>&1
+
+jobs:
+  cache-dependencies:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+    - name: Set Git Config
+      run: |
+        git config --global core.autocrlf false
+        git config --global core.filemode false
+        git config --global core.longpaths true
+    - name: Checkout
+      uses: actions/checkout@v4.1.0
+    - name: Restore dependency cache
+      id: dependency-cache
+      uses: actions/cache/restore@v6
+      with:
+        path: References
+        key: windows-dependencies-${{ hashFiles('References/Dependencies.7z') }}
+    - name: Extract game dependencies
+      if: steps.dependency-cache.outputs.cache-hit != 'true'
+      shell: pwsh
+      env:
+        ARCHIVE_PASSWORD: ${{ secrets.DEPENDENCIES_PASSWORD }}
+      run: |
+        if ([string]::IsNullOrWhiteSpace($env:ARCHIVE_PASSWORD)) {
+          throw "DEPENDENCIES_PASSWORD is required to prime dependency cache."
+        }
+
+        New-Item -ItemType Directory -Path References -Force | Out-Null
+        7z x .\References\Dependencies.7z -p"$($env:ARCHIVE_PASSWORD)" -oReferences -y
+    - name: Save dependency cache
+      if: steps.dependency-cache.outputs.cache-hit != 'true' && success()
+      uses: actions/cache/save@v6
+      with:
+        path: References
+        key: windows-dependencies-${{ hashFiles('References/Dependencies.7z') }}
+    - name: Cache summary
+      shell: pwsh
+      run: |
+        if ("${{ steps.dependency-cache.outputs.cache-hit }}" -eq "true") {
+          Write-Output "Dependency cache already exists for this archive hash."
+        }
+        else {
+          Write-Output "Dependency cache has been created."
+        }
