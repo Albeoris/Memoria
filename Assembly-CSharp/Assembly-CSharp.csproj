@@ -1379,6 +1379,7 @@
     <Compile Include="Memoria\World\WorldConfiguration.cs" />
     <Compile Include="Memoria\World\WorldEffect.cs" />
     <Compile Include="Memoria\World\WorldPlace.cs" />
+    <Compile Include="Memoria\World\WorldSoundPlayer.cs" />
     <Compile Include="NCalc\Evaluant.Calculator\Domain\BinaryExpression.cs" />
     <Compile Include="NCalc\Evaluant.Calculator\Domain\EvaluationVisitor.cs" />
     <Compile Include="NCalc\Evaluant.Calculator\Domain\Function.cs" />
