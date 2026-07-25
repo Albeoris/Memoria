@@ -380,6 +380,7 @@
     <Compile Include="Memoria\Assets\3DModel\FbxSkeleton.cs" />
     <Compile Include="Memoria\Assets\3DModel\FbxUdimBlink.cs" />
     <Compile Include="Memoria\Assets\3DModel\FbxUdimTexture.cs" />
+    <Compile Include="Memoria\Assets\3DModel\UdimTextureAtlas.cs" />
     <Compile Include="Memoria\Assets\3DModel\FbxVersion.cs" />
     <Compile Include="Memoria\Assets\3DModel\ModelImporter.cs" />
     <Compile Include="Memoria\Assets\Export\TranslationExporter.cs" />

@@ -188,7 +188,7 @@ namespace Memoria.Assets
                     Int32 originY = row * cellHeight + GutterSize;
                     Color32[] tilePixels = tile.Texture.GetPixels32();
 
-                    // Copy the tile and repeat its edge pixels into the gutter.
+                    // Copies the tile and repeats its edge pixels into the gutter.
                     for (Int32 y = -GutterSize; y < tileHeight + GutterSize; y++)
                     {
                         Int32 sourceY = Math.Max(0, Math.Min(tileHeight - 1, y));
@@ -312,6 +312,13 @@ namespace Memoria.Assets
                 UnityEngine.Object.Destroy(Texture);
                 Texture = null;
             }
+        }
+
+        internal Texture2D TakeTexture()
+        {
+            Texture2D texture = Texture;
+            Texture = null;
+            return texture;
         }
 
         private static Boolean TryGetTileCoordinate(Single value, Int32 tileCount, out Int32 coordinate, out Single localValue)
