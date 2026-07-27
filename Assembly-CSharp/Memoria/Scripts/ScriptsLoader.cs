@@ -316,6 +316,10 @@ namespace Memoria.Scripts
                     throw new FileNotFoundException($"[ScriptsLoader] Cannot load Memoria.Scripts.dll because a file does not exist: [{mainDllPath}].", mainDllPath);
                 }
 
+                foreach (Result result in s_result)
+                    if (result.OverloadableMethodScripts.TryGetValue(typeof(IOverloadOnBattleInitScript), out Type scriptType))
+                        scriptType.GetConstructor(Type.EmptyTypes).Invoke(null);
+
                 BattleVoice.Initialize();
             }
             catch (Exception ex)
