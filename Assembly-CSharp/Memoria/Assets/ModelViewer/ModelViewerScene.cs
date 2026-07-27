@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
@@ -2122,7 +2123,8 @@ namespace Memoria.Assets
 
         public static void WeaponAttach(GameObject sourceObject, GameObject targetObject, Int32 bone_index)
         {
-            if (sourceObject == null || targetObject == null) return;
+            if (sourceObject == null || targetObject == null)
+                return;
 
             Transform oldParent = sourceObject.transform.parent;
             sourceObject.transform.parent = null;
@@ -2135,11 +2137,6 @@ namespace Memoria.Assets
                 sourceObject.transform.localPosition = Vector3.zero;
                 sourceObject.transform.localRotation = Quaternion.identity;
                 sourceObject.transform.localScale = Vector3.one;
-            }
-            else
-            {
-                sourceObject.transform.parent = oldParent;
-                Log.Warning($"[ModelViewerScene] Can't find bone => {bone_index:D3} on the model.");
             }
         }
 
@@ -2261,7 +2258,7 @@ namespace Memoria.Assets
 
         private static void EnterAnimationEditMode()
         {
-            if (animList == null || animList.Count == 0 || currentModel == null) return;
+            if (animList == null || animList.Count == 0 || currentModel == null)return;
 
             String animName = animList[currentAnimIndex].Value;
             currentAnimName = animName + "_CUSTOM";
@@ -2285,11 +2282,7 @@ namespace Memoria.Assets
                 return;
             }
 
-            String[] animNameToken = animName.Split('_');
-            if (animNameToken.Length < 4) return;
-
-            String animModelName = "GEO_" + animNameToken[1] + "_" + animNameToken[2] + "_" + animNameToken[3];
-            String assetPath = "Animations/" + animModelName + "/" + animName;
+            String assetPath = "Animations/" + geoList[currentGeoIndex].Name + "/" + animName;
             assetPath = AnimationFactory.GetRenameAnimationPath(assetPath);
 
             AnimationClipReader.ReadAnimationClipFromDisc("StreamingAssets/Assets/Resources/" + assetPath + ".anim", out editingAnimationCustom);
