@@ -28,6 +28,7 @@ namespace Memoria.Speedrun
         {
             if (!Configuration.Speedrun.IsEnabled)
                 return;
+            AutoSplitterPipe.SendMessageToLiveSplit("start");
             SpeedrunSettings.CurrentSplitIndex = -2;
             RequestCurrentSplitIndex(index =>
             {
@@ -122,25 +123,39 @@ namespace Memoria.Speedrun
                     IntPtr pipe = CreateFile(@"\\.\pipe\LiveSplit", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, FILE_FLAG_NO_BUFFERING | FILE_FLAG_WRITE_THROUGH, IntPtr.Zero);
                     if (pipe.ToInt32() == -1)
                         return;
-                    IntPtr buffer = Marshal.AllocHGlobal(message.Length);
-                    Byte[] charStr = Encoding.ASCII.GetBytes(message);
+                    String messageLine = message + "\r\n";
+                    Byte[] charStr = Encoding.ASCII.GetBytes(messageLine);
+                    IntPtr buffer = Marshal.AllocHGlobal(charStr.Length);
                     Marshal.Copy(charStr, 0, buffer, charStr.Length);
                     Boolean success = WriteFile(pipe, buffer, (UInt32)charStr.Length, out UInt32 bufferWritten, IntPtr.Zero);
 
-                    // Not currently working (it waits indefinitely for ReadFile to return, blocking the thread)
-                    //if (answerCallback != null)
-                    //{
-                    //	Thread.Sleep(10);
-                    //	IntPtr inBuffer = Marshal.AllocHGlobal(4096);
-                    //	Log.Message($"[Split] request {message}");
-                    //	ReadFile(pipe, inBuffer, 4096, out UInt32 bufferRead, IntPtr.Zero);
-                    //	Byte[] answerStr = new Byte[bufferRead];
-                    //	Marshal.Copy(inBuffer, answerStr, 0, (Int32)bufferRead);
-                    //	String answer = Encoding.ASCII.GetString(answerStr);
-                    //	Log.Message($"[Split] answer = {answer}");
-                    //	answerCallback(answer);
-                    //	Marshal.FreeHGlobal(inBuffer);
-                    //}
+                    if (answerCallback != null)
+                    {
+                        const Int32 pollIntervalMs = 10;
+                        const Int32 timeoutMs = 500;
+                        Int32 waited = 0;
+                        UInt32 bytesAvailable = 0;
+                        while (waited < timeoutMs)
+                        {
+                            if (PeekNamedPipe(pipe, IntPtr.Zero, 0, IntPtr.Zero, out bytesAvailable, IntPtr.Zero) && bytesAvailable > 0)
+                                break;
+                            Thread.Sleep(pollIntervalMs);
+                            waited += pollIntervalMs;
+                        }
+                        if (bytesAvailable > 0)
+                        {
+                            IntPtr inBuffer = Marshal.AllocHGlobal(4096);
+                            if (ReadFile(pipe, inBuffer, 4096, out UInt32 bufferRead, IntPtr.Zero) && bufferRead > 0)
+                            {
+                                Byte[] answerStr = new Byte[bufferRead];
+                                Marshal.Copy(inBuffer, answerBytes, 0, (Int32)bufferRead);
+                                String answer = Encoding.ASCII.GetString(answerStr).Trim();
+                                Log.Message($"[Split] request {message}: answer = {answer}");
+                                answerCallback(answer);
+                            }
+                            Marshal.FreeHGlobal(inBuffer);
+                        }
+                    }
 
                     // For some reason (maybe because C methods close the handle without making sure LiveSplit's server intercepted the message before),
                     // there's a loss of ~10% of message sent if we don't wait a bit there
@@ -183,6 +198,8 @@ namespace Memoria.Speedrun
         private static extern Boolean CallNamedPipe(String lpNamedPipeName, IntPtr lpInBuffer, UInt32 nInBufferSize, IntPtr lpOutBuffer, UInt32 nOutBufferSize, IntPtr lpBytesRead, UInt32 nTimeOut);
         [DllImport("kernel32", SetLastError = true)]
         private static extern unsafe Boolean SetNamedPipeHandleState(String hNamedPipe, UInt32* lpMode, UInt32* lpMaxCollectionCount, UInt32* lpCollectDataTimeout);
+        [DllImport("kernel32", SetLastError = true)]
+        private static extern bool PeekNamedPipe(IntPtr hNamedPipe, IntPtr lpBuffer, UInt32 nBufferSize, IntPtr lpBytesRead, out UInt32 lpTotalBytesAvail, IntPtr lpBytesLeftThisMessage);
 
         private static List<Thread> MessageThreads = new List<Thread>();
 
