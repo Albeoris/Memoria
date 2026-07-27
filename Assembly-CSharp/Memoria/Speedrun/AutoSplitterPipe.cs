@@ -13,7 +13,7 @@ namespace Memoria.Speedrun
         // Let the game communicate with LiveSplit through a fifo pipe
         // Because the game's framework is rather old, System.Core.dll doesn't provide System.IO.Pipes and we thus must use another API
         // Also, for some reason, sending messages to LiveSplit works more or less correctly but receiving its answers doesn't work (even when setting up an asynchronous transmission)
-        // LiveSplit's server is set up there: https://github.com/LiveSplit/LiveSplit/blob/master/LiveSplit/LiveSplit.Core/Server/CommandServer.cs
+        // LiveSplit's server is set up there: https://github.com/LiveSplit/LiveSplit/blob/master/src/LiveSplit.Core/Server/CommandServer.cs
 
         public static void SignalGameStart()
         {
