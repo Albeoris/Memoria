@@ -14,6 +14,8 @@ namespace Memoria
                 get => Instance._battle.Speed;
                 set => Instance._battle.Speed.Value = value;
             }
+            public static Int32 ATBSpeedFactor => Math.Max(1, Instance._battle.ATBSpeedFactor);
+
             public static Boolean NoAutoTrance => Instance._battle.NoAutoTrance;
             public static Int32 EncounterInterval => Instance._battle.EncounterInterval;
             public static Int32 EncounterInitial => Instance._battle.EncounterInitial;
