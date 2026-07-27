@@ -147,9 +147,9 @@ namespace Memoria.Speedrun
                             IntPtr inBuffer = Marshal.AllocHGlobal(4096);
                             if (ReadFile(pipe, inBuffer, 4096, out UInt32 bufferRead, IntPtr.Zero) && bufferRead > 0)
                             {
-                                Byte[] answerStr = new Byte[bufferRead];
+                                Byte[] answerBytes = new Byte[bufferRead];
                                 Marshal.Copy(inBuffer, answerBytes, 0, (Int32)bufferRead);
-                                String answer = Encoding.ASCII.GetString(answerStr).Trim();
+                                String answer = Encoding.ASCII.GetString(answerBytes).Trim();
                                 Log.Message($"[Split] request {message}: answer = {answer}");
                                 answerCallback(answer);
                             }
