@@ -71,6 +71,12 @@ namespace Memoria.Assets
             if (destinationBlink == null)
                 destinationBlink = destinationRoot.AddComponent<FbxUdimBlink>();
             destinationBlink.InitializeTransferredTargets(transferredTargets, sourceBlink._eyeMode);
+            if (sourceBlink != destinationBlink)
+            {
+                // Allows the target mesh be the main mesh; pausing the game will not reset the blink state.
+                sourceBlink._targets = null;
+                sourceBlink.enabled = false;
+            }
             return true;
         }
 
