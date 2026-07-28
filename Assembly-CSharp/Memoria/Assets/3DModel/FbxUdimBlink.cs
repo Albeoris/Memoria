@@ -73,7 +73,7 @@ namespace Memoria.Assets
             destinationBlink.InitializeTransferredTargets(transferredTargets, sourceBlink._eyeMode);
             if (sourceBlink != destinationBlink)
             {
-                // Allows the target mesh be the main mesh; pausing the game will not reset the blink state.
+                // Stop the temporary model from changing the copied meshes.
                 sourceBlink._targets = null;
                 sourceBlink.enabled = false;
             }
