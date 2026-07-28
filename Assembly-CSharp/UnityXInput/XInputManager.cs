@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Memoria;
+using System;
 using UnityEngine;
 using XInputDotNetPure;
 
@@ -85,7 +86,7 @@ namespace UnityXInput
                 global::Debug.Log("Start reset input axes");
 
                 // Pause the game if a controller has been disconnected
-                if (!UIManager.Instance.IsPause)
+                if (!Configuration.Debug.StartModelViewer && !Configuration.Debug.StartFieldCreator && !UIManager.Instance.IsPause)
                     UIManager.Instance.GetSceneFromState(UIManager.Instance.State).OnKeyPause(null);
             }
         }
