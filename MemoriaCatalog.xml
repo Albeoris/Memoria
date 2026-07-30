@@ -332,20 +332,20 @@ Not supported language : Japanese (a lot of things get deleted... need to wait u
 
 <Mod>
 	<Name>NoHardcodedBattles</Name>
-	<Version>1.1</Version>
+	<Version>1.2</Version>
 	<Priority>3</Priority>
 	<Author>DV</Author>
 	<ReleaseDateOriginal>2025-05-29</ReleaseDateOriginal>
-	<ReleaseDate>2025-05-29</ReleaseDate>
+	<ReleaseDate>2026-07-30</ReleaseDate>
 	<InstallationPath>NoHardcodedBattles</InstallationPath>
 	<IncompatibleWith>AlternateFantasy, Trance Seek, David Bowie Edition</IncompatibleWith>
 	<Category>Gameplay</Category>
 	<Description>
 A tiny mod to remove some "hardcoded" scripts in battles.
-The goal is to make these fights compatible with any characters in battle, in order to avoid any softlocks.
-	</Description>
-	<PatchNotes>[Version 1.1]
-Fix a very specific soft lock against Prison Cage, Black Waltz 3 and Mistodon.</PatchNotes>
+The goal is to make these fights compatible with any characters in battle, in order to avoid any softlocks in some battles (like Prison Cage, Black Waltz 3, etc...)
+</Description>
+	<PatchNotes>[Version 1.2]
+Fix a softlock in Battle n°160 against Abadon (thanks to qrs for the report).</PatchNotes>
 	<PreviewFileUrl>https://i.imgur.com/KL9DWPk.jpeg</PreviewFileUrl>
 	<PreviewFile>Thumbnail/NoHardcodedBattles.jpg</PreviewFile>
 	<DownloadUrl>https://files.dv-modding.fr/NoHardcodedBattles.zip</DownloadUrl>
