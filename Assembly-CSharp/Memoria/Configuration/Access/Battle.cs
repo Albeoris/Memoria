@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
 
@@ -14,8 +15,7 @@ namespace Memoria
                 get => Instance._battle.Speed;
                 set => Instance._battle.Speed.Value = value;
             }
-            public static Single ATBSpeedFactor => GetBattleSpeedATB();
-
+            public static Single ATBSpeedFactor => Instance._battle.ATBSpeedFactor < 1.0f ? 1.0f : Instance._battle.ATBSpeedFactor; // [DV] 1.0f is already very slow imo.
             public static Boolean NoAutoTrance => Instance._battle.NoAutoTrance;
             public static Int32 EncounterInterval => Instance._battle.EncounterInterval;
             public static Int32 EncounterInitial => Instance._battle.EncounterInitial;
@@ -64,13 +64,7 @@ namespace Memoria
                 SaveValue(Instance._battle.Name, Instance._battle.Enabled);
                 SaveValue(Instance._battle.Name, Instance._battle.Speed);
             }
-            private static Single GetBattleSpeedATB()
-            {
-                if (Single.TryParse(Instance._battle.ATBSpeedFactor, out Single value))
-                    return value < 1.0f ? 1.0f : value; // [DV] 1.0f is already very slow imo.
 
-                return 4.0f;
-            }
             public static Boolean IsMenuEnabledInBattle(MainMenuUI.SubMenu subMenu)
             {
                 return AccessMenus > 0 && (AvailableMenus.Length == 0 || AvailableMenus.Contains(subMenu.ToString()));
