@@ -43,6 +43,14 @@ namespace Memoria.Prime.Ini
             return handler;
         }
 
+        protected IniValue<Single> BindSingle(String name, Single defaultValue)
+        {
+            IniValue<Single> handler = IniValue.Single(name);
+            handler.Value = defaultValue;
+            _bindings.Add(new ValueBinding<Single>(handler));
+            return handler;
+        }
+
         protected IniValue<String> BindPath(String name, String defaultValue)
         {
             if (IniValue.TryParsePath(defaultValue, out var path))
