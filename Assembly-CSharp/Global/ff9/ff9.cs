@@ -8706,7 +8706,7 @@ public static class ff9
                 for (Int32 j = 0; j < 12; j++)
                 {
                     Int32 specialArea = ff9.w_worldEncountSpecial[i].area[j] - 1;
-                    if (specialArea > 0 && specialArea < ff9.w_frameBattleScenePtr.Length)
+                    if (specialArea >= 0 && specialArea < ff9.w_frameBattleScenePtr.Length)
                         w_friendlyBattles.Add(ff9.w_frameBattleScenePtr[specialArea].scene[3]);
                 }
             }

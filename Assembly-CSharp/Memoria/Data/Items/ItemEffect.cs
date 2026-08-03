@@ -1,6 +1,7 @@
 ﻿using FF9;
 using Memoria.Prime.CSV;
 using System;
+using System.Collections.Generic;
 
 namespace Memoria.Data
 {
@@ -64,7 +65,10 @@ namespace Memoria.Data
             Rate = CsvParser.Int32(raw[index++]);
             Element = (EffectElement)CsvParser.Byte(raw[index++]);
 
-            Status = (BattleStatus)CsvParser.UInt64(raw[index]);
+            if (metadata.HasOption($"UseStatusList"))
+                Status = ParseBattleStatus(raw[index]);
+            else
+                Status = (BattleStatus)CsvParser.UInt64(raw[index]);
         }
 
         public void WriteEntry(CsvWriter sw, CsvMetaData metadata)
@@ -84,7 +88,10 @@ namespace Memoria.Data
             sw.Int32(Rate);
             sw.Byte((Byte)Element);
 
-            sw.UInt64((UInt64)Status);
+            if (metadata.HasOption($"UseStatusList"))
+                WriteBattleStatus(sw, Status);
+            else
+                sw.UInt64((UInt64)Status);
         }
 
         public ITEM_DATA ToItemData()
@@ -93,6 +100,27 @@ namespace Memoria.Data
                 new BattleCommandInfo(Targets, DefaultAlly, Display, AnimationId, Dead, false, DefaultDead),
                 new BTL_REF(ScriptId, Power, (Byte)Element, Rate),
                 Status);
+        }
+
+        public static BattleStatus ParseBattleStatus(String raw)
+        {
+            BattleStatus result = 0;
+            String[] tokens = raw.Split(',');
+            for (Int32 i = 0; i < tokens.Length; i++)
+            {
+                String tok = tokens[i].Trim();
+                if (!String.IsNullOrEmpty(tok))
+                    result |= CsvParser.EnumValue<BattleStatusIdOldVersion>(tok).ToBattleStatus();
+            }
+            return result;
+        }
+
+        public static void WriteBattleStatus(CsvWriter sw, BattleStatus status)
+        {
+            List<String> statusStr = new List<String>();
+            foreach (BattleStatusId statusId in status.ToStatusList())
+                statusStr.Add($"{statusId}({(Int32)statusId})");
+            sw.String(String.Join(", ", statusStr.ToArray()));
         }
     }
 }

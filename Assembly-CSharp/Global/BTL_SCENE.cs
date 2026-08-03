@@ -7,6 +7,8 @@ using System.IO;
 
 public class BTL_SCENE
 {
+    private const Byte VERSION_VANILLA = 7;
+
     public void ReadBattleScene(String name)
     {
         nameIdentifier = "BSC_" + name;
@@ -22,10 +24,12 @@ public class BTL_SCENE
             this.header.TypCount = binaryReader.ReadByte();
             this.header.AtkCount = binaryReader.ReadByte();
             this.header.Flags = binaryReader.ReadUInt16();
+            this.header.Pad1 = binaryReader.ReadInt16();
+            if (this.header.Ver > VERSION_VANILLA)
+                this.header.BattleMapIndex = binaryReader.ReadUInt16(); // Typically identical to FF9StateSystem.Battle.battleMapIndex
             this.PatAddr = new SB2_PATTERN[this.header.PatCount];
             this.MonAddr = new SB2_MON_PARM[this.header.TypCount];
             this.atk = new AA_DATA[this.header.AtkCount];
-            binaryReader.BaseStream.Seek(8L, SeekOrigin.Begin);
             for (Int32 i = 0; i < this.header.PatCount; i++)
             {
                 SB2_PATTERN pattern = this.PatAddr[i] = new SB2_PATTERN();
@@ -47,26 +51,48 @@ public class BTL_SCENE
                     placement.Rot = binaryReader.ReadInt16();
                 }
             }
-            binaryReader.BaseStream.Seek(8 + 56 * this.header.PatCount, SeekOrigin.Begin);
             for (Int32 i = 0; i < this.header.TypCount; i++)
             {
                 SB2_MON_PARM monParam = this.MonAddr[i] = new SB2_MON_PARM();
-                monParam.ResistStatus = (BattleStatus)binaryReader.ReadUInt32();
-                monParam.AutoStatus = (BattleStatus)binaryReader.ReadUInt32();
-                monParam.InitialStatus = (BattleStatus)binaryReader.ReadUInt32();
-                monParam.MaxHP = binaryReader.ReadUInt16();
-                monParam.MaxMP = binaryReader.ReadUInt16();
-                monParam.WinGil = binaryReader.ReadUInt16();
-                monParam.WinExp = binaryReader.ReadUInt16();
-                for (Int32 j = 0; j < 4; j++)
+                if (this.header.Ver > VERSION_VANILLA)
                 {
-                    monParam.WinItems[j] = (RegularItem)binaryReader.ReadByte();
-                    monParam.WinItemRates[j] = SB2_MON_PARM.DefaultWinItemRates[j];
+                    monParam.ResistStatus = binaryReader.ReadBattleStatus();
+                    monParam.AutoStatus = binaryReader.ReadBattleStatus();
+                    monParam.InitialStatus = binaryReader.ReadBattleStatus();
+                    monParam.MaxHP = binaryReader.ReadUInt32();
+                    monParam.MaxMP = binaryReader.ReadUInt32();
+                    monParam.WinGil = binaryReader.ReadUInt32();
+                    monParam.WinExp = binaryReader.ReadUInt32();
+                    for (Int32 j = 0; j < 4; j++)
+                        monParam.WinItems[j] = (RegularItem)binaryReader.ReadUInt32();
+                    for (Int32 j = 0; j < 4; j++)
+                        monParam.StealItems[j] = (RegularItem)binaryReader.ReadUInt32();
+                    for (Int32 j = 0; j < 4; j++)
+                        monParam.WinItemRates[j] = (UInt16)binaryReader.ReadUInt32();
+                    for (Int32 j = 0; j < 4; j++)
+                        monParam.StealItemRates[j] = (UInt16)binaryReader.ReadUInt32();
+                    monParam.WinCardRate = (UInt16)binaryReader.ReadUInt32();
                 }
-                for (Int32 j = 0; j < 4; j++)
+                else
                 {
-                    monParam.StealItems[j] = (RegularItem)binaryReader.ReadByte();
-                    monParam.StealItemRates[j] = SB2_MON_PARM.DefaultStealItemRates[j];
+                    monParam.ResistStatus = (BattleStatus)binaryReader.ReadUInt32();
+                    monParam.AutoStatus = (BattleStatus)binaryReader.ReadUInt32();
+                    monParam.InitialStatus = (BattleStatus)binaryReader.ReadUInt32();
+                    monParam.MaxHP = binaryReader.ReadUInt16();
+                    monParam.MaxMP = binaryReader.ReadUInt16();
+                    monParam.WinGil = binaryReader.ReadUInt16();
+                    monParam.WinExp = binaryReader.ReadUInt16();
+                    for (Int32 j = 0; j < 4; j++)
+                    {
+                        monParam.WinItems[j] = (RegularItem)binaryReader.ReadByte();
+                        monParam.WinItemRates[j] = SB2_MON_PARM.DefaultWinItemRates[j];
+                    }
+                    for (Int32 j = 0; j < 4; j++)
+                    {
+                        monParam.StealItems[j] = (RegularItem)binaryReader.ReadByte();
+                        monParam.StealItemRates[j] = SB2_MON_PARM.DefaultStealItemRates[j];
+                    }
+                    monParam.WinCardRate = SB2_MON_PARM.DefaultWinCardRate;
                 }
                 monParam.Radius = binaryReader.ReadUInt16();
                 monParam.Geo = binaryReader.ReadInt16();
@@ -75,12 +101,25 @@ public class BTL_SCENE
                 for (Int32 j = 0; j < 2; j++)
                     monParam.Mesh[j] = binaryReader.ReadUInt16();
                 monParam.Flags = binaryReader.ReadUInt16();
-                monParam.AP = binaryReader.ReadUInt16();
                 SB2_ELEMENT monStats = monParam.Element = new SB2_ELEMENT();
-                monStats.Speed = binaryReader.ReadByte();
-                monStats.Strength = binaryReader.ReadByte();
-                monStats.Magic = binaryReader.ReadByte();
-                monStats.Spirit = binaryReader.ReadByte();
+                if (this.header.Ver > VERSION_VANILLA)
+                {
+                    // For now, stats are still of type Byte in the C# code
+                    // Beware that the transition to a larger type will most likely invalidate compatibility with many Memoria.Scripts.dll of mods
+                    monParam.AP = binaryReader.ReadUInt32();
+                    monStats.Speed = (Byte)binaryReader.ReadUInt32();
+                    monStats.Strength = (Byte)binaryReader.ReadUInt32();
+                    monStats.Magic = (Byte)binaryReader.ReadUInt32();
+                    monStats.Spirit = (Byte)binaryReader.ReadUInt32();
+                }
+                else
+                {
+                    monParam.AP = binaryReader.ReadUInt16();
+                    monStats.Speed = binaryReader.ReadByte();
+                    monStats.Strength = binaryReader.ReadByte();
+                    monStats.Magic = binaryReader.ReadByte();
+                    monStats.Spirit = binaryReader.ReadByte();
+                }
                 monStats.pad = binaryReader.ReadByte();
                 monStats.trans = binaryReader.ReadByte();
                 monStats.cur_capa = binaryReader.ReadByte();
@@ -89,14 +128,28 @@ public class BTL_SCENE
                 monParam.AbsorbElement = binaryReader.ReadByte();
                 monParam.HalfElement = binaryReader.ReadByte();
                 monParam.WeakElement = binaryReader.ReadByte();
-                monParam.Level = binaryReader.ReadByte();
-                monParam.Category = binaryReader.ReadByte();
-                monParam.HitRate = binaryReader.ReadByte();
-                monParam.PhysicalDefence = binaryReader.ReadByte();
-                monParam.PhysicalEvade = binaryReader.ReadByte();
-                monParam.MagicalDefence = binaryReader.ReadByte();
-                monParam.MagicalEvade = binaryReader.ReadByte();
-                monParam.BlueMagic = binaryReader.ReadByte();
+                if (this.header.Ver > VERSION_VANILLA)
+                {
+                    monParam.Level = (Byte)binaryReader.ReadUInt32();
+                    monParam.Category = binaryReader.ReadByte();
+                    monParam.HitRate = binaryReader.ReadInt32();
+                    monParam.PhysicalDefence = binaryReader.ReadInt32();
+                    monParam.PhysicalEvade = binaryReader.ReadInt32();
+                    monParam.MagicalDefence = binaryReader.ReadInt32();
+                    monParam.MagicalEvade = binaryReader.ReadInt32();
+                    monParam.BlueMagic = binaryReader.ReadInt32();
+                }
+                else
+                {
+                    monParam.Level = binaryReader.ReadByte();
+                    monParam.Category = binaryReader.ReadByte();
+                    monParam.HitRate = binaryReader.ReadByte();
+                    monParam.PhysicalDefence = binaryReader.ReadByte();
+                    monParam.PhysicalEvade = binaryReader.ReadByte();
+                    monParam.MagicalDefence = binaryReader.ReadByte();
+                    monParam.MagicalEvade = binaryReader.ReadByte();
+                    monParam.BlueMagic = binaryReader.ReadByte();
+                }
                 for (Int32 j = 0; j < 4; j++)
                     monParam.Bone[j] = binaryReader.ReadByte();
                 monParam.DieSfx = binaryReader.ReadUInt16();
@@ -112,8 +165,7 @@ public class BTL_SCENE
                 monParam.ShadowX = binaryReader.ReadUInt16();
                 monParam.ShadowZ = binaryReader.ReadUInt16();
                 monParam.ShadowBone = binaryReader.ReadByte();
-                monParam.WinCard = (TetraMasterCardId)binaryReader.ReadByte();
-                monParam.WinCardRate = SB2_MON_PARM.DefaultWinCardRate;
+                monParam.WinCard = (TetraMasterCardId)(this.header.Ver > VERSION_VANILLA ? binaryReader.ReadInt32() : binaryReader.ReadByte());
                 monParam.ShadowOfsX = binaryReader.ReadInt16();
                 monParam.ShadowOfsZ = binaryReader.ReadInt16();
                 monParam.ShadowBone2 = binaryReader.ReadByte();
@@ -123,33 +175,51 @@ public class BTL_SCENE
                 if (btl_eqp.EnemyBuiltInWeaponTable.TryGetValue(monParam.Geo, out Int32[] weaponBones))
                     monParam.WeaponAttachment = weaponBones;
             }
-            binaryReader.BaseStream.Seek(8 + 56 * this.header.PatCount + 116 * this.header.TypCount, SeekOrigin.Begin);
             for (Int32 i = 0; i < this.header.AtkCount; i++)
             {
                 AA_DATA monAbility = this.atk[i] = new AA_DATA();
                 BattleCommandInfo abilInfo = monAbility.Info = new BattleCommandInfo();
                 BTL_REF abilRef = monAbility.Ref = new BTL_REF();
-                UInt32 input = binaryReader.ReadUInt32();
+                UInt32 input = binaryReader.ReadByte();
                 Byte bitPos = 0;
                 abilInfo.Target = (TargetType)BitUtil.ReadBits(input, ref bitPos, 4);
                 abilInfo.DefaultAlly = BitUtil.ReadBits(input, ref bitPos, 1) != 0;
                 abilInfo.DisplayStats = (TargetDisplay)BitUtil.ReadBits(input, ref bitPos, 3);
+                input = this.header.Ver > VERSION_VANILLA ? binaryReader.ReadUInt32() : binaryReader.ReadUInt16();
+                bitPos = 0;
                 abilInfo.VfxIndex = (Int16)BitUtil.ReadBits(input, ref bitPos, 9);
                 /*cmd_INFO.sfx_no = (Int16)*/
-                BitUtil.ReadBits(input, ref bitPos, 12);
+                input = binaryReader.ReadByte();
+                bitPos = 5;
                 abilInfo.ForDead = BitUtil.ReadBits(input, ref bitPos, 1) != 0;
                 abilInfo.DefaultCamera = BitUtil.ReadBits(input, ref bitPos, 1) != 0;
                 abilInfo.DefaultOnDead = BitUtil.ReadBits(input, ref bitPos, 1) != 0;
-                abilRef.ScriptId = binaryReader.ReadByte();
-                abilRef.Power = binaryReader.ReadByte();
-                abilRef.Elements = binaryReader.ReadByte();
-                abilRef.Rate = binaryReader.ReadByte();
-                monAbility.Category = binaryReader.ReadByte();
-                monAbility.AddStatusNo = (StatusSetId)binaryReader.ReadByte();
-                monAbility.MP = binaryReader.ReadByte();
-                monAbility.Type = binaryReader.ReadByte();
-                monAbility.Vfx2 = binaryReader.ReadUInt16();
-                monAbility.Name = binaryReader.ReadUInt16().ToString();
+                if (this.header.Ver > VERSION_VANILLA)
+                {
+                    abilRef.ScriptId = binaryReader.ReadInt32();
+                    abilRef.Power = binaryReader.ReadInt32();
+                    abilRef.Elements = binaryReader.ReadByte();
+                    abilRef.Rate = binaryReader.ReadInt32();
+                    monAbility.Category = binaryReader.ReadByte();
+                    monAbility.AddStatusNo = (StatusSetId)binaryReader.ReadInt32();
+                    monAbility.MP = binaryReader.ReadInt32();
+                    monAbility.Type = binaryReader.ReadByte();
+                    monAbility.Vfx2 = (UInt16)binaryReader.ReadUInt32();
+                }
+                else
+                {
+                    abilRef.ScriptId = binaryReader.ReadByte();
+                    abilRef.Power = binaryReader.ReadByte();
+                    abilRef.Elements = binaryReader.ReadByte();
+                    abilRef.Rate = binaryReader.ReadByte();
+                    monAbility.Category = binaryReader.ReadByte();
+                    monAbility.AddStatusNo = (StatusSetId)binaryReader.ReadByte();
+                    monAbility.MP = binaryReader.ReadByte();
+                    monAbility.Type = binaryReader.ReadByte();
+                    monAbility.Vfx2 = binaryReader.ReadUInt16();
+                }
+                binaryReader.ReadUInt16();
+                monAbility.Name = $"Attack{i}";
             }
         }
         SetupSceneInfo();

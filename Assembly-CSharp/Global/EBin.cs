@@ -452,6 +452,18 @@ public class EBin
                 _s7.pushSubs(args[0], args[1]);
                 _s7.push(encodeTypeAndVarClass(VariableSource.Null, VariableType.Dictionary));
                 return;
+            case flexible_varfunc.CATEGORY_KILL_COUNT:
+                _v0 = args[0] >= 0 && args[0] < FF9StateSystem.Common.FF9.categoryKillCount.Length ? FF9StateSystem.Common.FF9.categoryKillCount[(Int16)args[0]] : 0;
+                break;
+            case flexible_varfunc.MODEL_KILL_COUNT:
+                if (FF9StateSystem.Common.FF9.modelKillCount.TryGetValue((Int16)args[0], out Int16 count))
+                    _v0 = count;
+                else
+                    _v0 = 0;
+                break;
+            case flexible_varfunc.ABILITY_USE_COUNT:
+                _v0 = FF9StateSystem.EventState.GetAAUsageCounter((BattleAbilityId)args[0]);
+                break;
         }
         expr_Push_v0_Int24();
     }
@@ -1703,6 +1715,12 @@ public class EBin
                 return FF9StateSystem.Battle.FF9Battle.btl_scene.Info.ReverseAttack ? 1 : 0;
             case memoria_variable.BATTLE_AFTEREVENT:
                 return FF9StateSystem.Battle.FF9Battle.btl_scene.Info.AfterEvent ? 1 : 0;
+            case memoria_variable.TOTAL_BATTLE_COUNT:
+                return FF9StateSystem.Common.FF9.party.battle_no;
+            case memoria_variable.TOTAL_ESCAPE_COUNT:
+                return FF9StateSystem.Common.FF9.party.escape_no;
+            case memoria_variable.CURRENT_LANGUAGE:
+                return Localization.CurrentLanguageId;
 
         }
         return 0;
@@ -1735,6 +1753,12 @@ public class EBin
                 break;
             case memoria_variable.BATTLE_AFTEREVENT:
                 FF9StateSystem.Battle.FF9Battle.btl_scene.Info.AfterEvent = val != 0;
+                break;
+            case memoria_variable.TOTAL_BATTLE_COUNT:
+                FF9StateSystem.Common.FF9.party.battle_no = val;
+                break;
+            case memoria_variable.TOTAL_ESCAPE_COUNT:
+                FF9StateSystem.Common.FF9.party.escape_no = (UInt16)val;
                 break;
         }
     }
@@ -2402,6 +2426,9 @@ public class EBin
         VECTOR,
         VECTOR_SIZE,
         DICTIONARY,
+        CATEGORY_KILL_COUNT,
+        MODEL_KILL_COUNT,
+        ABILITY_USE_COUNT,
     }
 
     public enum memoria_variable : ushort
@@ -2417,7 +2444,10 @@ public class EBin
         BATTLE_NOGAMEOVER,
         BATTLE_WINPOSE,
         BATTLE_IPSENCURSE,
-        BATTLE_AFTEREVENT
+        BATTLE_AFTEREVENT,
+        TOTAL_BATTLE_COUNT,
+        TOTAL_ESCAPE_COUNT,
+        CURRENT_LANGUAGE,
     }
 
     public enum op_binary

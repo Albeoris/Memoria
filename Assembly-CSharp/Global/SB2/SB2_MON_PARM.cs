@@ -91,7 +91,7 @@ public class SB2_MON_PARM
     public Byte Category;
 
     [Memoria.PatchableFieldAttribute]
-    public Byte HitRate;
+    public Int32 HitRate;
 
     [Memoria.PatchableFieldAttribute]
     public Int32 PhysicalDefence;

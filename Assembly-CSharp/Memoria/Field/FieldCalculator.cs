@@ -11,6 +11,11 @@ namespace Memoria
         public static void ApplyRecover(PLAYER player, Int32 recover)
         {
             player.cur.hp = (UInt32)Mathf.Clamp(player.cur.hp + recover, 0, player.max.hp);
+            if ((BattleStatusConst.OutOfBattle & BattleStatus.Death) != 0 && player.cur.hp > 0) // In case the attribute "Outofbattle" is removed to Death to display it in the menu
+            {
+                player.permanent_status &= ~BattleStatus.Death;
+                player.status &= ~BattleStatus.Death;
+            }
         }
 
         public static void ApplyMpRecover(PLAYER player, Int32 recover)

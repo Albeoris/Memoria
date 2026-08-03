@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Linq;
+using System.IO;
 using System.Collections;
-using FF9;
 
 namespace Memoria.Data
 {
@@ -205,6 +204,16 @@ namespace Memoria.Data
             if (FF9StateSystem.Battle.FF9Battle.status_data.TryGetValue(statusId, out BattleStatusDataEntry data))
                 return data;
             throw new Exception($"[BattleStatus] Trying to use the non-existing status {statusId}");
+        }
+
+        // Extended method for reading a list of statuses; that formatting doesn't exists in vanilla binary files (they use a single "reader.ReadUInt32" instead)
+        public static BattleStatus ReadBattleStatus(this BinaryReader reader)
+        {
+            BattleStatus res = 0;
+            UInt32 count = reader.ReadUInt32();
+            for (UInt32 i = 0; i < count; i++)
+                res |= (BattleStatus)(1UL << reader.ReadInt32());
+            return res;
         }
     }
 }
