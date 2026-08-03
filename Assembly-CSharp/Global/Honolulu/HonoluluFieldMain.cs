@@ -156,8 +156,7 @@ public class HonoluluFieldMain : HonoBehavior
         Int32 camNumber = PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx ?? -1;
         String camNumberStr = "-" + camNumber;
         if (camNumber == -1) { camNumberStr = ""; };
-        String camIdxIfCam = (PersistenSingleton<EventEngine>.Instance?.fieldmap?.scene?.cameraList.Count > 1 && PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx != -1) ? "-" + PersistenSingleton<EventEngine>.Instance.fieldmap.camIdx : "";
-        PlayerWindow.Instance.SetTitle($"Map: {FF9StateSystem.Common.FF9.fldMapNo}{camIdxIfCam} ({FF9StateSystem.Common.FF9.mapNameStr}) | Index/Counter: {PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR)}/{PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR)} | Loc: {FF9StateSystem.Common.FF9.fldLocNo}");
+        PlayerWindow.UpdateTitle();
         FPSManager.DelayMainLoop(Time.realtimeSinceStartup - loadStartTime);
 
         // We use a coroutine here otherwise the game crashes frequently during the autosave for some reason

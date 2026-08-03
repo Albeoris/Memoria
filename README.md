@@ -42,35 +42,69 @@ Note: This is **not** affiliated with the Memoria Project, a 2023 Proof-of-conce
     - Excalibur II time limit removal
     - Cards: lower randomness, card limit raised, auto discard cards
     - Manual Trance
- 
+
 ![screenshots.jpg](https://github.com/user-attachments/assets/2bacaa4c-c380-44a8-bc67-9814594154d0)
 
-## Use
+## Install
 
-- **INSTALL**
-  - (Windows): Download and run [Memoria.Patcher.exe](https://github.com/Albeoris/Memoria/releases/latest/download/Memoria.Patcher.exe)
-    - Automatically finds the game path from Windows registry (if you've launched the game once and haven't moved the install folder) (If not, launch the patcher from the game folder, or provide a custom path in command line: 'Memoria.Patcher.exe "gameDirectory"')
-  - (Steam Deck / Linux) run this in the Konsole/terminal:
-  - `bash -c "$(curl -sL https://gist.githubusercontent.com/dotaxis/1ad1c64baa7ad9c1dabcb255ea6257ae/raw/memoria.sh)"`
-  - (Mac): The launcher has been shown to be currently only compatible with Crossover in Windows 7 32bit mode (Whiskey and 64bit give an error "mono-io-layer-error")
-- **UPDATE**
-  - Run the latest patcher exe or use "check for updates" in the launcher
-  - The Mod Manager will show a yellow dot if some of your mods are not up-to-date
-- **CONFIGURE**
-  - Most crucial options and cheats are embedded in the game launcher
-  - More in-depth configuration is available in the file Memoria.ini (in the game folder)
+- [Latest stable release](https://github.com/Albeoris/Memoria/releases/latest)
+- [Latest canary release](https://github.com/Albeoris/Memoria/releases/tag/canary)
+
+### Windows
+
+- Download `Memoria.Patcher.exe` from which ever release channel you prefer
+- Copy the file inside your game directory (next to `FF9_Launcher.exe` )
+- Double click `Memoria.Patcher.exe`
+- Launch the game and enjoy
+
+### Linux
+
+> **PLEASE NOTE:**
+>
+> If you prefer to use an automated approach, this gist is also available:
+>
+> ```bash
+> bash -c "$(curl -sL https://gist.githubusercontent.com/dotaxis/1ad1c64baa7ad9c1dabcb255ea6257ae/raw/memoria.sh)"
+> ```
+
+- Download `Memoria.Patcher-linux-x64` from which ever release channel you prefer
+- Copy the file inside your game directory (next to `FF9_Launcher.exe` )
+- Open a terminal session in your game path ( or `cd` to its path )
+- `chmod +x Memoria.Patcher-linux-x64 && ./Memoria.Patcher-linux-x64`
+- Launch the game and enjoy
+
+### MacOS
+
+> **PLEASE NOTE:**
+>
+> If you prefer to use an automated approach, SummonKit provides an easy way to install and run Memoria. See https://github.com/julianxhokaxhiu/SummonKit
+
+- Download `Memoria.Patcher-osx-x64` from which ever release channel you prefer
+- Copy the file inside your game directory (next to `FF9_Launcher.exe` )
+- Open a terminal session in your game path ( or `cd` to its path )
+- `chmod +x Memoria.Patcher-osx-x64 && ./Memoria.Patcher-osx-x64`
+- Launch the game and enjoy
+
+## Update
+
+- Memoria: Use the same steps described in [Install](#install).
+- Mods: The Mod Manager will show a yellow dot if some of your mods are not up-to-date
 
 ## Documentation
 
 - [Info for developers](../../wiki#Developers)
 - [Knowledge base](../../wiki#knowledge-base)
 - [Memoria.ini](../../wiki/Memoria.ini-sections)
+- Most crucial options and cheats are embedded in the game launcher
+- More in-depth configuration is available in the file `Memoria.ini` (in the game folder)
 
-## 🚀 Build the Latest Memoria Patcher
+## 🚀 Build
 
-[![Work-in-progress Builds](https://img.shields.io/badge/Work--in--progress_Builds-blue?logo=github)](https://github.com/Albeoris/Memoria/actions/workflows/build.yml)
+### Visual Studio
 
-**How to retrieve the work-in-progress version of Memoria (may contain errors and not work at all):**
-1. Click the **"Work-in-progress Builds"** button above.
-2. Open the **latest run** at the top of the list.
-3. Download the relevant **artifact** (Memoria-Patcher for either Linux or Windows) at the bottom of the page.
+0. Download the the latest [Visual Studio Community](https://visualstudio.microsoft.com/vs/community/) installer
+1. Run the installer and import this [.vsconfig](.vsconfig) file in the installer to pick the required components to build this project
+2. Install the game ( [Steam](https://store.steampowered.com/app/377840/FINAL_FANTASY_IX/) or [GOG](https://www.gog.com/en/game/final_fantasy_ix), whichever you prefer )
+3. Open the file [`Memoria.sln`](Memoria.sln) in Visual Studio and click the build button
+4. Click on `Start` to launch the `Memoria.Launcher` in the game directory
+

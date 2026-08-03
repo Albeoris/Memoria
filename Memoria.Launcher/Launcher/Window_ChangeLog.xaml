@@ -71,7 +71,7 @@
                             x:Name="Document"
                             Padding="15,0"
                             Foreground="{StaticResource WhiteUI}"
-                            FontFamily="Tahoma"
+                            FontFamily="{StaticResource Overpass}"
                             FontSize="16"
                             Background="Transparent"
                             BorderThickness="0"

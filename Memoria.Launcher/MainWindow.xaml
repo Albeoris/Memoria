@@ -15,6 +15,8 @@
     Background="Transparent"
     DataContext="{Binding RelativeSource={RelativeSource Self}}"
     AllowDrop="True"
+    UseLayoutRounding="True"
+    SnapsToDevicePixels="True"
     DragEnter="MainWindow_DragEnter"
     DragOver="MainWindow_DragOver"
     DragLeave="MainWindow_DragLeave"
@@ -85,7 +87,7 @@
                 Header="{DynamicResource Settings.menuSettings}"
                 Style="{StaticResource MainTabs}" >
                 <Border Style="{StaticResource TransparentGridStyle}" Padding="0,0,20,0">
-                    <Grid UseLayoutRounding="False">
+                    <Grid UseLayoutRounding="True">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"  />
                             <ColumnDefinition Width="*"/>
@@ -130,7 +132,7 @@
                 Header="{DynamicResource Settings.menuCheats}"
                 Style="{StaticResource MainTabs}" >
                 <Border Style="{StaticResource TransparentGridStyle}" Padding="0,0,20,0">
-                    <Grid UseLayoutRounding="False">
+                    <Grid UseLayoutRounding="True">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"  />
                             <ColumnDefinition Width="*"/>
@@ -156,7 +158,7 @@
                 Header="{DynamicResource Settings.menuAdvanced}"
                 Style="{StaticResource MainTabs}" >
                 <Border Style="{StaticResource TransparentGridStyle}" Padding="0,0,20,0">
-                    <Grid UseLayoutRounding="False">
+                    <Grid UseLayoutRounding="True">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"  />
                             <ColumnDefinition Width="*"/>
@@ -170,7 +172,7 @@
 
                         <launcher:SettingsGrid_Advanced x:Name="SettingsGrid_Advanced"
                             Grid.Column="0"  
-                            Margin="20,184,0,0"
+                            Margin="20,220,0,0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top" />
 
@@ -235,7 +237,7 @@
             <TabItem x:Name="ModManagerTab"
                 Height="45"
                 Header="{DynamicResource Settings.menuMods}"
-                Tag="16"
+                Tag="22"
                 Style="{StaticResource MainTabs}" >
                 <Border Style="{StaticResource TransparentGridStyle}">
                     <Grid>
@@ -277,8 +279,8 @@
                                         <Border Background="{StaticResource LightGreyUI}" Margin="2,2,8,0" Padding="6" CornerRadius="6">
                                             <Grid>
                                                 <Grid.RowDefinitions>
-                                                    <RowDefinition Height="*" />
                                                     <RowDefinition Height="auto" />
+                                                    <RowDefinition Height="*" />
                                                 </Grid.RowDefinitions>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="auto" />
@@ -286,9 +288,11 @@
                                                 </Grid.ColumnDefinitions>
                                                 <StackPanel
                                                     x:Name="stackButtons"
+                                                    Grid.Row="0"
+                                                    Grid.RowSpan="2"
                                                     Grid.Column="0"
                                                     HorizontalAlignment="Left"
-                                                    VerticalAlignment="Stretch">
+                                                    VerticalAlignment="Top">
                                                     <Button x:Name="btnReorganize"
                                                         Style="{StaticResource ToolButtonStyle}"
                                                         Margin="0,0,0,3"
@@ -327,10 +331,24 @@
                                                         <Image Source="/images/btnUninstallimg.png"/>
                                                     </Button>
                                                 </StackPanel>
+                                                <TextBox
+                                                    x:Name="txtSearchMods"
+                                                    Grid.Row="0"
+                                                    Grid.Column="1"
+                                                    Margin="6,0,0,6"
+                                                    TextChanged="TxtSearchMods_TextChanged"
+                                                    launcher:TextBoxHelper.Placeholder="Launcher.SearchModsPlaceholder"
+                                                    Padding="8,6,8,6"
+                                                    FontSize="14"
+                                                    Foreground="#ccc"
+                                                    Background="#222"
+                                                    BorderBrush="#444"
+                                                    BorderThickness="1"
+                                                    CaretBrush="#ccc" />
                                                 <ListView x:Name="lstMods"
                                                     Margin="6,0,0,0"
+                                                    Grid.Row="1"
                                                     Grid.Column="1"
-                                                    ItemsSource="{Binding ModListInstalled}"
                                                     ScrollViewer.CanContentScroll="False"
                                                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                                     PreviewMouseLeftButtonDown="ListView_PreviewMouseLeftButtonDown"
@@ -338,6 +356,12 @@
                                                     MouseMove="ListView_MouseMove"
                                                     PreviewMouseLeftButtonUp="ListView_PreviewMouseLeftButtonUp"
                                                     MouseLeave="ListView_MouseLeave">
+                                                    <ListView.ItemContainerStyle>
+                                                        <Style TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
+                                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                                        </Style>
+                                                    </ListView.ItemContainerStyle>
                                                     <ListView.View>
                                                         <GridView>
                                                             <GridViewColumn
@@ -347,6 +371,7 @@
                                                                         <CheckBox
                                                                             Style="{StaticResource CheckBoxStyle}"
                                                                             HorizontalAlignment="Center"
+                                                                            VerticalAlignment="Center"
                                                                             IsChecked="{Binding IsActive, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                                             Click="CheckBox_Click"
                                                                             IsTabStop="False" />
@@ -356,7 +381,8 @@
                                                                     <DataTemplate>
                                                                         <TextBlock
                                                                             Text="✅"
-                                                                            FontFamily="{StaticResource NotoEmoji}" />
+                                                                            FontFamily="{StaticResource NotoEmoji}"
+                                                                            FontSize="18" />
                                                                     </DataTemplate>
                                                                 </GridViewColumn.HeaderTemplate>
                                                             </GridViewColumn>
@@ -378,29 +404,68 @@
                                                                 Header="" >
                                                                 <GridViewColumn.CellTemplate>
                                                                     <DataTemplate>
-                                                                        <StackPanel Orientation="Horizontal">
-                                                                            <Button x:Name="colMyModsUpdateText"
-                                                                            Padding="0,3,0,0"
-                                                                                FontFamily="{StaticResource NotoEmoji}"
-                                                                                Content="{Binding UpdateIcon}"
-                                                                                FontWeight="Black"
-                                                                                ToolTip="{Binding UpdateTooltip}"
-                                                                                ToolTipService.InitialShowDelay="10"
-                                                                                Effect="{StaticResource ButtondropShadowEffect}"
-                                                                                Style="{StaticResource ButtonStyleLabel}"
-                                                                                Foreground="#efd525"
-                                                                                Cursor="Hand"
-                                                                                Click="UpdateIcon_Click"/>
-                                                                            <Label x:Name="colMyModsIncompText"
-                                                                                Padding="0,3,0,0"
-                                                                                FontFamily="{StaticResource NotoEmoji}"
-                                                                                Content="{Binding IncompIcon}"
-                                                                                ToolTip="{Binding ActiveIncompatibleMods}"
-                                                                                ToolTipService.InitialShowDelay="10"
-                                                                                ToolTipService.BetweenShowDelay="0"
-                                                                                Effect="{StaticResource ButtondropShadowEffect}"
-                                                                                Foreground="#f51818" />
-                                                                        </StackPanel>
+                                                                        <Grid HorizontalAlignment="Stretch" MinWidth="22">
+                                                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                                                <TextBlock x:Name="colMyModsUpdateText"
+                                                                                    FontFamily="{StaticResource NotoEmoji}"
+                                                                                    FontSize="18"
+                                                                                    Text="{Binding UpdateIcon}"
+                                                                                    FontWeight="Black"
+                                                                                    Width="22"
+                                                                                    Height="22"
+                                                                                    TextAlignment="Center"
+                                                                                    LineHeight="22"
+                                                                                    VerticalAlignment="Center"
+                                                                                    ToolTip="{Binding UpdateTooltip}"
+                                                                                    ToolTipService.InitialShowDelay="10"
+                                                                                    Effect="{StaticResource ButtondropShadowEffect}"
+                                                                                    Foreground="#efd525"
+                                                                                    Cursor="Hand"
+                                                                                    MouseLeftButtonUp="UpdateIcon_Click">
+                                                                                    <TextBlock.Style>
+                                                                                        <Style TargetType="TextBlock">
+                                                                                            <Setter Property="Visibility" Value="Visible" />
+                                                                                            <Style.Triggers>
+                                                                                                <DataTrigger Binding="{Binding UpdateIcon}" Value="{x:Null}">
+                                                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                                                </DataTrigger>
+                                                                                                <DataTrigger Binding="{Binding UpdateIcon}" Value="">
+                                                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                                                </DataTrigger>
+                                                                                            </Style.Triggers>
+                                                                                        </Style>
+                                                                                    </TextBlock.Style>
+                                                                                </TextBlock>
+                                                                                <TextBlock x:Name="colMyModsIncompText"
+                                                                                    FontFamily="{StaticResource NotoEmoji}"
+                                                                                    FontSize="18"
+                                                                                    Text="{Binding IncompIcon}"
+                                                                                    Width="22"
+                                                                                    Height="22"
+                                                                                    TextAlignment="Center"
+                                                                                    LineHeight="22"
+                                                                                    VerticalAlignment="Center"
+                                                                                    ToolTip="{Binding ActiveIncompatibleMods}"
+                                                                                    ToolTipService.InitialShowDelay="10"
+                                                                                    ToolTipService.BetweenShowDelay="0"
+                                                                                    Effect="{StaticResource ButtondropShadowEffect}"
+                                                                                    Foreground="#f51818">
+                                                                                    <TextBlock.Style>
+                                                                                        <Style TargetType="TextBlock">
+                                                                                            <Setter Property="Visibility" Value="Visible" />
+                                                                                            <Style.Triggers>
+                                                                                                <DataTrigger Binding="{Binding IncompIcon}" Value="{x:Null}">
+                                                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                                                </DataTrigger>
+                                                                                                <DataTrigger Binding="{Binding IncompIcon}" Value="">
+                                                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                                                </DataTrigger>
+                                                                                            </Style.Triggers>
+                                                                                        </Style>
+                                                                                    </TextBlock.Style>
+                                                                                </TextBlock>
+                                                                            </StackPanel>
+                                                                        </Grid>
                                                                     </DataTemplate>
                                                                 </GridViewColumn.CellTemplate>
                                                             </GridViewColumn>
@@ -414,13 +479,14 @@
                                                                 </GridViewColumn.HeaderContainerStyle>
                                                                 <GridViewColumn.CellTemplate>
                                                                     <DataTemplate>
-                                                                        <StackPanel Orientation="Horizontal">
+                                                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                                                             <TextBlock x:Name="colMyModsNameText"
-                                                                                Text="{Binding Name}" />
+                                                                                Text="{Binding Name}"
+                                                                                VerticalAlignment="Center" />
                                                                             <TextBlock x:Name="colMyModsVersionText"
                                                                                 Text="{Binding CurrentVersion}"
                                                                                 Margin="4,0,0,0"
-                                                                                VerticalAlignment="Bottom"
+                                                                                VerticalAlignment="Center"
                                                                                 Foreground="#888"
                                                                                 FontSize="12"/>
                                                                         </StackPanel>
@@ -458,6 +524,7 @@
                                         <Border Background="{StaticResource LightGreyUI}" Margin="2,2,8,0" Padding="6" CornerRadius="6">
                                             <Grid>
                                                 <Grid.RowDefinitions>
+                                                    <RowDefinition Height="auto" />
                                                     <RowDefinition Height="*" />
                                                     <RowDefinition Height="auto" />
                                                 </Grid.RowDefinitions>
@@ -466,6 +533,8 @@
                                                     <ColumnDefinition Width="*" />
                                                 </Grid.ColumnDefinitions>
                                                 <StackPanel
+                                                    Grid.Row="0"
+                                                    Grid.RowSpan="3"
                                                     Grid.Column="0"
                                                     HorizontalAlignment="Left"
                                                     VerticalAlignment="Top">
@@ -489,19 +558,35 @@
                                                         Opacity="0" >
                                                     </Button>
                                                 </StackPanel>
+                                                <TextBox
+                                                    x:Name="txtSearchCatalog"
+                                                    Grid.Row="0"
+                                                    Grid.Column="1"
+                                                    Margin="6,0,0,6"
+                                                    TextChanged="TxtSearchCatalog_TextChanged"
+                                                    launcher:TextBoxHelper.Placeholder="Launcher.SearchModsPlaceholder"
+                                                    Padding="8,6,8,6"
+                                                    FontSize="14"
+                                                    Foreground="#ccc"
+                                                    Background="#222"
+                                                    BorderBrush="#444"
+                                                    BorderThickness="1"
+                                                    CaretBrush="#ccc" />
                                                 <ListView x:Name="lstCatalogMods"
                                                     Margin="6,0,0,0"
+                                                    Grid.Row="1"
                                                     Grid.Column="1"
-                                                    ItemsSource="{Binding ModListCatalog}"
                                                     ScrollViewer.CanContentScroll="False"
                                                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                                     PreviewMouseLeftButtonDown="ListView_PreviewMouseLeftButtonDown"
                                                     PreviewMouseMove="ListView_PreviewMouseMove"
                                                     MouseMove="ListView_MouseMove"
                                                     PreviewMouseLeftButtonUp="ListView_PreviewMouseLeftButtonUp"
-                                                    MouseLeave="ListView_MouseLeave">
+                                                    MouseLeave="ListView_MouseLeave"
+                                                    SizeChanged="LstCatalogMods_SizeChanged">
                                                     <ListView.ItemContainerStyle>
                                                         <Style TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
+                                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                                                             <EventSetter Event="MouseDoubleClick" Handler="OnCatalogListDoubleClick"/>
                                                         </Style>
                                                     </ListView.ItemContainerStyle>
@@ -510,12 +595,46 @@
                                                             <GridViewColumn x:Name="colCatalogInstalled">
                                                                 <GridViewColumn.HeaderTemplate>
                                                                     <DataTemplate>
-                                                                        <TextBlock Text="✅" FontFamily="{StaticResource NotoEmoji}" />
+                                                                        <TextBlock Text="✅" FontFamily="{StaticResource NotoEmoji}" FontSize="18" />
                                                                     </DataTemplate>
                                                                 </GridViewColumn.HeaderTemplate>
                                                                 <GridViewColumn.CellTemplate>
                                                                     <DataTemplate>
-                                                                        <TextBlock Text="{Binding Installed}" FontFamily="{StaticResource NotoEmoji}" />
+                                                                        <Grid HorizontalAlignment="Stretch">
+                                                                            <Grid HorizontalAlignment="Center" Width="22">
+                                                                                <TextBlock Text="🆕"
+                                                                                    FontFamily="{StaticResource NotoEmoji}"
+                                                                                    FontSize="18"
+                                                                                    FontWeight="Normal"
+                                                                                    Foreground="#efd525"
+                                                                                    Effect="{StaticResource ButtondropShadowEffect}"
+                                                                                    VerticalAlignment="Center"
+                                                                                    TextAlignment="Center">
+                                                                                    <TextBlock.Style>
+                                                                                        <Style TargetType="TextBlock">
+                                                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                                                            <Style.Triggers>
+                                                                                                <DataTrigger Binding="{Binding IsNewAndNotInstalled}" Value="True">
+                                                                                                    <Setter Property="Visibility" Value="Visible" />
+                                                                                                </DataTrigger>
+                                                                                            </Style.Triggers>
+                                                                                        </Style>
+                                                                                    </TextBlock.Style>
+                                                                                </TextBlock>
+                                                                                <TextBlock Text="{Binding Installed}" FontFamily="{StaticResource NotoEmoji}" FontSize="18" TextAlignment="Center" VerticalAlignment="Center">
+                                                                                    <TextBlock.Style>
+                                                                                        <Style TargetType="TextBlock">
+                                                                                            <Setter Property="Visibility" Value="Visible" />
+                                                                                            <Style.Triggers>
+                                                                                                <DataTrigger Binding="{Binding IsNewAndNotInstalled}" Value="True">
+                                                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                                                </DataTrigger>
+                                                                                            </Style.Triggers>
+                                                                                        </Style>
+                                                                                    </TextBlock.Style>
+                                                                                </TextBlock>
+                                                                            </Grid>
+                                                                        </Grid>
                                                                     </DataTemplate>
                                                                 </GridViewColumn.CellTemplate>
                                                             </GridViewColumn>
@@ -549,16 +668,26 @@
                                                                     </Style>
                                                                 </GridViewColumn.HeaderContainerStyle>
                                                             </GridViewColumn>
+                                                            <GridViewColumn
+                                                                x:Name="colCatalogReleaseDate"
+                                                                DisplayMemberBinding="{Binding ReleaseDate}"
+                                                                Header="Release Date">
+                                                                <GridViewColumn.HeaderContainerStyle>
+                                                                    <Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
+                                                                        <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                                                    </Style>
+                                                                </GridViewColumn.HeaderContainerStyle>
+                                                            </GridViewColumn>
                                                         </GridView>
                                                     </ListView.View>
                                                 </ListView>
                                                 <StackPanel x:Name="btnCancelStackpanel"
                                                     Height="0"
-                                                    Grid.Row="1"
+                                                    Grid.Row="2"
                                                     Grid.Column="0"
                                                     Margin="0,0,0,0"
                                                     HorizontalAlignment="Right"
-                                                    VerticalAlignment="Stretch">
+                                                    VerticalAlignment="Top">
                                                     <Button x:Name="btnCancel"
                                                         Style="{StaticResource ToolButtonStyle}"
                                                         Click="OnClickCancelAll"
@@ -572,7 +701,7 @@
                                                 </StackPanel>
                                                 <ListView x:Name="lstDownloads"
                                                     Margin="6,0,0,0"
-                                                    Grid.Row="1"
+                                                    Grid.Row="2"
                                                     Grid.Column="1"
                                                     MinHeight="0"
                                                     MaxHeight="100"
@@ -688,9 +817,9 @@
                                                         Background="#e222" />
                                                     <TextBlock
                                                         x:Name="PreviewModCategory"
-                                                        Margin="6,1,6,3"
+                                                        Margin="6,1,8,3"
                                                         Style="{StaticResource ModInfoDetailsStyle}"
-                                                        TextAlignment="Right"
+                                                        TextWrapping="NoWrap"
                                                         Foreground="#fccc"
                                                         Text="Category" />
                                                 </Grid>
@@ -716,9 +845,11 @@
                                                 <ScrollViewer
                                                     Grid.Row="2"
                                                     HorizontalAlignment="Stretch"
+                                                    HorizontalScrollBarVisibility="Disabled"
                                                     VerticalScrollBarVisibility="Auto"
-                                                    Margin="7,0,0,7">
-                                                    <Grid x:Name="gridModInfo" Margin="0,0,0,3">
+                                                    Padding="0,0,14,0"
+                                                    Margin="7,0,7,7">
+                                                    <Grid x:Name="gridModInfo" Margin="0,0,8,3">
                                                         <Grid.RowDefinitions>
                                                             <RowDefinition Height="auto" />
                                                             <RowDefinition Height="auto" />
@@ -729,60 +860,57 @@
                                                             <RowDefinition Height="auto" />
                                                         </Grid.RowDefinitions>
 
-                                                        <WrapPanel
+                                                        <Grid
                                                             Grid.Row="0"
-                                                            Margin="0,4,0,0">
-                                                            <Grid Width="375">
-                                                                <Grid.ColumnDefinitions>
-                                                                    <ColumnDefinition Width="1*" />
-                                                                    <ColumnDefinition Width="1*" />
-                                                                </Grid.ColumnDefinitions>
-                                                                <WrapPanel
-                                                                    Grid.Column="0"
-                                                                    Grid.ColumnSpan="2" >
-                                                                    <TextBlock
-                                                                        x:Name="CaptionModAuthor"
-                                                                        Style="{StaticResource ModInfoLabelStyle}"
-                                                                        VerticalAlignment="Bottom"
-                                                                        Text="Author(s):" />
-                                                                    <TextBlock
-                                                                        x:Name="PreviewModAuthor"
-                                                                        Style="{StaticResource ModInfoDetailsStyle}"
-                                                                        VerticalAlignment="Bottom"
-                                                                        Text="" />
-                                                                </WrapPanel>
-                                                            </Grid>
-                                                        </WrapPanel>
-                                                        <WrapPanel
+                                                            Margin="0,4,6,0"
+                                                            HorizontalAlignment="Stretch">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="*" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBlock
+                                                                Grid.Column="0"
+                                                                x:Name="CaptionModAuthor"
+                                                                Style="{StaticResource ModInfoLabelStyle}"
+                                                                VerticalAlignment="Top"
+                                                                Text="Author(s):" />
+                                                            <TextBlock
+                                                                Grid.Column="1"
+                                                                x:Name="PreviewModAuthor"
+                                                                Style="{StaticResource ModInfoDetailsStyle}"
+                                                                VerticalAlignment="Top"
+                                                                TextWrapping="Wrap"
+                                                                Text="" />
+                                                        </Grid>
+                                                        <Grid
                                                             Grid.Row="1"
-                                                            Margin="0">
-                                                            <Grid Width="375">
-                                                                <Grid.ColumnDefinitions>
-                                                                    <ColumnDefinition Width="1*" />
-                                                                    <ColumnDefinition Width="1*" />
-                                                                </Grid.ColumnDefinitions>
-                                                                <WrapPanel Grid.Column="0" >
-                                                                    <TextBlock x:Name="CaptionModRelease"
-                                                                    Style="{StaticResource ModInfoLabelStyle}"
-                                                                    VerticalAlignment="Bottom"
-                                                                    Text="Updated:" />
-                                                                    <TextBlock x:Name="PreviewModRelease"
-                                                                    Style="{StaticResource ModInfoDetailsStyle}"
-                                                                    VerticalAlignment="Bottom"
-                                                                    Text="🞨" />
-                                                                </WrapPanel>
-                                                                <WrapPanel Grid.Column="1" HorizontalAlignment="Right">
-                                                                    <TextBlock x:Name="CaptionModReleaseOriginal"
-                                                                    Style="{StaticResource ModInfoLabelStyle}"
-                                                                    VerticalAlignment="Bottom"
-                                                                    Text="Released:" />
-                                                                    <TextBlock x:Name="PreviewModReleaseOriginal"
-                                                                    Style="{StaticResource ModInfoDetailsStyle}"
-                                                                    VerticalAlignment="Bottom"
-                                                                    Text="🞨" />
-                                                                </WrapPanel>
-                                                            </Grid>
-                                                        </WrapPanel>
+                                                            Margin="0,0,6,0"
+                                                            HorizontalAlignment="Stretch">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="*" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <WrapPanel Grid.Column="0">
+                                                                <TextBlock x:Name="CaptionModRelease"
+                                                                Style="{StaticResource ModInfoLabelStyle}"
+                                                                VerticalAlignment="Bottom"
+                                                                Text="Updated:" />
+                                                                <TextBlock x:Name="PreviewModRelease"
+                                                                Style="{StaticResource ModInfoDetailsStyle}"
+                                                                VerticalAlignment="Bottom"
+                                                                Text="🞨" />
+                                                            </WrapPanel>
+                                                            <WrapPanel Grid.Column="1" HorizontalAlignment="Right">
+                                                                <TextBlock x:Name="CaptionModReleaseOriginal"
+                                                                Style="{StaticResource ModInfoLabelStyle}"
+                                                                VerticalAlignment="Bottom"
+                                                                Text="Released:" />
+                                                                <TextBlock x:Name="PreviewModReleaseOriginal"
+                                                                Style="{StaticResource ModInfoDetailsStyle}"
+                                                                VerticalAlignment="Bottom"
+                                                                Text="🞨" />
+                                                            </WrapPanel>
+                                                        </Grid>
 
                                                         <Grid x:Name="ContentScroll" Grid.Row="2">
                                                             <Grid>
@@ -812,26 +940,31 @@
                                                                 <Grid x:Name="ReleaseNotesBlock"
                                                                     Grid.Row="2"
                                                                     HorizontalAlignment="Stretch">
-                                                                    <WrapPanel
+                                                                    <Grid
                                                                         Background="{StaticResource DarkGreyUI}"
-                                                                        Margin="0,10,6,0"
+                                                                        Margin="0,10,14,0"
                                                                         Visibility="Visible"
                                                                         Cursor="Hand"
                                                                         MouseLeftButtonUp="OnClickDescription">
-                                                                        <DockPanel>
-                                                                            <TextBlock x:Name="CaptionModReleaseNotes"
-                                                                                Style="{StaticResource ModInfoLabelStyle}"
-                                                                                Margin="5,5,0,5"
-                                                                                VerticalAlignment="Bottom"
-                                                                                Text="Release notes:" />
-                                                                        </DockPanel>
+                                                                        <Grid.RowDefinitions>
+                                                                            <RowDefinition Height="Auto" />
+                                                                            <RowDefinition Height="Auto" />
+                                                                        </Grid.RowDefinitions>
+                                                                        <TextBlock x:Name="CaptionModReleaseNotes"
+                                                                            Grid.Row="0"
+                                                                            Style="{StaticResource ModInfoLabelStyle}"
+                                                                            Margin="5,5,5,0"
+                                                                            VerticalAlignment="Bottom"
+                                                                            Text="Release notes:" />
                                                                         <TextBlock
                                                                             x:Name="PreviewModReleaseNotes"
+                                                                            Grid.Row="1"
                                                                             Style="{StaticResource ModInfoDetailsStyle}"
                                                                             Margin="5,5,5,5"
+                                                                            TextWrapping="Wrap"
                                                                             VerticalAlignment="Bottom"
                                                                             Text="" />
-                                                                    </WrapPanel>
+                                                                    </Grid>
                                                                 </Grid>
                                                             </Grid>
                                                         </Grid>
@@ -854,7 +987,7 @@
                                                                VerticalAlignment="Center"
                                                                Margin="28,0,0,0"/>
                                                         <Label x:Name="ModOptionsHeaderArrow"
-                                                               FontFamily="Segoe UI"
+                                                               FontFamily="{StaticResource Overpass}"
                                                                Foreground="{StaticResource WhiteUI}"
                                                                FontSize="16"
                                                                VerticalAlignment="Center"

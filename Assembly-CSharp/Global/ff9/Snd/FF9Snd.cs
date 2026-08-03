@@ -237,8 +237,8 @@ public static class FF9Snd
         {
             return 642;
         }
-        if (ObjNo == 255)
-        {
+        if (ObjNo == 255) // [DV] Special case for Prima Vista (field 57 and 58). The only sound invoked here is 255 but the devs add a little fix to add 618 and 410.
+        { // More informations in SetSfxResDelegate.
             return 618;
         }
         if (ObjNo == 355)

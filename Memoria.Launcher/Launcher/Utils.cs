@@ -7,10 +7,12 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
@@ -822,57 +824,107 @@ namespace Memoria.Launcher
 
     public static class ExtractorSharpCompress
     {
+        private static readonly NLog.Logger _log = AppLogger.GetLogger();
+
         // This is slow with some archives (7zip)
         public static void ExtractAllFileFromArchive(string archivePath, string extractTo, CancellationToken cancellationToken, Action<int> progressCallbak = null)
         {
             if (!File.Exists(archivePath))
             {
+                _log.Warn("Extraction skipped because archive was not found. Archive: {ArchivePath}", archivePath);
                 return;
             }
-            using (var archive = ArchiveFactory.Open(archivePath))
-            {
-                int total = 0;
-                foreach (var entry in archive.Entries)
-                    if (!entry.IsDirectory) total++;
 
-                int current = 0;
-                foreach (var entry in archive.Entries)
+            _log.Info("Starting archive extraction (SharpCompress). Archive: {ArchivePath}, Destination: {Destination}", archivePath, extractTo);
+            try
+            {
+                using (var archive = ArchiveFactory.OpenArchive(archivePath))
                 {
+                    int total = 0;
+                    foreach (var entry in archive.Entries)
+                        if (!entry.IsDirectory) total++;
+
+                    int current = 0;
+                    foreach (var entry in archive.Entries)
+                    {
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            _log.Warn("Archive extraction cancelled by token. Archive: {ArchivePath}, Destination: {Destination}, ExtractedEntries: {ExtractedEntries}, TotalEntries: {TotalEntries}", archivePath, extractTo, current, total);
+                            break;
+                        }
+
+                        if (!entry.IsDirectory)
+                        {
+                            try
+                            {
+                                entry.WriteToDirectory(extractTo, new ExtractionOptions()
+                                {
+                                    ExtractFullPath = true,
+                                    Overwrite = true
+                                });
+                            }
+                            catch (Exception ex)
+                            {
+                                _log.Error(ex, "Failed extracting archive entry. Archive: {ArchivePath}, Destination: {Destination}, Entry: {EntryKey}", archivePath, extractTo, entry.Key);
+                                throw;
+                            }
+
+                            current++;
+                            progressCallbak?.Invoke((int)(100 * current / total));
+                        }
+                    }
+
                     if (cancellationToken.IsCancellationRequested)
                     {
-                        break;
+                        if (Directory.Exists(extractTo))
+                        {
+                            try
+                            {
+                                Directory.Delete(extractTo, true);
+                                _log.Info("Cleaned extraction destination after cancellation. Destination: {Destination}", extractTo);
+                            }
+                            catch (Exception ex)
+                            {
+                                _log.Warn(ex, "Failed to cleanup extraction destination after cancellation. Destination: {Destination}", extractTo);
+                            }
+                        }
                     }
 
-                    if (!entry.IsDirectory)
-                    {
-                        entry.WriteToDirectory(extractTo, new ExtractionOptions()
-                        {
-                            ExtractFullPath = true,
-                            Overwrite = true
-                        });
-                        current++;
-                        progressCallbak?.Invoke((int)(100 * current / total));
-                    }
+                    _log.Info("Archive extraction completed (SharpCompress). Archive: {ArchivePath}, Destination: {Destination}, ExtractedEntries: {ExtractedEntries}, TotalEntries: {TotalEntries}", archivePath, extractTo, current, total);
                 }
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    Directory.Delete(extractTo, true);
-                }
+            }
+            catch (Exception ex)
+            {
+                _log.Error(ex, "Archive extraction failed (SharpCompress). Archive: {ArchivePath}, Destination: {Destination}", archivePath, extractTo);
+                throw;
             }
         }
     }
 
     public static class Extractor
     {
+        private static readonly NLog.Logger _log = AppLogger.GetLogger();
+
         private const String SevenZipPath = "7za.exe";
         public static void ExtractAllFileFromArchive(string archivePath, string extractTo, CancellationToken cancellationToken, Action<int> progressCallbak = null)
         {
             if (!File.Exists(archivePath))
+            {
+                _log.Warn("Extraction skipped because archive was not found. Archive: {ArchivePath}", archivePath);
                 return;
+            }
+
+            _log.Info("Starting archive extraction (7za). Archive: {ArchivePath}, Destination: {Destination}", archivePath, extractTo);
 
             if (!File.Exists(SevenZipPath))
             {
                 using Stream input = Assembly.GetExecutingAssembly().GetManifestResourceStream("7za.exe");
+                if (input == null)
+                {
+                    _log.Error("Unable to extract embedded 7za.exe resource. Archive: {ArchivePath}", archivePath);
+                    throw new FileNotFoundException("Embedded 7za.exe resource was not found.", SevenZipPath);
+                }
+
                 using FileStream output = File.Create(SevenZipPath);
                 input.CopyTo(output);
             }
@@ -883,15 +935,26 @@ namespace Memoria.Launcher
                 process.StartInfo.FileName = SevenZipPath;
                 process.StartInfo.Arguments = $@"x -bsp1 -aoa -o""{extractTo}"" ""{archivePath}""";
                 process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.RedirectStandardError = true;
                 process.StartInfo.CreateNoWindow = true;
                 process.StartInfo.UseShellExecute = false;
 
                 String error = null;
+                String stderr = null;
                 process.OutputDataReceived += (s, e) =>
                 {
                     if (cancellationToken.IsCancellationRequested)
                     {
-                        process.Kill();
+                        try
+                        {
+                            if (!process.HasExited)
+                                process.Kill();
+                        }
+                        catch (Exception ex)
+                        {
+                            _log.Warn(ex, "Failed to kill 7za process after cancellation. Archive: {ArchivePath}", archivePath);
+                        }
+
                         return;
                     }
 
@@ -903,12 +966,35 @@ namespace Memoria.Launcher
                         progressCallbak?.Invoke(progress);
                 };
 
+                process.ErrorDataReceived += (s, e) =>
+                {
+                    string data = e.Data ?? "";
+                    if (!String.IsNullOrWhiteSpace(data))
+                        stderr = data;
+                };
+
                 process.Start();
                 process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
                 process.WaitForExit();
 
-                if (error != null) throw new FileFormatException(error);
+                if (error != null)
+                {
+                    _log.Error("7za reported archive format error. Archive: {ArchivePath}, Destination: {Destination}, Error: {Error}", archivePath, extractTo, error);
+                    throw new FileFormatException(error);
+                }
+
+                if (process.ExitCode != 0)
+                {
+                    String failure = !String.IsNullOrWhiteSpace(stderr)
+                        ? stderr
+                        : $"7za exited with code {process.ExitCode}.";
+                    _log.Error("7za extraction failed. Archive: {ArchivePath}, Destination: {Destination}, ExitCode: {ExitCode}, Error: {Error}", archivePath, extractTo, process.ExitCode, failure);
+                    throw new InvalidOperationException(failure);
+                }
+
                 progressCallbak?.Invoke(100);
+                _log.Info("Archive extraction completed (7za). Archive: {ArchivePath}, Destination: {Destination}", archivePath, extractTo);
             }
             if (File.Exists(SevenZipPath))
                 File.Delete(SevenZipPath);
@@ -918,28 +1004,171 @@ namespace Memoria.Launcher
 
     #region ThrottledWeb
 
-    public class ThrottledWebClient : WebClient
+    public sealed class ThrottledDownloadProgressChangedEventArgs : EventArgs
     {
-        private Timer _timer;
+        public ThrottledDownloadProgressChangedEventArgs(Int64 bytesReceived, Int64 totalBytesToReceive)
+        {
+            BytesReceived = bytesReceived;
+            TotalBytesToReceive = totalBytesToReceive;
+        }
+
+        public Int64 BytesReceived { get; }
+        public Int64 TotalBytesToReceive { get; }
+
+        public Int32 ProgressPercentage
+        {
+            get
+            {
+                if (TotalBytesToReceive <= 0)
+                    return 0;
+
+                Double progress = BytesReceived * 100d / TotalBytesToReceive;
+                return (Int32)Math.Max(0, Math.Min(100, Math.Round(progress)));
+            }
+        }
+    }
+
+    public class ThrottledHttpClient : IDisposable
+    {
+        private static readonly NLog.Logger _log = AppLogger.GetLogger();
+
+        private readonly HttpClient _client;
+        private readonly Timer _timer;
+        private readonly object _stateLock = new object();
+        private CancellationTokenSource _downloadCts;
+        private bool _isBusy;
         private bool _updatePending;
 
-        public ThrottledWebClient()
+        public event EventHandler<ThrottledDownloadProgressChangedEventArgs> DownloadProgressChanged;
+        public event AsyncCompletedEventHandler DownloadFileCompleted;
+
+        public bool IsBusy
         {
+            get
+            {
+                lock (_stateLock)
+                    return _isBusy;
+            }
+        }
+
+        public ThrottledHttpClient()
+        {
+            _client = HttpClients.CreateDownloadClient();
+
             _timer = new Timer(100);
             _timer.Elapsed += OnTimerElapsed;
             _timer.Start();
         }
 
-        protected override void OnDownloadProgressChanged(DownloadProgressChangedEventArgs e)
+        public void CancelAsync()
         {
-            if (!_updatePending)
+            lock (_stateLock)
             {
-                _updatePending = true;
-                base.OnDownloadProgressChanged(e);
+                _downloadCts?.Cancel();
             }
         }
 
-        private void OnTimerElapsed(object sender, ElapsedEventArgs e)
+        public void DownloadFileAsync(Uri address, String fileName)
+        {
+            _log.Info("Requesting {Uri}", address);
+
+            CancellationTokenSource cts;
+            lock (_stateLock)
+            {
+                if (_isBusy)
+                    throw new InvalidOperationException("A download is already in progress.");
+
+                _downloadCts = new CancellationTokenSource();
+                cts = _downloadCts;
+                _isBusy = true;
+            }
+
+            _ = DownloadFileInternalAsync(address, fileName, cts);
+        }
+
+        private async Task DownloadFileInternalAsync(Uri address, String fileName, CancellationTokenSource cts)
+        {
+            Exception error = null;
+            bool cancelled = false;
+
+            try
+            {
+                using (HttpResponseMessage response = await HttpClients.GetWithDohFallbackAsync(_client, address, HttpCompletionOption.ResponseHeadersRead, cts.Token).ConfigureAwait(false))
+                {
+                    response.EnsureSuccessStatusCode();
+
+                    Int64 totalBytes = response.Content.Headers.ContentLength ?? -1;
+                    Int64 bytesReceived = 0;
+
+                    using (Stream input = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                    using (FileStream output = File.Create(fileName))
+                    {
+                        Byte[] buffer = new Byte[32 * 1024];
+                        Int32 read;
+                        while ((read = await input.ReadAsync(buffer, 0, buffer.Length, cts.Token).ConfigureAwait(false)) > 0)
+                        {
+                            await output.WriteAsync(buffer, 0, read, cts.Token).ConfigureAwait(false);
+                            bytesReceived += read;
+                            RaiseDownloadProgressChanged(bytesReceived, totalBytes);
+                        }
+                    }
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                cancelled = true;
+                _log.Warn("Download was cancelled for {Uri}.", address);
+            }
+            catch (Exception ex)
+            {
+                error = ex;
+                _log.Error(ex, "Download failed for {Uri}.", address);
+            }
+            finally
+            {
+                lock (_stateLock)
+                {
+                    _isBusy = false;
+                    if (ReferenceEquals(_downloadCts, cts))
+                    {
+                        _downloadCts.Dispose();
+                        _downloadCts = null;
+                    }
+                }
+
+                if (error == null && !cancelled)
+                    _log.Info("Download completed successfully for {Uri}.", address);
+
+                DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(error, cancelled, null));
+            }
+        }
+
+        private void RaiseDownloadProgressChanged(Int64 bytesReceived, Int64 totalBytesToReceive)
+        {
+            if (_updatePending)
+                return;
+
+            _updatePending = true;
+            DownloadProgressChanged?.Invoke(this, new ThrottledDownloadProgressChangedEventArgs(bytesReceived, totalBytesToReceive));
+        }
+
+        public void Dispose()
+        {
+            lock (_stateLock)
+            {
+                _downloadCts?.Cancel();
+                _downloadCts?.Dispose();
+                _downloadCts = null;
+                _isBusy = false;
+            }
+
+            _timer.Stop();
+            _timer.Elapsed -= OnTimerElapsed;
+            _timer.Dispose();
+            _client.Dispose();
+        }
+
+        private void OnTimerElapsed(Object sender, ElapsedEventArgs e)
         {
             _updatePending = false;
         }

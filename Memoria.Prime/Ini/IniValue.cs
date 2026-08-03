@@ -58,6 +58,11 @@ namespace Memoria.Prime.Ini
             return new IniSet<Int32>(name, TryParseInt32, FormatInt32);
         }
 
+        public static IniValue<Single> Single(String name)
+        {
+            return new IniValue<Single>(name, TryParseSingle, FormatSingle);
+        }
+
         public static IniArray<String> StringArray(String name)
         {
             return new IniArray<String>(name, TryParseString, FormatString);
@@ -116,6 +121,16 @@ namespace Memoria.Prime.Ini
         }
 
         private static String FormatInt32(Int32 value)
+        {
+            return value.ToString(CultureInfo.InvariantCulture);
+        }
+
+        private static Boolean TryParseSingle(String rawstring, out Single value)
+        {
+            return System.Single.TryParse(rawstring, NumberStyles.Float, CultureInfo.InvariantCulture, out value);
+        }
+
+        private static String FormatSingle(Single value)
         {
             return value.ToString(CultureInfo.InvariantCulture);
         }

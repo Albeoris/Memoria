@@ -54,6 +54,7 @@ namespace Memoria.Launcher
         // Entries that are computed in the Mod Manager
         public HashSet<String> FileContent { get; set; }
         public Boolean IsActive { get; set; }
+        public Boolean IsNew { get; set; }
         public String Installed { get; set; }
         public Int32 Priority { get; set; }
         public BitmapImage PreviewImage { get; set; }
@@ -65,6 +66,7 @@ namespace Memoria.Launcher
         public Int64 PercentComplete { get; set; }
 
         public String FullInstallationPath => ParentMod != null ? ParentMod.InstallationPath + "/" + InstallationPath : InstallationPath;
+        public Boolean IsNewAndNotInstalled => IsNew && String.IsNullOrEmpty(Installed);
 
         private const String presetFile = "Preset.ini";
 

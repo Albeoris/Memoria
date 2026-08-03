@@ -3734,11 +3734,7 @@ public static class ff9
     {
         if ((ff9.w_framePhase == 0 || ff9.w_framePhase == 2) && (ff9.w_framePhase == 0 || ff9.w_framePhase == 2))
             ff9.w_frameResult = ff9.ServiceEvents();
-        String wldLocName = ff9.w_worldLocationName();
-        if (String.IsNullOrEmpty(wldLocName))
-            PlayerWindow.Instance.SetTitle($"World Map: {FF9StateSystem.Common.FF9.wldMapNo}");
-        else
-            PlayerWindow.Instance.SetTitle($"World Map: {FF9StateSystem.Common.FF9.wldMapNo}, {wldLocName}");
+        PlayerWindow.UpdateTitle();
     }
 
     public static String w_worldLocationName()

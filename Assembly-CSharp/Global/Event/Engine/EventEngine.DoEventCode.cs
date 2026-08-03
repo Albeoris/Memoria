@@ -544,7 +544,7 @@ public partial class EventEngine
                         //   WindowAsync( winId, uiFlags, textId )
                         //   Wait( 30 )
                         //   CloseWindow( winId )
-                        if (VoicePlayer.HoldDialogUntilSoundEnds(FF9TextTool.FieldZoneId, UniversalTextId.GetUniversalTextId(Localization.CurrentSymbol, FF9TextTool.FieldZoneId, dialog.TextId), mapNo))
+                        if (VoicePlayer.HoldDialogUntilSoundEnds(FF9TextTool.FieldZoneId, dialog.TextId, UniversalTextId.GetUniversalTextId(Localization.CurrentSymbol, FF9TextTool.FieldZoneId, dialog.TextId), mapNo))
                         {
                             // Block the script and wait for the voice acting sound to complete
                             this.stay();

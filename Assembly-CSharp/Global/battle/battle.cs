@@ -77,6 +77,7 @@ public static class battle
         battle.isSpecialTutorialWindow = false;
 
         AudioEffectManager.ApplyBattleEffects(FF9StateSystem.Battle.battleMapIndex, battlebg.nf_BbgNumber);
+        PlayerWindow.UpdateTitle(true);
     }
 
     public static UInt32 BattleMain()

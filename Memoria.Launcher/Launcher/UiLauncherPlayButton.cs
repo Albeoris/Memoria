@@ -308,11 +308,18 @@ namespace Memoria.Launcher
             return false;
         }
 
+        private static String GetPatcherDownloadUrl(String updateChannel)
+        {
+            if (String.Equals(updateChannel, "Canary", StringComparison.OrdinalIgnoreCase))
+                return "https://github.com/Albeoris/Memoria/releases/download/canary/Memoria.Patcher.exe";
+
+            return "https://github.com/Albeoris/Memoria/releases/latest/download/Memoria.Patcher.exe";
+        }
 
         private static async Task<LinkedList<HttpFileInfo>> FindUpdatesInfo(String applicationDirectory, ManualResetEvent cancelEvent, SettingsGrid_Vanilla gameSettings)
         {
             Downloader downloader = new Downloader(cancelEvent);
-            String[] urls = gameSettings.DownloadMirrors;
+            String[] urls = [GetPatcherDownloadUrl(gameSettings.UpdateChannel)];
 
             LinkedList<HttpFileInfo> list = new LinkedList<HttpFileInfo>();
             Dictionary<String, LinkedListNode<HttpFileInfo>> dic = new Dictionary<String, LinkedListNode<HttpFileInfo>>(urls.Length);
@@ -367,16 +374,17 @@ namespace Memoria.Launcher
         public String TargetName;
         public String TargetPath;
 
-        public void ReadFromResponse(string url, WebResponse response)
+        public void ReadFromResponse(string url, HttpResponseMessage response)
         {
             Url = url;
-            ContentLength = response.ContentLength;
-            LastModified = ((HttpWebResponse)response).LastModified;
+            ContentLength = response.Content.Headers.ContentLength ?? -1;
+            LastModified = response.Content.Headers.LastModified?.UtcDateTime ?? DateTime.MinValue;
         }
     }
 
     public sealed class Downloader
     {
+        private static readonly HttpClient _httpClient = HttpClients.Shared;
         private readonly ManualResetEvent _cancelEvent;
 
         public event Action<long> DownloadProgress;
@@ -393,15 +401,21 @@ namespace Memoria.Launcher
             if (_cancelEvent.WaitOne(0))
                 return result;
 
-            WebRequest request = WebRequest.Create(url);
-            request.Method = "HEAD";
+            Uri uri = new Uri(url, UriKind.Absolute);
+            HttpResponseMessage response = await HttpClients.SendWithDohFallbackAsync(
+                _httpClient,
+                HttpMethod.Head,
+                uri,
+                HttpCompletionOption.ResponseHeadersRead,
+                CancellationToken.None).ConfigureAwait(false);
 
-            using (WebResponse resp = await request.GetResponseAsync())
+            using (response)
             {
+                response.EnsureSuccessStatusCode();
                 if (_cancelEvent.WaitOne(0))
                     return result;
 
-                result.ReadFromResponse(url, resp);
+                result.ReadFromResponse(url, response);
                 return result;
             }
         }
@@ -420,8 +434,13 @@ namespace Memoria.Launcher
             if (_cancelEvent.WaitOne(0))
                 return;
 
-            using (HttpClient client = new HttpClient())
-            using (Stream input = await client.GetStreamAsync(url))
+            Uri uri = new Uri(url, UriKind.Absolute);
+            Stream input = await HttpClients.GetStreamWithDohFallbackAsync(
+                _httpClient,
+                uri,
+                CancellationToken.None).ConfigureAwait(false);
+
+            using (input)
                 await CopyAsync(input, output, _cancelEvent, DownloadProgress);
         }
 

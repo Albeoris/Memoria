@@ -22,6 +22,8 @@ namespace Memoria.Launcher
 {
     public partial class MainWindow : Window, IComponentConnector
     {
+        private static readonly NLog.Logger _log = AppLogger.GetLogger();
+
         //public ModManagerWindow ModdingWindow;
         public static DateTime MemoriaAssemblyCompileDate;
 
@@ -44,6 +46,8 @@ namespace Memoria.Launcher
                 Directory.SetCurrentDirectory(launcherDirectory);
                 MemoriaAssemblyCompileDate = new DateTime(2000, 1, 1);
             }
+
+            _log.Info("Memoria Launcher started (v{Version})", MainWindow.MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd"));
 
             InitializeComponent();
 
@@ -80,8 +84,8 @@ namespace Memoria.Launcher
             LoadModSettings();
             CheckForValidModFolder();
             UpdateModListInstalled();
-            lstCatalogMods.ItemsSource = ModListCatalog;
-            lstMods.ItemsSource = ModListInstalled;
+            InitializeModsListView();
+            InitializeCatalogListView();
             lstDownloads.ItemsSource = DownloadList;
             UpdateCatalogInstallationState();
 
