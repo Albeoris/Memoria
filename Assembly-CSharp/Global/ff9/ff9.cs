@@ -8884,20 +8884,16 @@ public static class ff9
 
     public static void w_worldMapConstructor()
     {
-        UInt16 num = 0;
-        num = (UInt16)(num | ff9.byte_gEventGlobal(194));
-        num = (UInt16)(num | (UInt16)(ff9.byte_gEventGlobal(198) << 8));
+        UInt16 num = (UInt16)(ff9.byte_gEventGlobal(194) | (ff9.byte_gEventGlobal(198) << 8));
         for (Int32 i = 0; i < 9; i++)
         {
             if ((num >> i & 1) != 0)
             {
                 for (Int32 j = 0; j < 12; j++)
                 {
-                    UInt16 num2 = ff9.w_worldEncountSpecial[i].area[j];
-                    if (num2 - 1 > 0 && num2 - 1 < ff9.w_frameBattleScenePtr.Length)
-                    {
-                        ff9.w_frameBattleScenePtr[num2 - 1].scene[3] = ff9.w_frameBattleScenePtr[num2 - 1].scene[2];
-                    }
+                    Int32 specialArea = ff9.w_worldEncountSpecial[i].area[j] - 1;
+                    if (specialArea >= 0 && specialArea < ff9.w_frameBattleScenePtr.Length)
+                        ff9.w_frameBattleScenePtr[specialArea].scene[3] = ff9.w_frameBattleScenePtr[specialArea].scene[2];
                 }
             }
         }

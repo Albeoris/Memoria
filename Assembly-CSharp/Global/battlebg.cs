@@ -424,7 +424,7 @@ public static class battlebg
         //}
         //Vector3 center = ((enemyPosMin + enemyPosMax) / 2 + new Vector3(0f, 0f, btl_init.PLAYER_ORIGINAL_Z)) / 2;
         //center.y = 0f;
-        Vector3 center = new Vector3(-700f, 0f, -350f);
+        Vector3 center = new Vector3(0f, 0f, -400f);
         offset += center - (angle * center);
         battlebg.btlRoot.transform.localPosition = offset;
         battlebg.btlRoot.transform.localRotation = angle;

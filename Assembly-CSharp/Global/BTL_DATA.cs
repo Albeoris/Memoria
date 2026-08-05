@@ -46,7 +46,7 @@ public partial class BTL_DATA
 
     public void SetActiveBtlData(Boolean value)
     {
-        Boolean wasActive = this.gameObject.active;
+        Boolean wasActive = this.gameObject.activeSelf;
         GameObject shadow = this.getShadow();
         this.gameObject.SetActive(value);
         btl_stat.SetStatusClut(this, btl_stat.CheckStatus(this, BattleStatusConst.ChgPolyClut));

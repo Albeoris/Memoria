@@ -110,7 +110,7 @@ namespace Memoria.Data
             {
                 String tok = tokens[i].Trim();
                 if (!String.IsNullOrEmpty(tok))
-                    result |= CsvParser.EnumValue<BattleStatusIdOldVersion>(tok).ToBattleStatus();
+                    result |= CsvParser.EnumValue<BattleStatusId>(tok).ToBattleStatus();
             }
             return result;
         }

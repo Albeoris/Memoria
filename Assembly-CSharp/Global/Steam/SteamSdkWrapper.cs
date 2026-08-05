@@ -162,49 +162,49 @@ public class SteamSdkWrapper : ISocialPlatform
         return IsInitialized;
     }
 
-    [DllImport("steamwrapper")]
+    [DllImport(SteamSdkWrapper.LibraryName)]
     [return: MarshalAs(UnmanagedType.I1)]
     private static extern Boolean Init();
 
-    [DllImport("steamwrapper")]
+    [DllImport(SteamSdkWrapper.LibraryName)]
     private static extern void Shutdown_Internal();
 
-    [DllImport("steamwrapper")]
+    [DllImport(SteamSdkWrapper.LibraryName)]
     private static extern void ProcessCallbacks_Internal();
 
-    [DllImport("steamwrapper")]
+    [DllImport(SteamSdkWrapper.LibraryName)]
     [return: MarshalAs(UnmanagedType.I1)]
     private static extern Boolean TriggerAchievement_Internal(IntPtr achievementIdPointer);
 
-    [DllImport("steamwrapper")]
+    [DllImport(SteamSdkWrapper.LibraryName)]
     [return: MarshalAs(UnmanagedType.I1)]
     private static extern Boolean UpdateStatProgress_Internal(IntPtr statIdPointer, Int32 rawProgress);
 
-    [DllImport("steamwrapper")]
+    [DllImport(SteamSdkWrapper.LibraryName)]
     [return: MarshalAs(UnmanagedType.I1)]
     private static extern Boolean ClearAchievement_Internal(IntPtr achievementIdPointer);
 
-    [DllImport("steamwrapper")]
+    [DllImport(SteamSdkWrapper.LibraryName)]
     [return: MarshalAs(UnmanagedType.I1)]
     private static extern Boolean IsCloudEnabled_Internal();
 
-    [DllImport("steamwrapper")]
+    [DllImport(SteamSdkWrapper.LibraryName)]
     private static extern void RegisterStatsReceivedCallback(SteamSdkWrapper.ResultCallbackDelegate statsReceivedCallback);
 
-    [DllImport("steamwrapper")]
+    [DllImport(SteamSdkWrapper.LibraryName)]
     private static extern void RegisterStatsStoredCallback(SteamSdkWrapper.ResultCallbackDelegate statsStoredCallback);
 
-    [DllImport("steamwrapper")]
+    [DllImport(SteamSdkWrapper.LibraryName)]
     private static extern void RegisterAchievementStoredCallback(SteamSdkWrapper.VoidCallbackDelegate achievementStoredCallback);
 
-    [DllImport("steamwrapper")]
+    [DllImport(SteamSdkWrapper.LibraryName)]
     [return: MarshalAs(UnmanagedType.I1)]
     public static extern Boolean RequestStats();
 
-    [DllImport("steamwrapper")]
+    [DllImport(SteamSdkWrapper.LibraryName)]
     public static extern void SetSendAchievementToCS(SiliconStudio.Social.SendAchievementToCSCallback method);
 
-    [DllImport("steamwrapper")]
+    [DllImport(SteamSdkWrapper.LibraryName)]
     [return: MarshalAs(UnmanagedType.I1)]
     public static extern Boolean SteamAPIRestartAppIfNecessary(Int32 appId);
 
@@ -286,20 +286,17 @@ public class SteamSdkWrapper : ISocialPlatform
     public void ProcessCallbacks()
     {
         if (this.Initialized)
-        {
             SteamSdkWrapper.ProcessCallbacks_Internal();
-        }
     }
 
     public void Shutdown()
     {
         if (this.Initialized)
-        {
             SteamSdkWrapper.Shutdown_Internal();
-        }
     }
 
     public const String LibraryName = "steamwrapper";
+    public const Int32 ApplicationSteamId = 377840;
 
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     private delegate void ResultCallbackDelegate([MarshalAs(UnmanagedType.I1)] Boolean result);

@@ -1049,7 +1049,7 @@ public static class UnifiedBattleSequencer
                         tmpBool = true;
                     if (tmpBool && SFXDataCamera.currentCameraEngine == SFXDataCamera.CameraEngine.NONE)
                         break;
-                    Quaternion angle = Quaternion.EulerAngles(angleEuler);
+                    Quaternion angle = Quaternion.Euler(angleEuler);
                     battlebg.ShiftWorld(tmpVec, angle);
                     break;
                 }

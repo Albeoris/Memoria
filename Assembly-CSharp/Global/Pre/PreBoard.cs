@@ -36,18 +36,18 @@ public class PreBoard : MonoBehaviour
     public void Execute()
     {
         base.transform.localPosition = PreBoard.POSITION;
-        for (Int32 i = 0; i < 10; i++)
+        for (Int32 i = 0; i < SIZE_Y; i++)
         {
-            for (Int32 j = 0; j < 10; j++)
+            for (Int32 j = 0; j < SIZE_X; j++)
             {
-                Int32 num = j * 10 + i;
+                Int32 num = j * SIZE_Y + i;
                 GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(this.iconPrefab);
                 this.cardIconUIs[num] = gameObject.GetComponent<CardIconUI>();
                 this.cardIconUIs[num].Count = 0;
                 this.cardIconUIs[num].ID = num;
                 gameObject.name = num.ToString();
                 gameObject.transform.parent = base.transform;
-                gameObject.transform.localPosition = new Vector3((Single)j * CardIconUI.SIZE_W, (Single)(-(Single)i) * CardIconUI.SIZE_H, 0f);
+                gameObject.transform.localPosition = new Vector3(j * CardIconUI.SIZE_W, -i * CardIconUI.SIZE_H, 0f);
             }
         }
     }
@@ -195,11 +195,9 @@ public class PreBoard : MonoBehaviour
         this.cursor.transform.position = this.cardIconUIs[i].transform.position + new Vector3(0f, 0f, -1f);
     }
 
-    private static Vector3 POSITION = new Vector3(0.18f, -0.45f, 1f);
-
-    private static Int32 SIZE_X = 10;
-
-    private static Int32 SIZE_Y = 10;
+    private static readonly Vector3 POSITION = new Vector3(0.18f, -0.45f, 1f);
+    private const Int32 SIZE_X = 10;
+    private const Int32 SIZE_Y = 10;
 
     public GameObject iconPrefab;
 
