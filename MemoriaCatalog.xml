@@ -647,7 +647,7 @@ which will be much more optimized (DV and Tirlititi).</Description>
 
 <Mod>
 	<Name>Chocobo Hot and Cold QoL</Name>
-	<Version>1.0</Version>
+	<Version>2.0</Version>
 	<Author>CheddarBung</Author>
 	<Category>Gameplay</Category>
 	<PreviewFile>preview/chocoHC.png</PreviewFile>
@@ -655,7 +655,7 @@ which will be much more optimized (DV and Tirlititi).</Description>
 	<ReleaseDate>2025-12-14</ReleaseDate>
 	<ReleaseDateOriginal>2025-12-14</ReleaseDateOriginal>
 	<Website>https://github.com/robmcfarlane1120-sudo/Chocobo-Hot-and-Cold-QoL</Website>
-	<DownloadUrl>https://github.com/robmcfarlane1120-sudo/Chocobo-Hot-and-Cold-QoL/releases/download/v1.0.1/Chocobo_Hot_and_Cold_QOL_v1.0.1.zip</DownloadUrl>
+	<DownloadUrl>https://github.com/robmcfarlane1120-sudo/Chocobo-Hot-and-Cold-QoL/releases/latest/download/Chocobo.Hot.and.Cold.zip</DownloadUrl>
 	<PreviewFileUrl>https://github.com/robmcfarlane1120-sudo/Chocobo-Hot-and-Cold-QoL/blob/main/Chocobo%20Hot%20and%20Cold/Preview/chocoHC.png?raw=true</PreviewFileUrl>
 	<Description>Chocobo Hot and Cold QoL
 
@@ -4759,5 +4759,58 @@ Features;
 	<PreviewFile>vvsrandomizer.jpg</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/30/30-1762368557-608107247.png</PreviewFileUrl>
 </Mod>
+<Mod>
+	<Name>Hedgehog Skip Pack</Name>
+	<Version>1.0</Version>
+	<Author>CheddarBung</Author>
+	<Category>Gameplay</Category>
+	<InstallationPath>Hedgehog Skip Pack</InstallationPath>
+	<ReleaseDate>2026-08-10</ReleaseDate>
+	<ReleaseDateOriginal>2026-08-10</ReleaseDateOriginal>
+	<PreviewFile>PNG/PNG.png</PreviewFile>
+	<Website>https://github.com/robmcfarlane1120-sudo/Hedgehog-Skip-Pack</Website>
+	<DownloadUrl>https://github.com/robmcfarlane1120-sudo/Hedgehog-Skip-Pack/releases/latest/download/Hedgehog.Skip.Pack.zip</DownloadUrl>
+	<PreviewFileUrl>https://github.com/robmcfarlane1120-sudo/Hedgehog-Skip-Pack/blob/main/Hedgehog%20Skip%20Pack/PNG/PNG.png?raw=true</PreviewFileUrl>
+	<Description>Quality-of-life skip pack for repeat playthroughs of Final Fantasy IX. Enable only the skips you want.
 
+Pandemonium Bridge Skip
+Skips the Pandemonium light bridge sequence so the lights don't trigger random encounters.
+
+Sword Fight Skip
+The Swordfight always gives 100% impressed so you get the 10,000 gil and the Moonstone from Queen Brahne.
+
+Hedgehog Skip
+Removes Hedgehog Pie detection so you can't be caught stealing the key in Desert Palace.
+
+Sand Skip
+Disables the Cleyra Trunk sand-trap button-mashing sequence.</Description>
+
+	<SubMod>
+		<Name>Pandemonium Bridge Skip</Name>
+		<InstallationPath>Pandemonium Bridge Skip</InstallationPath>
+		<Description>Skips the Pandemonium light bridge sequence so the lights don't trigger random encounters.</Description>
+		<Default/>
+	</SubMod>
+
+	<SubMod>
+		<Name>Sword Fight Skip</Name>
+		<InstallationPath>Sword Fight Skip</InstallationPath>
+		<Description>The Swordfight always gives 100% impressed so you get the 10,000 gil and the Moonstone from Queen Brahne.</Description>
+		<Default/>
+	</SubMod>
+
+	<SubMod>
+		<Name>Hedgehog Skip</Name>
+		<InstallationPath>Hedgehog Skip</InstallationPath>
+		<Description>Removes Hedgehog Pie detection so you can't be caught stealing the key in Desert Palace.</Description>
+		<Default/>
+	</SubMod>
+
+	<SubMod>
+		<Name>Sand Pit Skip</Name>
+		<InstallationPath>Sand Skip</InstallationPath>
+		<Description>Disables the Cleyra Trunk sand-trap button-mashing sequence so the traps can be walked across normally.</Description>
+		<Default/>
+	</SubMod>
+</Mod>
 </ModCatalog>
