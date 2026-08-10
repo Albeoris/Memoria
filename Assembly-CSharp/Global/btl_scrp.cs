@@ -270,7 +270,7 @@ public class btl_scrp
                 result = btl.bi.line_no;
                 break;
             case 66u: // [MODEL_TYPE]
-                result = (Int32)btl_util.getPlayerPtr(btl).info.serial_no;
+                result = GetHackedSerialNumber(btl);
                break;
             case 67u: // [CATEGORY]
                 result = btl_util.getPlayerPtr(btl).category;
@@ -854,6 +854,104 @@ public class btl_scrp
                 break;
             case 44u:
                 battle.btl_bonus.ap = (ushort)val;
+                break;
+        }
+    }
+
+    public static Int32 GetHackedSerialNumber(BTL_DATA btl_data)
+    {
+        CheckForExpectedCharacters(btl_data.btl_id, out CharacterId expected_character);
+
+        if (expected_character == CharacterId.NONE || FF9StateSystem.Common.FF9.party.IsInParty(expected_character)) // Not a "hard-coded" battle
+            return (Int32)btl_util.getPlayerPtr(btl_data).info.serial_no;
+
+        return (Int32)btl_util.getSerialNumberFromCharacter(expected_character);
+    }
+
+    /*[ID] Battle name ID / File / Enemies / Modifications added
+    #################################################################
+    [014] BSC_LB_E080A / evt_battle_lb_e080a.eb.bytes / Zaghnol(Lindblum) => Change Zidane and Freya by 2nd and 1st character.
+    [114] BSC_IF_E087 / evt_battle_if_e087.eb.bytes / Mistodon => Mistodon will check if Steiner is present to trigger his Trance.
+    Otherwhise, he will check for an another character who can Trance => If it's not the case, this attack will be skipped.
+    [115] BSC_IF_E088 / evt_battle_if_e088.eb.bytes / Mistodon => Same as n°114.
+    [155] BSC_PD_E067 / evt_battle_pd_e067.eb.bytes / Amdusias (Mini-boss) => Instead of Amarant and Freya being hidden, it will be the 1st and 3rd character.
+    [160] BSC_PD_E068 / evt_battle_pd_e068.eb.bytes / Abadon (Mini-boss) => Instead of Zidane being hidden, it will be the 1st character.
+    [163] BSC_IF_E069 / evt_battle_pd_e069.eb.bytes / Shell Dragon (Mini-boss) => Instead of Dagga being hidden, it will be the 1st character.
+    [294] BSC_AP_E012 / evt_battle_ap_e012.eb.bytes / Black Waltz 2 => Will target the 4th character for the Hypnotize spell.
+    [296] BSC_CA_E013 / evt_battle_ca_e013.eb.bytes / Black Waltz 3 => Black Waltz 3 will check if Vivi is present to trigger his Trance.
+    Otherwhise, he will check for an another character who can Trance => If it's not the case, this attack will be skipped.
+    [302] BSC_EF_E006 / evt_battle_ef_e006.eb.bytes / Prison Cage ; Garnet => Prison Cage will check if Zidane is present to trigger his Trance.
+    [303] BSC_EF_E009 / evt_battle_ef_e009.eb.bytes / Plant Brain => Remove the hardcoded part about Zidane and Blank showing up in battle.
+    [337] BSC_TH_E003 / evt_battle_th_e003.eb.bytes / Steiner ; Blank => Steiner will hit a random target if PlutoBlank not present
+    [914] BSC_AT_E040B / evt_battle_at_e040b.eb.bytes / Mistodon => Same as n°114.
+    [915] BSC_AT_E040A / evt_battle_at_e040a.eb.bytes / Mistodon => Same as n°114.*/
+
+    private static void CheckForExpectedCharacters(int position, out CharacterId character)
+    {
+        character = CharacterId.NONE;
+        switch (FF9StateSystem.Battle.battleMapIndex) // No need to specify the battle group ?
+        {
+            case 14: // Zaghnol (Lindblum) - Festival of the Hunt
+                if (position == 1)
+                    character = CharacterId.Freya;
+                else if (position == 2)
+                    character = CharacterId.Zidane;
+                break;
+            case 155: // Amdusias (Mini-boss) - You are not alone
+                if (position == 1)
+                    character = CharacterId.Amarant;
+                else if (position == 2)
+                    character = CharacterId.Freya;
+                else if (position == 4)
+                    character = CharacterId.Zidane;
+                break;
+            case 160: // Abadon (Mini-boss) - You are not alone
+                if (position == 1)
+                    character = CharacterId.Zidane;
+                else if (position == 2)
+                    character = CharacterId.Steiner;
+                else if (position == 4)
+                    character = CharacterId.Quina;
+                break;
+            case 163: // Shell Dragon (Mini-boss) - You are not alone
+                if (position == 1)
+                    character = CharacterId.Garnet;
+                else if (position == 2)
+                    character = CharacterId.Zidane;
+                break;
+            case 294: // Black Waltz 2
+                if (position == 8)
+                    character = CharacterId.Garnet;
+                break;
+            case 296: // Black Waltz 3
+                if (position == 1)
+                    character = CharacterId.Vivi;
+                break;
+            case 302: // Prison Cage ; Garnet
+                if (position == 1)
+                    character = CharacterId.Zidane;
+                else if (position == 2)
+                    character = CharacterId.Steiner;
+                break;
+            case 303: // Plant Brain
+                if (position == 1)
+                    character = CharacterId.Blank;
+                else if (position == 2)
+                    character = CharacterId.Zidane;
+                break;
+            case 337: // Steiner ; Blank
+                if (position == 4)
+                    character = CharacterId.Blank;
+                break;
+            case 114: // Mistodon
+            case 115:
+            case 914:
+            case 915:
+                if (position == 1)
+                    character = CharacterId.Steiner;
+                break;
+            default:
+                character = CharacterId.NONE;
                 break;
         }
     }
