@@ -860,15 +860,20 @@ public class btl_scrp
 
     public static Int32 GetHackedSerialNumber(BTL_DATA btl_data)
     {
-        CheckForExpectedCharacters(btl_data.btl_id, out CharacterId expected_character);
-
-        if (expected_character == CharacterId.NONE || FF9StateSystem.Common.FF9.party.IsInParty(expected_character)) // Not a "hard-coded" battle
-            return (Int32)btl_util.getPlayerPtr(btl_data).info.serial_no;
-
-        return (Int32)btl_util.getSerialNumberFromCharacter(expected_character);
+        if (CheckForExpectedCharacters(btl_data.btl_id, out CharacterId expected_character))
+        {
+            if (expected_character != CharacterId.NONE && !FF9StateSystem.Common.FF9.party.IsInParty(expected_character))
+                return (Int32)btl_util.getSerialNumberFromCharacter(expected_character);
+            else
+            {
+                PLAYER player = btl_util.getPlayerPtr(btl_data);
+                return btl_util.IsCharacterSerialNumberVanilla(btl_data) ? (Int32)player.info.serial_no : (Int32)btl_util.getSerialNumberFromCharacter(player.info.slot_no);
+            }
+        }
+        return (Int32)btl_util.getPlayerPtr(btl_data).info.serial_no;
     }
 
-    /*[ID] Battle name ID / File / Enemies / Modifications added
+    /*[ID] Battle name ID / File / Enemies / Modifications added (documentation from No Hardcoded Battle mod made by DV)
     #################################################################
     [014] BSC_LB_E080A / evt_battle_lb_e080a.eb.bytes / Zaghnol(Lindblum) => Change Zidane and Freya by 2nd and 1st character.
     [114] BSC_IF_E087 / evt_battle_if_e087.eb.bytes / Mistodon => Mistodon will check if Steiner is present to trigger his Trance.
@@ -886,7 +891,7 @@ public class btl_scrp
     [914] BSC_AT_E040B / evt_battle_at_e040b.eb.bytes / Mistodon => Same as n°114.
     [915] BSC_AT_E040A / evt_battle_at_e040a.eb.bytes / Mistodon => Same as n°114.*/
 
-    private static void CheckForExpectedCharacters(int position, out CharacterId character)
+    private static Boolean CheckForExpectedCharacters(int position, out CharacterId character)
     {
         character = CharacterId.NONE;
         switch (FF9StateSystem.Battle.battleMapIndex) // No need to specify the battle group ?
@@ -952,7 +957,8 @@ public class btl_scrp
                 break;
             default:
                 character = CharacterId.NONE;
-                break;
+                return false;
         }
+        return true;
     }
 }

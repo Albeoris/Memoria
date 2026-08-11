@@ -94,6 +94,42 @@ namespace FF9
             }
         }
 
+        public static Boolean IsCharacterSerialNumberVanilla(BTL_DATA btl_data)
+        {
+            BattleUnit unit = new BattleUnit(btl_data);
+            CharacterSerialNumber serialNumber = getSerialNumber(btl_data);
+
+            switch (unit.PlayerIndex)
+            {
+                case CharacterId.Zidane:
+                    return serialNumber == CharacterSerialNumber.ZIDANE_DAGGER || serialNumber == CharacterSerialNumber.ZIDANE_SWORD;
+                case CharacterId.Vivi:
+                    return serialNumber == CharacterSerialNumber.VIVI;
+                case CharacterId.Garnet:
+                    return serialNumber >= CharacterSerialNumber.GARNET_LH_ROD && serialNumber <= CharacterSerialNumber.GARNET_SH_RACKET;
+                case CharacterId.Steiner:
+                    return serialNumber == CharacterSerialNumber.STEINER_INDOOR || serialNumber == CharacterSerialNumber.STEINER_OUTDOOR;
+                case CharacterId.Freya:
+                    return serialNumber == CharacterSerialNumber.FREIJA;
+                case CharacterId.Quina:
+                    return serialNumber == CharacterSerialNumber.KUINA;
+                case CharacterId.Eiko:
+                    return serialNumber == CharacterSerialNumber.EIKO_FLUTE || serialNumber == CharacterSerialNumber.EIKO_RACKET;
+                case CharacterId.Amarant:
+                    return serialNumber == CharacterSerialNumber.SALAMANDER;
+                case CharacterId.Cinna:
+                    return serialNumber == CharacterSerialNumber.CINNA;
+                case CharacterId.Marcus:
+                    return serialNumber == CharacterSerialNumber.MARCUS;
+                case CharacterId.Blank:
+                    return serialNumber == CharacterSerialNumber.BLANK || serialNumber == CharacterSerialNumber.BLANK_ARMOR;
+                case CharacterId.Beatrix:
+                    return serialNumber == CharacterSerialNumber.BEATRIX;
+                default:
+                    return false;
+            }
+        }
+
         public static CMD_DATA getCurCmdPtr()
         {
             return FF9StateSystem.Battle.FF9Battle.cur_cmd;
