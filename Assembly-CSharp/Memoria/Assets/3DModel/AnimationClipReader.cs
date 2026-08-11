@@ -183,7 +183,18 @@ namespace Memoria.Assets
                             List<Keyframe> keys_z = new List<Keyframe>();
                             List<Keyframe> keys_w = new List<Keyframe>();
 
-                            List<Keyframe> keys_xIT = new List<Keyframe>();
+                            // [DV] : Since this was added, it has significantly increased the loading time for the first battle (almost 40 seconds depending on the mod used... !)
+                            //  As seen with Tirlititi, the tangent calculations are extremely resource-intensive and not necessarily useful even with 60 FPS now.
+
+                            //  [Tirlititi] :
+                            //  "Since the vanilla animations have all their control points set at 30 fps,
+                            //  the tangents would only make a difference between frames (50% of the frames if you’re playing at 60 fps),
+                            //  and that difference is minimal because instead of linearly interpolating the intermediate frames,
+                            //  you shift them slightly (depending on how the tangents are set) to make the animation smoother.
+
+                            //  This would be useful for custom animations where you use very few control points—like an animation where you set the coordinates every 1 second, rather than every 0.03333 seconds."
+
+                            /*List<Keyframe> keys_xIT = new List<Keyframe>();
                             List<Keyframe> keys_yIT = new List<Keyframe>();
                             List<Keyframe> keys_zIT = new List<Keyframe>();
                             List<Keyframe> keys_wIT = new List<Keyframe>();
@@ -191,7 +202,7 @@ namespace Memoria.Assets
                             List<Keyframe> keys_xOT = new List<Keyframe>();
                             List<Keyframe> keys_yOT = new List<Keyframe>();
                             List<Keyframe> keys_zOT = new List<Keyframe>();
-                            List<Keyframe> keys_wOT = new List<Keyframe>();
+                            List<Keyframe> keys_wOT = new List<Keyframe>();*/
 
                             ta.transformType = localType;
                             foreach (JSONNode frameNode in rotArray.Childs)
@@ -228,7 +239,7 @@ namespace Memoria.Assets
                                     keys_w.Add(new Keyframe(time, fa.pos.w));
                                 }
 
-                                if (frameClass.Dict.TryGetValue("xInnerTangent", out keyNode))
+                                /*if (frameClass.Dict.TryGetValue("xInnerTangent", out keyNode))
                                 {
                                     fa.posInnerTangent.x = keyNode.AsFloat;
                                     keys_xIT.Add(new Keyframe(time, fa.posInnerTangent.x));
@@ -268,7 +279,7 @@ namespace Memoria.Assets
                                 {
                                     fa.posOuterTangent.w = keyNode.AsFloat;
                                     keys_wOT.Add(new Keyframe(time, fa.posOuterTangent.w));
-                                }
+                                }*/
                             }
                             if (!keys_x.IsNullOrEmpty())
                             {
@@ -291,7 +302,7 @@ namespace Memoria.Assets
                                 clip.SetCurve(boneName, typeof(Transform), localType + ".w", animCurve);
                             }
 
-                            if (!keys_xIT.IsNullOrEmpty())
+                            /*if (!keys_xIT.IsNullOrEmpty())
                             {
                                 animCurve = new AnimationCurve(keys_xIT.ToArray());
                                 clip.SetCurve(boneName, typeof(Transform), localType + ".xInnerTangent", animCurve);
@@ -331,7 +342,7 @@ namespace Memoria.Assets
                             {
                                 animCurve = new AnimationCurve(keys_wOT.ToArray());
                                 clip.SetCurve(boneName, typeof(Transform), localType + ".wOuterTangent", animCurve);
-                            }
+                            }*/
 
                             ta.frameAnimList.AddRange(faDict.Values);
                             ba.transformAnimList.Add(ta);
