@@ -9,6 +9,8 @@ public static class WindowProc
     [DllImport("user32.dll")]
     private static extern IntPtr GetActiveWindow();
     [DllImport("user32.dll")]
+    private static extern IntPtr GetForegroundWindow();
+    [DllImport("user32.dll")]
     private static extern IntPtr SetWindowLong(IntPtr hWnd, Int32 nIndex, WindowProcDelegate dwNewLong);
     [DllImport("user32.dll")]
     private static extern IntPtr SetWindowLongPtr(IntPtr hWnd, Int32 nIndex, WindowProcDelegate newProc);
@@ -30,17 +32,21 @@ public static class WindowProc
         try
         {
             IntPtr windowHandle = GetActiveWindow();
-            if (windowHandle != IntPtr.Zero)
+            if (windowHandle == IntPtr.Zero)
             {
-                newWndProc = new WindowProcDelegate(WndProc);
-
-                Log.Message("[WindowProc] Windows procedure registered");
-                if(Is64Bit())
-                    return SetWindowLongPtr(windowHandle, GWL_WNDPROC, newWndProc);
-                else
-                    return SetWindowLong(windowHandle, GWL_WNDPROC, newWndProc);
+                windowHandle = GetForegroundWindow(); // GetActiveWindow() returns null when launching directly from FF9.exe
+                if (windowHandle == IntPtr.Zero)
+                {
+                    Log.Message("[WindowProc] Couldn't get active window handle");
+                    return IntPtr.Zero;
+                }
             }
-            Log.Message("[WindowProc] Couldn't get active window handle");
+            newWndProc = new WindowProcDelegate(WndProc);
+            Log.Message("[WindowProc] Windows procedure registered");
+            if(Is64Bit())
+                return SetWindowLongPtr(windowHandle, GWL_WNDPROC, newWndProc);
+            else
+                return SetWindowLong(windowHandle, GWL_WNDPROC, newWndProc);
         }
         catch (Exception e)
         {
@@ -60,6 +66,6 @@ public static class WindowProc
     private static Boolean Is64Bit()
     {
         String environmentVariable = Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE");
-        return !String.IsNullOrEmpty(environmentVariable) && !(environmentVariable.Substring(0, 3) == "x86");
+        return !String.IsNullOrEmpty(environmentVariable) && environmentVariable.Substring(0, 3) != "x86";
     }
 }

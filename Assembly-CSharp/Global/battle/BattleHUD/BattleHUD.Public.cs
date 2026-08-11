@@ -134,7 +134,7 @@ public partial class BattleHUD : UIScene
                 BattleAbilityId abilId = btl_util.GetCommandMainActionIndex(pCmd);
                 if (abilId != BattleAbilityId.Void)
                 {
-                    Byte type = FF9StateSystem.Battle.FF9Battle.aa_data[abilId].CastingTitleType;
+                    UInt32 type = FF9StateSystem.Battle.FF9Battle.aa_data[abilId].CastingTitleType;
                     switch (type)
                     {
                         case 254: // Magic sword
@@ -142,9 +142,13 @@ public partial class BattleHUD : UIScene
                         case 255:
                             return FF9TextTool.ActionAbilityName(abilId);
                         case 0:
-                            break;
+                            return String.Empty;
                         default:
-                            return type < 192 ? FF9TextTool.ActionAbilityName((BattleAbilityId)type) : FF9TextTool.BattleCommandTitleText((type & 63) + 1);
+                            if (type < 192)
+                                return FF9TextTool.ActionAbilityName((BattleAbilityId)type);
+                            if (type < 255)
+                                return FF9TextTool.BattleCommandTitleText(((Int32)type & 63) + 1);
+                            return FF9TextTool.BattleCommandTitleText((Int32)type);
                     }
                 }
                 break;

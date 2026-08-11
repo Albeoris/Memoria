@@ -104,9 +104,9 @@ namespace Memoria.Assets
                     if (lang == "GR")
                         return SetupDictionary(ref _dictMadainSari1GR, 920, [171, 172, 663, 892, 893, 894, 895, 896], Dict([[699, 878], [700, 879], [701, 880], [561, 881], [188, 882], [189, 883], [194, 884], [806, 885], [870, 886], [871, 887], [872, 888], [873, 889], [874, 890], [875, 891], [876, 892], [885, 893], [886, 894], [887, 895], [888, 896], [889, 897], [890, 898], [891, 899], [198, 900], [199, 901], [562, 902], [563, 903], [918, 904], [641, 905], [642, 906], [650, 907], [655, 908], [656, 909], [919, 910], [657, 911]]));
                     if (lang == "IT")
-                        return SetupDictionary(ref _dictMadainSari1IT, 920, [573, 607, 609, 620, 627, 636, 637, 638, 639, 645, 648, 649, 653, 864, 865, 866, 867, 868, 869, 879, 880, 881, 882, 883, 884, 918, 919], Dict([[599, 603], [600, 604], [601, 598], [603, 599], [604, 600], [605, 601], [606, 602], [646, 639], [647, 641], [650, 633], [651, 634], [652, 642], [654, 643], [655, 637], [656, 638]]), Dict([[671, 660]]));
+                        return SetupDictionary(ref _dictMadainSari1IT, 920, [573, 607, 609, 620, 627, 636, 637, 638, 639, 645, 648, 649, 653, 864, 865, 866, 867, 868, 869, 879, 880, 881, 882, 883, 884, 918, 919], Dict([[599, 604], [600, 605], [601, 598], [601, 598], [602, 599], [603, 600], [604, 601], [605, 602], [606, 603], [640, 633], [646, 640], [647, 641], [650, 636], [655, 637], [656, 638]]), Dict([[671, 660]]));
                     if (lang == "ES")
-                        return SetupDictionary(ref _dictMadainSari1ES, 920, [52, 109, 171, 172, 192, 357, 382, 450, 512, 538, 544, 570, 571, 573, 574, 602, 607, 609, 620, 627, 636, 637, 638, 639, 640, 645, 646, 647, 648, 649, 652, 653, 654, 663, 687, 764, 765, 790, 864, 865, 866, 867, 868, 869, 879, 880, 881, 882, 883, 884, 892, 893, 894, 895, 896, 918, 919], Dict([[599, 588], [600, 589], [601, 583], [603, 584], [604, 585], [605, 586], [606, 587]]), Dict([[502, 493], [671, 639]]));
+                        return SetupDictionary(ref _dictMadainSari1ES, 920, [52, 109, 171, 172, 192, 357, 382, 450, 512, 538, 544, 570, 571, 573, 574, 602, 609, 620, 627, 636, 637, 638, 639, 640, 645, 646, 647, 648, 649, 652, 653, 654, 663, 687, 764, 765, 790, 864, 865, 866, 867, 868, 869, 879, 880, 881, 882, 883, 884, 892, 893, 894, 895, 896, 918, 919], Dict([[599, 588], [600, 589], [601, 583], [603, 584], [604, 585], [605, 586], [606, 587]]), Dict([[502, 493], [671, 639]]));
                     break;
                 case 359:
                     if (lang == "JP")
@@ -186,11 +186,11 @@ namespace Memoria.Assets
                     if (lang == "JP")
                         return SetupDictionary(ref _dictLindblumOccupiedJP, 393, [257, 258]);
                     if (lang == "FR")
-                        return SetupDictionary(ref _dictLindblumOccupiedFR, 393, [152, 257, 258, 259, 260, 261, 267, 268, 269, 270, 271, 272, 273]);
+                        return SetupDictionary(ref _dictLindblumOccupiedFR, 393, [152, 257, 258, 259, 260, 261, 266, 267, 268, 269, 270, 271, 272, 273]);
                     if (lang == "IT")
                         return SetupDictionary(ref _dictLindblumOccupiedIT, 393, [257, 258, 259]);
                     if (lang == "ES")
-                        return SetupDictionary(ref _dictLindblumOccupiedES, 393, [152, 247, 250, 257, 258, 267, 268, 269, 270, 271, 272, 273, 297, 381]);
+                        return SetupDictionary(ref _dictLindblumOccupiedES, 393, [152, 247, 250, 257, 258, 266, 267, 268, 269, 270, 271, 272, 273, 297, 381]);
                     break;
                 case 50:
                     if (lang == "US" || lang == "UK")
@@ -252,11 +252,11 @@ namespace Memoria.Assets
                     if (lang == "US" || lang == "UK")
                         return SetupDictionary(ref _dictQuMarshUSUK, 394, [365, 374, 390, 391], Dict([[212, 258]]));
                     if (lang == "JP" || lang == "GR" || lang == "FR")
-                        return SetupDictionary(ref _dictQuMarshJPGRFR, 394, [257]);
+                        return SetupDictionary(ref _dictQuMarshJPGRFR, 394, [258]);
                     if (lang == "IT")
-                        return SetupDictionary(ref _dictQuMarshIT, 394, [365, 390, 391]);
+                        return SetupDictionary(ref _dictQuMarshIT, 394, [258, 365, 390, 391]);
                     if (lang == "ES")
-                        return SetupDictionary(ref _dictQuMarshES, 394, [365, 374, 390, 391]);
+                        return SetupDictionary(ref _dictQuMarshES, 394, [258, 365, 374, 390, 391]);
                     break;
                 case 738:
                     if (lang == "US" || lang == "UK" || lang == "GR")

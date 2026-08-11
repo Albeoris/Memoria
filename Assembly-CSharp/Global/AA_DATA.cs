@@ -37,7 +37,8 @@ public class AA_DATA
     public Byte Type;
     [Memoria.PatchableFieldAttribute]
     public UInt16 Vfx2;
-    public Byte CastingTitleType;
+    [Memoria.PatchableFieldAttribute]
+    public UInt32 CastingTitleType;
 
     // Enable or disable availability when using BattleUnit.ChangeToMonster
     [Memoria.PatchableFieldAttribute]

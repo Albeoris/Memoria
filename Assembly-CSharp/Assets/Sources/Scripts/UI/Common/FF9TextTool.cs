@@ -311,10 +311,11 @@ namespace Assets.Sources.Scripts.UI.Common
         public static Dictionary<Int32, String> ExtractSentense(Dictionary<Int32, String> table, String text)
         {
             String[] strBlocks = text.Split(DELIM_TEXTID, StringSplitOptions.RemoveEmptyEntries);
+            Boolean startsWithId = text.StartsWith(DELIM_TEXTID[0]);
             for (Int32 i = 0; i < strBlocks.Length; i++)
             {
                 Int32 id = 0;
-                if (i > 0)
+                if (i > 0 || startsWithId)
                 {
                     Int32 endPos = strBlocks[i].IndexOf(']');
                     Int32.TryParse(strBlocks[i].Substring(0, endPos), out id);

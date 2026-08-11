@@ -9,6 +9,7 @@ namespace Memoria
         {
             public readonly IniValue<Boolean> SFXRework;
             public readonly IniValue<Int32> Speed;
+            public readonly IniValue<Single> ATBSpeedFactor;
             public readonly IniValue<Boolean> NoAutoTrance;
             public readonly IniValue<Int32> EncounterInterval;
             public readonly IniValue<Int32> EncounterInitial;
@@ -61,6 +62,7 @@ namespace Memoria
             {
                 SFXRework = BindBoolean(nameof(SFXRework), true);
                 Speed = BindInt32(nameof(Speed), 0);
+                ATBSpeedFactor = BindSingle(nameof(ATBSpeedFactor), 4.0f);
                 NoAutoTrance = BindBoolean(nameof(NoAutoTrance), false);
                 EncounterInterval = BindInt32(nameof(EncounterInterval), 960);
                 EncounterInitial = BindInt32(nameof(EncounterInitial), -1440);

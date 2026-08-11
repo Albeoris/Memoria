@@ -290,7 +290,7 @@ namespace Memoria.Assets
 
                 writer.WriteByte("level", enemy.Level);
                 writer.WriteByte("category", enemy.Category);
-                writer.WriteByte("hitRate", enemy.HitRate);
+                writer.WriteByte("hitRate", (Byte)enemy.HitRate);
                 writer.WriteInt32("pdp", enemy.PhysicalDefence);
                 writer.WriteInt32("pav", enemy.PhysicalEvade);
                 writer.WriteInt32("mdp", enemy.MagicalDefence);
@@ -590,7 +590,7 @@ namespace Memoria.Assets
                             if (baseValue.Category != enemy.Category)
                                 writer.WriteByte("category", enemy.Category);
                             if (baseValue.HitRate != enemy.HitRate)
-                                writer.WriteByte("hitRate", enemy.HitRate);
+                                writer.WriteByte("hitRate", (Byte)enemy.HitRate);
                             if (baseValue.PhysicalDefence != enemy.PhysicalDefence)
                                 writer.WriteInt32("pdp", enemy.PhysicalDefence);
                             if (baseValue.PhysicalEvade != enemy.PhysicalEvade)
@@ -902,7 +902,7 @@ namespace Memoria.Assets
 
                 sw.Byte(_enData.Level);
                 sw.Byte(_enData.Category);
-                sw.Byte(_enData.HitRate);
+                sw.Byte((Byte)_enData.HitRate);
                 sw.Int32(_enData.PhysicalDefence);
                 sw.Int32(_enData.PhysicalEvade);
                 sw.Int32(_enData.MagicalDefence);
