@@ -18,6 +18,8 @@ namespace Memoria
 
         public BattleStatus AddededCheckPointStatuses => CheckPointData() & ~_initialCheckPoint;
 
+        // TODO: These are already in BattleUnit... but removing them will invalidate compatibility with the Memoria.Scripts.dll of mods using it
+        // Remove these fields the next time compatibility has to be broken anyway
         public EffectElement GuardElement
         {
             get { return (EffectElement)Data.def_attr.invalid; }

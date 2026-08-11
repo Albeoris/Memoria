@@ -439,7 +439,9 @@ namespace Memoria.MSBuild
                 foreach (String sourceFile in Directory.EnumerateFiles(sourceDirectory, "*", SearchOption.AllDirectories))
                 {
                     String relativePath = sourceFile.Substring(sourceDirectory.Length).TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-                    QueueCopy(sourceFile, Path.Combine(_rootDirectory, destinationRelativePath, relativePath), logSuccess: true);
+                    String destPath = Path.Combine(_rootDirectory, destinationRelativePath, relativePath);
+                    if (!File.Exists(destPath) || File.GetLastWriteTime(relativePath) > File.GetLastWriteTime(destPath))
+                        QueueCopy(sourceFile, destPath, logSuccess: true);
                 }
             }
 

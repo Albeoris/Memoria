@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
 using static XInputDotNetPure.GamePadState;
 
 namespace XInputDotNetPure
@@ -349,13 +350,13 @@ namespace XInputDotNetPure
 
             try
             {
-                if (jslDevices == null)
+                Int32[] devices;
+                if (!TryGetJoyShockDevicesSnapshot(out devices))
+                    return new GamePadState(result == Utils.Success, rawState, deadZone);
+
+                if (devices.Length > 0)
                 {
-                    RefreshDevices();
-                }
-                if (jslDevices.Length > 0)
-                {
-                    foreach (int device in jslDevices)
+                    foreach (Int32 device in devices)
                     {
                         if (!JSL.StillConnected(device)) continue;
 
@@ -406,20 +407,8 @@ namespace XInputDotNetPure
         /// <returns>true if the number of devices has changed</returns></returns>
         public static Boolean RefreshDevices(Boolean forceReconnect = false)
         {
-            try
-            {
-                Int32 count = jslDevices?.Length ?? 0;
-                if (forceReconnect) JSL.DisconnectAndDisposeAll();
-                int c = JSL.ConnectDevices();
-                jslDevices = new int[c > 0 ? c : 0];
-                JSL.GetConnectedDeviceHandles(jslDevices, jslDevices.Length);
-                return jslDevices.Length != count;
-            }
-            catch (Exception e)
-            {
-                Log(e.ToString());
-            }
-            return false;
+            RequestRefresh(forceReconnect);
+            return ConsumeRefreshResult();
         }
 
         public static Single Threshold { set; get; }
@@ -429,9 +418,13 @@ namespace XInputDotNetPure
             Imports.XInputGamePadSetState((uint)playerIndex, leftMotor, rightMotor);
             try
             {
-                if (jslDevices.Length > 0)
+                Int32[] devices;
+                if (!TryGetJoyShockDevicesSnapshot(out devices))
+                    return;
+
+                if (devices.Length > 0)
                 {
-                    foreach (int device in jslDevices)
+                    foreach (Int32 device in devices)
                     {
                         if (!JSL.StillConnected(device)) continue;
                         JSL.SetRumble(device, (int)(leftMotor * byte.MaxValue), (int)(rightMotor * byte.MaxValue));
@@ -444,8 +437,126 @@ namespace XInputDotNetPure
             }
         }
 
-        private static int[] jslDevices = null;
+        private static Int32[] jslDevices = new Int32[0];
+        private static readonly Object jslSync = new Object();
+        private static Boolean discoveryRequested = false;
+        private static Boolean refreshInProgress = false;
+        private static Boolean refreshRequested = false;
+        private static Boolean forceReconnectRequested = false;
+        private static Boolean hasRefreshResult = false;
+        private static Boolean refreshChanged = false;
         private static long filePosition = 0;
+
+        private static Boolean TryGetJoyShockDevicesSnapshot(out Int32[] devices)
+        {
+            lock (jslSync)
+            {
+                if (!discoveryRequested)
+                {
+                    discoveryRequested = true;
+                    refreshRequested = true;
+                    StartRefreshWorker_NoLock();
+                }
+
+                // JslConnectDevices takes an exclusive lock in JoyShockLibrary.
+                // Skip JoyShock polling while refresh is running to guarantee this call stays non-blocking.
+                if (refreshInProgress)
+                {
+                    devices = new Int32[0];
+                    return false;
+                }
+
+                devices = jslDevices;
+                return true;
+            }
+        }
+
+        private static void RequestRefresh(Boolean forceReconnect)
+        {
+            lock (jslSync)
+            {
+                discoveryRequested = true;
+                refreshRequested = true;
+                if (forceReconnect)
+                    forceReconnectRequested = true;
+
+                StartRefreshWorker_NoLock();
+            }
+        }
+
+        private static void StartRefreshWorker_NoLock()
+        {
+            if (refreshInProgress)
+                return;
+
+            refreshInProgress = true;
+            ThreadPool.QueueUserWorkItem(_ => RefreshWorkerLoop());
+        }
+
+        private static void RefreshWorkerLoop()
+        {
+            while (true)
+            {
+                Boolean mustForceReconnect;
+
+                lock (jslSync)
+                {
+                    mustForceReconnect = forceReconnectRequested;
+                    forceReconnectRequested = false;
+                    refreshRequested = false;
+                }
+
+                Boolean changed = false;
+                Int32[] updatedDevices = new Int32[0];
+
+                try
+                {
+                    Int32 previousCount;
+                    lock (jslSync)
+                        previousCount = jslDevices.Length;
+
+                    if (mustForceReconnect)
+                        JSL.DisconnectAndDisposeAll();
+
+                    Int32 count = JSL.ConnectDevices();
+                    updatedDevices = new Int32[count > 0 ? count : 0];
+                    JSL.GetConnectedDeviceHandles(updatedDevices, updatedDevices.Length);
+                    changed = updatedDevices.Length != previousCount;
+                }
+                catch (Exception e)
+                {
+                    Log(e.ToString());
+                }
+
+                lock (jslSync)
+                {
+                    jslDevices = updatedDevices;
+                    hasRefreshResult = true;
+                    refreshChanged |= changed;
+
+                    if (refreshRequested)
+                        continue;
+
+                    refreshInProgress = false;
+                    return;
+                }
+            }
+        }
+
+        private static Boolean ConsumeRefreshResult()
+        {
+            lock (jslSync)
+            {
+                if (!hasRefreshResult)
+                    return false;
+
+                Boolean hasChanged = refreshChanged;
+                refreshChanged = false;
+                hasRefreshResult = false;
+                return hasChanged;
+            }
+        }
+
         private static void Log(string message)
         {
             using (var file = File.OpenWrite("XInpuDotNetPure.log"))

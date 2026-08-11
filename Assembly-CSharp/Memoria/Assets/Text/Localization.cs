@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Assets.Sources.Scripts.UI.Common;
-using Assets.Scripts.Common;
 using UnityEngine;
 
 namespace Memoria.Assets
@@ -30,6 +29,40 @@ namespace Memoria.Assets
         public static String CurrentLanguage => Provider.CurrentLanguage;
         /// <summary>The language symbol ("US", "JP", "ES"...) of the current primary language</summary>
         public static String CurrentSymbol => Provider.CurrentSymbol;
+        /// <summary>The language numerical ID ("US = 0", "UK = 1", "JP = 2"...) of the current primary language</summary>
+        public static Int32 CurrentLanguageId
+        {
+            get
+            {
+                switch (CurrentSymbol)
+                {
+                    case "US": return 0;
+                    case "UK": return 1;
+                    case "JP": return 2;
+                    case "GR": return 3;
+                    case "FR": return 4;
+                    case "IT": return 5;
+                    case "ES": return 6;
+                }
+                // Compute a kind of unique identifier based on the symbol's letter, in case we want to integrate custom languages more thoroughly in the future
+                // Eg.: "NAH"
+                // => 'N' + 'A' * 27 + 'H' * 27 * 27
+                // => 14  +  1  * 27 +  8  * 27 * 27
+                // => 5873
+                Int32 numbase = 'Z' - 'A' + 2;
+                Int32 numpower = 1;
+                Int32 langId = 0;
+                foreach (Char ch in CurrentSymbol)
+                {
+                    if (ch >= 'A' && ch <= 'Z')
+                        langId += numpower * (ch - 'A' + 1);
+                    else if (ch >= 'a' && ch <= 'z')
+                        langId += numpower * (ch - 'a' + 1);
+                    numpower *= numbase;
+                }
+                return langId > 0 ? langId : -1;
+            }
+        }
 
         public static void SetCurrentLanguage(String lang, MonoBehaviour caller = null, Action callback = null, Boolean updateDatabase = true)
         {
@@ -139,7 +172,7 @@ namespace Memoria.Assets
                     { "IT", UnicodeBIDI.DIGIT_SHAPES_LATIN }
                 }
             },
-            // Language name in the title menu's button
+            // Language name displayed in the title menu's button
             { "NameShort", new Dictionary<String, String>()
                 {
                     { "US", "US" },
@@ -149,6 +182,18 @@ namespace Memoria.Assets
                     { "FR", "FR" },
                     { "GR", "GR" },
                     { "IT", "IT" }
+                }
+            },
+            // Melodies of Life song path
+            { "MovieAudioPathFMV060", new Dictionary<String, String>()
+                {
+                    { "US", "Sounds02/Movie_/FMV059C" },
+                    { "UK", "Sounds02/Movie_/FMV059C" },
+                    { "JP", "Sounds02/Movie_/FMV059B" },
+                    { "ES", "Sounds02/Movie_/FMV059C" },
+                    { "FR", "Sounds02/Movie_/FMV059C" },
+                    { "GR", "Sounds02/Movie_/FMV059C" },
+                    { "IT", "Sounds02/Movie_/FMV059C" }
                 }
             },
             // Gil formatiing in multiple menu

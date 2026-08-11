@@ -15,8 +15,8 @@ public class PillarBoxOverrideManager : MonoBehaviour
         if (AssetManager.HasAssetOnDisc("embeddedasset/ui/sprites/overlay canvas/letterbox_verticle", true, false))
         {
             // TODO: for now, the existence of a custom texture replaces the pillars by black bars, without loading the texture itself
-            this.leftImage.gameObject.active = false;
-            this.rightImage.gameObject.active = false;
+            this.leftImage.gameObject.SetActive(false);
+            this.rightImage.gameObject.SetActive(false);
         }
         this.UpdatePillarSize();
     }

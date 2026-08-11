@@ -17,7 +17,15 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Restore dependency cache
+      id: dependency-cache
+      uses: actions/cache/restore@v6
+      with:
+        path: References
+        key: windows-dependencies-${{ hashFiles('References/Dependencies.7z') }}
+
     - name: Decrypt and extract dependencies
+      if: steps.dependency-cache.outputs.cache-hit != 'true'
       env:
         ARCHIVE_PASSWORD: ${{ secrets.DEPENDENCIES_PASSWORD }}
       shell: pwsh

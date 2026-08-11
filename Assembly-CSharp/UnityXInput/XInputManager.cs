@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Memoria;
+using System;
 using UnityEngine;
 using XInputDotNetPure;
 
@@ -43,10 +44,11 @@ namespace UnityXInput
             playerIndexSet = false;
             for (Int32 i = 0; i <= 3; i++)
             {
-                if (XInputDotNetPure.GamePad.GetState(playerIndex).IsConnected)
+                PlayerIndex candidate = (PlayerIndex)i;
+                if (XInputDotNetPure.GamePad.GetState(candidate).IsConnected)
                 {
                     UnityEngine.Input.ResetInputAxes();
-                    playerIndex = (PlayerIndex)i;
+                    playerIndex = candidate;
                     playerIndexSet = true;
                     break;
                 }
@@ -84,7 +86,7 @@ namespace UnityXInput
                 global::Debug.Log("Start reset input axes");
 
                 // Pause the game if a controller has been disconnected
-                if (!UIManager.Instance.IsPause)
+                if (!Configuration.Debug.StartModelViewer && !Configuration.Debug.StartFieldCreator && !UIManager.Instance.IsPause)
                     UIManager.Instance.GetSceneFromState(UIManager.Instance.State).OnKeyPause(null);
             }
         }

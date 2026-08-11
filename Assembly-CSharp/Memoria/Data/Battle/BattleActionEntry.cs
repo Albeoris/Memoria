@@ -39,7 +39,7 @@ namespace Memoria.Data
             ActionData = new AA_DATA(cmd, btl, category, statusIndex, mp, type, animation2);
 
             if (metadata.HasOption($"Include{nameof(AA_DATA.CastingTitleType)}"))
-                ActionData.CastingTitleType = CsvParser.Byte(raw[index++]);
+                ActionData.CastingTitleType = CsvParser.UInt32(raw[index++]);
             else
                 ActionData.CastingTitleType = GetDefaultCastingTitleType(Id);
         }
@@ -68,10 +68,10 @@ namespace Memoria.Data
             sw.Int32(ActionData.MP);
             sw.Byte(ActionData.Type);
             if (metadata.HasOption($"Include{nameof(AA_DATA.CastingTitleType)}"))
-                sw.Byte(ActionData.CastingTitleType);
+                sw.UInt32(ActionData.CastingTitleType);
         }
 
-        public static Byte GetDefaultCastingTitleType(BattleAbilityId id)
+        public static UInt32 GetDefaultCastingTitleType(BattleAbilityId id)
         {
             switch (id)
             {

@@ -601,7 +601,8 @@ namespace Memoria.Assets
                 new EtcTextBatch("CmdTitle", "CommandTitles",  3, FF9TextTool.MainBatch.cmdTitleText),
                 new EtcTextBatch("FF9Choco", "Chocographs",    4, FF9TextTool.MainBatch.chocoUIText),
                 new EtcTextBatch("Card",     "CardRanks",      5, FF9TextTool.MainBatch.cardLvName),
-                new EtcTextBatch("Minista",  "CardNames",      6, FF9TextTool.MainBatch.cardName)
+                new EtcTextBatch("Minigame", "CardMenu",       6, new Dictionary<Int32, String>()), // It looks like Minigame.mes is just unused; the real card dialogs are in Localization.txt
+                new EtcTextBatch("Minista",  "CardNames",      7, FF9TextTool.MainBatch.cardName)
             ];
             _messageAtlases =
             [

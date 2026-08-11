@@ -38,7 +38,7 @@ public class SoundLib : MonoBehaviour
         {
             case "FMV000": return SoundMetaData.GetSoundIndex("Sounds01/BGM_/music033", SoundProfileType.MovieAudio); // as SoundProfileType.Music ?
             case "FMV059": return SoundMetaData.GetSoundIndex("Sounds02/Movie_/FMV059A", SoundProfileType.MovieAudio);
-            case "FMV060": return SoundMetaData.GetSoundIndex("Sounds02/Movie_/" + (Localization.CurrentSymbol == "JP" ? "FMV059B" : "FMV059C"), SoundProfileType.MovieAudio);
+            case "FMV060": return SoundMetaData.GetSoundIndex(Localization.GetWithDefault("MovieAudioPathFMV060"), SoundProfileType.MovieAudio);
             case "mbg102": return SoundMetaData.GetSoundIndex("Sounds02/song_/song0504_0", SoundProfileType.MovieAudio);
             case "mbg103": return SoundMetaData.GetSoundIndex("Sounds02/song_/song0505_0", SoundProfileType.MovieAudio);
             case "mbg105": return SoundMetaData.GetSoundIndex("Sounds02/song_/song0503_0", SoundProfileType.MovieAudio);

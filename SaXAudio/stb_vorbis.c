@@ -5149,7 +5149,7 @@ static int8 channel_position[7][6] =
       float f;
       int i;
    } float_conv;
-   typedef char stb_vorbis_float_UINT32est[sizeof(float)==4 && sizeof(int) == 4];
+   typedef char stb_vorbis_float_size_test[sizeof(float)==4 && sizeof(int) == 4];
    #define FASTDEF(x) float_conv x
    // add (1<<23) to convert to int, then divide by 2^SHIFT, then add 0.5/2^SHIFT to round
    #define MAGIC(SHIFT) (1.5f * (1 << (23-SHIFT)) + 0.5f/(1 << SHIFT))
