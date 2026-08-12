@@ -646,77 +646,83 @@ which will be much more optimized (DV and Tirlititi).</Description>
 </Mod>
 
 <Mod>
-	<Name>Chocobo Hot and Cold QoL</Name>
-	<Version>2.0</Version>
-	<Author>CheddarBung</Author>
-	<Category>Gameplay</Category>
-	<PreviewFile>preview/chocoHC.png</PreviewFile>
-	<InstallationPath>Chocobo Hot and Cold</InstallationPath>
-	<ReleaseDate>2025-12-14</ReleaseDate>
-	<ReleaseDateOriginal>2025-12-14</ReleaseDateOriginal>
-	<Website>https://github.com/robmcfarlane1120-sudo/Chocobo-Hot-and-Cold-QoL</Website>
-	<DownloadUrl>https://github.com/robmcfarlane1120-sudo/Chocobo-Hot-and-Cold-QoL/releases/latest/download/Chocobo.Hot.and.Cold.zip</DownloadUrl>
-	<PreviewFileUrl>https://github.com/robmcfarlane1120-sudo/Chocobo-Hot-and-Cold-QoL/blob/main/Chocobo%20Hot%20and%20Cold/Preview/chocoHC.png?raw=true</PreviewFileUrl>
-	<Description>Chocobo Hot and Cold QoL
+    <Name>Chocobo Hot and Cold QoL</Name>
+    <Version>2.5</Version>
+    <Author>CheddarBung</Author>
+    <Category>Gameplay</Category>
+    <PreviewFile>preview/chocoHC.png</PreviewFile>
+    <InstallationPath>Chocobo Hot and Cold</InstallationPath>
+    <ReleaseDate>2026-08-11</ReleaseDate>
+    <ReleaseDateOriginal>2025-12-14</ReleaseDateOriginal>
+    <Website>https://github.com/robmcfarlane1120-sudo/Chocobo-Hot-and-Cold-QoL</Website>
+    <DownloadUrl>https://github.com/robmcfarlane1120-sudo/Chocobo-Hot-and-Cold-QoL/releases/download/v1.0.1/Chocobo_Hot_and_Cold_QOL_v1.0.1.zip</DownloadUrl>
+    <PreviewFileUrl>https://github.com/robmcfarlane1120-sudo/Chocobo-Hot-and-Cold-QoL/blob/main/Chocobo%20Hot%20and%20Cold/Preview/chocoHC.png?raw=true</PreviewFileUrl>
 
-Quality-of-life tweaks for Final Fantasy IX’s Chocobo Hot &amp; Cold that respect vanilla progression.
-Multiple modes adjust RNG to suit different playstyles, from the untouched classic experience to streamlined options for faster chocograph progression.
-Compatible with Alternate Fantasy and Ferny Fantasy.
-Load above them in the mod order.
+    <Description>Choose between multiple modes that adjust Chocograph and Chocograph Piece rates, from the original experience to a guaranteed chance. This mod activates after Mene identifies the Stone with Patterns.
+
+Designed to work alongside other mods regardless of load order. Hot & Cold changes are applied only during an active round, then automatically removed when the round ends, allowing other mods to retain their changes.
+
+The Lost Chapters:
+The Lost Chapters contains additional story content inside the Hot and Cold Minigame. To prevent conflicts, this mod remains inactive until the Chocobo Forest boss has been defeated. After that encounter, your selected Hot &amp; Cold mode activates automatically.
+
 
 Modes
 
 Chocobo Naturalist (Recommended)
 
-Balanced for real-time play without Turbo.
-Averages ~2½ chocographs within the first six digs, with rewards scaling for higher dig counts.
-Lets you play a handful of focused sessions, have a good time, and be done — without Turbo and without feeling like you’re cheating.
+60% increased Chocograph and Chocograph Piece chance.
+Designed for real-time play without Turbo.
+
 
 Chocographer
 
-100% chance to find chocographs and pieces when available.
-For players who want quick access to Ozma and rewards without RNG.
+100% chance to find a Chocograph or Chocograph Piece when one is available.
+Designed for players who want fast progression without relying on RNG.
+
 
 Lucky Beak
 
-Speeds up the vanilla turbo experience without turning Hot &amp; Cold into a cheat.
-Averages ~2½ chocographs over an eight-dig round, allows multiple finds per session, and keeps RNG intact.
-Designed for Turbo play with fewer sessions and steady progress.
+30% increased Chocograph and Chocograph Piece chance.
+Designed for Turbo play while retaining the original RNG.
 
-Vanilla
 
-Completely untouched Hot &amp; Cold behavior.
-Useful as a dedicated override for mods that edit Barrel_38, Barrel_41, or Barrel_46.
-	</Description>
-	<SubMod>
-		<Name>Chocographer</Name>
-		<InstallationPath>Chocographer</InstallationPath>
-		<Description>100% chocograph and Chocograph piece chance if available. Ideal for players who simply want to reach Ozma and get loot without fighting RNG.</Description>
-		<PreviewFile>Preview/choco.png</PreviewFile>
-		<Group>ChocoboHotandCold</Group>
-		<Default/>
-	</SubMod>
-	<SubMod>
-		<Name>Lucky Beak</Name>
-		<InstallationPath>LuckyBeak</InstallationPath>
-		<Description>Designed for players who still enjoy turbo mode but want fewer dry runs. Slightly improved Chocograph and piece chance. Can find more than 1 per round.</Description>
-		<PreviewFile>Preview/choco1.png</PreviewFile>
-		<Group>ChocoboHotandCold</Group>
-	</SubMod>
-	<SubMod>
-		<Name>Chocobo Naturalist</Name>
-		<InstallationPath>ChocoboNaturalist</InstallationPath>
-		<Description>Designed for players who want the natural feel of the game without the time sink it demands. Turn turbo off, beak level matters, race the clock to dig up your items. Greatly improved chocograph and piece chance. Can find more than 1 per round. (Recommended)</Description>
-		<PreviewFile>Preview/choco2.png</PreviewFile>
-		<Group>ChocoboHotandCold</Group>
-	</SubMod>
-	<SubMod>
-		<Name>Vanilla</Name>
-		<InstallationPath>Vanilla</InstallationPath>
-		<Description>The classic Hot and Cold experience with completely unmodified vanilla behavior.</Description>
-		<PreviewFile>Preview/choco3.png</PreviewFile>
-		<Group>ChocoboHotandCold</Group>
-	</SubMod>
+Classic
+
+The original Chocobo Hot &amp; Cold experience with no gameplay changes.
+    </Description>
+
+    <SubMod>
+        <Name>Chocographer</Name>
+        <InstallationPath>ModeSelector/Chocographer</InstallationPath>
+        <Description>100% chance to find a Chocograph or Chocograph Piece when one is available.</Description>
+        <PreviewFile>Preview/choco.png</PreviewFile>
+        <Group>ChocoboHotandCold</Group>
+        <Default/>
+    </SubMod>
+
+    <SubMod>
+        <Name>Lucky Beak</Name>
+        <InstallationPath>ModeSelector/LuckyBeak</InstallationPath>
+        <Description>30% increased Chocograph and Chocograph Piece chance.</Description>
+        <PreviewFile>Preview/choco1.png</PreviewFile>
+        <Group>ChocoboHotandCold</Group>
+    </SubMod>
+
+    <SubMod>
+        <Name>Chocobo Naturalist</Name>
+        <InstallationPath>ModeSelector/Naturalist</InstallationPath>
+        <Description>60% increased Chocograph and Chocograph Piece chance.</Description>
+        <PreviewFile>Preview/choco2.png</PreviewFile>
+        <Group>ChocoboHotandCold</Group>
+    </SubMod>
+
+    <SubMod>
+        <Name>Classic</Name>
+        <InstallationPath>ModeSelector/Vanilla</InstallationPath>
+        <Description>Original Chocobo Hot &amp; Cold behavior with no gameplay changes.</Description>
+        <PreviewFile>Preview/choco3.png</PreviewFile>
+        <Group>ChocoboHotandCold</Group>
+    </SubMod>
 </Mod>
 
 <Mod>
@@ -4291,6 +4297,7 @@ All changes made to the mode are adjustable as options:
 	<ReleaseDate>2026-08-10</ReleaseDate>
 	<ReleaseDateOriginal>2026-08-10</ReleaseDateOriginal>
 	<PreviewFile>PNG/PNG.png</PreviewFile>
+	<PreviewFileUrl>https://github.com/robmcfarlane1120-sudo/Hedgehog-Skip-Pack/blob/main/Hedgehog%20Skip%20Pack/PNG/PNG.png?raw=true</PreviewFileUrl>
 	<Website>https://github.com/robmcfarlane1120-sudo/Hedgehog-Skip-Pack</Website>
 	<DownloadUrl>https://github.com/robmcfarlane1120-sudo/Hedgehog-Skip-Pack/releases/latest/download/Hedgehog.Skip.Pack.zip</DownloadUrl>
 	<Description>Quality-of-life skip pack for repeat playthroughs of Final Fantasy IX. Enable only the skips you want.
@@ -4808,5 +4815,57 @@ Features;
 - Seed input to share the experience</Description>
 	<PreviewFile>vvsrandomizer.jpg</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/30/30-1762368557-608107247.png</PreviewFileUrl>
+</Mod>
+	<Name>FFIX: The Lost Chapters</Name>
+<Version>1.0.0</Version>
+<Author>CheddarBung</Author>
+<Category>Gameplay</Category>
+<PreviewFile>Png/Banner 2.png</PreviewFile>
+<InstallationPath>The Lost Chapters</InstallationPath>
+<DownloadUrl>https://github.com/robmcfarlane1120-sudo/FFIX-The-Lost-Chapters/releases/latest/download/FFIX.The.Lost.Chapters.zip</DownloadUrl>
+<PreviewFileUrl>https://github.com/robmcfarlane1120-sudo/FFIX-The-Lost-Chapters/blob/main/The%20Lost%20Chapters/Png/Banner%202.png?raw=true</PreviewFileUrl>
+<ReleaseDate>2026-08-12</ReleaseDate>
+<ReleaseDateOriginal>2026-08-12</ReleaseDateOriginal>
+<IncompatibleWith>Ferny Fantasy IX,No Cutscene,Trance Seek</IncompatibleWith>
+<Website>https://www.nexusmods.com/finalfantasy9/mods/127</Website>
+<DownloadUrl>https://www.nexusmods.com/finalfantasy9/mods/127</DownloadUrl>
+
+<Description>
+Now Compatible with Alternate Fantasy
+
+Final Fantasy IX: The Lost Chapters is a Vanilla+ expansion for Final Fantasy IX that integrates new boss encounters, story events, quests, and optional content into the original adventure.
+
+Rather than redesigning the game, The Lost Chapters expands the world of Gaia with new challenges, and meaningful rewards while remaining faithful to the characters, progression, and spirit of the original Final Fantasy IX experience.
+
+════════════════════════════
+NEW CONTENT
+════════════════════════════
+
+• Five story-integrated boss encounters
+• questline
+• Hidden Omega Weapon superboss
+• Zelda-inspired world-spanning Trade Quest
+• New key items and progression
+• Live Updating Progression Journal for new content
+
+════════════════════════════
+IMPORTANT
+════════════════════════════
+
+• Must be played using the US language version.
+• Balanced around Vanilla Final Fantasy IX and Alternate Fantasy
+• Not compatible with No Cutscenes / Skip Cutscenes mods. Several encounters use existing story events as trigger points.
+• Not currently compatible with Trance Seek, or Ferny Fantasy.
+
+════════════════════════════
+FEEDBACK
+════════════════════════════
+
+Feedback, bug reports, balance suggestions, and feature requests are always welcome on Discord.
+
+Thank you for playing!
+https://discord.gg/mNRq58BRej
+</Description>
+
 </Mod>
 </ModCatalog>
