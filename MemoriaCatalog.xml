@@ -4816,7 +4816,9 @@ Features;
 	<PreviewFile>vvsrandomizer.jpg</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/30/30-1762368557-608107247.png</PreviewFileUrl>
 </Mod>
-	<Name>FFIX: The Lost Chapters</Name>
+
+<Mod>
+<Name>FFIX: The Lost Chapters</Name>
 <Version>1.0.0</Version>
 <Author>CheddarBung</Author>
 <Category>Gameplay</Category>
@@ -4866,6 +4868,6 @@ Feedback, bug reports, balance suggestions, and feature requests are always welc
 Thank you for playing!
 https://discord.gg/mNRq58BRej
 </Description>
-
 </Mod>
+
 </ModCatalog>
