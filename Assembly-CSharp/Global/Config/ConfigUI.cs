@@ -70,7 +70,8 @@ public class ConfigUI : UIScene
         MovieVolume,
         VoiceVolume,
         ATBMode,
-        AutoText
+        AutoText,
+        ControllerBind
     }
 
     public enum ATBMode
@@ -219,6 +220,11 @@ public class ConfigUI : UIScene
     private Int32 vibe_tick;
 
     private Boolean helpEnable;
+
+    private Boolean isBindingMode = false;
+    private Int32 bindingStage = 0;
+    private Single bindingTimer = 0f;
+    private Dialog bindingDialog;
 
     [NonSerialized]
     private Int32 fieldMessageConfigIndex = (Int32)Configurator.FieldMessage;
@@ -733,6 +739,12 @@ public class ConfigUI : UIScene
                         ButtonGroupState.HoldActiveStateOnGroup(ConfigGroupButton);
                     });
                 }
+                if (config?.Configurator == Configurator.ControllerBind)
+                {
+                    FF9Sfx.FF9SFX_Play(103);
+                    StartBindingSequence();
+                    return true;
+                }
                 else if (config?.Configurator == Configurator.CombatTutorial)
                 {
                     if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Battle)
@@ -813,7 +825,7 @@ public class ConfigUI : UIScene
                 if (Configuration.Cheats.MasterSkill)
                 {
                     FF9Sfx.FF9SFX_Play(103);
-                    PersistenSingleton<UIManager>.Instance.Booster.ShowWaringDialog(BoosterType.MasterSkill, AfterBoosterFinish);
+                    PersistenSingleton<UIManager>.Instance.Booster.ShowWarningDialog(BoosterType.MasterSkill, AfterBoosterFinish);
                     hitpointScreenButton.KeyCommand = Control.None;
                     WarningDialogHitPoint.SetActive(true);
                 }
@@ -836,7 +848,7 @@ public class ConfigUI : UIScene
             if (Configuration.Cheats.LvMax)
             {
                 FF9Sfx.FF9SFX_Play(103);
-                PersistenSingleton<UIManager>.Instance.Booster.ShowWaringDialog(BoosterType.LvMax, AfterBoosterFinish);
+                PersistenSingleton<UIManager>.Instance.Booster.ShowWarningDialog(BoosterType.LvMax, AfterBoosterFinish);
                 hitpointScreenButton.KeyCommand = Control.None;
                 WarningDialogHitPoint.SetActive(true);
             }
@@ -851,7 +863,7 @@ public class ConfigUI : UIScene
             if (Configuration.Cheats.GilMax)
             {
                 FF9Sfx.FF9SFX_Play(103);
-                PersistenSingleton<UIManager>.Instance.Booster.ShowWaringDialog(BoosterType.GilMax, AfterBoosterFinish);
+                PersistenSingleton<UIManager>.Instance.Booster.ShowWarningDialog(BoosterType.GilMax, AfterBoosterFinish);
                 hitpointScreenButton.KeyCommand = Control.None;
                 WarningDialogHitPoint.SetActive(true);
             }
@@ -1298,7 +1310,7 @@ public class ConfigUI : UIScene
                 if (configField.Value == previousValue)
                     playSound = false;
             }
-            else if (configField.Configurator != Configurator.Title && configField.Configurator != Configurator.QuitGame && configField.Configurator != Configurator.ControlTutorial && configField.Configurator != Configurator.CombatTutorial)
+            else if (configField.Configurator != Configurator.Title && configField.Configurator != Configurator.QuitGame && configField.Configurator != Configurator.ControlTutorial && configField.Configurator != Configurator.CombatTutorial && configField.Configurator != Configurator.ControllerBind)
             {
                 GameObject child = configField.ConfigChoice[0].GetChild(0);
                 GameObject child2 = configField.ConfigChoice[1].GetChild(0);
@@ -1421,6 +1433,11 @@ public class ConfigUI : UIScene
             vib.VIB_actuatorReset(0);
             vib.VIB_actuatorReset(1);
         }
+        if (isBindingMode)
+        {
+            UpdateBindingLogic();
+            return;
+        }
     }
 
     private GameObject CreateChoice(GameObject template, Configurator id, String choice1, String choice2, int siblingIndex)
@@ -1508,6 +1525,139 @@ public class ConfigUI : UIScene
         slider.value = 0f;
     }
 
+    private void StartBindingSequence()
+    {
+        PersistenSingleton<HonoInputManager>.Instance.IsBindingInput = true;
+        isBindingMode = true;
+        bindingStage = 1;
+        bindingTimer = Time.realtimeSinceStartup + 0.5f;
+
+        string text = Localization.Get("ConfigBindL3"); // Don't refresh the text with dual language.
+        UpdateBindingDialogText(text);
+
+        ButtonGroupState.DisableAllGroup(true);
+    }
+
+    private void UpdateBindingDialogText(string newText)
+    {
+        if (bindingDialog != null)
+            Singleton<DialogManager>.Instance.Close(bindingDialog.Id);
+
+        bindingDialog = Singleton<DialogManager>.Instance.AttachDialog(
+            newText,
+            0,
+            0,
+            Dialog.TailPosition.Center,
+            Dialog.WindowStyle.WindowStylePlain,
+            Vector2.zero,
+            Dialog.CaptionType.None
+        );
+    }
+
+    private void UpdateBindingLogic()
+    {
+        if (!isBindingMode || Time.realtimeSinceStartup < bindingTimer) return;
+
+        if (Mathf.Abs(Input.GetAxis("Horizontal")) > 0.5f || Input.GetKey(KeyCode.Escape))
+        {
+            FF9Sfx.FF9SFX_Play(102);
+
+            if (bindingStage == 1) // L3
+            {
+                Configuration.Control.SaveLeftStick(-1);
+                UpdateBindingDialogText(Localization.Get("ConfigBindL3DisabledThenR3")); // Don't refresh the text with dual language.
+                bindingStage = 2;
+                bindingTimer = Time.realtimeSinceStartup + 0.5f;
+            }
+            else if (bindingStage == 2) // R3
+            {
+                Configuration.Control.SaveRightStick(-1);
+                EndBindingSequence();
+            }
+            return;
+        }
+
+        for (int i = 0; i < 20; i++)
+        {
+            KeyCode key = (KeyCode)((int)KeyCode.JoystickButton0 + i);
+            if (Input.GetKeyDown(key))
+            {
+                FF9Sfx.FF9SFX_Play(1044);
+                int rawID = (int)key;
+
+                if (bindingStage == 1) // L3
+                {
+                    Configuration.Control.SaveLeftStick(rawID);
+                    UpdateBindingDialogText(Localization.Get("ConfigBindR3")); // Don't refresh the text with dual language.
+                    bindingStage = 2;
+                    bindingTimer = Time.realtimeSinceStartup + 0.5f;
+                }
+                else if (bindingStage == 2)
+                {
+                    Configuration.Control.SaveRightStick(rawID);
+                    EndBindingSequence();
+                }
+                return;
+            }
+        }
+    }
+
+    private void EndBindingSequence()
+    {
+        isBindingMode = false;
+        bindingStage = 0;
+        PersistenSingleton<HonoInputManager>.Instance.IsBindingInput = false;
+
+        if (bindingDialog != null)
+        {
+            Singleton<DialogManager>.Instance.Close(bindingDialog.Id);
+            bindingDialog = null;
+        }
+
+        ButtonGroupState.DisableAllGroup(false);
+        ButtonGroupState.ActiveGroup = ConfigGroupButton;
+    }
+
+    private void CreateButtonFromExisting(Transform listParent, Configurator newId, String keyName, Configurator templateId, Configurator placeAfterId)
+    {
+        GameObject template = null;
+        int targetIndex = -1;
+
+        for (int i = 0; i < listParent.childCount; i++)
+        {
+            var nav = listParent.GetChild(i).GetComponent<ScrollItemKeyNavigation>();
+            if (nav == null) continue;
+
+            if (nav.ID == (int)templateId)
+                template = listParent.GetChild(i).gameObject;
+
+            if (nav.ID == (int)placeAfterId)
+                targetIndex = i + 1;
+        }
+
+        if (template != null && targetIndex != -1)
+        {
+            GameObject go = Instantiate(template);
+            go.name = $"{newId} Panel - Button";
+            go.transform.SetParent(listParent, false);
+            go.transform.SetSiblingIndex(targetIndex);
+
+            go.GetComponent<ScrollItemKeyNavigation>().ID = (int)newId;
+
+            UILabel lbl = go.GetComponentInChildren<UILabel>();
+            if (lbl != null)
+            {
+                UILocalize loc = lbl.GetComponent<UILocalize>();
+                if (loc == null) loc = lbl.gameObject.AddComponent<UILocalize>();
+                loc.key = keyName;
+            }
+        }
+        else
+        {
+            Log.Error("[ConfigUI] Impossible de trouver le template ou l'index cible.");
+        }
+    }
+
     private void Awake()
     {
         FadingComponent = ScreenFadeGameObject.GetComponent<HonoFading>();
@@ -1527,6 +1677,12 @@ public class ConfigUI : UIScene
         }
 
         CreateATBModeSlider(sliderTemplate, Configurator.ATBMode, 9);
+
+        if (PersistenSingleton<HonoInputManager>.Instance.IsControllerConnect)
+        {
+            Transform listParent = ConfigList.GetChild(1).GetChild(0).transform;
+            CreateButtonFromExisting(listParent, Configurator.ControllerBind, "MenuBoutonL3R3", Configurator.ControlTutorial, Configurator.Vibration);
+        }
 
         foreach (Transform trans in ConfigList.GetChild(1).GetChild(0).transform)
         {
@@ -1571,6 +1727,10 @@ public class ConfigUI : UIScene
             else if (configField.Configurator == Configurator.CombatTutorial)
             {
                 combatTutorialGameObject = configTopObj;
+                UIEventListener.Get(configTopObj).onClick += onClick;
+            }
+            else if (configField.Configurator == Configurator.ControllerBind)
+            {
                 UIEventListener.Get(configTopObj).onClick += onClick;
             }
             else if (configField.Configurator == Configurator.QuitGame)
