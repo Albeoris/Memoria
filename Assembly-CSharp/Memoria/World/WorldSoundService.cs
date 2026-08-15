@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Memoria.World
+namespace Memoria
 {
     /// <summary>
     /// Manages multiple WorldSoundPlayers keyed by a string identifier (effect name, rain entry, etc.).
