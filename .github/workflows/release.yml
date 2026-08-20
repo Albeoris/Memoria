@@ -7,7 +7,7 @@ on:
 
 env:
   # VCPKG: Enable Binary Caching
-  VCPKG_BINARY_SOURCES: clear;nuget,github,readwrite
+  VCPKG_BINARY_SOURCES: "clear;nuget,github,${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')) && 'readwrite' || 'read' }}"
 
 jobs:
   release:
