@@ -9,10 +9,6 @@ on:
     - main
   workflow_dispatch:
 
-env:
-  # VCPKG: Enable Binary Caching
-  VCPKG_BINARY_SOURCES: clear;nuget,github,readwrite
-
 jobs:
   build:
     runs-on: windows-latest

@@ -101,6 +101,13 @@ namespace SaXAudio
         public static extern void Release();
 
         /// <summary>
+        /// Stop background services that must finish before the native library is unloaded,
+        /// without releasing audio resources that Windows will reclaim at process exit.
+        /// </summary>
+        [DllImport("SaXAudio")]
+        public static extern void PrepareForShutdown();
+
+        /// <summary>
         /// Resume playing all voices
         /// </summary>
         [DllImport("SaXAudio")]
