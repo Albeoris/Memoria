@@ -61,19 +61,19 @@ jobs:
       run: nuget restore Memoria.sln
 
     - name: Build Memoria.MSBuild.csproj (Release)
-      run: msbuild Memoria.MSBuild/Memoria.MSBuild.csproj /t:Build /p:Configuration=Release
+      run: msbuild Memoria.MSBuild/Memoria.MSBuild.csproj /t:Build /p:Configuration=Release /verbosity:minimal
 
     - name: Build main solution (Release)
-      run: msbuild Memoria.sln /t:Build /p:Configuration=Release
+      run: msbuild Memoria.sln /t:Build /p:Configuration=Release /verbosity:minimal
 
     - name: Publish Memoria.Patcher (Win-x64)
-      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:PublishProfile=Win-x64
+      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:PublishProfile=Win-x64 /verbosity:minimal
 
     - name: Publish Memoria.Patcher (Linux-x64)
-      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:PublishProfile=Linux-x64
+      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:PublishProfile=Linux-x64 /verbosity:minimal
 
     - name: Publish Memoria.Patcher (Osx-x64)
-      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:PublishProfile=Osx-x64
+      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:PublishProfile=Osx-x64 /verbosity:minimal
 
     - name: Upload Win-x64 artifact
       uses: actions/upload-artifact@v7

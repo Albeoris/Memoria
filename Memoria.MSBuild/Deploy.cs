@@ -601,7 +601,7 @@ namespace Memoria.MSBuild
 
                     File.Copy(sourceItem, targetItem, true);
                     if (logSuccess)
-                        _deployTask._log.LogMessage(MessageImportance.High, "{0}Deployed [{1}]: {2}{0}", Environment.NewLine, Path.GetFileName(targetItem), targetItem);
+                        _deployTask._log.LogMessage(MessageImportance.High, "Deployed [{0}]: {1}", Path.GetFileName(targetItem), targetItem);
                 }
                 catch (Exception ex)
                 {

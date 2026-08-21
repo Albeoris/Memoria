@@ -24,12 +24,18 @@ namespace Memoria.Patcher
 
         private static GameLocationInfo TryLoadLocation(RegistryView view, String registryPath, String gamePathTag)
         {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                return null;
+            
             using (RegistryKey localMachine = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view))
                 return TryLoadLocation(localMachine, registryPath, gamePathTag);
         }
 
         private static GameLocationInfo TryLoadLocation(RegistryKey localMachine, String registryPath, String gamePathTag)
         {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                return null;
+            
             using (RegistryKey registryKey = localMachine.OpenSubKey(registryPath))
             {
                 if (registryKey == null)
