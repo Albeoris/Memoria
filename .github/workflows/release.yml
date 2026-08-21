@@ -15,7 +15,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Restore dependency cache
       id: dependency-cache
@@ -33,10 +33,10 @@ jobs:
         7z x .\References\Dependencies.7z -p"$($env:ARCHIVE_PASSWORD)" -oReferences -y
 
     - name: Setup MSBuild path
-      uses: microsoft/setup-msbuild@v2
+      uses: microsoft/setup-msbuild@v3
 
     - name: Cache NuGet packages
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: |
           ~/.nuget/packages
@@ -57,19 +57,19 @@ jobs:
       run: nuget restore Memoria.sln
 
     - name: Build Memoria.MSBuild.csproj (Release)
-      run: msbuild Memoria.MSBuild/Memoria.MSBuild.csproj /t:Build /p:Configuration=Release
+      run: msbuild Memoria.MSBuild/Memoria.MSBuild.csproj /t:Build /p:Configuration=Release /verbosity:minimal
 
     - name: Build main solution (Release)
-      run: msbuild Memoria.sln /t:Build /p:Configuration=Release
+      run: msbuild Memoria.sln /t:Build /p:Configuration=Release /verbosity:minimal
 
     - name: Publish Memoria.Patcher (Win-x64)
-      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:PublishProfile=Win-x64
+      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:PublishProfile=Win-x64 /verbosity:minimal
 
     - name: Publish Memoria.Patcher (Linux-x64)
-      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:PublishProfile=Linux-x64
+      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:PublishProfile=Linux-x64 /verbosity:minimal
 
     - name: Publish Memoria.Patcher (Osx-x64)
-      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:PublishProfile=Osx-x64
+      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:PublishProfile=Osx-x64 /verbosity:minimal
 
     - name: Rename output files
       run: |
@@ -77,7 +77,7 @@ jobs:
         mv "Output/osx-x64/Memoria.Patcher" "Output/osx-x64/Memoria.Patcher-osx-x64"
 
     - name: Release Memoria.Patcher
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       with:
         files: |
           Output/win-x64/Memoria.Patcher.exe

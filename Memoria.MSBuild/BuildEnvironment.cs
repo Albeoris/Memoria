@@ -9,11 +9,6 @@ namespace Memoria.MSBuild
             get
             {
                 return false;
-#if DEBUG
-                return true;
-#else
-                return false;
-#endif
             }
         }
     }
