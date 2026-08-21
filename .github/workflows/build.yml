@@ -15,7 +15,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Restore dependency cache
       id: dependency-cache
@@ -33,10 +33,10 @@ jobs:
         7z x .\References\Dependencies.7z -p"$($env:ARCHIVE_PASSWORD)" -oReferences -y
 
     - name: Setup MSBuild path
-      uses: microsoft/setup-msbuild@v2
+      uses: microsoft/setup-msbuild@v3
 
     - name: Cache NuGet packages
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: |
           ~/.nuget/packages
@@ -102,19 +102,19 @@ jobs:
         }
 
     - name: Upload Win-x64 artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: Memoria-Patcher-Win-x64
         path: Output/win-x64/Memoria.Patcher.exe
 
     - name: Upload Linux-x64 artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: Memoria-Patcher-Linux-x64
         path: Output/linux-x64/Memoria.Patcher
 
     - name: Upload Osx-x64 artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: Memoria-Patcher-Osx-x64
         path: Output/osx-x64/Memoria.Patcher
@@ -125,7 +125,7 @@ jobs:
         mv "Output/osx-x64/Memoria.Patcher" "Output/osx-x64/Memoria.Patcher-osx-x64"
     - name: Release Memoria.Patcher (Canary)
       if: github.event_name != 'pull_request'
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       with:
         name: Memoria (Canary)
         files: |
@@ -143,6 +143,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Move canary tag to this commit
       if: github.event_name != 'pull_request'
-      uses: richardsimko/update-tag@v1
+      uses: richardsimko/update-tag@v2
       with:
         tag_name: canary
