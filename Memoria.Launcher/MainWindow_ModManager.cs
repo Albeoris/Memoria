@@ -1120,7 +1120,6 @@ namespace Memoria.Launcher
             {
                 String downloadingModName = downloadingMod.Name;
                 String path = Mod.INSTALLATION_TMP + "/" + (downloadingMod.InstallationPath ?? downloadingModName);
-                Boolean success = false;
                 String downloadFormatExtLower = "." + (downloadingMod.DownloadFormat ?? "zip").ToLower();
                 if (String.IsNullOrEmpty(downloadingMod.DownloadFormat) || SupportedArchives.Contains(downloadFormatExtLower))
                 {
@@ -1206,7 +1205,6 @@ namespace Memoria.Launcher
                                 singleFileList = filePath.ToLower();
                             if (!String.IsNullOrEmpty(singleFileList) && !Mod.ARCHIVE_BUNDLE_FILES.Contains(singleFileList))
                                 File.WriteAllText(modInstallPath + "/" + Mod.MOD_CONTENT_FILE, singleFileList + "\n");
-                            success = true;
                         }
                     }
                     catch (Exception err)
