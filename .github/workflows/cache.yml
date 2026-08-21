@@ -19,7 +19,7 @@ jobs:
         git config --global core.filemode false
         git config --global core.longpaths true
     - name: Checkout
-      uses: actions/checkout@v4.1.0
+      uses: actions/checkout@v6
     - name: Restore dependency cache
       id: dependency-cache
       uses: actions/cache/restore@v6

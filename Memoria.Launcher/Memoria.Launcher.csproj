@@ -297,7 +297,7 @@
     <MSBuild Projects="..\Memoria.Injection\Memoria.Injection.vcxproj" Properties="Platform=Win32" RunEachTargetSeparately="true" />
     <MSBuild Projects="..\Memoria.Injection\Memoria.Injection.vcxproj" Properties="Platform=x64" RunEachTargetSeparately="true" />
   </Target>
-  <Target Name="AfterBuild">
+  <Target Name="AfterBuild" Condition="'$(CI)' != 'true'">
     <Deploy SolutionDir="$(SolutionDir)" TargetPath="$(TargetPath)" TargetDir="$(TargetDir)" TargetName="$(TargetName)" SourceFileName="$(TargetFileName)" DestinationFileName="FF9_Launcher.exe" CopyMdbSymbols="false" DeployToRootDirectory="true" />
   </Target>
 </Project>

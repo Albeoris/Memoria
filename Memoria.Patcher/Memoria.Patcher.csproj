@@ -3807,7 +3807,7 @@
     </PropertyGroup>
     <Pack SolutionDir="$(SolutionDir)" TargetPath="$(PublishDir)$(TargetName)$(NativeExecutableExtension)" TargetDir="$(TargetDir)" TargetName="$(TargetName)" />
   </Target>
-  <Target Name="MemoriaPatcherDeployOutput" AfterTargets="Build">
+  <Target Name="MemoriaPatcherDeployOutput" AfterTargets="Build" Condition="'$(CI)' != 'true'">
     <Deploy SolutionDir="$(SolutionDir)" OutputDir="$(SolutionDir)Output" GamePath="$(MemoriaGamePath)" />
   </Target>
 </Project>
