@@ -64,30 +64,37 @@ public partial class BattleHUD : UIScene
         Level = 0x2,
         HP = 0x4,
         MP = 0x8,
-        Category = 0x10,
-        ElementWeak = 0x20,
+        Stats = 0x10,
+        Category = 0x20,
         ItemSteal = 0x40,
-        BlueLearn = 0x80,
-        ElementResist = 0x100,
-        ElementImmune = 0x200,
-        ElementAbsorb = 0x400,
-        AttackList = 0x800,
-        StatusAuto = 0x1000,
-        StatusImmune = 0x2000,
-        StatusResist = 0x4000,
+        ItemBonus = 0x80,
+        BlueLearn = 0x100,
+        ElementWeak = 0x200,
+        ElementResist = 0x400,
+        ElementImmune = 0x800,
+        ElementAbsorb = 0x1000,
+        AttackList = 0x2000,
+        StatusAuto = 0x4000,
+        StatusImmune = 0x8000,
+        StatusResist = 0x10000,
 
         NameLevel = Name | Level,
         HPMP = HP | MP,
         ElementalAffinities = ElementWeak | ElementResist | ElementImmune | ElementAbsorb,
         StatusAffinities = StatusAuto | StatusImmune | StatusResist,
+        MobLoot = ItemSteal | ItemBonus,
 
         Default = NameLevel | HPMP | Category | ElementWeak,
-        All = NameLevel | HPMP | ElementalAffinities | StatusAffinities | Category | ItemSteal | BlueLearn | AttackList
+        All = NameLevel | HPMP | Stats | ElementalAffinities | StatusAffinities | Category | MobLoot | BlueLearn | AttackList
     }
 
     private static readonly LibraInformation[] LibraAutoProcess =
     {
+        LibraInformation.Stats,
         LibraInformation.Category,
+        LibraInformation.ItemSteal,
+        LibraInformation.ItemBonus,
+        LibraInformation.BlueLearn,
         LibraInformation.ElementWeak,
         LibraInformation.ElementResist,
         LibraInformation.ElementImmune,
@@ -95,8 +102,6 @@ public partial class BattleHUD : UIScene
         LibraInformation.StatusAuto,
         LibraInformation.StatusImmune,
         LibraInformation.StatusResist,
-        LibraInformation.ItemSteal,
-        LibraInformation.BlueLearn,
         LibraInformation.AttackList
     };
 

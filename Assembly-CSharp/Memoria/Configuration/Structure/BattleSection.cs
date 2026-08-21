@@ -56,6 +56,7 @@ namespace Memoria
             public readonly IniValue<String> MagicStoneStockFormula;
             public readonly IniValue<String> TranceDecreaseFormula;
             public readonly IniValue<Boolean> KeepRestTimeInBattle;
+            public readonly IniValue<Boolean> AASASorter;
 
             public BattleSection() : base(nameof(BattleSection), false)
             {
@@ -90,6 +91,7 @@ namespace Memoria
                 MagicStoneStockFormula = BindString(nameof(MagicStoneStockFormula), "");
                 TranceDecreaseFormula = BindString(nameof(TranceDecreaseFormula), "");
                 KeepRestTimeInBattle = BindBoolean(nameof(KeepRestTimeInBattle), true);
+                AASASorter = BindBoolean(nameof(AASASorter), false);
             }
         }
     }

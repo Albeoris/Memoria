@@ -590,6 +590,7 @@ namespace Memoria
         public void FaceTheEnemy()
         {
             FaceAsUnit(this);
+            Data.IsBackAttack = false;
         }
 
         public void FaceAsUnit(BattleUnit unit)

@@ -49,6 +49,35 @@ public class SaveLoadUI : UIScene
             PersistenSingleton<UIManager>.Instance.IsPlayerControlEnable = false;
     }
 
+    private void Update()
+    {
+        if (this.IsRenaming)
+        {
+            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+            {
+                this.OnSubmitPageName();
+                return;
+            }
+
+            return;
+        }
+
+        if (!this.isActiveAndEnabled || base.Loading || ButtonGroupState.ActiveGroup == SaveLoadUI.FileGroupButton)
+            return;
+
+        bool prevPage = PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftBumper) || UIManager.Input.GetKey(Control.LeftBumper);
+        bool nextPage = PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.RightBumper) || UIManager.Input.GetKey(Control.RightBumper);
+
+        if (prevPage)
+        {
+            ChangePage(-1);
+        }
+        else if (nextPage)
+        {
+            ChangePage(1);
+        }
+    }
+
     public override void Show(UIScene.SceneVoidDelegate afterFinished = null)
     {
         if (FF9StateSystem.aaaaPlatform)
@@ -69,7 +98,7 @@ public class SaveLoadUI : UIScene
                 ButtonGroupState.SetPointerLimitRectToGroup(this.FileListPanel.GetComponent<UIWidget>(), this.fileScrollList.ItemHeight, SaveLoadUI.FileGroupButton);
                 ButtonGroupState.SetScrollButtonToGroup(this.FileListPanel.GetChild(0).GetComponent<ScrollButton>(), SaveLoadUI.FileGroupButton);
                 Int32 index = FF9StateSystem.Settings.LatestSlot < 0 ? 0 : FF9StateSystem.Settings.LatestSlot;
-                this.helpSlotLabel.rawText = String.Format(Localization.Get("SlotNo"), index + 1);
+                this.helpSlotLabel.rawText = String.Format(Localization.Get("SlotNo"), (SharedDataBytesStorage.CurrentSavePage * 10) + this.currentSlot + 1);
                 ButtonGroupState.SetCursorStartSelect(this.slotNameButtonList[index].gameObject, SaveLoadUI.SlotGroupButton);
                 ButtonGroupState.ActiveGroup = SaveLoadUI.SlotGroupButton;
             };
@@ -107,7 +136,7 @@ public class SaveLoadUI : UIScene
         if (!isActiveAndEnabled)
             return;
         if (this.currentSlot >= 0)
-            this.helpSlotLabel.rawText = String.Format(Localization.Get("SlotNo"), this.currentSlot + 1);
+            this.helpSlotLabel.rawText = String.Format(Localization.Get("SlotNo"), (SharedDataBytesStorage.CurrentSavePage * 10) + this.currentSlot + 1);
         if (this.dataInfos != null && this.FileListPanel.activeInHierarchy)
         {
             Int32 saveID = 0;
@@ -129,6 +158,8 @@ public class SaveLoadUI : UIScene
 
     public override Boolean OnKeyConfirm(GameObject go)
     {
+        if (this.IsRenaming) return false;
+
         if (base.OnKeyConfirm(go))
         {
             if (ButtonGroupState.ActiveGroup == SaveLoadUI.SlotGroupButton)
@@ -212,6 +243,8 @@ public class SaveLoadUI : UIScene
 
     public override Boolean OnKeyCancel(GameObject go)
     {
+        if (this.IsRenaming) return false;
+
         if (base.OnKeyCancel(go))
         {
             if (ButtonGroupState.ActiveGroup == SaveLoadUI.SlotGroupButton)
@@ -249,6 +282,8 @@ public class SaveLoadUI : UIScene
 
     public override Boolean OnItemSelect(GameObject go)
     {
+        if (this.IsRenaming) return false;
+
         if (base.OnItemSelect(go))
         {
             if (ButtonGroupState.ActiveGroup == SaveLoadUI.SlotGroupButton)
@@ -256,7 +291,7 @@ public class SaveLoadUI : UIScene
                 if (this.currentSlot != go.transform.GetSiblingIndex())
                 {
                     this.currentSlot = go.transform.GetSiblingIndex();
-                    this.helpSlotLabel.rawText = String.Format(Localization.Get("SlotNo"), this.currentSlot + 1);
+                    this.helpSlotLabel.rawText = String.Format(Localization.Get("SlotNo"), (SharedDataBytesStorage.CurrentSavePage * 10) + this.currentSlot + 1);
                 }
             }
             else if (ButtonGroupState.ActiveGroup == SaveLoadUI.FileGroupButton)
@@ -265,6 +300,14 @@ public class SaveLoadUI : UIScene
             }
         }
         return true;
+    }
+
+    public override GameObject OnKeyNavigate(KeyCode direction, GameObject currentObj, GameObject nextObj)
+    {
+        if (this.IsRenaming)
+            return currentObj;
+
+        return base.OnKeyNavigate(direction, currentObj, nextObj);
     }
 
     private void DisplayHelp(Boolean updateActive)
@@ -493,11 +536,16 @@ public class SaveLoadUI : UIScene
         Int32 slotID = 0;
         foreach (UILabel uilabel in this.slotNameLabelList)
         {
-            uilabel.rawText = String.Format(Localization.Get("SlotNo"), slotID + 1);
+            int realSlotNumber = (SharedDataBytesStorage.CurrentSavePage * 10) + slotID + 1;
+            uilabel.rawText = String.Format(Localization.Get("SlotNo"), realSlotNumber);
             uilabel.color = FF9TextTool.White;
             slotID++;
         }
-        this.helpSlotLabel.rawText = String.Format(Localization.Get("SlotNo"), this.currentSlot + 1);
+        this.helpSlotLabel.rawText = String.Format(Localization.Get("SlotNo"), (SharedDataBytesStorage.CurrentSavePage * 10) + this.currentSlot + 1);
+
+        if (this.bottomPageInput != null)
+            this.bottomPageInput.value = SavePageNamer.GetPageName(SharedDataBytesStorage.CurrentSavePage);
+
         if (updateActive)
         {
             this.currentSlot = FF9StateSystem.Settings.LatestSlot;
@@ -626,6 +674,32 @@ public class SaveLoadUI : UIScene
         base.StartCoroutine(this.OnFinishedUploadToCloud_delay(errNo, isSuccess, localData, cloudData));
     }
 
+    private void ChangePage(int direction)
+    {
+        int newPage = SharedDataBytesStorage.CurrentSavePage + direction;
+
+        if (newPage < 0) return;
+        if (newPage > 9) return;
+
+        FF9Sfx.FF9SFX_Play(1047);
+        SharedDataBytesStorage.CurrentSavePage = newPage;
+        SharedDataBytesStorage.UpdatePathForPage();
+        RefreshSaveList();
+    }
+
+    private void RefreshSaveList()
+    {
+        this.DisplaySlot(false);
+        if (this.currentSlot >= 0)
+        {
+            int realSlotNumber = (SharedDataBytesStorage.CurrentSavePage * 10) + this.currentSlot + 1;
+            this.helpSlotLabel.rawText = String.Format(Localization.Get("SlotNo"), (SharedDataBytesStorage.CurrentSavePage * 10) + this.currentSlot + 1);
+        }
+
+        if (this.bottomPageInput != null)
+            this.bottomPageInput.value = SavePageNamer.GetPageName(SharedDataBytesStorage.CurrentSavePage);
+    }
+
     private IEnumerator OnFinishedSaveFile_delay(DataSerializerErrorCode errNo, Int32 slotID, Int32 saveID, Boolean isSuccess, SharedDataPreviewSlot data)
     {
         this.progressBar.value = 1f;
@@ -675,10 +749,49 @@ public class SaveLoadUI : UIScene
             FF9UIDataTool.DisplayTextLocalize(this.SerailizeTitleLabel, "Save");
     }
 
+    public void OnSubmitPageName()
+    {
+        if (this.bottomPageInput == null) return;
+
+        string newName = this.bottomPageInput.value;
+        SavePageNamer.SetPageName(SharedDataBytesStorage.CurrentSavePage, newName);
+        FF9Sfx.FF9SFX_Play(103);
+        this.bottomPageInput.isSelected = false;
+        RefreshSaveList();
+    }
+
     private void Awake()
     {
         base.FadingComponent = this.ScreenFadeGameObject.GetComponent<HonoFading>();
         this.helpSlotLabel = this.HelpPanel.GetChild(1).GetChild(0).GetComponent<UILabel>();
+
+        GameObject newObj = NGUITools.AddChild(this.gameObject, this.helpSlotLabel.gameObject);
+
+        UILabel labelComponent = newObj.GetComponent<UILabel>();
+        labelComponent.leftAnchor.target = null;
+        labelComponent.rightAnchor.target = null;
+        labelComponent.topAnchor.target = null;
+        labelComponent.bottomAnchor.target = null;
+        labelComponent.pivot = UIWidget.Pivot.Center;
+        labelComponent.alignment = NGUIText.Alignment.Center;
+        labelComponent.width = 800;
+        labelComponent.height = 50;
+        labelComponent.transform.localPosition = new Vector3(0f, -470f, 0f);
+        labelComponent.color = Color.white;
+        labelComponent.maxLineCount = 1;
+
+        NGUITools.AddWidgetCollider(newObj);
+
+        this.bottomPageInput = newObj.AddComponent<UIInput>();
+        this.bottomPageInput.label = labelComponent;
+
+        this.bottomPageInput.activeTextColor = Color.white;
+        this.bottomPageInput.onReturnKey = UIInput.OnReturnKey.Submit;
+        this.bottomPageInput.caretColor = new Color(1f, 1f, 1f, 0.8f);
+        this.bottomPageInput.selectionColor = new Color(0f, 0f, 0f, 0.5f);
+
+        EventDelegate.Add(this.bottomPageInput.onSubmit, this.OnSubmitPageName);
+
         this.successfulAccessGameObject = this.SuccessfulAccessPanel.GetChild(0);
         this.fileScrollList = this.FileListPanel.GetChild(1).GetComponent<SnapDragScrollView>();
         this.progressBar = this.LoadingAccessPanel.GetChild(2).GetComponent<UISlider>();
@@ -748,6 +861,10 @@ public class SaveLoadUI : UIScene
     private Int32 currentFile;
     private Single timeCounter;
     private Dialog noSaveDataDialog;
+
+    private UIInput bottomPageInput;
+    private bool IsRenaming => this.bottomPageInput != null && this.bottomPageInput.isSelected;
+    private bool wasRenaming = false;
 
     private struct FileInfoHUD
     {
