@@ -2,6 +2,8 @@
 
 ### The Memoria engine is an open-source community rewrite of Final Fantasy IX's engine that aims to add features, fix bugs and expand modding possibilities. It includes built-in improvements (QoL, camera, framerate, audio, controller, UI, options, cheats, shaders...), bugfixes, a mod manager/downloader and a model viewer. [More info here](https://github.com/Albeoris/Memoria/wiki/Project-Overview)
 
+[Overview video by snouz](https://www.youtube.com/watch?v=jrbGmuoW-68)
+
 Note: This is **not** affiliated with the Memoria Project, a 2023 Proof-of-concept tribute render in Unreal Engine
 
 [![Download Latest Release](https://img.shields.io/badge/Download%20Latest%20Release-006400?logo=github)](https://github.com/Albeoris/Memoria/releases/latest)

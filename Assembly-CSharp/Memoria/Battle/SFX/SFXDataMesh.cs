@@ -1355,13 +1355,13 @@ public abstract class SFXDataMesh
                         {
                             if (!em.iParamRangeMax.TryGetValue(pmin.Key, out ipmaxValue))
                                 continue;
-                            param[pmin.Key] = UnityEngine.Random.RandomRange(pmin.Value, ipmaxValue);
+                            param[pmin.Key] = UnityEngine.Random.Range(pmin.Value, ipmaxValue);
                         }
                         foreach (KeyValuePair<Int32, Single> pmin in em.fParamRangeMin)
                         {
                             if (!em.fParamRangeMax.TryGetValue(pmin.Key, out fpmaxValue))
                                 continue;
-                            param[pmin.Key] = UnityEngine.Random.RandomRange(pmin.Value, fpmaxValue);
+                            param[pmin.Key] = UnityEngine.Random.Range(pmin.Value, fpmaxValue);
                         }
                     }
                 }

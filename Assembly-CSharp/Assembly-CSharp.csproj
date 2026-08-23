@@ -40,6 +40,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>CS0414;CS0649;CS0169;CS0108;CS0618;CS8632</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp-firstpass">
@@ -1379,6 +1380,8 @@
     <Compile Include="Memoria\World\WorldConfiguration.cs" />
     <Compile Include="Memoria\World\WorldEffect.cs" />
     <Compile Include="Memoria\World\WorldPlace.cs" />
+    <Compile Include="Memoria\World\WorldSoundPlayer.cs" />
+    <Compile Include="Memoria\World\WorldSoundService.cs" />
     <Compile Include="NCalc\Evaluant.Calculator\Domain\BinaryExpression.cs" />
     <Compile Include="NCalc\Evaluant.Calculator\Domain\EvaluationVisitor.cs" />
     <Compile Include="NCalc\Evaluant.Calculator\Domain\Function.cs" />

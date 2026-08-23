@@ -197,109 +197,109 @@ public class btl_scrp
         Int32 result = 16777215;
         switch (id)
         {
-            case 35u:
+            case 35u: // [MAX_HP]
                 result = (Int32)btl.max.hp;
                 break;
-            case 36u:
+            case 36u: // [HP]
                 result = (Int32)btl.cur.hp;
                 break;
-            case 37u:
+            case 37u: // [MAX_MP]
                 result = (Int32)btl.max.mp;
                 break;
-            case 38u:
+            case 38u: // [MP]
                 result = (Int32)btl.cur.mp;
                 break;
-            case 39u:
+            case 39u: // [MAX_ATB]
                 result = (Int32)btl.max.at;
                 break;
-            case 40u:
+            case 40u: // [ATB]
                 result = (Int32)btl.cur.at;
                 break;
-            case 41u:
+            case 41u: // [LEVEL]
                 if (btl.bi.player != 0)
                     result = btl_util.getPlayerPtr(btl).level;
                 else
                     result = btl_util.getEnemyTypePtr(btl).level;
                 break;
-            case 42u:
+            case 42u: // [STATUS_IMMUNE_B]
                 result = (Int32)(((UInt64)btl.stat.invalid >> 24) & 0xFFFFFFu);
                 break;
-            case 43u:
+            case 43u: // [STATUS_IMMUNE_A]
                 result = (Int32)((UInt64)btl.stat.invalid & 0xFFFFFFu);
                 break;
-            case 44u:
+            case 44u: // [STATUS_AUTO_B]
                 result = (Int32)(((UInt64)btl.stat.permanent >> 24) & 0xFFFFFFu);
                 break;
-            case 45u:
+            case 45u: // [STATUS_AUTO_A]
                 result = (Int32)((UInt64)btl.stat.permanent & 0xFFFFFFu);
                 break;
-            case 46u:
+            case 46u: // [STATUS_CURRENT_B]
                 result = (Int32)(((UInt64)btl.stat.cur >> 24) & 0xFFFFFFu);
                 break;
-            case 47u:
+            case 47u: // [STATUS_CURRENT_A]
                 result = (Int32)((UInt64)btl.stat.cur & 0xFFFFFFu);
                 break;
-            case 48u:
+            case 48u: // [ELEMENT_IMMUNE]
                 result = btl.def_attr.invalid;
                 break;
-            case 49u:
+            case 49u: // [ELEMENT_ABSORB]
                 result = btl.def_attr.absorb;
                 break;
-            case 50u:
+            case 50u: // [ELEMENT_HALF]
                 result = btl.def_attr.half;
                 break;
-            case 51u:
+            case 51u: // [ELEMENT_WEAK]
                 result = btl.def_attr.weak;
                 break;
-            case 52u:
+            case 52u: // [TARGETABLE]
                 result = btl.bi.target;
                 break;
-            case 53u:
+            case 53u: // [DISAPPEAR]
                 result = btl.bi.disappear;
                 break;
-            case 57u:
+            case 57u: // [MODEL]
                 result = btl.dms_geo_id;
                 break;
-            case 58u:
+            case 58u: // [MODEL_VISIBLE]
                 result = btl.mesh_current;
                 break;
-            case 64u:
+            case 64u: // [ROW]
                 result = btl.bi.row;
                 break;
-            case 65u:
+            case 65u: // [COLUMN]
                 result = btl.bi.line_no;
                 break;
-            case 66u:
-                result = (Int32)btl_util.getPlayerPtr(btl).info.serial_no;
-                break;
-            case 67u:
+            case 66u: // [MODEL_TYPE]
+                result = GetHackedSerialNumber(btl);
+               break;
+            case 67u: // [CATEGORY]
                 result = btl_util.getPlayerPtr(btl).category;
                 break;
-            case 68u:
+            case 68u: // [CLASS]
                 result = btl_util.getEnemyTypePtr(btl).category;
                 break;
-            case 69u:
+            case 69u: // [STAND_ANIMATION]
                 result = btl.bi.def_idle;
                 break;
-            case 70u:
+            case 70u: // [ENEMY_ID]
                 result = btl.bi.slot_no;
                 break;
-            case 72u:
+            case 72u: // [STRENGTH]
                 result = btl.elem.str;
                 break;
-            case 73u:
+            case 73u: // [MAGIC]
                 result = btl.elem.mgc;
                 break;
-            case 74u:
+            case 74u: // [DEFENCE]
                 result = btl.defence.PhysicalDefence;
                 break;
-            case 75u:
+            case 75u: // [EVADE]
                 result = btl.defence.PhysicalEvade;
                 break;
-            case 76u:
+            case 76u: // [MAGICAL_DEFENCE]
                 result = btl.defence.MagicalDefence;
                 break;
-            case 77u:
+            case 77u: // [MAGICAL_EVADE]
                 result = btl.defence.MagicalEvade;
                 break;
             case 100u: // access/modify an enemy's item to steal with SV_FunctionEnemy[100] and followings
@@ -856,5 +856,109 @@ public class btl_scrp
                 battle.btl_bonus.ap = (ushort)val;
                 break;
         }
+    }
+
+    public static Int32 GetHackedSerialNumber(BTL_DATA btl_data)
+    {
+        if (CheckForExpectedCharacters(btl_data.btl_id, out CharacterId expected_character))
+        {
+            if (expected_character != CharacterId.NONE && !FF9StateSystem.Common.FF9.party.IsInParty(expected_character))
+                return (Int32)btl_util.getSerialNumberFromCharacter(expected_character);
+            else
+            {
+                PLAYER player = btl_util.getPlayerPtr(btl_data);
+                return btl_util.IsCharacterSerialNumberVanilla(btl_data) ? (Int32)player.info.serial_no : (Int32)btl_util.getSerialNumberFromCharacter(player.info.slot_no);
+            }
+        }
+        return (Int32)btl_util.getPlayerPtr(btl_data).info.serial_no;
+    }
+
+    /*[ID] Battle name ID / File / Enemies / Modifications added (documentation from No Hardcoded Battle mod made by DV)
+    #################################################################
+    [014] BSC_LB_E080A / evt_battle_lb_e080a.eb.bytes / Zaghnol(Lindblum) => Change Zidane and Freya by 2nd and 1st character.
+    [114] BSC_IF_E087 / evt_battle_if_e087.eb.bytes / Mistodon => Mistodon will check if Steiner is present to trigger his Trance.
+    Otherwhise, he will check for an another character who can Trance => If it's not the case, this attack will be skipped.
+    [115] BSC_IF_E088 / evt_battle_if_e088.eb.bytes / Mistodon => Same as n°114.
+    [155] BSC_PD_E067 / evt_battle_pd_e067.eb.bytes / Amdusias (Mini-boss) => Instead of Amarant and Freya being hidden, it will be the 1st and 3rd character.
+    [160] BSC_PD_E068 / evt_battle_pd_e068.eb.bytes / Abadon (Mini-boss) => Instead of Zidane being hidden, it will be the 1st character.
+    [163] BSC_IF_E069 / evt_battle_pd_e069.eb.bytes / Shell Dragon (Mini-boss) => Instead of Dagga being hidden, it will be the 1st character.
+    [294] BSC_AP_E012 / evt_battle_ap_e012.eb.bytes / Black Waltz 2 => Will target the 4th character for the Hypnotize spell.
+    [296] BSC_CA_E013 / evt_battle_ca_e013.eb.bytes / Black Waltz 3 => Black Waltz 3 will check if Vivi is present to trigger his Trance.
+    Otherwhise, he will check for an another character who can Trance => If it's not the case, this attack will be skipped.
+    [302] BSC_EF_E006 / evt_battle_ef_e006.eb.bytes / Prison Cage ; Garnet => Prison Cage will check if Zidane is present to trigger his Trance.
+    [303] BSC_EF_E009 / evt_battle_ef_e009.eb.bytes / Plant Brain => Remove the hardcoded part about Zidane and Blank showing up in battle.
+    [337] BSC_TH_E003 / evt_battle_th_e003.eb.bytes / Steiner ; Blank => Steiner will hit a random target if PlutoBlank not present
+    [914] BSC_AT_E040B / evt_battle_at_e040b.eb.bytes / Mistodon => Same as n°114.
+    [915] BSC_AT_E040A / evt_battle_at_e040a.eb.bytes / Mistodon => Same as n°114.*/
+
+    private static Boolean CheckForExpectedCharacters(int position, out CharacterId character)
+    {
+        character = CharacterId.NONE;
+        switch (FF9StateSystem.Battle.battleMapIndex) // No need to specify the battle group ?
+        {
+            case 14: // Zaghnol (Lindblum) - Festival of the Hunt
+                if (position == 1)
+                    character = CharacterId.Freya;
+                else if (position == 2)
+                    character = CharacterId.Zidane;
+                break;
+            case 155: // Amdusias (Mini-boss) - You are not alone
+                if (position == 1)
+                    character = CharacterId.Amarant;
+                else if (position == 2)
+                    character = CharacterId.Freya;
+                else if (position == 4)
+                    character = CharacterId.Zidane;
+                break;
+            case 160: // Abadon (Mini-boss) - You are not alone
+                if (position == 1)
+                    character = CharacterId.Zidane;
+                else if (position == 2)
+                    character = CharacterId.Steiner;
+                else if (position == 4)
+                    character = CharacterId.Quina;
+                break;
+            case 163: // Shell Dragon (Mini-boss) - You are not alone
+                if (position == 1)
+                    character = CharacterId.Garnet;
+                else if (position == 2)
+                    character = CharacterId.Zidane;
+                break;
+            case 294: // Black Waltz 2
+                if (position == 8)
+                    character = CharacterId.Garnet;
+                break;
+            case 296: // Black Waltz 3
+                if (position == 1)
+                    character = CharacterId.Vivi;
+                break;
+            case 302: // Prison Cage ; Garnet
+                if (position == 1)
+                    character = CharacterId.Zidane;
+                else if (position == 2)
+                    character = CharacterId.Steiner;
+                break;
+            case 303: // Plant Brain
+                if (position == 1)
+                    character = CharacterId.Blank;
+                else if (position == 2)
+                    character = CharacterId.Zidane;
+                break;
+            case 337: // Steiner ; Blank
+                if (position == 4)
+                    character = CharacterId.Blank;
+                break;
+            case 114: // Mistodon
+            case 115:
+            case 914:
+            case 915:
+                if (position == 1)
+                    character = CharacterId.Steiner;
+                break;
+            default:
+                character = CharacterId.NONE;
+                return false;
+        }
+        return true;
     }
 }
