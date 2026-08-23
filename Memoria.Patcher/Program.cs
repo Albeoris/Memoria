@@ -302,22 +302,8 @@ namespace Memoria.Patcher
                     {
                         if (Directory.Exists(gameLocation.ManagedPathX64))
                         {
-                            if (Directory.Exists(gameLocation.ManagedPathX86))
-                            {
-                                String x64 = outputPath.Replace("{PLATFORM}", "x64");
-                                String x86 = outputPath.Replace("{PLATFORM}", "x86");
-                                ExtractFile(input, uncompressedSize, buff, writeTimeUtc, progressHandler, x64, x86);
-                            }
-                            else
-                            {
-                                outputPath = outputPath.Replace("{PLATFORM}", "x86");
-                                ExtractFile(input, uncompressedSize, buff, writeTimeUtc, progressHandler, outputPath);
-                            }
-                        }
-                        else if (Directory.Exists(gameLocation.ManagedPathX86))
-                        {
-                            outputPath = outputPath.Replace("{PLATFORM}", "x86");
-                            ExtractFile(input, uncompressedSize, buff, writeTimeUtc, progressHandler, outputPath);
+                            String x64 = outputPath.Replace("{PLATFORM}", "x64");
+                            ExtractFile(input, uncompressedSize, buff, writeTimeUtc, progressHandler, x64);
                         }
                         else
                         {
@@ -350,7 +336,6 @@ namespace Memoria.Patcher
             {
                 List<FileStream> outputs = new List<FileStream>(outputPaths.Length);
                 Boolean isIni = outputPaths.Length > 0 && _iniFileName.Contains(Path.GetFileName(outputPaths[0]));
-                Boolean success = false;
                 try
                 {
                     foreach (String outputPath in outputPaths)
@@ -366,8 +351,6 @@ namespace Memoria.Patcher
 
                         progressHandler.IncrementProcessedSize(readed);
                     }
-
-                    success = true;
                 }
                 finally
                 {
@@ -375,7 +358,7 @@ namespace Memoria.Patcher
                         output.Dispose();
                 }
 
-                if (isIni && success && File.Exists(outputPaths[0]) && File.Exists(outputPaths[0] + ".bak"))
+                if (isIni && File.Exists(outputPaths[0]) && File.Exists(outputPaths[0] + ".bak"))
                 {
                     File.WriteAllLines(outputPaths[0], MergeIniFiles(File.ReadAllLines(outputPaths[0]), File.ReadAllLines(outputPaths[0] + ".bak")));
                     File.Delete(outputPaths[0] + ".bak");
@@ -454,7 +437,7 @@ namespace Memoria.Patcher
                     mergedIni[i] = String.Join(" = ", split);
                 }
             }
-            String currentSection = "";
+            String currentSection;
             Int32 sectionFirstLine = 0;
             Int32 sectionLastLine = 0;
             foreach (String line in newIni)

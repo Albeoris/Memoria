@@ -19,11 +19,6 @@
         <FrameworkPathOverride>..\..\..\x64\FF9_Data\Managed\</FrameworkPathOverride>
       </PropertyGroup>
     </When>
-    <When Condition="Exists('..\..\..\x86\FF9_Data\Managed')">
-      <PropertyGroup>
-        <FrameworkPathOverride>..\..\..\x86\FF9_Data\Managed\</FrameworkPathOverride>
-      </PropertyGroup>
-    </When>
   </Choose>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

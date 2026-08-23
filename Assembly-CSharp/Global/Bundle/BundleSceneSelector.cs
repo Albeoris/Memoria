@@ -9,7 +9,10 @@ public class BundleSceneSelector : MonoBehaviour
     {
         // Allow running the game directly from the game's executable instead of Steam -> Launcher -> FF9.exe
         String envDir = Environment.CurrentDirectory;
-        if (envDir.EndsWith("\\x86") || envDir.EndsWith("\\x64"))
+        if (envDir.EndsWith("\\x86"))
+            throw new NotSupportedException("The Memoria mod engine no longer supports x86 platforms. Use the x64 version of the game.");
+        
+        if (envDir.EndsWith("\\x64"))
             Environment.CurrentDirectory = envDir.Substring(0, envDir.Length - 4);
 
         WindowManager.AlignWindow();
