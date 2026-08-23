@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <UsingTask AssemblyFile="$(SolutionDir)\References\Memoria.MSBuild.dll" TaskName="Memoria.MSBuild.Pack" Runtime="CLR4" />
-  <UsingTask AssemblyFile="$(SolutionDir)\References\Memoria.MSBuild.dll" TaskName="Memoria.MSBuild.Deploy" Runtime="CLR4" />
+  <UsingTask AssemblyFile="$(SolutionDir)\References\Memoria.MSBuild.dll" TaskName="Memoria.MSBuild.Pack" Runtime="CLR4" TaskFactory="TaskHostFactory" />
+  <UsingTask AssemblyFile="$(SolutionDir)\References\Memoria.MSBuild.dll" TaskName="Memoria.MSBuild.Deploy" Runtime="CLR4" TaskFactory="TaskHostFactory" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -3794,18 +3794,14 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <Target Name="MemoriaPatcherBeforeBuild" BeforeTargets="Build" Condition="'$(DesignTimeBuild)' != 'true'">
-    <MSBuild Projects="..\Assembly-CSharp\Assembly-CSharp.csproj" Properties="Configuration=$(Configuration);Platform=AnyCPU" RunEachTargetSeparately="true" />
-  </Target>
-  <Target Name="MemoriaPatcherBeforePublish" BeforeTargets="Publish" Condition="'$(PublishSingleFile)' == 'true'">
-    <MSBuild Projects="..\Assembly-CSharp\Assembly-CSharp.csproj" Properties="Configuration=$(Configuration);Platform=AnyCPU" RunEachTargetSeparately="true" />
-  </Target>
-  <Target Name="MemoriaPatcherAfterPublish" AfterTargets="Publish" Condition="'$(PublishSingleFile)' == 'true'">
-    <PropertyGroup>
-      <NativeExecutableExtension Condition="'$(RuntimeIdentifier)' != '' and $(RuntimeIdentifier.StartsWith('win'))">.exe</NativeExecutableExtension>
-      <NativeExecutableExtension Condition="'$(RuntimeIdentifier)' == '' or !$(RuntimeIdentifier.StartsWith('win'))"></NativeExecutableExtension>
-    </PropertyGroup>
-    <Pack SolutionDir="$(SolutionDir)" TargetPath="$(PublishDir)$(TargetName)$(NativeExecutableExtension)" TargetDir="$(TargetDir)" TargetName="$(TargetName)" />
+  <ItemGroup>
+    <ProjectReference Include="..\Memoria.Launcher\Memoria.Launcher.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+    </ProjectReference>
+  </ItemGroup>
+  <Target Name="MemoriaPatcherAfterBuild" AfterTargets="AfterBuild">
+    <Pack SolutionDir="$(SolutionDir)" TargetPath="$(TargetDir)$(AssemblyName)$(_NativeExecutableExtension)" TargetDir="$(TargetDir)" TargetName="$(TargetName)" />
   </Target>
   <Target Name="MemoriaPatcherDeployOutput" AfterTargets="Build">
     <Deploy SolutionDir="$(SolutionDir)" OutputDir="$(SolutionDir)Output" GamePath="$(MemoriaGamePath)" />

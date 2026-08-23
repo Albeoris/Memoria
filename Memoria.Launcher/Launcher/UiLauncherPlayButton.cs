@@ -43,7 +43,7 @@ namespace Memoria.Launcher
 
             GetScreenResolution(out int width, out int height, monitor);
 
-            String gameArch = (GameSettings.IsX64 ? "x64" : "x86");
+            String gameArch = "x64";
             String workingDirectory = Path.GetFullPath(".\\" + gameArch);
             String executablePath = PrepareExecutableAndData(workingDirectory);
             String arguments = $"-runbylauncher -single-instance -monitor {monitor.ToString(CultureInfo.InvariantCulture)} -screen-width {width.ToString(CultureInfo.InvariantCulture)} -screen-height {height.ToString(CultureInfo.InvariantCulture)} -screen-fullscreen {(GameSettingsDisplay.WindowMode == 1 ? "1" : "0")} {(GameSettingsDisplay.WindowMode >= 2 ? "-popupwindow" : "")}";

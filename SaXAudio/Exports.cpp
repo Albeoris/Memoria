@@ -51,6 +51,11 @@ namespace SaXAudio
         SaXAudio::Instance.Release();
     }
 
+    EXPORT void PrepareForShutdown()
+    {
+        SaXAudio::Instance.PrepareForShutdown();
+    }
+
     EXPORT void StartEngine()
     {
         SaXAudio::Instance.StartEngine();

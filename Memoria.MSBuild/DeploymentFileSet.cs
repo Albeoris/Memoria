@@ -48,13 +48,9 @@ namespace Memoria.MSBuild
             new DeploymentFileDefinition(DeploymentItemKind.File, @"Newtonsoft.Json.dll", @"{PLATFORM}\FF9_Data\Managed\Newtonsoft.Json.dll"),
             new DeploymentFileDefinition(DeploymentItemKind.File, @"System.Runtime.Serialization.dll", @"{PLATFORM}\FF9_Data\Managed\System.Runtime.Serialization.dll"),
             new DeploymentFileDefinition(DeploymentItemKind.File, @"JoyShockLibrary\x64\JoyShockLibrary.dll", @"x64\FF9_Data\Plugins\JoyShockLibrary.dll"),
-            new DeploymentFileDefinition(DeploymentItemKind.File, @"JoyShockLibrary\x86\JoyShockLibrary.dll", @"x86\FF9_Data\Plugins\JoyShockLibrary.dll"),
             new DeploymentFileDefinition(DeploymentItemKind.File, @"Global\Sound\SoLoud\x64\soloud.dll", @"x64\FF9_Data\Plugins\soloud.dll"),
-            new DeploymentFileDefinition(DeploymentItemKind.File, @"Global\Sound\SoLoud\x86\soloud.dll", @"x86\FF9_Data\Plugins\soloud.dll"),
             new DeploymentFileDefinition(DeploymentItemKind.File, @"Global\Sound\SaXAudio\x64\SaXAudio.dll", @"x64\FF9_Data\Plugins\SaXAudio.dll"),
-            new DeploymentFileDefinition(DeploymentItemKind.File, @"Global\Sound\SaXAudio\x86\SaXAudio.dll", @"x86\FF9_Data\Plugins\SaXAudio.dll"),
             new DeploymentFileDefinition(DeploymentItemKind.File, @"Global\Sound\SaXAudio\x64\XAudio2_9.dll", @"x64\XAudio2_9.dll"),
-            new DeploymentFileDefinition(DeploymentItemKind.File, @"Global\Sound\SaXAudio\x86\XAudio2_9.dll", @"x86\XAudio2_9.dll"),
         };
     }
 }

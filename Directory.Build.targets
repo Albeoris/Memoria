@@ -1,7 +1,4 @@
 <Project>
-  <Import
-    Project="$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg.targets"
-    Condition="Exists('$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg.targets')" />
   <!--
     Copies missing game-managed DLLs from the Steam x64 installation into References\
     before assembly references are resolved. Only files that do not already exist in
