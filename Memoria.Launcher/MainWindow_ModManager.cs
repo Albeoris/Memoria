@@ -1055,7 +1055,7 @@ namespace Memoria.Launcher
                 String extractPath = Mod.INSTALLATION_TMP + "/" + Path.GetFileNameWithoutExtension(archivePath);
                 if (!Directory.Exists(extractPath)) Directory.CreateDirectory(extractPath);
 
-                Extractor.ExtractAllFileFromArchive(archivePath, extractPath, ExtractionCancellationToken.Token, progressCallbak);
+                ExtractorSharpCompress.ExtractAllFileFromArchive(archivePath, extractPath, ExtractionCancellationToken.Token, progressCallbak);
                 if (ExtractionCancellationToken.IsCancellationRequested)
                 {
                     ExtractionCancellationToken.Dispose();
