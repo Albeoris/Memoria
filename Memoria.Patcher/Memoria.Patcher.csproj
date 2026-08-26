@@ -3800,8 +3800,11 @@
       <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
     </ProjectReference>
   </ItemGroup>
-  <Target Name="MemoriaPatcherAfterBuild" AfterTargets="AfterBuild">
+  <Target Name="MemoriaPatcherAfterBuild" AfterTargets="AfterBuild" Condition="'$(PublishSingleFile)' != 'true'">
     <Pack SolutionDir="$(SolutionDir)" TargetPath="$(TargetDir)$(AssemblyName)$(_NativeExecutableExtension)" TargetDir="$(TargetDir)" TargetName="$(TargetName)" />
+  </Target>
+  <Target Name="MemoriaPatcherAfterPublish" AfterTargets="Publish" Condition="'$(PublishSingleFile)' == 'true'">
+    <Pack SolutionDir="$(SolutionDir)" TargetPath="$(PublishDir)$(AssemblyName)$(_NativeExecutableExtension)" TargetDir="$(TargetDir)" TargetName="$(TargetName)" />
   </Target>
   <Target Name="MemoriaPatcherDeployOutput" AfterTargets="Build">
     <Deploy SolutionDir="$(SolutionDir)" OutputDir="$(SolutionDir)Output" GamePath="$(MemoriaGamePath)" />
