@@ -71,6 +71,36 @@ jobs:
     - name: Publish Memoria.Patcher (Osx-x64)
       run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:PublishProfile=Osx-x64
 
+    - name: Verify Memoria.Patcher payload
+      shell: pwsh
+      run: |
+        $expectedMagicNumber = 0x004149524F4D454D # MEMORIA\0
+        $executables = @(
+          'Output/win-x64/Memoria.Patcher.exe'
+          'Output/linux-x64/Memoria.Patcher'
+          'Output/osx-x64/Memoria.Patcher'
+        )
+
+        foreach ($executable in $executables) {
+          $inputFile = [System.IO.File]::OpenRead($executable)
+          $br = [System.IO.BinaryReader]::new($inputFile)
+          try {
+            if ($inputFile.Length -lt 0x18) {
+              throw "Cannot verify '$executable': the file is shorter than 24 bytes. The Pack task was probably not invoked during the build."
+            }
+
+            $inputFile.Seek(-0x18, [System.IO.SeekOrigin]::End) | Out-Null
+            $magicNumber = $br.ReadInt64()
+            if ($magicNumber -ne $expectedMagicNumber) {
+              $actual = '0x{0:X16}' -f $magicNumber
+              throw "Invalid magic number in '$executable': $actual. The Pack task was probably not invoked during the build."
+            }
+          }
+          finally {
+            $br.Dispose()
+          }
+        }
+
     - name: Upload Win-x64 artifact
       uses: actions/upload-artifact@v4
       with:
