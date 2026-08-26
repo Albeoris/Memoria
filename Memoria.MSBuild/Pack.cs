@@ -48,6 +48,11 @@ namespace Memoria.MSBuild
             public BinaryWriter Bw;
             public Dictionary<string, ushort> PathMap;
         }
+        private class PackedFileLogEntry
+        {
+            public string TargetRelativePath;
+            public DateTime LastWriteTimeUtc;
+        }
         private List<PackFileOperationArgs> packFileOperations = new List<PackFileOperationArgs>();
 
         private const string SignatureThumbprint = "316b51aca09ee3b93d0b9a75a48ecee278491ce2";
@@ -231,7 +236,7 @@ namespace Memoria.MSBuild
             });
         }
 
-        private void PackFile(string filePath, String targetRelativePath, GZipStream output, BinaryWriter bw, Dictionary<String, UInt16> pathMap, ref Int64 uncompressedDataSize)
+        private DateTime PackFile(string filePath, String targetRelativePath, GZipStream output, BinaryWriter bw, Dictionary<String, UInt16> pathMap, ref Int64 uncompressedDataSize)
         {
             FileInfo file = new FileInfo(filePath);
             String[] targetPathParts = targetRelativePath.Split(Path.DirectorySeparatorChar);
@@ -263,9 +268,7 @@ namespace Memoria.MSBuild
                 inputFile.CopyTo(output);
 
             uncompressedDataSize += fileSize;
-            _log.LogMessage(MessageImportance.High, "{0}Packing [{1}]:{0}File size: {2}{0}Last write time: {3}{0} Total size: {4}{0}", Environment.NewLine, targetRelativePath, fileSize, file.LastWriteTimeUtc, uncompressedDataSize);
-
-            _log.LogMessage(targetRelativePath);
+            return file.LastWriteTimeUtc;
         }
 
         private void StartSigning()
@@ -309,10 +312,80 @@ namespace Memoria.MSBuild
 
         private void StartPacking(ref Int64 uncompressedDataSize)
         {
+            List<PackedFileLogEntry> packedFiles = new List<PackedFileLogEntry>(packFileOperations.Count);
             foreach (var args in packFileOperations)
             {
-                PackFile(args.File, args.TargetRelativePath, args.Output, args.Bw, args.PathMap, ref uncompressedDataSize);
+                try
+                {
+                    DateTime lastWriteTimeUtc = PackFile(args.File, args.TargetRelativePath, args.Output, args.Bw, args.PathMap, ref uncompressedDataSize);
+                    packedFiles.Add(new PackedFileLogEntry
+                    {
+                        TargetRelativePath = args.TargetRelativePath,
+                        LastWriteTimeUtc = lastWriteTimeUtc
+                    });
+                }
+                catch (Exception ex)
+                {
+                    _log.LogError("Failed to pack file [{0}] as [{1}]: {2}", args.File, args.TargetRelativePath, ex.Message);
+                    throw;
+                }
             }
+
+            LogPackedFiles(packedFiles);
+        }
+
+        private void LogPackedFiles(List<PackedFileLogEntry> packedFiles)
+        {
+            Dictionary<String, PackedFileLogEntry> filesByPath = new Dictionary<String, PackedFileLogEntry>(StringComparer.OrdinalIgnoreCase);
+            foreach (PackedFileLogEntry entry in packedFiles)
+            {
+                if (!filesByPath.TryGetValue(entry.TargetRelativePath, out PackedFileLogEntry existingEntry) || entry.LastWriteTimeUtc < existingEntry.LastWriteTimeUtc)
+                    filesByPath[entry.TargetRelativePath] = entry;
+            }
+
+            HashSet<String> loggedPaths = new HashSet<String>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (PackedFileLogEntry entry in packedFiles)
+            {
+                if (!loggedPaths.Add(entry.TargetRelativePath))
+                    continue;
+
+                PackedFileLogEntry loggedEntry = filesByPath[entry.TargetRelativePath];
+                String displayedPath = loggedEntry.TargetRelativePath;
+                DateTime displayedTime = loggedEntry.LastWriteTimeUtc;
+                if (TryGetPlatformPath(entry.TargetRelativePath, out String platform, out String relativePath))
+                {
+                    String otherPlatform = platform.Equals("x64", StringComparison.OrdinalIgnoreCase) ? "x86" : "x64";
+                    String otherPath = Path.Combine(otherPlatform, relativePath);
+                    if (filesByPath.TryGetValue(otherPath, out PackedFileLogEntry otherEntry))
+                    {
+                        loggedPaths.Add(otherPath);
+                        displayedPath = "(x64|x86)" + Path.DirectorySeparatorChar + relativePath;
+                        if (otherEntry.LastWriteTimeUtc < displayedTime)
+                            displayedTime = otherEntry.LastWriteTimeUtc;
+                    }
+                }
+
+                _log.LogMessage(MessageImportance.Low, "{0}  ({1:yyyy-MM-dd HH:mm:ss})", displayedPath, displayedTime);
+            }
+        }
+
+        private static Boolean TryGetPlatformPath(String path, out String platform, out String relativePath)
+        {
+            Int32 separatorIndex = path.IndexOf(Path.DirectorySeparatorChar);
+            if (separatorIndex > 0)
+            {
+                platform = path.Substring(0, separatorIndex);
+                if (platform.Equals("x64", StringComparison.OrdinalIgnoreCase) || platform.Equals("x86", StringComparison.OrdinalIgnoreCase))
+                {
+                    relativePath = path.Substring(separatorIndex + 1);
+                    return true;
+                }
+            }
+
+            platform = null;
+            relativePath = null;
+            return false;
         }
     }
 }

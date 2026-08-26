@@ -319,7 +319,7 @@
       </EmbeddedResource>
     </ItemGroup>
   </Target>
-  <Target Name="AfterBuild">
+  <Target Name="AfterBuild" Condition="'$(CI)' != 'true'">
     <Deploy SolutionDir="$(SolutionDir)" TargetPath="$(TargetPath)" TargetDir="$(TargetDir)" TargetName="$(TargetName)" SourceFileName="$(TargetFileName)" DestinationFileName="FF9_Launcher.exe" CopyMdbSymbols="false" DeployToRootDirectory="true" />
   </Target>
 </Project>
