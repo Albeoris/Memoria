@@ -4,9 +4,8 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
+using Memoria.Launcher.Utils;
 using Application = System.Windows.Application;
 using ComboBox = System.Windows.Controls.ComboBox;
 
@@ -14,7 +13,8 @@ namespace Memoria.Launcher
 {
     public sealed class SettingsGrid_VanillaDisplay : UiGrid, INotifyPropertyChanged
     {
-        public static String[] availableMonitors = GetAvailableMonitors();
+        private static readonly String[] AvailableMonitors = BuildMonitorChoices();
+
         public SettingsGrid_VanillaDisplay()
         {
             DataContext = this;
@@ -22,7 +22,7 @@ namespace Memoria.Launcher
 
             CreateHeading("Settings.Display");
 
-            String[] comboboxchoices = GetAvailableMonitors();
+            String[] comboboxchoices = AvailableMonitors;
             CreateCombobox("ActiveMonitor", comboboxchoices, 50, "Settings.ActiveMonitor", "Settings.ActiveMonitor_Tooltip", "", true);
 
             comboboxchoices = new String[]
@@ -37,7 +37,7 @@ namespace Memoria.Launcher
             List<String> reschoices =
             [
                 "Launcher.Auto",
-                .. EnumerateDisplaySettings(true).OrderByDescending(x => Convert.ToInt32(x.Split('x')[0]))
+                .. GetAvailableResolutionStrings(true).OrderByDescending(x => Convert.ToInt32(x.Split('x')[0]))
             ];
             ComboBox resComboBox = CreateCombobox("ScreenResolution", reschoices, 50, "Settings.Resolution", "Settings.Resolution_Tooltip", "", true);
 
@@ -66,7 +66,7 @@ namespace Memoria.Launcher
                     if (value == (String)Lang.Res["Launcher.Auto"])
                         _resolution = "0x0";
                     else
-                        _resolution = addRatio(value);
+                        _resolution = AddAspectRatio(value);
                     OnPropertyChanged();
                 }
             }
@@ -138,20 +138,23 @@ namespace Memoria.Launcher
                 IniFile iniFile = IniFile.SettingsIni;
 
                 String value = iniFile.GetSetting("Settings", nameof(ScreenResolution)).Split('|')[0].Trim(' ');
-                //if res in settings.ini exists AND corresponds to something in the res list
-                if ((!String.IsNullOrEmpty(value)) && EnumerateDisplaySettings(false).ToArray().Any(value.Contains))
-                    _resolution = addRatio(value);
-                //else we choose the largest available one
+                String[] availableResolutions = GetAvailableResolutionStrings(false).ToArray();
+                if (!String.IsNullOrEmpty(value) && availableResolutions.Contains(value))
+                    _resolution = AddAspectRatio(value);
                 else if (value == "0x0")
                     _resolution = value;
+                else if (availableResolutions.Length > 0)
+                    _resolution = AddAspectRatio(availableResolutions.OrderByDescending(ParseResolutionWidth).First());
+                else if (DisplayService.Current.PrimaryResolution.IsValid)
+                    _resolution = AddAspectRatio(DisplayService.Current.PrimaryResolution.ToString());
                 else
-                    _resolution = EnumerateDisplaySettings(false).OrderByDescending(x => Convert.ToInt32(x.Split('x')[0])).ToArray()[0];
+                    _resolution = "1920x1080";
 
                 value = iniFile.GetSetting("Settings", nameof(ActiveMonitor), "0");
 
                 String[] tokens = value.Split('-');
-                _activeMonitor = availableMonitors[0];
-                foreach (String monitor in availableMonitors)
+                _activeMonitor = AvailableMonitors[0];
+                foreach (String monitor in AvailableMonitors)
                 {
                     if (monitor.StartsWith(tokens[0].Trim()))
                     {
@@ -162,7 +165,7 @@ namespace Memoria.Launcher
                 if (tokens.Length > 1)
                 {
                     String displayName = Regex.Replace(tokens[1], @"\[[^\]]*\]", "").Trim();
-                    foreach (String monitor in availableMonitors)
+                    foreach (String monitor in AvailableMonitors)
                     {
                         if (monitor.Contains(displayName))
                         {
@@ -206,30 +209,19 @@ namespace Memoria.Launcher
             }
         }
 
-        [DllImport("user32.dll")]
-        private static extern Boolean EnumDisplaySettings(String deviceName, Int32 modeNum, ref DevMode devMode);
-
-        public IEnumerable<String> EnumerateDisplaySettings(Boolean displayRatio)
+        private static IEnumerable<String> GetAvailableResolutionStrings(Boolean includeAspectRatio)
         {
-            HashSet<String> set = new HashSet<String>();
-            DevMode devMode = new DevMode();
-            Int32 modeNum = 0;
-            while (EnumDisplaySettings(null, modeNum++, ref devMode))
+            foreach (DisplayResolution resolution in DisplayService.Current.SupportedResolutions)
             {
-                if (devMode.dmPelsWidth >= 640 && devMode.dmPelsHeight >= 480)
-                {
-                    String resolution = $"{devMode.dmPelsWidth.ToString(CultureInfo.InvariantCulture)}x{devMode.dmPelsHeight.ToString(CultureInfo.InvariantCulture)}";
+                if (resolution.Width < 640 || resolution.Height < 480)
+                    continue;
 
-                    if (displayRatio)
-                        resolution = addRatio(resolution);
-
-                    if (set.Add(resolution))
-                        yield return resolution;
-                }
+                String value = resolution.ToString();
+                yield return includeAspectRatio ? AddAspectRatio(value) : value;
             }
         }
 
-        private String addRatio(String resolution)
+        private static String AddAspectRatio(String resolution)
         {
             if (!resolution.Contains("|") && resolution.Contains("x"))
             {
@@ -253,56 +245,27 @@ namespace Memoria.Launcher
             return resolution;
         }
 
-        public static String[] GetAvailableMonitors()
+        private static Int32 ParseResolutionWidth(String resolution)
         {
-            var displays = DisplayInfo.Displays;
-            String[] result = new String[displays.Count];
-            for (Int32 i = 0; i < displays.Count; i++)
+            return Int32.Parse(resolution.Split('x')[0], CultureInfo.InvariantCulture);
+        }
+
+        private static String[] BuildMonitorChoices()
+        {
+            IReadOnlyList<DisplayMonitor> monitors = DisplayService.Current.Monitors;
+            if (monitors.Count == 0)
+                return ["0 - Default display"];
+
+            String[] result = new String[monitors.Count];
+            for (Int32 index = 0; index < monitors.Count; index++)
             {
-                result[i] = $"{i} - {displays[i].name}";
-                if (displays[i].isPrimary)
-                {
-                    result[i] += (String)Lang.Res["Settings.PrimaryMonitor"];
-                }
+                DisplayMonitor monitor = monitors[index];
+                result[index] = $"{monitor.Index} - {monitor.Name}";
+                if (monitor.IsPrimary)
+                    result[index] += (String)Lang.Res["Settings.PrimaryMonitor"];
             }
 
             return result;
-        }
-
-        private struct DevMode
-        {
-            private const Int32 CCHDEVICENAME = 32;
-            private const Int32 CCHFORMNAME = 32;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)] public String dmDeviceName;
-            public Int16 dmSpecVersion;
-            public Int16 dmDriverVersion;
-            public Int16 dmSize;
-            public Int16 dmDriverExtra;
-            public Int32 dmFields;
-            public Int32 dmPositionX;
-            public Int32 dmPositionY;
-            public ScreenOrientation dmDisplayOrientation;
-            public Int32 dmDisplayFixedOutput;
-            public Int16 dmColor;
-            public Int16 dmDuplex;
-            public Int16 dmYResolution;
-            public Int16 dmTTOption;
-            public Int16 dmCollate;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)] public String dmFormName;
-            public Int16 dmLogPixels;
-            public Int32 dmBitsPerPel;
-            public Int32 dmPelsWidth;
-            public Int32 dmPelsHeight;
-            public Int32 dmDisplayFlags;
-            public Int32 dmDisplayFrequency;
-            public Int32 dmICMMethod;
-            public Int32 dmICMIntent;
-            public Int32 dmMediaType;
-            public Int32 dmDitherType;
-            public Int32 dmReserved1;
-            public Int32 dmReserved2;
-            public Int32 dmPanningWidth;
-            public Int32 dmPanningHeight;
         }
     }
 }
