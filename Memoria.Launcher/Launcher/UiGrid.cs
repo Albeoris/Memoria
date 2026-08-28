@@ -13,6 +13,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
+using Memoria.Launcher.Utils;
+
 namespace Memoria.Launcher
 {
     public class UiGrid : Grid
@@ -368,7 +370,7 @@ namespace Memoria.Launcher
             };
             uiElement.MouseEnter += (sender, e) =>
             {
-                if (uiElement.SelectedValue != null && !uiElement.SelectedValue.ToString().StartsWith("Final Fantasy IX"))
+                if (uiElement.SelectedValue is String selectedFont && !selectedFont.StartsWith("Final Fantasy IX"))
                 {
                     ToolTipService.SetToolTip(uiElement, toolTip);
                     ToolTipService.SetInitialShowDelay(uiElement, 0);
@@ -377,11 +379,11 @@ namespace Memoria.Launcher
             };
             uiElement.SelectionChanged += (sender, e) =>
             {
-                if (!uiElement.SelectedValue.ToString().StartsWith("Final Fantasy IX"))
+                if (uiElement.SelectedValue is String selectedFont && !selectedFont.StartsWith("Final Fantasy IX"))
                 {
-                    String fontFamily = uiElement.SelectedValue.ToString().Replace("Bold", "").Replace("Italic", "");
-                    Boolean bold = uiElement.SelectedValue.ToString().Contains("Bold");
-                    Boolean italic = uiElement.SelectedValue.ToString().Contains("Italic");
+                    String fontFamily = selectedFont.Replace("Bold", "").Replace("Italic", "");
+                    Boolean bold = selectedFont.Contains("Bold");
+                    Boolean italic = selectedFont.Contains("Italic");
                     tooltipTextBlock.FontFamily = new FontFamily(fontFamily);
                     tooltipTextBlock.FontStyle = italic ? FontStyles.Italic : FontStyles.Normal;
                     tooltipTextBlock.FontWeight = bold ? FontWeights.Bold : FontWeights.Normal;
@@ -508,26 +510,7 @@ namespace Memoria.Launcher
             Children.Add(border);
         }
 
-        private static Dictionary<ComboBox, List<String>> _comboBoxes = new Dictionary<ComboBox, List<String>>();
-        public static void RefereshComboBoxes()
-        {
-            foreach (ComboBox comboBox in _comboBoxes.Keys)
-            {
-                Int32 i = comboBox.SelectedIndex;
-                List<String> choices = new List<String>();
-                foreach (String value in _comboBoxes[comboBox])
-                {
-                    if (Lang.Res.Contains(value))
-                        choices.Add((String)Lang.Res[value]);
-                    else
-                        choices.Add(value);
-                }
-                comboBox.ItemsSource = choices;
-                comboBox.SelectedIndex = i;
-            }
-        }
-
-        public ComboBox CreateCombobox(String property, IEnumerable<String> options, Int32 firstColumn = 50, String text = "", String tooltip = "", String tooltipImage = "", Boolean selectByName = false)
+        public ComboBox CreateCombobox(String property, IEnumerable<ComboBoxOption> options, Int32 firstColumn = 50, String text = "", String tooltip = "", String tooltipImage = "", ComboBoxSelectionMode selectionMode = ComboBoxSelectionMode.Index)
         {
             if (text != "")
             {
@@ -539,17 +522,19 @@ namespace Memoria.Launcher
                 RowDefinitions.Add(new RowDefinition());
             }
 
-            List<String> choices = new List<String>();
-            foreach (String value in options)
+            ComboBox comboBox = new ComboBox();
+            comboBox.SelectedValuePath = nameof(ComboBoxItem.Tag);
+            foreach (ComboBoxOption option in options)
             {
-                if (Lang.Res.Contains(value))
-                    choices.Add((String)Lang.Res[value]);
+                ComboBoxItem item = new ComboBoxItem { Tag = option.Value };
+                if (option.IsLocalized)
+                    item.SetResourceReference(ContentControl.ContentProperty, option.ResourceKey);
                 else
-                    choices.Add(value);
+                    item.Content = option.DisplayText;
+
+                comboBox.Items.Add(item);
             }
 
-            ComboBox comboBox = new ComboBox();
-            comboBox.ItemsSource = choices;
             //MakeTooltip(comboBox, tooltip, tooltipImage);
             if (property == "FontChoice")
                 MakeFontPreview(comboBox);
@@ -557,8 +542,8 @@ namespace Memoria.Launcher
             comboBox.Height = ComboboxHeight;
             comboBox.HorizontalAlignment = HorizontalAlignment.Right;
             comboBox.VerticalAlignment = VerticalAlignment.Center;
-            if (selectByName)
-                comboBox.SetBinding(Selector.SelectedItemProperty, new Binding(property) { Mode = BindingMode.TwoWay });
+            if (selectionMode == ComboBoxSelectionMode.Value)
+                comboBox.SetBinding(Selector.SelectedValueProperty, new Binding(property) { Mode = BindingMode.TwoWay });
             else
                 comboBox.SetBinding(Selector.SelectedIndexProperty, new Binding(property) { Mode = BindingMode.TwoWay });
             comboBox.SetValue(RowProperty, Row);
@@ -578,8 +563,6 @@ namespace Memoria.Launcher
                 comboBox.Focus();
             };
             Children.Add(comboBox);
-
-            _comboBoxes[comboBox] = new List<string>(options);
             return comboBox;
         }
         public void CreateSlider(String indexproperty, String sliderproperty, double min, double max, double tickFrequency, String stringFormat = "", Int32 firstColumn = 0, String text = "", String tooltip = "", String tooltipImage = "")

@@ -104,11 +104,15 @@
     <Compile Include="Launcher\AppLogger.cs" />
     <Compile Include="Launcher\HttpClients.cs" />
     <Compile Include="Launcher\Utils.cs" />
-    <Compile Include="Utils\DisplayBounds.cs" />
-    <Compile Include="Utils\DisplayMonitor.cs" />
-    <Compile Include="Utils\DisplayResolution.cs" />
-    <Compile Include="Utils\DisplayService.cs" />
-    <Compile Include="Utils\NativeDisplayMethods.cs" />
+    <Compile Include="Utils\Fonts\SystemFontService.cs" />
+    <Compile Include="Utils\Localization\ComboBoxOption.cs" />
+    <Compile Include="Utils\Localization\ComboBoxOptions.cs" />
+    <Compile Include="Utils\Localization\ComboBoxSelectionMode.cs" />
+    <Compile Include="Utils\Resolution\DisplayBounds.cs" />
+    <Compile Include="Utils\Resolution\DisplayMonitor.cs" />
+    <Compile Include="Utils\Resolution\DisplayResolution.cs" />
+    <Compile Include="Utils\Resolution\DisplayService.cs" />
+    <Compile Include="Utils\Resolution\NativeDisplayMethods.cs" />
     <Compile Include="Launcher\UiLauncherPlayButton.cs" />
     <Compile Include="Launcher\UiLauncherButton.xaml.cs">
       <DependentUpon>UiLauncherButton.xaml</DependentUpon>
