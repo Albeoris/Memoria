@@ -1,5 +1,6 @@
 using System;
 using Application = System.Windows.Application;
+using Memoria.Launcher.Utils;
 
 namespace Memoria.Launcher
 {
@@ -17,7 +18,7 @@ namespace Memoria.Launcher
                 "Settings.TripleTriadType1",
                 "Settings.TripleTriadType2"
             };
-            CreateCombobox("TripleTriad", comboboxchoices, 25, "Settings.TripleTriad", "Settings.TripleTriad_Tooltip", "comparison_cardgames.png");
+            CreateCombobox("TripleTriad", ComboBoxOptions.Localized(comboboxchoices), 25, "Settings.TripleTriad", "Settings.TripleTriad_Tooltip", "comparison_cardgames.png");
 
             CreateCheckbox("MaxCardCount", "Settings.MaxCardCount", "Settings.MaxCardCount_Tooltip");
             CreateCheckbox("HideCards", "Settings.HideSteamBubbles", "Settings.HideSteamBubbles_Tooltip");
@@ -34,7 +35,7 @@ namespace Memoria.Launcher
                 "Settings.WorldmapMistPresetChoice2",
                 "Settings.WorldmapMistPresetChoice3"
             };
-            CreateCombobox("WorldmapMistPreset", comboboxchoices, 50, "Settings.WorldmapMistPreset", "Settings.WorldmapMistPreset_Tooltip", "comparison_mist.jpg");
+            CreateCombobox("WorldmapMistPreset", ComboBoxOptions.Localized(comboboxchoices), 50, "Settings.WorldmapMistPreset", "Settings.WorldmapMistPreset_Tooltip", "comparison_mist.jpg");
 
             comboboxchoices = new String[]{
                 "Settings.WorldmapDistancePresetChoice0",
@@ -42,7 +43,7 @@ namespace Memoria.Launcher
                 "Settings.WorldmapDistancePresetChoice2",
                 "Settings.WorldmapDistancePresetChoice3"
             };
-            CreateCombobox("WorldmapDistancePreset", comboboxchoices, 50, "Settings.WorldmapDistancePreset", "Settings.WorldmapDistancePreset_Tooltip", "comparison_viewdistance.jpg");
+            CreateCombobox("WorldmapDistancePreset", ComboBoxOptions.Localized(comboboxchoices), 50, "Settings.WorldmapDistancePreset", "Settings.WorldmapDistancePreset_Tooltip", "comparison_viewdistance.jpg");
 
             CreateSlider("WorldmapFOV", "WorldmapFOV", 30, 110, 1, "", 50, "Settings.WorldmapFOV", "Settings.WorldmapFOV_Tooltip", "comparison_worldmapfov.jpg");
 

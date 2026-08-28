@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
+using Memoria.Launcher.Utils;
 
 namespace Memoria.Launcher
 {
@@ -20,14 +21,14 @@ namespace Memoria.Launcher
 
             CreateCheckbox("IsDebugMode", "Settings.Debuggable", "Settings.Debuggable_Tooltip");
             CreateCheckbox("CheckUpdates", "Settings.CheckUpdates", "Settings.CheckUpdates_Tooltip");
-            CreateCombobox("UpdateChannel", ["Stable", "Canary"], 50, "Settings.UpdateChannel", "Settings.UpdateChannel_Tooltip", "", true);
+            CreateCombobox("UpdateChannel", ComboBoxOptions.Literal(["Stable", "Canary"]), 50, "Settings.UpdateChannel", "Settings.UpdateChannel_Tooltip", "", ComboBoxSelectionMode.Value);
 
             String OSversion = $"{Environment.OSVersion}";
             if (OSversion.Contains("Windows") && string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WINELOADER")))
                 CreateCheckbox("SteamOverlayFix", "SteamOverlay.OptionLabel", "Settings.SteamOverlayFix_Tooltip");
 
 
-            CreateCombobox("LauncherLanguage", Lang.LauncherLanguageNames, 50, "Settings.LauncherLanguage", "Settings.LauncherLanguage_Tooltip", "");
+            CreateCombobox("LauncherLanguage", ComboBoxOptions.Literal(Lang.LauncherLanguageNames), 50, "Settings.LauncherLanguage", "Settings.LauncherLanguage_Tooltip", "");
 
             try
             {
@@ -136,7 +137,6 @@ namespace Memoria.Launcher
                         {
                             IniFile.PreventWrite = true;
                             Lang.LoadLanguageResources(Lang.LauncherLanguageList[value]);
-                            RefereshComboBoxes();
                             Lang.Res["Settings.LauncherWindowTitle"] += " | v" + MainWindow.MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd");
                             ((MainWindow)Application.Current.MainWindow).SettingsGrid_Presets.RefreshPresets();
                         }

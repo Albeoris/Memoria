@@ -23,7 +23,7 @@ namespace Memoria.Launcher
             CreateHeading("Settings.Display");
 
             String[] comboboxchoices = AvailableMonitors;
-            CreateCombobox("ActiveMonitor", comboboxchoices, 50, "Settings.ActiveMonitor", "Settings.ActiveMonitor_Tooltip", "", true);
+            CreateCombobox("ActiveMonitor", ComboBoxOptions.Literal(comboboxchoices), 50, "Settings.ActiveMonitor", "Settings.ActiveMonitor_Tooltip", "", ComboBoxSelectionMode.Value);
 
             comboboxchoices = new String[]
             {
@@ -32,14 +32,14 @@ namespace Memoria.Launcher
                 "Settings.BorderlessFullscreen",
                 "Settings.BorderlessWindow"
             };
-            ComboBox modeComboBox = CreateCombobox("WindowMode", comboboxchoices, 50, "Settings.WindowMode", "Settings.WindowMode_Tooltip");
+            ComboBox modeComboBox = CreateCombobox("WindowMode", ComboBoxOptions.Localized(comboboxchoices), 50, "Settings.WindowMode", "Settings.WindowMode_Tooltip");
 
-            List<String> reschoices =
+            List<ComboBoxOption> reschoices =
             [
-                "Launcher.Auto",
-                .. GetAvailableResolutionStrings(true).OrderByDescending(x => Convert.ToInt32(x.Split('x')[0]))
+                ComboBoxOption.Localized("0x0", "Launcher.Auto"),
+                .. ComboBoxOptions.Literal(GetAvailableResolutionStrings(true).OrderByDescending(ParseResolutionWidth))
             ];
-            ComboBox resComboBox = CreateCombobox("ScreenResolution", reschoices, 50, "Settings.Resolution", "Settings.Resolution_Tooltip", "", true);
+            ComboBox resComboBox = CreateCombobox("ScreenResolution", reschoices, 50, "Settings.Resolution", "Settings.Resolution_Tooltip", "", ComboBoxSelectionMode.Value);
 
             modeComboBox.SelectionChanged += (s, e) =>
             {
@@ -58,12 +58,12 @@ namespace Memoria.Launcher
 
         public String ScreenResolution
         {
-            get { return _resolution == "0x0" ? (String)Lang.Res["Launcher.Auto"] : _resolution; }
+            get { return _resolution; }
             set
             {
                 if (value != null && _resolution != value)
                 {
-                    if (value == (String)Lang.Res["Launcher.Auto"])
+                    if (value == "0x0")
                         _resolution = "0x0";
                     else
                         _resolution = AddAspectRatio(value);
