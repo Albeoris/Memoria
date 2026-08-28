@@ -58,7 +58,7 @@ namespace Memoria.Assets.TexturePacker
                         ReadNex();
                 }
 
-                // x86/FF9_Data/output.log.txt says:
+                // x64/FF9_Data/output.log.txt says:
                 // "SpriteSheet must be instantiated using the ScriptableObject.CreateInstance method instead of new SpriteSheet."
                 return new SpriteSheet
                 {

@@ -87,6 +87,8 @@ namespace Global.Sound.SaXAudio
         private static extern Boolean Create();
         [DllImport("SaXAudio")]
         public static extern void Release();
+        [DllImport("SaXAudio")]
+        internal static extern void PrepareForShutdown();
 
         [DllImport("SaXAudio")]
         public static extern void StartEngine();

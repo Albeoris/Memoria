@@ -32,7 +32,7 @@
   <Target Name="ResolveGamePathForIDE" BeforeTargets="PrepareForBuild" Condition="'$(Configuration)' == 'Debug' Or '$(Configuration)' == 'Release'">
     <Message Text="Game Path: $(GamePath)" Importance="high" Condition="'$(GamePath)' != ''" />
     <Message Text="Game Launcher: $(GameLauncherPath)" Importance="high" Condition="'$(GameLauncherPath)' != ''" />
-    <Message Text="Warning: Could not find FF9 game path (Steam or GOG)" Importance="high" Condition="'$(GamePath)' == ''" />
+    <Message Text="Warning: Could not find FF9 game path (Steam or GOG)" Importance="high" Condition="'$(GamePath)' == '' and '$(CI)' != 'true'" />
   </Target>
 
 </Project>

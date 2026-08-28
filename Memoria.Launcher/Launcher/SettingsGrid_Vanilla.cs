@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
+using Memoria.Launcher.Utils;
 
 namespace Memoria.Launcher
 {
@@ -18,17 +19,16 @@ namespace Memoria.Launcher
 
             CreateHeading("Settings.Advanced");
 
-            CreateCheckbox("IsX64", "x64", "Settings.Xsixfour_Tooltip", 0, "IsX64Enabled");
             CreateCheckbox("IsDebugMode", "Settings.Debuggable", "Settings.Debuggable_Tooltip");
             CreateCheckbox("CheckUpdates", "Settings.CheckUpdates", "Settings.CheckUpdates_Tooltip");
-            CreateCombobox("UpdateChannel", ["Stable", "Canary"], 50, "Settings.UpdateChannel", "Settings.UpdateChannel_Tooltip", "", true);
+            CreateCombobox("UpdateChannel", ComboBoxOptions.Literal(["Stable", "Canary"]), 50, "Settings.UpdateChannel", "Settings.UpdateChannel_Tooltip", "", ComboBoxSelectionMode.Value);
 
             String OSversion = $"{Environment.OSVersion}";
             if (OSversion.Contains("Windows") && string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WINELOADER")))
                 CreateCheckbox("SteamOverlayFix", "SteamOverlay.OptionLabel", "Settings.SteamOverlayFix_Tooltip");
 
 
-            CreateCombobox("LauncherLanguage", Lang.LauncherLanguageNames, 50, "Settings.LauncherLanguage", "Settings.LauncherLanguage_Tooltip", "");
+            CreateCombobox("LauncherLanguage", ComboBoxOptions.Literal(Lang.LauncherLanguageNames), 50, "Settings.LauncherLanguage", "Settings.LauncherLanguage_Tooltip", "");
 
             try
             {
@@ -37,32 +37,6 @@ namespace Memoria.Launcher
             catch (Exception ex)
             {
                 UiHelper.ShowError(Application.Current.MainWindow, ex);
-            }
-        }
-
-        public Boolean IsX64
-        {
-            get { return _isX64; }
-            set
-            {
-                if (_isX64 != value)
-                {
-                    _isX64 = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public Boolean IsX64Enabled
-        {
-            get { return _isX64Enabled; }
-            set
-            {
-                if (_isX64Enabled != value)
-                {
-                    _isX64Enabled = value;
-                    OnPropertyChanged();
-                }
             }
         }
 
@@ -163,7 +137,6 @@ namespace Memoria.Launcher
                         {
                             IniFile.PreventWrite = true;
                             Lang.LoadLanguageResources(Lang.LauncherLanguageList[value]);
-                            RefereshComboBoxes();
                             Lang.Res["Settings.LauncherWindowTitle"] += " | v" + MainWindow.MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd");
                             ((MainWindow)Application.Current.MainWindow).SettingsGrid_Presets.RefreshPresets();
                         }
@@ -196,9 +169,6 @@ namespace Memoria.Launcher
                     case nameof(IsDebugMode):
                         iniFile.SetSetting("Memoria", propertyName, IsDebugMode.ToString());
                         break;
-                    case nameof(IsX64):
-                        iniFile.SetSetting("Memoria", propertyName, IsX64.ToString());
-                        break;
                     case nameof(CheckUpdates):
                     {
                         iniFile.SetSetting("Memoria", propertyName, CheckUpdates.ToString());
@@ -228,8 +198,6 @@ namespace Memoria.Launcher
             }
         }
 
-        private Boolean _isX64 = true;
-        private Boolean _isX64Enabled = true;
         private Boolean _isDebugMode;
         private Boolean _checkUpdates = true;
         private String _updateChannel = "Stable";
@@ -240,21 +208,18 @@ namespace Memoria.Launcher
             {
                 IniFile iniFile = IniFile.SettingsIni;
 
-                String value = iniFile.GetSetting("Memoria", nameof(IsX64), "true");
-                if (!Boolean.TryParse(value, out _isX64))
-                    _isX64 = true;
-                if (!Environment.Is64BitOperatingSystem || !Directory.Exists("x64"))
+                if (!Environment.Is64BitOperatingSystem)
+                    throw new NotSupportedException("The Memoria mod engine no longer supports x86 platforms. Use x64 OS.");
+                
+                if (!Directory.Exists("x64"))
                 {
-                    _isX64 = false;
-                    _isX64Enabled = false;
-                }
-                else if (!Directory.Exists("x86"))
-                {
-                    _isX64 = true;
-                    _isX64Enabled = false;
+                    if (Directory.Exists("x86"))
+                        throw new NotSupportedException("The Memoria mod engine no longer supports x86 platforms. Recover the game to run x64 version.");
+                    
+                    throw new NotSupportedException("The launcher must be ran from the game directory containing the x64 folder.");
                 }
 
-                value = iniFile.GetSetting("Memoria", nameof(IsDebugMode), "false");
+                String value = iniFile.GetSetting("Memoria", nameof(IsDebugMode), "false");
                 if (!Boolean.TryParse(value, out _isDebugMode))
                     _isDebugMode = false;
 
@@ -279,8 +244,6 @@ namespace Memoria.Launcher
                 }
 
                 IniFile.PreventWrite = true;
-                OnPropertyChanged(nameof(IsX64));
-                OnPropertyChanged(nameof(IsX64Enabled));
                 OnPropertyChanged(nameof(IsDebugMode));
                 OnPropertyChanged(nameof(CheckUpdates));
                 OnPropertyChanged(nameof(UpdateChannel));
@@ -321,13 +284,6 @@ namespace Memoria.Launcher
             {
                 return false;
             }
-        }
-
-        private void ReloadApplication()
-        {
-            string exePath = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
-            System.Diagnostics.Process.Start(exePath);
-            Application.Current.Shutdown();
         }
     }
 }

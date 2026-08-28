@@ -15,6 +15,7 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using Memoria.Launcher.Utils;
 
 namespace Memoria.Launcher
 {
@@ -35,7 +36,7 @@ namespace Memoria.Launcher
             ApplyDebugSettingsSafe();
 
             int monitor = GetActiveMonitorIndex();
-            if (monitor < 0 || DisplayInfo.Displays == null || monitor >= DisplayInfo.Displays.Count)
+            if (!DisplayService.Current.TryGetMonitor(monitor, out _))
             {
                 MessageBox.Show((Window)this.GetRootElement(), $"Selected monitor ({monitor}) does not appear available.\nDisplaying to monitor 0.", "Information", MessageBoxButton.OK, MessageBoxImage.Asterisk);
                 monitor = 0;
@@ -43,7 +44,7 @@ namespace Memoria.Launcher
 
             GetScreenResolution(out int width, out int height, monitor);
 
-            String gameArch = (GameSettings.IsX64 ? "x64" : "x86");
+            String gameArch = "x64";
             String workingDirectory = Path.GetFullPath(".\\" + gameArch);
             String executablePath = PrepareExecutableAndData(workingDirectory);
             String arguments = $"-runbylauncher -single-instance -monitor {monitor.ToString(CultureInfo.InvariantCulture)} -screen-width {width.ToString(CultureInfo.InvariantCulture)} -screen-height {height.ToString(CultureInfo.InvariantCulture)} -screen-fullscreen {(GameSettingsDisplay.WindowMode == 1 ? "1" : "0")} {(GameSettingsDisplay.WindowMode >= 2 ? "-popupwindow" : "")}";
@@ -106,49 +107,41 @@ namespace Memoria.Launcher
         // Get the screen resolution
         private void GetScreenResolution(out int width, out int height, int monitor)
         {
-            width = height = 0;
-            string res = IniFile.SettingsIni.GetSetting("Settings", "ScreenResolution", GameSettingsDisplay.ScreenResolution);
-            if (!string.IsNullOrWhiteSpace(res))
-            {
+            String configuredValue = IniFile.SettingsIni.GetSetting(
+                "Settings",
+                "ScreenResolution",
+                GameSettingsDisplay.ScreenResolution);
+            Boolean hasConfiguredResolution = DisplayResolution.TryParse(configuredValue, out DisplayResolution configuredResolution);
 
-                var resString = res.Split(' ')[0];
-                var strArray = resString.Split('x');
-                if (strArray.Length < 2
-                    || !int.TryParse(strArray[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out width)
-                    || !int.TryParse(strArray[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out height))
-                {
-                    width = height = 0;
-                }
+            DisplayResolution monitorResolution = DisplayService.Current.TryGetMonitor(monitor, out DisplayMonitor selectedMonitor)
+                ? selectedMonitor.CurrentResolution
+                : DisplayService.Current.PrimaryResolution;
+
+            // EnumDisplaySettings supplies monitorResolution in physical pixels and does not
+            // participate in DPI virtualization. This distinction is essential under Wine:
+            // a 3840x2160 monitor at 200% desktop scaling may have a 1920x1080 logical
+            // monitor rectangle, while the game must still receive 3840x2160.
+            DisplayResolution launchResolution;
+            if (GameSettingsDisplay.WindowMode == 2 || !hasConfiguredResolution)
+            {
+                launchResolution = monitorResolution;
             }
-
-            // Ensure we have monitor information
-            if (monitor < 0 || DisplayInfo.Displays == null || monitor >= DisplayInfo.Displays.Count)
+            else if (monitorResolution.IsValid)
             {
-                if (width == 0 || height == 0)
-                {
-                    // Couldn't get any display information, default to 1080p
-                    width = 1920;
-                    height = 1080;
-                }
-                return;
-            }
-
-            // Adjust the screen size to the monitor
-            var display = DisplayInfo.Displays[monitor];
-
-            int monitorWidth = display.monitorArea.right - display.monitorArea.left;
-            int monitorHeight = display.monitorArea.bottom - display.monitorArea.top;
-
-            if (GameSettingsDisplay.WindowMode == 2 || width == 0 || height == 0)
-            {
-                width = monitorWidth;
-                height = monitorHeight;
+                launchResolution = new DisplayResolution(
+                    Math.Min(configuredResolution.Width, monitorResolution.Width),
+                    Math.Min(configuredResolution.Height, monitorResolution.Height));
             }
             else
             {
-                width = Math.Min(width, monitorWidth);
-                height = Math.Min(height, monitorHeight);
+                launchResolution = configuredResolution;
             }
+
+            if (!launchResolution.IsValid)
+                launchResolution = new DisplayResolution(1920, 1080);
+
+            width = launchResolution.Width;
+            height = launchResolution.Height;
         }
 
         // Handles Unity/Debug shenanigans, returns the executable path to run.
