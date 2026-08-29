@@ -1451,8 +1451,8 @@
     <ProjectReference Include="..\Memoria.XInputDotNetPure\Memoria.XInputDotNetPure.csproj"/>
     <ProjectReference Include="..\UnityEngine.UI\UnityEngine.UI.csproj"/>
     <ProjectReference Include="..\SaXAudio\SaXAudio.vcxproj">
-        <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-        <SetPlatform>Platform=x64</SetPlatform>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Properties>Configuration=$(Configuration);Platform=x64</Properties>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -62,14 +62,31 @@ jobs:
     - name: Build main solution (Release)
       run: msbuild Memoria.sln /t:Build /p:Configuration=Release /verbosity:minimal
 
+    - name: Verify SaXAudio Release runtime
+      shell: pwsh
+      run: |
+        $saXAudio = 'Output/Global/Sound/SaXAudio/x64/SaXAudio.dll'
+        if (!(Test-Path -LiteralPath $saXAudio)) {
+          throw "SaXAudio build output was not found: $saXAudio"
+        }
+
+        $binaryText = [Text.Encoding]::ASCII.GetString([IO.File]::ReadAllBytes($saXAudio))
+        # Examples: MSVCP140D.dll, VCRUNTIME140D.dll, VCRUNTIME140_1D.dll, ucrtbased.dll.
+        $debugRuntime = [regex]::Matches($binaryText, '(?i)\b(?:msvcp\d+d|vcruntime\d+(?:_\d+)?d|ucrtbased)\.dll\b') |
+          ForEach-Object Value |
+          Sort-Object -Unique
+        if ($debugRuntime) {
+          throw "SaXAudio.dll links against the Debug C++ runtime: $($debugRuntime -join ', ')"
+        }
+
     - name: Publish Memoria.Patcher (Win-x64)
-      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:PublishProfile=Win-x64 /verbosity:minimal
+      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:Configuration=Release /p:PublishProfile=Win-x64 /verbosity:minimal
 
     - name: Publish Memoria.Patcher (Linux-x64)
-      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:PublishProfile=Linux-x64 /verbosity:minimal
+      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:Configuration=Release /p:PublishProfile=Linux-x64 /verbosity:minimal
 
     - name: Publish Memoria.Patcher (Osx-x64)
-      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:PublishProfile=Osx-x64 /verbosity:minimal
+      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:Configuration=Release /p:PublishProfile=Osx-x64 /verbosity:minimal
 
     - name: Verify Memoria.Patcher payload
       shell: pwsh
