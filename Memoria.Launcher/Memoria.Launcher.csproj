@@ -102,9 +102,24 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Launcher\SettingsGrid_Vanilla.cs" />
     <Compile Include="Launcher\AppLogger.cs" />
-    <Compile Include="Launcher\HttpClients.cs" />
     <Compile Include="Launcher\Utils.cs" />
+    <Compile Include="Utils\Archives\ArchiveExtractionException.cs" />
+    <Compile Include="Utils\Archives\EmbeddedSevenZipExecutable.cs" />
+    <Compile Include="Utils\Archives\SevenZipExitCode.cs" />
+    <Compile Include="Utils\Archives\SevenZipExtractor.cs" />
+    <Compile Include="Utils\Archives\SevenZipProcessRunner.cs" />
+    <Compile Include="Utils\Downloads\DownloadException.cs" />
+    <Compile Include="Utils\Downloads\DownloadFailureKind.cs" />
+    <Compile Include="Utils\Downloads\DownloadFileOperation.cs" />
+    <Compile Include="Utils\Downloads\DownloadOperationEventArgs.cs" />
+    <Compile Include="Utils\Downloads\DownloadOperationState.cs" />
+    <Compile Include="Utils\Downloads\DownloadProgress.cs" />
+    <Compile Include="Utils\Downloads\FileDownloader.cs" />
+    <Compile Include="Utils\Downloads\LauncherUpdateDownloader.cs" />
+    <Compile Include="Utils\Downloads\RemoteFileInfo.cs" />
+    <Compile Include="Utils\Downloads\ResilientHttpClient.cs" />
     <Compile Include="Utils\Fonts\SystemFontService.cs" />
+    <Compile Include="Utils\IO\FileSystemAccessProbe.cs" />
     <Compile Include="Utils\Localization\ComboBoxOption.cs" />
     <Compile Include="Utils\Localization\ComboBoxOptions.cs" />
     <Compile Include="Utils\Localization\ComboBoxSelectionMode.cs" />
@@ -219,6 +234,23 @@
     <EmbeddedResource Include="7za.exe">
       <TargetPath>7za.exe</TargetPath>
     </EmbeddedResource>
+    <Content Include="..\THIRD-PARTY-NOTICES.md">
+      <Link>THIRD-PARTY-NOTICES.md</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>THIRD-PARTY-NOTICES.md</TargetPath>
+    </Content>
+    <Content Include="ThirdParty\7-Zip\License.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Licenses\7-Zip\License.txt</TargetPath>
+    </Content>
+    <Content Include="ThirdParty\7-Zip\COPYING.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Licenses\7-Zip\COPYING.txt</TargetPath>
+    </Content>
+    <Content Include="ThirdParty\7-Zip\unRarLicense.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Licenses\7-Zip\unRarLicense.txt</TargetPath>
+    </Content>
     <Resource Include="Fonts\centurygothic-bold.ttf" />
     <Resource Include="Fonts\centurygothic.ttf" />
     <Resource Include="Fonts\notoemoji.ttf" />

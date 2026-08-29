@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -160,7 +159,7 @@ namespace Memoria.Launcher
             String checkUpdates = IniFile.SettingsIni.GetSetting("Memoria", "CheckUpdates", "True");
             if (!Boolean.TryParse(checkUpdates, out Boolean result) || result)
             {
-                await UiLauncherPlayButton.CheckUpdates((Window)this.GetRootElement(), new ManualResetEvent(false), GameSettings);
+                await UiLauncherPlayButton.CheckUpdates((Window)this.GetRootElement(), GameSettings);
             }
         }
 

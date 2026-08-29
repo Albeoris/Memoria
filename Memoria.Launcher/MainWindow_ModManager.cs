@@ -1,5 +1,7 @@
 ﻿using SharpCompress.Archives;
 using System;
+using Memoria.Launcher.Utils.Archives;
+using Memoria.Launcher.Utils.Downloads;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -556,8 +558,8 @@ namespace Memoria.Launcher
                 MessageBox.Show($"If you close this window while downloads are on their way, they will be cancelled.", "Warning", MessageBoxButton.OK);
                 return;
             }
-            if (downloadCatalogClient != null && downloadCatalogClient.IsBusy)
-                downloadCatalogClient.CancelAsync();
+            if (downloadCatalogClient != null && downloadCatalogClient.IsRunning)
+                downloadCatalogClient.Cancel();
         }
 
 
@@ -852,38 +854,13 @@ namespace Memoria.Launcher
             return dateTime1 >= dateTime2;
         }
 
-        private void OnClickCancel(Object sender, RoutedEventArgs e)
-        {
-            if (downloadThread != null)
-                downloadThread.Abort();
-            if (downloadClient != null)
-                downloadClient.CancelAsync();
-            if (downloadingMod != null)
-                DownloadList.Remove(downloadingMod);
-            downloadingMod = null;
-            if (DownloadList.Count > 0)
-                DownloadStart(DownloadList[0]);
-            else
-            {
-                lstDownloads.MinHeight = 0;
-                lstDownloads.Height = 0;
-                btnCancelStackpanel.Height = 0;
-            }
-            UpdateCatalogInstallationState();
-        }
         private void OnClickCancelAll(Object sender, RoutedEventArgs e)
         {
-            if (downloadThread != null)
-                downloadThread.Abort();
             if (downloadClient != null)
-                downloadClient.CancelAsync();
+                downloadClient.Cancel();
             ExtractionCancellationToken.Cancel();
             DownloadList.Clear();
-            downloadingMod = null;
             UpdateCatalogInstallationState();
-            lstDownloads.MinHeight = 0;
-            lstDownloads.Height = 0;
-            btnCancelStackpanel.Height = 0;
         }
         private void OnClickWebsite(Object sender, RoutedEventArgs e)
         {
@@ -948,28 +925,26 @@ namespace Memoria.Launcher
         {
             if (downloadingMod != null)
                 return;
+            if (ExtractionCancellationToken.IsCancellationRequested)
+                ResetExtractionCancellationToken();
+
             downloadingMod = mod;
             downloadBytesTime = DateTime.Now;
-            downloadThread = new Thread(() =>
+            String extension = mod.DownloadFormat ?? "zip";
+            if (extension.StartsWith("SingleFileWithPath"))
             {
-                Directory.CreateDirectory(Mod.INSTALLATION_TMP);
-                string ext = mod.DownloadFormat ?? "zip";
-                if (ext.StartsWith("SingleFileWithPath"))
-                {
-                    ext = "zip";
-                }
-                downloadingPath = Mod.INSTALLATION_TMP + "/" + (mod.InstallationPath ?? mod.Name) + "." + ext;
-                downloadClient = new ThrottledHttpClient();
-                downloadClient.DownloadProgressChanged += DownloadLoop;
-                downloadClient.DownloadFileCompleted += DownloadEnd;
-                downloadClient.DownloadFileAsync(new Uri(mod.DownloadUrl), downloadingPath);
-            });
-            downloadThread.Start();
+                extension = "zip";
+            }
+            downloadingPath = Mod.INSTALLATION_TMP + "/" + (mod.InstallationPath ?? mod.Name) + "." + extension;
+            downloadClient = new DownloadFileOperation();
+            downloadClient.ProgressChanged += DownloadLoop;
+            downloadClient.Completed += DownloadEnd;
+            downloadClient.Start(new Uri(mod.DownloadUrl), downloadingPath);
             lstDownloads.MinHeight = 100;
             lstDownloads.Height = 100;
             btnCancelStackpanel.Height = 100;
         }
-        private void DownloadLoop(Object sender, ThrottledDownloadProgressChangedEventArgs e)
+        private void DownloadLoop(Object sender, FileDownloadProgressEventArgs e)
         {
             Dispatcher.BeginInvoke((MethodInvoker)delegate
             {
@@ -978,8 +953,8 @@ namespace Memoria.Launcher
                     timeSpan = 0.1;
                 try
                 {
-                    downloadingMod.PercentComplete = e.ProgressPercentage;
-                    Int64 dlSpeed = (Int64)(e.BytesReceived / 1024.0 / timeSpan);
+                    downloadingMod.PercentComplete = e.Progress.Percentage;
+                    Int64 dlSpeed = (Int64)(e.Progress.BytesReceived / 1024.0 / timeSpan);
                     String measurement = (String)Lang.Res["Measurement.KByteAbbr"];
                     if (dlSpeed > 1024)
                     {
@@ -988,8 +963,8 @@ namespace Memoria.Launcher
                     }
 
                     downloadingMod.DownloadSpeed = $"{dlSpeed} {measurement}/{(String)Lang.Res["Measurement.SecondAbbr"]}";
-                    if (e.BytesReceived > 0 && e.TotalBytesToReceive > 0)
-                        downloadingMod.RemainingTime = $"{TimeSpan.FromSeconds(Math.Round((e.TotalBytesToReceive - e.BytesReceived) * timeSpan / e.BytesReceived)):g}";
+                    if (e.Progress.BytesReceived > 0 && e.Progress.TotalBytes > 0)
+                        downloadingMod.RemainingTime = $"{TimeSpan.FromSeconds(Math.Round((e.Progress.TotalBytes - e.Progress.BytesReceived) * timeSpan / e.Progress.BytesReceived)):g}";
                     else
                         downloadingMod.RemainingTime = "";
                 }
@@ -1055,14 +1030,16 @@ namespace Memoria.Launcher
                 String extractPath = Mod.INSTALLATION_TMP + "/" + Path.GetFileNameWithoutExtension(archivePath);
                 if (!Directory.Exists(extractPath)) Directory.CreateDirectory(extractPath);
 
-                Extractor.ExtractAllFileFromArchive(archivePath, extractPath, ExtractionCancellationToken.Token, progressCallbak);
-                if (ExtractionCancellationToken.IsCancellationRequested)
+                try
                 {
-                    ExtractionCancellationToken.Dispose();
-                    ExtractionCancellationToken = new CancellationTokenSource();
-                    if (Directory.Exists(extractPath)) Directory.Delete(extractPath, true);
-                    throw new TaskCanceledException();
+                    ArchiveExtractor.Extract(archivePath, extractPath, ExtractionCancellationToken.Token, progressCallbak);
                 }
+                catch (OperationCanceledException) when (ExtractionCancellationToken.IsCancellationRequested)
+                {
+                    HandleExtractionCancellation(extractPath);
+                }
+                if (ExtractionCancellationToken.IsCancellationRequested)
+                    HandleExtractionCancellation(extractPath);
 
                 // Move it to the right installation path
                 String modPath = root != null ? Path.Combine(extractPath, root) : extractPath;
@@ -1106,13 +1083,50 @@ namespace Memoria.Launcher
             });
         }
 
-        private void DownloadEnd(Object sender, AsyncCompletedEventArgs e)
+        private void HandleExtractionCancellation(String extractionPath)
         {
-            if (e.Cancelled || e.Error != null)
+            ResetExtractionCancellationToken();
+            if (Directory.Exists(extractionPath))
+                Directory.Delete(extractionPath, recursive: true);
+            throw new TaskCanceledException();
+        }
+
+        private void ResetExtractionCancellationToken()
+        {
+            CancellationTokenSource previous = ExtractionCancellationToken;
+            ExtractionCancellationToken = new CancellationTokenSource();
+            previous.Dispose();
+        }
+
+        private void DownloadEnd(Object sender, DownloadCompletedEventArgs e)
+        {
+            if (e.IsCancelled || e.Error != null)
             {
-                if (File.Exists(downloadingPath))
-                    File.Delete(downloadingPath);
-                downloadingPath = "";
+                Dispatcher.BeginInvoke((MethodInvoker)delegate
+                {
+                    if (e.Error != null)
+                    {
+                        MessageBox.Show(
+                            e.Error.Message,
+                            "Download failed",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                    }
+
+                    if (downloadingMod != null)
+                        DownloadList.Remove(downloadingMod);
+                    downloadingMod = null;
+                    downloadingPath = String.Empty;
+                    if (DownloadList.Count > 0)
+                        DownloadStart(DownloadList[0]);
+                    else
+                    {
+                        lstDownloads.MinHeight = 0;
+                        lstDownloads.Height = 0;
+                        btnCancelStackpanel.Height = 0;
+                    }
+                    UpdateCatalogInstallationState();
+                });
                 return;
             }
 
@@ -1237,9 +1251,9 @@ namespace Memoria.Launcher
                 }
             });
         }
-        private void DownloadCatalogEnd(Object sender, AsyncCompletedEventArgs e)
+        private void DownloadCatalogEnd(Object sender, DownloadCompletedEventArgs e)
         {
-            if (e.Cancelled || e.Error != null)
+            if (e.IsCancelled || e.Error != null)
             {
                 if (File.Exists(CATALOG_PATH + ".tmp"))
                     File.Delete(CATALOG_PATH + ".tmp");
@@ -1268,13 +1282,9 @@ namespace Memoria.Launcher
             }
             ModListCatalog.Clear();
             ReadCatalog();
-            downloadCatalogThread = new Thread(() =>
-            {
-                downloadCatalogClient = new ThrottledHttpClient();
-                downloadCatalogClient.DownloadFileCompleted += DownloadCatalogEnd;
-                downloadCatalogClient.DownloadFileAsync(new Uri(CATALOG_URL), CATALOG_PATH + ".tmp");
-            });
-            downloadCatalogThread.Start();
+            downloadCatalogClient = new DownloadFileOperation();
+            downloadCatalogClient.Completed += DownloadCatalogEnd;
+            downloadCatalogClient.Start(new Uri(CATALOG_URL), CATALOG_PATH + ".tmp");
         }
 
         private void ReadCatalog()
@@ -2017,10 +2027,9 @@ namespace Memoria.Launcher
         private Mod downloadingMod;
         private String downloadingPath;
         private DateTime downloadBytesTime;
-        private Thread downloadThread;
-        private Thread downloadCatalogThread;
-        private ThrottledHttpClient downloadClient;
-        private ThrottledHttpClient downloadCatalogClient;
+        private static readonly SevenZipExtractor ArchiveExtractor = new SevenZipExtractor();
+        private DownloadFileOperation downloadClient;
+        private DownloadFileOperation downloadCatalogClient;
         private object ascendingSortedColumn = null;
 
         private const String CATALOG_PATH = "./ModCatalog.xml";

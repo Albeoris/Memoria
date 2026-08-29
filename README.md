@@ -100,6 +100,10 @@ Note: This is **not** affiliated with the Memoria Project, a 2023 Proof-of-conce
 - Most crucial options and cheats are embedded in the game launcher
 - More in-depth configuration is available in the file `Memoria.ini` (in the game folder)
 
+## Third-party software
+
+See [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) for third-party software and license information.
+
 ## 🚀 Build
 
 ### Visual Studio
