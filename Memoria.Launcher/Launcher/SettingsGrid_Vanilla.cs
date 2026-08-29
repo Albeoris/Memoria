@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using Memoria.Launcher.Utils;
@@ -174,12 +173,9 @@ namespace Memoria.Launcher
                         iniFile.SetSetting("Memoria", propertyName, CheckUpdates.ToString());
                         if (CheckUpdates)
                         {
-                            using (ManualResetEvent evt = new ManualResetEvent(false))
-                            {
-                                System.Windows.Window root = this.GetRootElement() as System.Windows.Window;
-                                if (root != null)
-                                    await UiLauncherPlayButton.CheckUpdates(root, evt, this);
-                            }
+                            System.Windows.Window root = this.GetRootElement() as System.Windows.Window;
+                            if (root != null)
+                                await UiLauncherPlayButton.CheckUpdates(root, this);
                         }
                         break;
                     }
