@@ -16,6 +16,8 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using System.Windows.Threading;
+using Memoria.Launcher.Utils.Archives;
+using Memoria.Launcher.Utils.Mods;
 
 namespace Memoria.Launcher
 {
@@ -30,6 +32,10 @@ namespace Memoria.Launcher
         {
             Lang.Initialize();
             String launcherDirectory = Directory.GetCurrentDirectory();
+            _modFileSystem = new ModInstallationFileSystem(launcherDirectory);
+            _modDescriptionFile = new ModDescriptionFile(_modFileSystem);
+            _singleFileModInstaller = new SingleFileModInstaller(_modFileSystem);
+            _archiveExtractor = new ArchiveExtractor(launcherDirectory);
             try
             {
                 // Official version since Aug 6, 2020:                          1.0.7141.27878
@@ -65,8 +71,7 @@ namespace Memoria.Launcher
         {
             try
             {
-                if (Directory.Exists(Mod.INSTALLATION_TMP))
-                    Directory.Delete(Mod.INSTALLATION_TMP, true);
+                _modFileSystem.DeleteTemporaryDirectory();
             }
             catch { }
             UpdateLauncherTheme();
@@ -231,7 +236,9 @@ namespace Memoria.Launcher
                 if (!e.Data.GetDataPresent(DataFormats.FileDrop, true))
                     return;
 
-                string[] filenames = e.Data.GetData(DataFormats.FileDrop, true) as string[];
+                if (!(e.Data.GetData(DataFormats.FileDrop, true) is String[] filenames))
+                    return;
+
                 foreach (string filename in filenames)
                 {
                     String ext = Path.GetExtension(filename).ToLowerInvariant();
@@ -253,15 +260,13 @@ namespace Memoria.Launcher
                     }
 
                     // Check if it's a Mod
-                    if (!SupportedArchives.Contains(ext))
+                    if (!ArchiveFileExtensions.IsSupportedFile(filename))
                         continue;
 
-                    if (FindModRoot(filename) != null)
-                    {
-                        // TODO translate:
-                        dropLabel.Content = Lang.Res["Launcher.InstallMod"];
-                        dropBackground.Visibility = Visibility.Visible;
-                    }
+                    FindModRoot(filename);
+                    // TODO translate:
+                    dropLabel.Content = Lang.Res["Launcher.InstallMod"];
+                    dropBackground.Visibility = Visibility.Visible;
                 }
             }
             catch { }
@@ -290,7 +295,9 @@ namespace Memoria.Launcher
 
                 Activate();
 
-                String[] filenames = e.Data.GetData(DataFormats.FileDrop, true) as String[];
+                if (!(e.Data.GetData(DataFormats.FileDrop, true) is String[] filenames))
+                    return;
+
                 foreach (string filename in filenames)
                 {
                     String ext = Path.GetExtension(filename).ToLowerInvariant();
@@ -345,35 +352,42 @@ namespace Memoria.Launcher
                         continue;
                     }
 
-                    if (!SupportedArchives.Contains(ext))
+                    if (!ArchiveFileExtensions.IsSupportedFile(filename))
                         continue;
 
-                    // Extract the archive
-                    // TODO language:
-                    dropLabel.Content = $"Extracting '{Path.GetFileName(filename)}'";
-                    Mod modInfo = await InstallModFromArchive(filename, null, (progress) =>
+                    try
                     {
-                        Dispatcher.BeginInvoke(() =>
+                        // Extract the archive
+                        // TODO language:
+                        dropLabel.Content = $"Extracting '{Path.GetFileName(filename)}'";
+                        Mod modInfo = await InstallDroppedModFromArchive(filename, (progress) =>
                         {
-                            dropLabel.Content = $"Extracting '{Path.GetFileName(filename)}' - {progress}%";
+                            Dispatcher.BeginInvoke(() =>
+                            {
+                                dropLabel.Content = $"Extracting '{Path.GetFileName(filename)}' - {progress}%";
+                            });
                         });
-                    });
 
-                    // Refresh mods list and activate the mod
-                    UpdateModListInstalled();
-                    UpdateCatalogInstallationState();
-                    CheckOutdatedAndIncompatibleMods();
-                    UpdateModSettings();
-                    modInfo = Mod.SearchMod(ModListInstalled, modInfo);
-                    // TODO language:
-                    MessageBox.Show($"The mod '{modInfo.Name}{(modInfo.CurrentVersion != null ? " " + modInfo.CurrentVersion : "")}' has been successfully installed", "Mod installed", MessageBoxButton.OK, MessageBoxImage.Information);
+                        // Refresh mods list and activate the mod
+                        UpdateModListInstalled();
+                        UpdateCatalogInstallationState();
+                        CheckOutdatedAndIncompatibleMods();
+                        UpdateModSettings();
+                        Mod installedMod = Mod.SearchMod(ModListInstalled, modInfo) ?? modInfo;
+                        // TODO language:
+                        MessageBox.Show(this, $"The mod '{installedMod.Name}{(installedMod.CurrentVersion != null ? " " + installedMod.CurrentVersion : "")}' has been successfully installed", "Mod installed", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    catch (TaskCanceledException) { }
+                    catch (Exception exception)
+                    {
+                        ShowArchiveInstallationFailure(filename, exception);
+                    }
                 }
             }
             catch (TaskCanceledException) { }
             catch (Exception err)
             {
-                // TODO language:
-                MessageBox.Show($"Failed to automatically install the mod\n{err.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(this, err.ToString(), "Installation failed", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {

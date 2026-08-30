@@ -1,3 +1,5 @@
+#nullable enable
+
 using NLog;
 using System;
 using System.ComponentModel;
@@ -21,12 +23,7 @@ namespace Memoria.Launcher.Utils.Archives
             _log = log ?? throw new ArgumentNullException(nameof(log));
         }
 
-        public void Extract(
-            String executablePath,
-            String archivePath,
-            String destinationPath,
-            CancellationToken cancellationToken,
-            Action<Int32> progress)
+        public void Extract(String executablePath, String archivePath, String destinationPath, CancellationToken cancellationToken, Action<Int32>? progress)
         {
             using Process process = CreateProcess(executablePath, archivePath, destinationPath);
             StringBuilder standardError = new StringBuilder();
@@ -72,7 +69,14 @@ namespace Memoria.Launcher.Utils.Archives
             cancellationToken.ThrowIfCancellationRequested();
             SevenZipExitCode exitCode = (SevenZipExitCode)process.ExitCode;
             if (exitCode != SevenZipExitCode.Success)
-                throw CreateExtractionException(exitCode, standardError, standardOutput);
+            {
+                throw SevenZipFailure.Create(
+                    exitCode,
+                    archivePath,
+                    destinationPath,
+                    standardError.ToString(),
+                    standardOutput.ToString());
+            }
         }
 
         private static Process CreateProcess(String executablePath, String archivePath, String destinationPath)
@@ -92,7 +96,7 @@ namespace Memoria.Launcher.Utils.Archives
             };
         }
 
-        private static void AppendLine(StringBuilder output, String line)
+        private static void AppendLine(StringBuilder output, String? line)
         {
             if (String.IsNullOrWhiteSpace(line))
                 return;
@@ -105,7 +109,7 @@ namespace Memoria.Launcher.Utils.Archives
             }
         }
 
-        private static Boolean TryParseProgress(String line, out Int32 progress)
+        private static Boolean TryParseProgress(String? line, out Int32 progress)
         {
             progress = 0;
             if (String.IsNullOrWhiteSpace(line))
@@ -125,7 +129,7 @@ namespace Memoria.Launcher.Utils.Archives
                 && progress <= 100;
         }
 
-        private static void ReportProgress(Action<Int32> callback, ref Int32 reportedProgress, Int32 latestProgress)
+        private static void ReportProgress(Action<Int32>? callback, ref Int32 reportedProgress, Int32 latestProgress)
         {
             if (callback == null || latestProgress < 0 || latestProgress == reportedProgress)
                 return;
@@ -176,40 +180,5 @@ namespace Memoria.Launcher.Utils.Archives
                 exception);
         }
 
-        private static ArchiveExtractionException CreateExtractionException(
-            SevenZipExitCode exitCode,
-            StringBuilder standardError,
-            StringBuilder standardOutput)
-        {
-            String details = GetLastUsefulLine(standardError);
-            if (String.IsNullOrWhiteSpace(details))
-                details = GetLastUsefulLine(standardOutput);
-
-            String recommendation = exitCode switch
-            {
-                SevenZipExitCode.Warning => "The archive was only partially extracted. Download it again and verify that enough disk space is available.",
-                SevenZipExitCode.FatalError => "The archive may be incomplete or corrupt. Download it again; if the problem persists, contact the mod author.",
-                SevenZipExitCode.CommandLineError => "The bundled 7-Zip installation may be damaged. Reinstall or update Memoria Launcher.",
-                SevenZipExitCode.NotEnoughMemory => "Close other applications or increase the Windows paging file, then try again.",
-                SevenZipExitCode.Cancelled => "Extraction was stopped. Start the installation again when ready.",
-                _ => "Check the archive, available disk space, antivirus settings, and write permission for the destination, then try again."
-            };
-            String diagnostic = String.IsNullOrWhiteSpace(details) ? String.Empty : $" 7-Zip reported: {details}";
-
-            return new ArchiveExtractionException($"7-Zip could not extract the archive (exit code {(Int32)exitCode}). {recommendation}{diagnostic}");
-        }
-
-        private static String GetLastUsefulLine(StringBuilder output)
-        {
-            String text;
-            lock (output)
-                text = output.ToString().Trim();
-
-            if (text.Length == 0)
-                return null;
-
-            String[] lines = text.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-            return lines.Length == 0 ? null : lines[lines.Length - 1].Trim();
-        }
     }
 }

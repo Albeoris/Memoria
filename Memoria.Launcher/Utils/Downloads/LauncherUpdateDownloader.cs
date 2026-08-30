@@ -22,18 +22,25 @@ namespace Memoria.Launcher.Utils.Downloads
             _cancellationToken = cancellationToken;
         }
 
-        public Boolean IsCancellationRequested => _cancellationToken.IsCancellationRequested;
+        public Boolean IsCancellationRequested
+        {
+            get
+            {
+                return _cancellationToken.IsCancellationRequested;
+            }
+        }
 
         public Task<RemoteFileInfo> GetRemoteFileInfoAsync(Uri source)
         {
-            ValidateSource(source);
+            FileDownloader.ValidateSource(source);
             ThrowIfDisposed();
             return GetRemoteFileInfoCoreAsync(source);
         }
 
-        public Task DownloadAsync(Uri source, String destinationPath, IProgress<Int64> progress = null)
+        public async Task DownloadAsync(Uri source, String destinationPath, IProgress<Int64> progress = null)
         {
-            FileDownloader.ValidateArguments(source, destinationPath);
+            FileDownloader.ValidateSource(source);
+            DownloadDestination destination = DownloadDestination.ForFile(destinationPath);
             ThrowIfDisposed();
 
             Int64 previouslyReported = 0;
@@ -46,7 +53,7 @@ namespace Memoria.Launcher.Utils.Downloads
                     if (increment > 0)
                         progress.Report(increment);
                 });
-            return _fileDownloader.DownloadAsync(source, destinationPath, byteProgress, _cancellationToken);
+            await _fileDownloader.DownloadAsync(source, destination, byteProgress, _cancellationToken).ConfigureAwait(false);
         }
 
         public void Dispose()
@@ -98,16 +105,6 @@ namespace Memoria.Launcher.Utils.Downloads
                 _log.Error(userException, "Unable to read remote file information. Uri: {Uri}", source);
                 throw userException;
             }
-        }
-
-        private static void ValidateSource(Uri source)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            if (!source.IsAbsoluteUri)
-                throw new ArgumentException("The source URI must be absolute.", nameof(source));
-            if (source.Scheme != Uri.UriSchemeHttp && source.Scheme != Uri.UriSchemeHttps)
-                throw new ArgumentException("Only HTTP and HTTPS URIs are supported.", nameof(source));
         }
 
         private void ThrowIfDisposed()

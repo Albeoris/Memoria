@@ -8,9 +8,7 @@ namespace Memoria.Launcher.Utils
 {
     public sealed class DisplayService
     {
-        private static readonly Lazy<DisplayService> CurrentInstance = new(
-            Create,
-            LazyThreadSafetyMode.ExecutionAndPublication);
+        private static readonly Lazy<DisplayService> CurrentInstance = new(Create, LazyThreadSafetyMode.ExecutionAndPublication);
 
         public static DisplayService Current => CurrentInstance.Value;
 

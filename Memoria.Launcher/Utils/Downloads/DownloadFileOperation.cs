@@ -23,11 +23,30 @@ namespace Memoria.Launcher.Utils.Downloads
             }
         }
 
-        public Boolean IsRunning => State == DownloadOperationState.Running;
+        public Boolean IsRunning
+        {
+            get
+            {
+                return State == DownloadOperationState.Running;
+            }
+        }
 
         public void Start(Uri source, String destinationPath)
         {
-            FileDownloader.ValidateArguments(source, destinationPath);
+            FileDownloader.ValidateSource(source);
+            StartCore(source, DownloadDestination.ForFile(destinationPath));
+        }
+
+        public void StartInDirectory(Uri source, String destinationDirectory)
+        {
+            FileDownloader.ValidateSource(source);
+            StartCore(source, DownloadDestination.InDirectory(destinationDirectory));
+        }
+
+        private void StartCore(Uri source, DownloadDestination destination)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
 
             CancellationTokenSource cancellation;
             lock (_lock)
@@ -42,7 +61,7 @@ namespace Memoria.Launcher.Utils.Downloads
                 _state = DownloadOperationState.Running;
             }
 
-            _ = RunAsync(source, destinationPath, cancellation);
+            _ = RunAsync(source, destination, cancellation);
         }
 
         public void Cancel()
@@ -79,30 +98,30 @@ namespace Memoria.Launcher.Utils.Downloads
             }
         }
 
-        private async Task RunAsync(Uri source, String destinationPath, CancellationTokenSource cancellation)
+        private async Task RunAsync(Uri source, DownloadDestination destination, CancellationTokenSource cancellation)
         {
-            DownloadOperationState terminalState;
-            Exception error = null;
+            DownloadCompletedEventArgs result;
             try
             {
-                await _downloader.DownloadAsync(source, destinationPath, this, cancellation.Token).ConfigureAwait(false);
-                terminalState = DownloadOperationState.Completed;
+                DownloadedFile downloadedFile = await _downloader
+                    .DownloadAsync(source, destination, this, cancellation.Token)
+                    .ConfigureAwait(false);
+                result = DownloadCompletedEventArgs.Completed(downloadedFile);
             }
             catch (OperationCanceledException) when (cancellation.IsCancellationRequested)
             {
-                terminalState = DownloadOperationState.Cancelled;
+                result = DownloadCompletedEventArgs.Cancelled();
             }
             catch (Exception exception)
             {
-                terminalState = DownloadOperationState.Failed;
-                error = exception;
+                result = DownloadCompletedEventArgs.Failed(exception);
             }
 
             lock (_lock)
             {
                 Boolean wasDisposed = _state == DownloadOperationState.Disposed;
                 if (!wasDisposed)
-                    _state = terminalState;
+                    _state = result.State;
                 if (ReferenceEquals(_cancellation, cancellation))
                     _cancellation = null;
 
@@ -112,7 +131,7 @@ namespace Memoria.Launcher.Utils.Downloads
                     return;
             }
 
-            Completed?.Invoke(this, new DownloadCompletedEventArgs(terminalState, error));
+            Completed?.Invoke(this, result);
         }
     }
 }

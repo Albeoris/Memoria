@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 
 namespace Memoria.Launcher.Utils.Downloads
@@ -12,27 +14,87 @@ namespace Memoria.Launcher.Utils.Downloads
         public DownloadProgress Progress { get; }
     }
 
-    public sealed class DownloadCompletedEventArgs : EventArgs
+    public abstract class DownloadCompletedEventArgs : EventArgs
     {
-        public DownloadCompletedEventArgs(DownloadOperationState state, Exception error)
+        private DownloadCompletedEventArgs(DownloadOperationState state)
         {
-            if (state != DownloadOperationState.Completed
-                && state != DownloadOperationState.Cancelled
-                && state != DownloadOperationState.Failed)
-            {
-                throw new ArgumentOutOfRangeException(nameof(state), state, "The state must be terminal.");
-            }
-            if (state == DownloadOperationState.Failed && error == null)
-                throw new ArgumentNullException(nameof(error));
-            if (state != DownloadOperationState.Failed && error != null)
-                throw new ArgumentException("Only a failed operation can contain an error.", nameof(error));
-
             State = state;
-            Error = error;
         }
 
         public DownloadOperationState State { get; }
-        public Exception Error { get; }
-        public Boolean IsCancelled => State == DownloadOperationState.Cancelled;
+        public Boolean IsCancelled
+        {
+            get
+            {
+                return State == DownloadOperationState.Cancelled;
+            }
+        }
+
+        public Boolean IsFailed
+        {
+            get
+            {
+                return State == DownloadOperationState.Failed;
+            }
+        }
+
+        public static DownloadCompletedEventArgs Completed(DownloadedFile downloadedFile)
+        {
+            return new SuccessfulDownload(downloadedFile);
+        }
+
+        public static DownloadCompletedEventArgs Cancelled()
+        {
+            return new CancelledDownload();
+        }
+
+        public static DownloadCompletedEventArgs Failed(Exception error)
+        {
+            return new FailedDownload(error);
+        }
+
+        public virtual Exception GetError()
+        {
+            throw new InvalidOperationException("Only a failed download has an error.");
+        }
+
+        public virtual DownloadedFile GetDownloadedFile()
+        {
+            throw new InvalidOperationException("Only a completed download has a downloaded file.");
+        }
+
+        private sealed class SuccessfulDownload : DownloadCompletedEventArgs
+        {
+            private readonly DownloadedFile _downloadedFile;
+
+            public SuccessfulDownload(DownloadedFile downloadedFile)
+                : base(DownloadOperationState.Completed)
+            {
+                _downloadedFile = downloadedFile ?? throw new ArgumentNullException(nameof(downloadedFile));
+            }
+
+            public override DownloadedFile GetDownloadedFile() => _downloadedFile;
+        }
+
+        private sealed class FailedDownload : DownloadCompletedEventArgs
+        {
+            private readonly Exception _error;
+
+            public FailedDownload(Exception error)
+                : base(DownloadOperationState.Failed)
+            {
+                _error = error ?? throw new ArgumentNullException(nameof(error));
+            }
+
+            public override Exception GetError() => _error;
+        }
+
+        private sealed class CancelledDownload : DownloadCompletedEventArgs
+        {
+            public CancelledDownload()
+                : base(DownloadOperationState.Cancelled)
+            {
+            }
+        }
     }
 }

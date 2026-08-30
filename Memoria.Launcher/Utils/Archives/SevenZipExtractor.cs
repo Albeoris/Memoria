@@ -1,3 +1,5 @@
+#nullable enable
+
 using NLog;
 using System;
 using System.ComponentModel;
@@ -6,40 +8,42 @@ using System.Reflection;
 using System.Security;
 using System.Threading;
 using Memoria.Launcher.Utils.IO;
+using SharpCompress.Archives;
 
 namespace Memoria.Launcher.Utils.Archives
 {
-    public sealed class SevenZipExtractor
+    internal sealed class SevenZipExtractor : IArchiveExtractor
     {
         private readonly Logger _log;
         private readonly EmbeddedSevenZipExecutable _executable;
+        private readonly GameRootDirectory _gameRoot;
         private readonly SevenZipProcessRunner _processRunner;
 
-        public SevenZipExtractor()
+        public SevenZipExtractor(String gameRootPath)
         {
             _log = AppLogger.GetLogger(nameof(SevenZipExtractor));
             _executable = new EmbeddedSevenZipExecutable(Assembly.GetExecutingAssembly());
+            _gameRoot = new GameRootDirectory(gameRootPath);
             _processRunner = new SevenZipProcessRunner(_log);
         }
 
-        public void Extract(
-            String archivePath,
-            String destinationPath,
-            CancellationToken cancellationToken,
-            Action<Int32> progress = null)
+        public void Extract(String archivePath, String destinationPath, CancellationToken cancellationToken, Action<Int32>? progress = null)
         {
             String fullArchivePath = ValidatePath(archivePath, nameof(archivePath));
             String fullDestinationPath = ValidatePath(destinationPath, nameof(destinationPath));
+            _gameRoot.EnsureContained(fullDestinationPath);
             cancellationToken.ThrowIfCancellationRequested();
 
             _log.Info("Extracting archive. Archive: {ArchivePath}, Destination: {DestinationPath}", fullArchivePath, fullDestinationPath);
             try
             {
                 EnsureAccess(fullArchivePath, fullDestinationPath);
+                ValidateArchiveEntries(fullArchivePath);
                 String executablePath = _executable.GetPath();
 
                 progress?.Invoke(0);
                 _processRunner.Extract(executablePath, fullArchivePath, fullDestinationPath, cancellationToken, progress);
+                _gameRoot.EnsureSafeTree(fullDestinationPath);
                 progress?.Invoke(100);
                 _log.Info("Archive extracted. Archive: {ArchivePath}, Destination: {DestinationPath}", fullArchivePath, fullDestinationPath);
             }
@@ -86,6 +90,20 @@ namespace Memoria.Launcher.Utils.Archives
             FileSystemAccessProbe.EnsureWritableDirectory(destinationPath);
         }
 
+        private static void ValidateArchiveEntries(String archivePath)
+        {
+            using (IArchive archive = ArchiveFactory.OpenArchive(archivePath))
+            {
+                foreach (IArchiveEntry entry in archive.Entries)
+                {
+                    if (String.IsNullOrWhiteSpace(entry.Key))
+                        throw new ArchiveExtractionException("The archive contains an entry without a path.");
+
+                    ArchiveEntryPathPolicy.Validate(entry.Key, entry.LinkTarget);
+                }
+            }
+        }
+
         private static Boolean IsAccessOrIoFailure(Exception exception)
         {
             return exception is UnauthorizedAccessException
@@ -94,10 +112,7 @@ namespace Memoria.Launcher.Utils.Archives
                 || exception is Win32Exception;
         }
 
-        private static ArchiveExtractionException CreateFileSystemException(
-            String archivePath,
-            String destinationPath,
-            Exception exception)
+        private static ArchiveExtractionException CreateFileSystemException(String archivePath, String destinationPath, Exception exception)
         {
             if (!File.Exists(archivePath))
             {

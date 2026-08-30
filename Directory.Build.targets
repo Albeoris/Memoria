@@ -4,7 +4,7 @@
     before assembly references are resolved. Only files that do not already exist in
     the References folder are copied, so subsequent builds are a no-op.
   -->
-  <Target Name="CopyGameReferences" BeforeTargets="ResolveAssemblyReferences;CollectReferencesForDesignTime">
+  <Target Name="CopyGameReferences" BeforeTargets="ResolveAssemblyReferences;CollectReferencesForDesignTime" Condition="'$(IsTestProject)' != 'true'">
     <PropertyGroup>
       <_FF9InstallLocation>$([MSBuild]::GetRegistryValueFromView(
           'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 377840',
