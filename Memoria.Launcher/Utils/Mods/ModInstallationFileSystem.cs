@@ -28,9 +28,6 @@ namespace Memoria.Launcher.Utils.Mods
         public String GetInstallationDirectory(String installationPath) =>
             ResolveInstallationDirectory(installationPath, nameof(installationPath));
 
-        public String GetDefaultInstallationDirectory(String modName) =>
-            ResolveInstallationDirectory(modName, nameof(modName));
-
         public String GetExtractedModDirectory(ModArchiveRoot archiveRoot)
         {
             if (archiveRoot == null)
@@ -58,9 +55,7 @@ namespace Memoria.Launcher.Utils.Mods
 
         public void PrepareDownloadDirectory()
         {
-            _gameRoot.EnsureContained(DownloadDirectory);
-            Directory.CreateDirectory(DownloadDirectory);
-            _gameRoot.EnsureContained(DownloadDirectory);
+            CreateSafeDirectory(DownloadDirectory);
         }
 
         public void ResetExtractionDirectory()
@@ -87,32 +82,49 @@ namespace Memoria.Launcher.Utils.Mods
             DeleteDirectoryIfExists(installationDirectory);
         }
 
-        public void MoveExtractedModToInstallation(String extractedModDirectory, String installationDirectory)
+        public void ReplaceInstallationDirectory(String extractedModDirectory, String installationDirectory)
         {
-            if (String.IsNullOrWhiteSpace(extractedModDirectory))
-                throw new ArgumentException("The extracted mod directory cannot be empty or whitespace.", nameof(extractedModDirectory));
-
-            _gameRoot.EnsureContained(extractedModDirectory);
-            String fullExtractedModDirectory = Path.GetFullPath(extractedModDirectory);
-            String extractionPrefix = ExtractionDirectory + Path.DirectorySeparatorChar;
-            if (!fullExtractedModDirectory.Equals(ExtractionDirectory, StringComparison.OrdinalIgnoreCase) &&
-                !fullExtractedModDirectory.StartsWith(extractionPrefix, StringComparison.OrdinalIgnoreCase))
-            {
-                throw new ArgumentException("The mod source is outside the extraction directory.", nameof(extractedModDirectory));
-            }
-
+            String fullExtractedModDirectory = ValidateExtractedModDirectory(extractedModDirectory);
             EnsureInstallationDirectory(installationDirectory);
             String? installationParent = Path.GetDirectoryName(installationDirectory);
             if (String.IsNullOrWhiteSpace(installationParent))
                 throw new InvalidDataException("The installation directory does not have a parent directory.");
 
-            _gameRoot.EnsureContained(installationParent, allowRoot: true);
-            Directory.CreateDirectory(installationParent);
-            _gameRoot.EnsureContained(installationParent, allowRoot: true);
-            Directory.Move(fullExtractedModDirectory, installationDirectory);
-        }
+            CreateSafeDirectory(installationParent!, allowRoot: true);
+            if (!Directory.Exists(installationDirectory))
+            {
+                Directory.Move(fullExtractedModDirectory, installationDirectory);
+                return;
+            }
 
-        public void EnsureContained(String path) => _gameRoot.EnsureContained(path);
+            CreateSafeDirectory(TemporaryDirectory);
+            String backupDirectory = _gameRoot.ResolveWithin(
+                TemporaryDirectory,
+                SafeRelativePath.Parse($"PreviousInstallation-{Guid.NewGuid():N}", "backupDirectory"));
+            Directory.Move(installationDirectory, backupDirectory);
+            try
+            {
+                Directory.Move(fullExtractedModDirectory, installationDirectory);
+            }
+            catch (Exception installationException)
+            {
+                try
+                {
+                    Directory.Move(backupDirectory, installationDirectory);
+                }
+                catch (Exception rollbackException)
+                {
+                    throw new AggregateException(
+                        "The new mod could not be installed and the previous installation could not be restored.",
+                        installationException,
+                        rollbackException);
+                }
+
+                throw;
+            }
+
+            DeleteDirectoryIfExists(backupDirectory);
+        }
 
         public void EnsureDownloadedFile(String path)
         {
@@ -120,8 +132,6 @@ namespace Memoria.Launcher.Utils.Mods
             if (!File.Exists(fullPath))
                 throw new FileNotFoundException("The downloaded mod file does not exist.", fullPath);
         }
-
-        public void EnsureSafeExtractionTree() => _gameRoot.EnsureSafeTree(ExtractionDirectory);
 
         private void EnsureInstallationDirectory(String installationDirectory)
         {
@@ -140,6 +150,30 @@ namespace Memoria.Launcher.Utils.Mods
         {
             _gameRoot.EnsureContained(directoryPath);
             DirectoryTreeDeleter.Delete(directoryPath);
+        }
+
+        private String ValidateExtractedModDirectory(String extractedModDirectory)
+        {
+            if (String.IsNullOrWhiteSpace(extractedModDirectory))
+                throw new ArgumentException("The extracted mod directory cannot be empty or whitespace.", nameof(extractedModDirectory));
+
+            _gameRoot.EnsureContained(extractedModDirectory);
+            String fullExtractedModDirectory = Path.GetFullPath(extractedModDirectory);
+            String extractionPrefix = ExtractionDirectory + Path.DirectorySeparatorChar;
+            if (!fullExtractedModDirectory.Equals(ExtractionDirectory, StringComparison.OrdinalIgnoreCase) &&
+                !fullExtractedModDirectory.StartsWith(extractionPrefix, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new ArgumentException("The mod source is outside the extraction directory.", nameof(extractedModDirectory));
+            }
+
+            return fullExtractedModDirectory;
+        }
+
+        private void CreateSafeDirectory(String directoryPath, Boolean allowRoot = false)
+        {
+            _gameRoot.EnsureContained(directoryPath, allowRoot);
+            Directory.CreateDirectory(directoryPath);
+            _gameRoot.EnsureContained(directoryPath, allowRoot);
         }
 
         private String ResolveInstallationDirectory(String relativePath, String parameterName)

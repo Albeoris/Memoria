@@ -69,7 +69,7 @@ public sealed class ModInstallationFileSystemTests
     }
 
     [Fact]
-    public void MoveExtractedModToInstallation_rejects_a_source_outside_the_extraction_directory()
+    public void ReplaceInstallationDirectory_rejects_a_source_outside_the_extraction_directory()
     {
         using TemporaryDirectory gameDirectory = new();
         ModInstallationFileSystem fileSystem = new(gameDirectory.FullPath);
@@ -79,7 +79,7 @@ public sealed class ModInstallationFileSystemTests
         String destination = fileSystem.GetInstallationDirectory("Mods/Installed");
 
         ArgumentException exception = Assert.Throws<ArgumentException>(() =>
-            fileSystem.MoveExtractedModToInstallation(unrelatedDirectory, destination));
+            fileSystem.ReplaceInstallationDirectory(unrelatedDirectory, destination));
 
         Assert.Contains("outside the extraction directory", exception.Message, StringComparison.OrdinalIgnoreCase);
         Assert.True(File.Exists(Path.Combine(unrelatedDirectory, "keep.txt")));
@@ -87,7 +87,7 @@ public sealed class ModInstallationFileSystemTests
     }
 
     [Fact]
-    public void MoveExtractedModToInstallation_rejects_a_parent_transition_in_the_source_path()
+    public void ReplaceInstallationDirectory_rejects_a_parent_transition_in_the_source_path()
     {
         using TemporaryDirectory gameDirectory = new();
         ModInstallationFileSystem fileSystem = new(gameDirectory.FullPath);
@@ -97,7 +97,7 @@ public sealed class ModInstallationFileSystemTests
         String destination = fileSystem.GetInstallationDirectory("Mods/Installed");
 
         Assert.Throws<ArgumentException>(() =>
-            fileSystem.MoveExtractedModToInstallation(unrelatedDirectory, destination));
+            fileSystem.ReplaceInstallationDirectory(unrelatedDirectory, destination));
     }
 
     [Fact]
@@ -118,7 +118,7 @@ public sealed class ModInstallationFileSystemTests
     }
 
     [Fact]
-    public void MoveExtractedModToInstallation_creates_a_safe_nested_parent_and_moves_the_tree()
+    public void ReplaceInstallationDirectory_creates_a_safe_nested_parent_and_moves_the_tree()
     {
         using TemporaryDirectory gameDirectory = new();
         ModInstallationFileSystem fileSystem = new(gameDirectory.FullPath);
@@ -128,9 +128,27 @@ public sealed class ModInstallationFileSystemTests
         File.WriteAllText(Path.Combine(extractedMod, "ModDescription.xml"), "content");
         String destination = fileSystem.GetInstallationDirectory("Mods/Freya");
 
-        fileSystem.MoveExtractedModToInstallation(extractedMod, destination);
+        fileSystem.ReplaceInstallationDirectory(extractedMod, destination);
 
         Assert.False(Directory.Exists(extractedMod));
         Assert.Equal("content", File.ReadAllText(Path.Combine(destination, "ModDescription.xml")));
+    }
+
+    [Fact]
+    public void ReplaceInstallationDirectory_restores_the_previous_mod_when_the_new_source_is_missing()
+    {
+        using TemporaryDirectory gameDirectory = new();
+        ModInstallationFileSystem fileSystem = new(gameDirectory.FullPath);
+        fileSystem.ResetExtractionDirectory();
+        String missingExtractedMod = fileSystem.GetExtractedModDirectory(ModArchiveRoot.FromRelativePath("Missing"));
+        String destination = fileSystem.GetInstallationDirectory("Mods/Freya");
+        Directory.CreateDirectory(destination);
+        String existingFile = Path.Combine(destination, "existing.txt");
+        File.WriteAllText(existingFile, "keep");
+
+        Assert.Throws<DirectoryNotFoundException>(() =>
+            fileSystem.ReplaceInstallationDirectory(missingExtractedMod, destination));
+
+        Assert.Equal("keep", File.ReadAllText(existingFile));
     }
 }

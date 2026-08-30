@@ -146,6 +146,7 @@
     <Compile Include="Utils\Mods\ModContentManifest.cs" />
     <Compile Include="Utils\Mods\ModDescriptionFile.cs" />
     <Compile Include="Utils\Mods\ModInstallationFileSystem.cs" />
+    <Compile Include="Utils\Mods\ModInstallationNameResolver.cs" />
     <Compile Include="Utils\Mods\ModUninstallFailureMessageBuilder.cs" />
     <Compile Include="Utils\Mods\ModArchiveInspector.cs" />
     <Compile Include="Utils\Mods\ModArchiveRoot.cs" />

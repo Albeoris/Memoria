@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Threading;
 
@@ -25,7 +27,7 @@ namespace Memoria.Launcher.Utils.Archives
             String archivePath,
             String destinationPath,
             CancellationToken cancellationToken,
-            Action<Int32> progress = null)
+            Action<Int32>? progress = null)
         {
             IArchiveExtractor extractor = ArchiveExtractionBackendSelector.Select(archivePath) == ArchiveExtractionBackend.SharpCompress
                 ? _rarExtractor

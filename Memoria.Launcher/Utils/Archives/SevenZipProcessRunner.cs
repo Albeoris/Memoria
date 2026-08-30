@@ -1,3 +1,5 @@
+#nullable enable
+
 using NLog;
 using System;
 using System.ComponentModel;
@@ -21,7 +23,7 @@ namespace Memoria.Launcher.Utils.Archives
             _log = log ?? throw new ArgumentNullException(nameof(log));
         }
 
-        public void Extract(String executablePath, String archivePath, String destinationPath, CancellationToken cancellationToken, Action<Int32> progress)
+        public void Extract(String executablePath, String archivePath, String destinationPath, CancellationToken cancellationToken, Action<Int32>? progress)
         {
             using Process process = CreateProcess(executablePath, archivePath, destinationPath);
             StringBuilder standardError = new StringBuilder();
@@ -94,7 +96,7 @@ namespace Memoria.Launcher.Utils.Archives
             };
         }
 
-        private static void AppendLine(StringBuilder output, String line)
+        private static void AppendLine(StringBuilder output, String? line)
         {
             if (String.IsNullOrWhiteSpace(line))
                 return;
@@ -107,7 +109,7 @@ namespace Memoria.Launcher.Utils.Archives
             }
         }
 
-        private static Boolean TryParseProgress(String line, out Int32 progress)
+        private static Boolean TryParseProgress(String? line, out Int32 progress)
         {
             progress = 0;
             if (String.IsNullOrWhiteSpace(line))
@@ -127,7 +129,7 @@ namespace Memoria.Launcher.Utils.Archives
                 && progress <= 100;
         }
 
-        private static void ReportProgress(Action<Int32> callback, ref Int32 reportedProgress, Int32 latestProgress)
+        private static void ReportProgress(Action<Int32>? callback, ref Int32 reportedProgress, Int32 latestProgress)
         {
             if (callback == null || latestProgress < 0 || latestProgress == reportedProgress)
                 return;

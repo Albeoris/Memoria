@@ -6,6 +6,19 @@ namespace Memoria.Launcher.Tests.IO;
 
 public sealed class GameRootDirectoryTests
 {
+    [Fact]
+    public void Constructor_preserves_a_file_system_root()
+    {
+        String fileSystemRoot = Path.GetPathRoot(Path.GetTempPath())!;
+        String childName = $"memoria-path-test-{Guid.NewGuid():N}";
+
+        GameRootDirectory gameRoot = new(fileSystemRoot);
+        String childPath = gameRoot.Resolve(SafeRelativePath.Parse(childName, nameof(childName)));
+
+        Assert.Equal(fileSystemRoot, gameRoot.RootPath);
+        Assert.Equal(Path.Combine(fileSystemRoot, childName), childPath);
+    }
+
     [Theory]
     [InlineData("../outside")]
     [InlineData("mods/../../outside")]

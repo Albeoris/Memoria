@@ -1,3 +1,5 @@
+#nullable enable
+
 using NLog;
 using System;
 using System.ComponentModel;
@@ -25,7 +27,7 @@ namespace Memoria.Launcher.Utils.Archives
             _processRunner = new SevenZipProcessRunner(_log);
         }
 
-        public void Extract(String archivePath, String destinationPath, CancellationToken cancellationToken, Action<Int32> progress = null)
+        public void Extract(String archivePath, String destinationPath, CancellationToken cancellationToken, Action<Int32>? progress = null)
         {
             String fullArchivePath = ValidatePath(archivePath, nameof(archivePath));
             String fullDestinationPath = ValidatePath(destinationPath, nameof(destinationPath));

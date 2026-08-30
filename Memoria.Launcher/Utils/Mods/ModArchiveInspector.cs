@@ -77,10 +77,6 @@ namespace Memoria.Launcher.Utils.Mods
                 }
             }
 
-            String archiveName = Path.GetFileNameWithoutExtension(archivePath);
-            if (knownRoots.Any(root => archiveName.StartsWith(root, StringComparison.OrdinalIgnoreCase)))
-                return ModArchiveRoot.ExtractionDirectory;
-
             throw new InvalidDataException("The archive does not contain a recognizable Memoria mod structure.");
         }
 

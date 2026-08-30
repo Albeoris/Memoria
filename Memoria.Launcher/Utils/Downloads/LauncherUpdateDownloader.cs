@@ -32,7 +32,7 @@ namespace Memoria.Launcher.Utils.Downloads
 
         public Task<RemoteFileInfo> GetRemoteFileInfoAsync(Uri source)
         {
-            ValidateSource(source);
+            FileDownloader.ValidateSource(source);
             ThrowIfDisposed();
             return GetRemoteFileInfoCoreAsync(source);
         }
@@ -105,16 +105,6 @@ namespace Memoria.Launcher.Utils.Downloads
                 _log.Error(userException, "Unable to read remote file information. Uri: {Uri}", source);
                 throw userException;
             }
-        }
-
-        private static void ValidateSource(Uri source)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            if (!source.IsAbsoluteUri)
-                throw new ArgumentException("The source URI must be absolute.", nameof(source));
-            if (source.Scheme != Uri.UriSchemeHttp && source.Scheme != Uri.UriSchemeHttps)
-                throw new ArgumentException("Only HTTP and HTTPS URIs are supported.", nameof(source));
         }
 
         private void ThrowIfDisposed()

@@ -49,4 +49,17 @@ public sealed class ModArchiveInspectorTests
 
         Assert.Contains("recognizable", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
+
+    [Fact]
+    public void FindModRoot_does_not_infer_structure_from_archive_name()
+    {
+        using TemporaryDirectory temporaryDirectory = new();
+        String archivePath = Path.Combine(temporaryDirectory.FullPath, "Freya Game release.zip");
+        using (ZipArchive archive = ZipFile.Open(archivePath, ZipArchiveMode.Create))
+            archive.CreateEntry("Documents/readme.txt");
+        ModArchiveInspector inspector = new();
+
+        Assert.Throws<InvalidDataException>(() =>
+            inspector.FindModRoot(archivePath, knownRootNames: ["Freya Game"]));
+    }
 }

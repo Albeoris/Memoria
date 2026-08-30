@@ -26,11 +26,6 @@ namespace Memoria.Launcher.Utils.Mods
                 return new SingleFileModDownloadFormat(SafeRelativePath.Parse(filePath, nameof(downloadFormat)));
             }
 
-            if (value.StartsWith(".", StringComparison.Ordinal))
-                throw new ArgumentException("DownloadFormat must contain an extension without a leading period.", nameof(downloadFormat));
-            if (value.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 || value.IndexOfAny(new[] { '/', '\\' }) >= 0)
-                throw new ArgumentException("DownloadFormat is not a valid file extension.", nameof(downloadFormat));
-
             return new ExpectedArchiveModDownloadFormat(value);
         }
     }
@@ -62,8 +57,16 @@ namespace Memoria.Launcher.Utils.Mods
         {
             if (String.IsNullOrWhiteSpace(expectedExtension))
                 throw new ArgumentException("The expected archive extension cannot be empty or whitespace.", nameof(expectedExtension));
+            String normalizedExtension = expectedExtension.Trim();
+            if (normalizedExtension.StartsWith(".", StringComparison.Ordinal))
+                throw new ArgumentException("The expected archive extension cannot start with a period.", nameof(expectedExtension));
+            if (normalizedExtension.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 ||
+                normalizedExtension.IndexOfAny(new[] { '/', '\\' }) >= 0)
+            {
+                throw new ArgumentException("The expected archive extension is invalid.", nameof(expectedExtension));
+            }
 
-            ExpectedExtension = expectedExtension;
+            ExpectedExtension = normalizedExtension;
         }
 
         public String ExpectedExtension { get; }

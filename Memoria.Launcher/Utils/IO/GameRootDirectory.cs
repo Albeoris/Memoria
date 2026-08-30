@@ -16,11 +16,13 @@ namespace Memoria.Launcher.Utils.IO
                 throw new ArgumentException("The game root cannot be empty or whitespace.", nameof(rootPath));
             EnsureNoRelativeTransitions(rootPath, nameof(rootPath));
 
-            RootPath = Path.GetFullPath(rootPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            RootPath = NormalizeDirectoryPath(rootPath);
             if (!Path.IsPathRooted(RootPath))
                 throw new ArgumentException("The game root must be an absolute path.", nameof(rootPath));
 
-            _rootPrefix = RootPath + Path.DirectorySeparatorChar;
+            _rootPrefix = RootPath.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal)
+                ? RootPath
+                : RootPath + Path.DirectorySeparatorChar;
         }
 
         public String RootPath { get; }
@@ -32,7 +34,6 @@ namespace Memoria.Launcher.Utils.IO
 
             String fullPath = Path.GetFullPath(Path.Combine(RootPath, relativePath.Value));
             EnsureContained(fullPath, allowRoot: false);
-            EnsureExistingAncestorsAreNotReparsePoints(fullPath);
             return fullPath;
         }
 
@@ -43,7 +44,7 @@ namespace Memoria.Launcher.Utils.IO
             if (relativePath == null)
                 throw new ArgumentNullException(nameof(relativePath));
 
-            String fullBasePath = Path.GetFullPath(basePath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            String fullBasePath = NormalizeDirectoryPath(basePath);
             EnsureContained(fullBasePath, allowRoot: true);
 
             String fullPath = Path.GetFullPath(Path.Combine(fullBasePath, relativePath.Value));
@@ -52,7 +53,6 @@ namespace Memoria.Launcher.Utils.IO
                 throw new ArgumentException("The resolved path escapes its allowed directory.", nameof(relativePath));
 
             EnsureContained(fullPath, allowRoot: false);
-            EnsureExistingAncestorsAreNotReparsePoints(fullPath);
             return fullPath;
         }
 
@@ -64,7 +64,7 @@ namespace Memoria.Launcher.Utils.IO
                 throw new ArgumentException("The path cannot be empty or whitespace.", nameof(path));
             EnsureNoRelativeTransitions(path, nameof(path));
 
-            String fullPath = Path.GetFullPath(path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            String fullPath = NormalizeDirectoryPath(path);
             Boolean isRoot = fullPath.Equals(RootPath, StringComparison.OrdinalIgnoreCase);
             if ((!allowRoot && isRoot) || (!isRoot && !fullPath.StartsWith(_rootPrefix, StringComparison.OrdinalIgnoreCase)))
                 throw new ArgumentException($"The path '{path}' is outside the game directory '{RootPath}'.", nameof(path));
@@ -122,6 +122,16 @@ namespace Memoria.Launcher.Utils.IO
                 if (segment == "." || segment == "..")
                     throw new ArgumentException("Relative path transitions '.' and '..' are not allowed.", parameterName);
             }
+        }
+
+        private static String NormalizeDirectoryPath(String path)
+        {
+            String fullPath = Path.GetFullPath(path);
+            String? pathRoot = Path.GetPathRoot(fullPath);
+            if (String.Equals(fullPath, pathRoot, StringComparison.OrdinalIgnoreCase))
+                return fullPath;
+
+            return fullPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
         }
     }
 }

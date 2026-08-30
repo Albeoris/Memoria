@@ -17,8 +17,27 @@ namespace Memoria.Launcher.Utils.IO
                 throw new ArgumentException("The directory path cannot be empty or whitespace.", nameof(directoryPath));
 
             String fullPath = Path.GetFullPath(directoryPath);
-            if (!Directory.Exists(fullPath))
+            FileAttributes attributes;
+            try
+            {
+                attributes = File.GetAttributes(fullPath);
+            }
+            catch (FileNotFoundException)
+            {
                 return;
+            }
+            catch (DirectoryNotFoundException)
+            {
+                return;
+            }
+
+            if ((attributes & FileAttributes.ReparsePoint) != 0)
+            {
+                DeleteReparsePoint(fullPath, attributes);
+                return;
+            }
+            if ((attributes & FileAttributes.Directory) == 0)
+                throw new IOException($"The path '{fullPath}' is not a directory.");
 
             DeleteDirectory(fullPath);
         }
@@ -27,9 +46,6 @@ namespace Memoria.Launcher.Utils.IO
         {
             foreach (String entryPath in Directory.EnumerateFileSystemEntries(directoryPath).ToArray())
             {
-                if (!File.Exists(entryPath) && !Directory.Exists(entryPath))
-                    continue;
-
                 FileAttributes attributes = File.GetAttributes(entryPath);
                 if ((attributes & FileAttributes.ReparsePoint) != 0)
                 {
@@ -55,7 +71,6 @@ namespace Memoria.Launcher.Utils.IO
 
         private static void DeleteReparsePoint(String path, FileAttributes attributes)
         {
-            RemoveDeleteBlockingAttributes(path, attributes);
             if ((attributes & FileAttributes.Directory) != 0)
                 Directory.Delete(path, recursive: false);
             else

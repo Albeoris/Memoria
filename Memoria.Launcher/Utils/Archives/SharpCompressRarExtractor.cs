@@ -1,3 +1,5 @@
+#nullable enable
+
 using NLog;
 using SharpCompress.Archives;
 using SharpCompress.Common;
@@ -27,7 +29,7 @@ namespace Memoria.Launcher.Utils.Archives
             String archivePath,
             String destinationPath,
             CancellationToken cancellationToken,
-            Action<Int32> progress = null)
+            Action<Int32>? progress = null)
         {
             String fullArchivePath = GetFullPath(archivePath, nameof(archivePath));
             String fullDestinationPath = GetFullPath(destinationPath, nameof(destinationPath));
@@ -45,9 +47,8 @@ namespace Memoria.Launcher.Utils.Archives
                     if (archive.Type != ArchiveType.Rar)
                         throw new ArchiveExtractionException($"The file '{fullArchivePath}' is not a valid RAR archive.");
 
-                    IArchiveEntry[] entries = archive.Entries.ToArray();
-                    IReadOnlyDictionary<IArchiveEntry, SafeRelativePath> entryPaths = ValidateEntries(entries);
-                    ExtractEntries(entries, entryPaths, fullDestinationPath, cancellationToken, progress);
+                    ValidatedArchiveEntry[] entries = ValidateEntries(archive.Entries);
+                    ExtractEntries(entries, fullDestinationPath, cancellationToken, progress);
                 }
 
                 _gameRoot.EnsureSafeTree(fullDestinationPath);
@@ -74,43 +75,43 @@ namespace Memoria.Launcher.Utils.Archives
             }
         }
 
-        private static IReadOnlyDictionary<IArchiveEntry, SafeRelativePath> ValidateEntries(IEnumerable<IArchiveEntry> entries)
+        private static ValidatedArchiveEntry[] ValidateEntries(IEnumerable<IArchiveEntry> entries)
         {
-            Dictionary<IArchiveEntry, SafeRelativePath> result = new();
-            foreach (IArchiveEntry entry in entries)
+            return entries.Select(entry =>
             {
                 if (String.IsNullOrWhiteSpace(entry.Key))
                     throw new ArchiveExtractionException("The RAR archive contains an entry without a path.");
 
-                result.Add(entry, ArchiveEntryPathPolicy.Validate(entry.Key, entry.LinkTarget));
-            }
-
-            return result;
+                SafeRelativePath path = ArchiveEntryPathPolicy.Validate(entry.Key, entry.LinkTarget);
+                return new ValidatedArchiveEntry(entry, path);
+            }).ToArray();
         }
 
         private void ExtractEntries(
-            IEnumerable<IArchiveEntry> entries,
-            IReadOnlyDictionary<IArchiveEntry, SafeRelativePath> entryPaths,
+            IReadOnlyCollection<ValidatedArchiveEntry> entries,
             String destinationPath,
             CancellationToken cancellationToken,
-            Action<Int32> progress)
+            Action<Int32>? progress)
         {
-            IArchiveEntry[] files = entries.Where(static entry => !entry.IsDirectory).ToArray();
-            Int64 totalBytes = files.Aggregate<IArchiveEntry, Int64>(0, static (total, entry) => checked(total + entry.Size));
+            Int64 totalBytes = entries
+                .Where(static entry => !entry.Entry.IsDirectory)
+                .Aggregate<ValidatedArchiveEntry, Int64>(0, static (total, entry) => checked(total + entry.Entry.Size));
             Int64 extractedBytes = 0;
             progress?.Invoke(0);
 
-            foreach (IArchiveEntry entry in entries)
+            foreach (ValidatedArchiveEntry validatedEntry in entries)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                String outputPath = _gameRoot.ResolveWithin(destinationPath, entryPaths[entry]);
+                IArchiveEntry entry = validatedEntry.Entry;
+                String outputPath = _gameRoot.ResolveWithin(destinationPath, validatedEntry.Path);
                 if (entry.IsDirectory)
                 {
                     Directory.CreateDirectory(outputPath);
                     continue;
                 }
 
-                String parentDirectory = Path.GetDirectoryName(outputPath);
+                String parentDirectory = Path.GetDirectoryName(outputPath)
+                    ?? throw new ArchiveExtractionException($"The archive entry '{entry.Key}' does not have a valid parent directory.");
                 Directory.CreateDirectory(parentDirectory);
                 using Stream input = entry.OpenEntryStream();
                 using FileStream output = new FileStream(
@@ -131,7 +132,7 @@ namespace Memoria.Launcher.Utils.Archives
             Int64 extractedBytes,
             Int64 totalBytes,
             CancellationToken cancellationToken,
-            Action<Int32> progress)
+            Action<Int32>? progress)
         {
             Byte[] buffer = new Byte[BufferSize];
             Int32 lastProgress = CalculateProgress(extractedBytes, totalBytes);
@@ -158,7 +159,7 @@ namespace Memoria.Launcher.Utils.Archives
             if (totalBytes <= 0)
                 return 0;
 
-            return (Int32)Math.Min(99, extractedBytes * 100 / totalBytes);
+            return (Int32)Math.Min(99, (Double)extractedBytes / totalBytes * 100);
         }
 
         private static String GetFullPath(String path, String parameterName)
@@ -176,6 +177,18 @@ namespace Memoria.Launcher.Utils.Archives
             {
                 throw new ArgumentException("The path is not a valid file-system path.", parameterName, exception);
             }
+        }
+
+        private sealed class ValidatedArchiveEntry
+        {
+            public ValidatedArchiveEntry(IArchiveEntry entry, SafeRelativePath path)
+            {
+                Entry = entry ?? throw new ArgumentNullException(nameof(entry));
+                Path = path ?? throw new ArgumentNullException(nameof(path));
+            }
+
+            public IArchiveEntry Entry { get; }
+            public SafeRelativePath Path { get; }
         }
     }
 }

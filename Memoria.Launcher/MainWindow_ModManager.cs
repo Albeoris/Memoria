@@ -1026,9 +1026,6 @@ namespace Memoria.Launcher
         private ModArchiveRoot FindModRoot(String archivePath) =>
             _modArchiveInspector.FindModRoot(archivePath, GetKnownModRootNames());
 
-        private ModArchiveRoot FindModRoot(String archivePath, String preferredRootName) =>
-            _modArchiveInspector.FindModRoot(archivePath, preferredRootName, GetKnownModRootNames());
-
         private String[] GetKnownModRootNames() => ModListCatalog
             .Select(static mod => mod.InstallationPath)
             .Where(static installationPath => !String.IsNullOrWhiteSpace(installationPath))
@@ -1046,9 +1043,10 @@ namespace Memoria.Launcher
                 throw new ArgumentNullException(nameof(plan));
 
             String[] knownRootNames = GetKnownModRootNames();
-            ExtractedModArchive extractedMod = await ExtractModArchive(
+            ExtractedModArchive extractedMod = await ExtractCatalogModArchive(
                 archivePath,
-                () => _modArchiveInspector.FindModRoot(archivePath, plan.InstallationPath, knownRootNames),
+                plan.InstallationPath,
+                knownRootNames,
                 progressCallback);
 
             await CommitExtractedModArchive(extractedMod, plan.InstallationDirectory);
@@ -1063,14 +1061,15 @@ namespace Memoria.Launcher
             Action<Int32> progressCallback)
         {
             String[] knownRootNames = GetKnownModRootNames();
-            ExtractedModArchive extractedMod = await ExtractModArchive(
+            ExtractedModArchive extractedMod = await ExtractDroppedModArchive(
                 archivePath,
-                () => _modArchiveInspector.FindModRoot(archivePath, knownRootNames),
+                knownRootNames,
                 progressCallback);
             Mod modInfo = extractedMod.Mod;
-            String installationDirectory = String.IsNullOrWhiteSpace(modInfo.InstallationPath)
-                ? _modFileSystem.GetDefaultInstallationDirectory(Path.GetFileName(extractedMod.DirectoryPath))
-                : _modFileSystem.GetInstallationDirectory(modInfo.InstallationPath);
+            String installationDirectory = _modFileSystem.GetInstallationDirectory(modInfo.InstallationPath);
+            Mod catalogMod = Mod.SearchMod(ModListCatalog, modInfo);
+            if (!extractedMod.HasDescriptionFile)
+                catalogMod?.GenerateDescription(extractedMod.DirectoryPath);
 
             if (Directory.Exists(installationDirectory))
             {
@@ -1102,71 +1101,95 @@ namespace Memoria.Launcher
 
             return Task.Run(() =>
             {
-                _modFileSystem.DeleteInstallationDirectory(installationDirectory);
-                _modFileSystem.MoveExtractedModToInstallation(extractedMod.DirectoryPath, installationDirectory);
+                _modFileSystem.ReplaceInstallationDirectory(extractedMod.DirectoryPath, installationDirectory);
                 _modFileSystem.DeleteExtractionDirectory();
             });
         }
 
-        private Task<ExtractedModArchive> ExtractModArchive(
+        private Task<ExtractedModArchive> ExtractCatalogModArchive(
             String archivePath,
-            Func<ModArchiveRoot> findRoot,
+            String preferredRootName,
+            IReadOnlyCollection<String> knownRootNames,
+            Action<Int32> progressCallback)
+        {
+            ValidateArchiveExtractionArguments(archivePath, knownRootNames, progressCallback);
+            if (String.IsNullOrWhiteSpace(preferredRootName))
+                throw new ArgumentException("The preferred mod root cannot be empty or whitespace.", nameof(preferredRootName));
+
+            return Task.Run(() =>
+            {
+                ModArchiveRoot root = _modArchiveInspector.FindModRoot(
+                    archivePath,
+                    preferredRootName,
+                    knownRootNames);
+                return ExtractModArchive(archivePath, root, progressCallback);
+            });
+        }
+
+        private Task<ExtractedModArchive> ExtractDroppedModArchive(
+            String archivePath,
+            IReadOnlyCollection<String> knownRootNames,
+            Action<Int32> progressCallback)
+        {
+            ValidateArchiveExtractionArguments(archivePath, knownRootNames, progressCallback);
+
+            return Task.Run(() =>
+            {
+                ModArchiveRoot root = _modArchiveInspector.FindModRoot(archivePath, knownRootNames);
+                return ExtractModArchive(archivePath, root, progressCallback);
+            });
+        }
+
+        private ExtractedModArchive ExtractModArchive(
+            String archivePath,
+            ModArchiveRoot root,
+            Action<Int32> progressCallback)
+        {
+            String extractPath = _modFileSystem.ExtractionDirectory;
+            _modFileSystem.ResetExtractionDirectory();
+            try
+            {
+                _archiveExtractor.Extract(archivePath, extractPath, ExtractionCancellationToken.Token, progressCallback);
+            }
+            catch (OperationCanceledException) when (ExtractionCancellationToken.IsCancellationRequested)
+            {
+                HandleExtractionCancellation();
+            }
+            if (ExtractionCancellationToken.IsCancellationRequested)
+                HandleExtractionCancellation();
+
+            String modPath = _modFileSystem.GetExtractedModDirectory(root);
+            String descriptionPath = _modFileSystem.GetDescriptionFile(modPath, Mod.DESCRIPTION_FILE);
+            Boolean hasDescriptionFile = File.Exists(descriptionPath);
+            Mod modInfo;
+            if (hasDescriptionFile)
+            {
+                using (Stream input = File.OpenRead(descriptionPath))
+                using (StreamReader reader = new StreamReader(input))
+                    modInfo = new Mod(reader);
+            }
+            else
+            {
+                modInfo = new Mod(modPath);
+            }
+
+            if (String.IsNullOrWhiteSpace(modInfo.InstallationPath))
+                modInfo.InstallationPath = ModInstallationNameResolver.Resolve(archivePath, root);
+
+            return new ExtractedModArchive(modInfo, modPath, hasDescriptionFile);
+        }
+
+        private static void ValidateArchiveExtractionArguments(
+            String archivePath,
+            IReadOnlyCollection<String> knownRootNames,
             Action<Int32> progressCallback)
         {
             if (String.IsNullOrWhiteSpace(archivePath))
                 throw new ArgumentException("The archive path cannot be empty or whitespace.", nameof(archivePath));
-            if (findRoot == null)
-                throw new ArgumentNullException(nameof(findRoot));
+            if (knownRootNames == null)
+                throw new ArgumentNullException(nameof(knownRootNames));
             if (progressCallback == null)
                 throw new ArgumentNullException(nameof(progressCallback));
-
-            return Task.Run(() =>
-            {
-                ModArchiveRoot root;
-                try
-                {
-                    root = findRoot();
-                }
-                catch (Exception exception)
-                {
-                    throw new ArchiveExtractionException($"Memoria could not inspect the archive '{archivePath}'.", exception);
-                }
-
-                String extractPath = _modFileSystem.ExtractionDirectory;
-                _modFileSystem.ResetExtractionDirectory();
-                try
-                {
-                    _archiveExtractor.Extract(archivePath, extractPath, ExtractionCancellationToken.Token, progressCallback);
-                }
-                catch (OperationCanceledException) when (ExtractionCancellationToken.IsCancellationRequested)
-                {
-                    HandleExtractionCancellation();
-                }
-                if (ExtractionCancellationToken.IsCancellationRequested)
-                    HandleExtractionCancellation();
-
-                String modPath = _modFileSystem.GetExtractedModDirectory(root);
-                String descriptionPath = _modFileSystem.GetDescriptionFile(modPath, Mod.DESCRIPTION_FILE);
-                Mod modInfo;
-                if (File.Exists(descriptionPath))
-                {
-                    using (Stream input = File.OpenRead(descriptionPath))
-                    using (StreamReader reader = new StreamReader(input))
-                        modInfo = new Mod(reader);
-                }
-                else
-                {
-                    modInfo = new Mod(modPath);
-                    if (String.IsNullOrEmpty(modInfo.InstallationPath))
-                        modInfo.InstallationPath = Path.GetFileName(modPath);
-
-                    Mod modCatalog = Mod.SearchMod(ModListCatalog, modInfo);
-                    if (modCatalog != null)
-                        modCatalog.GenerateDescription(modPath);
-                }
-
-                return new ExtractedModArchive(modInfo, modPath);
-            });
         }
 
         private void HandleExtractionCancellation()
@@ -1221,7 +1244,6 @@ namespace Memoria.Launcher
                 String path = downloadedFile.FullPath;
                 if (plan.Format.PackageType == ModPackageType.Archive)
                 {
-                    Boolean installationSucceeded = false;
                     try
                     {
                         plan.Validate(downloadedFile);
@@ -1248,7 +1270,7 @@ namespace Memoria.Launcher
                                 lstDownloads.Items.Refresh();
                             });
                         });
-                        installationSucceeded = true;
+                        DeleteDownloadedArchive(mod.Name, downloadedFile.FullPath);
                     }
                     catch (TaskCanceledException) { }
                     catch (Exception err)
@@ -1256,8 +1278,6 @@ namespace Memoria.Launcher
                         ShowModArchiveInstallationFailure(mod.Name, downloadedFile.FullPath, err);
                     }
 
-                    if (installationSucceeded)
-                        DeleteDownloadedArchive(mod.Name, downloadedFile.FullPath);
                 }
                 else
                 {

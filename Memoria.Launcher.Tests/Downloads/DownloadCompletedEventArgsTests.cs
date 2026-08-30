@@ -14,10 +14,14 @@ public sealed class DownloadCompletedEventArgsTests
 
         DownloadCompletedEventArgs success = DownloadCompletedEventArgs.Completed(file);
         DownloadCompletedEventArgs failure = DownloadCompletedEventArgs.Failed(error);
+        DownloadCompletedEventArgs cancelled = DownloadCompletedEventArgs.Cancelled();
 
         Assert.Same(file, success.GetDownloadedFile());
         Assert.Throws<InvalidOperationException>(() => success.GetError());
         Assert.Same(error, failure.GetError());
         Assert.Throws<InvalidOperationException>(() => failure.GetDownloadedFile());
+        Assert.True(cancelled.IsCancelled);
+        Assert.Throws<InvalidOperationException>(() => cancelled.GetError());
+        Assert.Throws<InvalidOperationException>(() => cancelled.GetDownloadedFile());
     }
 }

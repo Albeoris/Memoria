@@ -12,6 +12,16 @@ namespace Memoria.Launcher.Utils.Downloads
     {
         public static String Resolve(HttpResponseMessage response, Uri source)
         {
+            if (TryResolve(response, source, out String fileName))
+                return fileName;
+
+            throw new InvalidDataException(
+                $"The server did not provide a usable file name for '{source}'. " +
+                "Add a file name to the URL or configure Content-Disposition on the server.");
+        }
+
+        public static Boolean TryResolve(HttpResponseMessage response, Uri source, out String fileName)
+        {
             if (response == null)
                 throw new ArgumentNullException(nameof(response));
             if (source == null)
@@ -32,14 +42,8 @@ namespace Memoria.Launcher.Utils.Downloads
 
             String? resolved = candidates.FirstOrDefault(HasExtension)
                 ?? candidates.FirstOrDefault(value => !String.IsNullOrWhiteSpace(value));
-            if (String.IsNullOrWhiteSpace(resolved))
-            {
-                throw new InvalidDataException(
-                    $"The server did not provide a usable file name for '{source}'. " +
-                    "Add a file name to the URL or configure Content-Disposition on the server.");
-            }
-
-            return resolved!;
+            fileName = resolved ?? String.Empty;
+            return fileName.Length > 0;
         }
 
         private static String? GetUriFileName(Uri uri)

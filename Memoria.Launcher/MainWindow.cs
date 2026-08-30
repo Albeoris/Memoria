@@ -236,7 +236,9 @@ namespace Memoria.Launcher
                 if (!e.Data.GetDataPresent(DataFormats.FileDrop, true))
                     return;
 
-                string[] filenames = e.Data.GetData(DataFormats.FileDrop, true) as string[];
+                if (!(e.Data.GetData(DataFormats.FileDrop, true) is String[] filenames))
+                    return;
+
                 foreach (string filename in filenames)
                 {
                     String ext = Path.GetExtension(filename).ToLowerInvariant();
@@ -286,7 +288,6 @@ namespace Memoria.Launcher
         private async void MainWindow_Drop(object sender, DragEventArgs e)
         {
             e.Handled = true;
-            String currentArchivePath = null;
             try
             {
                 if (!e.Data.GetDataPresent(DataFormats.FileDrop, true))
@@ -294,10 +295,11 @@ namespace Memoria.Launcher
 
                 Activate();
 
-                String[] filenames = e.Data.GetData(DataFormats.FileDrop, true) as String[];
+                if (!(e.Data.GetData(DataFormats.FileDrop, true) is String[] filenames))
+                    return;
+
                 foreach (string filename in filenames)
                 {
-                    currentArchivePath = null;
                     String ext = Path.GetExtension(filename).ToLowerInvariant();
 
                     // Check if it's a Preset
@@ -353,35 +355,39 @@ namespace Memoria.Launcher
                     if (!ArchiveFileExtensions.IsSupportedFile(filename))
                         continue;
 
-                    // Extract the archive
-                    currentArchivePath = filename;
-                    // TODO language:
-                    dropLabel.Content = $"Extracting '{Path.GetFileName(filename)}'";
-                    Mod modInfo = await InstallDroppedModFromArchive(filename, (progress) =>
+                    try
                     {
-                        Dispatcher.BeginInvoke(() =>
+                        // Extract the archive
+                        // TODO language:
+                        dropLabel.Content = $"Extracting '{Path.GetFileName(filename)}'";
+                        Mod modInfo = await InstallDroppedModFromArchive(filename, (progress) =>
                         {
-                            dropLabel.Content = $"Extracting '{Path.GetFileName(filename)}' - {progress}%";
+                            Dispatcher.BeginInvoke(() =>
+                            {
+                                dropLabel.Content = $"Extracting '{Path.GetFileName(filename)}' - {progress}%";
+                            });
                         });
-                    });
 
-                    // Refresh mods list and activate the mod
-                    UpdateModListInstalled();
-                    UpdateCatalogInstallationState();
-                    CheckOutdatedAndIncompatibleMods();
-                    UpdateModSettings();
-                    modInfo = Mod.SearchMod(ModListInstalled, modInfo);
-                    // TODO language:
-                    MessageBox.Show($"The mod '{modInfo.Name}{(modInfo.CurrentVersion != null ? " " + modInfo.CurrentVersion : "")}' has been successfully installed", "Mod installed", MessageBoxButton.OK, MessageBoxImage.Information);
+                        // Refresh mods list and activate the mod
+                        UpdateModListInstalled();
+                        UpdateCatalogInstallationState();
+                        CheckOutdatedAndIncompatibleMods();
+                        UpdateModSettings();
+                        Mod installedMod = Mod.SearchMod(ModListInstalled, modInfo) ?? modInfo;
+                        // TODO language:
+                        MessageBox.Show(this, $"The mod '{installedMod.Name}{(installedMod.CurrentVersion != null ? " " + installedMod.CurrentVersion : "")}' has been successfully installed", "Mod installed", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    catch (TaskCanceledException) { }
+                    catch (Exception exception)
+                    {
+                        ShowArchiveInstallationFailure(filename, exception);
+                    }
                 }
             }
             catch (TaskCanceledException) { }
             catch (Exception err)
             {
-                if (currentArchivePath != null)
-                    ShowArchiveInstallationFailure(currentArchivePath, err);
-                else
-                    MessageBox.Show(this, err.ToString(), "Installation failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(this, err.ToString(), "Installation failed", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {
