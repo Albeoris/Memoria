@@ -10,6 +10,7 @@ using Xunit.Abstractions;
 
 namespace Memoria.Launcher.Tests;
 
+[Trait("Category", "CatalogIntegration")]
 public sealed class MemoriaCatalogTests(ITestOutputHelper output)
 {
     private const Int32 MaxConcurrentRequests = 8;

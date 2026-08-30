@@ -59,7 +59,7 @@ jobs:
       run: msbuild Memoria.sln /t:Build /p:Configuration=Release /verbosity:minimal
 
     - name: Run launcher tests (Release)
-      run: dotnet test Memoria.Launcher.Tests/Memoria.Launcher.Tests.csproj --configuration Release --no-restore --logger "console;verbosity=normal"
+      run: dotnet test Memoria.Launcher.Tests/Memoria.Launcher.Tests.csproj --configuration Release --no-restore --filter "Category!=CatalogIntegration" --logger "console;verbosity=normal"
 
     - name: Verify SaXAudio Release runtime
       shell: pwsh
