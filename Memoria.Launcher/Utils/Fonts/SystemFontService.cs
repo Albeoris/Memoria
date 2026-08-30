@@ -17,9 +17,7 @@ namespace Memoria.Launcher.Utils
         private const Int32 BoldWeight = 700;
 
         private static readonly Logger Log = AppLogger.GetLogger();
-        private static readonly Lazy<SystemFontService> CurrentInstance = new(
-            Create,
-            LazyThreadSafetyMode.ExecutionAndPublication);
+        private static readonly Lazy<SystemFontService> CurrentInstance = new(Create, LazyThreadSafetyMode.ExecutionAndPublication);
         private static readonly CultureInfo EnglishCulture = CultureInfo.GetCultureInfo("en-US");
 
         public static SystemFontService Current => CurrentInstance.Value;

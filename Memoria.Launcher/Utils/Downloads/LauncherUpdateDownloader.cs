@@ -22,7 +22,13 @@ namespace Memoria.Launcher.Utils.Downloads
             _cancellationToken = cancellationToken;
         }
 
-        public Boolean IsCancellationRequested => _cancellationToken.IsCancellationRequested;
+        public Boolean IsCancellationRequested
+        {
+            get
+            {
+                return _cancellationToken.IsCancellationRequested;
+            }
+        }
 
         public Task<RemoteFileInfo> GetRemoteFileInfoAsync(Uri source)
         {
@@ -31,9 +37,10 @@ namespace Memoria.Launcher.Utils.Downloads
             return GetRemoteFileInfoCoreAsync(source);
         }
 
-        public Task DownloadAsync(Uri source, String destinationPath, IProgress<Int64> progress = null)
+        public async Task DownloadAsync(Uri source, String destinationPath, IProgress<Int64> progress = null)
         {
-            FileDownloader.ValidateArguments(source, destinationPath);
+            FileDownloader.ValidateSource(source);
+            DownloadDestination destination = DownloadDestination.ForFile(destinationPath);
             ThrowIfDisposed();
 
             Int64 previouslyReported = 0;
@@ -46,7 +53,7 @@ namespace Memoria.Launcher.Utils.Downloads
                     if (increment > 0)
                         progress.Report(increment);
                 });
-            return _fileDownloader.DownloadAsync(source, destinationPath, byteProgress, _cancellationToken);
+            await _fileDownloader.DownloadAsync(source, destination, byteProgress, _cancellationToken).ConfigureAwait(false);
         }
 
         public void Dispose()

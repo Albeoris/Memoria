@@ -28,12 +28,7 @@ namespace Memoria.Launcher.Utils.Archives
                 if (String.IsNullOrWhiteSpace(localApplicationData))
                     localApplicationData = Path.GetTempPath();
 
-                String toolsDirectory = Path.Combine(
-                    localApplicationData,
-                    "Memoria",
-                    "Tools",
-                    "7-Zip",
-                    fingerprint);
+                String toolsDirectory = Path.Combine(localApplicationData, "Memoria", "Tools", "7-Zip", fingerprint);
                 String executablePath = Path.Combine(toolsDirectory, ExecutableName);
 
                 Directory.CreateDirectory(toolsDirectory);

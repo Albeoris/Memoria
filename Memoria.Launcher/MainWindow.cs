@@ -16,6 +16,8 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using System.Windows.Threading;
+using Memoria.Launcher.Utils.Archives;
+using Memoria.Launcher.Utils.Mods;
 
 namespace Memoria.Launcher
 {
@@ -30,6 +32,10 @@ namespace Memoria.Launcher
         {
             Lang.Initialize();
             String launcherDirectory = Directory.GetCurrentDirectory();
+            _modFileSystem = new ModInstallationFileSystem(launcherDirectory);
+            _modDescriptionFile = new ModDescriptionFile(_modFileSystem);
+            _singleFileModInstaller = new SingleFileModInstaller(_modFileSystem);
+            _archiveExtractor = new ArchiveExtractor(launcherDirectory);
             try
             {
                 // Official version since Aug 6, 2020:                          1.0.7141.27878
@@ -65,8 +71,7 @@ namespace Memoria.Launcher
         {
             try
             {
-                if (Directory.Exists(Mod.INSTALLATION_TMP))
-                    Directory.Delete(Mod.INSTALLATION_TMP, true);
+                _modFileSystem.DeleteTemporaryDirectory();
             }
             catch { }
             UpdateLauncherTheme();
@@ -253,15 +258,13 @@ namespace Memoria.Launcher
                     }
 
                     // Check if it's a Mod
-                    if (!SupportedArchives.Contains(ext))
+                    if (!ArchiveFileExtensions.IsSupportedFile(filename))
                         continue;
 
-                    if (FindModRoot(filename) != null)
-                    {
-                        // TODO translate:
-                        dropLabel.Content = Lang.Res["Launcher.InstallMod"];
-                        dropBackground.Visibility = Visibility.Visible;
-                    }
+                    FindModRoot(filename);
+                    // TODO translate:
+                    dropLabel.Content = Lang.Res["Launcher.InstallMod"];
+                    dropBackground.Visibility = Visibility.Visible;
                 }
             }
             catch { }
@@ -283,6 +286,7 @@ namespace Memoria.Launcher
         private async void MainWindow_Drop(object sender, DragEventArgs e)
         {
             e.Handled = true;
+            String currentArchivePath = null;
             try
             {
                 if (!e.Data.GetDataPresent(DataFormats.FileDrop, true))
@@ -293,6 +297,7 @@ namespace Memoria.Launcher
                 String[] filenames = e.Data.GetData(DataFormats.FileDrop, true) as String[];
                 foreach (string filename in filenames)
                 {
+                    currentArchivePath = null;
                     String ext = Path.GetExtension(filename).ToLowerInvariant();
 
                     // Check if it's a Preset
@@ -345,13 +350,14 @@ namespace Memoria.Launcher
                         continue;
                     }
 
-                    if (!SupportedArchives.Contains(ext))
+                    if (!ArchiveFileExtensions.IsSupportedFile(filename))
                         continue;
 
                     // Extract the archive
+                    currentArchivePath = filename;
                     // TODO language:
                     dropLabel.Content = $"Extracting '{Path.GetFileName(filename)}'";
-                    Mod modInfo = await InstallModFromArchive(filename, null, (progress) =>
+                    Mod modInfo = await InstallDroppedModFromArchive(filename, (progress) =>
                     {
                         Dispatcher.BeginInvoke(() =>
                         {
@@ -372,8 +378,10 @@ namespace Memoria.Launcher
             catch (TaskCanceledException) { }
             catch (Exception err)
             {
-                // TODO language:
-                MessageBox.Show($"Failed to automatically install the mod\n{err.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                if (currentArchivePath != null)
+                    ShowArchiveInstallationFailure(currentArchivePath, err);
+                else
+                    MessageBox.Show(this, err.ToString(), "Installation failed", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {

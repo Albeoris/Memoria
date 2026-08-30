@@ -25,38 +25,41 @@ namespace Memoria.Launcher.Utils.Downloads
             _httpClient = ResilientHttpClient.CreateClient();
         }
 
-        public Task DownloadAsync(
+        public Task<DownloadedFile> DownloadAsync(
             Uri source,
             String destinationPath,
             IProgress<DownloadProgress> progress = null,
             CancellationToken cancellationToken = default)
         {
-            String fullDestinationPath = ValidateArguments(source, destinationPath);
+            ValidateSource(source);
+            DownloadDestination destination = DownloadDestination.ForFile(destinationPath);
             ThrowIfDisposed();
-            return DownloadCoreAsync(source, fullDestinationPath, progress, cancellationToken);
+            return DownloadCoreAsync(source, destination, progress, cancellationToken);
         }
 
-        internal static String ValidateArguments(Uri source, String destinationPath)
+        public Task<DownloadedFile> DownloadToDirectoryAsync(
+            Uri source,
+            String destinationDirectory,
+            IProgress<DownloadProgress> progress = null,
+            CancellationToken cancellationToken = default)
         {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            if (!source.IsAbsoluteUri)
-                throw new ArgumentException("The download URI must be absolute.", nameof(source));
-            if (source.Scheme != Uri.UriSchemeHttp && source.Scheme != Uri.UriSchemeHttps)
-                throw new ArgumentException("Only HTTP and HTTPS download URIs are supported.", nameof(source));
-            if (destinationPath == null)
-                throw new ArgumentNullException(nameof(destinationPath));
-            if (String.IsNullOrWhiteSpace(destinationPath))
-                throw new ArgumentException("The destination path cannot be empty or whitespace.", nameof(destinationPath));
+            ValidateSource(source);
+            DownloadDestination destination = DownloadDestination.InDirectory(destinationDirectory);
+            ThrowIfDisposed();
+            return DownloadCoreAsync(source, destination, progress, cancellationToken);
+        }
 
-            try
-            {
-                return Path.GetFullPath(destinationPath);
-            }
-            catch (Exception exception) when (exception is ArgumentException || exception is NotSupportedException || exception is PathTooLongException)
-            {
-                throw new ArgumentException("The destination is not a valid file-system path.", nameof(destinationPath), exception);
-            }
+        internal Task<DownloadedFile> DownloadAsync(
+            Uri source,
+            DownloadDestination destination,
+            IProgress<DownloadProgress> progress,
+            CancellationToken cancellationToken)
+        {
+            ValidateSource(source);
+            if (destination == null)
+                throw new ArgumentNullException(nameof(destination));
+            ThrowIfDisposed();
+            return DownloadCoreAsync(source, destination, progress, cancellationToken);
         }
 
         public void Dispose()
@@ -68,21 +71,19 @@ namespace Memoria.Launcher.Utils.Downloads
             ResilientHttpClient.DisposeClient(_httpClient);
         }
 
-        private async Task DownloadCoreAsync(
+        private async Task<DownloadedFile> DownloadCoreAsync(
             Uri source,
-            String destinationPath,
+            DownloadDestination destination,
             IProgress<DownloadProgress> progress,
             CancellationToken cancellationToken)
         {
-            String stagingPath = null;
-            _log.Info("Downloading file. Uri: {Uri}, Destination: {DestinationPath}", source, destinationPath);
+            String stagingPath = String.Empty;
+            String resolvedDestinationPath = destination.DisplayPath;
+            _log.Info("Downloading file. Uri: {Uri}, Destination: {DestinationPath}", source, destination.DisplayPath);
             try
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                String destinationDirectory = Path.GetDirectoryName(destinationPath);
-                FileSystemAccessProbe.EnsureWritableDirectory(destinationDirectory);
-                FileSystemAccessProbe.EnsureReplaceableFile(destinationPath);
-                stagingPath = Path.Combine(destinationDirectory, $".{Path.GetFileName(destinationPath)}.{Guid.NewGuid():N}.download");
+                FileSystemAccessProbe.EnsureWritableDirectory(destination.DirectoryPath);
 
                 using (HttpResponseMessage response = await ResilientHttpClient.GetAsync(
                            _httpClient,
@@ -93,8 +94,12 @@ namespace Memoria.Launcher.Utils.Downloads
                     if (!response.IsSuccessStatusCode)
                         throw CreateHttpResponseException(source, response);
 
+                    DownloadResponseValidator.ValidateHeaders(response, source);
+                    resolvedDestinationPath = destination.ResolveFilePath(response, source);
+                    FileSystemAccessProbe.EnsureReplaceableFile(resolvedDestinationPath);
+                    stagingPath = Path.Combine(destination.DirectoryPath, $".{Path.GetFileName(resolvedDestinationPath)}.{Guid.NewGuid():N}.download");
                     Int64 expectedBytes = response.Content.Headers.ContentLength ?? -1;
-                    Int64 receivedBytes = await CopyResponseAsync(response, stagingPath, expectedBytes, progress, cancellationToken).ConfigureAwait(false);
+                    Int64 receivedBytes = await CopyResponseAsync(response, source, stagingPath, expectedBytes, progress, cancellationToken).ConfigureAwait(false);
                     if (expectedBytes >= 0 && receivedBytes != expectedBytes)
                     {
                         throw new DownloadException(
@@ -103,15 +108,16 @@ namespace Memoria.Launcher.Utils.Downloads
                             "Check your connection and free disk space, then download the file again.");
                     }
 
-                    Commit(stagingPath, destinationPath);
-                    stagingPath = null;
+                    Commit(stagingPath, resolvedDestinationPath);
+                    stagingPath = String.Empty;
                     progress?.Report(new DownloadProgress(receivedBytes, expectedBytes));
-                    _log.Info("File downloaded. Uri: {Uri}, Destination: {DestinationPath}, Bytes: {Bytes}", source, destinationPath, receivedBytes);
+                    _log.Info("File downloaded. Uri: {Uri}, Destination: {DestinationPath}, Bytes: {Bytes}", source, resolvedDestinationPath, receivedBytes);
+                    return new DownloadedFile(source, response.RequestMessage?.RequestUri ?? source, resolvedDestinationPath);
                 }
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
-                _log.Info("Download cancelled. Uri: {Uri}, Destination: {DestinationPath}", source, destinationPath);
+                _log.Info("Download cancelled. Uri: {Uri}, Destination: {DestinationPath}", source, resolvedDestinationPath);
                 throw;
             }
             catch (OperationCanceledException exception)
@@ -121,22 +127,22 @@ namespace Memoria.Launcher.Utils.Downloads
                     $"The download of '{source}' timed out. Check your connection, proxy or firewall settings, then try again.",
                     exception);
                 
-                _log.Error(userException, "Download failed. Uri: {Uri}, Destination: {DestinationPath}", source, destinationPath);
+                _log.Error(userException, "Download failed. Uri: {Uri}, Destination: {DestinationPath}", source, resolvedDestinationPath);
                 throw userException;
             }
             catch (DownloadException exception)
             {
-                _log.Error(exception, "Download failed. Uri: {Uri}, Destination: {DestinationPath}", source, destinationPath);
+                _log.Error(exception, "Download failed. Uri: {Uri}, Destination: {DestinationPath}", source, resolvedDestinationPath);
                 throw;
             }
             catch (Exception exception) when (exception is UnauthorizedAccessException || exception is SecurityException)
             {
                 DownloadException userException = new DownloadException(
                     DownloadFailureKind.AccessDenied,
-                    $"Windows denied access to '{destinationPath}'. Close applications using the file, remove its read-only attribute, " +
+                    $"Windows denied access to '{resolvedDestinationPath}'. Close applications using the file, remove its read-only attribute, " +
                     "and allow Memoria Launcher in your antivirus or Windows Controlled Folder Access settings, then try again.",
                     exception);
-                _log.Error(userException, "Download failed. Uri: {Uri}, Destination: {DestinationPath}", source, destinationPath);
+                _log.Error(userException, "Download failed. Uri: {Uri}, Destination: {DestinationPath}", source, resolvedDestinationPath);
                 throw userException;
             }
             catch (HttpRequestException exception)
@@ -145,18 +151,27 @@ namespace Memoria.Launcher.Utils.Downloads
                     DownloadFailureKind.Network,
                     $"Memoria could not download '{source}'. Check your internet connection, proxy or firewall settings, and whether the link opens in a browser, then try again.",
                     exception);
-                _log.Error(userException, "Download failed. Uri: {Uri}, Destination: {DestinationPath}", source, destinationPath);
+                _log.Error(userException, "Download failed. Uri: {Uri}, Destination: {DestinationPath}", source, resolvedDestinationPath);
+                throw userException;
+            }
+            catch (InvalidDataException exception)
+            {
+                DownloadException userException = new DownloadException(
+                    DownloadFailureKind.InvalidResponseMetadata,
+                    $"Memoria could not determine a safe file name for '{source}'. Ask the mod author to provide a direct file link.",
+                    exception);
+                _log.Error(userException, "Download failed. Uri: {Uri}", source);
                 throw userException;
             }
             catch (IOException exception)
             {
                 DownloadException userException = new DownloadException(
                     DownloadFailureKind.Storage,
-                    $"The download could not be saved to '{destinationPath}'. Check available disk space and folder permissions, " +
+                    $"The download could not be saved to '{resolvedDestinationPath}'. Check available disk space and folder permissions, " +
                     "close applications using the file, and try again.",
                     exception);
                 
-                _log.Error(userException, "Download failed. Uri: {Uri}, Destination: {DestinationPath}", source, destinationPath);
+                _log.Error(userException, "Download failed. Uri: {Uri}, Destination: {DestinationPath}", source, resolvedDestinationPath);
                 throw userException;
             }
             finally
@@ -165,8 +180,19 @@ namespace Memoria.Launcher.Utils.Downloads
             }
         }
 
+        internal static void ValidateSource(Uri source)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (!source.IsAbsoluteUri)
+                throw new ArgumentException("The download URI must be absolute.", nameof(source));
+            if (source.Scheme != Uri.UriSchemeHttp && source.Scheme != Uri.UriSchemeHttps)
+                throw new ArgumentException("Only HTTP and HTTPS download URIs are supported.", nameof(source));
+        }
+
         private static async Task<Int64> CopyResponseAsync(
             HttpResponseMessage response,
+            Uri source,
             String stagingPath,
             Int64 totalBytes,
             IProgress<DownloadProgress> progress,
@@ -175,6 +201,7 @@ namespace Memoria.Launcher.Utils.Downloads
             Int64 bytesReceived = 0;
             Byte[] buffer = new Byte[BufferSize];
             Stopwatch progressClock = Stopwatch.StartNew();
+            Boolean firstChunk = true;
 
             using Stream input = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
             using FileStream output = new FileStream(
@@ -190,6 +217,12 @@ namespace Memoria.Launcher.Utils.Downloads
                 Int32 read = await input.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false);
                 if (read == 0)
                     break;
+
+                if (firstChunk)
+                {
+                    DownloadResponseValidator.ValidatePayloadPrefix(buffer, read, response, source);
+                    firstChunk = false;
+                }
 
                 await output.WriteAsync(buffer, 0, read, cancellationToken).ConfigureAwait(false);
                 bytesReceived += read;

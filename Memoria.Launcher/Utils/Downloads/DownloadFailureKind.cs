@@ -6,6 +6,8 @@ namespace Memoria.Launcher.Utils.Downloads
         HttpResponse,
         AccessDenied,
         Storage,
-        IncompleteContent
+        IncompleteContent,
+        InvalidResponseMetadata,
+        UnexpectedContent
     }
 }

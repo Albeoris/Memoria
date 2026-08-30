@@ -23,7 +23,13 @@ namespace Memoria.Launcher.Utils.Downloads
         private static readonly Lazy<HttpClient> SharedFallbackClient = new Lazy<HttpClient>(CreateDohFallbackClient, isThreadSafe: true);
         private static readonly ConditionalWeakTable<HttpClient, HttpClient> FallbackClients = new ConditionalWeakTable<HttpClient, HttpClient>();
 
-        public static HttpClient Shared => SharedClient.Value;
+        public static HttpClient Shared
+        {
+            get
+            {
+                return SharedClient.Value;
+            }
+        }
 
         public static HttpClient CreateClient()
         {
