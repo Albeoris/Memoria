@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:launcher="clr-namespace:Memoria.Launcher"
+    xmlns:controller="clr-namespace:Memoria.Launcher.Controller"
     Title="{DynamicResource Settings.LauncherWindowTitle}"
     Width="1000"
     Height="700"
@@ -683,6 +684,7 @@
                                                 </ListView>
                                                 <StackPanel x:Name="btnCancelStackpanel"
                                                     Height="0"
+                                                    Visibility="Collapsed"
                                                     Grid.Row="2"
                                                     Grid.Column="0"
                                                     Margin="0,0,0,0"
@@ -706,6 +708,7 @@
                                                     MinHeight="0"
                                                     MaxHeight="100"
                                                     Height="0"
+                                                    Visibility="Collapsed"
                                                     ItemsSource="{Binding DownloadList, UpdateSourceTrigger=PropertyChanged}">
                                                     <ListView.View>
                                                         <GridView>
@@ -976,7 +979,13 @@
                                                     <RowDefinition Height="auto"/>
                                                     <RowDefinition Height="1*"/>
                                                 </Grid.RowDefinitions>
-                                                <Border x:Name="ModOptionsHeaderButton" Grid.Row="0" Padding="5" Cursor="Hand">
+                                                <Button x:Name="ModOptionsHeaderButton"
+                                                        Grid.Row="0"
+                                                        Padding="5"
+                                                        BorderThickness="0"
+                                                        Background="#3CCC"
+                                                        Cursor="Hand"
+                                                        HorizontalContentAlignment="Stretch">
                                                     <Grid>
                                                         <Image Source="images/modOptions.png" Width="22" Height="22" Margin="3,0,0,0" HorizontalAlignment="Left" Opacity="0.8"/>
                                                         <Label x:Name="ModOptionsHeaderLabel"
@@ -994,17 +1003,30 @@
                                                                HorizontalAlignment="Right"
                                                                Content="▲"/>
                                                     </Grid>
-                                                    <Border.Style>
-                                                        <Style>
-                                                            <Setter Property="Border.Background" Value="#3CCC"/>
+                                                    <Button.Style>
+                                                        <Style TargetType="Button">
+                                                            <Setter Property="Template">
+                                                                <Setter.Value>
+                                                                    <ControlTemplate TargetType="Button">
+                                                                        <Border Background="{TemplateBinding Background}"
+                                                                                Padding="{TemplateBinding Padding}">
+                                                                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                                              VerticalAlignment="Center"/>
+                                                                        </Border>
+                                                                    </ControlTemplate>
+                                                                </Setter.Value>
+                                                            </Setter>
                                                             <Style.Triggers>
-                                                                <Trigger Property="Border.IsMouseOver" Value="True">
-                                                                    <Setter Property="Border.Background" Value="#5CCC"/>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="Background" Value="#5CCC"/>
+                                                                </Trigger>
+                                                                <Trigger Property="IsPressed" Value="True">
+                                                                    <Setter Property="Background" Value="#6CCC"/>
                                                                 </Trigger>
                                                             </Style.Triggers>
                                                         </Style>
-                                                    </Border.Style>
-                                                </Border>
+                                                    </Button.Style>
+                                                </Button>
                                                 <ScrollViewer x:Name="ModOptionsScrollViewer" Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                                                     <StackPanel Margin="7,7,7,3" x:Name="ModOptionsPanel"/>
                                                 </ScrollViewer>
@@ -1021,23 +1043,25 @@
 
         <!-- Play Button -->
         <launcher:UiLauncherPlayButton x:Name="PlayButton"
+            controller:GamepadNavigation.IsDefaultFocus="True"
             Width="260"
             Height="70"
             Margin="0,46,20,0"
             HorizontalAlignment="Right"
             VerticalAlignment="Top" />
 
-        <TextBlock x:Name="Nameandversion"
-            Text="{DynamicResource Settings.MemoriaEngine}"
+        <Button x:Name="Nameandversion"
+            Content="{DynamicResource Settings.MemoriaEngine}"
             Foreground="#6fff"
             FontSize="15"
             FontWeight="Normal"
             FontFamily="{DynamicResource CenturyGothic}"
+            Style="{StaticResource ButtonStyleLabel}"
             Margin="22,0,0,2"
             HorizontalAlignment="Left"
             VerticalAlignment="Bottom"
             Cursor="Hand"
-            MouseUp="ShowReleaseNotes"/>
+            Click="ShowReleaseNotes"/>
 
         <Border x:Name="dropBackground" Background="#d000" Visibility="Hidden">
             <Label

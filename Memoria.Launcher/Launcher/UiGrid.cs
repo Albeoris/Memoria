@@ -270,7 +270,7 @@ namespace Memoria.Launcher
                         if (uiElement.ToolTip is ToolTip)
                         {
                             ((ToolTip)uiElement.ToolTip).IsOpen = true;
-                            if (uiElement.IsMouseOver)
+                            if (uiElement.IsMouseOver && !Controller.GamepadNavigation.IsControllerInputActive)
                             {
                                 if (curstorType == "mog")
                                     Mouse.OverrideCursor = new Cursor(Application.GetResourceStream(new Uri("pack://application:,,,/images/moogle.cur")).Stream);
@@ -284,7 +284,8 @@ namespace Memoria.Launcher
                         if (uiElement.ToolTip is ToolTip)
                         {
                             ((ToolTip)uiElement.ToolTip).IsOpen = false; // Force close the tooltip when the mouse leaves the element
-                            if (!uiElement.IsMouseOver) Mouse.OverrideCursor = null;
+                            if (!uiElement.IsMouseOver && !Controller.GamepadNavigation.IsControllerInputActive)
+                                Mouse.OverrideCursor = null;
                         }
                     };
                 }
@@ -370,7 +371,9 @@ namespace Memoria.Launcher
             };
             uiElement.MouseEnter += (sender, e) =>
             {
-                if (uiElement.SelectedValue is String selectedFont && !selectedFont.StartsWith("Final Fantasy IX"))
+                if (!Controller.GamepadNavigation.IsControllerInputActive &&
+                    uiElement.SelectedValue is String selectedFont &&
+                    !selectedFont.StartsWith("Final Fantasy IX"))
                 {
                     ToolTipService.SetToolTip(uiElement, toolTip);
                     ToolTipService.SetInitialShowDelay(uiElement, 0);
@@ -389,7 +392,7 @@ namespace Memoria.Launcher
                     tooltipTextBlock.FontWeight = bold ? FontWeights.Bold : FontWeights.Normal;
                     ToolTipService.SetToolTip(uiElement, toolTip);
                     ToolTipService.SetInitialShowDelay(uiElement, 0);
-                    toolTip.IsOpen = uiElement.IsMouseOver;
+                    toolTip.IsOpen = !Controller.GamepadNavigation.IsControllerInputActive && uiElement.IsMouseOver;
                 }
                 else
                 {

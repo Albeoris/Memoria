@@ -991,9 +991,19 @@ namespace Memoria.Launcher
             downloadClient.ProgressChanged += (_, args) => DownloadLoop(mod, args);
             downloadClient.Completed += (_, args) => DownloadEnd(args, mod, plan);
             downloadClient.StartInDirectory(downloadUri, plan.DownloadDirectory);
-            lstDownloads.MinHeight = 100;
-            lstDownloads.Height = 100;
-            btnCancelStackpanel.Height = 100;
+            SetDownloadPanelVisible(true);
+        }
+
+        private void SetDownloadPanelVisible(Boolean visible)
+        {
+            Double height = visible ? 100.0 : 0.0;
+            Visibility visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+
+            lstDownloads.MinHeight = height;
+            lstDownloads.Height = height;
+            lstDownloads.Visibility = visibility;
+            btnCancelStackpanel.Height = height;
+            btnCancelStackpanel.Visibility = visibility;
         }
         private void DownloadLoop(Mod mod, FileDownloadProgressEventArgs e)
         {
@@ -1229,9 +1239,7 @@ namespace Memoria.Launcher
                         DownloadStart(DownloadList[0]);
                     else
                     {
-                        lstDownloads.MinHeight = 0;
-                        lstDownloads.Height = 0;
-                        btnCancelStackpanel.Height = 0;
+                        SetDownloadPanelVisible(false);
                     }
                     UpdateCatalogInstallationState();
                 });
@@ -1320,9 +1328,7 @@ namespace Memoria.Launcher
                         DownloadStart(DownloadList[0]);
                     else
                     {
-                        lstDownloads.MinHeight = 0;
-                        lstDownloads.Height = 0;
-                        btnCancelStackpanel.Height = 0;
+                        SetDownloadPanelVisible(false);
                     }
                     UpdateModListInstalled();
                     CheckForValidModFolder();

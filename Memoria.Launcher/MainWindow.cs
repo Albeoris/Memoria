@@ -18,12 +18,14 @@ using System.Windows.Navigation;
 using System.Windows.Threading;
 using Memoria.Launcher.Utils.Archives;
 using Memoria.Launcher.Utils.Mods;
+using Memoria.Launcher.Controller;
 
 namespace Memoria.Launcher
 {
     public partial class MainWindow : Window, IComponentConnector
     {
         private static readonly NLog.Logger _log = AppLogger.GetLogger();
+        private readonly IDisposable _gamepadNavigation;
 
         //public ModManagerWindow ModdingWindow;
         public static DateTime MemoriaAssemblyCompileDate;
@@ -55,6 +57,8 @@ namespace Memoria.Launcher
             _log.Info("Memoria Launcher started (v{Version})", MainWindow.MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd"));
 
             InitializeComponent();
+
+            _gamepadNavigation = GamepadNavigationService.Attach(this);
 
             PlayButton.GameSettings = GameSettings;
             PlayButton.GameSettingsDisplay = GameSettingsDisplay;
@@ -96,7 +100,7 @@ namespace Memoria.Launcher
             lstCatalogMods.SelectionChanged += OnModListSelect;
             lstMods.SelectionChanged += OnModListSelect;
             tabCtrlMain.SelectionChanged += OnModListSelect;
-            ModOptionsHeaderButton.MouseUp += ModOptionsHeaderButton_MouseUp;
+            ModOptionsHeaderButton.Click += ModOptionsHeaderButton_Click;
             if (ModListInstalled.Count == 0)
                 tabCtrlMain.SelectedIndex = 1;
             UpdateModDetails((Mod)null);
@@ -168,7 +172,7 @@ namespace Memoria.Launcher
             }
         }
 
-        private void ModOptionsHeaderButton_MouseUp(Object sender, MouseButtonEventArgs e)
+        private void ModOptionsHeaderButton_Click(Object sender, RoutedEventArgs e)
         {
             Boolean collapsed = (String)ModOptionsHeaderArrow.Content == "▲";
             ModOptionsHeaderArrow.Content = collapsed ? "▼" : "▲";
@@ -493,7 +497,7 @@ namespace Memoria.Launcher
             SendMessage(new WindowInteropHelper(this).Handle, 161, 2, 0);
         }
 
-        private void ShowReleaseNotes(Object sender, MouseButtonEventArgs e)
+        private void ShowReleaseNotes(Object sender, RoutedEventArgs e)
         {
             var releaseWindow = new Window_ChangeLog();
             MainWindowGrid.Children.Add(releaseWindow);
