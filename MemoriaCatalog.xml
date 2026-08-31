@@ -3852,7 +3852,7 @@ Part of the Kupo Mods suite, formerly known as Mog Add-ons.
     <Version>2.0</Version>
     <InstallationPath>CostumePack</InstallationPath>
     <ReleaseDateOriginal>2026-03-25</ReleaseDateOriginal>
-    <ReleaseDate>2026-04-02</ReleaseDate>
+    <ReleaseDate>2026-08-31</ReleaseDate>
     <Author>WarpedEdge and ChikoLad</Author>
     <Description>The purpose of the mod is to give the FFIX cast costumes either already in the game, from DFFOO, or any other ones made for them</Description>
     <PatchNotes>
@@ -3870,7 +3870,8 @@ Part of the Kupo Mods suite, formerly known as Mog Add-ons.
     <Name>Extra Equipment Menu (EEM)</Name>
     <Version>1.0</Version>
     <Author>WarpedEdge</Author>
-    <ReleaseDateOriginal>31 Aug 2026</ReleaseDateOriginal>
+    <ReleaseDateOriginal>2026-08-31</ReleaseDateOriginal>
+	<ReleaseDate>2026-08-31</ReleaseDate>
     <InstallationPath>ExtraEquipmentMenu</InstallationPath>
     <Category>User Interface</Category>
     <Description>This mod adds an extra equipment menu to the game. This allows previewing of the character's model. It comes with two weapon transmog submod options, 3 new items (No EXP, No AP, and No Gil), and other mods can use this mod as a dependency and create their own rules with varying effects.
