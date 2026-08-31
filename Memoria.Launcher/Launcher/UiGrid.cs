@@ -270,7 +270,7 @@ namespace Memoria.Launcher
                         if (uiElement.ToolTip is ToolTip)
                         {
                             ((ToolTip)uiElement.ToolTip).IsOpen = true;
-                            if (uiElement.IsMouseOver && !Controller.GamepadNavigation.IsControllerInputActive)
+                            if (uiElement.IsMouseOver && !Controller.GamepadNavigation.IsControllerInputActive(uiElement))
                             {
                                 if (curstorType == "mog")
                                     Mouse.OverrideCursor = new Cursor(Application.GetResourceStream(new Uri("pack://application:,,,/images/moogle.cur")).Stream);
@@ -284,7 +284,7 @@ namespace Memoria.Launcher
                         if (uiElement.ToolTip is ToolTip)
                         {
                             ((ToolTip)uiElement.ToolTip).IsOpen = false; // Force close the tooltip when the mouse leaves the element
-                            if (!uiElement.IsMouseOver && !Controller.GamepadNavigation.IsControllerInputActive)
+                            if (!uiElement.IsMouseOver && !Controller.GamepadNavigation.IsControllerInputActive(uiElement))
                                 Mouse.OverrideCursor = null;
                         }
                     };
@@ -371,7 +371,7 @@ namespace Memoria.Launcher
             };
             uiElement.MouseEnter += (sender, e) =>
             {
-                if (!Controller.GamepadNavigation.IsControllerInputActive &&
+                if (!Controller.GamepadNavigation.IsControllerInputActive(uiElement) &&
                     uiElement.SelectedValue is String selectedFont &&
                     !selectedFont.StartsWith("Final Fantasy IX"))
                 {
@@ -392,7 +392,7 @@ namespace Memoria.Launcher
                     tooltipTextBlock.FontWeight = bold ? FontWeights.Bold : FontWeights.Normal;
                     ToolTipService.SetToolTip(uiElement, toolTip);
                     ToolTipService.SetInitialShowDelay(uiElement, 0);
-                    toolTip.IsOpen = !Controller.GamepadNavigation.IsControllerInputActive && uiElement.IsMouseOver;
+                    toolTip.IsOpen = !Controller.GamepadNavigation.IsControllerInputActive(uiElement) && uiElement.IsMouseOver;
                 }
                 else
                 {
@@ -440,7 +440,7 @@ namespace Memoria.Launcher
             checkBox.SetValue(ColumnSpanProperty, MaxColumns);
             Children.Add(checkBox);
         }
-        public void CreateTextbloc(String text, String tooltip = "", String tooltipImage = "", Int32 columns = 100)
+        public TextBlock CreateTextbloc(String text, String tooltip = "", String tooltipImage = "", Int32 columns = 100)
         {
             Row++;
             RowDefinitions.Add(new RowDefinition());
@@ -470,6 +470,7 @@ namespace Memoria.Launcher
             border.SetValue(ColumnSpanProperty, columns);
             border.Child = textbloc;
             Children.Add(border);
+            return textbloc;
         }
 
         public void CreateHeading(String text)
@@ -515,9 +516,10 @@ namespace Memoria.Launcher
 
         public ComboBox CreateCombobox(String property, IEnumerable<ComboBoxOption> options, Int32 firstColumn = 50, String text = "", String tooltip = "", String tooltipImage = "", ComboBoxSelectionMode selectionMode = ComboBoxSelectionMode.Index)
         {
+            FrameworkElement tooltipOwner = null;
             if (text != "")
             {
-                CreateTextbloc(text, tooltip, tooltipImage, firstColumn);
+                tooltipOwner = CreateTextbloc(text, tooltip, tooltipImage, firstColumn);
             }
             else if (firstColumn == 0)
             {
@@ -565,14 +567,17 @@ namespace Memoria.Launcher
             {
                 comboBox.Focus();
             };
+            if (tooltipOwner != null)
+                Controller.GamepadNavigation.SetTooltipOwner(comboBox, tooltipOwner);
             Children.Add(comboBox);
             return comboBox;
         }
         public void CreateSlider(String indexproperty, String sliderproperty, double min, double max, double tickFrequency, String stringFormat = "", Int32 firstColumn = 0, String text = "", String tooltip = "", String tooltipImage = "")
         {
+            FrameworkElement tooltipOwner = null;
             if (text != "" && firstColumn > 0)
             {
-                CreateTextbloc(text, tooltip, tooltipImage, firstColumn - 2);
+                tooltipOwner = CreateTextbloc(text, tooltip, tooltipImage, firstColumn - 2);
             }
             else if (firstColumn == 0)
             {
@@ -599,6 +604,8 @@ namespace Memoria.Launcher
             {
                 slider.Value = Math.Max(Math.Min(slider.Value + Math.Sign(e.Delta) * tickFrequency, max), min);
             };
+            if (tooltipOwner != null)
+                Controller.GamepadNavigation.SetTooltipOwner(slider, tooltipOwner);
             Children.Add(slider);
 
             TextBlock textbloc = new TextBlock();

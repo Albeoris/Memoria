@@ -87,6 +87,7 @@
                 <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
                     <Button
                         x:Name="Cancel"
+                        controller:GamepadNavigation.IsCancelAction="True"
                         Content="{DynamicResource Launcher.Cancel}"
                         Style="{StaticResource ButtonStyle}"
                         Height="30"

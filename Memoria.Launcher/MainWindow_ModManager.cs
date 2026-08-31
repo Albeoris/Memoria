@@ -372,6 +372,11 @@ namespace Memoria.Launcher
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
             Mod mod = (sender as CheckBox)?.DataContext as Mod;
+            ApplyModActivation(mod);
+        }
+
+        private void ApplyModActivation(Mod mod)
+        {
             if (mod != null && mod.IsActive)
                 mod.TryApplyPreset();
             CheckOutdatedAndIncompatibleMods();
@@ -651,6 +656,23 @@ namespace Memoria.Launcher
         private void OnCatalogListDoubleClick(Object sender, RoutedEventArgs e)
         {
             OnClickDownload(sender, e);
+        }
+
+        private void InstalledMods_ControllerActivated(Object sender, RoutedEventArgs e)
+        {
+            if (lstMods.SelectedItem is not Mod mod)
+                return;
+
+            mod.IsActive = !mod.IsActive;
+            ApplyModActivation(mod);
+            lstMods.Items.Refresh();
+            e.Handled = true;
+        }
+
+        private void CatalogMods_ControllerActivated(Object sender, RoutedEventArgs e)
+        {
+            OnClickDownload(sender, e);
+            e.Handled = true;
         }
 
         private void OnClickUninstall(Object sender, RoutedEventArgs e)

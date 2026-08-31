@@ -150,7 +150,6 @@
     </Style>
 
     <Style x:Key="{x:Type ListView}" TargetType="ListView">
-        <Setter Property="Focusable" Value="True" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="Foreground" Value="White" />
         <Setter Property="SnapsToDevicePixels" Value="true" />

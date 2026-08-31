@@ -97,6 +97,7 @@ namespace Memoria.Launcher.Controller
 
             Button cancel = CreateButton(null);
             cancel.Name = "Cancel";
+            GamepadNavigation.SetIsCancelAction(cancel, true);
             cancel.SetResourceReference(ContentControl.ContentProperty, "Launcher.Cancel");
             cancel.Click += (sender, args) => Close(false);
             commandRow.Children.Add(cancel);
