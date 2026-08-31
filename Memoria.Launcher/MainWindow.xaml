@@ -987,6 +987,7 @@
                                                     <RowDefinition Height="1*"/>
                                                 </Grid.RowDefinitions>
                                                 <Button x:Name="ModOptionsHeaderButton"
+                                                        controller:GamepadNavigation.Participation="Include"
                                                         Grid.Row="0"
                                                         Padding="5"
                                                         BorderThickness="0"

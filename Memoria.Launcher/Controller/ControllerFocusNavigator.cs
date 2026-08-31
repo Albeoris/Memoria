@@ -152,21 +152,48 @@ namespace Memoria.Launcher.Controller
             if (content == null || !VisualTree.IsDescendantOf(current, content))
                 return false;
 
-            NavigationRectangle currentBounds = GetBounds(current);
-            IEnumerable<SpatialNavigationCandidate<Control>> candidates = GetCandidates(content)
-                .Where(control => !ReferenceEquals(control, current))
-                .Select(control => new SpatialNavigationCandidate<Control>(control, GetBounds(control)));
-            SpatialNavigationCandidate<Control> next = SpatialNavigation.FindNext(currentBounds, candidates, direction);
-            if (next != null)
-            {
-                _focus.Focus(ResolveVerticalTabEntry(next.Value, direction));
+            if (TryMoveWithinScope(content, current, direction))
                 return true;
+
+            // A nested TabControl may occupy only part of its parent's page. If no
+            // neighbour exists inside the nested page, continue through the active
+            // parent page so adjacent controls remain reachable. Unselected pages
+            // are never searched because only the selected TabItem content is used.
+            TabControl ancestor = owner;
+            while ((ancestor = FindNearestTabControl(VisualTree.GetParent(ancestor))) != null)
+            {
+                if (ancestor.SelectedItem is not TabItem ancestorTab ||
+                    ancestorTab.Content is not FrameworkElement ancestorContent ||
+                    !VisualTree.IsDescendantOf(current, ancestorContent))
+                {
+                    break;
+                }
+
+                if (TryMoveWithinScope(ancestorContent, current, direction))
+                    return true;
             }
 
             if (direction == NavigationDirection.Up)
                 _focus.Focus(selectedTab);
 
             // Page edges are closed so focus cannot leak into another tab's content.
+            return true;
+        }
+
+        private Boolean TryMoveWithinScope(
+            FrameworkElement scope,
+            Control current,
+            NavigationDirection direction)
+        {
+            NavigationRectangle currentBounds = GetBounds(current);
+            IEnumerable<SpatialNavigationCandidate<Control>> candidates = GetCandidates(scope)
+                .Where(control => !ReferenceEquals(control, current))
+                .Select(control => new SpatialNavigationCandidate<Control>(control, GetBounds(control)));
+            SpatialNavigationCandidate<Control> next = SpatialNavigation.FindNext(currentBounds, candidates, direction);
+            if (next == null)
+                return false;
+
+            _focus.Focus(ResolveVerticalTabEntry(next.Value, direction));
             return true;
         }
 

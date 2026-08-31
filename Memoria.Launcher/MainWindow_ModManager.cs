@@ -1,4 +1,5 @@
 ﻿using System;
+using Memoria.Launcher.Controller;
 using Memoria.Launcher.Utils.Archives;
 using Memoria.Launcher.Utils.Catalog;
 using Memoria.Launcher.Utils.Downloads;
@@ -1850,12 +1851,14 @@ namespace Memoria.Launcher
                 checkBox.IsEnabled = isEnabled && mod.IsActive;
                 checkBox.Style = (Style)Application.Current.FindResource("CheckBoxStyle");
                 checkBox.Margin = new Thickness(0, 0, 0, 4);
+                GamepadNavigation.SetParticipation(checkBox, NavigationParticipation.Include);
 
                 checkBox.Checked += SubMod_CheckChanged;
                 checkBox.Unchecked += SubMod_CheckChanged;
 
                 Grid grid = new Grid();
                 grid.Children.Add(checkBox);
+                GamepadNavigation.SetTooltipOwner(checkBox, grid);
                 ModOptionsPanel.Children.Add(grid);
 
                 if (!String.IsNullOrEmpty(submod.Description))
