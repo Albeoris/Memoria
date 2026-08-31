@@ -1,0 +1,99 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <EnableDefaultItems>true</EnableDefaultItems>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <IsTestProject>true</IsTestProject>
+    <IsPackable>false</IsPackable>
+    <IsPublishable>false</IsPublishable>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="NLog" Version="6.1.3" />
+    <PackageReference Include="SharpCompress" Version="0.48.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Memoria.Launcher\Utils\ExceptionDetailsFormatter.cs"
+             Link="Production\ExceptionDetailsFormatter.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Archives\ArchiveEntryPathPolicy.cs"
+             Link="Production\Archives\ArchiveEntryPathPolicy.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Archives\ArchiveExtractionException.cs"
+             Link="Production\Archives\ArchiveExtractionException.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Archives\ArchiveExtractionBackend.cs"
+             Link="Production\Archives\ArchiveExtractionBackend.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Archives\ArchiveFailureMessageBuilder.cs"
+             Link="Production\Archives\ArchiveFailureMessageBuilder.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Archives\ArchiveFileExtensions.cs"
+             Link="Production\Archives\ArchiveFileExtensions.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Archives\IArchiveExtractor.cs"
+             Link="Production\Archives\IArchiveExtractor.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Archives\SharpCompressRarExtractor.cs"
+             Link="Production\Archives\SharpCompressRarExtractor.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Archives\SevenZipExitCode.cs"
+             Link="Production\Archives\SevenZipExitCode.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Archives\SevenZipFailure.cs"
+             Link="Production\Archives\SevenZipFailure.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Catalog\MemoriaCatalogEndpoints.cs"
+             Link="Catalog\MemoriaCatalogEndpoints.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Downloads\DownloadedFile.cs"
+             Link="Production\Downloads\DownloadedFile.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Downloads\DownloadDestination.cs"
+             Link="Production\Downloads\DownloadDestination.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Downloads\DownloadException.cs"
+             Link="Production\Downloads\DownloadException.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Downloads\DownloadFailureKind.cs"
+             Link="Production\Downloads\DownloadFailureKind.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Downloads\DownloadOperationEventArgs.cs"
+             Link="Production\Downloads\DownloadOperationEventArgs.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Downloads\DownloadOperationState.cs"
+             Link="Production\Downloads\DownloadOperationState.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Downloads\DownloadProgress.cs"
+             Link="Production\Downloads\DownloadProgress.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Downloads\DownloadResponseValidator.cs"
+             Link="Production\Downloads\DownloadResponseValidator.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Downloads\RemoteFileNameResolver.cs"
+             Link="Production\Downloads\RemoteFileNameResolver.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\IO\GameRootDirectory.cs"
+             Link="Production\IO\GameRootDirectory.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\IO\FileSystemAccessProbe.cs"
+             Link="Production\IO\FileSystemAccessProbe.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\IO\DirectoryTreeDeleter.cs"
+             Link="Production\IO\DirectoryTreeDeleter.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\IO\SafeRelativePath.cs"
+             Link="Production\IO\SafeRelativePath.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Mods\ModContentManifest.cs"
+             Link="Production\Mods\ModContentManifest.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Mods\ModDownloadFormat.cs"
+             Link="Production\Mods\ModDownloadFormat.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Mods\ModDownloadPlan.cs"
+             Link="Production\Mods\ModDownloadPlan.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Mods\ModDescriptionFile.cs"
+             Link="Production\Mods\ModDescriptionFile.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Mods\ModInstallationFileSystem.cs"
+             Link="Production\Mods\ModInstallationFileSystem.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Mods\ModInstallationNameResolver.cs"
+             Link="Production\Mods\ModInstallationNameResolver.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Mods\ModUninstallFailureMessageBuilder.cs"
+             Link="Production\Mods\ModUninstallFailureMessageBuilder.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Mods\ModArchiveInspector.cs"
+             Link="Production\Mods\ModArchiveInspector.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Mods\ModArchiveRoot.cs"
+             Link="Production\Mods\ModArchiveRoot.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Mods\ModPackageType.cs"
+             Link="Production\Mods\ModPackageType.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Mods\SingleFileModInstaller.cs"
+             Link="Production\Mods\SingleFileModInstaller.cs" />
+    <Compile Include="..\Memoria.Launcher\Launcher\AppLogger.cs"
+             Link="Production\AppLogger.cs" />
+  </ItemGroup>
+</Project>

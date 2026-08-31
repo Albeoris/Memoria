@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using Memoria.Launcher.Utils.Downloads;
 using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
@@ -44,7 +45,7 @@ namespace Memoria.Launcher
                 String url = "https://github.com/Albeoris/Memoria/releases";
                 using (CancellationTokenSource timeout = new CancellationTokenSource(TimeSpan.FromSeconds(5)))
                 {
-                    using (var response = await HttpClients.Shared.GetAsync(url, timeout.Token))
+                    using (var response = await ResilientHttpClient.Shared.GetAsync(url, timeout.Token))
                     {
                         response.EnsureSuccessStatusCode();
                         changeLogHtml = await response.Content.ReadAsStringAsync();

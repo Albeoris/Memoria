@@ -473,7 +473,7 @@ namespace Memoria.Launcher
                     mod.AppendChild(el);
                 }
             }
-            File.WriteAllText(folderPath + "/" + DESCRIPTION_FILE, IndentXml(doc.OuterXml));
+            File.WriteAllText(Path.Combine(folderPath, DESCRIPTION_FILE), IndentXml(doc.OuterXml));
         }
 
         public void TryApplyPreset()
@@ -568,37 +568,7 @@ namespace Memoria.Launcher
             public Dictionary<String, String> OtherModHigh = new Dictionary<String, String>();
         }
 
-        public static readonly HashSet<String> MEMORIA_ROOT_FILES = new HashSet<String>()
-        {
-            "memoria.ini",
-            "dictionarypatch.txt",
-            "battlepatch.txt",
-            "battlevoiceeffects.txt"
-        };
-
-        public static readonly HashSet<String> ARCHIVE_BUNDLE_FILES = new HashSet<String>()
-        {
-            "p0data11.bin",
-            "p0data12.bin",
-            "p0data13.bin",
-            "p0data14.bin",
-            "p0data15.bin",
-            "p0data16.bin",
-            "p0data17.bin",
-            "p0data18.bin",
-            "p0data19.bin",
-            "p0data2.bin",
-            "p0data3.bin",
-            "p0data4.bin",
-            "p0data5.bin",
-            "p0data61.bin",
-            "p0data62.bin",
-            "p0data63.bin",
-            "p0data7.bin"
-        };
-
         public const String DESCRIPTION_FILE = "ModDescription.xml";
         public const String MOD_CONTENT_FILE = "ModFileList.txt";
-        public const String INSTALLATION_TMP = "MemoriaInstallTmp";
     }
 }
