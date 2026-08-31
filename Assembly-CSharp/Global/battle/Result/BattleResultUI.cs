@@ -374,14 +374,10 @@ public class BattleResultUI : UIScene
     private void InitialEvent()
     {
         this.currentState = BattleResultUI.ResultState.None;
-        FF9StateBattleMap map = FF9StateSystem.Battle.FF9Battle.map;
-        if (map.evtPtr != null)
-        {
-            this.AllPanel.SetActive(false);
-            PersistenSingleton<EventEngine>.Instance.StartEvents(map.evtPtr);
-            if (this.isTimerDisplay && TimerUI.Enable)
-                TimerUI.SetDisplay(false);
-        }
+        this.AllPanel.SetActive(false);
+        PersistenSingleton<EventEngine>.Instance.StartEvents();
+        if (this.isTimerDisplay && TimerUI.Enable)
+            TimerUI.SetDisplay(false);
     }
 
     private void InitialNone()

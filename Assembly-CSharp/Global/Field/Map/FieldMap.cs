@@ -343,9 +343,8 @@ public class FieldMap : HonoBehavior
                 }
             }
         }
-        foreach (Int32 key in FF9StateSystem.Common.FF9.charArray.Keys)
+        foreach (FF9Char ff9Char in FF9StateSystem.Common.FF9.charArray.Values)
         {
-            FF9Char ff9Char = FF9StateSystem.Common.FF9.charArray[key];
             if (ff9Char != null && ff9Char.geo != null && FF9Char.ff9charptr_attr_test(ff9Char, 4096) == 0)
             {
                 GeoTexAnim component = ff9Char.geo.GetComponent<GeoTexAnim>();
@@ -531,7 +530,7 @@ public class FieldMap : HonoBehavior
     {
         if (actorOfObj.attatchTargetUid != -1)
         {
-            Obj objUID = PersistenSingleton<EventEngine>.Instance.GetObjUID(actorOfObj.attatchTargetUid);
+            Obj objUID = PersistenSingleton<EventEngine>.Instance.FindObjByUID(actorOfObj.attatchTargetUid);
             geo.geoAttach(modelGo, objUID.go, actorOfObj.attachTargetBoneIndex);
         }
     }
@@ -1495,15 +1494,15 @@ public class FieldMap : HonoBehavior
         if (FF9StateSystem.Common.FF9.fldMapNo == 1656 && this.playerController == null)
         {
             // Iifa Tree/Eidolon Moun, select Zidane
-            this.playerController = ((Actor)PersistenSingleton<EventEngine>.Instance.GetObjUID(8)).fieldMapActorController;
+            this.playerController = ((Actor)PersistenSingleton<EventEngine>.Instance.GetObjByUID(8)).fieldMapActorController;
             this.extraOffset = Vector2.zero;
         }
         if (this.playerController != null)
         {
-            if (FF9StateSystem.Common.FF9.fldMapNo == 813 && this.playerController == ((Actor)PersistenSingleton<EventEngine>.Instance.GetObjUID(8)).fieldMapActorController)
+            if (FF9StateSystem.Common.FF9.fldMapNo == 813 && this.playerController == ((Actor)PersistenSingleton<EventEngine>.Instance.GetObjByUID(8)).fieldMapActorController)
             {
                 // S. Gate/Berkmea, controlling Dagger -> switch to Mary instead
-                this.playerController = ((Actor)PersistenSingleton<EventEngine>.Instance.GetObjUID(2)).fieldMapActorController;
+                this.playerController = ((Actor)PersistenSingleton<EventEngine>.Instance.GetObjByUID(2)).fieldMapActorController;
             }
             vertex = this.playerController.curPos;
             vertex.y += (float)this.charAimHeight;
@@ -1965,7 +1964,7 @@ public class FieldMap : HonoBehavior
 
         if (map == 2512 && this.playerController == null) // CrutchForIpsenMap EVT_IPSEN_IP_CNT_2
         {
-            this.playerController = ((Actor)PersistenSingleton<EventEngine>.Instance.GetObjUID(2)).fieldMapActorController;
+            this.playerController = ((Actor)PersistenSingleton<EventEngine>.Instance.GetObjByUID(2)).fieldMapActorController;
             if (dbug) Log.Message("SceneService3DScroll | CrutchForIpsenMap");
         }
 

@@ -8,31 +8,33 @@ using System.IO;
 public class BTL_SCENE
 {
     private const Byte VERSION_VANILLA = 7;
+    private const Byte VERSION_EXTENDED = 8;
+    private const Byte VERSION_SEQPATH = 9;
 
     public void ReadBattleScene(String name)
     {
         nameIdentifier = "BSC_" + name;
         name = "EVT_BATTLE_" + name;
-        this.header = new SB2_HEAD();
+        header = new SB2_HEAD();
         Byte[] bytes = AssetManager.LoadBytes("BattleMap/BattleScene/" + name + "/dbfile0000.raw16");
         if (bytes == null)
             return;
         using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(bytes)))
         {
-            this.header.Ver = binaryReader.ReadByte();
-            this.header.PatCount = binaryReader.ReadByte();
-            this.header.TypCount = binaryReader.ReadByte();
-            this.header.AtkCount = binaryReader.ReadByte();
-            this.header.Flags = binaryReader.ReadUInt16();
-            this.header.Pad1 = binaryReader.ReadInt16();
-            if (this.header.Ver > VERSION_VANILLA)
-                this.header.BattleMapIndex = binaryReader.ReadUInt16(); // Typically identical to FF9StateSystem.Battle.battleMapIndex
-            this.PatAddr = new SB2_PATTERN[this.header.PatCount];
-            this.MonAddr = new SB2_MON_PARM[this.header.TypCount];
-            this.atk = new AA_DATA[this.header.AtkCount];
-            for (Int32 i = 0; i < this.header.PatCount; i++)
+            header.Ver = binaryReader.ReadByte();
+            header.PatCount = binaryReader.ReadByte();
+            header.TypCount = binaryReader.ReadByte();
+            header.AtkCount = binaryReader.ReadByte();
+            header.Flags = binaryReader.ReadUInt16();
+            header.Pad1 = binaryReader.ReadInt16();
+            if (header.Ver > VERSION_VANILLA)
+                header.BattleMapIndex = binaryReader.ReadUInt16(); // Typically identical to FF9StateSystem.Battle.battleMapIndex
+            PatAddr = new SB2_PATTERN[header.PatCount];
+            MonAddr = new SB2_MON_PARM[header.TypCount];
+            atk = new AA_DATA[header.AtkCount];
+            for (Int32 i = 0; i < header.PatCount; i++)
             {
-                SB2_PATTERN pattern = this.PatAddr[i] = new SB2_PATTERN();
+                SB2_PATTERN pattern = PatAddr[i] = new SB2_PATTERN();
                 pattern.Rate = binaryReader.ReadByte();
                 pattern.MonsterCount = binaryReader.ReadByte();
                 pattern.Camera = binaryReader.ReadByte();
@@ -51,10 +53,10 @@ public class BTL_SCENE
                     placement.Rot = binaryReader.ReadInt16();
                 }
             }
-            for (Int32 i = 0; i < this.header.TypCount; i++)
+            for (Int32 i = 0; i < header.TypCount; i++)
             {
-                SB2_MON_PARM monParam = this.MonAddr[i] = new SB2_MON_PARM();
-                if (this.header.Ver > VERSION_VANILLA)
+                SB2_MON_PARM monParam = MonAddr[i] = new SB2_MON_PARM();
+                if (header.Ver > VERSION_VANILLA)
                 {
                     monParam.ResistStatus = binaryReader.ReadBattleStatus();
                     monParam.AutoStatus = binaryReader.ReadBattleStatus();
@@ -102,7 +104,7 @@ public class BTL_SCENE
                     monParam.Mesh[j] = binaryReader.ReadUInt16();
                 monParam.Flags = binaryReader.ReadUInt16();
                 SB2_ELEMENT monStats = monParam.Element = new SB2_ELEMENT();
-                if (this.header.Ver > VERSION_VANILLA)
+                if (header.Ver > VERSION_VANILLA)
                 {
                     // For now, stats are still of type Byte in the C# code
                     // Beware that the transition to a larger type will most likely invalidate compatibility with many Memoria.Scripts.dll of mods
@@ -128,7 +130,7 @@ public class BTL_SCENE
                 monParam.AbsorbElement = binaryReader.ReadByte();
                 monParam.HalfElement = binaryReader.ReadByte();
                 monParam.WeakElement = binaryReader.ReadByte();
-                if (this.header.Ver > VERSION_VANILLA)
+                if (header.Ver > VERSION_VANILLA)
                 {
                     monParam.Level = (Byte)binaryReader.ReadUInt32();
                     monParam.Category = binaryReader.ReadByte();
@@ -165,7 +167,7 @@ public class BTL_SCENE
                 monParam.ShadowX = binaryReader.ReadUInt16();
                 monParam.ShadowZ = binaryReader.ReadUInt16();
                 monParam.ShadowBone = binaryReader.ReadByte();
-                monParam.WinCard = (TetraMasterCardId)(this.header.Ver > VERSION_VANILLA ? binaryReader.ReadInt32() : binaryReader.ReadByte());
+                monParam.WinCard = (TetraMasterCardId)(header.Ver > VERSION_VANILLA ? binaryReader.ReadInt32() : binaryReader.ReadByte());
                 monParam.ShadowOfsX = binaryReader.ReadInt16();
                 monParam.ShadowOfsZ = binaryReader.ReadInt16();
                 monParam.ShadowBone2 = binaryReader.ReadByte();
@@ -175,9 +177,9 @@ public class BTL_SCENE
                 if (btl_eqp.EnemyBuiltInWeaponTable.TryGetValue(monParam.Geo, out Int32[] weaponBones))
                     monParam.WeaponAttachment = weaponBones;
             }
-            for (Int32 i = 0; i < this.header.AtkCount; i++)
+            for (Int32 i = 0; i < header.AtkCount; i++)
             {
-                AA_DATA monAbility = this.atk[i] = new AA_DATA();
+                AA_DATA monAbility = atk[i] = new AA_DATA();
                 BattleCommandInfo abilInfo = monAbility.Info = new BattleCommandInfo();
                 BTL_REF abilRef = monAbility.Ref = new BTL_REF();
                 UInt32 input = binaryReader.ReadByte();
@@ -185,16 +187,23 @@ public class BTL_SCENE
                 abilInfo.Target = (TargetType)BitUtil.ReadBits(input, ref bitPos, 4);
                 abilInfo.DefaultAlly = BitUtil.ReadBits(input, ref bitPos, 1) != 0;
                 abilInfo.DisplayStats = (TargetDisplay)BitUtil.ReadBits(input, ref bitPos, 3);
-                input = this.header.Ver > VERSION_VANILLA ? binaryReader.ReadUInt32() : binaryReader.ReadUInt16();
+                input = header.Ver > VERSION_VANILLA ? binaryReader.ReadUInt32() : binaryReader.ReadUInt16();
                 bitPos = 0;
                 abilInfo.VfxIndex = (Int16)BitUtil.ReadBits(input, ref bitPos, 9);
                 /*cmd_INFO.sfx_no = (Int16)*/
                 input = binaryReader.ReadByte();
+                if (header.Ver >= VERSION_SEQPATH)
+                {
+                    bitPos = 0;
+                    monAbility.MorphForceAccess = BitUtil.ReadBits(input, ref bitPos, 1) != 0;
+                    monAbility.MorphDisableAccess = BitUtil.ReadBits(input, ref bitPos, 1) != 0;
+                    monAbility.AlternateIdleAccess = BitUtil.ReadBits(input, ref bitPos, 1) != 0;
+                }
                 bitPos = 5;
                 abilInfo.ForDead = BitUtil.ReadBits(input, ref bitPos, 1) != 0;
                 abilInfo.DefaultCamera = BitUtil.ReadBits(input, ref bitPos, 1) != 0;
                 abilInfo.DefaultOnDead = BitUtil.ReadBits(input, ref bitPos, 1) != 0;
-                if (this.header.Ver > VERSION_VANILLA)
+                if (header.Ver > VERSION_VANILLA)
                 {
                     abilRef.ScriptId = binaryReader.ReadInt32();
                     abilRef.Power = binaryReader.ReadInt32();
@@ -219,14 +228,16 @@ public class BTL_SCENE
                     monAbility.Vfx2 = binaryReader.ReadUInt16();
                 }
                 binaryReader.ReadUInt16();
-                monAbility.Name = $"Attack{i}";
+                if (header.Ver >= VERSION_SEQPATH)
+                    monAbility.Info.SequenceFile = binaryReader.ReadSizedUTF8();
+                monAbility.Name = $"Attack{i}"; // Placeholder before the correct name is read from the battle's text
             }
         }
         SetupSceneInfo();
         DataPatchers.ApplyBattlePatch(this);
         if (Configuration.Battle.SFXRework)
         {
-            foreach (AA_DATA aa in this.atk)
+            foreach (AA_DATA aa in atk)
             {
                 if (!String.IsNullOrEmpty(aa.Info.SequenceFile))
                 {
@@ -236,7 +247,7 @@ public class BTL_SCENE
                 }
             }
         }
-        foreach (SB2_MON_PARM monParam in this.MonAddr)
+        foreach (SB2_MON_PARM monParam in MonAddr)
         {
             if (!String.IsNullOrEmpty(monParam.SupportingAbilityFile))
             {

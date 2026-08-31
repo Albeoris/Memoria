@@ -3729,7 +3729,7 @@ public static class ff9
         ff9.w_frameInitialize = false;
         if (ff9.w_frameInternalSwitchEnable)
             ff9.FF9Global.worldState.internall = true;
-        ff9.w_frameResult = 0;
+        ff9.w_frameResult = EventEngine.FLOW_STATE_EXEC;
         if ((ff9.FF9Global.attr & 2u) == 0u)
         {
             ff9.w_frameUpdate();
@@ -3763,8 +3763,8 @@ public static class ff9
         ff9.w_frameService();
         ff9.w_frameCounter++;
         ff9.w_frameCounterReady++;
-        if (ff9.w_frameResult == 3 && ff9.m_GetIDTopograph(ff9.m_moveActorID) == 52)
-            ff9.w_frameResult = 0;
+        if (ff9.w_frameResult == EventEngine.FLOW_STATE_JUMP_BATTLE && ff9.m_GetIDTopograph(ff9.m_moveActorID) == 52) // Walking on the bridge
+            ff9.w_frameResult = EventEngine.FLOW_STATE_EXEC;
         if (ff9.w_frameInternalSwitchEnable)
             ff9.FF9Global.worldState.internall = false;
         ff9.totaltime = 0;
@@ -9199,8 +9199,8 @@ public static class ff9
             SFXData.Reinit();
             EventEngine eventEngine = PersistenSingleton<EventEngine>.Instance;
             String ebFileName = FF9DBAll.EventDB[MapNo];
-            map.evtPtr = EventEngineUtils.loadEventData(ebFileName, EventEngineUtils.ebSubFolderWorld);
-            eventEngine.StartEvents(map.evtPtr);
+            EventEngineUtils.loadEventData(ebFileName, EventEngineUtils.EB_SUBFOLDER_WORLD);
+            eventEngine.StartEvents();
             ETb.InitMessage();
             eventEngine.updateModelsToBeAdded();
         }

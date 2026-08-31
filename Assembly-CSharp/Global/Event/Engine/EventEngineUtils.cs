@@ -1,9 +1,11 @@
-using Memoria;
-using Memoria.Assets;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using Memoria.Assets;
+using Memoria.Prime;
+using Memoria.Data;
+using FF9;
 using UnityEngine;
 
 // ReSharper disable InconsistentNaming
@@ -17,15 +19,23 @@ using UnityEngine;
 #pragma warning disable 414
 #pragma warning disable 169
 
-internal class EventEngineUtils
+internal static class EventEngineUtils
 {
+    public const String FORMAT_EB_MAGIC_SIGNATURE = "EV";
+    public const Byte FORMAT_EB_VERSION_VANILLA = 2;
+    public const String EB_FILE_PATH = "CommonAsset/EventEngine/EventBinary/";
+    public const String EB_SUBFOLDER_FIELD = "Field/";
+    public const String EB_SUBFOLDER_BATTLE = "Battle/";
+    public const String EB_SUBFOLDER_WORLD = "World/";
+    public const String EB_FILE_EXT = ".eb";
+
     public static Boolean showDebugUI = true;
     public static showLogLevelEnum showLogLevel = showLogLevelEnum.levelMinus1;
-    public static String ebFilePath = "CommonAsset/EventEngine/EventBinary/";
-    public static String ebSubFolderField = "Field/";
-    public static String ebSubFolderBattle = "Battle/";
-    public static String ebSubFolderWorld = "World/";
-    public static String ebFileExt = ".eb";
+
+    public static Int32 EntryCount { get; private set; }
+    public static List<ObjTable> EntryTable { get; private set; }
+    public static List<Byte[]> EntryData { get; private set; }
+    public static List<Int32[]> EntryIndexing { get; private set; }
 
     public static Dictionary<Int32, String> eventIDToFBGID = new Dictionary<Int32, String>
     {
@@ -1686,32 +1696,32 @@ internal class EventEngineUtils
 
     public static Dictionary<Int32, Int32> QuadTalkableData = new Dictionary<Int32, Int32>()
     {
-        {111005, 4},
-        {1860008, 7},
-        {1860010, 9},
-        {1864010, 9},
-        {2455005, 4},
-        {2303011, 2},
-        {560008, 4},
-        {555023, 12},
-        {1303009, 6},
-        {553009, 6},
-        {561008, 4},
-        {562009, 4},
-        {1308005, 3},
-        {1509008, 3},
-        {1903014, 6},
-        {903012, 6},
-        {911006, 3},
-        {912013, 6},
-        {1911006, 3},
-        {1912014, 6},
-        {902006, 2},
-        {1902005, 2},
-        {2108006, 4},
-        {2103008, 9},
-        {2802024, 29},
-        {2109010, 5}
+        {111005, 4},    // Alexandria/Inn, FishManB
+        {2455005, 4},   // Alexandria/Inn, FishManB
+        {1860008, 7},   // Alexandria/Inn, Hippolady
+        {1860010, 9},   // Alexandria/Inn, Hippaul
+        {1864010, 9},   // Alexandria/Mini-Theater, ThugB
+        {555023, 12},   // Lindblum/Shopping Area, Old_Woman
+        {561008, 4},    // Lindblum/Item Shop, YoungWomanA
+        {560008, 4},    // Lindblum/Synthesist, Lindblum_ManB
+        {1308005, 3},   // Lindblum/Synthesist, Lindblum_ManB
+        {2108006, 4},   // Lindblum/Synthesist, Lindblum_ManB
+        {553009, 6},    // Lindblum/Inn, ManA
+        {1303009, 6},   // Lindblum/Inn, ManA
+        {2103008, 9},   // Lindblum/Inn, Zidane (ManA)
+        {562009, 4},    // Lindblum/Wpn. Shop, Lindblum_WorkerA
+        {1509008, 3},   // Lindblum/Wpn. Shop, Lindblum_WorkerA
+        {2109010, 5},   // Lindblum/Wpn. Shop, Lindblum_WorkerA
+        {903012, 6},    // Treno/Card Stadium, Man_BillyGoat
+        {1903014, 6},   // Treno/Card Stadium, Man_BillyGoat
+        {911006, 3},    // Treno/Queen's House, Queen_Stella
+        {1911006, 3},   // Treno/Queen's House, Queen_Stella
+        {912013, 6},    // Treno/Slums, YoungWomanB
+        {1912014, 6},   // Treno/Slums, YoungWomanB
+        {902006, 2},    // Treno/Synthesist, Lindblum_ManB
+        {1902005, 2},   // Treno/Synthesist, Lindblum_ManB
+        {2303011, 2},   // Esto Gaza/Shop, YoungWomanD
+        {2802024, 29}   // Daguerreo/Left Hall, Zidane (LibrarianA)
     };
 
     public static Dictionary<Int32, Int32> MogCallAddressData = new Dictionary<Int32, Int32>()
@@ -1795,7 +1805,7 @@ internal class EventEngineUtils
 
     public static Vector3 ConvertFixedPointAngleToDegree(Int16[] fixedPointAngle)
     {
-        return new Vector3(x: (Single)(((Int32)fixedPointAngle[0] >> 4) / 256.0 * 360.0), y: (Single)(((Int32)fixedPointAngle[1] >> 4) / 256.0 * 360.0), z: (Single)(((Int32)fixedPointAngle[2] >> 4) / 256.0 * 360.0));
+        return new Vector3(x: (Single)((fixedPointAngle[0] >> 4) / 256.0 * 360.0), y: (Single)((fixedPointAngle[1] >> 4) / 256.0 * 360.0), z: (Single)((fixedPointAngle[2] >> 4) / 256.0 * 360.0));
     }
 
     public static Single ConvertFixedPointAngleToDegree(Int32 fixedPointAngle)
@@ -1842,31 +1852,178 @@ internal class EventEngineUtils
         return Mathf.RoundToInt(f) + 1;
     }
 
-    public static Byte[] loadEventData(String ebFileName, String ebSubFolder)
+    public static Int32 GetEventCharacterSId(List<ObjTable> objTable, CharacterId charId)
+    {
+        if (charId == CharacterId.NONE)
+            return -1;
+        for (Int32 i = 0; i < objTable.Count; i++)
+            if (objTable[i].player_link == charId)
+                return i;
+        return -1;
+    }
+
+    // Try to find a suitable entry for a party member, ie. the linked entry if it exists and has at least 1 function, or another character entry otherwise
+    public static Int32 GetEventCharacterSIdHacked(List<ObjTable> objTable, CharacterId charId, Int32 memberIndex)
+    {
+        if (charId == CharacterId.NONE)
+            return -1;
+        for (Int32 i = 0; i < objTable.Count; i++)
+            if (objTable[i].player_link == charId && objTable[i].size > 0)
+                return i;
+        for (Int32 i = 0; i < objTable.Count; i++)
+            if (objTable[i].player_link != CharacterId.NONE && objTable[i].size > 0 && !FF9StateSystem.Common.FF9.party.IsInParty(objTable[i].player_link) && --memberIndex < 0)
+                return i;
+        return -1;
+    }
+
+    public static Int32 GetFileMode(Byte[] ebFileData)
+    {
+        Byte appendMode = 0;
+        using (BinaryReader br = new BinaryReader(new MemoryStream(ebFileData)))
+        {
+            String magic = br.ReadUTF8(2);
+            if (magic != FORMAT_EB_MAGIC_SIGNATURE)
+            {
+                Log.Error($"[{nameof(EventEngine)}] Event binary script doesn't start with \"{FORMAT_EB_MAGIC_SIGNATURE}\", file may be corrupted");
+                return -1;
+            }
+            Byte version = br.ReadByte();
+            if (version > FORMAT_EB_VERSION_VANILLA)
+                appendMode = br.ReadByte();
+        }
+        return appendMode;
+    }
+
+    public static void loadEventData(String ebFileName, String ebSubFolder)
     {
         if (ebFileName == null)
         {
             E_Error("loadEventData: ebFileName is null");
-            return null;
+            return;
         }
 
         String symbol = Localization.CurrentSymbol;
-        String str = symbol + "/";
+        String langFolder = symbol + "/";
         if (FF9StateSystem.Common.FF9.fldMapNo == 1060 && symbol != "US" && symbol != "JP") // Cleyra/Cathedral: dancing scene is forced to use the US or JP binary events
-            str = "US/";
+            langFolder = "US/"; // TODO: fix that (correcting the cutscene's wait times so it matches the music)
 
-        ebFileName = ebFilePath + ebSubFolder + str + ebFileName + ebFileExt;
-        Byte[] binAsset = AssetManager.LoadBytesMerged(ebFileName);
-        if (binAsset != null)
-            return binAsset;
+        ebFileName = EB_FILE_PATH + ebSubFolder + langFolder + ebFileName + EB_FILE_EXT;
+        List<Byte[]> scriptFiles = AssetManager.LoadEventScriptFiles(ebFileName);
+        if (scriptFiles.Count == 0)
+        {
+            E_Error("loadEventData: cannot load eb file " + ebFileName);
+            return;
+        }
 
-        E_Error("loadEventData: cannot load eb file " + ebFileName);
-        return null;
+        SetupEventData(scriptFiles);
+    }
+
+    private static void SetupEventData(List<Byte[]> scriptFiles)
+    {
+        EntryCount = 0;
+        EntryTable = new List<ObjTable>();
+        EntryData = new List<Byte[]>();
+        EntryIndexing = new List<Int32[]>();
+        if (scriptFiles.Count == 0)
+            return;
+        Int32 baseCount = 0;
+        using (BinaryReader mainFile = new BinaryReader(new MemoryStream(scriptFiles[0])))
+        {
+            ReadEventDataHeader(mainFile, out Byte version, out Byte mode, out Int32 entryCount);
+            Int64 basePos = mainFile.BaseStream.Position;
+            Int32[] indexing = new Int32[entryCount];
+            baseCount = entryCount;
+            EntryCount = entryCount;
+            for (Int32 i = 0; i < EntryCount; ++i)
+            {
+                ObjTable table = new ObjTable();
+                table.ReadData(mainFile, i, EntryCount, version == FORMAT_EB_VERSION_VANILLA);
+                table.append_mode = 0;
+                table.mod_index = 0;
+                EntryTable.Add(table);
+                indexing[i] = i;
+            }
+            if (version > FORMAT_EB_VERSION_VANILLA)
+                basePos = mainFile.BaseStream.Position;
+            for (Int32 i = 0; i < EntryCount; ++i)
+            {
+                mainFile.BaseStream.Position = basePos + EntryTable[i].ofs;
+                EntryData.Add(mainFile.ReadBytes(EntryTable[i].size));
+            }
+            EntryIndexing.Add(indexing);
+        }
+        for (Int32 scriptIndex = 1; scriptIndex < scriptFiles.Count; scriptIndex++)
+        {
+            using (BinaryReader patch = new BinaryReader(new MemoryStream(scriptFiles[scriptIndex])))
+            {
+                ReadEventDataHeader(patch, out Byte version, out Byte mode, out Int32 patchCount);
+                List<ObjTable> patchTable = new List<ObjTable>();
+                Int64 basePos = patch.BaseStream.Position;
+                Int32[] indexing = new Int32[patchCount];
+                for (Int32 i = 0; i < patchCount; ++i)
+                {
+                    ObjTable table = new ObjTable();
+                    table.ReadData(patch, i, patchCount, version == FORMAT_EB_VERSION_VANILLA);
+                    table.mod_index = scriptIndex;
+                    patchTable.Add(table);
+                }
+                if (version > FORMAT_EB_VERSION_VANILLA)
+                    basePos = patch.BaseStream.Position;
+                for (Int32 i = 0; i < patchCount; ++i)
+                {
+                    Int32 replaceOld = -1;
+                    if (patchTable[i].IsVanillaEntry)
+                        for (Int32 j = 0; j < baseCount; j++)
+                            if (patchTable[i].memoria_id == EntryTable[j].memoria_id)
+                            {
+                                replaceOld = j;
+                                break;
+                            }
+                    indexing[i] = replaceOld;
+                    if ((patchTable[i].append_mode & 1) == 0)
+                        continue;
+                    patch.BaseStream.Position = basePos + patchTable[i].ofs;
+                    if (replaceOld >= 0)
+                    {
+                        EntryData[replaceOld] = patch.ReadBytes(patchTable[i].size);
+                        EntryTable[replaceOld] = patchTable[i];
+                    }
+                    else
+                    {
+                        indexing[i] = EntryCount;
+                        EntryData.Add(patch.ReadBytes(patchTable[i].size));
+                        EntryTable.Add(patchTable[i]);
+                        EntryCount++;
+                    }
+                }
+                EntryIndexing.Add(indexing);
+            }
+        }
+    }
+
+    private static void ReadEventDataHeader(BinaryReader reader, out Byte version, out Byte mode, out Int32 count)
+    {
+        version = FORMAT_EB_VERSION_VANILLA;
+        mode = 0;
+        count = 0;
+        String magic = reader.ReadUTF8(2);
+        if (magic != FORMAT_EB_MAGIC_SIGNATURE)
+        {
+            Log.Error($"[{nameof(EventEngine)}] Event binary script doesn't start with \"{FORMAT_EB_MAGIC_SIGNATURE}\", file may be corrupted");
+            return;
+        }
+        version = reader.ReadByte();
+        mode = 0;
+        if (version > FORMAT_EB_VERSION_VANILLA)
+            mode = reader.ReadByte();
+        count = reader.ReadByte();
+        if (mode == 0)
+            reader.BaseStream.Seek(124L, SeekOrigin.Current);
     }
 
     public static EventEngineUtils.BinaryScript loadEventAsScript(String ebFileName, String ebSubFolder)
     {
-        ebFileName = ebFilePath + ebSubFolder + Localization.CurrentSymbol + "/" + ebFileName + ebFileExt;
+        ebFileName = EB_FILE_PATH + ebSubFolder + Localization.CurrentSymbol + "/" + ebFileName + EB_FILE_EXT;
         Byte[] binAsset = AssetManager.LoadBytes(ebFileName);
         if (binAsset != null)
             return new BinaryScript(binAsset);

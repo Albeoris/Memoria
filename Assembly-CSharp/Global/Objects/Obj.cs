@@ -11,46 +11,47 @@ public class Obj
 
     public Obj(Int32 sid, Int32 uid, Int32 size, Int32 stackn)
     {
+        // TODO: Maybe change the organisation of UID to allow using more entries
+        // Currently, it seems to be the following
+        // 0-63     -> entries initialised with default UID (same as SID)
+        // 64-127   -> entries executed with "RunSharedScript"
+        // 128-249  -> entries initialised with custom UID (for battle scripts or for duplicates of the same object/NPC)
+        // 250      -> ref to the player character
+        // 251-254  -> ref to party members
+        // 255      -> ref to the "this" entry
         EventEngine instance = PersistenSingleton<EventEngine>.Instance;
-        if (sid < 0 || sid >= instance.sSourceObjN)
-        {
-        }
         if (uid == 0)
-        {
             uid = sid;
-        }
         Obj obj = PersistenSingleton<EventEngine>.Instance.FindObjByUID(uid);
         if (obj != null)
-        {
             PersistenSingleton<EventEngine>.Instance.DisposeObj(obj);
-        }
         size = size + 3 >> 2;
-        Int32 num = instance.sObjTable[sid].varn + 3 >> 2;
-        this.AllocObj(size + num + stackn);
+        Int32 localVarSize = instance.sObjTable[sid].varn + 3 >> 2;
+        this.AllocObj(size + localVarSize + stackn);
         this.Clear();
-        ObjList freeObjList = instance.GetFreeObjList();
-        instance.SetFreeObjList(freeObjList.next);
+        ObjList newObj = instance.GetFreeObjList();
+        instance.SetFreeObjList(newObj.next);
         ObjList activeObjTailList = instance.GetActiveObjTailList();
         ObjList activeObjList = instance.GetActiveObjList();
         if (activeObjTailList != null)
         {
-            activeObjTailList.next = freeObjList;
-            instance.SetActiveObjTailList(freeObjList);
+            activeObjTailList.next = newObj;
+            instance.SetActiveObjTailList(newObj);
         }
         else
         {
-            instance.SetActiveObjTailList(freeObjList);
-            instance.SetActiveObjList(freeObjList);
+            instance.SetActiveObjTailList(newObj);
+            instance.SetActiveObjList(newObj);
         }
-        freeObjList.next = (ObjList)null;
-        freeObjList.obj = this;
+        newObj.next = null;
+        newObj.obj = this;
         this.sid = (Byte)sid;
         this.uid = (Byte)uid;
         this.cid = 0;
         this.ebData = instance.allObjsEBData[sid];
         this.ip = instance.GetIP(sid, 0, this.ebData);
         this.vofs = (Byte)size;
-        this.sofs = (Byte)(size + num);
+        this.sofs = (Byte)(size + localVarSize);
         this.sn = (Byte)stackn;
         this.state = EventEngine.stateNew;
         this.winnum = Byte.MaxValue;
@@ -59,225 +60,125 @@ public class Obj
 
     static Obj()
     {
-        // Note: this type is marked as 'beforefieldinit'.
-        Byte[] array = new Byte[5];
-        array[1] = 37;
-        array[2] = 160;
-        array[3] = 4;
-        Obj.movQData = array;
-        Obj.neckTurnData = new Byte[]
-        {
+        Obj.movQData =
+        [
+            0,
+            37,  // InitWalk
+            160, // WalkToExit
+            4,   // return
+            0
+        ];
+        Obj.neckTurnData =
+        [
             0,
             167, // Turn
 			0,
-            0, // <- write angle there for autoturn
-			80, // WaitTurn
-			4 // return
-		};
+            0,   // <- write angle there for autoturn
+			80,  // WaitTurn
+			4    // return
+		];
     }
 
     public Int32 ip
     {
-        get
-        {
-            return this.getIntFromBuffer(0);
-        }
-        set
-        {
-            this.setIntToBuffer(0, value);
-        }
+        get => getIntFromBuffer(0);
+        set => setIntToBuffer(0, value);
     }
 
     public Byte level
     {
-        get
-        {
-            return this.getByteFromBuffer(4);
-        }
-        set
-        {
-            this.setByteToBuffer(4, value);
-        }
+        get => getByteFromBuffer(4);
+        set => setByteToBuffer(4, value);
     }
 
     public Byte cid
     {
-        get
-        {
-            return this.getByteFromBuffer(5);
-        }
-        set
-        {
-            this.setByteToBuffer(5, value);
-        }
+        get => getByteFromBuffer(5);
+        set => setByteToBuffer(5, value);
     }
 
     public Byte sid
     {
-        get
-        {
-            return this.getByteFromBuffer(6);
-        }
-        set
-        {
-            this.setByteToBuffer(6, value);
-        }
+        get => getByteFromBuffer(6);
+        set => setByteToBuffer(6, value);
     }
 
     public Byte uid
     {
-        get
-        {
-            return this.getByteFromBuffer(7);
-        }
-        set
-        {
-            this.setByteToBuffer(7, value);
-        }
+        get => getByteFromBuffer(7);
+        set => setByteToBuffer(7, value);
     }
 
     public Byte vofs
     {
-        get
-        {
-            return this.getByteFromBuffer(8);
-        }
-        set
-        {
-            this.setByteToBuffer(8, value);
-        }
+        get => getByteFromBuffer(8);
+        set => setByteToBuffer(8, value);
     }
 
     public Byte sofs
     {
-        get
-        {
-            return this.getByteFromBuffer(9);
-        }
-        set
-        {
-            this.setByteToBuffer(9, value);
-        }
+        get => getByteFromBuffer(9);
+        set => setByteToBuffer(9, value);
     }
 
     public Byte sx
     {
-        get
-        {
-            return this.getByteFromBuffer(10);
-        }
-        set
-        {
-            this.setByteToBuffer(10, value);
-        }
+        get => getByteFromBuffer(10);
+        set => setByteToBuffer(10, value);
     }
 
     public Byte btlchk
     {
-        get
-        {
-            return this.getByteFromBuffer(11);
-        }
-        set
-        {
-            this.setByteToBuffer(11, value);
-        }
+        get => getByteFromBuffer(11);
+        set => setByteToBuffer(11, value);
     }
 
     public Byte sn
     {
-        get
-        {
-            return this.getByteFromBuffer(12);
-        }
-        set
-        {
-            this.setByteToBuffer(12, value);
-        }
+        get => getByteFromBuffer(12);
+        set => setByteToBuffer(12, value);
     }
 
     public Byte wait
     {
-        get
-        {
-            return this.getByteFromBuffer(13);
-        }
-        set
-        {
-            this.setByteToBuffer(13, value);
-        }
+        get => getByteFromBuffer(13);
+        set => setByteToBuffer(13, value);
     }
 
     public Byte state
     {
-        get
-        {
-            return this.getByteFromBuffer(14);
-        }
-        set
-        {
-            this.setByteToBuffer(14, value);
-        }
+        get => getByteFromBuffer(14);
+        set => setByteToBuffer(14, value);
     }
 
     public Byte flags
     {
-        get
-        {
-            return this.getByteFromBuffer(15);
-        }
-        set
-        {
-            this.setByteToBuffer(15, value);
-        }
+        get => getByteFromBuffer(15);
+        set => setByteToBuffer(15, value);
     }
 
     public Byte winnum
     {
-        get
-        {
-            return this.getByteFromBuffer(16);
-        }
-        set
-        {
-            this.setByteToBuffer(16, value);
-        }
+        get => getByteFromBuffer(16);
+        set => setByteToBuffer(16, value);
     }
 
     public Byte index
     {
-        get
-        {
-            return this.getByteFromBuffer(17);
-        }
-        set
-        {
-            this.setByteToBuffer(17, value);
-        }
+        get => getByteFromBuffer(17);
+        set => setByteToBuffer(17, value);
     }
 
     public Byte state0
     {
-        get
-        {
-            return this.getByteFromBuffer(18);
-        }
-        set
-        {
-            this.setByteToBuffer(18, value);
-        }
+        get => getByteFromBuffer(18);
+        set => setByteToBuffer(18, value);
     }
 
     public Byte pad2
     {
-        get
-        {
-            return this.getByteFromBuffer(19);
-        }
-        set
-        {
-            this.setByteToBuffer(19, value);
-        }
+        get => getByteFromBuffer(19);
+        set => setByteToBuffer(19, value);
     }
 
     public Int32 getIntFromBuffer(Int32 startID)
@@ -362,26 +263,21 @@ public class Obj
 
     private void AllocObj(Int32 size)
     {
-        size *= 4;
-        this.buffer = new Byte[size];
+        this.buffer = new Byte[size << 2];
     }
 
     public void copy(Obj o)
     {
         this.buffer = null;
-        this.buffer = new Byte[(Int32)o.buffer.Length];
-        for (Int32 i = 0; i < (Int32)o.buffer.Length; i++)
-        {
+        this.buffer = new Byte[o.buffer.Length];
+        for (Int32 i = 0; i < o.buffer.Length; i++)
             this.buffer[i] = o.buffer[i];
-        }
         if (o.ebData != null)
         {
             this.ebData = null;
-            this.ebData = new Byte[(Int32)o.ebData.Length];
-            for (Int32 j = 0; j < (Int32)o.ebData.Length; j++)
-            {
+            this.ebData = new Byte[o.ebData.Length];
+            for (Int32 j = 0; j < o.ebData.Length; j++)
                 this.ebData[j] = o.ebData[j];
-            }
         }
         this.ip = o.ip;
         this.level = o.level;
@@ -402,19 +298,13 @@ public class Obj
         this.pad2 = o.pad2;
         this.isAdditionCommand = o.isAdditionCommand;
         if (o.currentByte == Obj.movQData)
-        {
             this.currentByte = Obj.movQData;
-        }
         else if (o.currentByte == Obj.neckTurnData)
-        {
             this.currentByte = Obj.neckTurnData;
-        }
         else
-        {
             this.currentByte = this.ebData;
-        }
         this.tempFlag = o.tempFlag;
-        this.go = (GameObject)null;
+        this.go = null;
         if (o.cid == 4)
         {
             PosObj po = (PosObj)o;
@@ -438,26 +328,22 @@ public class Obj
     public void Clear()
     {
         this.ip = 0;
-        Byte b = 0;
-        this.uid = b;
-        this.sid = b;
-        this.cid = b;
-        this.level = b;
-        b = 0;
-        this.btlchk = b;
-        this.sx = b;
-        this.sofs = b;
-        this.vofs = b;
-        b = 0;
-        this.flags = b;
-        this.state = b;
-        this.wait = b;
-        this.sn = b;
-        b = 0;
-        this.pad2 = b;
-        this.state0 = b;
-        this.index = b;
-        this.winnum = b;
+        this.uid = 0;
+        this.sid = 0;
+        this.cid = 0;
+        this.level = 0;
+        this.btlchk = 0;
+        this.sx = 0;
+        this.sofs = 0;
+        this.vofs = 0;
+        this.flags = 0;
+        this.state = 0;
+        this.wait = 0;
+        this.sn = 0;
+        this.pad2 = 0;
+        this.state0 = 0;
+        this.index = 0;
+        this.winnum = 0;
     }
 
     public Byte getByteIP()
@@ -546,10 +432,10 @@ public class Obj
 
     public Int32 getIntIP()
     {
-        Int32 ip = (Int32)(this.currentByte[this.ip] & Byte.MaxValue);
-        ip |= (Int32)(this.currentByte[this.ip + 1] & Byte.MaxValue) << 8;
-        ip |= (Int32)(this.currentByte[this.ip + 2] & Byte.MaxValue) << 16;
-        return ip | (Int32)(this.currentByte[this.ip + 3] & Byte.MaxValue) << 24;
+        Int32 ip = this.currentByte[this.ip] & Byte.MaxValue;
+        ip |= (this.currentByte[this.ip + 1] & Byte.MaxValue) << 8;
+        ip |= (this.currentByte[this.ip + 2] & Byte.MaxValue) << 16;
+        return ip | (this.currentByte[this.ip + 3] & Byte.MaxValue) << 24;
     }
 
     public Byte getByteFromCurrentByte(Int32 index)
@@ -579,56 +465,32 @@ public class Obj
     }
 
     public const Int32 IP_POS = 0;
-
     public const Int32 LEVEL_POS = 4;
-
     public const Int32 CID_POS = 5;
-
     public const Int32 SID_POS = 6;
-
     public const Int32 UID_POS = 7;
-
     public const Int32 VOFS_POS = 8;
-
     public const Int32 SOFS_POS = 9;
-
     public const Int32 SX_POS = 10;
-
     public const Int32 BTLCHK_POS = 11;
-
     public const Int32 SN_POS = 12;
-
     public const Int32 WAIT_POS = 13;
-
     public const Int32 STATE_POS = 14;
-
     public const Int32 FLAGS_POS = 15;
-
     public const Int32 WINNUM_POS = 16;
-
     public const Int32 INDEX_POS = 17;
-
     public const Int32 STATE0_POS = 18;
-
     public const Int32 PAD2_POS = 19;
 
     public Byte[] buffer;
-
     public Byte[] ebData;
-
     public GameObject go;
-
     public Obj objParent;
-
     public Boolean isAdditionCommand;
-
     public Byte[] currentByte;
-
     public Int32 tempFlag = -1;
-
     public Boolean isEnableRenderer = true;
 
     public static readonly Byte[] movQData;
-
     public static Byte[] neckTurnData;
 }

@@ -32,13 +32,9 @@ public class EventCollision
         EventEngine instance = PersistenSingleton<EventEngine>.Instance;
         Vector3 result = Vector3.zero;
         if (instance.gMode == 1)
-        {
             result = po.rotAngle;
-        }
         else if (instance.gMode == 3)
-        {
             result = ((Actor)po).wmActor.rot;
-        }
         return result;
     }
 
@@ -47,13 +43,9 @@ public class EventCollision
         if (userObject != null)
         {
             if (userObject.cid == 4)
-            {
                 EventCollision.CheckNPCInput(userObject);
-            }
             else
-            {
                 EventCollision.CheckQuadInput(userObject);
-            }
         }
     }
 
@@ -142,17 +134,15 @@ public class EventCollision
     private static void ClearPathFinding(PosObj po)
     {
         if (PersistenSingleton<EventEngine>.Instance.gMode == 1)
-        {
             po.go.GetComponent<FieldMapActorController>().ClearMoveTargetAndPath();
-        }
     }
 
     public static Obj Collision(EventEngine eventEngine, PosObj po, Int32 mode, ref Single distance)
     {
-        Obj result = (Obj)null;
-        Single num = Single.MaxValue;
-        Boolean flag = (mode & 4) > 0;
-        Int32 num2 = (Int32)(4 * (Byte)((!flag) ? po.collRad : po.talkRad));
+        Obj result = null;
+        Single closestDist = Single.MaxValue;
+        Boolean isTalk = (mode & 4) > 0;
+        Int32 poCollRadius = 4 * (isTalk ? po.talkRad : po.collRad);
         Vector3 a = Vector3.zero;
         if (eventEngine.gMode != 1)
         {
@@ -164,72 +154,57 @@ public class EventCollision
             for (ObjList objList = eventEngine.GetActiveObjList(); objList != null; objList = objList.next)
             {
                 Obj obj = objList.obj;
-                if (obj.sid != 5 || eventEngine.gMode == 3)
-                {
-                }
-                Byte b = (Byte)((obj.uid != eventEngine.GetControlUID()) ? 4 : 2);
+                Byte b = (Byte)(obj.uid != eventEngine.GetControlUID() ? 4 : 2);
                 Boolean flag2 = (po.flags & b) > 0;
-                Single num3 = (Single)((!flag && !flag2) ? 0 : 1);
-                Byte b2 = (Byte)((!flag) ? ((Byte)((po.uid != eventEngine.GetControlUID()) ? 4 : 2)) : 8);
-                Single num4 = (Single)(obj.flags & b2);
+                Single num3 = isTalk || flag2 ? 1 : 0;
+                Byte b2 = (Byte)(isTalk ? 8 : b);
+                Single num4 = obj.flags & b2;
                 if (obj != po)
                 {
                     Boolean flag3 = num3 <= 0f;
                     Boolean flag4 = num4 <= 0f;
                     if (flag3 || flag4)
                     {
-                        flag3 = ((mode & 6) <= 0);
-                        flag4 = (eventEngine.GetIP((Int32)obj.sid, (Int32)((!flag) ? 2 : 3), obj.ebData) != eventEngine.nil);
+                        flag3 = (mode & 6) == 0;
+                        flag4 = eventEngine.GetIP(obj.sid, isTalk ? 3 : 2, obj.ebData) != eventEngine.nil;
                         if ((flag3 || flag4) && obj.cid == 4)
                         {
                             Actor actor = (Actor)obj;
-                            Single num5 = 0f;
-                            Int32 num6 = (Int32)(4 * (Byte)((!flag) ? actor.collRad : actor.talkRad));
+                            Single checkDist = 0f;
+                            Int32 collRadius = 4 * (isTalk ? actor.talkRad : actor.collRad);
                             PosObj posObj = (PosObj)obj;
                             if (posObj.ovalRatio > 0)
-                            {
-                                num6 = EventCollision.CalculateRadiusFromOvalRatio(po, posObj, num6);
-                            }
-                            num6 += num2;
+                                collRadius = EventCollision.CalculateRadiusFromOvalRatio(po, posObj, collRadius);
+                            collRadius += poCollRadius;
                             if ((mode & 6) != 0)
-                            {
-                                num6 += (Int32)(actor.speed + 60);
-                            }
+                                collRadius += actor.speed + 60;
                             if (eventEngine.gMode == 3)
-                            {
-                                Single num7 = Vector3.Distance(a, actor.wmActor.RealPosition);
-                                Single num8 = num7 * 256f;
-                                num5 = num8;
-                            }
-                            if ((Single)num6 > num5 && num > num5)
+                                checkDist = Vector3.Distance(a, actor.wmActor.RealPosition) * 256f;
+                            if (collRadius > checkDist && closestDist > checkDist)
                             {
                                 result = actor;
-                                num = num5;
+                                closestDist = checkDist;
                             }
                         }
                     }
                 }
             }
             if (distance > 0f)
-            {
-                distance = num;
-            }
+                distance = closestDist;
             return result;
         }
         FieldMapActorController component = po.go.GetComponent<FieldMapActorController>();
-        if (component == (UnityEngine.Object)null)
-        {
-            return (Obj)null;
-        }
+        if (component == null)
+            return null;
         return component.walkMesh.Collision(component, mode, out distance);
     }
 
     private static Int32 CalculateRadiusFromOvalRatio(PosObj po, PosObj targetPosObj, Int32 radius)
     {
         Int32 fixedPointAngle = EventCollision.CollisionAngle(targetPosObj, po);
-        Int32 num = ff9.rcos(fixedPointAngle);
-        Int32 num2 = (num * num >> 4) * (Int32)targetPosObj.ovalRatio + 16777216;
-        radius = Convert.ToInt32((Single)radius * ff9.SquareRoot0((Single)num2)) >> 12;
+        Int32 collCos = ff9.rcos(fixedPointAngle);
+        Int32 maxRadius = (collCos * collCos >> 4) * targetPosObj.ovalRatio + 16777216;
+        radius = Convert.ToInt32(radius * ff9.SquareRoot0(maxRadius)) >> 12;
         return radius;
     }
 
@@ -394,39 +369,23 @@ public class EventCollision
 
     private static Boolean CheckQuadTalk(PosObj ctrl, Obj quad)
     {
-        Boolean result = true;
         if (PersistenSingleton<EventEngine>.Instance.gMode == 1)
         {
             Int16 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
-            if (fldMapNo != 2108)
-            {
-                if (fldMapNo == 2504)
-                {
-                    Byte sid = quad.sid;
-                    if (sid == 9)
-                    {
-                        result = false;
-                    }
-                }
-            }
-            else
-            {
-                Byte sid = quad.sid;
-                if (sid == 7)
-                {
-                    result = false;
-                }
-            }
+            if (fldMapNo == 2504) // I. Castle/Small Room
+                return quad.sid != 9;
+            if (fldMapNo == 2108) // Lindblum/Synthesist
+                return quad.sid != 7;
         }
-        return result;
+        return true;
     }
 
     public static Boolean IsWorldTrigger()
     {
         WMActor controlChar = ff9.GetControlChar();
-        if (controlChar != (UnityEngine.Object)null)
+        if (controlChar != null)
         {
-            ff9.s_moveCHRStatus s_moveCHRStatus = ff9.w_moveCHRStatus[(Int32)controlChar.originalActor.index];
+            ff9.s_moveCHRStatus s_moveCHRStatus = ff9.w_moveCHRStatus[controlChar.originalActor.index];
             return ff9.m_GetIDEvent(s_moveCHRStatus.id) != 0 && ff9.w_frameEventEnable;
         }
         return false;
@@ -443,46 +402,41 @@ public class EventCollision
     {
         if (PersistenSingleton<EventEngine>.Instance.gMode == 1)
         {
-            Obj obj = (Obj)null;
-            Int32 fldMapNo = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
-            Int32 uid = (Int32)quad.uid;
+            Obj obj = null;
+            Int32 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
+            Int32 uid = quad.uid;
             Int32 key = EMinigame.CreateNPCID(fldMapNo, uid);
             if (EventEngineUtils.QuadTalkableData.ContainsKey(key))
-            {
-                obj = PersistenSingleton<EventEngine>.Instance.GetObjUID(EventEngineUtils.QuadTalkableData[key]);
-            }
+                obj = PersistenSingleton<EventEngine>.Instance.GetObjByUID(EventEngineUtils.QuadTalkableData[key]);
             if (obj != null)
             {
-                Int32 num = fldMapNo;
-                Int32 num2;
-                if (num == 2108)
+                Int32 angle;
+                if (fldMapNo == 2108) // Lindblum/Synthesist, Lindblum_ManB
                 {
-                    num2 = EventCollision.GetDir((Actor)ctrl);
-                    return num2 > 90 && num2 < 160;
+                    angle = EventCollision.GetDir((Actor)ctrl);
+                    return angle > 90 && angle < 160;
                 }
-                if (num == 2109)
+                if (fldMapNo == 2109) // Lindblum/Wpn. Shop, Lindblum_WorkerA
                 {
-                    num2 = EventCollision.GetDir((Actor)ctrl);
-                    return num2 > 159 && num2 < 223;
+                    angle = EventCollision.GetDir((Actor)ctrl);
+                    return angle > 159 && angle < 223;
                 }
-                if (num == 2103)
+                if (fldMapNo == 2103) // Lindblum/Inn, Zidane (ManA)
                 {
-                    num2 = EventCollision.GetDir((Actor)ctrl);
-                    return num2 > 159 && num2 < 223;
+                    angle = EventCollision.GetDir((Actor)ctrl);
+                    return angle > 159 && angle < 223;
                 }
-                if (num != 2802)
+                if (fldMapNo == 2802) // Daguerreo/Left Hall, Zidane (LibrarianA)
                 {
-                    num2 = EventCollision.CollisionAngle(ctrl, obj);
-                    return num2 > -880 && num2 < 880;
+                    Obj objUID = PersistenSingleton<EventEngine>.Instance.GetObjByUID(18); // Daguerreo_ElevatorA
+                    Single elevatorHeight = 0f;
+                    if (PersistenSingleton<EventEngine>.Instance.isPosObj(objUID))
+                        elevatorHeight = -((PosObj)objUID).pos[1];
+                    angle = EventCollision.GetDir((Actor)ctrl);
+                    return angle > 16 && angle < 112 && elevatorHeight > 950f;
                 }
-                Obj objUID = PersistenSingleton<EventEngine>.Instance.GetObjUID(18);
-                Single num3 = 0f;
-                if (PersistenSingleton<EventEngine>.Instance.isPosObj(objUID))
-                {
-                    num3 = -((PosObj)objUID).pos[1];
-                }
-                num2 = EventCollision.GetDir((Actor)ctrl);
-                return num2 > 16 && num2 < 112 && num3 > 950f;
+                Int32 collAngle = EventCollision.CollisionAngle(ctrl, obj);
+                return collAngle > -880 && collAngle < 880;
             }
         }
         return true;
@@ -490,12 +444,10 @@ public class EventCollision
 
     private static Boolean IsNPCTalkable(Obj npc)
     {
-        Boolean flag = true;
         if (PersistenSingleton<EventEngine>.Instance.gMode == 1)
         {
-            Int32 fldMapNo = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
-            Int32 num = fldMapNo;
-            switch (num)
+            Int32 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
+            switch (fldMapNo)
             {
                 case 656:
                 case 657:
@@ -503,8 +455,7 @@ public class EventCollision
                 case 659:
                     if (PersistenSingleton<EventEngine>.Instance.isPosObj(npc))
                     {
-                        PosObj posObj = (PosObj)npc;
-                        UInt16 model = posObj.model;
+                        UInt16 model = ((PosObj)npc).model;
                         switch (model)
                         {
                             case 174:
@@ -513,117 +464,83 @@ public class EventCollision
                                 break;
                             default:
                                 if (model != EMinigame.GoldenFrogModelId)
-                                {
-                                    goto IL_191;
-                                }
+                                    return true;
                                 break;
                         }
                         Int32 varManually = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(157157);
-                        flag = (varManually > 0);
                         if (fldMapNo == 657)
-                        {
-                            flag = (flag || npc.sid == 4);
-                        }
-                        return flag;
+                            return varManually > 0 || npc.sid == 4;
+                        return varManually > 0;
                     }
-                IL_191:
                     break;
-                default:
-                    if (num != 350)
+                case 2950:
+                    if (npc.sid == 9)
                     {
-                        if (num != 507)
-                        {
-                            if (num != 566)
-                            {
-                                if (num != 611)
-                                {
-                                    if (num != 1603)
-                                    {
-                                        if (num != 1608)
-                                        {
-                                            if (num != 1856)
-                                            {
-                                                if (num == 2950)
-                                                {
-                                                    if (npc.sid == 9)
-                                                    {
-                                                        Int32 varManually2 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR);
-                                                        Int32 varManually3 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(8401);
-                                                        return varManually2 != 2 && varManually3 == 1;
-                                                    }
-                                                }
-                                            }
-                                            else if (npc.uid == 4 && Singleton<BubbleUI>.Instance.IsActive && EIcon.SFIconType == BubbleUI.IconType.Exclamation)
-                                            {
-                                                flag = false;
-                                            }
-                                        }
-                                        else if (npc.sid == 15)
-                                        {
-                                            Int32 varManually4 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
-                                            return 6850 <= varManually4;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        Int32 varManually5 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
-                                        if (npc.uid == 133 && varManually5 == 6810)
-                                        {
-                                            flag = false;
-                                        }
-                                    }
-                                }
-                                else if (npc.sid == 7)
-                                {
-                                    Int32 varManually5 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
-                                    Int32 varManually2 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR);
-                                    if (varManually5 == 3140 && varManually2 == 40)
-                                    {
-                                        flag = false;
-                                    }
-                                }
-                            }
-                            else if (npc.uid == 10 && Singleton<BubbleUI>.Instance.IsActive && EIcon.SFIconType == BubbleUI.IconType.Exclamation)
-                            {
-                                flag = false;
-                            }
-                        }
-                        else if (npc.sid == 15)
-                        {
-                            Int32 varManually5 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
-                            Int32 varManually2 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR);
-                            Obj objUID = PersistenSingleton<EventEngine>.Instance.GetObjUID(10);
-                            if (varManually5 == 2915 && varManually2 == 3 && objUID != null)
-                            {
-                                flag = false;
-                            }
-                        }
+                        Int32 fieldEntrance = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR);
+                        Int32 varManually3 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(8401);
+                        return fieldEntrance != 2 && varManually3 == 1;
                     }
-                    else if (npc.sid == 34)
+                    break;
+                case 1856:
+                    if (npc.uid == 4 && Singleton<BubbleUI>.Instance.IsActive && EIcon.SFIconType == BubbleUI.IconType.Exclamation)
+                        return false;
+                    break;
+                case 1608:
+                    if (npc.sid == 15)
                     {
-                        Int32 varManually5 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
-                        Int32 varManually2 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR);
-                        if (varManually5 == 2600 && varManually2 == 2)
-                        {
-                            flag = false;
-                        }
+                        Int32 scenarioCounter = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
+                        return scenarioCounter >= 6850;
+                    }
+                    break;
+                case 1603:
+                {
+                    Int32 scenarioCounter = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
+                    if (npc.uid == 133 && scenarioCounter == 6810)
+                        return false;
+                    break;
+                }
+                case 611:
+                    if (npc.sid == 7)
+                    {
+                        Int32 scenarioCounter = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
+                        Int32 fieldEntrance = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR);
+                        if (scenarioCounter == 3140 && fieldEntrance == 40)
+                            return false;
+                    }
+                    break;
+                case 566:
+                    if (npc.uid == 10 && Singleton<BubbleUI>.Instance.IsActive && EIcon.SFIconType == BubbleUI.IconType.Exclamation)
+                        return false;
+                    break;
+                case 507:
+                    if (npc.sid == 15)
+                    {
+                        Int32 scenarioCounter = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
+                        Int32 fieldEntrance = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR);
+                        Obj objUID = PersistenSingleton<EventEngine>.Instance.GetObjByUID(10);
+                        if (scenarioCounter == 2915 && fieldEntrance == 3 && objUID != null)
+                            return false;
+                    }
+                    break;
+                case 350:
+                    if (npc.sid == 34)
+                    {
+                        Int32 scenarioCounter = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
+                        Int32 fieldEntrance = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR);
+                        if (scenarioCounter == 2600 && fieldEntrance == 2)
+                            return false;
                     }
                     break;
             }
         }
-        return flag;
+        return true;
     }
 
     public const Single halfCircleDegree = 180f;
-
     public const Single fullCircleDegree = 360f;
-
     public const Int32 kDefaultHeight = 400;
-
     public const UInt16 kCollCutOff = 2048;
-
     public const Int32 kCollAngle = 1024;
-
     public const Int32 kQuadAngle = 880;
 
     public static Int32 sSysAngle;

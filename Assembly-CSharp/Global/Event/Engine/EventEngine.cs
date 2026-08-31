@@ -3,6 +3,7 @@ using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria;
 using Memoria.Data;
+using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -39,8 +40,11 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
     public EventContext sEventContext0;
     public EventContext sEventContext1;
     public ObjList gStopObj;
-    public ObjTable[] sObjTable;
+    public List<ObjTable> sObjTable;
+    public List<Int32[]> sObjModIndexing;
     public Int32 sSourceObjN;
+    public Boolean autoStartEntriesProceed;
+    public Boolean autoStartEntriesDone;
     #region Memoria Background free-view mode
     public Boolean sExternalFieldMode = false;
     public List<Int16> sExternalFieldList = new List<Int16>();
@@ -69,7 +73,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
     public Int64 sLockTimer;
     public Int64 sLockFree;
     public EBin eBin;
-    public Byte[][] allObjsEBData;
+    public List<Byte[]> allObjsEBData;
     public List<Int32> toBeAddedObjUIDList;
     public Boolean requiredAddActor;
     public Boolean addedChar;
@@ -113,16 +117,16 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
 
     public Int32 ServiceEvents()
     {
-        Int32 returnCode = 0;
+        Int32 codeFlowState = 0;
         if (!this._noEvents)
         {
             ETb.ProcessKeyEvents();
             this.CheckSleep();
-            returnCode = this.ProcessEvents();
+            codeFlowState = this.ProcessEvents();
             EIcon.ProcessFIcon();
             EIcon.ProcessAIcon();
         }
-        return returnCode;
+        return codeFlowState;
     }
 
     public Int32 GetFldMapNoAfterChangeDisc()
@@ -216,68 +220,68 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         return encountData.scene[3];
     }
 
-    public Int32 OperatorPick()
+    public Int32 OperatorFirstOf()
     {
-        Int32 num1 = 0;
+        Int32 result = 0;
         Int32 valueAtOffset = this.gCP.getValueAtOffset(-2);
-        Int32 num2;
+        Int32 activeBits;
         if ((valueAtOffset >> 26 & 7) == 5)
         {
-            num2 = this.GetSysList(valueAtOffset);
+            activeBits = this.GetSysList(valueAtOffset);
         }
         else
         {
             this.gCP.retreatTopOfStack();
-            num2 = this.eBin.getv();
+            activeBits = this.eBin.getv();
             this.gCP.advanceTopOfStack();
             this.gCP.advanceTopOfStack();
         }
         Int32 index = 0;
-        while (index < 8 && (num2 & 1) == 0)
+        while (index < 8 && (activeBits & 1) == 0)
         {
             ++index;
-            num2 >>= 1;
+            activeBits >>= 1;
         }
         if (index < 8)
         {
             this.gMemberTarget = this._objPtrList[index];
-            num1 = this.eBin.getv();
+            result = this.eBin.getv();
         }
         else
+        {
             this.gCP.retreatTopOfStack();
+        }
         this.gCP.retreatTopOfStack();
-        return num1;
+        return result;
     }
 
     public Int32 OperatorCount()
     {
-        Int32 num1 = 0;
-        Int32 num2 = this.eBin.getv();
-        Int16 num3 = 1;
-        while (num3 != 0)
+        Int32 count = 0;
+        Int32 activeBits = this.eBin.getv();
+        Int16 check = 1;
+        while (check != 0)
         {
-            num1 += (num2 & num3) == 0 ? 0 : 1;
-            num3 <<= 1;
+            count += (activeBits & check) == 0 ? 0 : 1;
+            check <<= 1;
         }
-        return num1;
+        return count;
     }
 
-    public Int32 OperatorSelect()
+    public Int32 GetRandomActiveBit()
     {
         Byte[] numArray = new Byte[8];
-        Int32 num1 = this.eBin.getv();
-        Int32 num2 = 0;
-        Int32 num3 = 0;
-        while (num3 < 8)
+        Int32 activeBits = this.eBin.getv();
+        Int32 activeCount = 0;
+        for (Byte i = 0; i < 8; ++i)
         {
-            if ((num1 & 1) != 0)
-                numArray[num2++] = (Byte)num3;
-            ++num3;
-            num1 >>= 1;
+            if ((activeBits & 1) != 0)
+                numArray[activeCount++] = i;
+            activeBits >>= 1;
         }
-        if (num2 == 0)
+        if (activeCount == 0)
             return 0;
-        Int32 index = num2 * Comn.random8() >> 8;
+        Int32 index = activeCount * Comn.random8() >> 8;
         return 1 << numArray[index];
     }
 
@@ -360,7 +364,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         Int32 num = obj.wait & Byte.MaxValue | (obj.level & Byte.MaxValue) << 8 | (!ew ? Byte.MaxValue : this.gExec.level & Byte.MaxValue) << 16 | (this.gExec.uid & Byte.MaxValue) << 24;
         obj.setIntToBuffer(startID + 4, num);
         if (ew)
-            this.gExec.wait = Byte.MaxValue;
+            this.gExec.wait = EBin.WAIT_STATE_END_REQ;
         obj.sx += 2;
         obj.ip = ip;
         obj.level = (Byte)level;
@@ -372,7 +376,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
 
     private Int32 getspw(Obj obj, Int32 id)
     {
-        return obj.sofs * 4 + 4 * id;
+        return (obj.sofs + id) << 2;
     }
 
     private Obj getSender(Obj obj)
@@ -468,19 +472,6 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         actor.rot0 = 0.0f;
     }
 
-    private void SetupCodeParam(BinaryReader br)
-    {
-        br.BaseStream.Seek(3L, SeekOrigin.Begin);
-        this.sSourceObjN = br.ReadByte();
-        br.BaseStream.Seek(128L, SeekOrigin.Begin);
-        this.sObjTable = new ObjTable[this.sSourceObjN];
-        for (Int32 index = 0; index < this.sObjTable.Length; ++index)
-        {
-            this.sObjTable[index] = new ObjTable();
-            this.sObjTable[index].ReadData(br);
-        }
-    }
-
     public void ResetIdleTimer(Int32 x)
     {
         if (this._context.idletimer < 0)
@@ -513,26 +504,23 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         return obj.cid == 4;
     }
 
-    public void StartEventsByEBFileName(String ebFileName)
-    {
-        this._currentEBAsset = AssetManager.LoadBytes(ebFileName);
-        this.StartEvents(this._currentEBAsset);
-    }
-
     public Boolean IsEventContextValid()
     {
         return this._context != null;
     }
 
-    public void StartEvents(Byte[] ebFileData)
+    public void StartEvents()
     {
         resyncBGMSignal = 0;
-        //Debug.Log("Reset resyncBGMSignal = " + (object)EventEngine.resyncBGMSignal);
         this._ff9 = FF9StateSystem.Common.FF9;
         this._ff9.charArray.Clear();
         this._ff9Sys = PersistenSingleton<FF9StateSystem>.Instance;
-        BinaryReader br = new BinaryReader(new MemoryStream(ebFileData));
-        this.SetupCodeParam(br);
+        this.sSourceObjN = EventEngineUtils.EntryCount;
+        this.sObjTable = EventEngineUtils.EntryTable;
+        this.allObjsEBData = EventEngineUtils.EntryData;
+        this.sObjModIndexing = EventEngineUtils.EntryIndexing;
+        this.autoStartEntriesProceed = false;
+        this.autoStartEntriesDone = false;
         this._ff9.mapNameStr = FF9TextTool.LocationName(this._ff9.fldMapNo);
         this._defaultMapName = this._ff9.mapNameStr;
         switch (this._ff9Sys.mode)
@@ -547,7 +535,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
                 this.gMode = 3;
                 UIManager.World.EnableMapButton = true;
                 break;
-            case 8: // Battle
+            case 8: // Battle Result (when AfterEvent is activated)
                 this.gMode = 4;
                 break;
         }
@@ -557,21 +545,10 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         TimerUI.SetEnable(this._ff9.timerDisplay);
         TimerUI.SetDisplay(this._ff9.timerDisplay);
         TimerUI.SetPlay(this._ff9.timerControl);
-        this.allObjsEBData = new Byte[this.sSourceObjN][];
         this.toBeAddedObjUIDList.Clear();
         for (Int32 btlindex = 0; btlindex < 8; btlindex++)
             for (Int32 lvlindex = 0; lvlindex < 8; lvlindex++)
                 this._requestCommandTrigger[btlindex, lvlindex] = null;
-        for (Int32 index = 0; index < this.sSourceObjN; ++index)
-        {
-            br.BaseStream.Seek(128L, SeekOrigin.Begin);
-            Int32 num = (Int32)this.sObjTable[index].ofs;
-            Int32 count = (Int32)this.sObjTable[index].size;
-            br.BaseStream.Seek((Int64)num, SeekOrigin.Current);
-            this.allObjsEBData[index] = br.ReadBytes(count);
-            //if (count < 4)
-            //;
-        }
         if ((this.sEventContext0.inited == 1 || this.sEventContext0.inited == 3) && this.gMode == 2)
             this.sEventContext1.copy(this.sEventContext0);
         this._context = this.sEventContext0;
@@ -605,11 +582,9 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         {
             for (Int32 index = 0; index < 4; ++index)
             {
-                Int32 memberIndex = ff9play.CharacterIDToEventId(ETb.GetPartyMember(index));
-                if (memberIndex >= 0)
-                    new Actor(this.sSourceObjN - 9 + memberIndex, 0, sizeOfActor);
-                else
-                    new Actor(this.sSourceObjN - 9, this.sSourceObjN + (Int32)ETb.GetPartyMember(index), sizeOfActor);
+                Int32 sid = EventEngineUtils.GetEventCharacterSId(this.sObjTable, ETb.GetPartyMember(index));
+                if (sid >= 0)
+                    new Actor(sid, 0);
             }
             this._context.partyObjTail = this._context.activeObjTail;
         }
@@ -717,7 +692,6 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         }
         this._context.inited = (Byte)this.gMode;
         this._context.lastmap = this.gMode == 1 ? (UInt16)this._ff9.fldMapNo : (this.gMode == 3 ? (UInt16)this._ff9.wldMapNo : (UInt16)0);
-        br.Close();
 
         SpawnCustomChatacters();
 
@@ -748,84 +722,18 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
 
     private void SetupPartyUID()
     {
-        // Order of script objects is Zidane, Vivi, Dagger, Steiner, Freya, Quina, Eiko, Amarant, Beatrix
-        // Order of priorities is Zidane, Eiko, Steiner, Vivi, Freya, Amarant, Garnet, Beatrix, others...
-        Byte[] reorderArray1 = new Byte[9] { 0, 6, 3, 1, 4, 5, 7, 2, 8 };
-        Byte[] reorderArray2 = new Byte[9] { 0, 3, 7, 2, 4, 5, 1, 6, 8 };
-        Dictionary<Int32, CharacterId> reorderToChar = new Dictionary<Int32, CharacterId>();
-        Int32 charFlags = 0;
         for (Int32 index = 0; index < 4; ++index)
         {
-            this._context.partyUID[index] = Byte.MaxValue;
+            this._context.partyUID[index] = -1;
             this._context.eventPartyMember[index] = CharacterId.NONE;
-        }
-        for (Int32 index = 0; index < 4; ++index)
-        {
             CharacterId memberId = ETb.GetPartyMember(index);
-            Int32 memberIndex = ff9play.CharacterIDToEventId(memberId);
-            Boolean shouldHack = false; // https://github.com/Albeoris/Memoria/issues/3
-            Boolean eikoAbducted = FF9StateSystem.EventState.IsEikoAbducted;
-            if (memberIndex >= 0)
+            if (memberId != CharacterId.NONE)
             {
-                // If Beatrix is in the team and she has no script, we make it so the engine thinks it's another member instead
-                if (memberIndex == (Int32)CharacterOldIndex.Beatrix)
-                {
-                    Byte BeatrixSID = (Byte)(this.sSourceObjN - 9 + memberIndex);
-                    if (this.GetIP(BeatrixSID, 0, this.allObjsEBData[BeatrixSID]) == this.nil) // The Main function of the Beatrix entry doesn't exist
-                        shouldHack = true;
-                }
-                else if (memberIndex == (Int32)CharacterOldIndex.Eiko && eikoAbducted)
-                {
-                    shouldHack = true;
-                }
-                // Note that, as for all the 9 characters, the Beatrix entry is not dependant on the model used by the entry but rather on the fact that it is at the end of the entry list
-                // (Even in battle scripts, in which character entries are never used nor tied to the team's battle datas, 9 entry slots are reserved at the end of the entry list)
-                // *********************
-            }
-            else if (memberId != CharacterId.NONE)
-            {
-                // TODO: Maybe identify a field actor corresponding to a party member without event ID
-                //  (Cinna/Marcus/Blank after they were replaced, or a custom character)
-                //  using the actor's model ID instead... provided that we can identify that ID before running any event script
-                shouldHack = true;
-            }
-            if (shouldHack)
-            {
-                if (!eikoAbducted && !partychk((Int32)CharacterOldIndex.Eiko) && (charFlags & (1 << reorderArray2[(Int32)CharacterOldIndex.Eiko])) == 0)
-                    memberIndex = (Int32)CharacterOldIndex.Eiko;
-                else if (!partychk((Int32)CharacterOldIndex.Steiner) && (charFlags & (1 << reorderArray2[(Int32)CharacterOldIndex.Steiner])) == 0)
-                    memberIndex = (Int32)CharacterOldIndex.Steiner;
-                else if (!partychk((Int32)CharacterOldIndex.Vivi) && (charFlags & (1 << reorderArray2[(Int32)CharacterOldIndex.Vivi])) == 0)
-                    memberIndex = (Int32)CharacterOldIndex.Vivi;
-                else if (!partychk((Int32)CharacterOldIndex.Freya) && (charFlags & (1 << reorderArray2[(Int32)CharacterOldIndex.Freya])) == 0)
-                    memberIndex = (Int32)CharacterOldIndex.Freya;
-                else
-                    memberIndex = (Int32)CharacterOldIndex.Garnet;
-            }
-            if (memberIndex >= 0)
-            {
-                charFlags |= 1 << reorderArray2[memberIndex];
-                reorderToChar[reorderArray2[memberIndex]] = memberId;
+                this._context.partyUID[index] = EventEngineUtils.GetEventCharacterSIdHacked(this.sObjTable, memberId, index);
+                if (this._context.partyUID[index] >= 0)
+                    this._context.eventPartyMember[index] = this.sObjTable[this._context.partyUID[index]].player_link;
             }
         }
-        Int32 partyIndex = 0;
-        Int32 reorderIndex = 0;
-        while (charFlags != 0)
-        {
-            if ((charFlags & 1) != 0)
-            {
-                this._context.partyUID[partyIndex] = (Byte)(this.sSourceObjN - 9 + reorderArray1[reorderIndex]);
-                this._context.eventPartyMember[partyIndex] = reorderToChar[reorderIndex];
-                partyIndex++;
-            }
-            ++reorderIndex;
-            charFlags >>= 1;
-        }
-    }
-
-    public CharacterId GetEventPartyPlayer(Int32 partyIndex)
-    {
-        return partyIndex >= 0 && partyIndex < this._context.eventPartyMember.Length ? this._context.eventPartyMember[partyIndex] : CharacterId.NONE;
     }
 
     public Boolean partychk(Int32 x)
@@ -872,19 +780,20 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         return ff9play.CharacterOldIndexToID((CharacterOldIndex)x);
     }
 
+    // Note: this counts entries initialised with "InitObject" that are not playable characters, so it includes things like chests or other 3D model objects
     public Int32 GetNumberNPC()
     {
-        Int32 num = 0;
+        Int32 count = 0;
         if (this._context != null)
         {
             for (ObjList objList = this._context.activeObj; objList != null; objList = objList.next)
             {
                 Obj obj = objList.obj;
-                if (obj.sid < this.sSourceObjN - 9 && obj.cid == 4)
-                    ++num;
+                if (obj.cid == 4 && this.sObjTable[obj.sid].player_link == CharacterId.NONE)
+                    ++count;
             }
         }
-        return num;
+        return count;
     }
 
     public Obj GetObjIP(Int32 ip)
@@ -896,18 +805,60 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         return objList?.obj;
     }
 
-    public Obj GetObjUID(Int32 uid)
+    /// <summary>Get the mod index from which the object's script originates</summary>
+    public Int32 GetObjectModIndex(Obj obj)
     {
-        if (uid == Byte.MaxValue)
-            return this.gCur;
+        return sObjTable[obj.sid].mod_index;
+    }
+
+    public Int32 GetUIDFromLocalUID(Int32 uid, Int32 modIndex = 0)
+    {
+        if (uid == 255)
+            return this.gCur.uid;
         if (uid == 250)
-            uid = this._context.controlUID;
-        else if (uid >= 251 && uid < Byte.MaxValue)
-            uid = this._context.partyUID[uid - 251];
+            return this._context.controlUID;
+        if (uid >= 251 && uid <= 254)
+            return this._context.partyUID[uid - 251];
+        if (uid < 0)
+            return uid;
+        if (uid < EventEngine.UID_OFFSET_SEQ)
+        {
+            if (uid >= sObjModIndexing[modIndex].Length || sObjModIndexing[modIndex][uid] < 0)
+            {
+                Log.Error($"[{nameof(EventEngine)}] Trying to access object {uid} (mod index = {modIndex}) that is not registered");
+                UIManager.DebugLogStackTrace();
+                return -1;
+            }
+            return sObjModIndexing[modIndex][uid];
+        }
+        if (uid < EventEngine.UID_OFFSET_SPEC)
+        {
+            uid -= EventEngine.UID_OFFSET_SEQ;
+            if (uid >= sObjModIndexing[modIndex].Length || sObjModIndexing[modIndex][uid] < 0)
+            {
+                Log.Error($"[{nameof(EventEngine)}] Trying to access shared entry executed by {uid} (mod index = {modIndex}) that is not registered");
+                UIManager.DebugLogStackTrace();
+                return -1;
+            }
+            return sObjModIndexing[modIndex][uid] + EventEngine.UID_OFFSET_SEQ;
+        }
+        return uid;
+    }
+
+    public Obj GetObjByUID(Int32 uid, Int32 modIndex = 0)
+    {
+        uid = GetUIDFromLocalUID(uid, modIndex);
         ObjList objList = this._context.activeObj;
         while (objList != null && objList.obj.uid != uid)
             objList = objList.next;
+        return objList?.obj;
+    }
 
+    public Obj FindObjByUID(Int32 uid)
+    {
+        ObjList objList = this._context.activeObj;
+        while (objList != null && objList.obj.uid != uid)
+            objList = objList.next;
         return objList?.obj;
     }
 
@@ -976,9 +927,9 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         this._context.activeObj = this._context.activeObjTail = null;
     }
 
-    private static Obj NewThread(Int32 sid, Int32 uid)
+    public static Obj NewThread(Int32 sid, Int32 uid)
     {
-        return new Obj(sid, uid, sizeOfObj, 16) { cid = 2 };
+        return new Obj(sid, uid, SIZE_OF_OBJ, 16) { cid = 2 };
     }
 
     public Int32 GetBattleCharData(Obj obj, Int32 kind)
@@ -1114,15 +1065,6 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
     {
     }
 
-    public Obj FindObjByUID(Int32 uid)
-    {
-        ObjList objList = this._context.activeObj;
-        while (objList != null && objList.obj.uid != uid)
-            objList = objList.next;
-
-        return objList?.obj;
-    }
-
     public Boolean objIsVisible(Obj obj)
     {
         if (obj.state == stateRunning)
@@ -1197,7 +1139,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
                 Obj objByUid = this.FindObjByUID(intFromBuffer >> 24 & Byte.MaxValue);
                 if (objByUid != null)
                 {
-                    if (objByUid.wait == Byte.MaxValue)
+                    if (objByUid.wait == EBin.WAIT_STATE_END_REQ)
                     {
                         objByUid.wait = 0;
                     }
@@ -1404,13 +1346,6 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         if (this._context != null)
             return this._context.dashinh;
         return 0;
-    }
-
-    private enum wait_desc
-    {
-        waitMessage = 254,
-        waitSpecial = 254,
-        waitEndReq = 255,
     }
 
     private class FF9FIELD_DISC

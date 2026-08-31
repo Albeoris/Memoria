@@ -1,5 +1,6 @@
-﻿using Memoria.Prime.CSV;
-using System;
+﻿using System;
+using Memoria.Prime.CSV;
+using FF9;
 
 namespace Memoria.Data
 {
@@ -7,46 +8,55 @@ namespace Memoria.Data
     {
         public String Comment;
         public Int32 Id;
+        public ItemAttack Data;
 
         public WeaponCategory Category;
         public StatusSetId StatusIndex;
         public String ModelName;
         public UInt16 ModelId;
-        public BTL_REF Ref;
+        public BTL_REF Ref = new BTL_REF();
         public Int16 Offset1;
         public Int16 Offset2;
         public Byte HitSfx;
-        public String[] CustomTexture;
+        public String[] CustomTexture = [];
 
-        public void ParseEntry(String[] raw, CsvMetaData metadata)
+        public static ItemAttack GetExisting(Int32 id)
         {
-            Comment = CsvParser.String(raw[0]);
-            Id = CsvParser.Int32(raw[1]);
+            if (ff9weap.WeaponData.TryGetValue(id, out ItemAttack result))
+                return result;
+            throw new NotSupportedException($"The option AppendMode must be used to patch existing entries but the entry {id} doesn't exist");
+        }
 
-            Category = (WeaponCategory)CsvParser.Byte(raw[2]);
-            StatusIndex = (StatusSetId)CsvParser.Int32(raw[3]);
-            ModelName = CsvParser.String(raw[4]);
-            if (!String.IsNullOrEmpty(ModelName))
-                ModelId = (UInt16)FF9BattleDB.GEO.GetKey(ModelName);
-            else
-                ModelId = UInt16.MaxValue;
-
-            Int32 scriptId = CsvParser.Int32(raw[5]);
-            Int32 power = CsvParser.Int32(raw[6]);
-            Byte elements = CsvParser.Byte(raw[7]);
-            Int32 rate = CsvParser.Int32(raw[8]);
-            Ref = new BTL_REF(scriptId, power, elements, rate);
-
-            Offset1 = Int16.Parse(raw[9]);
-            Offset2 = Int16.Parse(raw[10]);
-            if (metadata.HasOption($"Include{nameof(HitSfx)}"))
-                HitSfx = Byte.Parse(raw[11]);
-            else
-                HitSfx = (Byte)Id;
-            CustomTexture = null;
-            if (metadata.HasOption($"Include{nameof(CustomTexture)}"))
+        public void ParseDataEntry(String[] raw, CsvMetaData metadata, ref Int32 index)
+        {
+            if (metadata.HasField("Category")) Category = (WeaponCategory)CsvParser.Byte(raw[index++]);
+            if (metadata.HasField("StatusIndex")) StatusIndex = (StatusSetId)CsvParser.Int32(raw[index++]);
+            if (metadata.HasField("ModelName"))
             {
-                String StringTexture = CsvParser.String(raw[12]);
+                ModelName = CsvParser.String(raw[index++]);
+                if (!String.IsNullOrEmpty(ModelName))
+                    ModelId = (UInt16)FF9BattleDB.GEO.GetKey(ModelName);
+                else
+                    ModelId = UInt16.MaxValue;
+            }
+
+            if (metadata.HasField("ScriptId")) Ref.ScriptId = CsvParser.Int32(raw[index++]);
+            if (metadata.HasField("Power")) Ref.Power = CsvParser.Int32(raw[index++]);
+            if (metadata.HasField("Elements")) Ref.Elements = CsvParser.Byte(raw[index++]);
+            if (metadata.HasField("Rate")) Ref.Rate = CsvParser.Int32(raw[index++]);
+
+            if (metadata.HasField("Offset1")) Offset1 = Int16.Parse(raw[index++]);
+            if (metadata.HasField("Offset2")) Offset2 = Int16.Parse(raw[index++]);
+            if (metadata.HasField("HitSfx"))
+            {
+                if (metadata.HasOption($"Include{nameof(HitSfx)}"))
+                    HitSfx = Byte.Parse(raw[index++]);
+                else
+                    HitSfx = (Byte)Id;
+            }
+            if (metadata.HasOption($"Include{nameof(CustomTexture)}") && metadata.HasField("CustomTexture"))
+            {
+                String StringTexture = CsvParser.String(raw[index++]);
                 if (StringTexture.Trim().Length > 0)
                 {
                     CustomTexture = StringTexture.Split(',');
@@ -54,6 +64,15 @@ namespace Memoria.Data
                         CustomTexture[i] = CustomTexture[i].Trim();
                 }
             }
+        }
+
+        public void ParseEntry(String[] raw, CsvMetaData metadata)
+        {
+            Int32 index = 0;
+            Comment = CsvParser.String(raw[index++]);
+            Id = CsvParser.Int32(raw[index++]);
+            Data = metadata.IsAppendMode ? GetExisting(Id) : this;
+            Data.ParseDataEntry(raw, metadata, ref index);
         }
 
         public void WriteEntry(CsvWriter sw, CsvMetaData metadata)
