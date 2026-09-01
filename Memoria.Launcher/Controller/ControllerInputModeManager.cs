@@ -120,10 +120,10 @@ namespace Memoria.Launcher.Controller
         private void EnterMouseMode()
         {
             _tooltips.Disable();
-            _focus.DeactivateControllerAppearance(true);
             if (!_controllerInputActive)
                 return;
 
+            _focus.DeactivateControllerAppearance(true);
             _controllerInputActive = false;
             GamepadNavigation.SetIsControllerInputActive(_window, false);
             _hasControllerPointerPosition = false;
