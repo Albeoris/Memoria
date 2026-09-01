@@ -1863,16 +1863,18 @@ internal static class EventEngineUtils
     }
 
     // Try to find a suitable entry for a party member, ie. the linked entry if it exists and has at least 1 function, or another character entry otherwise
-    public static Int32 GetEventCharacterSIdHacked(List<ObjTable> objTable, CharacterId charId, Int32 memberIndex)
+    public static Int32 GetEventCharacterSIdHacked(List<ObjTable> objTable, CharacterId charId, Int32 memberIndex, CharacterId[] reorderArray)
     {
         if (charId == CharacterId.NONE)
             return -1;
+        Boolean avoidEiko = FF9StateSystem.EventState.IsEikoAbducted;
         for (Int32 i = 0; i < objTable.Count; i++)
-            if (objTable[i].player_link == charId && objTable[i].size > 0)
+            if (objTable[i].player_link == charId && objTable[i].size > 0 && (charId != CharacterId.Eiko || !avoidEiko))
                 return i;
-        for (Int32 i = 0; i < objTable.Count; i++)
-            if (objTable[i].player_link != CharacterId.NONE && objTable[i].size > 0 && !FF9StateSystem.Common.FF9.party.IsInParty(objTable[i].player_link) && --memberIndex < 0)
-                return i;
+        for (Int32 order = 0; order < reorderArray.Length; order++)
+            for (Int32 i = 0; i < objTable.Count; i++)
+                if (objTable[i].player_link != CharacterId.NONE && objTable[i].size > 0 && (objTable[i].player_link != CharacterId.Eiko || !avoidEiko) && (objTable[i].player_link == reorderArray[order] || (reorderArray[order] == CharacterId.NONE && objTable[i].player_link > CharacterId.Amarant && objTable[i].player_link != CharacterId.Beatrix)) && !FF9StateSystem.Common.FF9.party.IsInParty(objTable[i].player_link) && --memberIndex < 0)
+                    return i;
         return -1;
     }
 

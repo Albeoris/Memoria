@@ -37,8 +37,8 @@ namespace Memoria.Data
         public void ParseDataEntry(String[] raw, CsvMetaData metadata, ref Int32 index)
         {
             if (metadata.HasField("Priority")) Priority = CsvParser.Byte(raw[index++]);
-            if (metadata.HasField("OprCnt")) OprCnt = CsvParser.Byte(raw[index++]);
-            if (metadata.HasField("ContiCnt")) ContiCnt = CsvParser.UInt16(raw[index++]);
+            if (metadata.HasField("OprCount")) OprCnt = CsvParser.Byte(raw[index++]);
+            if (metadata.HasField("ContiCount")) ContiCnt = CsvParser.UInt16(raw[index++]);
             if (metadata.HasField("ClearOnApply")) ClearOnApply = BattleStatusEntry.ParseBattleStatus(raw[index++], metadata);
             if (metadata.HasField("ImmunityProvided")) ImmunityProvided = BattleStatusEntry.ParseBattleStatus(raw[index++], metadata);
 

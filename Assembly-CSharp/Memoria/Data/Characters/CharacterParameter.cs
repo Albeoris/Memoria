@@ -29,9 +29,9 @@ namespace Memoria.Data
             if (metadata.HasField("DefaultRow")) DefaultRow = CsvParser.Byte(raw[index++]);
             if (metadata.HasField("DefaultWinPose")) DefaultWinPose = CsvParser.Byte(raw[index++]);
             if (metadata.HasField("DefaultCategory")) DefaultCategory = CsvParser.Byte(raw[index++]);
-            if (metadata.HasField("DefaultMenuType")) DefaultMenuType = (CharacterPresetId)CsvParser.Byte(raw[index++]);
+            if (metadata.HasField("DefaultCommandSet")) DefaultMenuType = (CharacterPresetId)CsvParser.Byte(raw[index++]);
             if (metadata.HasField("DefaultEquipmentSet")) DefaultEquipmentSet = (EquipmentSetId)CsvParser.Byte(raw[index++]);
-            if (metadata.HasField("SerialNumberFormula")) SerialNumberFormula = CsvParser.String(raw[index++]);
+            if (metadata.HasField("BattleParameterFormula")) SerialNumberFormula = CsvParser.String(raw[index++]);
             if (metadata.HasField("NameKeyword")) NameKeyword = CsvParser.String(raw[index++]);
         }
 

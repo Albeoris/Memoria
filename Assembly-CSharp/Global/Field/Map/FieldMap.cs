@@ -528,9 +528,9 @@ public class FieldMap : HonoBehavior
 
     public void RestoreAttachModel(GameObject modelGo, Actor actorOfObj)
     {
-        if (actorOfObj.attatchTargetUid != -1)
+        if (actorOfObj.attachTargetUid != -1)
         {
-            Obj objUID = PersistenSingleton<EventEngine>.Instance.FindObjByUID(actorOfObj.attatchTargetUid);
+            Obj objUID = PersistenSingleton<EventEngine>.Instance.FindObjByUID(actorOfObj.attachTargetUid);
             geo.geoAttach(modelGo, objUID.go, actorOfObj.attachTargetBoneIndex);
         }
     }

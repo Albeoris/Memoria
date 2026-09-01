@@ -657,6 +657,8 @@ public static class AssetManager
 
     public static Byte[] LoadBytes(String name, Boolean suppressMissingError = false)
     {
+        if (AssetManager.AnimationInFolder == null)
+            DelayedInitialization();
         Byte[] mainFile = LoadBytesMultiple(name).FirstOrDefault();
         if (mainFile == null && !suppressMissingError)
             Log.Message("[AssetManager] Memoria asset not found: " + name);

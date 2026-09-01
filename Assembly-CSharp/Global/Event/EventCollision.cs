@@ -139,64 +139,61 @@ public class EventCollision
 
     public static Obj Collision(EventEngine eventEngine, PosObj po, Int32 mode, ref Single distance)
     {
+        if (eventEngine.gMode == 1)
+        {
+            // Field collision
+            FieldMapActorController actorController = po.go.GetComponent<FieldMapActorController>();
+            if (actorController == null)
+                return null;
+            return actorController.walkMesh.Collision(actorController, mode, out distance);
+        }
+        // World map collision (or battle collision?)
         Obj result = null;
         Single closestDist = Single.MaxValue;
-        Boolean isTalk = (mode & 4) > 0;
+        Boolean isTalk = (mode & 4) != 0;
+        Byte poCollisionKind = (Byte)(po.uid != eventEngine.GetControlUID() ? 4 : 2);
         Int32 poCollRadius = 4 * (isTalk ? po.talkRad : po.collRad);
-        Vector3 a = Vector3.zero;
-        if (eventEngine.gMode != 1)
+        Vector3 wmPos = Vector3.zero;
+        if (eventEngine.gMode == 3)
+            wmPos = ((Actor)po).wmActor.RealPosition;
+        for (ObjList objList = eventEngine.GetActiveObjList(); objList != null; objList = objList.next)
         {
-            if (eventEngine.gMode == 3)
+            Obj obj = objList.obj;
+            if (obj != po && obj.cid == 4)
             {
-                WMActor wmActor = ((Actor)po).wmActor;
-                a = wmActor.RealPosition;
-            }
-            for (ObjList objList = eventEngine.GetActiveObjList(); objList != null; objList = objList.next)
-            {
-                Obj obj = objList.obj;
-                Byte b = (Byte)(obj.uid != eventEngine.GetControlUID() ? 4 : 2);
-                Boolean flag2 = (po.flags & b) > 0;
-                Single num3 = isTalk || flag2 ? 1 : 0;
-                Byte b2 = (Byte)(isTalk ? 8 : b);
-                Single num4 = obj.flags & b2;
-                if (obj != po)
+                Byte collisionKind = (Byte)(obj.uid != eventEngine.GetControlUID() ? 4 : 2);
+                Boolean disabledCollision = (po.flags & collisionKind) != 0;
+                Byte interactMask = (Byte)(isTalk ? 8 : poCollisionKind);
+                Boolean canInteract = (!isTalk && !disabledCollision) || (obj.flags & interactMask) == 0;
+                if (canInteract)
                 {
-                    Boolean flag3 = num3 <= 0f;
-                    Boolean flag4 = num4 <= 0f;
-                    if (flag3 || flag4)
+                    Boolean ignoreDisables = (mode & 6) == 0;
+                    Boolean hasRelatedFunction = eventEngine.GetIP(obj.sid, isTalk ? 3 : 2, obj.ebData) != eventEngine.nil;
+                    if (ignoreDisables || hasRelatedFunction)
                     {
-                        flag3 = (mode & 6) == 0;
-                        flag4 = eventEngine.GetIP(obj.sid, isTalk ? 3 : 2, obj.ebData) != eventEngine.nil;
-                        if ((flag3 || flag4) && obj.cid == 4)
+                        Actor actor = (Actor)obj;
+                        Single checkDist = 0f;
+                        Int32 collRadius = 4 * (isTalk ? actor.talkRad : actor.collRad);
+                        PosObj posObj = (PosObj)obj;
+                        if (posObj.ovalRatio > 0)
+                            collRadius = EventCollision.CalculateRadiusFromOvalRatio(po, posObj, collRadius);
+                        collRadius += poCollRadius;
+                        if ((mode & 6) != 0)
+                            collRadius += actor.speed + 60;
+                        if (eventEngine.gMode == 3)
+                            checkDist = Vector3.Distance(wmPos, actor.wmActor.RealPosition) * 256f;
+                        if (collRadius > checkDist && closestDist > checkDist)
                         {
-                            Actor actor = (Actor)obj;
-                            Single checkDist = 0f;
-                            Int32 collRadius = 4 * (isTalk ? actor.talkRad : actor.collRad);
-                            PosObj posObj = (PosObj)obj;
-                            if (posObj.ovalRatio > 0)
-                                collRadius = EventCollision.CalculateRadiusFromOvalRatio(po, posObj, collRadius);
-                            collRadius += poCollRadius;
-                            if ((mode & 6) != 0)
-                                collRadius += actor.speed + 60;
-                            if (eventEngine.gMode == 3)
-                                checkDist = Vector3.Distance(a, actor.wmActor.RealPosition) * 256f;
-                            if (collRadius > checkDist && closestDist > checkDist)
-                            {
-                                result = actor;
-                                closestDist = checkDist;
-                            }
+                            result = actor;
+                            closestDist = checkDist;
                         }
                     }
                 }
             }
-            if (distance > 0f)
-                distance = closestDist;
-            return result;
         }
-        FieldMapActorController component = po.go.GetComponent<FieldMapActorController>();
-        if (component == null)
-            return null;
-        return component.walkMesh.Collision(component, mode, out distance);
+        if (distance > 0f)
+            distance = closestDist;
+        return result;
     }
 
     private static Int32 CalculateRadiusFromOvalRatio(PosObj po, PosObj targetPosObj, Int32 radius)

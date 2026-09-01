@@ -47,10 +47,8 @@ public partial class EventEngine
         switch (eventCodeBinary)
         {
             case EBin.event_code_binary.NOP: // 0x00, "NOTHING", "Do nothing."
-            {
                 return EventEngine.FLOW_STATE_WAIT;
-            }
-            // These control flow codes are handled by EBin.jumpToCommand instead:
+            // These control flow codes are handled by EBin.commandCodeFlow instead:
             // 0x02, "JMP_IFN", "Skip some operations if the stack value is not 0."
             // 0x03, "JMP_IF", "Skip some operations if the stack value is 0."
             // 0x04, "return", "End the function."
@@ -71,9 +69,7 @@ public partial class EventEngine
             case EBin.event_code_binary.GLOBALCLEAR:
             case EBin.event_code_binary.DEBUGSAVE:
             case EBin.event_code_binary.DEBUGLOAD:
-            {
                 return 0;
-            }
             case EBin.event_code_binary.BSSTART:
             case EBin.event_code_binary.BSFRAME:
             case EBin.event_code_binary.BAANIME:
@@ -133,12 +129,12 @@ public partial class EventEngine
             {
                 Int32 sid = this.gArgFlag; // arg1: code entry to init
                 Int32 uid = this.geti(); // arg2: Unique ID (defaulted to entry's ID if 0)
-                if (sid >= 251 && sid < Byte.MaxValue)
+                if (sid >= 251 && sid <= 254)
                 {
                     sid = this._context.partyUID[sid - 251];
                     if (sid < 0)
                     {
-                        Log.Warning($"[EventEnginge] Failed to perform an event code [NEW3] because there is no party member with index {this.gArgFlag}");
+                        Log.Warning($"[EventEnginge] Failed to perform an event code [NEW3] (InitObject) because there is no party member with index {this.gArgFlag}");
                         return 0;
                     }
                 }
@@ -1087,11 +1083,11 @@ public partial class EventEngine
                         for (Int32 i = 0; i < length; ++i)
                             po.meshIsRendering[i] = true;
 
-                        if (FF9StateSystem.Common.FF9.charArray.ContainsKey(po.uid))
-                            return 0;
                         FF9Char ff9Char = new FF9Char();
                         ff9Char.geo = po.go;
                         ff9Char.evt = po;
+                        if (FF9StateSystem.Common.FF9.charArray.ContainsKey(po.uid))
+                            return 0;
                         FF9StateSystem.Common.FF9.charArray.Add(po.uid, ff9Char);
                         FF9FieldCharState ff9FieldCharState = new FF9FieldCharState();
                         FF9StateSystem.Field.FF9Field.loc.map.charStateArray.Add(po.uid, ff9FieldCharState);
@@ -1955,7 +1951,7 @@ public partial class EventEngine
                 this.fieldmap.SetCurrentCameraIndex(newCamIdx);
                 if (mapNo == 1205 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 4800 && this.eBin.getVarManually(6357) == 3) // A. Castle/Chapel
                     this.SetActorPosition(this._fixThornPosObj, this._fixThornPosA, this._fixThornPosB, this._fixThornPosC);
-                if (mapNo == 3009 && this.gCur.uid == 17 && newCamIdx == 0) // Ending/TH (UID is supposed to be Blank but it is wrong in some languages, as vanilla doesn't have the same number of entries there)
+                if (mapNo == 3009 && newCamIdx == 0 && this.gCur.sid == EventEngineUtils.GetEventCharacterSId(this.sObjTable, CharacterId.Blank)) // Ending/TH
                     EventEngine.resyncBGMSignal = 1;
                 return 0;
             }
@@ -2113,19 +2109,19 @@ public partial class EventEngine
             case EBin.event_code_binary.TSPEED: // 0x99, "SetTurnSpeed", "Change the entry's object turn speed"
             {
                 actor.tspeed = (Byte)this.getv1(); // arg1: turn speed (1 is slowest)
-                if ((Int32)actor.tspeed == 0)
-                    actor.tspeed = (Byte)16;
+                if (actor.tspeed == 0)
+                    actor.tspeed = 16;
                 return 0;
             }
             case EBin.event_code_binary.TURNTO: // 0x9B, "TurnTowardPosition", "Turn the character toward a position (animated). The object's turn speed is used (default to 16)."
             {
                 Int32 posX = this.getv2(); // X position
                 Int32 posZ = this.getv2(); // Z position
-                if (!EventEngineUtils.nearlyEqual((Single)posX, gameObject.transform.localPosition.x) || !EventEngineUtils.nearlyEqual((Single)posZ, gameObject.transform.localPosition.z))
+                if (!EventEngineUtils.nearlyEqual(posX, gameObject.transform.localPosition.x) || !EventEngineUtils.nearlyEqual(posZ, gameObject.transform.localPosition.z))
                 {
                     FieldMapActorController component = gameObject.GetComponent<FieldMapActorController>();
-                    Single a = this.eBin.angleAsm((Single)posX - component.curPos.x, (Single)posZ - component.curPos.z);
-                    this.StartTurn(actor, a, true, (Int32)actor.tspeed);
+                    Single a = this.eBin.angleAsm(posX - component.curPos.x, posZ - component.curPos.z);
+                    this.StartTurn(actor, a, true, actor.tspeed);
                 }
                 return 0;
             }
@@ -2137,10 +2133,10 @@ public partial class EventEngine
                 Int32 ratioY = this.getv1(); // Ratio Y (def: 64)
                 if (po == null)
                     return 0;
-                if ((UnityEngine.Object)po.go != (UnityEngine.Object)null)
+                if (po.go != null)
                     geo.geoScaleSetXYZ(po.go, ratioX << 24 >> 18, ratioZ << 24 >> 18, ratioY << 24 >> 18);
                 po.scaley = (Byte)ratioZ;
-                if (mapNo == 576 && ((Int32)po.uid == 4 || (Int32)po.uid == 8 || ((Int32)po.uid == 9 || (Int32)po.uid == 10) || (Int32)po.uid == 11))
+                if (mapNo == 576 && (po.uid == 4 || po.uid == 8 || po.uid == 9 || po.uid == 10 || po.uid == 11)) // Lindblum/Festival, mini-models
                 {
                     this._geoTexAnim = po.go.GetComponent<GeoTexAnim>();
                     this._geoTexAnim.geoTexAnimStop(2);
@@ -2332,7 +2328,6 @@ public partial class EventEngine
             {
                 return EventEngine.FLOW_STATE_GAMEOVER;
             }
-            // Minigames
             case EBin.event_code_binary.MINIGAME: // 0xAE, "TetraMaster", "Begin a card game"
             {
                 Int32 minigameFlag = this.getv2(); // arg1: card deck of the opponent
@@ -2405,8 +2400,8 @@ public partial class EventEngine
                     }
                     else
                     {
-                        actor.parent = (Actor)null;
-                        actor.animFlag = (Byte)0;
+                        actor.parent = null;
+                        actor.animFlag = 0;
                     }
                 }
                 return 0;

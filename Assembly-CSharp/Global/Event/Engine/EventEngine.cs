@@ -722,18 +722,40 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
 
     private void SetupPartyUID()
     {
+        // Order of priorities is Zidane, Eiko, Steiner, Vivi, Freya, others, Quina, Amarant, Garnet, Beatrix
+        CharacterId[] reorderArray = [CharacterId.Zidane, CharacterId.Eiko, CharacterId.Steiner, CharacterId.Vivi, CharacterId.Freya, CharacterId.NONE ,CharacterId.Quina, CharacterId.Amarant, CharacterId.Garnet, CharacterId.Beatrix];
         for (Int32 index = 0; index < 4; ++index)
-        {
             this._context.partyUID[index] = -1;
-            this._context.eventPartyMember[index] = CharacterId.NONE;
-            CharacterId memberId = ETb.GetPartyMember(index);
-            if (memberId != CharacterId.NONE)
+        Int32 memberIndex = 0;
+        for (Int32 i = 0; i < reorderArray.Length; i++)
+        {
+            if (reorderArray[i] == CharacterId.NONE)
             {
-                this._context.partyUID[index] = EventEngineUtils.GetEventCharacterSIdHacked(this.sObjTable, memberId, index);
-                if (this._context.partyUID[index] >= 0)
-                    this._context.eventPartyMember[index] = this.sObjTable[this._context.partyUID[index]].player_link;
+                for (Int32 partyIndex = 0; partyIndex < 4; partyIndex++)
+                {
+                    CharacterId charId = ETb.GetPartyMember(partyIndex);
+                    if (charId != CharacterId.NONE && charId > CharacterId.Amarant && charId != CharacterId.Beatrix)
+                    {
+                        Int32 memberUID = EventEngineUtils.GetEventCharacterSIdHacked(this.sObjTable, charId, memberIndex, reorderArray);
+                        if (memberUID >= 0)
+                            this._context.partyUID[memberIndex++] = memberUID;
+                    }
+                }
+            }
+            else if (FF9StateSystem.Common.FF9.party.IsInParty(reorderArray[i]))
+            {
+                Int32 memberUID = EventEngineUtils.GetEventCharacterSIdHacked(this.sObjTable, reorderArray[i], memberIndex, reorderArray);
+                if (memberUID >= 0)
+                    this._context.partyUID[memberIndex++] = memberUID;
             }
         }
+        for (Int32 index = 0; index < 4; ++index)
+            this._context.eventPartyMember[index] = this._context.partyUID[index] >= 0 ? this.sObjTable[this._context.partyUID[index]].player_link : CharacterId.NONE;
+    }
+
+    public CharacterId GetEventPartyPlayer(Int32 partyIndex)
+    {
+        return partyIndex >= 0 && partyIndex < this._context.eventPartyMember.Length ? this._context.eventPartyMember[partyIndex] : CharacterId.NONE;
     }
 
     public Boolean partychk(Int32 x)
