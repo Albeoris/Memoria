@@ -17,10 +17,10 @@ public partial class EventEngine
 {
     public Int32 DoEventCode()
     {
-        Actor actor = (Actor)null;
-        GameObject gameObject = (GameObject)null;
-        PosObj po = (PosObj)null;
-        FieldMapActorController fmac = (FieldMapActorController)null;
+        Actor actor = null;
+        GameObject gameObject = null;
+        PosObj po = null;
+        FieldMapActorController fmac = null;
         Int16 mapNo = FF9StateSystem.Common.FF9.fldMapNo;
         Int32 scCounter = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
         Int32 mapIndex = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR);
@@ -47,22 +47,29 @@ public partial class EventEngine
         switch (eventCodeBinary)
         {
             case EBin.event_code_binary.NOP: // 0x00, "NOTHING", "Do nothing."
-            {
-                return 1;
-            }
-            // 0x02, "JMP_IFN", "Skip some operations if the stack value is not 0.WARNING: unsafe to use."
-            // 0x03, "JMP_IF", "Skip some operations if the stack value is 0.WARNING: unsafe to use."
+                return EventEngine.FLOW_STATE_WAIT;
+            // These control flow codes are handled by EBin.commandCodeFlow instead:
+            // 0x02, "JMP_IFN", "Skip some operations if the stack value is not 0."
+            // 0x03, "JMP_IF", "Skip some operations if the stack value is 0."
             // 0x04, "return", "End the function."
             // 0x05, "set", "Perform variable operations and store the result in the stack."
-            // 0x06, "JMP_SWITCHEX", "Skip some operations depending on the stack value.WARNING: unsafe to use."
+            // 0x06, "JMP_SWITCHEX", "Skip some operations depending on the stack value."
+            // 0x0B, "JMP_SWITCH", "Skip some operations depending on the stack value. WARNING: unsafe to use."
+            // 0x0C, "0x0C", "Unknown Opcode.", 
+            // 0x0D, "0x0D", "Unknown Opcode." - Steam seems to handle it like a JMP_SWITCH with a short instead of a char (number of cases)
+            // 0x1C, "TerminateEntry", "Stop the execution of an entry's code.arg1: entry to terminate."
+            // 0x22, "Wait", "Wait some time."
+            // 0x30, "PRINT1", "Unused Opcode."
+            // 0x31, "PRINTF", "Unused Opcode."
+            // 0x32, "LOCATE", "Unused Opcode."
+            // 0x6C, "PPRINT", "Unused Opcode."
+            // 0x6D, "PPRINTF", "Unused Opcode."
             // Unknown / unused opcodes:
             case EBin.event_code_binary.DEBUGCC:
             case EBin.event_code_binary.GLOBALCLEAR:
             case EBin.event_code_binary.DEBUGSAVE:
             case EBin.event_code_binary.DEBUGLOAD:
-            {
                 return 0;
-            }
             case EBin.event_code_binary.BSSTART:
             case EBin.event_code_binary.BSFRAME:
             case EBin.event_code_binary.BAANIME:
@@ -107,12 +114,14 @@ public partial class EventEngine
             case EBin.event_code_binary.NEW: // 0x07, "InitCode", "Init a normal code (independant functions).arg1: code entry to init.arg2: Unique ID (defaulted to entry's ID if 0)."
             {
                 NewThread(this.gArgFlag, this.geti()); // arg1: code entry to init / arg2: Unique ID (defaulted to entry's ID if 0)
+                this.autoStartEntriesProceed = true;
                 this.gArgUsed = 1;
                 return 0;
             }
             case EBin.event_code_binary.NEW2: // 0x08, "InitRegion", "Init a region code (associated with a region).arg1: code entry to init.arg2: Unique ID (defaulted to entry's ID if 0)."
             {
                 Quad quad = new Quad(this.gArgFlag, this.geti()); // arg1: code entry to init / arg2: Unique ID (defaulted to entry's ID if 0)
+                this.autoStartEntriesProceed = true;
                 this.gArgUsed = 1;
                 return 0;
             }
@@ -120,16 +129,17 @@ public partial class EventEngine
             {
                 Int32 sid = this.gArgFlag; // arg1: code entry to init
                 Int32 uid = this.geti(); // arg2: Unique ID (defaulted to entry's ID if 0)
-                if (sid >= 251 && sid < Byte.MaxValue)
+                if (sid >= 251 && sid <= 254)
                 {
                     sid = this._context.partyUID[sid - 251];
-                    if (sid == Byte.MaxValue)
+                    if (sid < 0)
                     {
-                        Log.Warning($"[EventEnginge] Failed to perform an event code [NEW3] because there is no party member with index {this.gArgFlag}");
+                        Log.Warning($"[EventEnginge] Failed to perform an event code [NEW3] (InitObject) because there is no party member with index {this.gArgFlag}");
                         return 0;
                     }
                 }
-                actor = new Actor(sid, uid, EventEngine.sizeOfActor);
+                this.autoStartEntriesProceed = true;
+                actor = new Actor(sid, uid);
                 if (this.gMode == 3)
                     Singleton<WMWorld>.Instance.addWMActorOnly(actor);
                 else if (this.gMode == 1)
@@ -137,9 +147,6 @@ public partial class EventEngine
                 this.gArgUsed = 1;
                 return 0;
             }
-            // 0x0B, "JMP_SWITCH", "Skip some operations depending on the stack value. WARNING: unsafe to use."
-            // 0x0C, "0x0C", "Unknown Opcode.", 
-            // 0x0D, "0x0D", "Unknown Opcode." - Steam seems to handle it like a JMP_SWITCH with a short instead of a char (number of cases)
             case EBin.event_code_binary.REQ: // 0x10, "RunScriptAsync", "Run script function and continue executing the current one.Entry's script level is 0 until its main function returns, then it becomes 7. If the specified script level is higher than the entry's script level, the function is not executed. Otherwise, the entry's script level is set to the specified script level until the function returns"
             {
                 Int32 scriptLevel = this.getv1(); // arg1: script level
@@ -166,7 +173,7 @@ public partial class EventEngine
                     this.Request(obj1, scriptLevel, tagNumber, false);
                     if (mapNo == 262) // Evil Forest/Exit
                     {
-                        this._geoTexAnim = this.GetObjUID(12).go.GetComponent<GeoTexAnim>();
+                        this._geoTexAnim = this.GetObjByUID(12).go.GetComponent<GeoTexAnim>();
                         if (obj1.sid == 10 && tagNumber == 12) // Zidane, yawning in front of tent
                         {
                             this._geoTexAnim.geoTexAnimStop(2);
@@ -180,7 +187,7 @@ public partial class EventEngine
                     return 0;
                 }
                 this.stay();
-                return 1;
+                return EventEngine.FLOW_STATE_WAIT;
             }
             case EBin.event_code_binary.REQEW: // 0x14, "RunScriptSync", "Wait until the entry's script level gets higher than the specified script level then run the script function and wait until it returns.
                                                // Entry's script level is 0 until its main function returns, then it becomes 7. If the specified script level is higher than the entry's script level, the function is not executed.
@@ -223,7 +230,7 @@ public partial class EventEngine
                         oeilvertPartyCount++;
                     }
                 }
-                return 1;
+                return EventEngine.FLOW_STATE_WAIT;
             }
             case EBin.event_code_binary.REPLY: // 0x16, "RunScriptObjectAsync", "Run script function and continue executing the current one. Must only be used in response to a function call ;
                                                // the argument's entry is the one that called this function.Entry's script level is 0 until its main function returns, then it becomes 7.
@@ -244,7 +251,7 @@ public partial class EventEngine
                     return 0;
                 }
                 this.stay();
-                return 1;
+                return EventEngine.FLOW_STATE_WAIT;
             }
             case EBin.event_code_binary.REPLYEW: // 0x1A, "RunScriptObjectSync", "Wait until the entry's script level gets higher than the specified script level then run the script function and wait until it returns.
                                                  // Must only be used in response to a function call ; the argument's entry is the one that called this function.Entry's script level is 0 until its main function returns, then it becomes 7.
@@ -257,7 +264,7 @@ public partial class EventEngine
                     this.Request(this.getSender(this.gExec), scriptLevel, tagNumber, true);
                 else
                     this.stay();
-                return 1;
+                return EventEngine.FLOW_STATE_WAIT;
             }
             case EBin.event_code_binary.SONGFLAG: // 0x1B, "ContinueBattleMusic", "Continue the music after the battle end"
             {
@@ -267,7 +274,6 @@ public partial class EventEngine
                     FF9StateSystem.Common.FF9.btl_flag &= unchecked((Byte)~battle.BTL_CONTI_FLD_SONG);
                 return 0;
             }
-            // 0x1C, "TerminateEntry", "Stop the execution of an entry's code.arg1: entry to terminate."
             case EBin.event_code_binary.POS: // 0x1D, "CreateObject", "Place (or replace) the 3D model on the field"
             case EBin.event_code_binary.DPOS: // 0xBF, "MoveInstantEx", "Instantly move an object"
             {
@@ -415,7 +421,7 @@ public partial class EventEngine
                 if (mapNo == 1757 && scCounter == 6740 && mapIndex == 30) // Iifa Tree/Outer Seal
                 {
                     this.stay();
-                    return 1;
+                    return EventEngine.FLOW_STATE_WAIT;
                 }
                 if (mapNo == 1060) // Cleyra/Cathedral
                 {
@@ -454,8 +460,8 @@ public partial class EventEngine
                     return 0;
                 }
                 ETb.NewMesWin(textID, this.gCur.winnum, uiFlags, this.isPosObj(this.gCur) ? (PosObj)this.gCur : null);
-                this.gCur.wait = 254;
-                return 1;
+                this.gCur.wait = EBin.WAIT_STATE_MESSAGE;
+                return EventEngine.FLOW_STATE_WAIT;
             }
             case EBin.event_code_binary.MESN: // 0x20, "WindowAsync", "Display a window with text inside and continue the execution of the script without waiting"
             {
@@ -496,7 +502,7 @@ public partial class EventEngine
                 if (mapNo == 1757 && scCounter == 6740 && mapIndex == 30) // Iifa Tree/Outer Seal
                 {
                     this.stay();
-                    return 1;
+                    return EventEngine.FLOW_STATE_WAIT;
                 }
                 PersistenSingleton<CheatingManager>.Instance.CheatJumpingRobe();
                 ETb.NewMesWin(textID, this.gCur.winnum, uiFlags, this.isPosObj(this.gCur) ? (PosObj)this.gCur : null);
@@ -513,8 +519,8 @@ public partial class EventEngine
                 ETb.NewMesWin(textID, this.gCur.winnum, uiFlags, po);
                 if (eventCodeBinary == EBin.event_code_binary.MESAN)
                     return 0;
-                this.gCur.wait = (Byte)254;
-                return 1;
+                this.gCur.wait = EBin.WAIT_STATE_MESSAGE;
+                return EventEngine.FLOW_STATE_WAIT;
             }
             case EBin.event_code_binary.MESVALUE: // 0x66, "SetTextVariable", "Set the value of a text number or item variable"
             {
@@ -548,7 +554,7 @@ public partial class EventEngine
                         {
                             // Block the script and wait for the voice acting sound to complete
                             this.stay();
-                            return 1;
+                            return EventEngine.FLOW_STATE_WAIT;
                         }
                     }
                 }
@@ -574,8 +580,8 @@ public partial class EventEngine
                     return 0;
                 }
                 this.gCur.winnum = (Byte)this.getv1(); // arg1: window ID determined at its creation
-                this.gCur.wait = 254;
-                return 1;
+                this.gCur.wait = EBin.WAIT_STATE_MESSAGE;
+                return EventEngine.FLOW_STATE_WAIT;
             }
             case EBin.event_code_binary.TIMERSET: // 0x69, "ChangeTimerTime", "Change the remaining time of the timer window"
             {
@@ -626,7 +632,7 @@ public partial class EventEngine
                 stateFieldSystem.attr |= 1048576U;
                 instance.attr |= 8U;
 
-                return 1;
+                return EventEngine.FLOW_STATE_WAIT;
             }
             case EBin.event_code_binary.WIPERGB: // 0xEC, "FadeFilter", "Apply a fade filter on the screen"
             {
@@ -792,7 +798,7 @@ public partial class EventEngine
                 eulerAngles1 = po.go.transform.localRotation.eulerAngles;
                 if (flag || flag2)
                     this.stay();
-                return 1;
+                return EventEngine.FLOW_STATE_WAIT;
             }
             case EBin.event_code_binary.MOVA: // 0x24, "WalkTowardObject", "Make the character walk and follow an object"
             {
@@ -800,7 +806,7 @@ public partial class EventEngine
                 if (this.MoveToward_mixed(po.pos[0], po.pos[1], po.pos[2], 0, po))
                     this.stay();
                 this.gArgUsed = 1;
-                return 1;
+                return EventEngine.FLOW_STATE_WAIT;
             }
             case EBin.event_code_binary.MOVE_EX: // "WalkEx" Make the specified character walk to destination
             {
@@ -841,38 +847,38 @@ public partial class EventEngine
                         }
                     }
                 }
-                return 1;
+                return EventEngine.FLOW_STATE_WAIT;
             }
             case EBin.event_code_binary.MOVE3: // 0xA2, "WalkXZY", "Make the character walk to destination. Make it synchronous if InitWalk is called before"
             {
-                Single x = (Single)this.getv2(); // 3rd to 5th arguments: position in (X, Y, Z) format.
-                Single y = -(Single)(this.getv2());
-                Single z = (Single)this.getv2();
+                Single x = this.getv2(); // 3rd to 5th arguments: position in (X, Y, Z) format.
+                Single y = -this.getv2();
+                Single z = this.getv2();
 
                 if (mapNo == 1550 && ((po.sid == 18 && x == 1798f) || (po.sid == 2 && x == 1797f))) // Fix widescreen - Quina runs to eat Mog
                     x = 2800f;
 
-                if (this.MoveToward_mixed(x, y, z, 2, (PosObj)null)) // arg1: destination in (X, Z, Y)
+                if (this.MoveToward_mixed(x, y, z, 2, null)) // arg1: destination in (X, Z, Y)
                     this.stay();
-                return 1;
+                return EventEngine.FLOW_STATE_WAIT;
             }
             case EBin.event_code_binary.MOVQ: // 0x9E, "ExitField", "Make the player's character walk to the field exit and prepare to flush the field datas."
             {
-                po = (PosObj)this.FindObjByUID((Int32)this._context.controlUID);
+                po = (PosObj)this.FindObjByUID(this._context.controlUID);
                 if (po != null)
                 {
                     this.Call((Obj)po, 0, 0, false, Obj.movQData);
-                    this._context.usercontrol = (Byte)0;
+                    this._context.usercontrol = 0;
                     for (ObjList objList = this._context.activeObj; objList != null; objList = objList.next)
-                        objList.obj.flags |= (Byte)6;
+                        objList.obj.flags |= 6;
                 }
                 return 0;
             }
             case EBin.event_code_binary.MOVJ: // 0xA0, "WalkToExit", "Make the entry's object walk to the field exit."
             {
-                if (this.MoveToward_mixed((Single)this.sMapJumpX, 0.0f, (Single)this.sMapJumpZ, 0, (PosObj)null))
+                if (this.MoveToward_mixed(this.sMapJumpX, 0.0f, this.sMapJumpZ, 0, null))
                     this.stay();
-                return 1;
+                return EventEngine.FLOW_STATE_WAIT;
             }
             case EBin.event_code_binary.MOVH: // 0xA5, "Slide", "Make the character slide to destination (walk without using the walk animation and without changing the facing angle)"
             {
@@ -886,13 +892,13 @@ public partial class EventEngine
                 }
                 if (this.MoveToward_mixed(destX, 0.0f, destZ, 1, null))
                     this.stay();
-                return 1;
+                return EventEngine.FLOW_STATE_WAIT;
             }
             case EBin.event_code_binary.MOVE3H: // 0xE8, "SideWalkXZY", "Make the character walk to destination without changing his facing angle. Make it synchronous if InitWalk is called before. format.", true, 3, { 2, 2, 2 }, { "Destination" }, { AT_POSITION_X, AT_POSITION_Z, AT_POSITION_Y }, 0
             {
                 if (this.MoveToward_mixed(this.getv2(), -this.getv2(), this.getv2(), 3, null)) // 1st to arg3s: destination in (X, Z, Y)
                     this.stay();
-                return 1;
+                return EventEngine.FLOW_STATE_WAIT;
             }
             case EBin.event_code_binary.CLRDIST: // 0x25, "InitWalk", "Make a further Walk call (or variations of Walk) synchronous."
             {
@@ -962,7 +968,7 @@ public partial class EventEngine
                 this.SetBattleScene(btlId & Int16.MaxValue);
                 FF9StateSystem.Battle.isRandomEncounter = false;
                 this._encountBase = 0;
-                return 3;
+                return EventEngine.FLOW_STATE_JUMP_BATTLE;
             }
             case EBin.event_code_binary.ENCOUNT2: // 0x8C, "BattleEx", "Start a battle and choose its battle group"
             {
@@ -973,7 +979,7 @@ public partial class EventEngine
                 this.SetBattleScene(btlId & Int16.MaxValue);
                 FF9StateSystem.Battle.isRandomEncounter = false;
                 this._encountBase = 0;
-                return 3;
+                return EventEngine.FLOW_STATE_JUMP_BATTLE;
             }
             case EBin.event_code_binary.ENCRATE: // 0x57, "SetRandomBattleFrequency", "Set the frequency of random battles / 255 is the maximum frequency, corresponding to ~12 walking steps or ~7 running steps. 0 is the minimal frequency and disables random battles."
             {
@@ -994,7 +1000,7 @@ public partial class EventEngine
             case EBin.event_code_binary.MAPJUMP: // 0x2B, "Field", "Change the field scene",
             {
                 this.SetNextMap(this.getv2()); //arg1: field scene destination
-                return 4;
+                return EventEngine.FLOW_STATE_JUMP_FIELD;
             }
             case EBin.event_code_binary.CC: // 0x2C, "DefinePlayerCharacter", "Apply the player's control over the entry's object"
             {
@@ -1019,12 +1025,12 @@ public partial class EventEngine
                     UIManager.World.SetMinimapPressable(false);
                 else if (this.gMode == 1)
                 {
-                    Obj objUid250 = this.GetObjUID(250);
-                    if (objUid250 != null && objUid250.cid == 4)
-                        ((Actor)objUid250).fieldMapActorController.ClearMoveTargetAndPath();
+                    Obj playerObj = this.GetObjByUID(250, GetObjectModIndex(this.gExec));
+                    if (playerObj != null && playerObj.cid == 4)
+                        ((Actor)playerObj).fieldMapActorController.ClearMoveTargetAndPath();
                 }
                 if (!EMinigame.CheckChocoboVirtual())
-                    PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(false, (System.Action)null);
+                    PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(false, null);
                 return 0;
             }
             case EBin.event_code_binary.UCON: // 0x2E, "EnableMove", "Enable the player's movement control"
@@ -1358,14 +1364,14 @@ public partial class EventEngine
                 if ((actor.animFlag & EventEngine.afExec) == 0)
                     return 0;
                 this.stay();
-                return 1;
+                return EventEngine.FLOW_STATE_WAIT;
             }
             case EBin.event_code_binary.DWAITANIM: // 0xBE, "WaitAnimationEx", "Wait until the object's animation has ended"
             {
                 if ((((Actor)this.GetObj1()).animFlag & EventEngine.afExec) == 0) // arg1: object's entry
                     return 0;
                 this.stay();
-                return 1;
+                return EventEngine.FLOW_STATE_WAIT;
             }
             case EBin.event_code_binary.ENDANIM: // 0x42, "StopAnimation", "Stop the character's animation."
             {
@@ -1379,23 +1385,22 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.STARTSEQ: // 0x43, "RunSharedScript", "Run script passing the current object to it and continue executing the current function. If another shared script is already running for this object, it will be terminated"
             {
-                Int32 uid = (Int32)this.gExec.uid + EventEngine.cSeqOfs;
+                Int32 uid = this.gExec.uid + EventEngine.UID_OFFSET_SEQ;
                 Obj objByUid = this.FindObjByUID(uid);
                 if (objByUid != null)
                     this.DisposeObj(objByUid);
                 Int32 entry = this.getv1(); // arg1: entry (should be a one-function entry)
                 Seq seq = new Seq(entry, uid);
-                if (mapNo == 1610)
+                if (mapNo == 1610) // Mdn. Sari/Cove
                 {
-                    po = (PosObj)this.GetObjUID(21);
+                    po = (PosObj)this.GetObjByUID(21);
                     if (po != null)
                     {
                         Int32 varManually = this.eBin.getVarManually(EBin.MAP_INDEX_SVR);
-                        //Debug.Log((object)("map_id = " + (object)varManually));
                         if (varManually == 26)
                         {
                             this._geoTexAnim = po.go.GetComponent<GeoTexAnim>();
-                            if (entry == 13)
+                            if (entry == 13) // Dagger's script calling the shared script to play animations Catch_Down_1 / Catch_Down_2
                             {
                                 this._geoTexAnim.geoTexAnimStop(2);
                                 this._geoTexAnim.geoTexAnimPlay(0);
@@ -1407,14 +1412,14 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.WAITSEQ: // 0x44, "WaitSharedScript", "Wait until the ran shared script has ended."
             {
-                if (this.FindObjByUID((Int32)this.gExec.uid + EventEngine.cSeqOfs) == null)
+                if (this.FindObjByUID(this.gExec.uid + EventEngine.UID_OFFSET_SEQ) == null)
                     return 0;
                 this.stay();
-                return 1;
+                return EventEngine.FLOW_STATE_WAIT;
             }
             case EBin.event_code_binary.ENDSEQ: // 0x45, "StopSharedScript", "Terminate the execution of the ran shared script."
             {
-                Obj objByUid = this.FindObjByUID((Int32)this.gExec.uid + EventEngine.cSeqOfs);
+                Obj objByUid = this.FindObjByUID(this.gExec.uid + EventEngine.UID_OFFSET_SEQ);
                 if (objByUid != null)
                     this.DisposeObj(objByUid);
                 return 0;
@@ -1508,12 +1513,12 @@ public partial class EventEngine
                 Int32 bone_index = this.getv1(); // arg3: attachment point
 
                 if (this.gMode == 1 && mapNo == 112 && po.model == 223 && po.uid == 3) // [DV] Fix the glasses in Alexandria's pub at the begin of the game // snouz: placed red mage's glass to DisableShadow (this code is never called for glass 6)
-                    geo.geoAttach(this.GetObjUID(3).go, this.GetObjUID(2).go, 13);
+                    geo.geoAttach(this.GetObjByUID(3).go, this.GetObjByUID(2).go, 13);
 
                 if (this.gMode == 1 || this.gMode == 3)
                 {
-                    Obj attachedObj = this.GetObjUID(attachedUid);
-                    Obj carryingObj = this.GetObjUID(carryingUid);
+                    Obj attachedObj = this.GetObjByUID(attachedUid, GetObjectModIndex(this.gExec));
+                    Obj carryingObj = this.GetObjByUID(carryingUid, GetObjectModIndex(this.gExec));
                     GameObject attachedGo = attachedObj?.go;
                     GameObject carryingGo = carryingObj?.go;
                     if (attachedGo != null && carryingGo != null)
@@ -1556,7 +1561,7 @@ public partial class EventEngine
                 Int32 attachedUid = this.getv1(); // arg1: carried object
                 if (this.gMode == 1 || this.gMode == 3)
                 {
-                    Obj attachedObj = this.GetObjUID(attachedUid);
+                    Obj attachedObj = this.GetObjByUID(attachedUid, GetObjectModIndex(this.gExec));
                     if (attachedObj != null)
                     {
                         if (this.gMode == 1)
@@ -1597,10 +1602,10 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.STOP: // 0x4F, "0x4F", "Unknown Opcode (STOP)."
             {
-                Int32 stop = (Int32)this.gExec.getByteIP(-1) | (Int32)this.gExec.getByteIP() << 8;
+                Int32 stop = this.gExec.getByteIP(-1) | this.gExec.getByteIP() << 8;
                 ++this.gExec.ip;
                 this.gArgUsed = 1;
-                return 6;
+                return EventEngine.FLOW_STATE_STOP;
             }
             case EBin.event_code_binary.WAITTURN: // 0x50, "WaitTurn", "Wait until the character has turned."
             case EBin.event_code_binary.DWAITTURN: // 0xBC, "WaitTurnEx", "Wait until an object facing movement has ended"
@@ -1609,7 +1614,7 @@ public partial class EventEngine
                     actor = (Actor)this.GetObj1(); // arg1: object's entry
                 if (((Int32)actor.flags & 128) != 0)
                     this.stay();
-                return 1;
+                return EventEngine.FLOW_STATE_WAIT;
             }
             case EBin.event_code_binary.TURNA: // 0x51, "TurnTowardObject", "Turn the character toward an entry object (animated)"
             {
@@ -1700,7 +1705,7 @@ public partial class EventEngine
                 if (mapNo == 352 && scCounter == 2540 && overlayNdx == 0) // fix for anim and chest visible
                 {
                     this.fieldmap.EBG_animSetActive(0, isActive); // anim on -> becomes visible in Ultrawide
-                    Obj chest = this.GetObjUID(16); // chest obj 15 is ok, but 16 was forgotten
+                    Obj chest = this.GetObjByUID(16); // chest obj 15 is ok, but 16 was forgotten
                     if (chest != null)
                         chest.flags = (Byte)((chest.flags & -64) | (isActive ? 49 : 14)) ;
                 }
@@ -1936,7 +1941,7 @@ public partial class EventEngine
             case EBin.event_code_binary.SETCAM: // 0x7E, "SetFieldCamera", "Change the field's background camera"
             {
                 Int32 newCamIdx = this.getv1(); // arg1: camera ID
-                Obj player = this.GetObjUID(250);
+                Obj player = this.GetObjByUID(250, GetObjectModIndex(this.gExec));
                 if (player != null && player.cid == 4 && (mapNo == 153 || mapNo == 1214 || mapNo == 1806) && newCamIdx == 0) // Fix #493 - flapping camera
                 {
                     Vector3 pos = ((Actor)player).fieldMapActorController.lastPos;
@@ -1944,13 +1949,10 @@ public partial class EventEngine
                         return 0;
                 }
                 this.fieldmap.SetCurrentCameraIndex(newCamIdx);
-                if (mapNo == 1205 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 4800 && this.eBin.getVarManually(6357) == 3)
-                    this.SetActorPosition(this._fixThornPosObj, (Single)this._fixThornPosA, (Single)this._fixThornPosB, (Single)this._fixThornPosC);
-                if (mapNo == 3009 && this.gCur.uid == 17 && newCamIdx == 0)
-                {
+                if (mapNo == 1205 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 4800 && this.eBin.getVarManually(6357) == 3) // A. Castle/Chapel
+                    this.SetActorPosition(this._fixThornPosObj, this._fixThornPosA, this._fixThornPosB, this._fixThornPosC);
+                if (mapNo == 3009 && newCamIdx == 0 && this.gCur.sid == EventEngineUtils.GetEventCharacterSId(this.sObjTable, CharacterId.Blank)) // Ending/TH
                     EventEngine.resyncBGMSignal = 1;
-                    //Debug.Log((object)("SET resyncBGMSignal = " + (object)EventEngine.resyncBGMSignal));
-                }
                 return 0;
             }
             case EBin.event_code_binary.IDLESPEED: // 0x86, "SetAnimationStandSpeed", "Change the standing animation speed"
@@ -2015,7 +2017,7 @@ public partial class EventEngine
                 if (fldmcf.FF9FieldMCFSetCharColor((Int32)this.GetObj1().uid, this.getv1(), this.getv1(), this.getv1()) == 0) // arg1: entry associated with the model, 2-4: color in (Red, Green, Blue)
                     return 0;
                 this.stay();
-                return 1;
+                return EventEngine.FLOW_STATE_WAIT;
             }
             case EBin.event_code_binary.SLEEPINH: // 0x90, "DisableInactiveAnimation", "Prevent player's character to play its inactive animation."
             {
@@ -2069,7 +2071,7 @@ public partial class EventEngine
                 if (jumpFrame >= jframeN)
                     return 0;
                 this.stay();
-                return 1;
+                return EventEngine.FLOW_STATE_WAIT;
             }
             case EBin.event_code_binary.PREJUMP: // 0x9C, "RunJumpAnimation", "Make the character play its jumping animation."
             {
@@ -2090,14 +2092,14 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.DRET: // 0x97, "ReturnEntryFunctions", "Make all the currently executed functions return for a given entry"
             {
-                Obj obj1 = this.GetObj1(); // arg1: entry for which functions are returned
-                if (obj1 != null)
+                Obj obj = this.GetObj1(); // arg1: entry for which functions are returned
+                if (obj != null)
                 {
-                    obj1.sx = (Byte)0;
-                    obj1.state = EventEngine.stateInit;
-                    this.Return(obj1);
+                    obj.sx = 0;
+                    obj.state = EventEngine.stateInit;
+                    this.Return(obj);
                 }
-                return obj1 == this.gExec ? 1 : 0;
+                return obj == this.gExec ? EventEngine.FLOW_STATE_WAIT : EventEngine.FLOW_STATE_EXEC;
             }
             case EBin.event_code_binary.MOVT: // 0x98, "MakeAnimationLoop", "Make current object's currently playing animation loop"
             {
@@ -2107,19 +2109,19 @@ public partial class EventEngine
             case EBin.event_code_binary.TSPEED: // 0x99, "SetTurnSpeed", "Change the entry's object turn speed"
             {
                 actor.tspeed = (Byte)this.getv1(); // arg1: turn speed (1 is slowest)
-                if ((Int32)actor.tspeed == 0)
-                    actor.tspeed = (Byte)16;
+                if (actor.tspeed == 0)
+                    actor.tspeed = 16;
                 return 0;
             }
             case EBin.event_code_binary.TURNTO: // 0x9B, "TurnTowardPosition", "Turn the character toward a position (animated). The object's turn speed is used (default to 16)."
             {
                 Int32 posX = this.getv2(); // X position
                 Int32 posZ = this.getv2(); // Z position
-                if (!EventEngineUtils.nearlyEqual((Single)posX, gameObject.transform.localPosition.x) || !EventEngineUtils.nearlyEqual((Single)posZ, gameObject.transform.localPosition.z))
+                if (!EventEngineUtils.nearlyEqual(posX, gameObject.transform.localPosition.x) || !EventEngineUtils.nearlyEqual(posZ, gameObject.transform.localPosition.z))
                 {
                     FieldMapActorController component = gameObject.GetComponent<FieldMapActorController>();
-                    Single a = this.eBin.angleAsm((Single)posX - component.curPos.x, (Single)posZ - component.curPos.z);
-                    this.StartTurn(actor, a, true, (Int32)actor.tspeed);
+                    Single a = this.eBin.angleAsm(posX - component.curPos.x, posZ - component.curPos.z);
+                    this.StartTurn(actor, a, true, actor.tspeed);
                 }
                 return 0;
             }
@@ -2131,10 +2133,10 @@ public partial class EventEngine
                 Int32 ratioY = this.getv1(); // Ratio Y (def: 64)
                 if (po == null)
                     return 0;
-                if ((UnityEngine.Object)po.go != (UnityEngine.Object)null)
+                if (po.go != null)
                     geo.geoScaleSetXYZ(po.go, ratioX << 24 >> 18, ratioZ << 24 >> 18, ratioY << 24 >> 18);
                 po.scaley = (Byte)ratioZ;
-                if (mapNo == 576 && ((Int32)po.uid == 4 || (Int32)po.uid == 8 || ((Int32)po.uid == 9 || (Int32)po.uid == 10) || (Int32)po.uid == 11))
+                if (mapNo == 576 && (po.uid == 4 || po.uid == 8 || po.uid == 9 || po.uid == 10 || po.uid == 11)) // Lindblum/Festival, mini-models
                 {
                     this._geoTexAnim = po.go.GetComponent<GeoTexAnim>();
                     this._geoTexAnim.geoTexAnimStop(2);
@@ -2212,32 +2214,32 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.MJPOS: // 0xA4, "CalculateExitPosition", "Calculate the field exit position based on the region's polygon."
             {
-                po = (PosObj)this.FindObjByUID((Int32)this._context.controlUID);
+                this.sMapJumpX = this.sMapJumpZ = 0;
+                po = (PosObj)this.FindObjByUID(this._context.controlUID);
                 if (po != null)
                 {
-                    QuadPos quadPos4 = ((Quad)this.gCur).q[0];
-                    QuadPos quadPos5 = ((Quad)this.gCur).q[1];
-                    Int32 posX = (Int32)quadPos5.X - (Int32)quadPos4.X;
-                    Int32 posZ = (Int32)quadPos5.Z - (Int32)quadPos4.Z;
-                    Int32 val = posX * posX + posZ * posZ >> 8;
+                    QuadPos vert1 = ((Quad)this.gCur).q[0];
+                    QuadPos vert2 = ((Quad)this.gCur).q[1];
+                    Int32 dX = vert2.X - vert1.X;
+                    Int32 dZ = vert2.Z - vert1.Z;
+                    Int32 val = dX * dX + dZ * dZ >> 8;
                     if (val != 0)
                     {
-                        val = ((Int32)((Double)posX * ((Double)po.pos[0] - (Double)quadPos4.X)) + (Int32)((Double)posZ * ((Double)po.pos[2] - (Double)quadPos4.Z))) / val;
+                        val = ((Int32)(dX * (po.pos[0] - vert1.X)) + (Int32)(dZ * (po.pos[2] - vert1.Z))) / val;
                         if (val < 0)
                             val = 0;
                         else if (val > 256)
                             val = 256;
                     }
-                    this.sMapJumpX = (val * posX >> 8) + (Int32)quadPos4.X;
-                    this.sMapJumpZ = (val * posZ >> 8) + (Int32)quadPos4.Z;
-                    if (mapNo == 552 && (Int32)quadPos4.X == 1231 && ((Int32)quadPos4.Z == 1556 && (Int32)quadPos5.X == 1291) && (Int32)quadPos5.Z == 1376)
+                    this.sMapJumpX = (val * dX >> 8) + vert1.X;
+                    this.sMapJumpZ = (val * dZ >> 8) + vert1.Z;
+                    if (mapNo == 552 && vert1.X == 1231 && vert1.Z == 1556 && vert2.X == 1291 && vert2.Z == 1376)
                     {
+                        // Lindblum/Main Street, Region22 (gate to Lindblum/B.D. Station)
                         this.sMapJumpX = 1226;
                         this.sMapJumpZ = 1430;
                     }
                 }
-                else
-                    this.sMapJumpX = this.sMapJumpZ = 0;
                 return 0;
             }
             case EBin.event_code_binary.SPEEDTH: // 0xA6, "SetRunSpeedLimit", "Change the speed at which the character uses his run animation instead of his walk animation (default is 31)"
@@ -2254,11 +2256,9 @@ public partial class EventEngine
             case EBin.event_code_binary.GETSCREEN: // 0xA9, "CalculateScreenPosition", "Calculate the object's position in screen coordinates and store it in 'GetScreenCalculatedX' and 'GetScreenCalculatedY'."
             {
                 Obj obj1 = this.GetObj1();
-                if (obj1 != null && (UnityEngine.Object)obj1.go != (UnityEngine.Object)null)
+                if (obj1 != null && obj1.go != null)
                 {
-                    Single x;
-                    Single y;
-                    ETb.World2Screen(obj1.go.GetComponent<FieldMapActorController>().curPos, out x, out y);
+                    ETb.World2Screen(obj1.go.GetComponent<FieldMapActorController>().curPos, out Single x, out Single y);
                     this.sSysX = (Int32)x;
                     this.sSysY = (Int32)y;
                 }
@@ -2278,7 +2278,7 @@ public partial class EventEngine
                     return 0; // L. Castle/Telescope
                 EventInput.PSXCntlSetPadMask(0, EventInput.MenuControl);
                 PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(false);
-                return 1;
+                return EventEngine.FLOW_STATE_WAIT;
             }
             case EBin.event_code_binary.MENU: // 0x75, "Menu", "Open a menu"
             {
@@ -2293,7 +2293,7 @@ public partial class EventEngine
                 }
                 EventService.StartMenu(menuId, subId);
                 PersistenSingleton<UIManager>.Instance.MenuOpenEvent();
-                return 1;
+                return EventEngine.FLOW_STATE_WAIT;
             }
             case EBin.event_code_binary.PARTYMENU: // 0xB2, "Party", "Allow the player to change the members of its party"
             {
@@ -2322,14 +2322,12 @@ public partial class EventEngine
                 }
                 sPartyInfo.select = selectList.ToArray();
                 EventService.OpenPartyMenu(sPartyInfo);
-                return 1;
+                return EventEngine.FLOW_STATE_WAIT;
             }
             case EBin.event_code_binary.GAMEOVER: // 0xF5, "GameOver", "Terminate the game with a Game Over screen."
             {
-                return 8;
+                return EventEngine.FLOW_STATE_GAMEOVER;
             }
-
-            // Minigames
             case EBin.event_code_binary.MINIGAME: // 0xAE, "TetraMaster", "Begin a card game"
             {
                 Int32 minigameFlag = this.getv2(); // arg1: card deck of the opponent
@@ -2337,7 +2335,7 @@ public partial class EventEngine
                 EMinigame.SetQuadmistStadiumOpponentId(this.gCur, minigameFlag);
                 EMinigame.SetThiefId(this.gCur);
                 EMinigame.SetFatChocoboId(this.gCur);
-                return 7;
+                return EventEngine.FLOW_STATE_QUADMIST;
             }
             case EBin.event_code_binary.DELETEALLCARD: // 0xAF, "DeleteAllCards", "Clear the player's Tetra Master's deck."
             {
@@ -2402,8 +2400,8 @@ public partial class EventEngine
                     }
                     else
                     {
-                        actor.parent = (Actor)null;
-                        actor.animFlag = (Byte)0;
+                        actor.parent = null;
+                        actor.animFlag = 0;
                     }
                 }
                 return 0;
@@ -2413,7 +2411,7 @@ public partial class EventEngine
             case EBin.event_code_binary.WMAPJUMP: // 0xB6, "WorldMap", "Change the scene to a world map"
             {
                 this.SetNextMap(this.getv2()); // arg1: world map destination
-                return 5;
+                return EventEngine.FLOW_STATE_JUMP_WORLD_MAP;
             }
             case EBin.event_code_binary.EYE: // 0xB7, "0xB7", "Unknown World Map Opcode (EYE)."
             {
@@ -3200,19 +3198,21 @@ public partial class EventEngine
             {
                 if (this.gMode == 1)
                 {
-                    ff9shadow.FF9ShadowOffField((Int32)po.uid);
+                    ff9shadow.FF9ShadowOffField(po.uid);
                     po.isShadowOff = true;
 
                     if (mapNo == 112 && po.model == 223 && po.uid == 6) // intercept to force attach glass in alex pub
                     {
-                        GameObject attachedObjUnity = this.GetObjUID(6).go;
-                        GameObject targetObject = this.GetObjUID(4).go;
+                        GameObject attachedObjUnity = this.GetObjByUID(6).go;
+                        GameObject targetObject = this.GetObjByUID(4).go;
                         if (attachedObjUnity != null && targetObject != null)
-                            geo.geoAttach(this.GetObjUID(6).go, this.GetObjUID(4).go, 13);
+                            geo.geoAttach(this.GetObjByUID(6).go, this.GetObjByUID(4).go, 13);
                     }
                 }
                 else if (this.gMode == 2)
+                {
                     ff9shadow.FF9ShadowOffBattle(po.uid);
+                }
                 return 0;
             }
             case EBin.event_code_binary.SHADOWSCALE: // 0x81, "SetShadowSize", "Set the entry's object shadow size"
@@ -3276,7 +3276,7 @@ public partial class EventEngine
             }
             default:
             {
-                return 1;
+                return EventEngine.FLOW_STATE_WAIT;
             }
         }
     }
@@ -3421,18 +3421,18 @@ public partial class EventEngine
     private Boolean requestAcceptable(Obj p, Int32 lv)
     {
         if (p != null)
-            return lv < (Int32)p.level;
+            return lv < p.level;
         return false;
     }
 
     private Obj GetObj1()
     {
-        return this.GetObjUID(this.getv1());
+        return this.GetObjByUID(this.getv1(), GetObjectModIndex(this.gExec));
     }
 
     private Obj GetObj3()
     {
-        return this.GetObjUID(this.getv3());
+        return this.GetObjByUID(this.getv3(), GetObjectModIndex(this.gExec));
     }
 
     internal void SetActorPosition(PosObj po, Single x, Single y, Single z)

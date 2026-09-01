@@ -357,6 +357,8 @@ public class MainMenuUI : UIScene
 
     public Boolean IsSubMenuEnabled(MainMenuUI.SubMenu subMenu)
     {
+        if (subMenu == SubMenu.Party && FF9StateSystem.Common.FF9.fldMapNo == 2207 && FF9StateSystem.EventState.ScenarioCounter == 9840)
+            return false; // Hotfix: prevent party switch in "Palace/Hall" when Zidane returns with the Gulug Stone
         if (EnabledSubMenus.Count == 0)
             return true;
         if (subMenu == SubMenu.Ability && (EnabledSubMenus.Contains("ActiveAbility") || EnabledSubMenus.Contains("SupportingAbility")))

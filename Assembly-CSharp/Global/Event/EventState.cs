@@ -71,6 +71,7 @@ public class EventState : MonoBehaviour
         return pts;
     }
 
+    // Very resource requiring: only use it for debugging purpose or database generation
     public List<Int32> FindVariableInFieldScriptUsage(List<Int32> variableIndex, List<Boolean> asBool = null)
     {
         List<Int32> fieldList = new List<Int32>();
@@ -78,7 +79,7 @@ public class EventState : MonoBehaviour
         {
             if (EventEngineUtils.eventIDToFBGID.ContainsKey(pair.Key))
             {
-                EventEngineUtils.BinaryScript script = EventEngineUtils.loadEventAsScript(pair.Value, EventEngineUtils.ebSubFolderField);
+                EventEngineUtils.BinaryScript script = EventEngineUtils.loadEventAsScript(pair.Value, EventEngineUtils.EB_SUBFOLDER_FIELD);
                 HashSet<UInt32> varUsed = script.GetVariableUsage(true, false, false);
                 for (Int32 i = 0; i < variableIndex.Count; i++)
                     if (EventEngineUtils.BinaryScript.IsVariableInUsage(varUsed, EventEngineUtils.BinaryScript.GetVariableFromIndex(EBin.VariableSource.Global, (UInt16)variableIndex[i], asBool != null ? asBool[i] : false)))

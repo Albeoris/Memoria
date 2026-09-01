@@ -414,10 +414,14 @@ public static class btl_init
             ff9Char = new FF9Char();
         ff9Char.btl = btl;
         ff9Char.evt = btl.evt;
-        if (ff9play.CharacterIDToEventId(p.Index) >= 0)
-            FF9StateSystem.Common.FF9.charArray[ff9play.CharacterIDToEventId(p.Index)] = ff9Char;
-        else
-            FF9StateSystem.Common.FF9.charArray[9 + (Int32)p.Index] = ff9Char;
+        Int32 charUID = EventEngineUtils.GetEventCharacterSId(PersistenSingleton<EventEngine>.Instance.sObjTable, p.Index);
+        if (charUID < 0)
+        {
+            charUID = 9 + (Int32)p.Index;
+            while (!reinit && FF9StateSystem.Common.FF9.charArray.ContainsKey(charUID))
+                charUID++;
+        }
+        FF9StateSystem.Common.FF9.charArray[charUID] = ff9Char;
         btl_init.InitBattleData(btl, ff9Char);
         btl.mesh_banish = UInt16.MaxValue;
         btl_para.SetupATBCoef(btl, btl_para.GetATBCoef());

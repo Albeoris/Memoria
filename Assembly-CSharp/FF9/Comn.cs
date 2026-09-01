@@ -1,9 +1,10 @@
 ﻿using System;
+using System.IO;
 using System.Collections;
 
 namespace FF9
 {
-    public class Comn
+    public static class Comn
     {
         public static Int32 random8()
         {
@@ -88,6 +89,24 @@ namespace FF9
                 ++pos;
             }
             throw new Exception("[Comn] Trying to find firstBitSetIndex of 0");
+        }
+
+        public static String ReadSizedUTF8(this BinaryReader reader)
+        {
+            Int32 strlen = reader.ReadInt32();
+            return reader.ReadUTF8(strlen);
+        }
+
+        public static String ReadUTF8(this BinaryReader reader, Int32 bytelength)
+        {
+            SByte[] strraw = new SByte[bytelength];
+            for (Int32 j = 0; j < bytelength; j++)
+                strraw[j] = reader.ReadSByte();
+            unsafe
+            {
+                fixed (SByte* strptr = strraw)
+                    return new String(strptr, 0, bytelength, System.Text.Encoding.UTF8);
+            }
         }
     }
 }

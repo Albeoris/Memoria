@@ -4,7 +4,7 @@
 # 16-Water 32-Wind 64-Holy 128-Dark
 # 7-Fire/Ice/Thunder 57-Fire/Earth/Water/Wind 192-Holy/Dark 255-All
 # -----------------------------------------------
-# Comment;Id;Dexterity;Strength;Magic;Will;AttackElement;GuardElement;AbsorbElement;HalfElement;WeakElement
+# Comment;Id;Speed;Strength;Magic;Spirit;BonusElement;GuardElement;AbsorbElement;HalfElement;WeakElement
 #;Int32;Byte;Byte;Byte;Byte;Byte;Byte;Byte;Byte;Byte
 # -----------------------------------------------
 Bonus 0000 # Empty;0;0;0;0;0;0;0;0;0;0

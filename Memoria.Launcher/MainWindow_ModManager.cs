@@ -1,4 +1,5 @@
 ﻿using System;
+using Memoria.Launcher.Controller;
 using Memoria.Launcher.Utils.Archives;
 using Memoria.Launcher.Utils.Catalog;
 using Memoria.Launcher.Utils.Downloads;
@@ -372,6 +373,11 @@ namespace Memoria.Launcher
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
             Mod mod = (sender as CheckBox)?.DataContext as Mod;
+            ApplyModActivation(mod);
+        }
+
+        private void ApplyModActivation(Mod mod)
+        {
             if (mod != null && mod.IsActive)
                 mod.TryApplyPreset();
             CheckOutdatedAndIncompatibleMods();
@@ -651,6 +657,23 @@ namespace Memoria.Launcher
         private void OnCatalogListDoubleClick(Object sender, RoutedEventArgs e)
         {
             OnClickDownload(sender, e);
+        }
+
+        private void InstalledMods_ControllerActivated(Object sender, RoutedEventArgs e)
+        {
+            if (lstMods.SelectedItem is not Mod mod)
+                return;
+
+            mod.IsActive = !mod.IsActive;
+            ApplyModActivation(mod);
+            lstMods.Items.Refresh();
+            e.Handled = true;
+        }
+
+        private void CatalogMods_ControllerActivated(Object sender, RoutedEventArgs e)
+        {
+            OnClickDownload(sender, e);
+            e.Handled = true;
         }
 
         private void OnClickUninstall(Object sender, RoutedEventArgs e)
@@ -991,9 +1014,19 @@ namespace Memoria.Launcher
             downloadClient.ProgressChanged += (_, args) => DownloadLoop(mod, args);
             downloadClient.Completed += (_, args) => DownloadEnd(args, mod, plan);
             downloadClient.StartInDirectory(downloadUri, plan.DownloadDirectory);
-            lstDownloads.MinHeight = 100;
-            lstDownloads.Height = 100;
-            btnCancelStackpanel.Height = 100;
+            SetDownloadPanelVisible(true);
+        }
+
+        private void SetDownloadPanelVisible(Boolean visible)
+        {
+            Double height = visible ? 100.0 : 0.0;
+            Visibility visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+
+            lstDownloads.MinHeight = height;
+            lstDownloads.Height = height;
+            lstDownloads.Visibility = visibility;
+            btnCancelStackpanel.Height = height;
+            btnCancelStackpanel.Visibility = visibility;
         }
         private void DownloadLoop(Mod mod, FileDownloadProgressEventArgs e)
         {
@@ -1229,9 +1262,7 @@ namespace Memoria.Launcher
                         DownloadStart(DownloadList[0]);
                     else
                     {
-                        lstDownloads.MinHeight = 0;
-                        lstDownloads.Height = 0;
-                        btnCancelStackpanel.Height = 0;
+                        SetDownloadPanelVisible(false);
                     }
                     UpdateCatalogInstallationState();
                 });
@@ -1320,9 +1351,7 @@ namespace Memoria.Launcher
                         DownloadStart(DownloadList[0]);
                     else
                     {
-                        lstDownloads.MinHeight = 0;
-                        lstDownloads.Height = 0;
-                        btnCancelStackpanel.Height = 0;
+                        SetDownloadPanelVisible(false);
                     }
                     UpdateModListInstalled();
                     CheckForValidModFolder();
@@ -1822,12 +1851,14 @@ namespace Memoria.Launcher
                 checkBox.IsEnabled = isEnabled && mod.IsActive;
                 checkBox.Style = (Style)Application.Current.FindResource("CheckBoxStyle");
                 checkBox.Margin = new Thickness(0, 0, 0, 4);
+                GamepadNavigation.SetParticipation(checkBox, NavigationParticipation.Include);
 
                 checkBox.Checked += SubMod_CheckChanged;
                 checkBox.Unchecked += SubMod_CheckChanged;
 
                 Grid grid = new Grid();
                 grid.Children.Add(checkBox);
+                GamepadNavigation.SetTooltipOwner(checkBox, grid);
                 ModOptionsPanel.Children.Add(grid);
 
                 if (!String.IsNullOrEmpty(submod.Description))

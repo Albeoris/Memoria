@@ -11,7 +11,7 @@ public class EventContext
         this.objlist = new List<ObjList>(32); // Start with 32 possible entries to be used simultaneously
         for (Int32 i = 0; i < 32; i++)
             this.objlist.Add(new ObjList());
-        this.partyUID = new Byte[EventContext.partyUIDSize];
+        this.partyUID = new Int32[EventContext.partyUIDSize];
         this.eventPartyMember = new CharacterId[EventContext.partyUIDSize];
         this.watch = new Watch[16];
         for (Int32 i = 0; i < 16; i++)
@@ -122,8 +122,8 @@ public class EventContext
 
     public ObjList freeObj;
 
-    public Byte[] partyUID;
-    public CharacterId[] eventPartyMember;
+    public Int32[] partyUID;
+    public CharacterId[] eventPartyMember; // The characters that appear with script entries linked to party members, which can be different from the party members themselves (eg. if that party member has no associated entry)
 
     public Int16 twist_a;
 

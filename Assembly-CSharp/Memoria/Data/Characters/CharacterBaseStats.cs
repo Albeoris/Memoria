@@ -7,6 +7,7 @@ namespace Memoria.Data
     {
         public String Comment;
         public CharacterId Id;
+        public CharacterBaseStats Data;
 
         public Byte Dexterity;
         public Byte Strength;
@@ -14,16 +15,29 @@ namespace Memoria.Data
         public Byte Will;
         public UInt32 Gems;
 
+        public static CharacterBaseStats GetExisting(CharacterId id)
+        {
+            if (ff9level.CharacterBaseStats.TryGetValue(id, out CharacterBaseStats result))
+                return result;
+            throw new NotSupportedException($"The option AppendMode must be used to patch existing entries but the entry {id} doesn't exist");
+        }
+
+        public void ParseDataEntry(String[] raw, CsvMetaData metadata, ref Int32 index)
+        {
+            if (metadata.HasField("Speed")) Dexterity = CsvParser.Byte(raw[index++]);
+            if (metadata.HasField("Strength")) Strength = CsvParser.Byte(raw[index++]);
+            if (metadata.HasField("Magic")) Magic = CsvParser.Byte(raw[index++]);
+            if (metadata.HasField("Spirit")) Will = CsvParser.Byte(raw[index++]);
+            if (metadata.HasField("Gems")) Gems = CsvParser.UInt32(raw[index++]);
+        }
+
         public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
-            Comment = CsvParser.String(raw[0]);
-            Id = (CharacterId)CsvParser.Byte(raw[1]);
-
-            Dexterity = CsvParser.Byte(raw[2]);
-            Strength = CsvParser.Byte(raw[3]);
-            Magic = CsvParser.Byte(raw[4]);
-            Will = CsvParser.Byte(raw[5]);
-            Gems = CsvParser.UInt32(raw[6]);
+            Int32 index = 0;
+            Comment = CsvParser.String(raw[index++]);
+            Id = (CharacterId)CsvParser.Byte(raw[index++]);
+            Data = metadata.IsAppendMode ? GetExisting(Id) : this;
+            Data.ParseDataEntry(raw, metadata, ref index);
         }
 
         public void WriteEntry(CsvWriter sw, CsvMetaData metadata)

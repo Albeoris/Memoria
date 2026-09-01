@@ -23,6 +23,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\Memoria.Launcher\Controller\ControllerInput.cs"
+             Link="Production\Controller\ControllerInput.cs" />
+    <Compile Include="..\Memoria.Launcher\Controller\SpatialNavigation.cs"
+             Link="Production\Controller\SpatialNavigation.cs" />
     <Compile Include="..\Memoria.Launcher\Utils\ExceptionDetailsFormatter.cs"
              Link="Production\ExceptionDetailsFormatter.cs" />
     <Compile Include="..\Memoria.Launcher\Utils\Archives\ArchiveEntryPathPolicy.cs"

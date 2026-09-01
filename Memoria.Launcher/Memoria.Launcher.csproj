@@ -75,6 +75,18 @@
     <Compile Include="Languages\Lang.cs" />
     <Compile Include="Languages\XmlDocumentExm.cs" />
     <Compile Include="Languages\XmlHelper.cs" />
+    <Compile Include="Controller\ControllerInput.cs" />
+    <Compile Include="Controller\ControllerControlInteractor.cs" />
+    <Compile Include="Controller\ControllerFocusManager.cs" />
+    <Compile Include="Controller\ControllerFocusNavigator.cs" />
+    <Compile Include="Controller\ControllerInputModeManager.cs" />
+    <Compile Include="Controller\ControllerTextInputOverlay.cs" />
+    <Compile Include="Controller\ControllerTooltipPresenter.cs" />
+    <Compile Include="Controller\GamepadNavigation.cs" />
+    <Compile Include="Controller\NativeDialogControllerBridge.cs" />
+    <Compile Include="Controller\SpatialNavigation.cs" />
+    <Compile Include="Controller\VisualTree.cs" />
+    <Compile Include="Controller\XInputControllerInputSource.cs" />
     <Compile Include="Launcher\ALChColor.cs" />
     <Compile Include="Launcher\Window_ModDescription.xaml.cs">
       <DependentUpon>Window_ModDescription.xaml</DependentUpon>

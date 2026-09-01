@@ -3,7 +3,7 @@
 # This file contains a set of game weapons.
 # You must set at least 88 different items.
 # -----------------------------------------------
-# Comment;Id;Category;StatusIndex;Model;ScriptId;Power;Elements;Rate;Offset1;Offset2;HitSfx;CustomTexture
+# Comment;Id;Category;StatusIndex;ModelName;ScriptId;Power;Elements;Rate;Offset1;Offset2;HitSfx;CustomTexture
 # ;Int32;Byte;Int32;String;Int32;Int32;Byte;Int32;Int16;Int16;Byte;String[]
 # -----------------------------------------------
 Hammer;0;1;0;GEO_WEP_B1_011;5;12;0;0;0;0;0;

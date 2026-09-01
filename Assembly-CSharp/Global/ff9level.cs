@@ -12,59 +12,55 @@ public static class ff9level
 {
     public const Int32 LEVEL_COUNT = 99;
 
-    public static readonly Dictionary<CharacterId, CharacterBaseStats> CharacterBaseStats;
-    public static readonly CharacterLevelUp[] CharacterLevelUps;
+    public static Dictionary<CharacterId, CharacterBaseStats> CharacterBaseStats;
+    public static CharacterLevelUp[] CharacterLevelUps;
 
     static ff9level()
     {
-        CharacterBaseStats = LoadBaseStats();
-        CharacterLevelUps = LoadLeveling();
+        LoadBaseStats();
+        LoadLeveling();
     }
 
-    private static Dictionary<CharacterId, CharacterBaseStats> LoadBaseStats()
+    private static void LoadBaseStats()
     {
         try
         {
+            CharacterBaseStats = new Dictionary<CharacterId, CharacterBaseStats>();
             String inputPath = DataResources.Characters.PureDirectory + DataResources.Characters.BaseStatsFile;
-            Dictionary<CharacterId, CharacterBaseStats> result = new Dictionary<CharacterId, CharacterBaseStats>();
             foreach (CharacterBaseStats[] stats in AssetManager.EnumerateCsvFromLowToHigh<CharacterBaseStats>(inputPath))
                 foreach (CharacterBaseStats stat in stats)
-                    result[stat.Id] = stat;
-            if (result.Count == 0)
+                    CharacterBaseStats[stat.Id] = stat.Data;
+            if (CharacterBaseStats.Count == 0)
                 throw new FileNotFoundException($"Cannot load base stats because a file does not exist: [{DataResources.Characters.Directory + DataResources.Characters.BaseStatsFile}].", DataResources.Characters.Directory + DataResources.Characters.BaseStatsFile);
             for (Int32 i = 0; i < 12; i++)
-                if (!result.ContainsKey((CharacterId)i))
+                if (!CharacterBaseStats.ContainsKey((CharacterId)i))
                     throw new NotSupportedException($"You must set base stats for at least 12 characters, with IDs between 0 and 11.");
-            return result;
         }
         catch (Exception ex)
         {
             Log.Error(ex, "[ff9level] Load base stats of characters failed.");
             UIManager.Input.ConfirmQuit();
-            return null;
         }
     }
 
-    private static CharacterLevelUp[] LoadLeveling()
+    private static void LoadLeveling()
     {
         try
         {
             String inputPath = DataResources.Characters.PureDirectory + DataResources.Characters.Leveling;
-            CharacterLevelUp[] levels = AssetManager.GetCsvWithHighestPriority<CharacterLevelUp>(inputPath);
-            if (levels == null)
+            CharacterLevelUps = AssetManager.GetCsvWithHighestPriority<CharacterLevelUp>(inputPath);
+            if (CharacterLevelUps == null)
             {
                 inputPath = DataResources.Characters.Directory + DataResources.Characters.Leveling;
                 throw new FileNotFoundException($"File with leveling info not found: [{inputPath}]", inputPath);
             }
-            if (levels.Length < LEVEL_COUNT)
-                throw new NotSupportedException($"You must set level up info for {LEVEL_COUNT} levels, but there {levels.Length}.");
-            return levels;
+            if (CharacterLevelUps.Length < LEVEL_COUNT)
+                throw new NotSupportedException($"You must set level up info for {LEVEL_COUNT} levels, but there {CharacterLevelUps.Length}.");
         }
         catch (Exception ex)
         {
             Log.Error(ex, "[ff9level] Load leveling info failed.");
             UIManager.Input.ConfirmQuit();
-            return null;
         }
     }
 

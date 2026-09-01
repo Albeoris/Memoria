@@ -230,7 +230,7 @@ public class SFX_Rush
         switch (type)
         {
             case 0:
-                Obj objUid = PersistenSingleton<EventEngine>.Instance.GetObjUID(250);
+                Obj objUid = PersistenSingleton<EventEngine>.Instance.GetObjByUID(250);
                 if (objUid != null && objUid.cid == 4)
                 {
                     PosObj posObj = (PosObj)objUid;
