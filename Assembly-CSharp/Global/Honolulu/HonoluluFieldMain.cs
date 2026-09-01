@@ -88,7 +88,7 @@ public class HonoluluFieldMain : HonoBehavior
             }
         }
         String text = FF9DBAll.EventDB[MapNo];
-        map.evtPtr = EventEngineUtils.loadEventData(text, EventEngineUtils.ebSubFolderField);
+        EventEngineUtils.loadEventData(text, EventEngineUtils.EB_SUBFOLDER_FIELD);
         AnimationFactory.LoadAnimationUseInEvent(text);
         vib.LoadVibData(text);
         map.mcfPtr = MapConfiguration.LoadMapConfigData(text);
@@ -131,7 +131,7 @@ public class HonoluluFieldMain : HonoBehavior
         Int32 sndEffectResSoundID2 = allSoundDispatchPlayer.GetSndEffectResSoundID(1);
         FF9Snd.BGMFieldSongCounter = 0;
         SFXData.Reinit();
-        this.ee.StartEvents(map.evtPtr);
+        this.ee.StartEvents();
         FF9StateSystem.Field.SetTwistAD(this.ee.GetTwistA(), this.ee.GetTwistD());
         ETb.InitMessage();
         ETb.InitMovieHitPoint(MapNo);
@@ -221,13 +221,13 @@ public class HonoluluFieldMain : HonoBehavior
                 Singleton<fldfmv>.Instance.ff9fieldFMVService();
             if ((this.FF9.attr & 2u) == 0u)
             {
-                Int32 num = this.ee.ServiceEvents();
+                Int32 codeFlowState = this.ee.ServiceEvents();
                 HonoluluFieldMain.eventEngineRunningCount++;
                 SFXData.AdvanceEventSFXFrame();
                 this.updatePlayerObj();
-                switch (num)
+                switch (codeFlowState)
                 {
-                    case 3:
+                    case EventEngine.FLOW_STATE_JUMP_BATTLE:
                         this.FF9Sys.attr |= 8u;
                         this.FF9FieldMap.nextMode = 2;
                         this.fieldmap.ff9fieldInternalBattleEncountStart();
@@ -236,7 +236,7 @@ public class HonoluluFieldMain : HonoBehavior
                         FF9StateSystem.Battle.mappingBattleIDWithMapList = false;
                         NGUIDebug.Clear();
                         break;
-                    case 4:
+                    case EventEngine.FLOW_STATE_JUMP_FIELD:
                         if (this.FF9FieldMap.nextMapNo == FF9Define.FLDSCRPT_EVTNO_ENDING)
                         {
                             this.FF9FieldMap.nextMode = 4;
@@ -248,15 +248,15 @@ public class HonoluluFieldMain : HonoBehavior
                             this.FF9Sys.attr |= 8u;
                         }
                         break;
-                    case 5:
+                    case EventEngine.FLOW_STATE_JUMP_WORLD_MAP:
                         this.FF9FieldMap.nextMode = 3;
                         this.FF9Sys.attr |= 2u;
                         break;
-                    case 7:
+                    case EventEngine.FLOW_STATE_QUADMIST:
                         this.FF9FieldMap.nextMode = 9;
                         this.FF9Sys.attr |= 2u;
                         break;
-                    case 8:
+                    case EventEngine.FLOW_STATE_GAMEOVER:
                         this.FF9FieldMap.nextMode = 7;
                         this.FF9Sys.attr |= 2u;
                         this.FF9.attr |= 2u;
@@ -358,7 +358,7 @@ public class HonoluluFieldMain : HonoBehavior
             this.ee.requiredAddActor = false;
             foreach (Int32 num in this.ee.toBeAddedObjUIDList)
             {
-                Obj objUID = this.ee.GetObjUID(num);
+                Obj objUID = this.ee.FindObjByUID(num);
                 Boolean flag = num == controlUID;
                 if (flag)
                 {
@@ -376,7 +376,7 @@ public class HonoluluFieldMain : HonoBehavior
 
     private void updatePlayerObj()
     {
-        Obj objUID = this.ee.GetObjUID(250);
+        Obj objUID = this.ee.GetObjByUID(250);
         String text = "Player";
         if (objUID != null && objUID.go != null && objUID.go.name != text)
         {

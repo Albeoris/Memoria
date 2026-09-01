@@ -208,9 +208,8 @@ public static class ETb
 
     public static CharacterId GetPartyMember(Int32 index)
     {
-        FF9StateGlobal ff = FF9StateSystem.Common.FF9;
-        PLAYER player = ff.party.member[index];
-        return (player == null) ? CharacterId.NONE : player.info.slot_no;
+        PLAYER player = FF9StateSystem.Common.FF9.party.member[index];
+        return player == null ? CharacterId.NONE : player.info.slot_no;
     }
 
     public static void YWindow_CloseAll(Boolean scriptedClose = false)

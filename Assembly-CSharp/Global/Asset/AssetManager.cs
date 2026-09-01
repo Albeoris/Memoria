@@ -665,63 +665,93 @@ public static class AssetManager
         return mainFile;
     }
 
-    public static Byte[] LoadBytesMerged(String name, Boolean suppressMissingError = false)
+    /// <summary>Get a list of script binary files with the 1st file being the script base and the subsequent being appends</summary>
+    public static List<Byte[]> LoadEventScriptFiles(String name, Boolean suppressMissingError = false)
     {
-        if (!Configuration.Mod.MergeScripts)
-            return LoadBytes(name, suppressMissingError);
-
+        List<Byte[]> scriptFiles = new List<Byte[]>();
         if (AssetManager.AnimationInFolder == null)
             DelayedInitialization();
-        Byte[] ogFile = null;
-        String belongingBundleFilename = AssetManagerUtil.GetBelongingBundleFilename(name);
-        if (!String.IsNullOrEmpty(belongingBundleFilename))
+        if (!Configuration.Mod.MergeScripts)
         {
-            String nameInBundle = AssetManagerUtil.GetResourcesBasePath() + name + AssetManagerUtil.GetAssetExtension<TextAsset>(name);
-            foreach (AssetFolder modfold in FolderLowToHigh)
+            Byte[] baseFile = null;
+            foreach (Byte[] file in LoadBytesMultiple(name))
             {
-                if (modfold.IsAssetInModInBundle(belongingBundleFilename, nameInBundle, out AssetBundleRef assetBundleRef))
+                Int32 mode = EventEngineUtils.GetFileMode(file);
+                if (mode < 0)
+                    continue;
+                if (mode > 0)
+                    scriptFiles.Add(file);
+                else if (baseFile == null)
+                    baseFile = file;
+            }
+            if (baseFile == null)
+            {
+                if (!suppressMissingError)
+                    Log.Message($"[AssetManager] Memoria {(scriptFiles.Count == 0 ? "asset" : "main asset")} not found: {name}");
+                return new List<Byte[]>();
+            }
+            scriptFiles.Add(baseFile);
+            scriptFiles.Reverse();
+            return scriptFiles;
+        }
+
+        // Better not use "Configuration.Mod.MergeScripts"
+        // Binary merges cannot get very far, as it doesn't identify any context
+        //  Eg. Script 1: "set var = 5" ... Script 2: "set var = 6"
+        //  => the script diff will see that "5" and "6" are different, but doesn't identify that they are part of a "set" opcode
+        //  => instead of merging by using either "set var = 5" or "set var = 6" or a the combination of them in any order,
+        //   it will generate an invalid "set" opcode that could be translated to "set var = 5 6"
+        // Things get even worse when JUMP instructions are involved, which is very likely to happen very often
+        // Even if context was scanned and all, what would be the expected merge of scripts like the followings?
+        //  Script Base:
+        //   AddItem( 50, 1 )
+        //  Script 1st mod:
+        //   AddItem( 51, 1 )
+        //  Script 2nd mod:
+        //   AddItem( 52, 1 )
+        // Should all the items be given, like they are all in a single chest?
+        // Should only the item of the highest priority mod be given? or the items of both mods but not vanilla's?
+        // What if it were "WindowSync" or "Battle" instead of "AddItem", or complex script chunks, like patching a cutscene with a section inserted?
+        // There is no possible standardised way to merge scripts, so better find ways to let the modders give informations somehow to let Memoria know how scripts should best be merged
+        foreach (Byte[] file in LoadBytesMultiple(name))
+            if (EventEngineUtils.GetFileMode(file) >= 0)
+                scriptFiles.Add(file);
+        scriptFiles.Reverse();
+        Byte[] ogFile = null;
+        BinaryDiff merged = new BinaryDiff();
+        foreach (Byte[] file in scriptFiles.ToArray())
+        {
+            Int32 mode = EventEngineUtils.GetFileMode(file);
+            if (mode == 0)
+            {
+                if (ogFile == null)
                 {
-                    // TODO: Ensure the file is vanilla. If a mod includes p0Data files (with the script) it will be loaded instead of the vanilla script
-                    TextAsset txt = assetBundleRef.assetBundle.LoadAsset<TextAsset>(nameInBundle);
-                    if (txt != null)
+                    ogFile = file;
+                }
+                else
+                {
+                    BinaryDiff diff = new BinaryDiff(ogFile, file);
+                    if (diff.Count > 0)
                     {
-                        ogFile = txt.bytes;
-                        break;
+                        if (merged.TryMerge(diff))
+                            Log.Message($"[AssetManager] Merged '{Path.GetFileName(name)}{AssetManagerUtil.GetAssetExtension<TextAsset>(name)}'");
+                        else
+                            Log.Message($"[AssetManager] Couldn't merge script file '{Path.GetFileName(name)}{AssetManagerUtil.GetAssetExtension<TextAsset>(name)}', conflict detected");
                     }
                 }
+                scriptFiles.Remove(file);
             }
         }
         if (ogFile == null)
         {
-            Byte[] mainFile = LoadBytesMultiple(name).FirstOrDefault();
-            if (mainFile == null && !suppressMissingError)
-                Log.Message("[AssetManager] Memoria asset not found: " + name);
-            return mainFile;
+            if (!suppressMissingError)
+                Log.Message($"[AssetManager] Memoria {(scriptFiles.Count == 0 ? "asset" : "main asset")} not found: {name}");
+            return new List<Byte[]>();
         }
-        else
-        {
-            BinaryDiff merged = new BinaryDiff();
-
-            foreach (Byte[] file in LoadBytesMultiple(name))
-            {
-                var diff = new BinaryDiff(ogFile, file);
-                if (diff.Count > 0)
-                {
-                    if (merged.TryMerge(diff))
-                        Log.Message($"[AssetManager] Merged '{Path.GetFileName(name)}{AssetManagerUtil.GetAssetExtension<TextAsset>(name)}'({(String.IsNullOrEmpty(modFolderName) ? "Memoria" : modFolderName.TrimEnd(['/']))})");
-                    else
-                        Log.Message($"[AssetManager] Couldn't merge script file '{Path.GetFileName(name)}{AssetManagerUtil.GetAssetExtension<TextAsset>(name)}'({(String.IsNullOrEmpty(modFolderName) ? "Memoria" : modFolderName.TrimEnd(['/']))}), conflict detected");
-                }
-                else if (!String.IsNullOrEmpty(modFolderName))
-                {
-                    Log.Message($"[AssetManager] Script file '{Path.GetFileName(name)}{AssetManagerUtil.GetAssetExtension<TextAsset>(name)}'({modFolderName.TrimEnd(['/'])}) doesn't contain any changes");
-                }
-            }
-            if (merged != null && merged.Count > 0)
-                return merged.Apply(ogFile);
-
-            return ogFile;
-        }
+        if (merged.Count > 0)
+            ogFile = merged.Apply(ogFile);
+        scriptFiles.Insert(0, ogFile);
+        return scriptFiles;
     }
 
     public static AssetManagerRequest LoadAsync<T>(String name) where T : UnityEngine.Object

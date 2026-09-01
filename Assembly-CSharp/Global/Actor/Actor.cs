@@ -9,7 +9,7 @@ public class Actor : PosObj
         base.cid = 4;
     }
 
-    public Actor(Int32 sid, Int32 uid, Int32 size) : base(sid, uid, size, 16)
+    public Actor(Int32 sid, Int32 uid, Int32 size = EventEngine.SIZE_OF_ACTOR) : base(sid, uid, size, 16)
     {
         this.idleSpeed = new Byte[4];
         EventEngine instance = PersistenSingleton<EventEngine>.Instance;

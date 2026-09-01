@@ -11,7 +11,7 @@ public class Quad : Obj
         }
     }
 
-    public Quad(Int32 sid, Int32 uid) : base(sid, uid, EventEngine.sizeOfQuad, 16)
+    public Quad(Int32 sid, Int32 uid) : base(sid, uid, EventEngine.SIZE_OF_QUAD, 16)
     {
         this.q = new QuadPos[Quad.numOfQuadPoses];
         for (Int32 i = 0; i < Quad.numOfQuadPoses; i++)

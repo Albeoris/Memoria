@@ -385,7 +385,7 @@ public class EMinigame
     public static void DigUpMadianRingCheating()
     {
         EBin eBin = PersistenSingleton<EventEngine>.Instance.eBin;
-        if (FF9StateSystem.Common.FF9.fldMapNo == 1421 && EBin.s1.sid == 0 && EBin.s1.ip == 813)  // Fossil Roo/Mining Site
+        if (FF9StateSystem.Common.FF9.fldMapNo == 1421 && EBin.currentObject.sid == 0 && EBin.currentObject.ip == 813)  // Fossil Roo/Mining Site
         {
             eBin.setVarManually(EBin.getVarOperation(EBin.VariableSource.Map, EBin.VariableType.Byte, 47), 2);
             eBin.setVarManually(EBin.getVarOperation(EBin.VariableSource.Map, EBin.VariableType.Int16, 56), 203);

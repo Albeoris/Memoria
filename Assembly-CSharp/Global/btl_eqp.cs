@@ -66,11 +66,11 @@ public static class btl_eqp
             for (Int32 i = 0; i < btl.weaponMeshCount; i++)
             {
                 btl.weaponRenderer[i] = componentsInChildren[i].GetComponent<Renderer>();
-                if (btl.weapon.CustomTexture != null && btl.weapon.CustomTexture.Length > i && !String.IsNullOrEmpty(btl.weapon.CustomTexture[i]))
+                if (btl.weapon.CustomTexture.Length > i && !String.IsNullOrEmpty(btl.weapon.CustomTexture[i]))
                     btl.weaponRenderer[i].material.mainTexture = AssetManager.Load<Texture2D>(btl.weapon.CustomTexture[i], false);
             }
         }
-        else if (btl.weapon.CustomTexture != null && btl.weapon.CustomTexture.Length > 0) // Other kind of model have no btl.weaponMeshCount
+        else if (btl.weapon.CustomTexture.Length > 0) // Other kind of model have no btl.weaponMeshCount
         {
             ModelFactory.ChangeModelTexture(mainWeapon.geo, btl.weapon.CustomTexture);
         }

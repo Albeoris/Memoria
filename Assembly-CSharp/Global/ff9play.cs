@@ -52,14 +52,13 @@ public static class ff9play
     public const Int32 FF9PLAY_EQUIP_ID_NONE = 255;
     public static readonly Byte[] FF9PLAY_STAT_MAX = { 50, 99, 99, 50 };
 
-    private static Boolean _FF9Play_Face;
-    private static Dictionary<EquipmentSetId, CharacterEquipment> DefaultEquipment;
-    private static Dictionary<CharacterId, CharacterParameter> CharacterParameterList;
+    public static Dictionary<EquipmentSetId, CharacterEquipment> DefaultEquipment;
+    public static Dictionary<CharacterId, CharacterParameter> CharacterParameterList;
 
     public static void FF9Play_Init()
     {
-        DefaultEquipment = LoadCharacterDefaultEquipment();
-        CharacterParameterList = LoadCharacterParameters();
+        LoadCharacterDefaultEquipment();
+        LoadCharacterParameters();
         btl_mot.Init();
 
         foreach (CharacterParameter param in CharacterParameterList.Values)
@@ -68,7 +67,6 @@ public static class ff9play
             FF9StateSystem.Common.FF9.player[param.Id] = new PLAYER();
         }
         FF9StateGlobal ff9StateGlobal = FF9StateSystem.Common.FF9;
-        FF9Play_SetFaceDirty(false);
         foreach (CharacterParameter param in CharacterParameterList.Values)
             FF9Play_New(param.Id);
         FF9Play_Add(FF9StateSystem.Common.FF9.GetPlayer(CharacterId.Zidane));
@@ -80,51 +78,47 @@ public static class ff9play
         ff9StateGlobal.party.summon_flag = 0;
     }
 
-    private static Dictionary<EquipmentSetId, CharacterEquipment> LoadCharacterDefaultEquipment()
+    private static void LoadCharacterDefaultEquipment()
     {
         try
         {
+            DefaultEquipment = new Dictionary<EquipmentSetId, CharacterEquipment>();
             String inputPath = DataResources.Characters.PureDirectory + DataResources.Characters.DefaultEquipmentsFile;
-            Dictionary<EquipmentSetId, CharacterEquipment> result = new Dictionary<EquipmentSetId, CharacterEquipment>();
             foreach (CharacterEquipment[] equips in AssetManager.EnumerateCsvFromLowToHigh<CharacterEquipment>(inputPath))
                 foreach (CharacterEquipment equip in equips)
-                    result[equip.Id] = equip;
-            if (result.Count == 0)
+                    DefaultEquipment[equip.Id] = equip;
+            if (DefaultEquipment.Count == 0)
                 throw new FileNotFoundException($"Cannot load equipment sets because a file does not exist: [{DataResources.Characters.Directory + DataResources.Characters.DefaultEquipmentsFile}].", DataResources.Characters.Directory + DataResources.Characters.DefaultEquipmentsFile);
             for (Int32 i = 0; i < 15; i++)
-                if (!result.ContainsKey((EquipmentSetId)i))
+                if (!DefaultEquipment.ContainsKey((EquipmentSetId)i))
                     throw new NotSupportedException($"You must define at least the 15 equipment sets, with IDs between 0 and 14.");
-            return result;
         }
         catch (Exception ex)
         {
             Log.Error(ex, "[ff9play] Load characters default equipments failed.");
             UIManager.Input.ConfirmQuit();
-            return null;
         }
     }
 
-    private static Dictionary<CharacterId, CharacterParameter> LoadCharacterParameters()
+    private static void LoadCharacterParameters()
     {
         try
         {
+            CharacterParameterList = new Dictionary<CharacterId, CharacterParameter>();
             String inputPath = DataResources.Characters.PureDirectory + DataResources.Characters.CharacterParametersFile;
-            Dictionary<CharacterId, CharacterParameter> result = new Dictionary<CharacterId, CharacterParameter>();
             foreach (CharacterParameter[] characters in AssetManager.EnumerateCsvFromLowToHigh<CharacterParameter>(inputPath))
                 foreach (CharacterParameter character in characters)
-                    result[character.Id] = character;
-            if (result.Count == 0)
+                    CharacterParameterList[character.Id] = character.Data;
+            if (CharacterParameterList.Count == 0)
                 throw new FileNotFoundException($"Cannot load character parameters because a file does not exist: [{DataResources.Characters.Directory + DataResources.Characters.CharacterParametersFile}].", DataResources.Characters.Directory + DataResources.Characters.CharacterParametersFile);
             for (Int32 i = 0; i < 12; i++)
-                if (!result.ContainsKey((CharacterId)i))
+                if (!CharacterParameterList.ContainsKey((CharacterId)i))
                     throw new NotSupportedException($"You must define at least 12 character parameters, with IDs between 0 and 11.");
-            return result;
         }
         catch (Exception ex)
         {
             Log.Error(ex, "[ff9play] Load character parameters failed.");
             UIManager.Input.ConfirmQuit();
-            return null;
         }
     }
 
@@ -168,11 +162,6 @@ public static class ff9play
             FF9Play_Add(newMember);
             ff9StateGlobal.party.member[partySlot] = newMember;
         }
-
-        if (player == ff9StateGlobal.party.member[partySlot])
-            return;
-
-        FF9Play_SetFaceDirty(true);
     }
 
     public static Int32 FF9Play_GetPrev(Int32 id)
@@ -401,6 +390,7 @@ public static class ff9play
         return (CharacterOldIndex)charId;
     }
 
+    // Dummied, use "EventEngineUtils.GetEventCharacterSId" instead
     public static Int32 CharacterIDToEventId(CharacterId characterId)
     {
         if (characterId <= CharacterId.Amarant)
@@ -414,16 +404,6 @@ public static class ff9play
         if (characterId == CharacterId.Blank)
             return FF9StateSystem.Common.FF9.GetPlayer(CharacterId.Amarant).info.sub_replaced ? -1 : 7;
         return -1;
-    }
-
-    public static void FF9Play_SetFaceDirty(Boolean dirty)
-    {
-        _FF9Play_Face = dirty;
-    }
-
-    private static Boolean FF9Play_GetFaceDirty()
-    {
-        return _FF9Play_Face;
     }
 
     public static void FF9Play_SetDefEquips(CharacterEquipment target, EquipmentSetId equipmentId, Boolean isNewPlayer)
