@@ -100,13 +100,6 @@ namespace Memoria.Launcher.Utils.Downloads
                     stagingPath = Path.Combine(destination.DirectoryPath, $".{Path.GetFileName(resolvedDestinationPath)}.{Guid.NewGuid():N}.download");
                     Int64 expectedBytes = response.Content.Headers.ContentLength ?? -1;
                     Int64 receivedBytes = await CopyResponseAsync(response, source, stagingPath, expectedBytes, progress, cancellationToken).ConfigureAwait(false);
-                    if (expectedBytes >= 0 && receivedBytes != expectedBytes)
-                    {
-                        throw new DownloadException(
-                            DownloadFailureKind.IncompleteContent,
-                            $"The server sent only {receivedBytes} of {expectedBytes} bytes for '{source}'. " +
-                            "Check your connection and free disk space, then download the file again.");
-                    }
 
                     Commit(stagingPath, resolvedDestinationPath);
                     stagingPath = String.Empty;
