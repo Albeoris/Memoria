@@ -627,3 +627,5 @@ vcpkg_installed/
 
 # VS Code C# Dev Kit
 *.lscache
+.vscode/launch.json
+.vscode/tasks.json
