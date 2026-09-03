@@ -3729,15 +3729,15 @@ A component of Mods Kupo Library formerly Mog Add-ons</Description>
 <Mod>
 	<Name>High-Res Chocographs</Name>
 	<InstallationPath>HDChocographs</InstallationPath>
-	<Version>1.0</Version>
+	<Version>1.1</Version>
 	<Priority>-30</Priority>
 	<Author>Caledor</Author>
-	<ReleaseDate>2023-01-23</ReleaseDate>
+	<ReleaseDate>2026-09-03</ReleaseDate>
 	<ReleaseDateOriginal>2021-05-12</ReleaseDateOriginal>
 	<Description>[Already integrated in Moguri 9.0] Chocographs remade from scratch by taking actual screenshots in FF9 Steam modded with Moguri Mod 8.2.</Description>
 	<Category>Visual</Category>
 	<Website>https://forums.qhimm.com/index.php?topic=20657.0</Website>
-	<DownloadUrl>https://i.imgur.com/tpdfrUQ.png</DownloadUrl>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/uj5mgvtccp087l21v0afi/PC_HighResChocographs.png?rlkey=1pow2n3suweqoe6f3pmx9hkor&amp;st=wngoikd2&amp;dl=0</DownloadUrl>
 	<DownloadFormat>SingleFileWithPath:FF9_Data/EmbeddedAsset/UI/Atlas/Chocograph Atlas</DownloadFormat>
 	<PreviewFileUrl>https://i.imgur.com/t2mA44B.png</PreviewFileUrl>
 </Mod>
