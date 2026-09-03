@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -78,7 +78,6 @@ namespace Memoria.Launcher
                 _modFileSystem.DeleteTemporaryDirectory();
             }
             catch { }
-            UpdateLauncherTheme();
             HotfixForMoguriMod();
             Lang.Res["Settings.LauncherWindowTitle"] += " | v" + MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd");
             Lang.Res["Settings.MemoriaEngine"] += " v" + MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd");
@@ -92,6 +91,7 @@ namespace Memoria.Launcher
             LoadModSettings();
             CheckForValidModFolder();
             UpdateModListInstalled();
+            UpdateLauncherTheme();
             InitializeModsListView();
             InitializeCatalogListView();
             lstDownloads.ItemsSource = DownloadList;
@@ -149,7 +149,7 @@ namespace Memoria.Launcher
                     UpdateModSettings();
                     UpdateLauncherTheme();
                 }
-                else if(date < new DateTime(2025, 07, 13))
+                else if (date < new DateTime(2025, 07, 13))
                 {
                     // Make sure to use the new back-end
                     IniFile.MemoriaIni.SetSetting("Audio", "Backend", "1");
