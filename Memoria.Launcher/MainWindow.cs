@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -92,6 +92,7 @@ namespace Memoria.Launcher
             LoadModSettings();
             CheckForValidModFolder();
             UpdateModListInstalled();
+            UpdateLauncherTheme();
             InitializeModsListView();
             InitializeCatalogListView();
             lstDownloads.ItemsSource = DownloadList;
