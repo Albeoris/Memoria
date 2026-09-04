@@ -390,6 +390,7 @@
       <ProjectReference Include="..\Memoria.SteamFix\Memoria.SteamFix.csproj">
           <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
           <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+          <SetTargetFramework>TargetFramework=net48</SetTargetFramework>
       </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
