@@ -208,7 +208,7 @@ Not supported language : Japanese (a lot of things get deleted... need to wait u
 - The "Zombie" status no longer prevents fleeing.
 
 {SA / AA Abilities}
-- "What’s That!?" is compatible with Thief’s Eye and applies Zidane’s passive to every target.
+- "What’s That!?" is compatible with Thief’s Eye and applies Zidane’s passive to every target. 
 - "What’s That!?" allows repositioning in any situation, even against bosses.
 - "Transmute" and "Mana Well" commands are now properly disabled when Vivi is under Silence.
 - Gil bonuses now stack (from SAs or equipment).
@@ -4556,45 +4556,71 @@ Features;
 </Mod>
 
 <Mod>
+
 <Name>FFIX: The Lost Chapters</Name>
-<Version>1.0.0</Version>
+<Version>1.1.7</Version>
 <Author>CheddarBung</Author>
 <Category>Gameplay</Category>
-<PreviewFile>Png/Banner 2.png</PreviewFile>
+<PreviewFile>Png/banner2.png</PreviewFile>
 <InstallationPath>The Lost Chapters</InstallationPath>
 <DownloadUrl>https://github.com/robmcfarlane1120-sudo/FFIX-The-Lost-Chapters/releases/latest/download/FFIX.The.Lost.Chapters.zip</DownloadUrl>
 <PreviewFileUrl>https://github.com/robmcfarlane1120-sudo/FFIX-The-Lost-Chapters/blob/main/The%20Lost%20Chapters/Png/Banner%202.png?raw=true</PreviewFileUrl>
-<ReleaseDate>2026-08-12</ReleaseDate>
+
+<ReleaseDate>2026-09-04</ReleaseDate>
 <ReleaseDateOriginal>2026-08-12</ReleaseDateOriginal>
-<IncompatibleWith>Ferny Fantasy IX,No Cutscene,Trance Seek</IncompatibleWith>
+
+<IncompatibleWith>Ferny Fantasy IX,No Cutscene,Trance Seek,KupoMail</IncompatibleWith>
+
 <Website>https://www.nexusmods.com/finalfantasy9/mods/127</Website>
 
+<PatchNotes>The Lost Chapters — v1.1.7 Changelog
+
+Boss &amp; Battle Updates
+
+- Added a new Queen Brahne FBX model, fixing her fan placement so it is correctly held in her right hand.
+- Rebalanced boss encounters and moved standard boss stats into Hades Workshop (HWS) for cleaner, more consistent battle data.
+- Cleaned up BattlePatch.txt (BP.t) by removing unnecessary stat overrides.
+- Earth Eater Maul, Corailon, and Skorz'ma received approximately a 5% increase to HP and damage.
+- Omega Weapon HP increased from 100,000 to 130,000.
+- Now play as Freya, Vivi or Zidane during the festival of the hunt	
+
+Quest Fixes
+
+- Fixed MemoriaDictionary flags for Cinna's Goggles in the Trade Quest, correcting progression issues related to the item.
+
+Backend / Cleanup
+
+- General battle-data cleanup and organization to improve maintainability and compatibility.
+</PatchNotes>
+
 <Description>
+
 Now Compatible with Alternate Fantasy
 
 Final Fantasy IX: The Lost Chapters is a Vanilla+ expansion for Final Fantasy IX that integrates new boss encounters, story events, quests, and optional content into the original adventure.
 
-Rather than redesigning the game, The Lost Chapters expands the world of Gaia with new challenges, and meaningful rewards while remaining faithful to the characters, progression, and spirit of the original Final Fantasy IX experience.
+Rather than redesigning the game, The Lost Chapters expands the world of Gaia with new challenges and meaningful rewards while remaining faithful to the characters and progression of the original Final Fantasy IX experience.
 
 ════════════════════════════
-NEW CONTENT
+CURRENT CONTENT
 ════════════════════════════
 
 • Five story-integrated boss encounters
-• questline
+• Omega Artifact questline
 • Hidden Omega Weapon superboss
 • Zelda-inspired world-spanning Trade Quest
-• New key items and progression
+• New key items
 • Live Updating Progression Journal for new content
+• Play as Freya, Vivi, or Zidane during the Festival of the Hunt
 
 ════════════════════════════
 IMPORTANT
 ════════════════════════════
 
 • Must be played using the US language version.
-• Balanced around Vanilla Final Fantasy IX and Alternate Fantasy
+• Balanced around Vanilla Final Fantasy IX and Alternate Fantasy.
 • Not compatible with No Cutscenes / Skip Cutscenes mods. Several encounters use existing story events as trigger points.
-• Not currently compatible with Trance Seek, or Ferny Fantasy.
+• Not currently compatible with Trance Seek, Ferny Fantasy, or KupoMail.
 
 ════════════════════════════
 FEEDBACK
@@ -4603,8 +4629,8 @@ FEEDBACK
 Feedback, bug reports, balance suggestions, and feature requests are always welcome on Discord.
 
 Thank you for playing!
-https://discord.gg/mNRq58BRej
-</Description>
-</Mod>
 
+</Description>
+
+</Mod>
 </ModCatalog>
