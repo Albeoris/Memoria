@@ -222,15 +222,27 @@ public class btl_cmd
                     first_tar_id = tar_id;
                     if (!second_aa.Info.DefaultAlly)
                         second_tar_id = tar_id;
+                    else if (second_aa.Info.Target == TargetType.ManyAlly)
+                        second_tar_id = 0xF;
+                    else if (second_aa.Info.Target == TargetType.ManyEnemy)
+                        second_tar_id = 0xF0;
+                    else if (second_aa.Info.Target == TargetType.ManyAny)
+                        second_tar_id = 0xF;
                     else
                         second_tar_id = (UInt16)Comn.randomID(0xF);
                 }
                 else
                 {
-                    if (!first_aa.Info.DefaultAlly)
-                        first_tar_id = (UInt16)Comn.randomID(0xF0);
-                    else
+                    if (first_aa.Info.DefaultAlly)
                         first_tar_id = tar_id;
+                    else if (first_aa.Info.Target == TargetType.ManyAlly)
+                        first_tar_id = 0xF;
+                    else if (first_aa.Info.Target == TargetType.ManyEnemy)
+                        first_tar_id = 0xF0;
+                    else if (first_aa.Info.Target == TargetType.ManyAny)
+                        first_tar_id = 0xF0;
+                    else
+                        first_tar_id = (UInt16)Comn.randomID(0xF0);
                     second_tar_id = tar_id;
                 }
             }
