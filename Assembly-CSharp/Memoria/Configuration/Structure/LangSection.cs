@@ -1,6 +1,5 @@
 ﻿using Memoria.Prime.Ini;
 using System;
-using System.Collections.Generic;
 
 namespace Memoria
 {
@@ -10,11 +9,13 @@ namespace Memoria
         {
             public readonly IniValue<Int32> DualLanguageMode;
             public readonly IniValue<String> DualLanguage;
+            public readonly IniValue<String> KeyDualLanguage;
 
             public LangSection() : base(nameof(LangSection), false)
             {
                 DualLanguageMode = BindInt32(nameof(DualLanguageMode), 0);
                 DualLanguage = BindString(nameof(DualLanguage), String.Empty);
+                KeyDualLanguage = BindString(nameof(KeyDualLanguage), "CapsLock");
             }
         }
     }

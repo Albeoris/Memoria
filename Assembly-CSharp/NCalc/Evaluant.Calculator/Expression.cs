@@ -43,6 +43,31 @@ namespace NCalc
             Options = options;
         }
 
+        /// <summary>
+        /// Gets the current number of subscribers (for debugging).
+        /// </summary>
+        public int EvaluateFunctionCount
+        {
+            get { return _evaluateFunction != null ? _evaluateFunction.GetInvocationList().Length : 0; }
+        }
+
+        /// <summary>
+        /// Gets the current number of subscribers (for debugging).
+        /// </summary>
+        public int EvaluateParameterCount
+        {
+            get { return _evaluateParameter != null ? _evaluateParameter.GetInvocationList().Length : 0; }
+        }
+
+        /// <summary>
+        /// Clears all event subscribers to prevent memory leaks.
+        /// </summary>
+        public void ClearHandlers()
+        {
+            _evaluateFunction = null;
+            _evaluateParameter = null;
+        }
+
         #region Cache management
 
         private static bool cacheEnabled = true;
@@ -195,8 +220,8 @@ namespace NCalc
             }
 
             var visitor = new EvaluationVisitor(Options);
-            visitor.EvaluateFunction += EvaluateFunction;
-            visitor.EvaluateParameter += EvaluateParameter;
+            visitor.EvaluateFunction += _evaluateFunction;
+            visitor.EvaluateParameter += _evaluateParameter;
             visitor.Parameters = Parameters;
 
             // Add a "null" parameter which returns null if configured to do so
@@ -266,16 +291,113 @@ namespace NCalc
             return visitor.Result;
         }
 
-        public event EvaluateFunctionHandler EvaluateFunction;
+        private EvaluateFunctionHandler _evaluateFunction;
+        private EvaluateParameterHandler _evaluateParameter;
 
-        public event EvaluateParameterHandler EvaluateParameter;
+        // [DV] I made this "auto-clean" feature, for huge mod using a lot of AbilityFeatures.txt, mostly for the PlayerHUD.
+        // EvaluateFunction can increase very high, like 300+ with this kind of AbilF.txt (like the Cloud mod from WarpedEdge).
+        // NCalc will call all these handlers for each evaluation, which can eliminate memory leaks if the handlers are not properly removed (mostly in the HUD when checking party equipments).
+        public event EvaluateFunctionHandler EvaluateFunction
+        {
+            add
+            {
+                if (_evaluateFunction != null)
+                {
+                    foreach (Delegate d in _evaluateFunction.GetInvocationList())
+                        if (d.Method == value.Method && d.Target == value.Target)
+                            return;
+
+                    SmartCleanFunctionHandlers();
+                }
+
+                _evaluateFunction += value;
+            }
+            remove { _evaluateFunction -= value; }
+        }
+
+        public event EvaluateParameterHandler EvaluateParameter
+        {
+            add
+            {
+                if (_evaluateParameter != null)
+                {
+                    foreach (Delegate d in _evaluateParameter.GetInvocationList())
+                        if (d.Method == value.Method && d.Target == value.Target)
+                            return;
+
+                    SmartCleanParameterHandlers();
+                }
+
+                _evaluateParameter += value;
+            }
+            remove { _evaluateParameter -= value; }
+        }
+
+        private void SmartCleanFunctionHandlers()
+        {
+            var list = _evaluateFunction.GetInvocationList();
+
+            if (list.Length <= 50) return;
+
+            _evaluateFunction = null;
+
+            for (int i = 0; i < list.Length; i++)
+            {
+                var d = list[i];
+
+                if (d.Target != null && d.Target.GetType().Name == "<>c" || i >= list.Length - 10)
+                    _evaluateFunction += (EvaluateFunctionHandler)d;
+            }
+        }
+
+        private void SmartCleanParameterHandlers()
+        {
+            var list = _evaluateParameter.GetInvocationList();
+
+            if (list.Length <= 50) return;
+
+            _evaluateParameter = null;
+
+            for (int i = 0; i < list.Length; i++)
+            {
+                var d = list[i];
+
+                if (d.Target != null && d.Target.GetType().Name == "<>c" || i >= list.Length - 10)
+                    _evaluateParameter += (EvaluateParameterHandler)d;
+            }
+        }
 
         private Dictionary<string, object> parameters;
+        private volatile bool _isEvaluating = false;
 
         public Dictionary<string, object> Parameters
         {
             get { return parameters ?? (parameters = new Dictionary<string, object>(IgnoreCase ? StringComparer.CurrentCultureIgnoreCase : StringComparer.CurrentCulture)); }
             set { parameters = value; }
+        }
+
+        private void AnalyzeFunctionHandlers()
+        {
+            if (_evaluateFunction == null) return;
+
+            var list = _evaluateFunction.GetInvocationList();
+
+            if (list.Length >= 50)
+            {
+                Memoria.Prime.Log.Warning($"[NCalc Debug] --- ANALYSE DES HANDLERS FUNCTION (Total: {list.Length}) ---");
+
+                for (int i = 0; i < list.Length; i++)
+                {
+                    var d = list[i];
+
+                    string methodName = d.Method != null ? d.Method.Name : "UnknownMethod";
+                    string targetType = d.Target != null ? d.Target.GetType().Name : "Static/Null";
+                    string targetHash = d.Target != null ? d.Target.GetHashCode().ToString() : "N/A";
+
+                    Memoria.Prime.Log.Warning($"   -> [{i}] Method: {methodName} | Target: {targetType} (Hash: {targetHash})");
+                }
+                Memoria.Prime.Log.Warning($"[NCalc Debug] ----------------------------------------------------");
+            }
         }
     }
 }

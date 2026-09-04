@@ -58,7 +58,9 @@ public class SFXMesh : SFXMeshBase
 
     public static void Release()
     {
-        UnityEngine.Object.Destroy(__dummyMaterial);
+        if (__dummyMaterial != null)
+            UnityEngine.Object.Destroy(__dummyMaterial);
+
         for (Int32 i = 0; i < 6; i++)
             __shaders[i] = null;
         __shaders = null;
