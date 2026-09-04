@@ -1878,6 +1878,11 @@ internal static class EventEngineUtils
         return -1;
     }
 
+    public static Boolean IsBlankInField3009(EventEngine ee, Obj obj)
+    {
+        return obj.sid == EventEngineUtils.GetEventCharacterSId(ee.sObjTable, CharacterId.Blank) || obj.sid == EventEngineUtils.GetEventCharacterSId(ee.sObjTable, CharacterId.Amarant);
+    }
+
     public static Int32 GetFileMode(Byte[] ebFileData)
     {
         Byte appendMode = 0;
@@ -1904,12 +1909,7 @@ internal static class EventEngineUtils
             return;
         }
 
-        String symbol = Localization.CurrentSymbol;
-        String langFolder = symbol + "/";
-        if (FF9StateSystem.Common.FF9.fldMapNo == 1060 && symbol != "US" && symbol != "JP") // Cleyra/Cathedral: dancing scene is forced to use the US or JP binary events
-            langFolder = "US/"; // TODO: fix that (correcting the cutscene's wait times so it matches the music)
-
-        ebFileName = EB_FILE_PATH + ebSubFolder + langFolder + ebFileName + EB_FILE_EXT;
+        ebFileName = EB_FILE_PATH + ebSubFolder + Localization.CurrentSymbol + "/" + ebFileName + EB_FILE_EXT;
         List<Byte[]> scriptFiles = AssetManager.LoadEventScriptFiles(ebFileName);
         if (scriptFiles.Count == 0)
         {

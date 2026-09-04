@@ -38,14 +38,14 @@ namespace Memoria.Data
         public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
             Int32 index = 0;
-            Id = (CharacterId)CsvParser.Byte(raw[index++]);
+            Id = (CharacterId)CsvParser.Int32(raw[index++]);
             Data = metadata.IsAppendMode ? GetExisting(Id) : this;
             Data.ParseDataEntry(raw, metadata, ref index);
         }
 
         public void WriteEntry(CsvWriter writer, CsvMetaData metadata)
         {
-            writer.Byte((Byte)Id);
+            writer.Int32((Int32)Id);
             writer.Byte(DefaultRow);
             writer.Byte(DefaultWinPose);
             writer.Byte(DefaultCategory);

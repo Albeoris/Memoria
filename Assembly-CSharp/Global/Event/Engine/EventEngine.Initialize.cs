@@ -1,6 +1,7 @@
-﻿using Assets.Scripts.Common;
+﻿using System;
+using System.Collections.Generic;
+using Assets.Scripts.Common;
 using Memoria;
-using System;
 using UnityEngine;
 
 public partial class EventEngine
@@ -27,7 +28,17 @@ public partial class EventEngine
         this.sEventContext1 = new EventContext();
         this.eBin = new EBin(this);
         this.gMode = gModeVal;
-        ETb.gMesValue = new Int32[8];
+        ETb.gMesValue = new Dictionary<Int32, Int32>()
+        {
+            { 0, 0 },
+            { 1, 0 },
+            { 2, 0 },
+            { 3, 0 },
+            { 4, 0 },
+            { 5, 0 },
+            { 6, 0 },
+            { 7, 0 }
+        };
         this._objPtrList = new Obj[8];
         this._sysList = new UInt16[8];
         this._enCountData = new EncountData();

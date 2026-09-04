@@ -391,12 +391,16 @@ public static class AssetManager
         }
         else if (typeof(T) == typeof(Texture2D) || typeof(T) == typeof(Texture))
         {
+            if (AssetManagerUtil.CustomTextures.TryGetValue(name, out Texture2D textureAsset))
+                return (T)(Object)textureAsset;
             Byte[] raw = File.ReadAllBytes(name);
-            Texture2D newTexture = LoadTextureGeneric(raw);
-            if (newTexture == null)
-                newTexture = new Texture2D(1, 1, DefaultTextureFormat, false);
-            //ApplyTextureGenericMemoriaInfo<Texture2D>(ref newTexture, ref memoriaInfo);
-            return (T)(Object)newTexture;
+            textureAsset = LoadTextureGeneric(raw);
+            if (textureAsset == null)
+                textureAsset = new Texture2D(1, 1, DefaultTextureFormat, false);
+            else
+                AssetManagerUtil.CustomTextures.Add(name, textureAsset);
+            //ApplyTextureGenericMemoriaInfo<Texture2D>(ref textureAsset, ref memoriaInfo);
+            return (T)(Object)textureAsset;
         }
         else if (typeof(T) == typeof(Sprite))
         {

@@ -560,7 +560,7 @@ public class FieldMap : HonoBehavior
         FieldMapActorController fieldMapActorController = modelGo.AddComponent<FieldMapActorController>();
         actorOfObj.fieldMapActorController = fieldMapActorController;
 
-        FF9BattleDBHeightAndRadius.TryFindNeckBoneIndex(actorOfObj.model, ref actorOfObj.neckBoneIndex);
+        FF9DBModelParameters.TryFindNeckBoneIndex(actorOfObj.model, ref actorOfObj.neckBoneIndex);
 
         if (needRestore)
             this.RestoreModels(modelGo, actorOfObj);

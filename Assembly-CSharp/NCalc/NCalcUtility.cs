@@ -307,6 +307,29 @@ namespace NCalc
             if (name == "WorldDisc") args.Result = (Int32)ff9.w_frameDisc;
         };
 
+        public static void InitializeExpressionScene(ref Expression expr, BTL_SCENE scene)
+        {
+            expr.Parameters["StartType"] = (Int32)scene.Info.StartType;
+            expr.Parameters["IsSpecialStart"] = scene.Info.SpecialStart;
+            expr.Parameters["IsBackAttack"] = scene.Info.BackAttack;
+            expr.Parameters["IsNoGameOver"] = scene.Info.NoGameOver;
+            expr.Parameters["IsNoExp"] = scene.Info.NoExp;
+            expr.Parameters["IsWinPose"] = scene.Info.WinPose;
+            expr.Parameters["IsRunaway"] = scene.Info.Runaway;
+            expr.Parameters["IsNoNeighboring"] = scene.Info.NoNeighboring;
+            expr.Parameters["IsNoMagical"] = scene.Info.NoMagical;
+            expr.Parameters["IsReverseAttack"] = scene.Info.ReverseAttack;
+            expr.Parameters["IsFixedCamera1"] = scene.Info.FixedCamera1;
+            expr.Parameters["IsFixedCamera2"] = scene.Info.FixedCamera2;
+            expr.Parameters["IsAfterEvent"] = scene.Info.AfterEvent;
+            expr.Parameters["IsFieldBGM"] = scene.Info.FieldBGM;
+            expr.Parameters["IsPreemptive"] = scene.Info.Preemptive;
+            expr.Parameters["BattleBackground"] = scene.Info.BattleBackground;
+            expr.Parameters["SceneEnemyTypeCount"] = (Int32)scene.header.TypCount;
+            expr.Parameters["SceneAttackCount"] = (Int32)scene.header.AtkCount;
+            expr.Parameters["ScenePatternCount"] = (Int32)scene.header.PatCount;
+        }
+
         public static void InitializeExpressionPlayer(ref Expression expr, PLAYER play)
         {
             expr.Parameters["Name"] = play.Name;

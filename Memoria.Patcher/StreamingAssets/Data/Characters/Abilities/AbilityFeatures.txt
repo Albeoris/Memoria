@@ -829,7 +829,7 @@ Ability AsTarget
 
 >SA 56 Auto-Potion
 Ability AsTarget
-[code=Condition] IsCounterableCommand && CasterIsPlayer != TargetIsPlayer && (HPDamage != 0 || (EffectFlags & BattleCalcFlags_DirectHP) != 0) [/code]
+[code=Condition] IsCounterableCommand && CasterIsPlayer != TargetIsPlayer && (HPDamage != 0 && (EffectTargetFlags & CalcFlag_HpDamageOrHeal) == CalcFlag_HpAlteration || (EffectFlags & BattleCalcFlags_DirectHP) != 0) [/code]
 [code=AutoItem] GetItemCount(RegularItem_Potion) != 0 ? RegularItem_Potion : RegularItem_HiPotion [/code]
 DisableSA 36 54 56
 

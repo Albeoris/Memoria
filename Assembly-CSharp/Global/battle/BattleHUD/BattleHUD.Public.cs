@@ -420,10 +420,23 @@ public partial class BattleHUD : UIScene
             Log.Error("[BattleHUD.UpdateUserInterface] Fail at target buttons");
             Log.Error(err);
         }
-        var hp = _statusPanel.HP;
-        var mp = _statusPanel.MP;
-        var good = _statusPanel.GoodStatus;
-        var bad = _statusPanel.BadStatus;
+        UI.ContainerStatus.PanelDetail<UI.ContainerStatus.ValueWidget> hp = null;
+        UI.ContainerStatus.PanelDetail<UI.ContainerStatus.ValueWidget> mp = null;
+        UI.ContainerStatus.PanelDetail<UI.ContainerStatus.IconsWidget> good = null;
+        UI.ContainerStatus.PanelDetail<UI.ContainerStatus.IconsWidget> bad = null;
+        try
+        {
+            hp = _statusPanel.HP;
+            mp = _statusPanel.MP;
+            good = _statusPanel.GoodStatus;
+            bad = _statusPanel.BadStatus;
+        }
+        catch (Exception err)
+        {
+            Log.Error("[BattleHUD.UpdateUserInterface] Fail at PanelDetail setup");
+            Log.Error(err);
+            return;
+        }
         if (!Configuration.Interface.IsEnabled)
         {
             try
@@ -451,8 +464,18 @@ public partial class BattleHUD : UIScene
         Vector2 menuSize = Configuration.Interface.BattleMenuSize;
         Vector2 detailPos = Configuration.Interface.BattleDetailPos;
         Vector2 detailSize = Configuration.Interface.BattleDetailSize;
-        Single partyItemHeight = detailSize.y / _partyDetail.Characters.Count;
-        detailPos.y -= partyItemHeight * (_partyDetail.Characters.Count - partyCount);
+        Single partyItemHeight = 0f;
+        try
+        {
+            partyItemHeight = detailSize.y / _partyDetail.Characters.Count;
+            detailPos.y -= partyItemHeight * (_partyDetail.Characters.Count - partyCount);
+        }
+        catch (Exception err)
+        {
+            Log.Error("[BattleHUD.UpdateUserInterface] Fail at partyItemHeight setup");
+            Log.Error(err);
+            return;
+        }
         Int32 columnPerPage = Configuration.Interface.BattleColumnCount;
         Int32 linePerPage = Configuration.Interface.BattleRowCount;
         Int32 lineHeight = (Int32)Math.Round(menuSize.y / linePerPage);
@@ -650,12 +673,20 @@ public partial class BattleHUD : UIScene
             Log.Error("[BattleHUD.UpdateUserInterface] Fail at other panels");
             Log.Error(err);
         }
-        ButtonGroupState.SetOutsideLimitRectBehavior(PointerManager.LimitRectBehavior.None, CommandGroupButton);
-        ButtonGroupState.SetOutsideLimitRectBehavior(PointerManager.LimitRectBehavior.None, TargetGroupButton);
-        ButtonGroupState.SetPointerLimitRectToGroup(_abilityPanel.Widget, lineHeight, AbilityGroupButton);
-        ButtonGroupState.SetPointerLimitRectToGroup(_itemPanel.Widget, lineHeight, ItemGroupButton);
-        if (Singleton<HelpDialog>.Instance.IsShown)
-            Singleton<HelpDialog>.Instance.ShowDialog();
+        try
+        {
+            ButtonGroupState.SetOutsideLimitRectBehavior(PointerManager.LimitRectBehavior.None, CommandGroupButton);
+            ButtonGroupState.SetOutsideLimitRectBehavior(PointerManager.LimitRectBehavior.None, TargetGroupButton);
+            ButtonGroupState.SetPointerLimitRectToGroup(_abilityPanel.Widget, lineHeight, AbilityGroupButton);
+            ButtonGroupState.SetPointerLimitRectToGroup(_itemPanel.Widget, lineHeight, ItemGroupButton);
+            if (Singleton<HelpDialog>.Instance.IsShown)
+                Singleton<HelpDialog>.Instance.ShowDialog();
+        }
+        catch (Exception err)
+        {
+            Log.Error("[BattleHUD.UpdateUserInterface] Fail at ButtonGroupState setup");
+            Log.Error(err);
+        }
     }
 
     public void AddPlayerToReady(Int32 playerId)

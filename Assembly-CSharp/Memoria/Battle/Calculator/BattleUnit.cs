@@ -1035,7 +1035,7 @@ namespace Memoria
             btl_cmd.KillSpecificCommand(Data, BattleCommandId.EnemyCounter);
             Data.geo_scale_default = 4096;
             geo.geoScaleReset(Data);
-            if (battle.TRANCE_GAUGE_FLAG != 0 && (p.category & 16) == 0 && (Data.bi.slot_no != (Byte)CharacterId.Garnet || battle.GARNET_DEPRESS_FLAG == 0))
+            if (battle.TRANCE_GAUGE_FLAG != 0 && (p.category & 16) == 0 && ((CharacterId)Data.bi.slot_no != CharacterId.Garnet || battle.GARNET_DEPRESS_FLAG == 0))
                 Data.bi.t_gauge = 1;
             // Reset the position even when ChangeToMonster doesn't change it by itself
             Data.pos.x = Data.evt.posBattle.x = Data.evt.pos[0] = Data.base_pos.x = Data.original_pos.x;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Data;
@@ -229,8 +230,7 @@ public static class ETb
 
     public static void SetMesValue(Int32 scriptID, Int32 value)
     {
-        if (scriptID >= 0 && scriptID < 8)
-            ETb.gMesValue[scriptID] = value;
+        ETb.gMesValue[scriptID] = value;
     }
 
     public static String GetItemName(Int32 itemId)
@@ -266,17 +266,21 @@ public static class ETb
         return ETb.sChoose;
     }
 
+    public static Int32 GetMesVarValue(Int32 index)
+    {
+        if (ETb.gMesValue.TryGetValue(index, out Int32 value))
+            return value;
+        return 0;
+    }
+
     public static String GetStringFromTable(UInt32 bank, UInt32 index)
     {
-        if (index < 8u)
+        String[] tableText = FF9TextTool.GetTableText(bank);
+        if (tableText != null)
         {
-            String[] tableText = FF9TextTool.GetTableText(bank);
-            if (tableText != null)
-            {
-                Int32 tableIndex = ETb.gMesValue[index];
-                if (tableIndex < tableText.Length)
-                    return tableText[tableIndex];
-            }
+            Int32 tableIndex = ETb.GetMesVarValue((Int32)index);
+            if (tableIndex < tableText.Length)
+                return tableText[tableIndex];
         }
         return String.Empty;
     }
@@ -496,7 +500,7 @@ public static class ETb
     public static UInt32 sKeyOff;
 
     public static Int32 gMesCount;
-    public static Int32[] gMesValue;
+    public static Dictionary<Int32, Int32> gMesValue;
 
     public static Int32 gMesSignal;
     public static Int32 sChoose;

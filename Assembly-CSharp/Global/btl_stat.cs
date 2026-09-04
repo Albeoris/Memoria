@@ -130,7 +130,7 @@ public static class btl_stat
 
     public static UInt32 AlterStatuses(BattleUnit target, BattleStatus statuses, BattleUnit inflicter = null, Boolean usePartialResist = false)
     {
-        UInt32 bestResult = 0;
+        UInt32 bestResult = ALTER_RESIST;
         foreach (BattleStatusId statusId in statuses.ToStatusList())
             bestResult = Math.Max(bestResult, AlterStatus(target, statusId, inflicter, usePartialResist));
         return bestResult;

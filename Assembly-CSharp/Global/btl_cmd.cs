@@ -221,16 +221,16 @@ public class btl_cmd
                 {
                     first_tar_id = tar_id;
                     if (!second_aa.Info.DefaultAlly)
-                        second_tar_id = 0xF0;
+                        second_tar_id = tar_id;
                     else
-                        second_tar_id = 0xF;
+                        second_tar_id = (UInt16)Comn.randomID(0xF);
                 }
                 else
                 {
                     if (!first_aa.Info.DefaultAlly)
-                        first_tar_id = 0xF0;
+                        first_tar_id = (UInt16)Comn.randomID(0xF0);
                     else
-                        first_tar_id = 0xF;
+                        first_tar_id = tar_id;
                     second_tar_id = tar_id;
                 }
             }
@@ -1156,7 +1156,7 @@ public class btl_cmd
 
     public static void ClearSysPhantom(BTL_DATA btl)
     {
-        if (btl.bi.player == 0 || btl.bi.slot_no != (Byte)CharacterId.Garnet)
+        if (btl.bi.player == 0 || (CharacterId)btl.bi.slot_no != CharacterId.Garnet)
             return;
         KillSpecificCommand(btl, BattleCommandId.SysPhantom);
         FF9StateSystem.Battle.FF9Battle.cmd_status &= 0xFFF3;

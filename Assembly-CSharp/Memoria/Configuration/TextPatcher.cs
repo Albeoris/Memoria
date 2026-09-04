@@ -149,7 +149,7 @@ namespace Memoria
                         else if (name == "GetTextVariable" && args.Parameters.Length == 1)
                         {
                             Int32 scriptId = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), -1);
-                            args.Result = scriptId >= 0 && scriptId < ETb.gMesValue.Length ? ETb.gMesValue[scriptId] : 0;
+                            args.Result = ETb.GetMesVarValue(scriptId);
                         }
                     };
                 };
@@ -197,7 +197,7 @@ namespace Memoria
                         else if (name == "GetTextVariable" && args.Parameters.Length == 1)
                         {
                             Int32 scriptId = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), -1);
-                            args.Result = scriptId >= 0 && scriptId < ETb.gMesValue.Length ? ETb.gMesValue[scriptId] : 0;
+                            args.Result = ETb.GetMesVarValue(scriptId);
                         }
                     };
                 };
