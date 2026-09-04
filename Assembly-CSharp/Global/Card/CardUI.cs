@@ -87,6 +87,8 @@ public class CardUI : UIScene
                         ButtonGroupState.RemoveCursorMemorize(CardUI.DiscardDialogButtonGroup);
                         ButtonGroupState.ActiveGroup = CardUI.DiscardDialogButtonGroup;
                         ButtonGroupState.HoldActiveStateOnGroup(CardUI.CardGroupButton);
+                        if (!Configuration.TetraMaster.DiscardAutoButton)
+                            ButtonGroupState.ActiveButton = DiscardCancelButton.gameObject;
                         _uiDiscardDialog.ShowMessage(true);
                     });
                     _uiDiscardDialog.ShowMessage(false);

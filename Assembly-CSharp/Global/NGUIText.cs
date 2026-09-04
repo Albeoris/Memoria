@@ -87,7 +87,7 @@ public static class NGUIText
                 case 14: // [ITEM=SCRIPTID]
                 {
                     Int32 scriptId = specialCodeList[i + 1];
-                    String itemName = ETb.GetItemName(ETb.gMesValue[scriptId]);
+                    String itemName = ETb.GetItemName(ETb.GetMesVarValue(scriptId));
                     extraWidth += NGUIText.GetTextWidthFromFF9Font(phraseLabel, itemName);
                     i++;
                     break;
@@ -128,12 +128,12 @@ public static class NGUIText
                 case 64: // [NUMB=SCRIPTID]
                 {
                     Int32 scriptId = specialCodeList[i + 1];
-                    extraWidth += NGUIText.GetTextWidthFromFF9Font(phraseLabel, ETb.gMesValue[scriptId].ToString());
+                    extraWidth += NGUIText.GetTextWidthFromFF9Font(phraseLabel, ETb.GetMesVarValue(scriptId).ToString());
                     i++;
                     break;
                 }
                 case 112: // [PNEW=SCRIPTID]
-                    if ((ETb.gMesValue[0] & (1 << specialCodeList[++i])) != 0)
+                    if ((ETb.GetMesVarValue(0) & (1 << specialCodeList[++i])) != 0)
                         extraWidth += 30f;
                     break;
             }

@@ -41,7 +41,7 @@ public class TutorialUI : UIScene
 
     public override void Hide(UIScene.SceneVoidDelegate afterFinished = null)
     {
-        this.tutorialDialog = null;
+        this.TutorialDialog = null;
         UIScene.SceneVoidDelegate sceneVoidDelegate = delegate
         {
             if (!this.isFromPause)
@@ -103,13 +103,13 @@ public class TutorialUI : UIScene
         else if (this.DisplayMode == TutorialUI.Mode.BasicControl)
         {
             String key = this.GetBasicControlTutorialKey();
-            if (this.tutorialDialog != null && !String.IsNullOrEmpty(key))
-                this.tutorialDialog.ChangePhraseSoft(Localization.Get(key));
+            if (this.TutorialDialog != null && !String.IsNullOrEmpty(key))
+                this.TutorialDialog.ChangePhraseSoft(Localization.Get(key));
         }
         else if (this.DisplayMode == TutorialUI.Mode.QuadMist)
         {
-            if (this.tutorialDialog != null && this.QuadmistTutorialID <= 3)
-                this.tutorialDialog.ChangePhraseSoft(Localization.Get(TutorialUI.QuadMistLocalizeKey + this.QuadmistTutorialID));
+            if (this.TutorialDialog != null && this.QuadmistTutorialID <= 3)
+                this.TutorialDialog.ChangePhraseSoft(Localization.Get(TutorialUI.QuadMistLocalizeKey + this.QuadmistTutorialID));
         }
     }
 
@@ -214,7 +214,7 @@ public class TutorialUI : UIScene
         String platform = FF9StateSystem.MobilePlatform ? "mobile" : "pc";
         String platformUpper = FF9StateSystem.MobilePlatform ? "Mobile" : "PC";
         this.headerLocalize.enabled = true;
-        this.battleTutorialImage1.SetAnchor(target: this.ContentPanel.transform, relRight: 0.5f, relBottom: 0.5f, left: 103, right: -60, top: -41, bottom: -6); // TODO
+        this.battleTutorialImage1.SetAnchor(target: this.ContentPanel.transform, relRight: 0.5f, relBottom: 0.5f, left: 103, right: -60, top: -41, bottom: -6);
         this.battleTutorialImage1.spriteName = $"tutorial_{platform}_01{suffix}";
         this.battleTutorialImage2.spriteName = $"tutorial_{platform}_02{suffix}";
         this.battleTutorialImage1Dialog.spriteName = "tutorial_help_01";
@@ -224,6 +224,8 @@ public class TutorialUI : UIScene
         this.battleTutorialDialogImage2.spriteName = Localization.Get($"TutorialTapOnCharacterIcon{platformUpper}");
         this.battleTutorialImage2Dialog.spriteName = "tutorial_help_02";
         this.battleTutorialImage2Pointer.spriteName = "tutorial_help_cursor";
+        //this.battleLeftLabel.SetAnchor(target: this.ContentPanel.transform, relTop: 0.5f, relRight: 0.5f, right: -60, left: 103, top: -24, bottom: 130);
+        //this.battleRightLabel.SetAnchor(target: this.ContentPanel.transform, relTop: 0.5f, relLeft: 0.5f, right: -83, left: 60, top: -24, bottom: 130);
         this.battleLeftLabel.rawText = Localization.Get($"TutorialLeftParagraph{platformUpper}");
         this.battleRightLabel.rawText = Localization.Get($"TutorialRightParagraph{platformUpper}");
         this.headerLabel.fontSize = 36;
@@ -241,24 +243,19 @@ public class TutorialUI : UIScene
         if (this.QuadmistTutorialID > 3)
             return;
         base.Loading = true;
-        String key = TutorialUI.QuadMistLocalizeKey + this.QuadmistTutorialID;
-        this.tutorialDialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(key), 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.None);
-        this.tutorialDialog.AfterDialogShown = delegate (Int32 choice)
-        {
-            base.Loading = false;
-        };
-        this.tutorialDialog.AfterDialogHidden = this.AfterHideQuadmistTutorial;
-        TweenPosition tweenPos = this.tutorialDialog.GetComponent<TweenPosition>();
+        String text = Localization.Get(TutorialUI.QuadMistLocalizeKey + this.QuadmistTutorialID);
+        DialogBoxSymbols.GetSizeIfSpecified(text, out Int32 dialogWidth, out Int32 dialogLineCount);
+        this.TutorialDialog = Singleton<DialogManager>.Instance.AttachDialog(text, dialogWidth, dialogLineCount, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.None);
+        this.TutorialDialog.AfterDialogShown = (Int32 choice) => { base.Loading = false; };
+        this.TutorialDialog.AfterDialogHidden = this.AfterHideQuadmistTutorial;
+        TweenPosition tweenPos = this.TutorialDialog.GetComponent<TweenPosition>();
         if (tweenPos != null)
             tweenPos.enabled = false;
     }
 
     private void AfterHideQuadmistTutorial(Int32 choice)
     {
-        this.Hide(delegate
-        {
-            this.HideTutorial();
-        });
+        this.Hide(this.HideTutorial);
     }
 
     private void DisplayBasicControlTutorial()
@@ -267,12 +264,9 @@ public class TutorialUI : UIScene
         String key = this.GetBasicControlTutorialKey();
         if (String.IsNullOrEmpty(key))
             return;
-        this.tutorialDialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(key), 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.None);
-        this.tutorialDialog.AfterDialogShown = delegate (Int32 choice)
-        {
-            base.Loading = false;
-        };
-        this.tutorialDialog.AfterDialogHidden = this.AfterHideBasicControlTutorial;
+        this.TutorialDialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(key), 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.None);
+        this.TutorialDialog.AfterDialogShown = (Int32 choice) => { base.Loading = false; };
+        this.TutorialDialog.AfterDialogHidden = this.AfterHideBasicControlTutorial;
     }
 
     private String GetBasicControlTutorialKey()
@@ -417,7 +411,7 @@ public class TutorialUI : UIScene
     public Int32 libraPage;
 
     [NonSerialized]
-    private Dialog tutorialDialog;
+    public Dialog TutorialDialog;
 
     private class GOIsolatedButton : GOWidget
     {

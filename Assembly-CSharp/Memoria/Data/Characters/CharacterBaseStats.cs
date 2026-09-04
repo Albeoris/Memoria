@@ -35,7 +35,7 @@ namespace Memoria.Data
         {
             Int32 index = 0;
             Comment = CsvParser.String(raw[index++]);
-            Id = (CharacterId)CsvParser.Byte(raw[index++]);
+            Id = (CharacterId)CsvParser.Int32(raw[index++]);
             Data = metadata.IsAppendMode ? GetExisting(Id) : this;
             Data.ParseDataEntry(raw, metadata, ref index);
         }

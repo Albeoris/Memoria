@@ -1,5 +1,6 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
 using FF9;
+using NCalc;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
@@ -552,6 +553,22 @@ namespace Memoria
                         FF9BattleDB.Animation[ID[idindex]] = entry[entry.Length - 1];
                     }
                 }
+                else if (String.Equals(entry[0], "3DModelParameter"))
+                {
+                    if (!Int32.TryParse(entry[1], out Int32 modelId))
+                        continue;
+                    FF9DBModelParameters param = FF9DBModelParameters.GetOrCreateParameters(modelId);
+                    for (Int32 i = 2; i + 1 < entry.Length; i += 2)
+                    {
+                        String paramName = entry[i];
+                        String paramValue = entry[i + 1];
+                        if (paramName == "Height") Int32.TryParse(paramValue, out param.Height);
+                        if (paramName == "Radius") Int32.TryParse(paramValue, out param.Radius);
+                        if (paramName == "NeckBone") Int32.TryParse(paramValue, out param.NeckBone);
+                        if (paramName == "StencilOpOutline") Int32.TryParse(paramValue, out param.StencilOpOutline);
+                        if (paramName == "OutlineWidth") Single.TryParse(paramValue, out param.OutlineWidth);
+                    }
+                }
                 else if (String.Equals(entry[0], "SwapFieldModelTexture"))
                 {
                     // eg.: SwapFieldModelTexture 2250 GEO_MON_B3_093 CustomTextures/OeilvertGuardian/342_0.png CustomTextures/OeilvertGuardian/342_1.png CustomTextures/OeilvertGuardian/342_2.png CustomTextures/OeilvertGuardian/342_3.png CustomTextures/OeilvertGuardian/342_4.png CustomTextures/OeilvertGuardian/342_5.png
@@ -579,6 +596,7 @@ namespace Memoria
             };
             BattlePatch currentPatch = null;
             _selectedBattleId = -1;
+            _currentCondition = String.Empty;
             foreach (String s in patchCode)
             {
                 if (s.StartsWith("//"))
@@ -625,13 +643,48 @@ namespace Memoria
                 _battlePatch.Remove(bp);
         }
 
+        private static Boolean SceneCheck_Single(BTL_SCENE scene, String battleName, String condition)
+        {
+            if (!String.Equals(scene.nameIdentifier, battleName))
+                return false;
+            if (String.IsNullOrEmpty(condition))
+                return true;
+            Expression expr = new Expression(condition);
+            NCalcUtility.InitializeExpressionScene(ref expr, scene);
+            expr.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+            expr.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+            return NCalcUtility.EvaluateNCalcCondition(expr.Evaluate(), false);
+        }
+
+        private static Boolean SceneCheck_NameExists(BTL_SCENE scene, String[] battleTexts, String search, String condition)
+        {
+            if (!Array.Exists(battleTexts, (name) => String.Equals(name, search)))
+                return false;
+            if (String.IsNullOrEmpty(condition))
+                return true;
+            Expression expr = new Expression(condition);
+            NCalcUtility.InitializeExpressionScene(ref expr, scene);
+            expr.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+            expr.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+            return NCalcUtility.EvaluateNCalcCondition(expr.Evaluate(), false);
+        }
+
         private static Boolean TryParseBattleSelector(String opcode, String oparg, ref BattlePatch patch)
         {
             String idstr;
             Int32 idint;
-            if (String.Equals(opcode, "Battle"))
+            if (String.Equals(opcode, "Condition"))
+            {
+                oparg = oparg.Trim();
+                if (oparg == "None")
+                    oparg = String.Empty;
+                _currentCondition = oparg;
+                return true;
+            }
+            else if (String.Equals(opcode, "Battle"))
             {
                 String selectedBattle;
+                String condition = _currentCondition;
                 if (Int32.TryParse(oparg, out idint) && FF9BattleDB.SceneData.TryGetKey(idint, out idstr))
                     selectedBattle = idstr;
                 else
@@ -639,25 +692,27 @@ namespace Memoria
                 if (!FF9BattleDB.SceneData.TryGetValue(selectedBattle, out _selectedBattleId))
                     _selectedBattleId = -1;
                 patch = new BattlePatch(BattlePatch.BattleTokenType.Scene,
-                    (scene, str) => String.Equals(scene.nameIdentifier, selectedBattle),
+                    (scene, str) => SceneCheck_Single(scene, selectedBattle, condition),
                     (scene, str, index) => false);
                 _battlePatch.Add(patch);
                 return true;
             }
             else if (String.Equals(opcode, "AnyEnemyByName"))
             {
+                String condition = _currentCondition;
                 _selectedBattleId = -1;
                 patch = new BattlePatch(BattlePatch.BattleTokenType.Enemy,
-                    (scene, str) => Array.Exists(str, (name) => String.Equals(name, oparg)),
+                    (scene, str) => SceneCheck_NameExists(scene, str, oparg, condition),
                     (scene, str, index) => String.Equals(str[index], oparg));
                 _battlePatch.Add(patch);
                 return true;
             }
             else if (String.Equals(opcode, "AnyAttackByName"))
             {
+                String condition = _currentCondition;
                 _selectedBattleId = -1;
                 patch = new BattlePatch(BattlePatch.BattleTokenType.Attack,
-                    (scene, str) => Array.Exists(str, (name) => String.Equals(name, oparg)),
+                    (scene, str) => SceneCheck_NameExists(scene, str, oparg, condition),
                     (scene, str, index) => String.Equals(str[scene.header.TypCount + index], oparg));
                 _battlePatch.Add(patch);
                 return true;
@@ -742,6 +797,7 @@ namespace Memoria
 
         private static List<BattlePatch> _battlePatch = new List<BattlePatch>();
         private static Int32 _selectedBattleId;
+        private static String _currentCondition;
 
         private static Char[] _formulaTrim = ['"'];
         private static Char[] _battleSeparator = [' '];

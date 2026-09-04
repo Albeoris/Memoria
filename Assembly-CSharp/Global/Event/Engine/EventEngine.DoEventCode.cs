@@ -425,33 +425,21 @@ public partial class EventEngine
                 }
                 if (mapNo == 1060) // Cleyra/Cathedral
                 {
-                    String lang = Localization.CurrentSymbol;
-                    if (lang == "JP")
+                    String symbol = Localization.CurrentSymbol;
+                    Int32 startDanceID = 262;
+                    Int32 endDanceID = 264;
+                    if (symbol == "JP" || symbol == "GR" || symbol == "FR" || symbol == "ES" || symbol == "IT")
                     {
-                        if (textID == 271) // Start of the dancing scene
-                        {
-                            HonoBehaviorSystem.FrameSkipEnabled = true;
-                            HonoBehaviorSystem.TargetFrameTime = 0.03333334f;
-                        }
-                        else if (textID == 272) // End of the dancing scene
-                            HonoBehaviorSystem.FrameSkipEnabled = false;
+                        startDanceID = symbol == "IT" ? 270 : 271;
+                        endDanceID = symbol == "GR" ? 274 : 272;
                     }
-                    else if (textID == 262) // Start of the dancing scene
+                    if (textID == startDanceID) // Start of the dancing scene
                     {
                         HonoBehaviorSystem.TargetFrameTime = 0.03333334f;
                         HonoBehaviorSystem.FrameSkipEnabled = true;
                     }
-                    else if (textID == 264) // End of the dancing scene
+                    else if (textID == endDanceID) // End of the dancing scene
                         HonoBehaviorSystem.FrameSkipEnabled = false;
-                    Dictionary<Int32, Int32> remapDictionary = null;
-                    if (lang == "ES" || lang == "FR")
-                        remapDictionary = this._mesIdES_FR;
-                    else if (lang == "GR")
-                        remapDictionary = this._mesIdGR;
-                    else if (lang == "IT")
-                        remapDictionary = this._mesIdIT;
-                    if (remapDictionary != null && remapDictionary.ContainsKey(textID))
-                        textID = remapDictionary[textID];
                 }
                 if (mapNo == 2172 && scCounter < 9100 && Localization.CurrentSymbol == "JP" && textID == 91 && this.gCur.sid == 1 && this.gCur.ip == 145 && EIcon.AIconMode == 0)
                 {
@@ -472,32 +460,20 @@ public partial class EventEngine
                 if (mapNo == 1060) // Cleyra/Cathedral
                 {
                     String symbol = Localization.CurrentSymbol;
-                    if (symbol == "JP")
+                    Int32 startDanceID = 262;
+                    Int32 endDanceID = 264;
+                    if (symbol == "JP" || symbol == "GR" || symbol == "FR" || symbol == "ES" || symbol == "IT")
                     {
-                        if (textID == 271) // Start of the dancing scene
-                        {
-                            HonoBehaviorSystem.TargetFrameTime = 0.03333334f;
-                            HonoBehaviorSystem.FrameSkipEnabled = true;
-                        }
-                        else if (textID == 272) // End of the dancing scene
-                            HonoBehaviorSystem.FrameSkipEnabled = false;
+                        startDanceID = symbol == "IT" ? 270 : 271;
+                        endDanceID = symbol == "GR" ? 274 : 272;
                     }
-                    else if (textID == 262) // Start of the dancing scene
+                    if (textID == startDanceID) // Start of the dancing scene
                     {
                         HonoBehaviorSystem.TargetFrameTime = 0.03333334f;
                         HonoBehaviorSystem.FrameSkipEnabled = true;
                     }
-                    else if (textID == 264) // End of the dancing scene
+                    else if (textID == endDanceID) // End of the dancing scene
                         HonoBehaviorSystem.FrameSkipEnabled = false;
-                    Dictionary<Int32, Int32> remapDictionary = null;
-                    if (symbol == "ES" || symbol == "FR")
-                        remapDictionary = this._mesIdES_FR;
-                    else if (symbol == "GR")
-                        remapDictionary = this._mesIdGR;
-                    else if (symbol == "IT")
-                        remapDictionary = this._mesIdIT;
-                    if (remapDictionary != null && remapDictionary.ContainsKey(textID))
-                        textID = remapDictionary[textID];
                 }
                 if (mapNo == 1757 && scCounter == 6740 && mapIndex == 30) // Iifa Tree/Outer Seal
                 {
@@ -657,7 +633,6 @@ public partial class EventEngine
                 EIcon.SetAIcon(mode);
                 return 0;
             }
-            // 0x22, "Wait", "Wait some time.arg1: amount of frames to wait. For PAL, 1 frame is 0.04 seconds. For other versions, 1 frame is about 0.033 seconds."
             case EBin.event_code_binary.MOVE: // 0x23, "Walk", "Make the character walk to destination. Make it synchronous if InitWalk is called before"
             {
                 Int32 destX = this.getv2(); // arg1: destination X
@@ -1274,6 +1249,16 @@ public partial class EventEngine
                     return 0;
                 }
                 actor.aspeed0 = (Byte)this.getv1(); // arg1: speed
+                if (mapNo == 1060) // Cleyra/Cathedral
+                {
+                    String lang = Localization.CurrentSymbol;
+                    if (lang != "US" && lang != "JP")
+                    {
+                        // Dancing scene: use the wait timings adapted to 30fps (NTSC) instead of 25fps (PAL)
+                        if (actor.aspeed0 == 20)
+                            actor.aspeed0 = 16;
+                    }
+                }
                 return 0;
             }
             case EBin.event_code_binary.AMODE: // 0x3F, "SetAnimationFlags", "Set the current object's next animation looping flags"
@@ -1951,7 +1936,7 @@ public partial class EventEngine
                 this.fieldmap.SetCurrentCameraIndex(newCamIdx);
                 if (mapNo == 1205 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 4800 && this.eBin.getVarManually(6357) == 3) // A. Castle/Chapel
                     this.SetActorPosition(this._fixThornPosObj, this._fixThornPosA, this._fixThornPosB, this._fixThornPosC);
-                if (mapNo == 3009 && newCamIdx == 0 && this.gCur.sid == EventEngineUtils.GetEventCharacterSId(this.sObjTable, CharacterId.Blank)) // Ending/TH
+                if (mapNo == 3009 && newCamIdx == 0 && EventEngineUtils.IsBlankInField3009(this, this.gCur)) // Ending/TH
                     EventEngine.resyncBGMSignal = 1;
                 return 0;
             }
@@ -2502,16 +2487,25 @@ public partial class EventEngine
                     arg2 = this.getv1();
                 if (eventCodeBinary == EBin.event_code_binary.FLDSND3)
                     arg3 = this.getv1();
+                if (mapNo == 1060 && soundCode == FF9Snd.FF9SOUND_SONG_TEMPO && soundID == 83 && arg1 == 5) // Cleyra/Cathedral, dancing song
+                {
+                    String lang = Localization.CurrentSymbol;
+                    if (lang != "US" && lang != "JP")
+                    {
+                        // Dancing scene: use the wait timings adapted to 30fps (NTSC) instead of 25fps (PAL)
+                        return 0;
+                    }
+                }
 
                 FF9Snd.FF9Sound(soundCode, soundID, arg1, arg2, arg3);
-                if (mapNo == 2928)
+                if (mapNo == 2928) // Hill of Despair
                 {
                     if (soundID == 2786)
                     {
                         FF9Snd.FF9Sound(soundCode, 2980, arg1, arg2, arg3);
                         FF9Snd.FF9Sound(soundCode, 2981, arg1, arg2, arg3);
                     }
-                    else if (soundCode == -12288 && soundID == 2787 && (arg1 == 0 && arg2 == 128) && arg3 == 125)
+                    else if (soundCode == -12288 && soundID == 2787 && arg1 == 0 && arg2 == 128 && arg3 == 125)
                     {
                         FF9Snd.FF9Sound(20736, 2980, 0, 0, 0);
                         FF9Snd.FF9Sound(20736, 2981, 0, 0, 0);

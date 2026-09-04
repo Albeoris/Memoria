@@ -700,7 +700,20 @@ public class EBin
                 Int32 y = EvaluateValueExpression();
                 _calcValue = EvaluateValueExpression();
                 if ((FF9StateSystem.Common.FF9.fldMapNo == 908 || FF9StateSystem.Common.FF9.fldMapNo == 1908) && _eventEngine.gCur.uid == 0 && y == 80)
-                    y = 300; // fix for gates at treno in widescreen
+                {
+                    // fix for gates at treno in widescreen
+                    y = 300;
+                }
+                else if (FF9StateSystem.Common.FF9.fldMapNo == 1060) // Cleyra/Cathedral
+                {
+                    String lang = Localization.CurrentSymbol;
+                    if (lang != "US" && lang != "JP")
+                    {
+                        // Dancing scene: use the wait timings adapted to 30fps (NTSC) instead of 25fps (PAL)
+                        if (y == 44)
+                            y = 55;
+                    }
+                }
                 if (_eventEngine.gCur.uid == 13 && y == -300)
                     y = -250;
                 _calcValue = _calcValue < y ? 1 : 0;
@@ -1229,7 +1242,25 @@ public class EBin
         Int32 varargflag = currentObject.getByteIP();
         currentObject.ip++;
         _calcValue = getv1i(ref varargflag);
-        if (FF9StateSystem.Common.FF9.fldMapNo == 3011) // Ending/TH
+        if (FF9StateSystem.Common.FF9.fldMapNo == 1060) // Cleyra/Cathedral
+        {
+            String lang = Localization.CurrentSymbol;
+            if (lang != "US" && lang != "JP")
+            {
+                // Dancing scene: use the wait timings adapted to 30fps (NTSC) instead of 25fps (PAL)
+                if (_calcValue == 44)
+                    _calcValue = 55;
+                else if (_calcValue == 12)
+                    _calcValue = 16;
+                else if (_calcValue == 13)
+                    _calcValue = 24;
+                else if (_calcValue == 40 && currentObject.sid == 16)
+                    _calcValue = 50;
+                else if (_calcValue == 11)
+                    _calcValue = 14;
+            }
+        }
+        else if (FF9StateSystem.Common.FF9.fldMapNo == 3011) // Ending/TH
         {
             String lang = Localization.CurrentSymbol;
             if (lang != "US" && lang != "JP")
@@ -1243,7 +1274,7 @@ public class EBin
         else if (FF9StateSystem.Common.FF9.fldMapNo == 3009) // Ending/TH
         {
             String lang = Localization.CurrentSymbol;
-            if (lang != "US" && lang != "JP" && currentObject.uid == 17 && _calcValue == 15)
+            if (lang != "US" && lang != "JP" && EventEngineUtils.IsBlankInField3009(_eventEngine, currentObject) && _calcValue == 15)
                 _calcValue = 20;
         }
         if (_calcValue != 0)
