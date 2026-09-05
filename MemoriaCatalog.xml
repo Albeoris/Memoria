@@ -3868,10 +3868,10 @@ Part of the Kupo Mods suite, formerly known as Mog Add-ons.
 
 <Mod>
     <Name>Extra Equipment Menu (EEM)</Name>
-    <Version>1.1</Version>
+    <Version>1.2</Version>
     <Author>WarpedEdge</Author>
     <ReleaseDateOriginal>2026-08-31</ReleaseDateOriginal>
-	<ReleaseDate>2026-09-03</ReleaseDate>
+	<ReleaseDate>2026-09-05</ReleaseDate>
     <InstallationPath>ExtraEquipmentMenu</InstallationPath>
     <Category>User Interface</Category>
     <Description>This mod adds an extra equipment menu to the game. This allows previewing of the character's model. It comes with two weapon transmog submod options, 3 new items (No EXP, No AP, and No Gil), and other mods can use this mod as a dependency and create their own rules with varying effects.
@@ -3894,7 +3894,7 @@ Part of the Kupo Mods suite, formerly known as Mog Add-ons.
         <Group>WeaponTransmog</Group>
     </SubMod>
     <Website>https://www.nexusmods.com/games/finalfantasy9/mods/137</Website>
-	<DownloadUrl>https://github.com/WarpedEdge/FFIX-ExtraEquipmentMenu-Public/releases/download/v1.1/ExtraEquipmentMenu.zip</DownloadUrl>
+	<DownloadUrl>https://github.com/WarpedEdge/FFIX-ExtraEquipmentMenu-Public/releases/download/v1.2/ExtraEquipmentMenu.zip</DownloadUrl>
     <PreviewFile>Preview/ExtraEquipmentMenu.png</PreviewFile>
 	<PreviewFileUrl>https://i.imgur.com/AB0NcqI.png</PreviewFileUrl>
     <MinimumMemoriaVersion>2026.07.21</MinimumMemoriaVersion>
