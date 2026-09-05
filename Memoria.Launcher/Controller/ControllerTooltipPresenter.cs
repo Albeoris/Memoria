@@ -41,6 +41,13 @@ namespace Memoria.Launcher.Controller
             Show(current);
         }
 
+        public void Enable(Control current = null)
+        {
+            _enabled = true;
+            if (current != null)
+                Show(current);
+        }
+
         public void Disable()
         {
             _enabled = false;
