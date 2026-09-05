@@ -23,6 +23,8 @@ namespace Memoria.Launcher.Controller
                 throw new ArgumentNullException(nameof(window));
         }
 
+        public Control Current => _focusVisualOwner ?? Keyboard.FocusedElement as Control;
+
         public event Action<Control> FocusChanging;
         public event Action<Control> Focused;
 

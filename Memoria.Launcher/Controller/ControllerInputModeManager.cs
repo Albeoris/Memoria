@@ -54,6 +54,7 @@ namespace Memoria.Launcher.Controller
             _hasControllerPointerPosition = NativePointer.TryGetPosition(out _controllerPointerPosition);
             Mouse.OverrideCursor = Cursors.None;
             _tooltips.CloseAutomaticTooltips();
+            _tooltips.Enable(_focus.Current);
             InstallMouseInputShield();
         }
 
