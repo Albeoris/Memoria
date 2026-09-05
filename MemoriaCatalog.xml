@@ -161,12 +161,12 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 	
 <Mod>
 	<Name>Trance Seek</Name>
-	<Version>0.3.36.2</Version>
+	<Version>0.3.37</Version>
 	<Priority>4</Priority>
 	<InstallationPath>TranceSeek</InstallationPath>
 	<ReleaseDateOriginal>2022-01-28</ReleaseDateOriginal>
-	<ReleaseDate>2025-09-05</ReleaseDate>
-	<MinimumMemoriaVersion>2025-05-12</MinimumMemoriaVersion>
+	<ReleaseDate>2026-09-05</ReleaseDate>
+	<MinimumMemoriaVersion>2025-05-17</MinimumMemoriaVersion>
 	<Author>DV</Author>
 	<IncompatibleWith>Alternate Fantasy,Amazing Quina,Beatrix Mod,Black Cat - Endgame Shop,David Bowie Edition,Freya Game+,Garnet is Main Character,Perfect Stats,Play As Kuja,Playable Character Pack,Tantalus</IncompatibleWith>
 	<Description>
@@ -193,135 +193,144 @@ Don't hesitate to try!
 Recommended language : Français / English (UK)
 Not supported language : Japanese (a lot of things get deleted... need to wait until full release... sorry !)</Description>
 	<PatchNotes>
-------[0.3.36.2]------
-
-{Characters}
-- Zidane will chuckle when a steal succeeds under the effect of "Thief’s Eye"
-- Fixed some bugs with Eiko’s passive under specific conditions.
-- Fixed Vivi’s animations for high-tier spells.
-- Changed Vivi’s SA "Invigorating" to "Last Stand".
-- "Mog Flare" and "Mog Holy" are much less likely to be cast against targets under "Reflect".
-- New texture for Steiner under "Old" status so it’s more visible, especially under magical barriers like Shell.
-- Restored "Aero" and "Aero+" spells to Beatrix’s "Saint Mag" command.
-- Fixed Vivi’s Focus effect with "Dbl Blk" when ATB is set to "Wait Mode".
-- [WIP] Fixed a specific bug where a character remained invisible after a scripted Trance with the accessory "Ghost Scarf", notably with Vivi against Black Waltz 3 in Disc 1.
-- The "Zombie" status no longer prevents fleeing.
-
-{SA / AA Abilities}
-- "What’s That!?" is compatible with Thief’s Eye and applies Zidane’s passive to every target.
-- "What’s That!?" allows repositioning in any situation, even against bosses.
-- "Transmute" and "Mana Well" commands are now properly disabled when Vivi is under Silence.
-- Gil bonuses now stack (from SAs or equipment).
-- Camera sequences for "Eat" and "Cook" are disabled under certain conditions (notably when damage is dealt).
-- Fixed the "Appetite" and "Gluttony" SAs against certain targets, especially humanoids.
-- Fixed the "Demi" spell when cast on multiple targets.
-- Fixed the sequence file for the AA "Dragon’s Crest", which displayed invisible enemies in battle.
-- Fixed the AA "Mog Life".
-- Fixed the MP cost of one of Quina’s blue magics.
-- SOS-type SAs are no longer always reset when a character is revived.
-- Fixed the description of the SA "Voracious".
-- Fixed the SA "Turbo".
-- Fixed the SA "Embrace".
-- Fixed the SA "Propagation" which was changing "Lv.4 Holy" into "Matra Magic".
-- Fixed the SA "Fencing".
-- Fixed the AA "Fenrir", about unlocking its "Wind" version.
-- Adjusted the cost of the SA "Fencing": 3 -> 4.
-- Adjusted the cost of the SA "Presence": 4 -> 3.
-- Adjusted the cost of the SA "Alert": 5 -> 4.
-- The "Attack" command will now change if the weapon element is infused, especially with the SA "Enchanted Blade".
-- Fixed "Atomos" damage on bosses.
-- Fixed the formula of the SA "Invigorating" and slightly adjusted its effect.
-- Slight adjustment to the effect of "Zantetsuken" under "Divine guidance".
-- Fixed the Gravity spell against certain monsters, especially bosses with scripted deaths.
-  With the new Gravity spells added to Vivi, the damage penalty now starts at 2 instead of 1 (damage divided by 2, then 4, 8, 16, 32, etc…).
-- Gravity spells are 50% more effective against "Giant"-type enemies (instead of 100%).
-  They also gain a 25% damage bonus against Giant-type bosses.
-- The abilities "Zeus", "Hikari" and "Zantetsu" have been renamed to "Fulmen", "Sentence" and "Inquisition".
-- Improved the descriptions of Freya’s "Dragon" spells.
-- Fixed and improved the descriptions of several AAs/SAs.
-
-{Items}
-- "Smoke Bomb" no longer has the "IsPhysical" tag.
-- Adjusted some SFX depending on the weapon type thrown by Amarant.
-- Fixed SAs tied to certain items.
-- Fixed the description of the SA "Invigorating".
-- Added a new effect for "Pickpocket".
-- Fixed the description of "Cypress Pile", which didn’t display the correct status effect.
-- Optimized the effect of "Larceny Scepter" in multi-target cases.
-- Adjusted the price of certain items.
-- Fixed the effects of several items, some of which failed to properly trigger a free SA activation.
-- Fixed and improved the descriptions of all weapons to be clearer when using the "Throw" command.
-- Fixed and improved the descriptions of several items.
-
-{Monsters and Bosses}
-- Reworked a majority of AIs so their scripts depend on MAX_HP instead of a fixed value (to better match the different difficulty settings).
-  Some formulas remain unchanged depending on the difficulty, such as Gisamark’s last phase.
-- Reworked code handling buffs/debuffs tied to difficulty (in preparation for the future Garland mode).
-- Added 2 new monsters in the "Pandemonium" dungeon.
-- Fixed Soulcage’s AI.
-- Fixed Thorn’s AI (Disc 1) (+ complete reset of the entire fight due to corruption in the .hws project).
-- Adjusted Hilgigars’s AI.
-- Adjusted Taharka’s AI.
-- Adjusted Baku’s AI.
-- Adjusted Steiner’s AI (first encounter).
-- Adjusted the AI of Malboros.
-- Adjusted the AI of Vices.
-- Adjusted the AI of Magic Vices.
-- Adjusted Beatrix 3’s fight: just a small detail added at the end of the battle.
-- Fixed Kuja’s animations in Disc 3 and improved sequence files.
-- Fixed certain sequence files that still targeted KO’d characters.
-- Fixed a sequence file of "Sand Worm" where the second-position character could end up under the terrain.
-- Fixed a bug against "Sand Worm" where it was possible to resist its "Quicksand" attack.
-- Monsters during the "You Are Not Alone" scene are now considered bosses instead of elite monsters.
-- Added a "mini hack" for monsters when they can’t target anyone in ATB "Wait Mode", notably Freya in 1v1 who could easily spam "Jump" at equal speed.
-- The boss "Arkh" will no longer coo at all! ^^
-- Fixed the "Trouble Knife" attack of Ogres in "Outer Continent, Dirt" which didn’t have the correct sequence file.
-- Fixed the rewards of a boss.
-- Fixed Hilgigars’s max HP, which made Gravity damage inconsistent.
-- Improved the sequence files of certain monsters.
-
-{Fields}
-- Added Beatrix to field 2854 "Hilda Garde 3/Bridge"
-- Fixed a bug in field 2706 "Pand./Hall" where the Beatrix model remained.
-- Fixed a bug in field 2711 "Pand./Control Room" where TurboDialog wasn’t compatible with the elevator control window.
-- Fixed the score window in US during Lindblum’s Festival of the Hunt.
-- Fixed the position of the points window awarded by Fang in US.
-- Fixed NPC dialogues in fields 551 + 563 + 572, which caused a softlock in US during Lindblum’s Festival of the Hunt.
-- Fixed the rewards in the Fossil Roo mining mini-game.
-- Fixed the reward at 5 Frogs in Qu’s Marsh frog catching mini-game.
-
-{Miscellaneous}
-- Fixed certain conditions in Ozma Mode where the level cap was locked in unintended places.
-- SAs are now sorted alphabetically for the StuffListed.txt option.
+ChangeLog too long... please check "ChangeLog_FR+EN_[0.3.37]" in the mod folder.
 	</PatchNotes>
-	<Header>QoL options</Header>
+<Header>QoL Miscellaneous</Header>
+	<SubMod>
+		<Name>Activate Redemption Icon in Battle</Name>
+		<InstallationPath>Options/RedemptionIconInBattle</InstallationPath>
+		<Description>Enable or disable the Redemption stack in battle, next to Beatrix (old version).</Description>
+		<PreviewFile>Options/RedemptionIconInBattle/Thumbnail.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Immune Status Effect on Player</Name>
+		<InstallationPath>Options/ImmuneStatusPlayer</InstallationPath>
+		<Description>Active the "Immune Status" SPS effect on players too.</Description>
+		<PreviewFile>Options/ImmuneStatusPlayer/Thumbnail.jpg</PreviewFile>
+		<Default />
+	</SubMod>
+	<SubMod>
+		<Name>Hé hé !</Name>
+		<InstallationPath>Options/HeheZidane</InstallationPath>
+		<Description>Zidane will speak for every steal succeeded.</Description>
+		<PreviewFile>Options/HeheZidane/Thumbnail.jpg</PreviewFile>
+		<Default />
+	</SubMod>
+	<SubMod>
+		<Name>Haste/Slow feature</Name>
+		<InstallationPath>Options/HasteSlowFeature</InstallationPath>
+		<Description>Speed up some animations when an unit is under Haste.
+		Slow down some animations when an unit is under Slow.
+		Quite experimental.</Description>
+		<Default />
+	</SubMod>
+	<SubMod>
+		<Name>Best sorting shops/equipments menu</Name>
+		<InstallationPath>Options/AutoSorterShop</InstallationPath>
+		<Description>Automatically sorts the equipment menu and shops menu
+		so that items are organized more logically
+		(generally by type and then by stats)</Description>
+		<PreviewFile>Options/AutoSorterShop/Thumbnail.jpg</PreviewFile>
+		<Default />
+	</SubMod>
+	<SubMod>
+		<Name>Trance Music</Name>
+		<InstallationPath>Options/TranceMusic</InstallationPath>
+		<Description>Change the BGM Music by a remixed one,
+		when a monster get intro Trance.
+		Disabled by default because may crash the game...</Description>
+	</SubMod>
+	<SubMod>
+		<Name>Party Followers feature</Name>
+		<InstallationPath>Options/FollowersFeature</InstallationPath>
+		<Description>Replicates the feature from FF8 where your party members follow you during a cutscene or on the world map!
+		Compatible only with characters from Trance Seek.
+		Experimental and may cause "strange" situations.</Description>
+		<PreviewFile>Options/FollowersFeature/Thumbnail.jpg</PreviewFile>
+		<Default />
+	</SubMod>
+	<Header>Player Menu QoL</Header>
 	<SubMod>
 		<Name>Enable colored HP in Menu</Name>
-		<InstallationPath>ColoredHP</InstallationPath>
+		<InstallationPath>Options/ColoredHP</InstallationPath>
 		<Description>Enable or disable the colored HP maximum on menu (player + battle).</Description>
-		<Default/>
-		<PreviewFile>ColoredHP/Thumbnail.jpg</PreviewFile>
+		<PreviewFile>Options/ColoredHP/Thumbnail.jpg</PreviewFile>
+		<Default />
 	</SubMod>
 	<SubMod>
 		<Name>Enable colored MP in Menu</Name>
-		<InstallationPath>ColoredMP</InstallationPath>
+		<InstallationPath>Options/ColoredMP</InstallationPath>
 		<Description>Enable or disable the colored MP maximum on menu (player + battle).</Description>
-		<Default/>
-		<PreviewFile>ColoredMP/Thumbnail.jpg</PreviewFile>
+		<PreviewFile>Options/ColoredMP/Thumbnail.jpg</PreviewFile>
+		<Default />
 	</SubMod>
 	<SubMod>
 		<Name>Enable colored magic stones in Menu</Name>
-		<InstallationPath>ColoredGems</InstallationPath>
+		<InstallationPath>Options/ColoredGems</InstallationPath>
 		<Description>Enable or disable the colored gem stones on player menu.</Description>
-		<Default/>
-		<PreviewFile>ColoredGems/Thumbnail.jpg</PreviewFile>
+		<PreviewFile>Options/ColoredGems/Thumbnail.jpg</PreviewFile>
+		<Default />
 	</SubMod>
 	<SubMod>
+		<Name>Boosted SA Indicator (Pink Text)</Name>
+		<InstallationPath>Options/BoostedSAIndicator/PinkText</InstallationPath>
+		<Description>Enable or disable the colored MP maximum on menu (player + battle).</Description>
+		<PreviewFile>Options/BoostedSAIndicator/PinkText/Thumbnail.jpg</PreviewFile>
+		<Group>BoostedSAIndicator</Group>
+		<Default />
+	</SubMod>
+	<SubMod>
+		<Name>Boosted SA Indicator (Fading)</Name>
+		<InstallationPath>Options/BoostedSAIndicator/Fading</InstallationPath>
+		<Description>Enable or disable the colored gem stones on player menu.</Description>
+		<PreviewFile>Options/BoostedSAIndicator/Fading/Thumbnail.jpg</PreviewFile>
+		<Group>BoostedSAIndicator</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Boosted SA Indicator (Disabled)</Name>
+		<InstallationPath>Options/BoostedSAIndicator/Disabled</InstallationPath>
+		<Description>Enable or disable the colored gem stones on player menu.</Description>
+		<PreviewFile>Options/BoostedSAIndicator/Disabled/Thumbnail.jpg</PreviewFile>
+		<Group>BoostedSAIndicator</Group>
+	</SubMod>
+	<Header>Statistics modifier indicator</Header>
+	<SubMod>
+		<Name>Green / Red</Name>
+		<InstallationPath>Options/StatModifierIndicator/GreenRed</InstallationPath>
+		<Description>A feature that checks whether an unity in battle has modified stats and shows a message.
+		It's generally recommended to leave this enabled.
+		Green indicates a stat bonus.
+		Red indicates a stat malus.</Description>
+		<PreviewFile>Options/StatModifierIndicator/GreenRed/Thumbnail.jpg</PreviewFile>
+		<Group>StatModifierIndicator</Group>
+	</SubMod>
+	<SubMod>
+		<Name>Yellow / Purple</Name>
+		<InstallationPath>Options/StatModifierIndicator/YellowPurple</InstallationPath>
+		<Description>A feature that checks whether an unity in battle has modified stats and shows a message.
+		It's generally recommended to leave this enabled.
+		Yellow indicates a stat bonus.
+		Purple indicates a stat malus.</Description>
+		<PreviewFile>Options/StatModifierIndicator/YellowPurple/Thumbnail.jpg</PreviewFile>
+		<Group>StatModifierIndicator</Group>
+		<Default />
+	</SubMod>
+	<SubMod>
+		<Name>Disabled</Name>
+		<InstallationPath>Options/StatModifierIndicator/Disabled</InstallationPath>
+		<Description>Disable the feature.
+		Not recommended if you're discovering the mod for the first time.</Description>
+		<Group>StatModifierIndicator</Group>
+	</SubMod>
+	<Header>Miscellaneous</Header>
+	<SubMod>
 		<Name>Activate StuffListed file</Name>
-		<InstallationPath>StuffListed</InstallationPath>
+		<InstallationPath>Options/StuffListed</InstallationPath>
 		<Description>Enable or disable a feature to list all stuff at each battle start.
-		You can find the file in the folder TranceSeek, called StuffListed.txt</Description>
-		<PreviewFile>StuffListed/Thumbnail.jpg</PreviewFile>
+	You can find the file in the folder TranceSeek, called StuffListed.txt.
+	A handy way to share your build (e.g., a YouTube video) during a battle.
+	</Description>
+		<PreviewFile>Options/StuffListed/Thumbnail.jpg</PreviewFile>
 	</SubMod>
 	<Category>Gameplay</Category>
 	<PreviewFileUrl>https://i.ibb.co/HC3GH4j/Logo-Trance-Seek.png</PreviewFileUrl>
