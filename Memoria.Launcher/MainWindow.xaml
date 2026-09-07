@@ -333,6 +333,20 @@
                                                         <Image Source="/images/btnUninstallimg.png"/>
                                                     </Button>
                                                 </StackPanel>
+                                                <Button x:Name="btnDebugMod"
+                                                    Grid.Row="0"
+                                                    Grid.RowSpan="2"
+                                                    Grid.Column="0"
+                                                    Style="{StaticResource ToolButtonStyle}"
+                                                    Margin="0,3,0,0"
+                                                    HorizontalAlignment="Left"
+                                                    VerticalAlignment="Bottom"
+                                                    Click="OnClickDebugMod"
+                                                    IsEnabled="False"
+                                                    TabIndex="29"
+                                                    ToolTip="Debug selected mod">
+                                                    <TextBlock Text="🐞" FontFamily="{StaticResource NotoEmoji}" FontSize="25" TextAlignment="Center" VerticalAlignment="Center" />
+                                                </Button>
                                                 <TextBox
                                                     x:Name="txtSearchMods"
                                                     Grid.Row="0"

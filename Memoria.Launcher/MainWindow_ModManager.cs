@@ -4,6 +4,7 @@ using Memoria.Launcher.Utils.Archives;
 using Memoria.Launcher.Utils.Catalog;
 using Memoria.Launcher.Utils.Downloads;
 using Memoria.Launcher.Utils.Mods;
+using Memoria.Launcher.Utils.ModValidation;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -666,6 +667,31 @@ namespace Memoria.Launcher
             else
             {
                 btnDownload.IsEnabled = false;
+            }
+            btnDebugMod.IsEnabled = lstMods.SelectedItems.Count == 1;
+        }
+
+        private void OnClickDebugMod(Object sender, RoutedEventArgs e)
+        {
+            Mod mod = lstMods.SelectedItem as Mod;
+            if (mod == null)
+                return;
+
+            String displayName = String.IsNullOrWhiteSpace(mod.Name) ? "<unnamed mod>" : mod.Name;
+            try
+            {
+                if (String.IsNullOrWhiteSpace(mod.InstallationPath))
+                    throw new InvalidDataException("The mod does not define an installation path.");
+
+                String installationDirectory = _modFileSystem.GetInstallationDirectory(mod.InstallationPath);
+                ModValidationService service = new ModValidationService(new IModFileValidator[] { new D3D9ShaderValidator(() => SystemD3DShaderAssembler.Instance) });
+                ModValidationWindow window = new ModValidationWindow(installationDirectory, displayName, service) { Owner = this };
+                window.ShowDialog();
+            }
+            catch (Exception exception)
+            {
+                _log.Error(exception, "Unable to validate mod. Mod: {ModName}, InstallationPath: {InstallationPath}", displayName, mod.InstallationPath);
+                MessageBox.Show(this, exception.Message, "Mod validation failed", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         private void OnModListDoubleClick(Object sender, RoutedEventArgs e)

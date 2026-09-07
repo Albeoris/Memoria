@@ -1,0 +1,132 @@
+<Window x:Class="Memoria.Launcher.Utils.ModValidation.ModValidationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:Memoria.Launcher.Utils.ModValidation"
+        Title="Mod validation"
+        MinWidth="800"
+        MinHeight="520"
+        ResizeMode="CanResize"
+        ShowInTaskbar="False"
+        WindowStartupLocation="Manual"
+        Background="#202020"
+        Foreground="#E8E8E8">
+    <Window.Resources>
+        <HierarchicalDataTemplate DataType="{x:Type local:ValidationDisplayNode}" ItemsSource="{Binding Children}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Width="22" Height="22" FontFamily="{DynamicResource NotoEmoji}" FontSize="16" Text="{Binding Icon}" Foreground="{Binding IconBrush}" TextAlignment="Center" VerticalAlignment="Center" />
+                <TextBlock Margin="4,0,0,0" Text="{Binding Name}" VerticalAlignment="Center">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsSuccessMessage}" Value="True">
+                                    <Setter Property="Foreground" Value="LightGreen" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </StackPanel>
+        </HierarchicalDataTemplate>
+    </Window.Resources>
+    <Grid Margin="14">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="8" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="12" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="12" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock x:Name="CurrentStatusTextBlock" FontSize="14" Text="Preparing validation..." TextTrimming="CharacterEllipsis" />
+        <ProgressBar x:Name="ValidationProgressBar" Grid.Row="2" Height="20" Minimum="0" Maximum="1" IsIndeterminate="True" />
+
+        <Grid Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" MinWidth="260" />
+                <ColumnDefinition Width="7" />
+                <ColumnDefinition Width="3*" MinWidth="320" />
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="8" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox x:Name="ShowAllFilesCheckBox" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" VerticalAlignment="Center">
+                        <TextBlock Text="Show all files" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
+                    </CheckBox>
+                    <CheckBox x:Name="TreeViewCheckBox" Margin="20,0,0,0" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" VerticalAlignment="Center">
+                        <TextBlock Text="Tree view" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
+                    </CheckBox>
+                </StackPanel>
+                <Border Grid.Row="2" BorderBrush="#555555" BorderThickness="1" Background="#181818">
+                    <Grid>
+                        <TreeView x:Name="ResultsTreeView" Background="Transparent" Foreground="#E8E8E8" BorderThickness="0" Visibility="Collapsed" SelectedItemChanged="OnTreeSelectedItemChanged">
+                            <TreeView.Resources>
+                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="{DynamicResource AccentColor}" />
+                                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="{DynamicResource AccentColorDarker}" />
+                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="{DynamicResource LightColorPressed}" />
+                                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="{DynamicResource LightColorNormal}" />
+                            </TreeView.Resources>
+                            <TreeView.ItemContainerStyle>
+                                <Style TargetType="{x:Type TreeViewItem}">
+                                    <Setter Property="IsExpanded" Value="True" />
+                                </Style>
+                            </TreeView.ItemContainerStyle>
+                        </TreeView>
+                        <ListBox x:Name="ResultsListBox" Background="Transparent" Foreground="#E8E8E8" BorderThickness="0" SelectionChanged="OnListSelectionChanged" MouseDoubleClick="OnListMouseDoubleClick">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Width="22" Height="22" FontFamily="{DynamicResource NotoEmoji}" FontSize="16" Text="{Binding Icon}" Foreground="{Binding IconBrush}" TextAlignment="Center" VerticalAlignment="Center" />
+                                        <TextBlock Margin="4,0,0,0" Text="{Binding RelativePath}" VerticalAlignment="Center">
+                                            <TextBlock.Style>
+                                                <Style TargetType="{x:Type TextBlock}">
+                                                    <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsSuccessMessage}" Value="True">
+                                                            <Setter Property="Foreground" Value="LightGreen" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <GridSplitter Grid.Column="1" Width="7" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#555555" ResizeBehavior="PreviousAndNext" ResizeDirection="Columns" ShowsPreview="True" />
+
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="8" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="10" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock FontSize="14" Text="Diagnostics" />
+                <TextBox x:Name="DiagnosticsTextBox" Grid.Row="2" Padding="10" Background="#181818" Foreground="#E8E8E8" BorderBrush="#555555" BorderThickness="1" FontFamily="Consolas" FontSize="13" IsReadOnly="True" AcceptsReturn="True" TextWrapping="NoWrap" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" />
+                <Button x:Name="RevalidateButton" Grid.Row="4" Width="160" Height="30" HorizontalAlignment="Right" Content="Validate selected file" IsEnabled="False" Click="OnRevalidateClick" />
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Row="6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="SummaryTextBlock" VerticalAlignment="Center" />
+            <Button x:Name="CloseButton" Grid.Column="1" Width="110" Height="30" Content="Cancel" Click="OnCloseClick" />
+        </Grid>
+    </Grid>
+</Window>

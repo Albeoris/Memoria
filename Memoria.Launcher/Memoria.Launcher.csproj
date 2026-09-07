@@ -147,6 +147,7 @@
     <Compile Include="Utils\IO\FileSystemAccessProbe.cs" />
     <Compile Include="Utils\IO\DirectoryTreeDeleter.cs" />
     <Compile Include="Utils\IO\GameRootDirectory.cs" />
+    <Compile Include="Utils\IO\PathSegmentMatcher.cs" />
     <Compile Include="Utils\IO\SafeRelativePath.cs" />
     <Compile Include="Utils\Localization\ComboBoxOption.cs" />
     <Compile Include="Utils\Localization\ComboBoxOptions.cs" />
@@ -163,6 +164,26 @@
     <Compile Include="Utils\Mods\ModArchiveRoot.cs" />
     <Compile Include="Utils\Mods\ModPackageType.cs" />
     <Compile Include="Utils\Mods\SingleFileModInstaller.cs" />
+    <Compile Include="Utils\ModValidation\D3D9ShaderProgram.cs" />
+    <Compile Include="Utils\ModValidation\D3D9ShaderProgramReader.cs" />
+    <Compile Include="Utils\ModValidation\D3D9ShaderValidator.cs" />
+    <Compile Include="Utils\ModValidation\D3DShaderAssemblyResult.cs" />
+    <Compile Include="Utils\ModValidation\ID3DShaderAssembler.cs" />
+    <Compile Include="Utils\ModValidation\IModFileValidator.cs" />
+    <Compile Include="Utils\ModValidation\ModValidationDiagnosticSeverity.cs" />
+    <Compile Include="Utils\ModValidation\ModValidationFile.cs" />
+    <Compile Include="Utils\ModValidation\ModValidationDiagnostic.cs" />
+    <Compile Include="Utils\ModValidation\ModValidationProgress.cs" />
+    <Compile Include="Utils\ModValidation\ModValidationReport.cs" />
+    <Compile Include="Utils\ModValidation\ModValidationResult.cs" />
+    <Compile Include="Utils\ModValidation\ModValidationService.cs" />
+    <Compile Include="Utils\ModValidation\ModValidationStatus.cs" />
+    <Compile Include="Utils\ModValidation\ModValidationTreeNode.cs" />
+    <Compile Include="Utils\ModValidation\ModValidationWindow.xaml.cs">
+      <DependentUpon>ModValidationWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\ModValidation\SystemD3DShaderAssembler.cs" />
+    <Compile Include="Utils\ModValidation\ValidationDisplayNode.cs" />
     <Compile Include="Utils\Resolution\DisplayBounds.cs" />
     <Compile Include="Utils\Resolution\DisplayMonitor.cs" />
     <Compile Include="Utils\Resolution\DisplayResolution.cs" />
@@ -238,6 +259,10 @@
     </Page>
     <Page Include="Resources\TabItemStyle.xaml">
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Utils\ModValidation\ModValidationWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Resources\TextBoxStyle.xaml">
       <Generator>MSBuild:Compile</Generator>

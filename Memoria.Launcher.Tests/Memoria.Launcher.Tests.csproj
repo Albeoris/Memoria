@@ -63,6 +63,8 @@
              Link="Production\IO\FileSystemAccessProbe.cs" />
     <Compile Include="..\Memoria.Launcher\Utils\IO\DirectoryTreeDeleter.cs"
              Link="Production\IO\DirectoryTreeDeleter.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\IO\PathSegmentMatcher.cs"
+             Link="Production\IO\PathSegmentMatcher.cs" />
     <Compile Include="..\Memoria.Launcher\Utils\IO\SafeRelativePath.cs"
              Link="Production\IO\SafeRelativePath.cs" />
     <Compile Include="..\Memoria.Launcher\Utils\Updates\PendingUpdatePackage.cs"
@@ -97,6 +99,37 @@
              Link="Production\Mods\ModPackageType.cs" />
     <Compile Include="..\Memoria.Launcher\Utils\Mods\SingleFileModInstaller.cs"
              Link="Production\Mods\SingleFileModInstaller.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\D3D9ShaderValidator.cs"
+             Link="Production\ModValidation\D3D9ShaderValidator.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\D3D9ShaderProgram.cs"
+             Link="Production\ModValidation\D3D9ShaderProgram.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\D3D9ShaderProgramReader.cs"
+             Link="Production\ModValidation\D3D9ShaderProgramReader.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\D3DShaderAssemblyResult.cs"
+             Link="Production\ModValidation\D3DShaderAssemblyResult.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\ID3DShaderAssembler.cs"
+             Link="Production\ModValidation\ID3DShaderAssembler.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\IModFileValidator.cs"
+             Link="Production\ModValidation\IModFileValidator.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\ModValidationDiagnostic.cs">
+      <Link>Production\ModValidation\ModValidationDiagnostic.cs</Link>
+    </Compile>
+    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\ModValidationDiagnosticSeverity.cs"
+             Link="Production\ModValidation\ModValidationDiagnosticSeverity.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\ModValidationFile.cs"
+             Link="Production\ModValidation\ModValidationFile.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\ModValidationProgress.cs"
+             Link="Production\ModValidation\ModValidationProgress.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\ModValidationReport.cs"
+             Link="Production\ModValidation\ModValidationReport.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\ModValidationResult.cs"
+             Link="Production\ModValidation\ModValidationResult.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\ModValidationService.cs"
+             Link="Production\ModValidation\ModValidationService.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\ModValidationStatus.cs"
+             Link="Production\ModValidation\ModValidationStatus.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\ModValidationTreeNode.cs"
+             Link="Production\ModValidation\ModValidationTreeNode.cs" />
     <Compile Include="..\Memoria.Launcher\Launcher\AppLogger.cs"
              Link="Production\AppLogger.cs" />
     <Compile Include="..\Memoria.Launcher\Launcher\SteamLauncherBootstrap.cs"
