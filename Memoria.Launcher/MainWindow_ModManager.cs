@@ -112,6 +112,7 @@ namespace Memoria.Launcher
                 AnimateHeight(ContentTabControl, 520, 590, TimeSpan.FromMilliseconds(500));
                 AnimateMargin(LogoImage, new Thickness(20, -53, 0, 0), new Thickness(20, -20, 0, 0), TimeSpan.FromMilliseconds(500));
                 AnimateHeight(LogoImage, 250, 125, TimeSpan.FromMilliseconds(500));
+                AnimateScale(PlayAndUpdatePanelScale, 1.0, 0.65, TimeSpan.FromMilliseconds(500));
                 previousTabWasMod = true;
 
                 // Refresh placeholders when Mods tab is selected
@@ -122,6 +123,7 @@ namespace Memoria.Launcher
                 AnimateHeight(ContentTabControl, 590, 520, TimeSpan.FromMilliseconds(500));
                 AnimateMargin(LogoImage, new Thickness(20, -20, 0, 0), new Thickness(20, -53, 0, 0), TimeSpan.FromMilliseconds(500));
                 AnimateHeight(LogoImage, 125, 250, TimeSpan.FromMilliseconds(500));
+                AnimateScale(PlayAndUpdatePanelScale, 0.65, 1.0, TimeSpan.FromMilliseconds(500));
                 previousTabWasMod = false;
             }
 
@@ -223,6 +225,21 @@ namespace Memoria.Launcher
 
             element.BeginAnimation(FrameworkElement.HeightProperty, heightAnimation);
         }
+
+        private void AnimateScale(ScaleTransform transform, double from, double to, TimeSpan duration)
+        {
+            DoubleAnimation scaleAnimation = new DoubleAnimation
+            {
+                From = from,
+                To = to,
+                Duration = new Duration(duration),
+                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseInOut }
+            };
+
+            transform.BeginAnimation(ScaleTransform.ScaleXProperty, scaleAnimation);
+            transform.BeginAnimation(ScaleTransform.ScaleYProperty, scaleAnimation);
+        }
+
         private void AnimateMargin(FrameworkElement element, Thickness from, Thickness to, TimeSpan duration)
         {
             ThicknessAnimation marginAnimation = new ThicknessAnimation
