@@ -103,6 +103,7 @@
     <Compile Include="Launcher\SettingsGrid_Main2.cs" />
     <Compile Include="Launcher\SettingsGrid_Main.cs" />
     <Compile Include="Launcher\Settings.cs" />
+    <Compile Include="Launcher\SteamLauncherBootstrap.cs" />
     <Compile Include="Launcher\SettingsGrid_Presets.cs" />
     <Compile Include="Launcher\SettingsGrid_VanillaDisplay.cs" />
     <Compile Include="Launcher\UiGrid.cs" />

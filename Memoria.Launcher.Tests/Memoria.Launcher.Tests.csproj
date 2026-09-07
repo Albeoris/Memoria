@@ -99,5 +99,7 @@
              Link="Production\Mods\SingleFileModInstaller.cs" />
     <Compile Include="..\Memoria.Launcher\Launcher\AppLogger.cs"
              Link="Production\AppLogger.cs" />
+    <Compile Include="..\Memoria.Launcher\Launcher\SteamLauncherBootstrap.cs"
+             Link="Production\SteamLauncherBootstrap.cs" />
   </ItemGroup>
 </Project>
