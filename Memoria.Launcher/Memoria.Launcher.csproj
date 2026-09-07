@@ -58,6 +58,7 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Web.Extensions" />
@@ -174,6 +175,7 @@
     <Compile Include="Utils\Updates\UpdateBuild.cs" />
     <Compile Include="Utils\Updates\UpdateBuildCatalog.cs" />
     <Compile Include="Utils\Updates\UpdateBuildInfo.cs" />
+    <Compile Include="Utils\Updates\UpdateManifest.cs" />
     <Compile Include="Utils\Updates\UpdateDownloadWindow.cs" />
     <Compile Include="Utils\Updates\UpdateTimeFormatter.cs" />
     <Compile Include="Utils\Updates\UpdateVersionRelation.cs" />

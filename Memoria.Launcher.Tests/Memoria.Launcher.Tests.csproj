@@ -81,6 +81,8 @@
              Link="Production\Updates\PendingUpdatePackage.cs" />
     <Compile Include="..\Memoria.Launcher\Utils\Updates\UpdateTimeFormatter.cs"
              Link="Production\Updates\UpdateTimeFormatter.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Updates\UpdateManifest.cs"
+             Link="Production\Updates\UpdateManifest.cs" />
     <Compile Include="..\Memoria.Launcher\Utils\Mods\ModContentManifest.cs"
              Link="Production\Mods\ModContentManifest.cs" />
     <Compile Include="..\Memoria.Launcher\Utils\Mods\ModDownloadFormat.cs"
