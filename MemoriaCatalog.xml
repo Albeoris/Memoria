@@ -161,14 +161,14 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 	
 <Mod>
 	<Name>Trance Seek</Name>
-	<Version>0.3.37.1</Version>
+	<Version>0.3.37.2</Version>
 	<Priority>4</Priority>
 	<InstallationPath>TranceSeek</InstallationPath>
 	<ReleaseDateOriginal>2022-01-28</ReleaseDateOriginal>
-	<ReleaseDate>2026-09-06</ReleaseDate>
+	<ReleaseDate>2026-09-07</ReleaseDate>
 	<MinimumMemoriaVersion>2025-05-17</MinimumMemoriaVersion>
 	<Author>DV</Author>
-	<IncompatibleWith>Alternate Fantasy,Amazing Quina,Beatrix Mod,Black Cat - Endgame Shop,David Bowie Edition,Freya Game+,Garnet is Main Character,Perfect Stats,Play As Kuja,Playable Character Pack,Tantalus</IncompatibleWith>
+	<IncompatibleWith>Alternate Fantasy, Amazing Abilities, Amazing Quina, Amazing Freya, Amazing Garnet, Amazing Steiner, Amazing Vivi, Artifacts, Beatrix Mod, Black Cat - Endgame Shop, David Bowie Edition, Doppelgängers, Ferny Fantasy IX, FernySupportTweaks, FernyTranceTweaks, FFIX: The Lost Chapters, Freya Game+, Garnet is Main Character, Hedgehog Skip Pack, Perfect Stats, Play As Kuja, Modern Labels +, No Cutscene, NoHardcodedBattles, Play As Ozma, Playable Character Pack, ReTrad FR, Tantalus, [Tsunamods] Four Shrines Revival, [Tsunamods] Scavenger 9, VVsRandomizer</IncompatibleWith>
 	<Description>
 A mod that allows you to experience a new whole adventure! All the monsters and bosses have been redesigned (not only a stats boost but all the AIs are revisited), new skills, mechanics and many other things!
 
@@ -196,14 +196,22 @@ Don't hesitate to try!
 Recommended language : Français / English (UK)
 Not supported language : Japanese (a lot of things get deleted... need to wait until full release... sorry !)</Description>
 	<PatchNotes>
-[0.3.37.1]
-{Monsters & Bosses}
-- Fixed the rewards given by the friendly monsters (my bad, sorry...).
-Added an additional dialogue option at the Marsh Mog for players who were unable to claim their rewards (provided they have already defeated the corresponding friendly monster).
+[0.3.37.2]
 
-{Fields}
-- A few fixes related to the “Followers” feature
-- A few text corrections.
+- Fixed the "StuffListed" option.
+- The "AutoBattle" option is no longer forced to 0 by the mod.
+- Fixed the calculation for Ozma Mode.
+- Fixed the "Arsenic" spell on Pythons not removing "Vanish".
+- Adjusted the Level 9 cap milestone in Ozma Mode.
+- Fixed a bug with Steiner's Sword Magic when used with Vivi's "Focus".
+- Fixed damage on certain daggers that were missing their damage penalty.
+- Fixed a bug with certain accessories on Zidane (Sword stance).
+- Fixed the effect of "Rogue Boots".
+- Fixed the effect of "Rogue Scarf".
+- Restored certain items that were missing (accidentally deleted...).
+- Improved responsiveness for certain mechanics, such as SOS-type SAs and the Dragon effect.
+- Fixed Memoria.Scripts.TranceSeek.dll and the AbilityFeatures file by removing all "SerialNumber" entries to improve compatibility with Costume Pack + EEM.
+- Numerous additional fixes for the "Followers" feature across various scenes.
 	</PatchNotes>
 <Header>QoL Miscellaneous</Header>
 	<SubMod>
