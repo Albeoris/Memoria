@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <EnableDefaultItems>true</EnableDefaultItems>
@@ -23,116 +24,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\Memoria.Launcher\Controller\ControllerInput.cs"
-             Link="Production\Controller\ControllerInput.cs" />
-    <Compile Include="..\Memoria.Launcher\Controller\SpatialNavigation.cs"
-             Link="Production\Controller\SpatialNavigation.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\ExceptionDetailsFormatter.cs"
-             Link="Production\ExceptionDetailsFormatter.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Archives\ArchiveEntryPathPolicy.cs"
-             Link="Production\Archives\ArchiveEntryPathPolicy.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Archives\ArchiveExtractionException.cs"
-             Link="Production\Archives\ArchiveExtractionException.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Archives\ArchiveFailureMessageBuilder.cs"
-             Link="Production\Archives\ArchiveFailureMessageBuilder.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Archives\ArchiveFileExtensions.cs"
-             Link="Production\Archives\ArchiveFileExtensions.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Archives\IArchiveExtractor.cs"
-             Link="Production\Archives\IArchiveExtractor.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Archives\SharpCompressRarExtractor.cs"
-             Link="Production\Archives\SharpCompressRarExtractor.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Archives\SevenZipExitCode.cs"
-             Link="Production\Archives\SevenZipExitCode.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Archives\SevenZipFailure.cs"
-             Link="Production\Archives\SevenZipFailure.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Catalog\MemoriaCatalogEndpoints.cs"
-             Link="Catalog\MemoriaCatalogEndpoints.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Downloads\DownloadedFile.cs"
-             Link="Production\Downloads\DownloadedFile.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Downloads\DownloadException.cs"
-             Link="Production\Downloads\DownloadException.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Downloads\DownloadFailureKind.cs"
-             Link="Production\Downloads\DownloadFailureKind.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Downloads\DownloadResponseValidator.cs"
-             Link="Production\Downloads\DownloadResponseValidator.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Downloads\RemoteFileNameResolver.cs"
-             Link="Production\Downloads\RemoteFileNameResolver.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\IO\GameRootDirectory.cs"
-             Link="Production\IO\GameRootDirectory.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\IO\FileSystemAccessProbe.cs"
-             Link="Production\IO\FileSystemAccessProbe.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\IO\DirectoryTreeDeleter.cs"
-             Link="Production\IO\DirectoryTreeDeleter.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\IO\PathSegmentMatcher.cs"
-             Link="Production\IO\PathSegmentMatcher.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\IO\SafeRelativePath.cs"
-             Link="Production\IO\SafeRelativePath.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Updates\PendingUpdatePackage.cs"
-             Link="Production\Updates\PendingUpdatePackage.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Updates\UpdateTimeFormatter.cs"
-             Link="Production\Updates\UpdateTimeFormatter.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Updates\UpdateManifest.cs"
-             Link="Production\Updates\UpdateManifest.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Updates\UpdateBuild.cs"
-             Link="Production\Updates\UpdateBuild.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Updates\ReleaseNotesDocument.cs"
-             Link="Production\Updates\ReleaseNotesDocument.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Updates\GitHubReleaseDescriptionParser.cs"
-             Link="Production\Updates\GitHubReleaseDescriptionParser.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Mods\ModContentManifest.cs"
-             Link="Production\Mods\ModContentManifest.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Mods\ModDownloadFormat.cs"
-             Link="Production\Mods\ModDownloadFormat.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Mods\ModDownloadPlan.cs"
-             Link="Production\Mods\ModDownloadPlan.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Mods\ModDescriptionFile.cs"
-             Link="Production\Mods\ModDescriptionFile.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Mods\ModInstallationFileSystem.cs"
-             Link="Production\Mods\ModInstallationFileSystem.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Mods\ModUninstallFailureMessageBuilder.cs"
-             Link="Production\Mods\ModUninstallFailureMessageBuilder.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Mods\ModArchiveInspector.cs"
-             Link="Production\Mods\ModArchiveInspector.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Mods\ModArchiveRoot.cs"
-             Link="Production\Mods\ModArchiveRoot.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Mods\ModPackageType.cs"
-             Link="Production\Mods\ModPackageType.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\Mods\SingleFileModInstaller.cs"
-             Link="Production\Mods\SingleFileModInstaller.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\D3D9ShaderValidator.cs"
-             Link="Production\ModValidation\D3D9ShaderValidator.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\D3D9ShaderProgram.cs"
-             Link="Production\ModValidation\D3D9ShaderProgram.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\D3D9ShaderProgramReader.cs"
-             Link="Production\ModValidation\D3D9ShaderProgramReader.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\D3DShaderAssemblyResult.cs"
-             Link="Production\ModValidation\D3DShaderAssemblyResult.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\ID3DShaderAssembler.cs"
-             Link="Production\ModValidation\ID3DShaderAssembler.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\IModFileValidator.cs"
-             Link="Production\ModValidation\IModFileValidator.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\ModValidationDiagnostic.cs">
-      <Link>Production\ModValidation\ModValidationDiagnostic.cs</Link>
-    </Compile>
-    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\ModValidationDiagnosticSeverity.cs"
-             Link="Production\ModValidation\ModValidationDiagnosticSeverity.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\ModValidationFile.cs"
-             Link="Production\ModValidation\ModValidationFile.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\ModValidationProgress.cs"
-             Link="Production\ModValidation\ModValidationProgress.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\ModValidationReport.cs"
-             Link="Production\ModValidation\ModValidationReport.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\ModValidationResult.cs"
-             Link="Production\ModValidation\ModValidationResult.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\ModValidationService.cs"
-             Link="Production\ModValidation\ModValidationService.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\ModValidationStatus.cs"
-             Link="Production\ModValidation\ModValidationStatus.cs" />
-    <Compile Include="..\Memoria.Launcher\Utils\ModValidation\ModValidationTreeNode.cs"
-             Link="Production\ModValidation\ModValidationTreeNode.cs" />
-    <Compile Include="..\Memoria.Launcher\Launcher\AppLogger.cs"
-             Link="Production\AppLogger.cs" />
-    <Compile Include="..\Memoria.Launcher\Launcher\SteamLauncherBootstrap.cs"
-             Link="Production\SteamLauncherBootstrap.cs" />
+    <ProjectReference Include="..\Memoria.Launcher\Memoria.Launcher.csproj">
+      <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+    </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="System.IO" />
+    <Using Include="System.Net.Http" />
   </ItemGroup>
 </Project>

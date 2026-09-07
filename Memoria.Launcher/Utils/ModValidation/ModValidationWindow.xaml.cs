@@ -26,6 +26,9 @@ namespace Memoria.Launcher.Utils.ModValidation
         private readonly String _rootDirectory;
         private readonly String _rootName;
         private readonly ModValidationService _service;
+        private readonly ModFixService _fixService;
+        private readonly ModFixChangelogStore _fixChangelog;
+        private readonly ModFileFixCoordinator _fixCoordinator;
         private readonly CancellationTokenSource _cancellation = new();
         private readonly Dictionary<String, ModValidationResult> _results = new(StringComparer.OrdinalIgnoreCase);
         private readonly IDisposable _gamepadNavigation;
@@ -34,11 +37,14 @@ namespace Memoria.Launcher.Utils.ModValidation
         private Boolean _running;
         private Boolean _closed;
 
-        internal ModValidationWindow(String rootDirectory, String rootName, ModValidationService service)
+        internal ModValidationWindow(String rootDirectory, String rootName, ModValidationService service, ModFixService fixService)
         {
             _rootDirectory = rootDirectory ?? throw new ArgumentNullException(nameof(rootDirectory));
             _rootName = rootName ?? throw new ArgumentNullException(nameof(rootName));
             _service = service ?? throw new ArgumentNullException(nameof(service));
+            _fixService = fixService ?? throw new ArgumentNullException(nameof(fixService));
+            _fixChangelog = new ModFixChangelogStore(_rootDirectory);
+            _fixCoordinator = new ModFileFixCoordinator(_service, _fixService, _fixChangelog);
             InitializeComponent();
             Title = $"Validate mod — {_rootName}";
             ShowAllFilesCheckBox.Checked += OnViewChanged;
@@ -69,7 +75,7 @@ namespace Memoria.Launcher.Utils.ModValidation
             Progress<ModValidationProgress> progress = new(OnProgress);
             try
             {
-                _report = await _service.ValidateDirectoryAsync(_rootDirectory, _rootName, progress, _cancellation.Token);
+                _report = ApplyFixHistory(await _service.ValidateDirectoryAsync(_rootDirectory, _rootName, progress, _cancellation.Token));
                 if (_closed)
                     return;
                 foreach (ModValidationResult result in _report.FlattenFiles())
@@ -100,7 +106,7 @@ namespace Memoria.Launcher.Utils.ModValidation
                 if (!_closed)
                 {
                     CloseButton.Content = "Close";
-                    RevalidateButton.IsEnabled = _selectedNode != null && _service.CanValidate(_selectedNode.Result.File);
+                    UpdateActionButtons();
                 }
             }
         }
@@ -228,8 +234,8 @@ namespace Memoria.Launcher.Utils.ModValidation
         private void SelectNode(ValidationDisplayNode node)
         {
             _selectedNode = node?.Result == null ? null : node;
-            RevalidateButton.IsEnabled = !_running && _selectedNode != null && _service.CanValidate(_selectedNode.Result.File);
             DiagnosticsTextBox.Text = _selectedNode == null ? String.Empty : FormatDiagnostics(_selectedNode.Result);
+            UpdateActionButtons();
         }
 
         private async void OnRevalidateClick(Object sender, RoutedEventArgs e)
@@ -245,7 +251,7 @@ namespace Memoria.Launcher.Utils.ModValidation
             CurrentStatusTextBlock.Text = $"Validating {selectedPath}";
             try
             {
-                ModValidationResult result = await _service.ValidateFileAsync(selected.File, _cancellation.Token);
+                ModValidationResult result = ApplyFixHistory(await _service.ValidateFileAsync(selected.File, _cancellation.Token));
                 if (_closed)
                     return;
                 _results[result.File.FullPath] = result;
@@ -265,9 +271,104 @@ namespace Memoria.Launcher.Utils.ModValidation
                 if (!_closed)
                 {
                     CloseButton.Content = "Close";
-                    RevalidateButton.IsEnabled = _selectedNode != null && _service.CanValidate(_selectedNode.Result.File);
+                    UpdateActionButtons();
                 }
             }
+        }
+
+        private async void OnFixSelectedClick(Object sender, RoutedEventArgs e)
+        {
+            ModValidationResult selected = _selectedNode?.Result;
+            if (selected != null)
+                await FixFilesAsync(new[] { selected });
+        }
+
+        private async void OnFixAllClick(Object sender, RoutedEventArgs e)
+        {
+            await FixFilesAsync(_results.Values.Where(result => result.HasProblem && _fixService.CanFix(result)).OrderBy(result => result.File.RelativePath, StringComparer.OrdinalIgnoreCase).ToList());
+        }
+
+        private async Task FixFilesAsync(IReadOnlyList<ModValidationResult> files)
+        {
+            if (files.Count == 0)
+                return;
+
+            _running = true;
+            CloseButton.Content = "Cancel";
+            ValidationProgressBar.IsIndeterminate = false;
+            ValidationProgressBar.Minimum = 0;
+            ValidationProgressBar.Maximum = files.Count;
+            ValidationProgressBar.Value = 0;
+            UpdateActionButtons();
+            Int32 fixedFiles = 0;
+            try
+            {
+                for (Int32 index = 0; index < files.Count; index++)
+                {
+                    _cancellation.Token.ThrowIfCancellationRequested();
+                    ModValidationResult validationResult = files[index];
+                    CurrentStatusTextBlock.Text = $"Fixing {validationResult.File.RelativePath} — {index + 1} / {files.Count}";
+                    ModFileFixOutcome outcome = await _fixCoordinator.FixAsync(validationResult, _cancellation.Token);
+                    if (!outcome.Changed)
+                    {
+                        ValidationProgressBar.Value = index + 1;
+                        continue;
+                    }
+
+                    ModValidationResult revalidated = outcome.ValidationResult;
+                    if (revalidated.Status == ModValidationStatus.Fixed)
+                        fixedFiles++;
+                    _results[revalidated.File.FullPath] = revalidated;
+                    ValidationProgressBar.Value = index + 1;
+                }
+
+                _report = new ModValidationReport(_rootName, _results.Values);
+                RebuildViews(null);
+                SummaryTextBlock.Text = BuildSummary(_report.FlattenFiles());
+                CurrentStatusTextBlock.Text = $"Fixing completed. Fixed files: {fixedFiles}.";
+            }
+            catch (OperationCanceledException)
+            {
+                if (!_closed)
+                    CurrentStatusTextBlock.Text = "Fixing cancelled.";
+            }
+            catch (Exception exception)
+            {
+                if (!_closed)
+                {
+                    CurrentStatusTextBlock.Text = "Fixing could not be completed.";
+                    DiagnosticsTextBox.Text = exception.ToString();
+                }
+            }
+            finally
+            {
+                _running = false;
+                if (!_closed)
+                {
+                    CloseButton.Content = "Close";
+                    UpdateActionButtons();
+                }
+            }
+        }
+
+        private ModValidationReport ApplyFixHistory(ModValidationReport report)
+        {
+            return new ModValidationReport(_rootName, report.FlattenFiles().Select(ApplyFixHistory));
+        }
+
+        private ModValidationResult ApplyFixHistory(ModValidationResult result)
+        {
+            if (result.Status != ModValidationStatus.Valid)
+                return result;
+            ModFixChangelogEntry entry = _fixChangelog.FindCurrent(result.File);
+            return entry == null ? result : result.WithFixChangelog(entry);
+        }
+
+        private void UpdateActionButtons()
+        {
+            RevalidateButton.IsEnabled = !_running && _selectedNode != null && _service.CanValidate(_selectedNode.Result.File);
+            FixSelectedButton.IsEnabled = !_running && _selectedNode != null && _fixService.CanFix(_selectedNode.Result);
+            FixAllButton.IsEnabled = !_running && _results.Values.Any(result => result.HasProblem && _fixService.CanFix(result));
         }
 
         private static String FormatDiagnostics(ModValidationResult result)
@@ -283,15 +384,30 @@ namespace Memoria.Launcher.Utils.ModValidation
                 text.AppendLine(diagnostic.Message);
                 text.AppendLine();
             }
+            if (result.FixChangelog != null)
+            {
+                text.AppendLine("Fixer changelog");
+                text.AppendLine($"Date: {result.FixChangelog.Timestamp}");
+                text.AppendLine($"Fixer: {result.FixChangelog.FixerName}");
+                foreach (ModFixChange change in result.FixChangelog.Changes)
+                {
+                    text.AppendLine();
+                    text.AppendLine($"File line {change.FileLine}:");
+                    text.AppendLine($"- {change.Before}");
+                    foreach (String line in change.After.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None))
+                        text.AppendLine($"+ {line}");
+                }
+            }
             return text.ToString().TrimEnd();
         }
 
         private static String BuildSummary(IReadOnlyList<ModValidationResult> results)
         {
             Int32 valid = results.Count(result => result.Status == ModValidationStatus.Valid);
+            Int32 fixedFiles = results.Count(result => result.Status == ModValidationStatus.Fixed);
             Int32 problems = results.Count(result => result.HasProblem);
             Int32 skipped = results.Count(result => result.Status == ModValidationStatus.Skipped);
-            return $"Files: {results.Count}   Valid: {valid}   Problems: {problems}   Skipped: {skipped}";
+            return $"Files: {results.Count}   Valid: {valid}   Fixed: {fixedFiles}   Problems: {problems}   Skipped: {skipped}";
         }
 
         private void OnCloseClick(Object sender, RoutedEventArgs e) => Close();

@@ -116,7 +116,10 @@
                 </Grid.RowDefinitions>
                 <TextBlock FontSize="14" Text="Diagnostics" />
                 <TextBox x:Name="DiagnosticsTextBox" Grid.Row="2" Padding="10" Background="#181818" Foreground="#E8E8E8" BorderBrush="#555555" BorderThickness="1" FontFamily="Consolas" FontSize="13" IsReadOnly="True" AcceptsReturn="True" TextWrapping="NoWrap" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" />
-                <Button x:Name="RevalidateButton" Grid.Row="4" Width="160" Height="30" HorizontalAlignment="Right" Content="Validate selected file" IsEnabled="False" Click="OnRevalidateClick" />
+                <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button x:Name="FixSelectedButton" Width="150" Height="30" Margin="0,0,8,0" Content="Fix selected file" IsEnabled="False" Click="OnFixSelectedClick" />
+                    <Button x:Name="RevalidateButton" Width="160" Height="30" Content="Validate selected file" IsEnabled="False" Click="OnRevalidateClick" />
+                </StackPanel>
             </Grid>
         </Grid>
 
@@ -124,9 +127,11 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBlock x:Name="SummaryTextBlock" VerticalAlignment="Center" />
-            <Button x:Name="CloseButton" Grid.Column="1" Width="110" Height="30" Content="Cancel" Click="OnCloseClick" />
+            <Button x:Name="FixAllButton" Grid.Column="1" Width="150" Height="30" Margin="0,0,8,0" Content="Fix all problems" IsEnabled="False" Click="OnFixAllClick" />
+            <Button x:Name="CloseButton" Grid.Column="2" Width="110" Height="30" Content="Cancel" Click="OnCloseClick" />
         </Grid>
     </Grid>
 </Window>

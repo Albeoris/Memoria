@@ -10,7 +10,7 @@ namespace Memoria.Launcher.Utils.ModValidation
 {
     internal sealed class D3D9ShaderValidator : IModFileValidator
     {
-        private static readonly Regex DiagnosticLocationPattern = new Regex(@"^(?<indent>[ \t]*)\((?<line>[0-9]+)(?<position>,[^)\r\n]+)?\)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
+        private static readonly Regex DiagnosticLocationPattern = new(@"^(?<indent>[ \t]*)\((?<line>[0-9]+)(?<position>,[^)\r\n]+)?\)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
         private readonly Lazy<ID3DShaderAssembler> _assembler;
 
         public D3D9ShaderValidator(ID3DShaderAssembler assembler)

@@ -164,12 +164,15 @@
     <Compile Include="Utils\Mods\ModArchiveRoot.cs" />
     <Compile Include="Utils\Mods\ModPackageType.cs" />
     <Compile Include="Utils\Mods\SingleFileModInstaller.cs" />
-    <Compile Include="Utils\ModValidation\D3D9ShaderProgram.cs" />
-    <Compile Include="Utils\ModValidation\D3D9ShaderProgramReader.cs" />
-    <Compile Include="Utils\ModValidation\D3D9ShaderValidator.cs" />
-    <Compile Include="Utils\ModValidation\D3DShaderAssemblyResult.cs" />
-    <Compile Include="Utils\ModValidation\ID3DShaderAssembler.cs" />
+    <Compile Include="Utils\ModValidation\IModFileFixer.cs" />
     <Compile Include="Utils\ModValidation\IModFileValidator.cs" />
+    <Compile Include="Utils\ModValidation\ModFileFixCoordinator.cs" />
+    <Compile Include="Utils\ModValidation\ModFileFixOutcome.cs" />
+    <Compile Include="Utils\ModValidation\ModFileFixResult.cs" />
+    <Compile Include="Utils\ModValidation\ModFixChange.cs" />
+    <Compile Include="Utils\ModValidation\ModFixChangelogEntry.cs" />
+    <Compile Include="Utils\ModValidation\ModFixChangelogStore.cs" />
+    <Compile Include="Utils\ModValidation\ModFixService.cs" />
     <Compile Include="Utils\ModValidation\ModValidationDiagnosticSeverity.cs" />
     <Compile Include="Utils\ModValidation\ModValidationFile.cs" />
     <Compile Include="Utils\ModValidation\ModValidationDiagnostic.cs" />
@@ -182,7 +185,15 @@
     <Compile Include="Utils\ModValidation\ModValidationWindow.xaml.cs">
       <DependentUpon>ModValidationWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utils\ModValidation\SystemD3DShaderAssembler.cs" />
+    <Compile Include="Utils\ModValidation\Shaders\D3D9ShaderProgram.cs" />
+    <Compile Include="Utils\ModValidation\Shaders\D3D9ShaderProgramReader.cs" />
+    <Compile Include="Utils\ModValidation\Shaders\D3D9ShaderValidator.cs" />
+    <Compile Include="Utils\ModValidation\Shaders\D3D9X5213AddFixer.cs" />
+    <Compile Include="Utils\ModValidation\Shaders\D3D9X5213BinaryOperationFixer.cs" />
+    <Compile Include="Utils\ModValidation\Shaders\D3D9X5213MultiplyFixer.cs" />
+    <Compile Include="Utils\ModValidation\Shaders\D3DShaderAssemblyResult.cs" />
+    <Compile Include="Utils\ModValidation\Shaders\ID3DShaderAssembler.cs" />
+    <Compile Include="Utils\ModValidation\Shaders\SystemD3DShaderAssembler.cs" />
     <Compile Include="Utils\ModValidation\ValidationDisplayNode.cs" />
     <Compile Include="Utils\Resolution\DisplayBounds.cs" />
     <Compile Include="Utils\Resolution\DisplayMonitor.cs" />

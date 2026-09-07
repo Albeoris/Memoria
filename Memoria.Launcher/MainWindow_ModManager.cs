@@ -685,7 +685,8 @@ namespace Memoria.Launcher
 
                 String installationDirectory = _modFileSystem.GetInstallationDirectory(mod.InstallationPath);
                 ModValidationService service = new ModValidationService(new IModFileValidator[] { new D3D9ShaderValidator(() => SystemD3DShaderAssembler.Instance) });
-                ModValidationWindow window = new ModValidationWindow(installationDirectory, displayName, service) { Owner = this };
+                ModFixService fixService = new ModFixService(new IModFileFixer[] { new D3D9X5213AddFixer(), new D3D9X5213MultiplyFixer() });
+                ModValidationWindow window = new ModValidationWindow(installationDirectory, displayName, service, fixService) { Owner = this };
                 window.ShowDialog();
             }
             catch (Exception exception)

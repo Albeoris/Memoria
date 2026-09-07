@@ -17,7 +17,7 @@ namespace Memoria.Launcher.Utils.ModValidation
                 Icon = "📁";
                 IconBrush = Brushes.LightGray;
             }
-            else if (node.Result.Status == ModValidationStatus.Valid)
+            else if (node.Result.Status == ModValidationStatus.Valid || node.Result.Status == ModValidationStatus.Fixed)
             {
                 Icon = "✅";
                 IconBrush = Brushes.LimeGreen;
@@ -53,6 +53,6 @@ namespace Memoria.Launcher.Utils.ModValidation
         public IReadOnlyList<ValidationDisplayNode> Children { get; }
         public Boolean IsSuccessMessage { get; }
 
-        internal static ValidationDisplayNode CreateSuccessMessage() => new ValidationDisplayNode("All files passed validation.");
+        internal static ValidationDisplayNode CreateSuccessMessage() => new("All files passed validation.");
     }
 }

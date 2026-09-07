@@ -5,6 +5,7 @@ namespace Memoria.Launcher.Utils.ModValidation
         Pending,
         Validating,
         Valid,
+        Fixed,
         Invalid,
         Skipped,
         Error,
