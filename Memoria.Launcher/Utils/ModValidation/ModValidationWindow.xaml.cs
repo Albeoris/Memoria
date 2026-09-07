@@ -142,7 +142,7 @@ namespace Memoria.Launcher.Utils.ModValidation
         {
             Boolean showAll = ShowAllFilesCheckBox.IsChecked == true;
             ValidationDisplayNode root = CreateDisplayNode(_report.Tree, showAll);
-            List<ValidationDisplayNode> flatFiles = FlattenDisplayNodes(_report.Tree).Where(node => showAll || node.Result.HasProblem).ToList();
+            List<ValidationDisplayNode> flatFiles = FlattenDisplayNodes(_report.Tree).Where(node => showAll || ShouldDisplayByDefault(node.Result)).ToList();
             if (!showAll && flatFiles.Count == 0)
             {
                 ValidationDisplayNode successMessage = ValidationDisplayNode.CreateSuccessMessage();
@@ -164,12 +164,14 @@ namespace Memoria.Launcher.Utils.ModValidation
         private static ValidationDisplayNode CreateDisplayNode(ModValidationTreeNode node, Boolean showAll)
         {
             List<ValidationDisplayNode> children = node.Children.Select(child => CreateDisplayNode(child, showAll)).Where(child => child != null).ToList();
-            if (node.IsFile && (showAll || node.Result.HasProblem))
+            if (node.IsFile && (showAll || ShouldDisplayByDefault(node.Result)))
                 return new ValidationDisplayNode(node, children);
             if (!node.IsFile && children.Count > 0)
                 return new ValidationDisplayNode(node, children);
             return null;
         }
+
+        private static Boolean ShouldDisplayByDefault(ModValidationResult result) => result.HasProblem || result.Status == ModValidationStatus.Fixed;
 
         private static IEnumerable<ValidationDisplayNode> FlattenDisplayNodes(ModValidationTreeNode node)
         {
