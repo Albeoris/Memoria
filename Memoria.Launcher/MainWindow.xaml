@@ -1108,7 +1108,7 @@
                                     <GeometryDrawing Brush="{StaticResource ControllerButtonFaceBrush}" Geometry="M 12,1 A 10.5,10.5 0 1 1 11.999,1 Z"/>
                                     <GeometryDrawing Geometry="M 7.8,7.8 L 16.2,16.2 M 16.2,7.8 L 7.8,16.2">
                                         <GeometryDrawing.Pen>
-                                            <Pen Brush="#FF2878C8" Thickness="2.2" StartLineCap="Round" EndLineCap="Round"/>
+                                            <Pen Brush="#FFF2E8D5" Thickness="2.2" StartLineCap="Round" EndLineCap="Round"/>
                                         </GeometryDrawing.Pen>
                                     </GeometryDrawing>
                                 </DrawingGroup>
