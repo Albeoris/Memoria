@@ -2,6 +2,8 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows;
+using System.Windows.Interop;
 
 namespace Memoria.Launcher.Controller
 {
@@ -13,6 +15,7 @@ namespace Memoria.Launcher.Controller
         private const UInt32 Command = 0x0111;
         private const UInt32 KeyDown = 0x0100;
         private const UInt32 KeyUp = 0x0101;
+        private const UInt32 OwnerWindow = 4;
         private const Int32 OkButton = 1;
         private const Int32 CancelButton = 2;
         private const Int32 NoButton = 7;
@@ -24,14 +27,23 @@ namespace Memoria.Launcher.Controller
         private const Int32 ArrowDown = 0x28;
         private const String DialogWindowClass = "#32770";
 
-        public static Boolean IsMessageBoxActiveForCurrentProcess()
+        public static Boolean IsMessageBoxActiveFor(Window owner)
         {
+            if (owner == null)
+                throw new ArgumentNullException(nameof(owner));
+
             IntPtr window = GetForegroundWindow();
             if (window == IntPtr.Zero || !String.Equals(GetWindowClass(window), DialogWindowClass, StringComparison.Ordinal))
                 return false;
 
             GetWindowThreadProcessId(window, out UInt32 processId);
-            return processId == (UInt32)Process.GetCurrentProcess().Id;
+            if (processId != (UInt32)Process.GetCurrentProcess().Id)
+                return false;
+
+            IntPtr dialogOwner = GetWindow(window, OwnerWindow);
+            if (dialogOwner == IntPtr.Zero)
+                return ReferenceEquals(Application.Current?.MainWindow, owner);
+            return dialogOwner == new WindowInteropHelper(owner).Handle;
         }
 
         public static void Send(ControllerButton actions)
@@ -99,6 +111,9 @@ namespace Memoria.Launcher.Controller
 
         [DllImport("user32.dll")]
         private static extern UInt32 GetWindowThreadProcessId(IntPtr window, out UInt32 processId);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetWindow(IntPtr window, UInt32 command);
 
         [DllImport("user32.dll")]
         private static extern IntPtr GetDlgItem(IntPtr dialog, Int32 itemId);

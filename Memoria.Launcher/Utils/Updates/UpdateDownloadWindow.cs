@@ -3,6 +3,8 @@ using System.ComponentModel;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using Memoria.Launcher.Controller;
 using Memoria.Launcher.Utils.Downloads;
 
 namespace Memoria.Launcher.Utils.Updates
@@ -12,6 +14,8 @@ namespace Memoria.Launcher.Utils.Updates
         private readonly CancellationTokenSource _cancellation;
         private readonly ProgressBar _progressBar;
         private readonly TextBlock _status;
+        private readonly Button _cancelButton;
+        private readonly IDisposable _gamepadNavigation;
         private Boolean _allowClose;
         private Boolean _completionRequested;
 
@@ -20,7 +24,7 @@ namespace Memoria.Launcher.Utils.Updates
             _cancellation = cancellation ?? throw new ArgumentNullException(nameof(cancellation));
             Title = title ?? throw new ArgumentNullException(nameof(title));
             Width = 430;
-            Height = 145;
+            Height = 185;
             ResizeMode = ResizeMode.NoResize;
             WindowStartupLocation = WindowStartupLocation.CenterOwner;
             ShowInTaskbar = false;
@@ -29,15 +33,27 @@ namespace Memoria.Launcher.Utils.Updates
             root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             root.RowDefinitions.Add(new RowDefinition { Height = new GridLength(16) });
             root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            root.RowDefinitions.Add(new RowDefinition { Height = new GridLength(12) });
+            root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            GamepadNavigation.SetIsModalScope(root, true);
 
             _status = new TextBlock { HorizontalAlignment = HorizontalAlignment.Center, Text = title, TextWrapping = TextWrapping.Wrap };
             _progressBar = new ProgressBar { Height = 20, Minimum = 0, Maximum = 100, IsIndeterminate = true };
+            _cancelButton = new Button { Width = 110, Height = 28, HorizontalAlignment = HorizontalAlignment.Right };
+            _cancelButton.SetResourceReference(ContentControl.ContentProperty, "Launcher.Cancel");
+            _cancelButton.SetResourceReference(StyleProperty, "ButtonStyle");
+            _cancelButton.Click += OnCancelClick;
+            GamepadNavigation.SetIsDefaultFocus(_cancelButton, true);
+            GamepadNavigation.SetIsCancelAction(_cancelButton, true);
             Grid.SetRow(_progressBar, 2);
+            Grid.SetRow(_cancelButton, 4);
             root.Children.Add(_status);
             root.Children.Add(_progressBar);
+            root.Children.Add(_cancelButton);
             Content = root;
             Loaded += OnLoaded;
             Closing += OnClosing;
+            _gamepadNavigation = GamepadNavigationService.Attach(this);
         }
 
         public Boolean UserCancellationRequested { get; private set; }
@@ -82,12 +98,21 @@ namespace Memoria.Launcher.Utils.Updates
         {
             Closing -= OnClosing;
             Loaded -= OnLoaded;
+            _cancelButton.Click -= OnCancelClick;
+            _gamepadNavigation.Dispose();
         }
 
         private void OnLoaded(Object sender, RoutedEventArgs e)
         {
+            _cancelButton.Focus();
+            Keyboard.Focus(_cancelButton);
             if (_completionRequested)
                 Dispatcher.BeginInvoke(new Action(CompleteAndClose));
+        }
+
+        private void OnCancelClick(Object sender, RoutedEventArgs e)
+        {
+            Close();
         }
 
         private void OnClosing(Object sender, CancelEventArgs e)

@@ -8,7 +8,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
+using Memoria.Launcher.Controller;
 using Memoria.Launcher.Utils.Downloads;
 
 namespace Memoria.Launcher.Utils.Updates
@@ -113,6 +116,7 @@ namespace Memoria.Launcher.Utils.Updates
 
             Boolean gateEntered = false;
             Boolean resumeAutomaticRefresh = false;
+            Boolean restoreControllerFocus = GamepadNavigation.IsControllerInputActive(button);
             _busy = true;
             SetButtonsEnabled(false);
             try
@@ -152,6 +156,8 @@ namespace Memoria.Launcher.Utils.Updates
                     RefreshLanguage();
                 if (!_disposed && resumeAutomaticRefresh && _settings?.CheckUpdates == true)
                     await RefreshAllAsync();
+                if (!_disposed && restoreControllerFocus)
+                    RestoreFocus(button);
             }
         }
 
@@ -282,7 +288,7 @@ namespace Memoria.Launcher.Utils.Updates
             if (_availableBuilds.TryGetValue(build.Kind, out UpdateBuildInfo info))
             {
                 SetButtonContent(button, GetBuildName(build), FormatLocalDate(info.PublishedAtUtc));
-                button.Opacity = UpdateVersionComparer.Compare(_currentVersionUtc, info.PublishedAtUtc) == UpdateVersionRelation.Downgrade ? 0.45 : 1;
+                button.Opacity = UpdateVersionComparer.Compare(_currentVersionUtc, info.PublishedAtUtc) == UpdateVersionRelation.Upgrade ? 1 : 0.45;
                 return;
             }
 
@@ -339,6 +345,20 @@ namespace Memoria.Launcher.Utils.Updates
         {
             button.ToolTip = new ToolTip { Content = new TextBlock { Text = text, MaxWidth = 380, TextWrapping = TextWrapping.Wrap } };
             ToolTipService.SetShowDuration(button, 30000);
+        }
+
+        private static void RestoreFocus(Button button)
+        {
+            button.Dispatcher.BeginInvoke(DispatcherPriority.Input, new Action(() => FocusIfAvailable(button)));
+        }
+
+        private static void FocusIfAvailable(Button button)
+        {
+            if (!button.IsVisible || !button.IsEnabled)
+                return;
+
+            button.Focus();
+            Keyboard.Focus(button);
         }
 
         private Window GetOwner()
