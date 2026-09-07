@@ -274,15 +274,17 @@ namespace Memoria.Patcher
                         {
                             id = (Int16)(id & ~idMask);
 
-                            Int32 bytesNumber = br.ReadByte();
-                            Int32 readed = 0;
-                            while (bytesNumber > 0)
+                            Int32 byteCount = br.ReadByte();
+                            Int32 totalBytesRead = 0;
+                            while (totalBytesRead < byteCount)
                             {
-                                readed = br.Read(buff, readed, bytesNumber);
-                                bytesNumber -= readed;
+                                Int32 bytesRead = br.Read(buff, totalBytesRead, byteCount - totalBytesRead);
+                                if (bytesRead == 0)
+                                    throw new EndOfStreamException("Unexpected end of the patcher payload while reading a path segment.");
+                                totalBytesRead += bytesRead;
                             }
 
-                            part = Encoding.UTF8.GetString(buff, 0, readed);
+                            part = Encoding.UTF8.GetString(buff, 0, totalBytesRead);
                             pathParts[i] = part;
                             pathMap.Add(id, part);
                         }
