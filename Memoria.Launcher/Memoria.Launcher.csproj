@@ -58,6 +58,7 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Web.Extensions" />
@@ -139,8 +140,6 @@
     <Compile Include="Utils\Downloads\DownloadProgress.cs" />
     <Compile Include="Utils\Downloads\DownloadResponseValidator.cs" />
     <Compile Include="Utils\Downloads\FileDownloader.cs" />
-    <Compile Include="Utils\Downloads\LauncherUpdateDownloader.cs" />
-    <Compile Include="Utils\Downloads\RemoteFileInfo.cs" />
     <Compile Include="Utils\Downloads\RemoteFileNameResolver.cs" />
     <Compile Include="Utils\Downloads\ResilientHttpClient.cs" />
     <Compile Include="Utils\Fonts\SystemFontService.cs" />
@@ -168,6 +167,23 @@
     <Compile Include="Utils\Resolution\DisplayResolution.cs" />
     <Compile Include="Utils\Resolution\DisplayService.cs" />
     <Compile Include="Utils\Resolution\NativeDisplayMethods.cs" />
+    <Compile Include="Utils\Updates\LauncherUpdateInstaller.cs" />
+    <Compile Include="Utils\Updates\LauncherUpdateMetadataClient.cs" />
+    <Compile Include="Utils\Updates\LauncherUpdateService.cs" />
+    <Compile Include="Utils\Updates\GitHubReleaseDescriptionParser.cs" />
+    <Compile Include="Utils\Updates\GitHubReleaseNotesClient.cs" />
+    <Compile Include="Utils\Updates\InstalledBuildVersion.cs" />
+    <Compile Include="Utils\Updates\InstalledReleaseNotesService.cs" />
+    <Compile Include="Utils\Updates\PendingUpdatePackage.cs" />
+    <Compile Include="Utils\Updates\ReleaseNotesDocument.cs" />
+    <Compile Include="Utils\Updates\UiLauncherUpdatePanel.cs" />
+    <Compile Include="Utils\Updates\UpdateBuild.cs" />
+    <Compile Include="Utils\Updates\UpdateBuildCatalog.cs" />
+    <Compile Include="Utils\Updates\UpdateBuildInfo.cs" />
+    <Compile Include="Utils\Updates\UpdateManifest.cs" />
+    <Compile Include="Utils\Updates\UpdateDownloadWindow.cs" />
+    <Compile Include="Utils\Updates\UpdateTimeFormatter.cs" />
+    <Compile Include="Utils\Updates\UpdateVersionRelation.cs" />
     <Compile Include="Launcher\UiLauncherPlayButton.cs" />
     <Compile Include="Launcher\UiLauncherButton.xaml.cs">
       <DependentUpon>UiLauncherButton.xaml</DependentUpon>

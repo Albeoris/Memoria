@@ -18,6 +18,7 @@ using System.Windows.Navigation;
 using System.Windows.Threading;
 using Memoria.Launcher.Utils.Archives;
 using Memoria.Launcher.Utils.Mods;
+using Memoria.Launcher.Utils.Updates;
 using Memoria.Launcher.Controller;
 
 namespace Memoria.Launcher
@@ -26,6 +27,9 @@ namespace Memoria.Launcher
     {
         private static readonly NLog.Logger _log = AppLogger.GetLogger();
         private readonly IDisposable _gamepadNavigation;
+        private readonly InstalledReleaseNotesService _releaseNotesService = new InstalledReleaseNotesService();
+        private Task<InstalledReleaseLookupResult> _releaseNotesLookupTask;
+        private Boolean _releaseNotesVisible;
 
         //public ModManagerWindow ModdingWindow;
         public static DateTime MemoriaAssemblyCompileDate;
@@ -115,10 +119,11 @@ namespace Memoria.Launcher
             UiGrid.MakeTooltip(btnCancel, "ModEditor.TooltipCancel", "", "hand");
 
             String version = IniFile.SettingsIni.GetSetting("Memoria", "Version", "2000.01.01");
+            String storedBuildTimestamp = IniFile.SettingsIni.GetSetting("Memoria", "BuildTimestamp", String.Empty);
+            Boolean installedBuildChanged = !InstalledBuildVersion.Matches(storedBuildTimestamp, MemoriaAssemblyCompileDate);
             DateTime currentVersion = DateTime.ParseExact(MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd"), "yyyy.MM.dd", CultureInfo.InvariantCulture);
             if (!DateTime.TryParseExact(version, "yyyy.MM.dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date) || date < currentVersion)
             {
-                ShowReleaseNotes(null, null);
                 // One time patches
                 if (date < new DateTime(2024, 11, 25))
                 {
@@ -162,14 +167,27 @@ namespace Memoria.Launcher
                 IniFile.SettingsIni.SetSetting("Memoria", "Version", MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd"));
                 IniFile.SettingsIni.Save();
             }
-            else if (GameSettings.AutoRunGame)
+
+            Boolean releaseNotesShown = false;
+            if (installedBuildChanged)
+            {
+                InstalledReleaseLookupResult releaseLookup = await GetInstalledReleaseNotesAsync();
+                if (releaseLookup.Status == InstalledReleaseLookupStatus.Found)
+                {
+                    ShowReleaseNotes(releaseLookup.ReleaseNotes);
+                    releaseNotesShown = true;
+                }
+                if (releaseLookup.IsDefinitive)
+                {
+                    IniFile.SettingsIni.SetSetting("Memoria", "BuildTimestamp", InstalledBuildVersion.Serialize(MemoriaAssemblyCompileDate));
+                    IniFile.SettingsIni.Save();
+                }
+            }
+
+            if (GameSettings.AutoRunGame && !releaseNotesShown)
                 PlayButton.Click();
 
-            String checkUpdates = IniFile.SettingsIni.GetSetting("Memoria", "CheckUpdates", "True");
-            if (!Boolean.TryParse(checkUpdates, out Boolean result) || result)
-            {
-                await UiLauncherPlayButton.CheckUpdates((Window)this.GetRootElement(), GameSettings);
-            }
+            await UpdateBuildPanel.InitializeAsync(GameSettings, MemoriaAssemblyCompileDate);
         }
 
         private void ModOptionsHeaderButton_Click(Object sender, RoutedEventArgs e)
@@ -497,9 +515,39 @@ namespace Memoria.Launcher
             SendMessage(new WindowInteropHelper(this).Handle, 161, 2, 0);
         }
 
-        private void ShowReleaseNotes(Object sender, RoutedEventArgs e)
+        private async void ShowReleaseNotes(Object sender, RoutedEventArgs e)
         {
-            var releaseWindow = new Window_ChangeLog();
+            try
+            {
+                InstalledReleaseLookupResult releaseLookup = await GetInstalledReleaseNotesAsync();
+                if (releaseLookup.Status == InstalledReleaseLookupStatus.Found)
+                    ShowReleaseNotes(releaseLookup.ReleaseNotes);
+            }
+            catch (Exception exception)
+            {
+                _log.Error(exception, "Unable to show release notes for the installed build {InstalledVersion:O}.", MemoriaAssemblyCompileDate);
+            }
+        }
+
+        private async Task<InstalledReleaseLookupResult> GetInstalledReleaseNotesAsync()
+        {
+            if (_releaseNotesLookupTask == null)
+                _releaseNotesLookupTask = _releaseNotesService.FindAsync(MemoriaAssemblyCompileDate);
+
+            InstalledReleaseLookupResult result = await _releaseNotesLookupTask;
+            if (result.Status == InstalledReleaseLookupStatus.Unavailable)
+                _releaseNotesLookupTask = null;
+            return result;
+        }
+
+        private void ShowReleaseNotes(ReleaseNotesDocument releaseNotes)
+        {
+            if (_releaseNotesVisible)
+                return;
+
+            Window_ChangeLog releaseWindow = new Window_ChangeLog(releaseNotes);
+            releaseWindow.Unloaded += (sender, args) => _releaseNotesVisible = false;
+            _releaseNotesVisible = true;
             MainWindowGrid.Children.Add(releaseWindow);
         }
 
