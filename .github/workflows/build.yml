@@ -147,11 +147,19 @@ jobs:
       run: |
         mv "Output/linux-x64/Memoria.Patcher" "Output/linux-x64/Memoria.Patcher-linux-x64"
         mv "Output/osx-x64/Memoria.Patcher" "Output/osx-x64/Memoria.Patcher-osx-x64"
+    - name: Prepare Canary release title
+      if: github.event_name != 'pull_request'
+      id: canary-release
+      shell: pwsh
+      run: |
+        $manifest = Get-Content -LiteralPath 'Output/manifest.json' -Raw | ConvertFrom-Json
+        $buildTimeUtc = [DateTimeOffset]::Parse($manifest.BuildTimeUtc, [Globalization.CultureInfo]::InvariantCulture).UtcDateTime
+        "title=Memoria (Canary) — $($buildTimeUtc.ToString('yyyy-MM-dd HH:mm')) UTC" >> $env:GITHUB_OUTPUT
     - name: Release Memoria.Patcher (Canary)
       if: github.event_name != 'pull_request'
       uses: softprops/action-gh-release@v3
       with:
-        name: Memoria (Canary)
+        name: ${{ steps.canary-release.outputs.title }}
         files: |
           Output/win-x64/Memoria.Patcher.exe
           Output/linux-x64/Memoria.Patcher-linux-x64
