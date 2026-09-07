@@ -14,6 +14,8 @@ EByteAbbr = "EB"
 />
 
 <Launcher
+ControllerShowTooltipHint = "显示提示"
+ControllerHideTooltipHint = "隐藏提示"
 Launch = "开始游戏"
 Launching = "启动中..."
 ModManager = "模组管理器"

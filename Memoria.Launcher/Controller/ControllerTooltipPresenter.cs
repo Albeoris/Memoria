@@ -38,12 +38,14 @@ namespace Memoria.Launcher.Controller
             }
 
             _enabled = true;
+            GamepadNavigation.SetAreControllerTooltipsEnabled(_window, true);
             Show(current);
         }
 
         public void Disable()
         {
             _enabled = false;
+            GamepadNavigation.SetAreControllerTooltipsEnabled(_window, false);
             Close();
         }
 

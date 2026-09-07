@@ -14,6 +14,8 @@ EByteAbbr = "EB"
 />
 
 <Launcher
+ControllerShowTooltipHint = "Show tooltip"
+ControllerHideTooltipHint = "Hide tooltip"
 Launch = "PLAY"
 Launching = "Launching..."
 ModManager = "MOD MANAGER"

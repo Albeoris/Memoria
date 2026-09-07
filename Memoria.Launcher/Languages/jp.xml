@@ -14,6 +14,8 @@ EByteAbbr = "EB"
 />
 
 <Launcher
+ControllerShowTooltipHint = "ツールチップを表示"
+ControllerHideTooltipHint = "ツールチップを非表示"
 Launch = "再生"
 Launching = "再生中..."
 ModManager = "MOD マネージャー"

@@ -14,6 +14,8 @@ EByteAbbr = "ЭБ"
 />
 
 <Launcher
+ControllerShowTooltipHint = "Показать подсказку"
+ControllerHideTooltipHint = "Скрыть подсказку"
 Launch = "Запуск"
 Launching = "Запускаем..."
 ModManager = "Установить Моды"

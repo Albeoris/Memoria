@@ -29,6 +29,10 @@ namespace Memoria.Launcher.Controller
         public static readonly DependencyProperty IsControllerInputActiveProperty =
             IsControllerInputActivePropertyKey.DependencyProperty;
 
+        private static readonly DependencyPropertyKey AreControllerTooltipsEnabledPropertyKey = DependencyProperty.RegisterAttachedReadOnly("AreControllerTooltipsEnabled", typeof(Boolean), typeof(GamepadNavigation), new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.Inherits));
+
+        public static readonly DependencyProperty AreControllerTooltipsEnabledProperty = AreControllerTooltipsEnabledPropertyKey.DependencyProperty;
+
         public static readonly DependencyProperty IsDefaultFocusProperty = DependencyProperty.RegisterAttached(
             "IsDefaultFocus", typeof(Boolean), typeof(GamepadNavigation), new FrameworkPropertyMetadata(false));
 
@@ -50,6 +54,8 @@ namespace Memoria.Launcher.Controller
 
         public static Boolean IsControllerInputActive(DependencyObject element) =>
             (Boolean)element.GetValue(IsControllerInputActiveProperty);
+
+        public static Boolean GetAreControllerTooltipsEnabled(DependencyObject element) => (Boolean)element.GetValue(AreControllerTooltipsEnabledProperty);
 
         public static void SetIsDefaultFocus(DependencyObject element, Boolean value) =>
             element.SetValue(IsDefaultFocusProperty, value);
@@ -89,6 +95,8 @@ namespace Memoria.Launcher.Controller
 
         internal static void SetIsControllerInputActive(DependencyObject element, Boolean value) =>
             element.SetValue(IsControllerInputActivePropertyKey, value);
+
+        internal static void SetAreControllerTooltipsEnabled(DependencyObject element, Boolean value) => element.SetValue(AreControllerTooltipsEnabledPropertyKey, value);
 
         internal static Boolean RaiseActivated(UIElement element)
         {

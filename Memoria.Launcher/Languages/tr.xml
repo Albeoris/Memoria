@@ -14,6 +14,8 @@ EByteAbbr = "EB"
 />
 
 <Launcher
+ControllerShowTooltipHint = "İpucunu göster"
+ControllerHideTooltipHint = "İpucunu gizle"
 Launch = "OYNA"
 Launching = "Başlatılıyor..."
 ModManager = "MOD YÖNETİCİSİ"
