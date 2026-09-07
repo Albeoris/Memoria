@@ -1,203 +1,80 @@
-﻿using System;
+using System;
 using System.Diagnostics;
-using Memoria.Launcher.Utils.Downloads;
-using System.Net;
-using System.Net.Http;
-using System.Text.RegularExpressions;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using Memoria.Launcher.Utils.Updates;
 
 namespace Memoria.Launcher
 {
-    /// <summary>
-    /// Interaction logic for Window_ReleaseNotes.xaml
-    /// </summary>
     public partial class Window_ChangeLog : UserControl
     {
         public Window_ChangeLog()
         {
             InitializeComponent();
-
-            if (changeLogHtml == null)
-                LoadRemoteChangelog();
-            else
-                ParseChangeLogHtml();
         }
 
-        private static String changeLogHtml = null;
+        internal Window_ChangeLog(ReleaseNotesDocument releaseNotes) : this()
+        {
+            Render(releaseNotes ?? throw new ArgumentNullException(nameof(releaseNotes)));
+        }
 
-        private async void LoadRemoteChangelog()
+        private void Render(ReleaseNotesDocument releaseNotes)
         {
             Document.Document.Blocks.Clear();
-            Paragraph loading = new Paragraph(new Run($"Loading changelog..."))
+            Paragraph title = new Paragraph(new Run($"{releaseNotes.Build.Name}: {releaseNotes.Title}")) { Margin = new Thickness(), Padding = new Thickness(0, 10, 0, 4), FontSize = 26 };
+            Hyperlink releaseLink = new Hyperlink(new Run(releaseNotes.Tag + " ↗")) { NavigateUri = releaseNotes.ReleasePage, FontSize = 16 };
+            releaseLink.RequestNavigate += OpenLink;
+            title.Inlines.Add(new LineBreak());
+            title.Inlines.Add(releaseLink);
+            Document.Document.Blocks.Add(title);
+
+            List currentList = null;
+            foreach (ReleaseNotesBlock block in releaseNotes.Blocks)
             {
-                Margin = new Thickness(0, 20, 0, 20),
-                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aeee"))
-            };
-            Document.Document.Blocks.Add(loading);
-            try
-            {
-                // Load the release page from github and parse it into a changelog
-                String url = "https://github.com/Albeoris/Memoria/releases";
-                using (CancellationTokenSource timeout = new CancellationTokenSource(TimeSpan.FromSeconds(5)))
+                if (block.Kind == ReleaseNotesBlockKind.Bullet)
                 {
-                    using (var response = await ResilientHttpClient.Shared.GetAsync(url, timeout.Token))
+                    if (currentList == null)
                     {
-                        response.EnsureSuccessStatusCode();
-                        changeLogHtml = await response.Content.ReadAsStringAsync();
+                        currentList = new List { MarkerStyle = TextMarkerStyle.Disc, Margin = new Thickness(), Padding = new Thickness(24, 0, 0, 0) };
+                        Document.Document.Blocks.Add(currentList);
                     }
+                    currentList.ListItems.Add(new ListItem(new Paragraph(new Run(block.Text)) { Margin = new Thickness(), Padding = new Thickness(0, 0, 0, 5) }));
+                    continue;
                 }
-                ParseChangeLogHtml();
-            }
-            catch
-            {
-                Document.Document.Blocks.Clear();
-                Paragraph p = new Paragraph(new Run($"Couldn't load the changelog."))
+
+                currentList = null;
+                if (block.Kind == ReleaseNotesBlockKind.Link)
                 {
-                    Padding = new Thickness(0, 0, 0, 10),
-                    Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aeee"))
-                };
-                Document.Document.Blocks.Add(p);
+                    Hyperlink link = new Hyperlink(new Run(block.Text + " ↗")) { NavigateUri = block.Link };
+                    link.RequestNavigate += OpenLink;
+                    Document.Document.Blocks.Add(new Paragraph(link) { Margin = new Thickness(), Padding = new Thickness(0, 8, 0, 8) });
+                    continue;
+                }
+
+                Double fontSize = block.Kind == ReleaseNotesBlockKind.Heading ? 20 : 16;
+                Thickness padding = block.Kind == ReleaseNotesBlockKind.Heading ? new Thickness(0, 20, 0, 8) : new Thickness(0, 6, 0, 6);
+                Document.Document.Blocks.Add(new Paragraph(new Run(block.Text)) { Margin = new Thickness(), Padding = padding, FontSize = fontSize, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aeee")) });
             }
         }
 
-        private void ParseChangeLogHtml()
+        private static void OpenLink(Object sender, RoutedEventArgs e)
         {
-            Document.Document.Blocks.Clear();
-
-            try
-            {
-                foreach (Match sectionMatch in Regex.Matches(changeLogHtml, @"<section[^>]*>(.*?)</section>", RegexOptions.Singleline))
-                {
-                    if (!sectionMatch.Success) continue;
-
-                    String section = sectionMatch.Groups[1].Value;
-                    String version = Regex.Match(section, "v(20[^\\\"<]*)\\\"", RegexOptions.Singleline).Groups[1].Value;
-                    String wikiLink = Regex.Match(section, @"https:\/\/github.com\/Albeoris\/Memoria\/wiki\/Changelog-v20[^\""]*", RegexOptions.Singleline).Groups?[0].Value;
-                    String title = Regex.Match(section, @"<h2[^>]*>(.*?)</h2>", RegexOptions.Singleline).Groups[1].Value;
-
-                    String content = Regex.Match(section, @"<div[^>]*body-content[^>]*>(.*?)<\/div>", RegexOptions.Singleline).Groups[1].Value;
-                    // Removes changelog link
-                    content = Regex.Replace(content, @"<p>(?!:<\/p>).*?COMPLETE CHANGELOG HERE<\/a><\/p>", "", RegexOptions.Singleline);
-                    // Remove all links
-                    content = Regex.Replace(content, @"<a[^>]*>(.*?)<\/a>", "$1", RegexOptions.Singleline);
-
-                    // Main header
-                    {
-                        Paragraph p = new Paragraph(new Run($"Version {version}"))
-                        {
-                            Margin = new Thickness(),
-                            Padding = new Thickness(0, 10, 0, 10),
-                            FontSize = 26
-                        };
-
-                        if (!String.IsNullOrEmpty(wikiLink))
-                        {
-                            Hyperlink link = new Hyperlink();
-                            link.FontSize = 16;
-                            link.Inlines.Add("Complete changelog ↗");
-                            link.NavigateUri = new Uri(wikiLink);
-                            link.RequestNavigate += (s, e) =>
-                            {
-                                Process.Start(e.Uri.ToString());
-                            };
-                            p.Inlines.Add(new LineBreak());
-                            p.Inlines.Add(link);
-                        }
-                        Document.Document.Blocks.Add(p);
-                    }
-
-                    // Parse content
-                    List list = null;
-                    Int32 indent = 0;
-
-                    String[] lines = content.Split('\n');
-                    foreach (String line in lines)
-                    {
-                        String trimmed = line.Trim();
-                        String plainText = WebUtility.HtmlDecode(Regex.Replace(trimmed, @"<[^>]*>", ""));
-
-                        if (trimmed.StartsWith("<h2>"))
-                        {
-                            Paragraph p = new Paragraph(new Run(plainText))
-                            {
-                                Margin = new Thickness(),
-                                Padding = new Thickness(0, 20, 0, 10),
-                                FontSize = 20
-                            };
-                            Document.Document.Blocks.Add(p);
-                            continue;
-                        }
-                        if (trimmed.StartsWith("<ul>"))
-                        {
-                            indent++;
-                            continue;
-                        }
-                        if (trimmed.StartsWith("<li>"))
-                        {
-                            Paragraph p = new Paragraph(new Run("• " + plainText));
-                            ListItem item = new ListItem(p)
-                            {
-                                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aeee"))
-                            };
-                            item.Margin = new Thickness();
-                            item.Padding = new Thickness(indent * 10, 0, 0, 5);
-                            if (list == null)
-                            {
-                                list = new List();
-                                list.MarkerStyle = TextMarkerStyle.None;
-                                list.Margin = new Thickness();
-                                list.Padding = new Thickness();
-                                Document.Document.Blocks.Add(list);
-                            }
-                            list.ListItems.Add(item);
-                            continue;
-                        }
-                        if (trimmed.StartsWith("</ul>"))
-                        {
-                            indent--;
-                            if (indent == 0)
-                                list = null;
-                            continue;
-                        }
-                        if (trimmed.StartsWith("<p>"))
-                        {
-                            Paragraph p = new Paragraph(new Run(plainText))
-                            {
-                                Margin = new Thickness(),
-                                Padding = new Thickness(0, 10, 0, 10),
-                                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aeee"))
-                            };
-                            Document.Document.Blocks.Add(p);
-                            continue;
-                        }
-                    }
-                }
-            }
-            catch
-            {
-                Document.Document.Blocks.Clear();
-                Paragraph p = new Paragraph(new Run($"Couldn't parse the changelog."))
-                {
-                    Padding = new Thickness(0, 0, 0, 10),
-                    Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aeee"))
-                };
-                Document.Document.Blocks.Add(p);
-            }
+            if (sender is Hyperlink link && link.NavigateUri != null)
+                Process.Start(link.NavigateUri.AbsoluteUri);
+            e.Handled = true;
         }
 
         private void Close(Object sender, RoutedEventArgs e)
         {
             MainWindow mainWindow = (MainWindow)this.GetRootElement();
-            ((Grid)this.Parent).Children.Remove(this);
-
+            ((Grid)Parent).Children.Remove(this);
             if (mainWindow.GameSettings.AutoRunGame)
                 mainWindow.PlayButton.Click();
         }
+
         private void Bg_MouseDown(Object sender, MouseButtonEventArgs e)
         {
             Window.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#e333"));
@@ -216,7 +93,7 @@ namespace Memoria.Launcher
         private void DocumentScrollViewer_PreviewMouseWheel(Object sender, MouseWheelEventArgs e)
         {
             ScrollViewer scrollViewer = (ScrollViewer)sender;
-            double offset = scrollViewer.VerticalOffset - (e.Delta / 3f);
+            Double offset = scrollViewer.VerticalOffset - e.Delta / 3f;
             scrollViewer.ScrollToVerticalOffset(offset < 0 ? 0 : offset > scrollViewer.ExtentHeight ? scrollViewer.ExtentHeight : offset);
         }
     }

@@ -83,6 +83,14 @@
              Link="Production\Updates\UpdateTimeFormatter.cs" />
     <Compile Include="..\Memoria.Launcher\Utils\Updates\UpdateManifest.cs"
              Link="Production\Updates\UpdateManifest.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Updates\UpdateBuild.cs"
+             Link="Production\Updates\UpdateBuild.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Updates\InstalledBuildVersion.cs"
+             Link="Production\Updates\InstalledBuildVersion.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Updates\ReleaseNotesDocument.cs"
+             Link="Production\Updates\ReleaseNotesDocument.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Updates\GitHubReleaseDescriptionParser.cs"
+             Link="Production\Updates\GitHubReleaseDescriptionParser.cs" />
     <Compile Include="..\Memoria.Launcher\Utils\Mods\ModContentManifest.cs"
              Link="Production\Mods\ModContentManifest.cs" />
     <Compile Include="..\Memoria.Launcher\Utils\Mods\ModDownloadFormat.cs"
