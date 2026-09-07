@@ -50,6 +50,28 @@ Auto = "Auto"
 SearchModsPlaceholder = "SUCHE NACH NAMEN"
 />
 
+<!-- Anwendungsaktualisierung -->
+<Updater
+StableName = "Stable"
+CanaryName = "Canary"
+CheckStatus = "Build prüfen"
+CheckingStatus = "Wird geprüft..."
+UnavailableStatus = "Nicht verfügbar"
+WaitingStatus = "Warten..."
+StableTooltip = "Stable ist der getestete Build, der für die meisten Spieler empfohlen wird. Klicken Sie, um genau diesen Build herunterzuladen."
+CanaryTooltip = "Canary ist ein experimenteller Vorschau-Build mit den neuesten Änderungen. Er kann unfertige Funktionen oder Regressionen enthalten; verwenden Sie ihn nur, wenn Sie dieses Risiko akzeptieren."
+EnableAutoCheckRecommendation = "Aktivieren Sie die automatische Updateprüfung in den Einstellungen, um beim Start Datum und Verfügbarkeit beider Builds zu sehen."
+CheckFailedTooltip = "Updateinformationen konnten nicht abgerufen werden. Vollständige Diagnosedetails wurden in MemoriaLauncher.log geschrieben."
+ConfirmTitle = "Memoria-Build installieren?"
+ConfirmDowngrade = "Möchten Sie wirklich auf den {2}-Build downgraden?&#xA;&#xA;Ihre Version: {0}&#xA;Ausgewählter Build: {1}"
+ConfirmUpgrade = "Möchten Sie den neuen {2}-Build wirklich herunterladen und installieren?&#xA;&#xA;Ihre Version: {0}&#xA;Ausgewählter Build: {1}"
+ConfirmReinstall = "Der ausgewählte {2}-Build wurde zur selben Zeit wie Ihre Version veröffentlicht. Möchten Sie ihn neu installieren?&#xA;&#xA;Version: {1}"
+DownloadingBuild = "{0}-Build wird heruntergeladen..."
+CancelDownloadTitle = "Download abbrechen?"
+CancelDownloadQuestion = "Möchten Sie diesen Download wirklich abbrechen? Die heruntergeladenen Daten werden verworfen."
+DownloadFailed = "Das Update konnte nicht heruntergeladen oder installiert werden. Vollständige Diagnosedetails wurden in MemoriaLauncher.log geschrieben."
+/>
+
 <Settings
 LauncherWindowTitle = "Final Fantasy IX | Memoria Launcher"
 ActiveMonitor = "Aktiver Monitor"

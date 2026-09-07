@@ -50,6 +50,28 @@ Auto = "自動"
 SearchModsPlaceholder = "按名稱搜尋"
 />
 
+<!-- 應用程式更新 -->
+<Updater
+StableName = "Stable"
+CanaryName = "Canary"
+CheckStatus = "檢查組建"
+CheckingStatus = "正在檢查..."
+UnavailableStatus = "無法使用"
+WaitingStatus = "等待中..."
+StableTooltip = "Stable 是經過測試的組建，建議大多數玩家使用。按一下即可下載此組建。"
+CanaryTooltip = "Canary 是包含最新變更的實驗性預覽組建，可能包含未完成功能或迴歸問題；請僅在接受此風險的情況下使用。"
+EnableAutoCheckRecommendation = "請在設定中啟用自動檢查更新，以便在啟動時查看兩個組建的日期與可用狀態。"
+CheckFailedTooltip = "無法取得更新資訊。完整的診斷詳細資料已寫入 MemoriaLauncher.log。"
+ConfirmTitle = "安裝 Memoria 組建？"
+ConfirmDowngrade = "確定要降級到 {2} 組建嗎？&#xA;&#xA;目前版本：{0}&#xA;所選組建：{1}"
+ConfirmUpgrade = "確定要下載並安裝新的 {2} 組建嗎？&#xA;&#xA;目前版本：{0}&#xA;所選組建：{1}"
+ConfirmReinstall = "所選的 {2} 組建與目前版本的發佈時間相同。要重新安裝嗎？&#xA;&#xA;版本：{1}"
+DownloadingBuild = "正在下載 {0} 組建..."
+CancelDownloadTitle = "取消下載？"
+CancelDownloadQuestion = "確定要取消此次下載嗎？已下載的資料將被捨棄。"
+DownloadFailed = "無法下載或安裝更新。完整的診斷詳細資料已寫入 MemoriaLauncher.log。"
+/>
+
 <Settings
 LauncherWindowTitle = "Final Fantasy IX | Memoria 啟動器"
 ActiveMonitor = "顯示器"

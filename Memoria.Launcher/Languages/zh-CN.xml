@@ -50,6 +50,28 @@ Auto = "自动"
 SearchModsPlaceholder = "按名称搜索"
 />
 
+<!-- 应用程序更新 -->
+<Updater
+StableName = "Stable"
+CanaryName = "Canary"
+CheckStatus = "检查构建"
+CheckingStatus = "正在检查..."
+UnavailableStatus = "不可用"
+WaitingStatus = "等待中..."
+StableTooltip = "Stable 是经过测试的构建，推荐大多数玩家使用。点击即可下载此构建。"
+CanaryTooltip = "Canary 是包含最新更改的实验性预览构建，可能包含未完成功能或回归问题；请仅在接受此风险的情况下使用。"
+EnableAutoCheckRecommendation = "请在设置中启用自动检查更新，以便在启动时查看两个构建的日期和可用状态。"
+CheckFailedTooltip = "无法获取更新信息。完整的诊断详情已写入 MemoriaLauncher.log。"
+ConfirmTitle = "安装 Memoria 构建？"
+ConfirmDowngrade = "确定要降级到 {2} 构建吗？&#xA;&#xA;当前版本：{0}&#xA;所选构建：{1}"
+ConfirmUpgrade = "确定要下载并安装新的 {2} 构建吗？&#xA;&#xA;当前版本：{0}&#xA;所选构建：{1}"
+ConfirmReinstall = "所选的 {2} 构建与当前版本的发布时间相同。要重新安装吗？&#xA;&#xA;版本：{1}"
+DownloadingBuild = "正在下载 {0} 构建..."
+CancelDownloadTitle = "取消下载？"
+CancelDownloadQuestion = "确定要取消此次下载吗？已下载的数据将被丢弃。"
+DownloadFailed = "无法下载或安装更新。完整的诊断详情已写入 MemoriaLauncher.log。"
+/>
+
 <Settings
 LauncherWindowTitle = "Final Fantasy IX | Memoria 启动器"
 ActiveMonitor = "显示器"

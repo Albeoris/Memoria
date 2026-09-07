@@ -50,6 +50,28 @@ Auto = "Otomatik"
 SearchModsPlaceholder = "İSİM GÖRE ARAMA"
 />
 
+<!-- Uygulama güncelleyici -->
+<Updater
+StableName = "Stable"
+CanaryName = "Canary"
+CheckStatus = "Derlemeyi kontrol et"
+CheckingStatus = "Kontrol ediliyor..."
+UnavailableStatus = "Kullanılamıyor"
+WaitingStatus = "Bekleniyor..."
+StableTooltip = "Stable, çoğu oyuncu için önerilen test edilmiş derlemedir. Tam olarak bu derlemeyi indirmek için tıklayın."
+CanaryTooltip = "Canary, en yeni değişiklikleri içeren deneysel bir önizleme derlemesidir. Tamamlanmamış özellikler veya gerilemeler içerebilir; yalnızca bu riski kabul ediyorsanız kullanın."
+EnableAutoCheckRecommendation = "Başlangıçta her iki derlemenin tarihini ve kullanılabilirliğini görmek için Ayarlar'da otomatik güncelleme kontrolünü etkinleştirin."
+CheckFailedTooltip = "Güncelleme bilgileri alınamadı. Tüm tanılama ayrıntıları MemoriaLauncher.log dosyasına yazıldı."
+ConfirmTitle = "Memoria derlemesi yüklensin mi?"
+ConfirmDowngrade = "{2} derlemesine geçerek sürümü düşürmek istediğinizden emin misiniz?&#xA;&#xA;Sürümünüz: {0}&#xA;Seçilen derleme: {1}"
+ConfirmUpgrade = "Yeni {2} derlemesini indirip yüklemek istediğinizden emin misiniz?&#xA;&#xA;Sürümünüz: {0}&#xA;Seçilen derleme: {1}"
+ConfirmReinstall = "Seçilen {2} derlemesi sürümünüzle aynı zamanda yayımlandı. Yeniden yüklemek ister misiniz?&#xA;&#xA;Sürüm: {1}"
+DownloadingBuild = "{0} derlemesi indiriliyor..."
+CancelDownloadTitle = "İndirme iptal edilsin mi?"
+CancelDownloadQuestion = "Bu indirmeyi iptal etmek istediğinizden emin misiniz? İndirilen veriler silinecek."
+DownloadFailed = "Güncelleme indirilemedi veya yüklenemedi. Tüm tanılama ayrıntıları MemoriaLauncher.log dosyasına yazıldı."
+/>
+
 <Settings
 LauncherWindowTitle = "Final Fantasy IX | Memoria Başlatıcı"
 ActiveMonitor = "Aktif monitör"

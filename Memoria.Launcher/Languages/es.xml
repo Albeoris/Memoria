@@ -50,6 +50,28 @@ Auto = "Auto"
 SearchModsPlaceholder = "BUSCAR POR NOMBRE"
 />
 
+<!-- Actualizador de la aplicación -->
+<Updater
+StableName = "Stable"
+CanaryName = "Canary"
+CheckStatus = "Comprobar compilación"
+CheckingStatus = "Comprobando..."
+UnavailableStatus = "No disponible"
+WaitingStatus = "Esperando..."
+StableTooltip = "Stable es la compilación probada y recomendada para la mayoría de los jugadores. Haz clic para descargar exactamente esta compilación."
+CanaryTooltip = "Canary es una compilación preliminar experimental con los cambios más recientes. Puede contener funciones sin terminar o regresiones; úsala solo si aceptas ese riesgo."
+EnableAutoCheckRecommendation = "Activa la comprobación automática de actualizaciones en Ajustes para ver al iniciar las fechas y la disponibilidad de ambas compilaciones."
+CheckFailedTooltip = "No se pudo obtener la información de actualización. Los detalles completos del diagnóstico se escribieron en MemoriaLauncher.log."
+ConfirmTitle = "¿Instalar la compilación de Memoria?"
+ConfirmDowngrade = "¿Seguro que quieres volver a la compilación {2}?&#xA;&#xA;Tu versión: {0}&#xA;Compilación seleccionada: {1}"
+ConfirmUpgrade = "¿Seguro que quieres descargar e instalar la nueva compilación {2}?&#xA;&#xA;Tu versión: {0}&#xA;Compilación seleccionada: {1}"
+ConfirmReinstall = "La compilación {2} seleccionada se publicó al mismo tiempo que tu versión. ¿Quieres reinstalarla?&#xA;&#xA;Versión: {1}"
+DownloadingBuild = "Descargando la compilación {0}..."
+CancelDownloadTitle = "¿Cancelar la descarga?"
+CancelDownloadQuestion = "¿Seguro que quieres cancelar esta descarga? Los datos descargados se descartarán."
+DownloadFailed = "No se pudo descargar o instalar la actualización. Los detalles completos del diagnóstico se escribieron en MemoriaLauncher.log."
+/>
+
 <Settings
 LauncherWindowTitle = "Final Fantasy IX | Memoria Launcher"
 ActiveMonitor = "Monitor activo"

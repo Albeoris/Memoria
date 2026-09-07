@@ -10,6 +10,9 @@ namespace Memoria.Launcher.Utils.Updates
     internal sealed class LauncherUpdateMetadataClient : IDisposable
     {
         private static readonly TimeSpan RequestTimeout = TimeSpan.FromSeconds(20);
+        // TODO: Remove this legacy Stable timestamp correction after the next Stable release publishes manifest.json.
+        private static readonly DateTime LegacyStableAssetTimeUtc = new DateTime(2025, 7, 13, 21, 55, 2, DateTimeKind.Utc);
+        private static readonly DateTime LegacyStableBuildTimeUtc = new DateTime(2025, 7, 13, 22, 50, 2, DateTimeKind.Utc);
         private readonly Logger _log = AppLogger.GetLogger(nameof(LauncherUpdateMetadataClient));
         private readonly HttpClient _httpClient = ResilientHttpClient.CreateClient();
         private Boolean _disposed;
@@ -75,12 +78,18 @@ namespace Memoria.Launcher.Utils.Updates
             if (!response.IsSuccessStatusCode)
                 throw FileDownloader.CreateHttpResponseException(build.Source, response);
 
-            DateTime? publishedAtUtc = response.Content.Headers.LastModified?.UtcDateTime;
-            if (!publishedAtUtc.HasValue)
+            DateTime? assetTimeUtc = response.Content.Headers.LastModified?.UtcDateTime;
+            if (!assetTimeUtc.HasValue)
                 throw new DownloadException(DownloadFailureKind.InvalidResponseMetadata, $"The update server did not provide a publication time for the {build.Name} build.");
 
-            _log.Info("Update metadata loaded from legacy HEAD response. Build: {Build}, PublishedAtUtc: {PublishedAtUtc:O}, Uri: {Uri}", build.Name, publishedAtUtc.Value, build.Source);
-            return new UpdateBuildInfo(build, publishedAtUtc.Value, response.Content.Headers.ContentLength ?? -1);
+            DateTime buildTimeUtc = CorrectLegacyStableBuildTime(build, assetTimeUtc.Value);
+            _log.Info("Update metadata loaded from legacy HEAD response. Build: {Build}, AssetTimeUtc: {AssetTimeUtc:O}, BuildTimeUtc: {BuildTimeUtc:O}, Uri: {Uri}", build.Name, assetTimeUtc.Value, buildTimeUtc, build.Source);
+            return new UpdateBuildInfo(build, buildTimeUtc, response.Content.Headers.ContentLength ?? -1);
+        }
+
+        private static DateTime CorrectLegacyStableBuildTime(UpdateBuild build, DateTime assetTimeUtc)
+        {
+            return build.Kind == UpdateBuildKind.Stable && assetTimeUtc == LegacyStableAssetTimeUtc ? LegacyStableBuildTimeUtc : assetTimeUtc;
         }
 
         private static CancellationTokenSource CreateRequestCancellation(CancellationToken cancellationToken)

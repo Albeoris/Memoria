@@ -50,6 +50,28 @@ Auto = "Auto"
 SearchModsPlaceholder = "RECHERCHER PAR NOM"
 />
 
+<!-- Mise à jour de l'application -->
+<Updater
+StableName = "Stable"
+CanaryName = "Canary"
+CheckStatus = "Vérifier la version"
+CheckingStatus = "Vérification..."
+UnavailableStatus = "Indisponible"
+WaitingStatus = "En attente..."
+StableTooltip = "Stable est la version testée recommandée à la plupart des joueurs. Cliquez pour télécharger précisément cette version."
+CanaryTooltip = "Canary est une préversion expérimentale contenant les changements les plus récents. Elle peut comporter des fonctions inachevées ou des régressions ; utilisez-la uniquement si vous acceptez ce risque."
+EnableAutoCheckRecommendation = "Activez la vérification automatique des mises à jour dans les paramètres pour voir au démarrage la date et la disponibilité des deux versions."
+CheckFailedTooltip = "Les informations de mise à jour n'ont pas pu être récupérées. Les détails complets du diagnostic ont été enregistrés dans MemoriaLauncher.log."
+ConfirmTitle = "Installer la version de Memoria ?"
+ConfirmDowngrade = "Voulez-vous vraiment revenir à la version {2} ?&#xA;&#xA;Votre version : {0}&#xA;Version sélectionnée : {1}"
+ConfirmUpgrade = "Voulez-vous vraiment télécharger et installer la nouvelle version {2} ?&#xA;&#xA;Votre version : {0}&#xA;Version sélectionnée : {1}"
+ConfirmReinstall = "La version {2} sélectionnée a été publiée en même temps que votre version. Voulez-vous la réinstaller ?&#xA;&#xA;Version : {1}"
+DownloadingBuild = "Téléchargement de la version {0}..."
+CancelDownloadTitle = "Annuler le téléchargement ?"
+CancelDownloadQuestion = "Voulez-vous vraiment annuler ce téléchargement ? Les données téléchargées seront supprimées."
+DownloadFailed = "La mise à jour n'a pas pu être téléchargée ou installée. Les détails complets du diagnostic ont été enregistrés dans MemoriaLauncher.log."
+/>
+
 <Settings
 LauncherWindowTitle = "Final Fantasy IX | Memoria Launcher"
 ActiveMonitor = "Écran actif"

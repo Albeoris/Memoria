@@ -50,6 +50,28 @@ Auto = "自動"
 SearchModsPlaceholder = "名前で検索"
 />
 
+<!-- アプリケーションの更新 -->
+<Updater
+StableName = "Stable"
+CanaryName = "Canary"
+CheckStatus = "ビルドを確認"
+CheckingStatus = "確認中..."
+UnavailableStatus = "利用不可"
+WaitingStatus = "待機中..."
+StableTooltip = "Stableはテスト済みで、ほとんどのプレイヤーに推奨されるビルドです。クリックすると、このビルドをダウンロードします。"
+CanaryTooltip = "Canaryは最新の変更を含む実験的なプレビュービルドです。未完成の機能や不具合が含まれる可能性があります。このリスクを承知した場合のみ使用してください。"
+EnableAutoCheckRecommendation = "設定で更新の自動確認を有効にすると、起動時に両方のビルドの日付と利用状況を確認できます。"
+CheckFailedTooltip = "更新情報を取得できませんでした。詳細な診断情報はMemoriaLauncher.logに記録されました。"
+ConfirmTitle = "Memoriaビルドをインストールしますか？"
+ConfirmDowngrade = "{2}ビルドへダウングレードしますか？&#xA;&#xA;現在のバージョン: {0}&#xA;選択したビルド: {1}"
+ConfirmUpgrade = "新しい{2}ビルドをダウンロードしてインストールしますか？&#xA;&#xA;現在のバージョン: {0}&#xA;選択したビルド: {1}"
+ConfirmReinstall = "選択した{2}ビルドは現在のバージョンと同じ時刻に公開されています。再インストールしますか？&#xA;&#xA;バージョン: {1}"
+DownloadingBuild = "{0}ビルドをダウンロード中..."
+CancelDownloadTitle = "ダウンロードをキャンセルしますか？"
+CancelDownloadQuestion = "このダウンロードをキャンセルしますか？ダウンロード済みのデータは破棄されます。"
+DownloadFailed = "更新をダウンロードまたはインストールできませんでした。詳細な診断情報はMemoriaLauncher.logに記録されました。"
+/>
+
 <Settings
 LauncherWindowTitle = "Final Fantasy IX | Memoriaランチャー"
 ActiveMonitor = "アクティブ モニター"

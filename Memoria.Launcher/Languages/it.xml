@@ -50,6 +50,28 @@ Auto = "Auto"
 SearchModsPlaceholder = "CERCA PER NOME"
 />
 
+<!-- Aggiornamento dell'applicazione -->
+<Updater
+StableName = "Stable"
+CanaryName = "Canary"
+CheckStatus = "Controlla build"
+CheckingStatus = "Controllo..."
+UnavailableStatus = "Non disponibile"
+WaitingStatus = "In attesa..."
+StableTooltip = "Stable è la build collaudata e consigliata per la maggior parte dei giocatori. Fai clic per scaricare esattamente questa build."
+CanaryTooltip = "Canary è una build sperimentale di anteprima con le modifiche più recenti. Può contenere funzionalità incomplete o regressioni; usala solo se accetti questo rischio."
+EnableAutoCheckRecommendation = "Attiva il controllo automatico degli aggiornamenti nelle impostazioni per vedere all'avvio le date e la disponibilità di entrambe le build."
+CheckFailedTooltip = "Impossibile recuperare le informazioni sull'aggiornamento. I dettagli diagnostici completi sono stati scritti in MemoriaLauncher.log."
+ConfirmTitle = "Installare la build di Memoria?"
+ConfirmDowngrade = "Vuoi davvero eseguire il downgrade alla build {2}?&#xA;&#xA;La tua versione: {0}&#xA;Build selezionata: {1}"
+ConfirmUpgrade = "Vuoi davvero scaricare e installare la nuova build {2}?&#xA;&#xA;La tua versione: {0}&#xA;Build selezionata: {1}"
+ConfirmReinstall = "La build {2} selezionata è stata pubblicata contemporaneamente alla tua versione. Vuoi reinstallarla?&#xA;&#xA;Versione: {1}"
+DownloadingBuild = "Download della build {0}..."
+CancelDownloadTitle = "Annullare il download?"
+CancelDownloadQuestion = "Vuoi davvero annullare questo download? I dati scaricati verranno eliminati."
+DownloadFailed = "Impossibile scaricare o installare l'aggiornamento. I dettagli diagnostici completi sono stati scritti in MemoriaLauncher.log."
+/>
+
 <Settings
 LauncherWindowTitle = "Final Fantasy IX | Launcher Memoria"
 ActiveMonitor = "Monitor attivo"
