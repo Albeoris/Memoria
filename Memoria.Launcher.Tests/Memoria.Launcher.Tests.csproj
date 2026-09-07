@@ -75,6 +75,12 @@
              Link="Production\IO\DirectoryTreeDeleter.cs" />
     <Compile Include="..\Memoria.Launcher\Utils\IO\SafeRelativePath.cs"
              Link="Production\IO\SafeRelativePath.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Updates\UpdateVersionRelation.cs"
+             Link="Production\Updates\UpdateVersionRelation.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Updates\PendingUpdatePackage.cs"
+             Link="Production\Updates\PendingUpdatePackage.cs" />
+    <Compile Include="..\Memoria.Launcher\Utils\Updates\UpdateTimeFormatter.cs"
+             Link="Production\Updates\UpdateTimeFormatter.cs" />
     <Compile Include="..\Memoria.Launcher\Utils\Mods\ModContentManifest.cs"
              Link="Production\Mods\ModContentManifest.cs" />
     <Compile Include="..\Memoria.Launcher\Utils\Mods\ModDownloadFormat.cs"

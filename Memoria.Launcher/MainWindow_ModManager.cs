@@ -565,6 +565,7 @@ namespace Memoria.Launcher
             }
             if (downloadCatalogClient != null && downloadCatalogClient.IsRunning)
                 downloadCatalogClient.Cancel();
+            UpdateBuildPanel.Dispose();
         }
 
 

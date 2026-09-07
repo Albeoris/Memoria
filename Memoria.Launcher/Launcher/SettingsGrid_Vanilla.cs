@@ -20,7 +20,6 @@ namespace Memoria.Launcher
 
             CreateCheckbox("IsDebugMode", "Settings.Debuggable", "Settings.Debuggable_Tooltip");
             CreateCheckbox("CheckUpdates", "Settings.CheckUpdates", "Settings.CheckUpdates_Tooltip");
-            CreateCombobox("UpdateChannel", ComboBoxOptions.Literal(["Stable", "Canary"]), 50, "Settings.UpdateChannel", "Settings.UpdateChannel_Tooltip", "", ComboBoxSelectionMode.Value);
 
             String OSversion = $"{Environment.OSVersion}";
             if (OSversion.Contains("Windows") && string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WINELOADER")))
@@ -47,19 +46,6 @@ namespace Memoria.Launcher
                 if (_isDebugMode != value)
                 {
                     _isDebugMode = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public String UpdateChannel
-        {
-            get { return _updateChannel; }
-            set
-            {
-                if (!String.Equals(_updateChannel, value, StringComparison.Ordinal))
-                {
-                    _updateChannel = value;
                     OnPropertyChanged();
                 }
             }
@@ -137,7 +123,9 @@ namespace Memoria.Launcher
                             IniFile.PreventWrite = true;
                             Lang.LoadLanguageResources(Lang.LauncherLanguageList[value]);
                             Lang.Res["Settings.LauncherWindowTitle"] += " | v" + MainWindow.MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd");
-                            ((MainWindow)Application.Current.MainWindow).SettingsGrid_Presets.RefreshPresets();
+                            MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
+                            mainWindow.SettingsGrid_Presets.RefreshPresets();
+                            mainWindow.UpdateBuildPanel?.RefreshLanguage();
                         }
                         catch (Exception ex)
                         {
@@ -156,7 +144,7 @@ namespace Memoria.Launcher
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private async void OnPropertyChanged([CallerMemberName] String propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] String propertyName = null)
         {
             try
             {
@@ -169,18 +157,7 @@ namespace Memoria.Launcher
                         iniFile.SetSetting("Memoria", propertyName, IsDebugMode.ToString());
                         break;
                     case nameof(CheckUpdates):
-                    {
                         iniFile.SetSetting("Memoria", propertyName, CheckUpdates.ToString());
-                        if (CheckUpdates)
-                        {
-                            System.Windows.Window root = this.GetRootElement() as System.Windows.Window;
-                            if (root != null)
-                                await UiLauncherPlayButton.CheckUpdates(root, this);
-                        }
-                        break;
-                    }
-                    case nameof(UpdateChannel):
-                        iniFile.SetSetting("Memoria", propertyName, UpdateChannel);
                         break;
                     case nameof(LauncherLanguage):
                         iniFile.SetSetting("Memoria", propertyName, Lang.LauncherLanguageList[LauncherLanguage]);
@@ -196,7 +173,6 @@ namespace Memoria.Launcher
 
         private Boolean _isDebugMode;
         private Boolean _checkUpdates = true;
-        private String _updateChannel = "Stable";
 
         public void LoadSettings()
         {
@@ -226,8 +202,6 @@ namespace Memoria.Launcher
                 value = iniFile.GetSetting("Memoria", nameof(AutoRunGame), "false");
                 AutoRunGame = App.AutoRunGame || (Boolean.TryParse(value, out var autoRunGame) && autoRunGame);
 
-                _updateChannel = iniFile.GetSetting("Memoria", nameof(UpdateChannel), "Stable");
-
                 value = iniFile.GetSetting("Memoria", "LauncherLanguage", Lang.LangName);
                 _launcherlanguage = 0;
                 for (Int32 i = 0; i < Lang.LauncherLanguageList.Length; i++)
@@ -242,7 +216,6 @@ namespace Memoria.Launcher
                 IniFile.PreventWrite = true;
                 OnPropertyChanged(nameof(IsDebugMode));
                 OnPropertyChanged(nameof(CheckUpdates));
-                OnPropertyChanged(nameof(UpdateChannel));
                 OnPropertyChanged(nameof(LauncherLanguage));
             }
             catch (Exception ex)

@@ -165,11 +165,7 @@ namespace Memoria.Launcher
             else if (GameSettings.AutoRunGame)
                 PlayButton.Click();
 
-            String checkUpdates = IniFile.SettingsIni.GetSetting("Memoria", "CheckUpdates", "True");
-            if (!Boolean.TryParse(checkUpdates, out Boolean result) || result)
-            {
-                await UiLauncherPlayButton.CheckUpdates((Window)this.GetRootElement(), GameSettings);
-            }
+            await UpdateBuildPanel.InitializeAsync(GameSettings, MemoriaAssemblyCompileDate);
         }
 
         private void ModOptionsHeaderButton_Click(Object sender, RoutedEventArgs e)

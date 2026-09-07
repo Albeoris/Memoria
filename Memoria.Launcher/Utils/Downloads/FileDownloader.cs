@@ -14,6 +14,7 @@ namespace Memoria.Launcher.Utils.Downloads
     {
         private const Int32 BufferSize = 32 * 1024;
         private const Int32 ProgressIntervalMilliseconds = 100;
+        private static readonly TimeSpan ReadInactivityTimeout = TimeSpan.FromSeconds(30);
 
         private readonly Logger _log;
         private readonly HttpClient _httpClient;
@@ -100,6 +101,7 @@ namespace Memoria.Launcher.Utils.Downloads
                     stagingPath = Path.Combine(destination.DirectoryPath, $".{Path.GetFileName(resolvedDestinationPath)}.{Guid.NewGuid():N}.download");
                     Int64 expectedBytes = response.Content.Headers.ContentLength ?? -1;
                     Int64 receivedBytes = await CopyResponseAsync(response, source, stagingPath, expectedBytes, progress, cancellationToken).ConfigureAwait(false);
+                    DownloadResponseValidator.ValidateContentLength(receivedBytes, expectedBytes, source);
 
                     Commit(stagingPath, resolvedDestinationPath);
                     stagingPath = String.Empty;
@@ -207,7 +209,9 @@ namespace Memoria.Launcher.Utils.Downloads
 
             while (true)
             {
-                Int32 read = await input.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false);
+                using CancellationTokenSource readCancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                readCancellation.CancelAfter(ReadInactivityTimeout);
+                Int32 read = await input.ReadAsync(buffer, 0, buffer.Length, readCancellation.Token).ConfigureAwait(false);
                 if (read == 0)
                     break;
 

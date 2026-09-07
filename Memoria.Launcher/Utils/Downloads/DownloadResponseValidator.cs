@@ -47,6 +47,18 @@ namespace Memoria.Launcher.Utils.Downloads
                    String.Equals(mediaType, "application/xhtml+xml", StringComparison.OrdinalIgnoreCase);
         }
 
+        public static void ValidateContentLength(Int64 receivedBytes, Int64 expectedBytes, Uri source)
+        {
+            if (receivedBytes < 0)
+                throw new ArgumentOutOfRangeException(nameof(receivedBytes));
+            if (expectedBytes < -1)
+                throw new ArgumentOutOfRangeException(nameof(expectedBytes));
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (expectedBytes >= 0 && receivedBytes != expectedBytes)
+                throw new DownloadException(DownloadFailureKind.IncompleteContent, $"The download of '{source}' ended early. Expected {expectedBytes} bytes, but received {receivedBytes} bytes.");
+        }
+
         private static Boolean LooksLikeHtmlDocument(Byte[] buffer, Int32 byteCount)
         {
             if (byteCount == 0)

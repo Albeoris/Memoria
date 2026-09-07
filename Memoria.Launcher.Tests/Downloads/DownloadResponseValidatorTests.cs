@@ -47,6 +47,22 @@ public sealed class DownloadResponseValidatorTests
         DownloadResponseValidator.ValidatePayloadPrefix(content, content.Length, response, Source);
     }
 
+    [Fact]
+    public void ValidateContentLength_rejects_a_truncated_download()
+    {
+        DownloadException exception = Assert.Throws<DownloadException>(() => DownloadResponseValidator.ValidateContentLength(512, 1024, Source));
+
+        Assert.Equal(DownloadFailureKind.IncompleteContent, exception.Kind);
+        Assert.Contains("1024", exception.Message);
+        Assert.Contains("512", exception.Message);
+    }
+
+    [Fact]
+    public void ValidateContentLength_accepts_an_unknown_length()
+    {
+        DownloadResponseValidator.ValidateContentLength(512, -1, Source);
+    }
+
     private static HttpResponseMessage CreateResponse(String mediaType)
     {
         ByteArrayContent content = new([]);

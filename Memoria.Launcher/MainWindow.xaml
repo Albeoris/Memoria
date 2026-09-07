@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:launcher="clr-namespace:Memoria.Launcher"
     xmlns:controller="clr-namespace:Memoria.Launcher.Controller"
+    xmlns:updates="clr-namespace:Memoria.Launcher.Utils.Updates"
     Title="{DynamicResource Settings.LauncherWindowTitle}"
     Width="1000"
     Height="700"
@@ -1050,13 +1051,10 @@
         </TabControl>
 
         <!-- Play Button -->
-        <launcher:UiLauncherPlayButton x:Name="PlayButton"
-            controller:GamepadNavigation.IsDefaultFocus="True"
-            Width="260"
-            Height="70"
-            Margin="0,46,20,0"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top" />
+        <StackPanel Width="260" Margin="0,46,20,0" HorizontalAlignment="Right" VerticalAlignment="Top">
+            <launcher:UiLauncherPlayButton x:Name="PlayButton" controller:GamepadNavigation.IsDefaultFocus="True" Width="260" Height="70" />
+            <updates:UiLauncherUpdatePanel x:Name="UpdateBuildPanel" Width="260" Height="46" Margin="0,6,0,0" />
+        </StackPanel>
 
         <Button x:Name="Nameandversion"
             Content="{DynamicResource Settings.MemoriaEngine}"
