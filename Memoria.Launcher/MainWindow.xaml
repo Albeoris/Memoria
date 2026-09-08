@@ -1070,7 +1070,7 @@
                 <ScaleTransform x:Name="PlayAndUpdatePanelScale" ScaleX="1" ScaleY="1" />
             </StackPanel.RenderTransform>
             <launcher:UiLauncherPlayButton x:Name="PlayButton" controller:GamepadNavigation.IsDefaultFocus="True" Width="260" Height="70" />
-            <updates:UiLauncherUpdatePanel x:Name="UpdateBuildPanel" Width="260" Height="46" Margin="0,6,0,0" />
+            <updates:UiLauncherUpdatePanel x:Name="UpdateBuildPanel" Width="260" Height="52" Margin="0,6,0,0" />
         </StackPanel>
 
         <Button x:Name="Nameandversion"

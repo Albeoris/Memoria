@@ -42,7 +42,7 @@ namespace Memoria.Launcher.Utils.Updates
             for (Int32 index = 0; index < UpdateBuildCatalog.All.Count; index++)
             {
                 UpdateBuild build = UpdateBuildCatalog.All[index];
-                Button button = new Button { Height = 46, Margin = index == 0 ? new Thickness(0, 0, 3, 0) : new Thickness(3, 0, 0, 0), Padding = new Thickness(3), FontSize = 11, FontFamily = new FontFamily("Segoe UI"), Cursor = System.Windows.Input.Cursors.Hand, Tag = build };
+                Button button = new Button { Height = 52, Margin = index == 0 ? new Thickness(0, 0, 3, 0) : new Thickness(3, 0, 0, 0), Padding = new Thickness(3), FontSize = 11, FontFamily = new FontFamily("Segoe UI"), Cursor = System.Windows.Input.Cursors.Hand, Tag = build };
                 button.SetResourceReference(StyleProperty, "ButtonStyle");
                 button.Click += OnBuildClick;
                 Grid.SetColumn(button, index);
@@ -343,14 +343,14 @@ namespace Memoria.Launcher.Utils.Updates
             StackPanel title = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Center };
             if (showUpdateIndicator)
             {
-                TextBlock indicator = new TextBlock { Text = "⏫", FontSize = 11, Foreground = new SolidColorBrush(Color.FromRgb(0xef, 0xd5, 0x25)), TextAlignment = TextAlignment.Center, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 0, 4, 0) };
+                TextBlock indicator = new TextBlock { Text = "🆕", FontSize = 16, Foreground = new SolidColorBrush(Color.FromRgb(0xef, 0xd5, 0x25)), TextAlignment = TextAlignment.Center, VerticalAlignment = VerticalAlignment.Bottom, Margin = new Thickness(0, 0, 4, 0) };
                 indicator.SetResourceReference(TextBlock.FontFamilyProperty, "NotoEmoji");
                 title.Children.Add(indicator);
             }
-            title.Children.Add(new TextBlock { Text = buildName, TextAlignment = TextAlignment.Center, VerticalAlignment = VerticalAlignment.Center });
+            title.Children.Add(new TextBlock { Text = buildName, FontSize = 18, TextAlignment = TextAlignment.Center, VerticalAlignment = VerticalAlignment.Center });
             content.Children.Add(title);
             content.Children.Add(new TextBlock { Text = status, TextAlignment = TextAlignment.Center, TextWrapping = TextWrapping.Wrap, HorizontalAlignment = HorizontalAlignment.Center });
-            button.Content = content;
+            button.Content = new Border { Padding = new Thickness(4), Child = content };
         }
 
         private static void SetButtonTooltip(Button button, String text)
