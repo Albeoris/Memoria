@@ -30,4 +30,17 @@ public sealed class ControllerButtonRepeaterTests
         Assert.Equal(ControllerButton.None, repeater.Update(ControllerButton.Down, InitialDelay + RepeatInterval - TimeSpan.FromMilliseconds(1)));
         Assert.Equal(ControllerButton.Down, repeater.Update(ControllerButton.Down, InitialDelay + RepeatInterval));
     }
+
+    [Fact]
+    public void SuppressUntilReleased_DoesNotCarryHeldButtonIntoNewInputScope()
+    {
+        ControllerButtonRepeater repeater = new ControllerButtonRepeater(InitialDelay, RepeatInterval);
+
+        repeater.SuppressUntilReleased();
+
+        Assert.Equal(ControllerButton.None, repeater.Update(ControllerButton.Confirm, TimeSpan.Zero));
+        Assert.Equal(ControllerButton.None, repeater.Update(ControllerButton.Confirm, TimeSpan.FromSeconds(1)));
+        Assert.Equal(ControllerButton.None, repeater.Update(ControllerButton.None, TimeSpan.FromSeconds(2)));
+        Assert.Equal(ControllerButton.Confirm, repeater.Update(ControllerButton.Confirm, TimeSpan.FromSeconds(3)));
+    }
 }

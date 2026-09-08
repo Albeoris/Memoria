@@ -395,7 +395,22 @@ public partial class BattleHUD : UIScene
 
     public void UpdateUserInterface(Boolean forceUpdate = false)
     {
-        Int32 partyCount = FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits().Count(unit => unit.IsPlayer);
+        BattleStateSystem battleState = FF9StateSystem.Battle;
+        if (battleState == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] FF9StateSystem.Battle is null. The battle state has not been initialized.");
+        
+        FF9StateBattleSystem battle = battleState.FF9Battle;
+        if (battle == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] FF9StateSystem.Battle.FF9Battle is null. The battle system has not been initialized.");
+        if (battle.btl_list == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] FF9StateSystem.Battle.FF9Battle.btl_list is null. The battle unit list has not been initialized.");
+        if (_targetPanel == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] _targetPanel is null. BattleHUD.Awake has not initialized the target panel.");
+        if (_partyDetail == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] _partyDetail is null. BattleHUD.Awake has not initialized the party panel.");
+        if (_statusPanel == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] _statusPanel is null. BattleHUD.Awake has not initialized the status panel.");
+        if (_commandPanel == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] _commandPanel is null. BattleHUD.Awake has not initialized the command panel.");
+        if (_abilityPanel == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] _abilityPanel is null. BattleHUD.Awake has not initialized the ability panel.");
+        if (_itemPanel == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] _itemPanel is null. BattleHUD.Awake has not initialized the item panel.");
+
+        IEnumerable<BattleUnit> battleUnits = battle.EnumerateBattleUnits();
+        
+        Int32 partyCount = battleUnits.Count(unit => unit.IsPlayer);
         if (partyCount == _playerDetailCount && !forceUpdate)
             return;
         try
@@ -420,23 +435,16 @@ public partial class BattleHUD : UIScene
             Log.Error("[BattleHUD.UpdateUserInterface] Fail at target buttons");
             Log.Error(err);
         }
-        UI.ContainerStatus.PanelDetail<UI.ContainerStatus.ValueWidget> hp = null;
-        UI.ContainerStatus.PanelDetail<UI.ContainerStatus.ValueWidget> mp = null;
-        UI.ContainerStatus.PanelDetail<UI.ContainerStatus.IconsWidget> good = null;
-        UI.ContainerStatus.PanelDetail<UI.ContainerStatus.IconsWidget> bad = null;
-        try
-        {
-            hp = _statusPanel.HP;
-            mp = _statusPanel.MP;
-            good = _statusPanel.GoodStatus;
-            bad = _statusPanel.BadStatus;
-        }
-        catch (Exception err)
-        {
-            Log.Error("[BattleHUD.UpdateUserInterface] Fail at PanelDetail setup");
-            Log.Error(err);
-            return;
-        }
+        
+        UI.ContainerStatus.PanelDetail<UI.ContainerStatus.ValueWidget> hp = _statusPanel.HP;
+        UI.ContainerStatus.PanelDetail<UI.ContainerStatus.ValueWidget> mp = _statusPanel.MP;
+        UI.ContainerStatus.PanelDetail<UI.ContainerStatus.IconsWidget> good = _statusPanel.GoodStatus;
+        UI.ContainerStatus.PanelDetail<UI.ContainerStatus.IconsWidget> bad = _statusPanel.BadStatus;
+        if (hp == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] _statusPanel.HP is null. The HP status panel has not been initialized.");
+        if (mp == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] _statusPanel.MP is null. The MP status panel has not been initialized.");
+        if (good == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] _statusPanel.GoodStatus is null. The positive status panel has not been initialized.");
+        if (bad == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] _statusPanel.BadStatus is null. The negative status panel has not been initialized.");
+        
         if (!Configuration.Interface.IsEnabled)
         {
             try
@@ -679,8 +687,10 @@ public partial class BattleHUD : UIScene
             ButtonGroupState.SetOutsideLimitRectBehavior(PointerManager.LimitRectBehavior.None, TargetGroupButton);
             ButtonGroupState.SetPointerLimitRectToGroup(_abilityPanel.Widget, lineHeight, AbilityGroupButton);
             ButtonGroupState.SetPointerLimitRectToGroup(_itemPanel.Widget, lineHeight, ItemGroupButton);
-            if (Singleton<HelpDialog>.Instance.IsShown)
-                Singleton<HelpDialog>.Instance.ShowDialog();
+            HelpDialog helpDialog = Singleton<HelpDialog>.Instance;
+            if (helpDialog == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] Singleton<HelpDialog>.Instance returned null.");
+            if (helpDialog.IsShown)
+                helpDialog.ShowDialog();
         }
         catch (Exception err)
         {

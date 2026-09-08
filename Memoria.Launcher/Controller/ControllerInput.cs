@@ -54,6 +54,7 @@ namespace Memoria.Launcher.Controller
         private readonly TimeSpan _repeatInterval;
         private readonly Dictionary<ControllerButton, TimeSpan> _nextRepeat = new Dictionary<ControllerButton, TimeSpan>();
         private ControllerButton _previous;
+        private Boolean _suppressUntilReleased;
 
         public ControllerButtonRepeater(TimeSpan initialDelay, TimeSpan repeatInterval)
         {
@@ -68,6 +69,13 @@ namespace Memoria.Launcher.Controller
 
         public ControllerButton Update(ControllerButton current, TimeSpan now)
         {
+            if (_suppressUntilReleased)
+            {
+                if (current == ControllerButton.None)
+                    _suppressUntilReleased = false;
+                return ControllerButton.None;
+            }
+
             ControllerButton actions = current & ~_previous;
 
             foreach (ControllerButton button in RepeatableButtons)
@@ -106,6 +114,13 @@ namespace Memoria.Launcher.Controller
         {
             _previous = ControllerButton.None;
             _nextRepeat.Clear();
+            _suppressUntilReleased = false;
+        }
+
+        public void SuppressUntilReleased()
+        {
+            Reset();
+            _suppressUntilReleased = true;
         }
     }
 }

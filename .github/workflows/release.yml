@@ -59,7 +59,7 @@ jobs:
       run: msbuild Memoria.sln /t:Build /p:Configuration=Release /verbosity:minimal
 
     - name: Run launcher tests (Release)
-      run: dotnet test Memoria.Launcher.Tests/Memoria.Launcher.Tests.csproj --configuration Release --no-restore --filter "Category!=CatalogIntegration" --logger "console;verbosity=normal"
+      run: dotnet test Memoria.Launcher.Tests/Memoria.Launcher.Tests.csproj --configuration Release --no-build --no-restore --filter "Category!=CatalogIntegration" --logger "console;verbosity=normal"
 
     - name: Verify SaXAudio Release runtime
       shell: pwsh
@@ -81,6 +81,10 @@ jobs:
     - name: Publish Memoria.Patcher (Win-x64)
       run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:Configuration=Release /p:PublishProfile=Win-x64 /verbosity:minimal
 
+    - name: Generate update manifest
+      shell: pwsh
+      run: .\.github\New-UpdateManifest.ps1 -AssemblyPath .\Output\Assembly-CSharp.dll -PatcherPath .\Output\win-x64\Memoria.Patcher.exe -OutputPath .\Output\manifest.json
+
     - name: Publish Memoria.Patcher (Linux-x64)
       run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:Configuration=Release /p:PublishProfile=Linux-x64 /verbosity:minimal
 
@@ -99,6 +103,7 @@ jobs:
           Output/win-x64/Memoria.Patcher.exe
           Output/linux-x64/Memoria.Patcher-linux-x64
           Output/osx-x64/Memoria.Patcher-osx-x64
+          Output/manifest.json
         generate_release_notes: true
         draft: true
       env:

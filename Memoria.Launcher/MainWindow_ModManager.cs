@@ -4,6 +4,7 @@ using Memoria.Launcher.Utils.Archives;
 using Memoria.Launcher.Utils.Catalog;
 using Memoria.Launcher.Utils.Downloads;
 using Memoria.Launcher.Utils.Mods;
+using Memoria.Launcher.Utils.ModValidation;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -112,6 +113,7 @@ namespace Memoria.Launcher
                 AnimateHeight(ContentTabControl, 520, 590, TimeSpan.FromMilliseconds(500));
                 AnimateMargin(LogoImage, new Thickness(20, -53, 0, 0), new Thickness(20, -20, 0, 0), TimeSpan.FromMilliseconds(500));
                 AnimateHeight(LogoImage, 250, 125, TimeSpan.FromMilliseconds(500));
+                AnimateScale(PlayAndUpdatePanelScale, 1.0, 0.65, TimeSpan.FromMilliseconds(500));
                 previousTabWasMod = true;
 
                 // Refresh placeholders when Mods tab is selected
@@ -122,6 +124,7 @@ namespace Memoria.Launcher
                 AnimateHeight(ContentTabControl, 590, 520, TimeSpan.FromMilliseconds(500));
                 AnimateMargin(LogoImage, new Thickness(20, -20, 0, 0), new Thickness(20, -53, 0, 0), TimeSpan.FromMilliseconds(500));
                 AnimateHeight(LogoImage, 125, 250, TimeSpan.FromMilliseconds(500));
+                AnimateScale(PlayAndUpdatePanelScale, 0.65, 1.0, TimeSpan.FromMilliseconds(500));
                 previousTabWasMod = false;
             }
 
@@ -223,6 +226,21 @@ namespace Memoria.Launcher
 
             element.BeginAnimation(FrameworkElement.HeightProperty, heightAnimation);
         }
+
+        private void AnimateScale(ScaleTransform transform, double from, double to, TimeSpan duration)
+        {
+            DoubleAnimation scaleAnimation = new DoubleAnimation
+            {
+                From = from,
+                To = to,
+                Duration = new Duration(duration),
+                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseInOut }
+            };
+
+            transform.BeginAnimation(ScaleTransform.ScaleXProperty, scaleAnimation);
+            transform.BeginAnimation(ScaleTransform.ScaleYProperty, scaleAnimation);
+        }
+
         private void AnimateMargin(FrameworkElement element, Thickness from, Thickness to, TimeSpan duration)
         {
             ThicknessAnimation marginAnimation = new ThicknessAnimation
@@ -565,6 +583,7 @@ namespace Memoria.Launcher
             }
             if (downloadCatalogClient != null && downloadCatalogClient.IsRunning)
                 downloadCatalogClient.Cancel();
+            UpdateBuildPanel.Dispose();
         }
 
 
@@ -648,6 +667,32 @@ namespace Memoria.Launcher
             else
             {
                 btnDownload.IsEnabled = false;
+            }
+            btnDebugMod.IsEnabled = lstMods.SelectedItems.Count == 1;
+        }
+
+        private void OnClickDebugMod(Object sender, RoutedEventArgs e)
+        {
+            Mod mod = lstMods.SelectedItem as Mod;
+            if (mod == null)
+                return;
+
+            String displayName = String.IsNullOrWhiteSpace(mod.Name) ? "<unnamed mod>" : mod.Name;
+            try
+            {
+                if (String.IsNullOrWhiteSpace(mod.InstallationPath))
+                    throw new InvalidDataException("The mod does not define an installation path.");
+
+                String installationDirectory = _modFileSystem.GetInstallationDirectory(mod.InstallationPath);
+                ModValidationService service = new ModValidationService(new IModFileValidator[] { new D3D9ShaderValidator(() => SystemD3DShaderAssembler.Instance) });
+                ModFixService fixService = new ModFixService(new IModFileFixer[] { new D3D9X5213AddFixer(), new D3D9X5213MultiplyFixer() });
+                ModValidationWindow window = new ModValidationWindow(installationDirectory, displayName, service, fixService) { Owner = this };
+                window.ShowDialog();
+            }
+            catch (Exception exception)
+            {
+                _log.Error(exception, "Unable to validate mod. Mod: {ModName}, InstallationPath: {InstallationPath}", displayName, mod.InstallationPath);
+                MessageBox.Show(this, exception.Message, "Mod validation failed", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         private void OnModListDoubleClick(Object sender, RoutedEventArgs e)

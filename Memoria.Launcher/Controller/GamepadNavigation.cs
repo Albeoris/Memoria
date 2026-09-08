@@ -29,6 +29,10 @@ namespace Memoria.Launcher.Controller
         public static readonly DependencyProperty IsControllerInputActiveProperty =
             IsControllerInputActivePropertyKey.DependencyProperty;
 
+        private static readonly DependencyPropertyKey AreControllerTooltipsEnabledPropertyKey = DependencyProperty.RegisterAttachedReadOnly("AreControllerTooltipsEnabled", typeof(Boolean), typeof(GamepadNavigation), new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.Inherits));
+
+        public static readonly DependencyProperty AreControllerTooltipsEnabledProperty = AreControllerTooltipsEnabledPropertyKey.DependencyProperty;
+
         public static readonly DependencyProperty IsDefaultFocusProperty = DependencyProperty.RegisterAttached(
             "IsDefaultFocus", typeof(Boolean), typeof(GamepadNavigation), new FrameworkPropertyMetadata(false));
 
@@ -50,6 +54,8 @@ namespace Memoria.Launcher.Controller
 
         public static Boolean IsControllerInputActive(DependencyObject element) =>
             (Boolean)element.GetValue(IsControllerInputActiveProperty);
+
+        public static Boolean GetAreControllerTooltipsEnabled(DependencyObject element) => (Boolean)element.GetValue(AreControllerTooltipsEnabledProperty);
 
         public static void SetIsDefaultFocus(DependencyObject element, Boolean value) =>
             element.SetValue(IsDefaultFocusProperty, value);
@@ -90,6 +96,8 @@ namespace Memoria.Launcher.Controller
         internal static void SetIsControllerInputActive(DependencyObject element, Boolean value) =>
             element.SetValue(IsControllerInputActivePropertyKey, value);
 
+        internal static void SetAreControllerTooltipsEnabled(DependencyObject element, Boolean value) => element.SetValue(AreControllerTooltipsEnabledPropertyKey, value);
+
         internal static Boolean RaiseActivated(UIElement element)
         {
             RoutedEventArgs args = new RoutedEventArgs(ActivatedEvent, element);
@@ -117,6 +125,7 @@ namespace Memoria.Launcher.Controller
         private readonly ControllerControlInteractor _interaction;
         private readonly ControllerTooltipPresenter _tooltips;
         private readonly ControllerInputModeManager _inputMode;
+        private Boolean _nativeDialogActive;
         private Boolean _disposed;
 
         internal GamepadNavigationService(Window window, IControllerInputSource input)
@@ -124,6 +133,7 @@ namespace Memoria.Launcher.Controller
             _window = window ?? throw new ArgumentNullException(nameof(window));
             _input = input ?? throw new ArgumentNullException(nameof(input));
             _repeater = new ControllerButtonRepeater(InitialRepeatDelay, RepeatInterval);
+            _repeater.SuppressUntilReleased();
 
             _focus = new ControllerFocusManager(window);
             _navigator = new ControllerFocusNavigator(window, _focus);
@@ -173,21 +183,25 @@ namespace Memoria.Launcher.Controller
         {
             if (_window.WindowState == WindowState.Minimized)
             {
-                _repeater.Reset();
+                _repeater.SuppressUntilReleased();
                 return;
             }
 
-            Boolean nativeDialogActive = !_window.IsActive &&
-                                         NativeDialogControllerBridge.IsMessageBoxActiveForCurrentProcess();
+            Boolean nativeDialogActive = !_window.IsActive && NativeDialogControllerBridge.IsMessageBoxActiveFor(_window);
+            if (nativeDialogActive != _nativeDialogActive)
+            {
+                _nativeDialogActive = nativeDialogActive;
+                _repeater.SuppressUntilReleased();
+            }
             if (!_window.IsActive && !nativeDialogActive)
             {
-                _repeater.Reset();
+                _repeater.SuppressUntilReleased();
                 return;
             }
 
             if (!_input.TryGetState(out ControllerState state))
             {
-                _repeater.Reset();
+                _repeater.SuppressUntilReleased();
                 return;
             }
 
