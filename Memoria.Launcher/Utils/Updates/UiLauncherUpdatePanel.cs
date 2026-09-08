@@ -48,7 +48,7 @@ namespace Memoria.Launcher.Utils.Updates
                 Grid.SetColumn(button, index);
                 grid.Children.Add(button);
                 _buttons.Add(build.Kind, button);
-                SetButtonContent(button, GetBuildName(build), GetText("Updater.WaitingStatus"));
+                SetButtonContent(button, GetBuildName(build), GetText("Updater.WaitingStatus"), false);
             }
             Content = grid;
         }
@@ -280,21 +280,22 @@ namespace Memoria.Launcher.Utils.Updates
 
             if (_checkingBuilds.Contains(build.Kind))
             {
-                SetButtonContent(button, GetBuildName(build), GetText("Updater.CheckingStatus"));
+                SetButtonContent(button, GetBuildName(build), GetText("Updater.CheckingStatus"), false);
                 button.Opacity = 1;
                 return;
             }
 
             if (_availableBuilds.TryGetValue(build.Kind, out UpdateBuildInfo info))
             {
-                SetButtonContent(button, GetBuildName(build), FormatLocalDate(info.PublishedAtUtc));
-                button.Opacity = UpdateVersionComparer.Compare(_currentVersionUtc, info.PublishedAtUtc) == UpdateVersionRelation.Upgrade ? 1 : 0.45;
+                Boolean updateAvailable = UpdateVersionComparer.Compare(_currentVersionUtc, info.PublishedAtUtc) == UpdateVersionRelation.Upgrade;
+                SetButtonContent(button, GetBuildName(build), FormatLocalDate(info.PublishedAtUtc), updateAvailable);
+                button.Opacity = updateAvailable ? 1 : 0.45;
                 return;
             }
 
             if (_failedChecks.Contains(build.Kind))
             {
-                SetButtonContent(button, GetBuildName(build), GetText("Updater.UnavailableStatus"));
+                SetButtonContent(button, GetBuildName(build), GetText("Updater.UnavailableStatus"), false);
                 SetButtonTooltip(button, GetBuildTooltipWithRecommendation(build) + Environment.NewLine + Environment.NewLine + GetText("Updater.CheckFailedTooltip"));
                 button.Opacity = 0.65;
                 return;
@@ -302,12 +303,12 @@ namespace Memoria.Launcher.Utils.Updates
 
             if (_settings == null || !_settings.CheckUpdates)
             {
-                SetButtonContent(button, GetBuildName(build), _settings == null ? GetText("Updater.WaitingStatus") : GetText("Updater.CheckStatus"));
+                SetButtonContent(button, GetBuildName(build), _settings == null ? GetText("Updater.WaitingStatus") : GetText("Updater.CheckStatus"), false);
                 button.Opacity = 1;
                 return;
             }
 
-            SetButtonContent(button, GetBuildName(build), GetText("Updater.WaitingStatus"));
+            SetButtonContent(button, GetBuildName(build), GetText("Updater.WaitingStatus"), false);
             button.Opacity = 1;
         }
 
@@ -336,9 +337,20 @@ namespace Memoria.Launcher.Utils.Updates
             return UpdateTimeFormatter.FormatWithUtc(value, TimeZoneInfo.Local);
         }
 
-        private static void SetButtonContent(Button button, String buildName, String status)
+        private static void SetButtonContent(Button button, String buildName, String status, Boolean showUpdateIndicator)
         {
-            button.Content = new TextBlock { Text = buildName + Environment.NewLine + status, TextAlignment = TextAlignment.Center, TextWrapping = TextWrapping.Wrap, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
+            StackPanel content = new StackPanel { HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
+            StackPanel title = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Center };
+            if (showUpdateIndicator)
+            {
+                TextBlock indicator = new TextBlock { Text = "⏫", FontSize = 18, Foreground = new SolidColorBrush(Color.FromRgb(0xef, 0xd5, 0x25)), Height = 22, LineHeight = 22, TextAlignment = TextAlignment.Center, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 0, 6, 0) };
+                indicator.SetResourceReference(TextBlock.FontFamilyProperty, "NotoEmoji");
+                title.Children.Add(indicator);
+            }
+            title.Children.Add(new TextBlock { Text = buildName, TextAlignment = TextAlignment.Center, VerticalAlignment = VerticalAlignment.Center });
+            content.Children.Add(title);
+            content.Children.Add(new TextBlock { Text = status, TextAlignment = TextAlignment.Center, TextWrapping = TextWrapping.Wrap, HorizontalAlignment = HorizontalAlignment.Center });
+            button.Content = content;
         }
 
         private static void SetButtonTooltip(Button button, String text)
