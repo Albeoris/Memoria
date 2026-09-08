@@ -343,7 +343,7 @@ namespace Memoria.Launcher.Utils.Updates
             StackPanel title = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Center };
             if (showUpdateIndicator)
             {
-                TextBlock indicator = new TextBlock { Text = "⏫", FontSize = 18, Foreground = new SolidColorBrush(Color.FromRgb(0xef, 0xd5, 0x25)), Height = 22, LineHeight = 22, TextAlignment = TextAlignment.Center, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 0, 6, 0) };
+                TextBlock indicator = new TextBlock { Text = "⏫", FontSize = 11, Foreground = new SolidColorBrush(Color.FromRgb(0xef, 0xd5, 0x25)), TextAlignment = TextAlignment.Center, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 0, 4, 0) };
                 indicator.SetResourceReference(TextBlock.FontFamilyProperty, "NotoEmoji");
                 title.Children.Add(indicator);
             }
