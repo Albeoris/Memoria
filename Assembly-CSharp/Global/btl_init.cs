@@ -31,9 +31,6 @@ public static class btl_init
     public static void InitEnemyData(FF9StateBattleSystem btlsys)
     {
         BTL_DATA monLastBtl = null;
-        ObjList objList = new ObjList();
-        if (!FF9StateSystem.Battle.isDebug)
-            objList = PersistenSingleton<EventEngine>.Instance.GetActiveObjList().next;
         Int32 monCount = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].MonsterCount;
         Int32 enemyIndex = 0;
         Int32 btlIndex = 4;
@@ -54,8 +51,6 @@ public static class btl_init
             {
                 btl_init.SetBattleModel(monBtl);
                 enemy.info.slave = 0;
-                if (!FF9StateSystem.Battle.isDebug)
-                    objList = objList.next;
             }
             monBtl.btl_id = (UInt16)(16 << enemyIndex);
             monBtl.bi.player = 0;
@@ -252,14 +247,10 @@ public static class btl_init
 
     public static void InitPlayerData(FF9StateBattleSystem btlsys)
     {
-        ObjList objList = new ObjList();
-        if (!FF9StateSystem.Battle.isDebug)
-            objList = PersistenSingleton<EventEngine>.Instance.GetActiveObjList().next;
         Int16 btlIndex = 0;
-        PLAYER player;
         for (Int32 memberIndex = 0; memberIndex < 4; memberIndex++)
         {
-            player = FF9StateSystem.Common.FF9.party.member[memberIndex];
+            PLAYER player = FF9StateSystem.Common.FF9.party.member[memberIndex];
             if (player != null)
             {
                 BTL_DATA btl = btlsys.btl_data[btlIndex];
@@ -282,8 +273,6 @@ public static class btl_init
                 {
                     GeoTexAnim.geoTexAnimPlay(btl.texanimptr, 2);
                 }
-                if (!FF9StateSystem.Battle.isDebug)
-                    objList = objList.next;
                 btlIndex++;
                 btl_sys.AddCharacter(btl);
                 if (btlsys.cmd_escape.regist == null)
@@ -531,7 +520,7 @@ public static class btl_init
                     {
                         Int32 animOffset = btlseq.instance.seq_work_set.AnmOfsList[j];
                         foreach (Int32 animIndex in btlseq.instance.GetAnimationsOfSequence(j))
-                            if (FF9BattleDB.Animation.TryGetValue(btlseq.instance.seq_work_set.AnmAddrList[animOffset + animIndex], out String animName))
+                            if (animOffset + animIndex < btlseq.instance.seq_work_set.AnmAddrList.Length && FF9BattleDB.Animation.TryGetValue(btlseq.instance.seq_work_set.AnmAddrList[animOffset + animIndex], out String animName))
                                 AnimationFactory.AddAnimWithAnimatioName(btl.gameObject, animName);
                     }
                 }
