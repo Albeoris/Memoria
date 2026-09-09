@@ -161,11 +161,11 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 	
 <Mod>
 	<Name>Trance Seek</Name>
-	<Version>0.3.37.2</Version>
+	<Version>0.3.37.3</Version>
 	<Priority>4</Priority>
 	<InstallationPath>TranceSeek</InstallationPath>
 	<ReleaseDateOriginal>2022-01-28</ReleaseDateOriginal>
-	<ReleaseDate>2026-09-07</ReleaseDate>
+	<ReleaseDate>2026-09-09</ReleaseDate>
 	<MinimumMemoriaVersion>2025-05-17</MinimumMemoriaVersion>
 	<Author>DV</Author>
 	<IncompatibleWith>Alternate Fantasy, Amazing Abilities, Amazing Quina, Amazing Freya, Amazing Garnet, Amazing Steiner, Amazing Vivi, Artifacts, Beatrix Mod, Black Cat - Endgame Shop, David Bowie Edition, Doppelgängers, Ferny Fantasy IX, FernySupportTweaks, FernyTranceTweaks, FFIX: The Lost Chapters, Freya Game+, Garnet is Main Character, Hedgehog Skip Pack, Perfect Stats, Play As Kuja, Modern Labels +, No Cutscene, NoHardcodedBattles, Play As Ozma, Playable Character Pack, ReTrad FR, Tantalus, [Tsunamods] Four Shrines Revival, [Tsunamods] Scavenger 9, VVsRandomizer</IncompatibleWith>
@@ -196,22 +196,23 @@ Don't hesitate to try!
 Recommended language : Français / English (UK)
 Not supported language : Japanese (a lot of things get deleted... need to wait until full release... sorry !)</Description>
 	<PatchNotes>
-[0.3.37.2]
+[0.3.37.3]
 
-- Fixed the "StuffListed" option.
-- The "AutoBattle" option is no longer forced to 0 by the mod.
-- Fixed the calculation for Ozma Mode.
-- Fixed the "Arsenic" spell on Pythons not removing "Vanish".
-- Adjusted the Level 9 cap milestone in Ozma Mode.
-- Fixed a bug with Steiner's Sword Magic when used with Vivi's "Focus".
-- Fixed damage on certain daggers that were missing their damage penalty.
-- Fixed a bug with certain accessories on Zidane (Sword stance).
-- Fixed the effect of "Rogue Boots".
-- Fixed the effect of "Rogue Scarf".
-- Restored certain items that were missing (accidentally deleted...).
-- Improved responsiveness for certain mechanics, such as SOS-type SAs and the Dragon effect.
-- Fixed Memoria.Scripts.TranceSeek.dll and the AbilityFeatures file by removing all "SerialNumber" entries to improve compatibility with Costume Pack + EEM.
-- Numerous additional fixes for the "Followers" feature across various scenes.
+- Updated button controls for Steiner's mechanic.
+To add/remove "Pluto" stacks, open the "Swd Art" command and press Left or Right.
+- [WIP] Added a small bonus chance to obtain a Chocograph during "Hot & Cold".
+This bonus builds up with each treasure found until the next Chocograph is obtained.
+This bonus resets to 0 as soon as a Chocograph is found or if the player leaves the area.
+Additionally, it is now possible to dig up multiple Chocographs in a single session.
+- Fixed Field #1201 where a softlock occurred when Dagger performs a "Walk".
+- Fixed the "Komodaxe" weapon.
+- Fixed the "Emergency Satchel" accessory, which was consuming Potions from the player's inventory.
+- Fixed Black Waltz 3's AI.
+- Fixed certain Steiner abilities under the Pluto effect.
+- Fixed the AA "DeathBlow+", which did not have the correct base chance percentage.
+- Fixed Zidane's dialogue in Alexandria on Disc 2, which was not scaling with the timer according to game difficulty.
+- Fixed several text issues.
+- A few additional fixes for the "Followers" feature.
 	</PatchNotes>
 <Header>QoL Miscellaneous</Header>
 	<SubMod>
