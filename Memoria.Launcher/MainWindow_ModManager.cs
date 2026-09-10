@@ -13,6 +13,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -25,6 +26,7 @@ using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using System.Xml;
 using MethodInvoker = System.Windows.Forms.MethodInvoker;
 
 namespace Memoria.Launcher
@@ -1462,35 +1464,72 @@ namespace Memoria.Launcher
                     File.Delete(CATALOG_PATH + ".tmp");
                 return;
             }
-            Dispatcher.BeginInvoke((MethodInvoker)delegate
+            Dispatcher.BeginInvoke((MethodInvoker)async delegate
             {
                 if (File.Exists(CATALOG_PATH))
                     File.Delete(CATALOG_PATH);
                 File.Move(CATALOG_PATH + ".tmp", CATALOG_PATH);
-                ReadCatalog();
+                await ReadCatalog();
                 CheckOutdatedAndIncompatibleMods();
             });
         }
 
-        private void UpdateCatalog()
+        private async void UpdateCatalog()
         {
             if (File.Exists(CATALOG_PATH))
             {
                 FileInfo fi = new FileInfo(CATALOG_PATH);
                 if (fi.IsReadOnly) // Local testing of catalog: put it as read-only
                 {
-                    ReadCatalog();
+                    await ReadCatalog();
+                    CheckOutdatedAndIncompatibleMods();
                     return;
                 }
             }
             ModListCatalog.Clear();
-            ReadCatalog();
+            await ReadCatalog(false);
             downloadCatalogClient = new DownloadFileOperation();
             downloadCatalogClient.Completed += DownloadCatalogEnd;
             downloadCatalogClient.Start(MemoriaCatalogEndpoints.Default, CATALOG_PATH + ".tmp");
         }
 
-        private void ReadCatalog()
+        private async Task UpdateRemoteVersions()
+        {
+            HttpClient client = ResilientHttpClient.Shared;
+
+            foreach (Mod mod in ModListCatalog)
+            {
+                if (String.IsNullOrWhiteSpace(mod.MetadataUrl))
+                    continue;
+
+                try
+                {
+                    using (HttpResponseMessage response = await ResilientHttpClient.GetAsync(
+                        client,
+                        new Uri(mod.MetadataUrl),
+                        HttpCompletionOption.ResponseContentRead,
+                        CancellationToken.None))
+                    {
+                        response.EnsureSuccessStatusCode();
+
+                        String metadata = await response.Content.ReadAsStringAsync();
+
+                        XmlDocument doc = new XmlDocument();
+                        doc.LoadXml(metadata);
+
+                        String versionText = doc.SelectSingleNode("/ModMetadata/Version")?.InnerText;
+
+                        if (Version.TryParse(versionText, out Version version))
+                            mod.CurrentVersion = version;
+                    }
+                }
+                catch
+                {
+                }
+            }
+        }
+
+        private async Task ReadCatalog(Boolean updateRemoteVersions = true)
         {
             if (!File.Exists(CATALOG_PATH))
                 return;
@@ -1500,6 +1539,9 @@ namespace Memoria.Launcher
                 using (Stream input = File.OpenRead(CATALOG_PATH))
                 using (StreamReader reader = new StreamReader(input))
                     Mod.LoadModDescriptions(reader, ModListCatalog);
+
+                if (updateRemoteVersions)
+                    await UpdateRemoteVersions();
 
                 // Preserve existing behavior for highlighting recently released and not yet installed mods.
                 CalculateNewModStatus();
