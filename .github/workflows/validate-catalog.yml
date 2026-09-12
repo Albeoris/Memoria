@@ -1,0 +1,39 @@
+name: Validate mod catalog
+
+on:
+  pull_request:
+    branches:
+    - mod-catalog
+    paths:
+    - MemoriaCatalog.xml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-mod-catalog-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Structure and changed mod links
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+    - name: Checkout pull request
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+        ref: ${{ github.event.pull_request.head.sha }}
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Build validator
+      run: dotnet build .github/tools/ModCatalogValidator/ModCatalogValidator.csproj --configuration Release
+
+    - name: Validate catalog
+      run: dotnet run --project .github/tools/ModCatalogValidator/ModCatalogValidator.csproj --configuration Release --no-build -- MemoriaCatalog.xml '${{ github.event.pull_request.base.sha }}' '${{ github.event.pull_request.head.sha }}'
