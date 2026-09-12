@@ -200,7 +200,7 @@ Not supported language : Japanese (a lot of things get deleted... need to wait u
 
 - Updated button controls for Steiner's mechanic.
 To add/remove "Pluto" stacks, open the "Swd Art" command and press Left or Right.
-- [WIP] Added a small bonus chance to obtain a Chocograph during "Hot & Cold".
+- [WIP] Added a small bonus chance to obtain a Chocograph during "Hot &amp; Cold".
 This bonus builds up with each treasure found until the next Chocograph is obtained.
 This bonus resets to 0 as soon as a Chocograph is found or if the player leaves the area.
 Additionally, it is now possible to dig up multiple Chocographs in a single session.
