@@ -15,6 +15,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,7 +28,6 @@ using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using System.Xml;
 using MethodInvoker = System.Windows.Forms.MethodInvoker;
 
 namespace Memoria.Launcher
@@ -255,7 +256,202 @@ namespace Memoria.Launcher
 
             element.BeginAnimation(FrameworkElement.MarginProperty, marginAnimation);
         }
+        private sealed class ArchiveUpdateIdentity
+        {
+            public String LastModified { get; set; }
+            public String ETag { get; set; }
 
+            public Boolean HasValue =>
+                !String.IsNullOrWhiteSpace(LastModified) ||
+                !String.IsNullOrWhiteSpace(ETag);
+        }
+
+        private async Task<ArchiveUpdateIdentity> GetArchiveUpdateIdentityAsync(Mod mod)
+        {
+            if (mod == null ||
+                String.IsNullOrWhiteSpace(mod.DownloadUrl))
+                return null;
+
+            if (!Uri.TryCreate(mod.DownloadUrl, UriKind.Absolute, out Uri uri))
+                return null;
+
+            try
+            {
+                using (CancellationTokenSource cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(10)))
+                using (HttpResponseMessage response = await ResilientHttpClient.SendAsync(
+                    ResilientHttpClient.Shared,
+                    HttpMethod.Head,
+                    uri,
+                    HttpCompletionOption.ResponseHeadersRead,
+                    cancellation.Token))
+                {
+                    if (!response.IsSuccessStatusCode)
+                        return null;
+
+                    ArchiveUpdateIdentity identity = new ArchiveUpdateIdentity
+                    {
+                        LastModified = response.Content.Headers.LastModified?.UtcDateTime.ToString("O", CultureInfo.InvariantCulture),
+                        ETag = response.Headers.ETag?.ToString()
+                    };
+
+                    return identity.HasValue ? identity : null;
+                }
+            }
+            catch
+            {
+
+                return null;
+            }
+        }
+
+        private static String GetArchiveUpdateStateKey(Mod mod, String suffix)
+        {
+            if (mod == null || String.IsNullOrWhiteSpace(mod.InstallationPath))
+                return null;
+
+            Byte[] pathBytes = Encoding.UTF8.GetBytes(mod.InstallationPath);
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                Byte[] hash = sha256.ComputeHash(pathBytes);
+                return BitConverter.ToString(hash).Replace("-", String.Empty) + "_" + suffix;
+            }
+        }
+
+        private static ArchiveUpdateIdentity GetStoredArchiveUpdateIdentity(Mod mod)
+        {
+            String lastModifiedKey = GetArchiveUpdateStateKey(mod, "LastModified");
+            String etagKey = GetArchiveUpdateStateKey(mod, "ETag");
+
+            if (lastModifiedKey == null || etagKey == null)
+                return null;
+
+            IniFile ini = IniFile.SettingsIni;
+
+            ArchiveUpdateIdentity identity = new ArchiveUpdateIdentity
+            {
+                LastModified = ini.GetSetting("ModArchiveUpdate", lastModifiedKey, String.Empty),
+                ETag = ini.GetSetting("ModArchiveUpdate", etagKey, String.Empty)
+            };
+
+            return identity.HasValue ? identity : null;
+        }
+
+        private static void StoreArchiveUpdateIdentity(Mod mod, ArchiveUpdateIdentity identity)
+        {
+            if (mod == null || identity == null || !identity.HasValue)
+                return;
+
+            String lastModifiedKey = GetArchiveUpdateStateKey(mod, "LastModified");
+            String etagKey = GetArchiveUpdateStateKey(mod, "ETag");
+
+            if (lastModifiedKey == null || etagKey == null)
+                return;
+
+            IniFile ini = IniFile.SettingsIni;
+
+            ini.SetSetting(
+                "ModArchiveUpdate",
+                lastModifiedKey,
+                identity.LastModified ?? String.Empty);
+
+            ini.SetSetting(
+                "ModArchiveUpdate",
+                etagKey,
+                identity.ETag ?? String.Empty);
+            ini.Save();
+        }
+
+        private static Boolean ArchiveUpdateIdentityMatches(
+            ArchiveUpdateIdentity stored,
+            ArchiveUpdateIdentity remote)
+        {
+            if (stored == null || remote == null)
+                return true;
+
+            if (!String.IsNullOrWhiteSpace(stored.ETag) &&
+                !String.IsNullOrWhiteSpace(remote.ETag))
+                return String.Equals(stored.ETag, remote.ETag, StringComparison.Ordinal);
+
+            if (!String.IsNullOrWhiteSpace(stored.LastModified) &&
+                !String.IsNullOrWhiteSpace(remote.LastModified))
+                return String.Equals(stored.LastModified, remote.LastModified, StringComparison.Ordinal);
+
+            return true;
+        }
+
+        private async Task CheckArchiveUpdateTriggersAsync()
+        {
+            foreach (Mod installedMod in ModListInstalled)
+            {
+                if (installedMod == null ||
+                    String.IsNullOrWhiteSpace(installedMod.Name) ||
+                    !installedMod.UseArchiveUpdateCheck)
+                    continue;
+
+                Mod catalogMod = Mod.SearchMod(ModListCatalog, installedMod);
+
+                if (catalogMod == null ||
+                    String.IsNullOrWhiteSpace(catalogMod.DownloadUrl))
+                    continue;
+
+                ArchiveUpdateIdentity remoteIdentity =
+                    await GetArchiveUpdateIdentityAsync(catalogMod);
+
+                if (remoteIdentity == null)
+                    continue;
+
+                ArchiveUpdateIdentity storedIdentity =
+                    GetStoredArchiveUpdateIdentity(installedMod);
+
+                if (storedIdentity == null)
+                {
+                    StoreArchiveUpdateIdentity(installedMod, remoteIdentity);
+                    continue;
+                }
+
+                if (ArchiveUpdateIdentityMatches(storedIdentity, remoteIdentity))
+                {
+                    if (!installedMod.IsOutdated)
+                    {
+                        installedMod.UpdateIcon = null;
+                        installedMod.UpdateTooltip = null;
+                    }
+
+                    continue;
+                }
+
+                installedMod.IsOutdated = true;
+                catalogMod.IsOutdated = true;
+                installedMod.UpdateIcon = UpdateEmoji;
+                installedMod.UpdateTooltip = (String)Lang.Res["ModEditor.ArchiveUpdateTooltip"];
+                AreThereModUpdates = true;
+            }
+
+            lstMods.Items.Refresh();
+        }
+        private async Task StoreCurrentArchiveUpdateIdentityAsync(Mod catalogMod)
+        {
+            if (catalogMod == null ||
+                String.IsNullOrWhiteSpace(catalogMod.DownloadUrl))
+                return;
+
+            Mod installedMod = Mod.SearchMod(ModListInstalled, catalogMod);
+
+            if (installedMod == null ||
+                !installedMod.UseArchiveUpdateCheck)
+                return;
+
+            ArchiveUpdateIdentity identity =
+                await GetArchiveUpdateIdentityAsync(catalogMod);
+
+            if (identity != null)
+                StoreArchiveUpdateIdentity(installedMod, identity);
+        }
+        private async Task CheckAllModUpdatesAsync()
+        {
+            CheckOutdatedAndIncompatibleMods();
+            await CheckArchiveUpdateTriggersAsync();
+        }
         private void CheckOutdatedAndIncompatibleMods()
         {
             try
@@ -1348,6 +1544,9 @@ namespace Memoria.Launcher
                                 lstDownloads.Items.Refresh();
                             });
                         });
+
+                        await StoreCurrentArchiveUpdateIdentityAsync(mod);
+
                         DeleteDownloadedArchive(mod.Name, downloadedFile.FullPath);
                     }
                     catch (TaskCanceledException) { }
@@ -1381,6 +1580,7 @@ namespace Memoria.Launcher
                         {
                             _singleFileModInstaller.Install(downloadedFile, plan, Mod.MOD_CONTENT_FILE);
                             mod.GenerateDescription(modInstallPath);
+                            await StoreCurrentArchiveUpdateIdentityAsync(mod);
                         }
                     }
                     catch (Exception err)
@@ -1403,7 +1603,7 @@ namespace Memoria.Launcher
                     UpdateModListInstalled();
                     CheckForValidModFolder();
                     UpdateCatalogInstallationState();
-                    CheckOutdatedAndIncompatibleMods();
+                    await CheckAllModUpdatesAsync();
                 }
                 catch (Exception err)
                 {
@@ -1468,68 +1668,32 @@ namespace Memoria.Launcher
             {
                 if (File.Exists(CATALOG_PATH))
                     File.Delete(CATALOG_PATH);
+
                 File.Move(CATALOG_PATH + ".tmp", CATALOG_PATH);
-                await ReadCatalog();
-                CheckOutdatedAndIncompatibleMods();
+                ReadCatalog();
+                await CheckAllModUpdatesAsync();
             });
         }
 
-        private async void UpdateCatalog()
+        private void UpdateCatalog()
         {
             if (File.Exists(CATALOG_PATH))
             {
                 FileInfo fi = new FileInfo(CATALOG_PATH);
                 if (fi.IsReadOnly) // Local testing of catalog: put it as read-only
                 {
-                    await ReadCatalog();
-                    CheckOutdatedAndIncompatibleMods();
+                    ReadCatalog();
                     return;
                 }
             }
             ModListCatalog.Clear();
-            await ReadCatalog(false);
+            ReadCatalog();
             downloadCatalogClient = new DownloadFileOperation();
             downloadCatalogClient.Completed += DownloadCatalogEnd;
             downloadCatalogClient.Start(MemoriaCatalogEndpoints.Default, CATALOG_PATH + ".tmp");
         }
 
-        private async Task UpdateRemoteVersions()
-        {
-            HttpClient client = ResilientHttpClient.Shared;
-
-            foreach (Mod mod in ModListCatalog)
-            {
-                if (String.IsNullOrWhiteSpace(mod.MetadataUrl))
-                    continue;
-
-                try
-                {
-                    using (HttpResponseMessage response = await ResilientHttpClient.GetAsync(
-                        client,
-                        new Uri(mod.MetadataUrl),
-                        HttpCompletionOption.ResponseContentRead,
-                        CancellationToken.None))
-                    {
-                        response.EnsureSuccessStatusCode();
-
-                        String metadata = await response.Content.ReadAsStringAsync();
-
-                        XmlDocument doc = new XmlDocument();
-                        doc.LoadXml(metadata);
-
-                        String versionText = doc.SelectSingleNode("/ModMetadata/Version")?.InnerText;
-
-                        if (Version.TryParse(versionText, out Version version))
-                            mod.CurrentVersion = version;
-                    }
-                }
-                catch
-                {
-                }
-            }
-        }
-
-        private async Task ReadCatalog(Boolean updateRemoteVersions = true)
+        private void ReadCatalog()
         {
             if (!File.Exists(CATALOG_PATH))
                 return;
@@ -1539,9 +1703,6 @@ namespace Memoria.Launcher
                 using (Stream input = File.OpenRead(CATALOG_PATH))
                 using (StreamReader reader = new StreamReader(input))
                     Mod.LoadModDescriptions(reader, ModListCatalog);
-
-                if (updateRemoteVersions)
-                    await UpdateRemoteVersions();
 
                 // Preserve existing behavior for highlighting recently released and not yet installed mods.
                 CalculateNewModStatus();
