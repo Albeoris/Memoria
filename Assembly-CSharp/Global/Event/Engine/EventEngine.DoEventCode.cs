@@ -3443,16 +3443,8 @@ public partial class EventEngine
             //if ((Int32)po.uid != (Int32)this._context.controlUID)
             //    ;
             ((Actor)po).wmActor.SetPosition(po.pos[0], po.pos[1], po.pos[2]);
-            if (po.index < 3 || po.index > 7)
-                return;
-            Int32 posX = (Int32)po.pos[0];
-            Int32 posY = (Int32)po.pos[1];
-            Int32 posZ = (Int32)po.pos[2];
-            ff9.w_movementChrVerifyValidCastPosition(ref posX, ref posY, ref posZ);
-            po.pos[0] = posX;
-            po.pos[1] = posY;
-            po.pos[2] = posZ;
-            ((Actor)po).wmActor.SetPosition(po.pos[0], po.pos[1], po.pos[2]);
+            if (po.IsChocoboIndex)
+                ((Actor)po).wmActor.VerifyValidCastPosition();
         }
     }
 }

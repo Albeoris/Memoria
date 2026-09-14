@@ -1320,10 +1320,7 @@ public static class ff9
         ff9.WorldTitleFadeOutMode = 2;
         ff9.WorldTitleCloseMode = 3;
         ff9.lastTitleDrawState = 0;
-        ff9.ggammawork = new ff9.CVECTOR[256];
         ff9.w_nwpZDepth = new Byte[1024];
-        ff9.w_nwbAreaPage = new ff9.sNWBPage[17];
-        ff9.w_nwbColor = new ff9.sNWBColor[2];
         ff9.rayStartOffsetYFromSky = 400f;
         ff9.rayStartOffsetY = 2.34375f;
         ff9.rayDistance = 2.8f;
@@ -3295,14 +3292,10 @@ public static class ff9
 
     public static Boolean w_cellHit(ref Vector3 position, ref Int32 id, out Int32 pno, ff9.s_moveCHRCache cache, out Single height)
     {
-        id = 0;
-        pno = 0;
         Vector3 vector = position;
         height = ff9.w_nwpHit(ref vector, out id, out pno, cache);
         if ((ff9.w_moveCHRControl_No == 3 || ff9.w_moveCHRControl_No == 2) && (id == 56 || id == 57))
-        {
             id = 54;
-        }
         return true;
     }
 
@@ -4178,11 +4171,11 @@ public static class ff9
                     ff9.w_movementChange();
                     switch (ff9.w_moveActorPtr.originalActor.index)
                     {
-                        case 8:
+                        case Obj.OBJINDEX_NARCISS:
                             ff9.w_movePlanePtr = ff9.w_moveActorPtr;
                             break;
-                        case 9:
-                        case 10:
+                        case Obj.OBJINDEX_HILDA_GARDE_3:
+                        case Obj.OBJINDEX_INVINCIBLE:
                             ff9.w_movePlanePtr = ff9.w_moveActorPtr;
                             break;
                     }
@@ -4359,13 +4352,11 @@ public static class ff9
 
     public static Boolean w_frameChocoboCheck()
     {
-        Byte index = ff9.w_moveActorPtr.originalActor.index;
-        if (index == 1 || index == 2)
+        if (ff9.w_moveActorPtr.originalActor.IsPlayerCharacterIndex)
         {
-            Int32 num = ff9.m_GetIDTopograph(ff9.m_moveActorID);
-            switch (num)
+            switch (ff9.m_GetIDTopograph(ff9.m_moveActorID))
             {
-                case 3: // Chocobo tracks: Mist Continent (and archipelago)
+                case 3:  // Chocobo tracks: Mist Continent (and archipelago)
                 case 18: // Chocobo tracks: Outer Continent
                 case 21: // Chocobo tracks: Forgotten Continent (north)
                 case 22: // Chocobo tracks: Forgotten Continent (center)
@@ -4480,67 +4471,51 @@ public static class ff9
             if (obj.cid == 4)
             {
                 PosObj posObj = (PosObj)obj;
-                if (posObj.index >= 3 && posObj.index <= 7)
+                if (posObj.IsChocoboIndex)
                 {
                     switch (posObj.index)
                     {
-                        case 3:
+                        case Obj.OBJINDEX_CHOCOBO_YELLOW:
                             index = 0;
                             break;
-                        case 4:
+                        case Obj.OBJINDEX_CHOCOBO_TEAL:
                             index = 1;
                             break;
-                        case 5:
+                        case Obj.OBJINDEX_CHOCOBO_RED:
                             index = 2;
                             break;
-                        case 6:
+                        case Obj.OBJINDEX_CHOCOBO_BLUE:
                             index = 3;
                             break;
-                        case 7:
+                        case Obj.OBJINDEX_CHOCOBO_GOLD:
                             index = 4;
                             break;
                     }
                     if (!FF9StateSystem.World.IsBeeScene)
                     {
                         ff9.world.LoadCurrentChocoboTexture(index);
-                        GameObject gameObject = ((Actor)posObj).wmActor.gameObject;
-                        Transform transform = gameObject.transform.Find("GEO_SUB_W0_003(Clone)/mesh0");
-                        if (transform == null)
-                        {
-                            transform = gameObject.transform.Find("308(Clone)/mesh0");
-                        }
-                        Transform transform2 = gameObject.transform.Find("GEO_SUB_W0_003(Clone)/mesh1");
-                        if (transform2 == null)
-                        {
-                            transform2 = gameObject.transform.Find("308(Clone)/mesh1");
-                        }
-                        Transform transform3 = gameObject.transform.Find("GEO_SUB_W0_003(Clone)/mesh2");
-                        if (transform3 == null)
-                        {
-                            transform3 = gameObject.transform.Find("308(Clone)/mesh2");
-                        }
-                        Renderer component = transform.GetComponent<Renderer>();
-                        Material material = component.material;
-                        material.mainTexture = ff9.world.CurrentChocoboTextures[1];
-                        component = transform2.GetComponent<Renderer>();
-                        material = component.material;
-                        material.mainTexture = ff9.world.CurrentChocoboTextures[0];
-                        component = transform3.GetComponent<Renderer>();
-                        material = component.material;
-                        material.mainTexture = ff9.world.CurrentChocoboTextures[2];
+                        GameObject go = ((Actor)posObj).wmActor.gameObject;
+                        Transform mesh = go.transform.Find("GEO_SUB_W0_003(Clone)/mesh0");
+                        if (mesh == null)
+                            mesh = go.transform.Find("308(Clone)/mesh0");
+                        mesh.GetComponent<Renderer>().material.mainTexture = ff9.world.CurrentChocoboTextures[1];
+                        mesh = go.transform.Find("GEO_SUB_W0_003(Clone)/mesh1");
+                        if (mesh == null)
+                            mesh = go.transform.Find("308(Clone)/mesh1");
+                        mesh.GetComponent<Renderer>().material.mainTexture = ff9.world.CurrentChocoboTextures[0];
+                        mesh = go.transform.Find("GEO_SUB_W0_003(Clone)/mesh2");
+                        if (mesh == null)
+                            mesh = go.transform.Find("308(Clone)/mesh2");
+                        mesh.GetComponent<Renderer>().material.mainTexture = ff9.world.CurrentChocoboTextures[2];
                     }
                 }
-                if (posObj.index == 8 && !FF9StateSystem.World.IsBeeScene)
+                if (posObj.index == Obj.OBJINDEX_NARCISS && !FF9StateSystem.World.IsBeeScene)
                 {
-                    GameObject gameObject2 = ((Actor)posObj).wmActor.gameObject;
-                    Transform transform4 = gameObject2.transform.Find("GEO_SUB_W0_008(Clone)");
-                    if (transform4 == null)
-                    {
-                        transform4 = gameObject2.transform.Find("321(Clone)");
-                    }
-                    Vector3 localPosition = transform4.localPosition;
-                    localPosition.z = 1f;
-                    transform4.localPosition = localPosition;
+                    GameObject go = ((Actor)posObj).wmActor.gameObject;
+                    Transform transf = go.transform.Find("GEO_SUB_W0_008(Clone)");
+                    if (transf == null)
+                        transf = go.transform.Find("321(Clone)");
+                    transf.localPosition = transf.localPosition.SetZ(1f);
                 }
             }
         }
@@ -4556,22 +4531,22 @@ public static class ff9
                 PosObj posObj = (PosObj)obj;
                 switch (posObj.index)
                 {
-                    case 1:
-                    case 2:
+                    case Obj.OBJINDEX_ZIDANE:
+                    case Obj.OBJINDEX_GARNET:
                         ff9.w_moveHumanPtr = ((Actor)posObj).wmActor;
                         break;
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
+                    case Obj.OBJINDEX_CHOCOBO_YELLOW:
+                    case Obj.OBJINDEX_CHOCOBO_TEAL:
+                    case Obj.OBJINDEX_CHOCOBO_RED:
+                    case Obj.OBJINDEX_CHOCOBO_BLUE:
+                    case Obj.OBJINDEX_CHOCOBO_GOLD:
                         ff9.w_moveChocoboPtr = ((Actor)posObj).wmActor;
                         break;
-                    case 8:
+                    case Obj.OBJINDEX_NARCISS:
                         ff9.w_movePlanePtr = ((Actor)posObj).wmActor;
                         break;
-                    case 9:
-                    case 10:
+                    case Obj.OBJINDEX_HILDA_GARDE_3:
+                    case Obj.OBJINDEX_INVINCIBLE:
                         ff9.w_movePlanePtr = ((Actor)posObj).wmActor;
                         break;
                 }
@@ -4579,14 +4554,7 @@ public static class ff9
                 {
                     if (ff9.FF9Sys.prevMode == 1 && !ff9.FF9Global.worldState.internall)
                     {
-                        if (ff9.w_moveCHRControlPtr.camrot)
-                        {
-                            ff9.w_cameraSysDataCamera.rotationRev = ff9.PsxRot(2048);
-                        }
-                        else
-                        {
-                            ff9.w_cameraSysDataCamera.rotationRev = ff9.PsxRot(0);
-                        }
+                        ff9.w_cameraSysDataCamera.rotationRev = ff9.w_moveCHRControlPtr.camrot ? ff9.PsxRot(2048) : ff9.PsxRot(0);
                         ff9.w_cameraSysDataCamera.rotation = posObj.rot[1] + ff9.w_cameraSysDataCamera.rotationRev;
                     }
                     ff9.w_moveCHRControl_RotTrue = ((Actor)posObj).wmActor.rot[1];
@@ -4609,12 +4577,29 @@ public static class ff9
                 PosObj posObj = (PosObj)obj;
                 Vector3 pos = ((Actor)posObj).wmActor.pos;
                 ff9.s_moveCHRStatus s_moveCHRStatus = ff9.w_moveCHRStatus[posObj.index];
-                Boolean flag = false;
-                Int32 num;
-                Single ground_height;
-                ff9.w_cellHit(ref pos, ref s_moveCHRStatus.id, out num, null, out ground_height);
-                s_moveCHRStatus.ground_height = ground_height;
-                s_moveCHRStatus.slice_height = ff9.w_movementGetSliceHeight(s_moveCHRStatus.slice_type, s_moveCHRStatus.id, ref flag);
+                Int32 mapid = s_moveCHRStatus.id;
+                ff9.w_cellHit(ref pos, ref mapid, out Int32 pno, null, out Single h);
+                if (pno == -1)
+                {
+                    Vector3 basePos = pos;
+                    for (Int32 retryCounter = 0; retryCounter < 10; retryCounter++)
+                    {
+                        pos = basePos + new Vector3(UnityEngine.Random.Range(-1f, 1f), 0f, UnityEngine.Random.Range(-1f, 1f));
+                        ff9.w_cellHit(ref pos, ref mapid, out pno, null, out h);
+                        if (pno != -1)
+                            break;
+                    }
+                }
+                if (pno != -1)
+                {
+                    s_moveCHRStatus.id = mapid;
+                    s_moveCHRStatus.ground_height = h;
+                    s_moveCHRStatus.slice_height = ff9.w_movementGetSliceHeight(s_moveCHRStatus.slice_type, s_moveCHRStatus.id, out Boolean inForest);
+                }
+                else
+                {
+                    s_moveCHRStatus.ground_height = pos.y;
+                }
                 ff9.w_movementSetheight(posObj);
                 posObj.lastx = posObj.pos[0];
             }
@@ -4625,121 +4610,87 @@ public static class ff9
 
     public static void w_movementChrFixBug()
     {
-        WMActor wmactor = null;
-        WMActor wmactor2 = null;
-        WMActor wmactor3 = null;
-        WMActor wmactor4 = null;
+        WMActor playerActor = null;
+        WMActor chocoboActor = null;
+        WMActor transportActor = null;
+        WMActor interractActor = null;
         for (ObjList objList = ff9.GetActiveObjList(); objList != null; objList = objList.next)
         {
             Obj obj = objList.obj;
             if (obj.cid == 4)
             {
                 PosObj posObj = (PosObj)obj;
-                if (obj.index == 1)
-                {
-                    wmactor = ((Actor)posObj).wmActor;
-                }
-                if (obj.index >= 3 && obj.index <= 7)
-                {
-                    wmactor2 = ((Actor)posObj).wmActor;
-                }
-                if (obj.index == 9 || obj.index == 10)
-                {
-                    wmactor3 = ((Actor)posObj).wmActor;
-                }
+                if (obj.index == Obj.OBJINDEX_ZIDANE)
+                    playerActor = ((Actor)posObj).wmActor;
+                if (obj.IsChocoboIndex)
+                    chocoboActor = ((Actor)posObj).wmActor;
+                if (obj.IsPlayerAirshipIndex)
+                    transportActor = ((Actor)posObj).wmActor;
             }
         }
-        if (wmactor == null)
-        {
+        if (playerActor == null)
             return;
-        }
-        if (wmactor2 != null)
+        if (chocoboActor != null)
+            interractActor = chocoboActor;
+        if (transportActor != null)
+            interractActor = transportActor;
+        if (chocoboActor != null && transportActor != null)
         {
-            wmactor4 = wmactor2;
+            Single distChoco = Vector3.Distance(playerActor.pos, chocoboActor.pos);
+            Single distTransport = Vector3.Distance(playerActor.pos, transportActor.pos);
+            interractActor = distChoco < distTransport ? chocoboActor : transportActor;
         }
-        if (wmactor3 != null)
-        {
-            wmactor4 = wmactor3;
-        }
-        if (wmactor2 != null && wmactor3 != null)
-        {
-            Single num = Vector3.Distance(wmactor.pos, wmactor2.pos);
-            Single num2 = Vector3.Distance(wmactor.pos, wmactor3.pos);
-            if (num < num2)
-            {
-                wmactor4 = wmactor2;
-            }
-            else
-            {
-                wmactor4 = wmactor3;
-            }
-        }
-        Single x = wmactor.pos.x;
-        Single y = wmactor.pos.y;
-        Single z = wmactor.pos.z;
-        Single x2 = x;
-        Single y2 = y;
-        Single z2 = z;
-        Vector3 vector = new Vector3(x2, y2, z2);
+        Single playerX = playerActor.pos.x;
+        Single playerY = playerActor.pos.y;
+        Single playerZ = playerActor.pos.z;
+        Vector3 playerPos = new Vector3(playerX, playerY, playerZ);
         WMPhysics.CastRayFromSky = true;
         WMPhysics.IgnoreExceptions = true;
         WMPhysics.UseInfiniteRaycast = true;
-        Int32 num3;
-        Int32 num4;
-        Single y3;
-        Boolean flag = ff9.w_nwpHitBool(ref vector, out num3, out num4, null, out y3);
-        if (flag)
+        Boolean foundGround = ff9.w_nwpHitBool(ref playerPos, out Int32 mapid, out Int32 pno, null, out Single h);
+        if (foundGround)
         {
+            WMPhysics.CastRayFromSky = false;
+            WMPhysics.IgnoreExceptions = false;
+            WMPhysics.UseInfiniteRaycast = false;
             return;
         }
-        Vector3 nearestObjectPos = wmactor.pos;
-        if (wmactor4 != null)
-        {
-            nearestObjectPos = wmactor4.pos;
-        }
-        List<Vector3> list = new List<Vector3>();
-        for (Int32 i = 0; i < 360; i += 45)
+        Vector3 nearestObjectPos = playerActor.pos;
+        if (interractActor != null)
+            nearestObjectPos = interractActor.pos;
+        List<Vector3> tryPositions = new List<Vector3>();
+        for (Single angle = 0f; angle < 360f; angle += 45f)
         {
             Vector3 pos = ff9.w_moveActorPtr.pos;
-            pos.x += ff9.rcos((Single)i) * 0.2f;
-            pos.z += ff9.rsin((Single)i) * 0.2f;
-            list.Add(pos);
+            pos.x += ff9.rcos(angle) * 0.2f;
+            pos.z += ff9.rsin(angle) * 0.2f;
+            tryPositions.Add(pos);
         }
-        list.Sort(delegate (Vector3 p1, Vector3 p2)
+        tryPositions.Sort((Vector3 p1, Vector3 p2) =>
         {
             Vector3 nop = nearestObjectPos;
             nop.y = 0f;
             p1.y = 0f;
             p2.y = 0f;
-            Single num5 = Vector3.Distance(p1, nop);
-            Single num6 = Vector3.Distance(p2, nop);
-            if (num5 > num6)
-            {
+            Single d1 = Vector3.Distance(p1, nop);
+            Single d2 = Vector3.Distance(p2, nop);
+            if (d1 > d2)
                 return -1;
-            }
-            if (num5 < num6)
-            {
+            if (d1 < d2)
                 return 1;
-            }
             return 0;
         });
-        for (Int32 j = 0; j < list.Count; j++)
+        for (Int32 i = 0; i < tryPositions.Count; i++)
         {
-            vector = list[j];
-            flag = ff9.w_nwpHitBool(ref vector, out num3, out num4, null, out y3);
-            if (flag)
-            {
+            Vector3 tryPos = tryPositions[i];
+            foundGround = ff9.w_nwpHitBool(ref tryPos, out mapid, out pno, null, out h);
+            if (foundGround)
                 break;
-            }
         }
-        if (flag)
-        {
-            wmactor.pos = new Vector3(x2, y3, z2);
-        }
-        else if (wmactor4)
-        {
-            wmactor.pos = wmactor4.pos;
-        }
+        playerActor.pos = foundGround ? new Vector3(playerX, h, playerZ) : nearestObjectPos;
+        playerActor.lastx = playerActor.pos.x;
+        playerActor.lasty = playerActor.pos.y;
+        playerActor.lastz = playerActor.pos.z;
         WMPhysics.CastRayFromSky = false;
         WMPhysics.IgnoreExceptions = false;
         WMPhysics.UseInfiniteRaycast = false;
@@ -4747,137 +4698,108 @@ public static class ff9
 
     public static void w_movementChrFixBug_Chocobo()
     {
-        WMActor wmactor = null;
+        WMActor chocoboActor = null;
         for (ObjList objList = ff9.GetActiveObjList(); objList != null; objList = objList.next)
         {
             Obj obj = objList.obj;
             if (obj.cid == 4)
             {
                 PosObj posObj = (PosObj)obj;
-                if (obj.index == 1)
-                {
-                    WMActor wmActor = ((Actor)posObj).wmActor;
-                }
-                if (obj.index >= 3 && obj.index <= 7)
-                {
-                    wmactor = ((Actor)posObj).wmActor;
-                }
-                if (obj.index == 9 || obj.index == 10)
-                {
-                    WMActor wmActor2 = ((Actor)posObj).wmActor;
-                }
+                if (obj.IsChocoboIndex)
+                    chocoboActor = ((Actor)posObj).wmActor;
             }
         }
-        if (wmactor == null)
-        {
+        if (chocoboActor == null)
             return;
-        }
-        Single x = wmactor.pos.x;
-        Single y = wmactor.pos.y;
-        Single z = wmactor.pos.z;
-        Single x2 = x;
-        Single y2 = y;
-        Single z2 = z;
-        Vector3 vector = new Vector3(x2, y2, z2);
+        Vector3 tryPos = chocoboActor.pos;
         WMPhysics.CastRayFromSky = true;
         WMPhysics.IgnoreExceptions = true;
         WMPhysics.UseInfiniteRaycast = true;
-        Int32 num;
-        Int32 num2;
-        Single y3;
-        if (!ff9.w_nwpHitBool(ref vector, out num, out num2, null, out y3))
+        if (!ff9.w_nwpHitBool(ref tryPos, out Int32 mapid, out Int32 pno, null, out Single h))
+            tryPos.x += 0.1f;
+        if (!ff9.w_nwpHitBool(ref tryPos, out mapid, out pno, null, out h))
+            tryPos.x += 0.2f;
+        if (ff9.w_nwpHitBool(ref tryPos, out mapid, out pno, null, out h))
         {
-            vector.x += 0.1f;
-        }
-        if (!ff9.w_nwpHitBool(ref vector, out num, out num2, null, out y3))
-        {
-            vector.x += 0.2f;
-        }
-        Boolean flag = ff9.w_nwpHitBool(ref vector, out num, out num2, null, out y3);
-        if (flag)
-        {
-            wmactor.pos = new Vector3(vector.x, y3, vector.z);
-            wmactor.lastx = wmactor.pos.x;
-            wmactor.lasty = wmactor.pos.y;
-            wmactor.lastz = wmactor.pos.z;
+            chocoboActor.pos = new Vector3(tryPos.x, h, tryPos.z);
+            chocoboActor.lastx = chocoboActor.pos.x;
+            chocoboActor.lasty = chocoboActor.pos.y;
+            chocoboActor.lastz = chocoboActor.pos.z;
         }
         WMPhysics.CastRayFromSky = false;
         WMPhysics.IgnoreExceptions = false;
         WMPhysics.UseInfiniteRaycast = false;
     }
 
-    public static void w_movementChrVerifyValidCastPosition(ref Int32 posX, ref Int32 posY, ref Int32 posZ)
+    public static Boolean w_movementChrTryFindPositionNearby(Int32 initX, Int32 initY, Int32 initZ, ref Int32 destX, ref Int32 destY, ref Int32 destZ, ref Vector3 destPos)
     {
-        Int32 num = posX;
-        Int32 num2 = posY;
-        Int32 num3 = posZ;
-        ff9.world.GetUnityPositionOf_FixedPoint(ref num, ref num2, ref num3);
-        Int32 num4 = num;
-        Int32 num5 = num2;
-        Int32 num6 = num3;
-        Vector3 vector = new Vector3(num4, num5, num6) * 0.00390625f;
-        WMPhysics.CastRayFromSky = true;
-        WMPhysics.IgnoreExceptions = true;
-        WMPhysics.UseInfiniteRaycast = true;
-        Int32 num7;
-        Int32 num8;
-        Single num9;
-        Boolean flag = ff9.w_nwpHitBool(ref vector, out num7, out num8, null, out num9);
-        if (!flag)
+        Int32 mapid;
+        Int32 pno;
+        Single h;
+
+        const Int32 STEP_LENGTH = 20;
+        Int32 r2 = 2 * STEP_LENGTH;
+        Int32 step = 0;
+        Int32 dir = 0;
+        destX = initX + STEP_LENGTH;
+        destZ = initZ + STEP_LENGTH;
+        while (r2 < 400)
         {
-            Boolean flag2 = false;
-            for (Int32 i = 20; i < 200; i += 20)
+            if (dir == 0)
+                destZ -= STEP_LENGTH;
+            else if (dir == 1)
+                destX -= STEP_LENGTH;
+            else if (dir == 2)
+                destZ += STEP_LENGTH;
+            else
+                destX += STEP_LENGTH;
+            destPos = new Vector3(destX, destY, destZ) * 0.00390625f;
+            if (ff9.w_nwpHitBool(ref destPos, out mapid, out pno, null, out h))
+                return true;
+            step += 20;
+            if (step >= r2)
             {
-                for (Int32 j = 20; j < 200; j += 20)
+                step = 0;
+                dir++;
+                if (dir >= 4)
                 {
-                    num4 = num + i;
-                    num6 = num3 + j;
-                    vector = new Vector3(num4, num5, num6) * 0.00390625f;
-                    flag = ff9.w_nwpHitBool(ref vector, out num7, out num8, null, out num9);
-                    if (flag)
-                    {
-                        flag2 = true;
-                        break;
-                    }
-                    num4 = num - i;
-                    num6 = num3 + j;
-                    vector = new Vector3(num4, num5, num6) * 0.00390625f;
-                    flag = ff9.w_nwpHitBool(ref vector, out num7, out num8, null, out num9);
-                    if (flag)
-                    {
-                        flag2 = true;
-                        break;
-                    }
-                    num4 = num + i;
-                    num6 = num3 - j;
-                    vector = new Vector3(num4, num5, num6) * 0.00390625f;
-                    flag = ff9.w_nwpHitBool(ref vector, out num7, out num8, null, out num9);
-                    if (flag)
-                    {
-                        flag2 = true;
-                        break;
-                    }
-                    num4 = num - i;
-                    num6 = num3 - j;
-                    vector = new Vector3(num4, num5, num6) * 0.00390625f;
-                    flag = ff9.w_nwpHitBool(ref vector, out num7, out num8, null, out num9);
-                }
-                if (flag2)
-                {
-                    break;
+                    dir = 0;
+                    r2 += 40;
+                    destX = initX + r2 / 2;
+                    destZ = initZ + r2 / 2;
                 }
             }
         }
-        if (flag)
+        return false;
+    }
+
+    public static Boolean w_movementChrVerifyValidCastPosition(ref Int32 posX, ref Int32 posY, ref Int32 posZ)
+    {
+        Int32 initX = posX;
+        Int32 initY = posY;
+        Int32 initZ = posZ;
+        ff9.world.GetUnityPositionOf_FixedPoint(ref initX, ref initY, ref initZ);
+        Int32 destX = initX;
+        Int32 destY = initY;
+        Int32 destZ = initZ;
+        Vector3 destPos = new Vector3(destX, destY, destZ) * 0.00390625f;
+        WMPhysics.CastRayFromSky = true;
+        WMPhysics.IgnoreExceptions = true;
+        WMPhysics.UseInfiniteRaycast = true;
+        Boolean foundValidPos = ff9.w_nwpHitBool(ref destPos, out Int32 mapid, out Int32 pno, null, out Single h);
+        if (!foundValidPos)
+            foundValidPos = ff9.w_movementChrTryFindPositionNearby(initX, initY, initZ, ref destX, ref destY, ref destZ, ref destPos);
+        if (foundValidPos)
         {
-            ff9.world.GetAbsolutePositionOf_FixedPoint(ref num4, ref num5, ref num6);
-            posX = num4;
-            posY = num5;
-            posZ = num6;
+            ff9.world.GetAbsolutePositionOf_FixedPoint(ref destX, ref destY, ref destZ);
+            posX = destX;
+            posY = destY;
+            posZ = destZ;
         }
         WMPhysics.CastRayFromSky = false;
         WMPhysics.IgnoreExceptions = false;
         WMPhysics.UseInfiniteRaycast = false;
+        return foundValidPos;
     }
 
     /*
@@ -4927,17 +4849,17 @@ public static class ff9
                 {
                     Boolean useOwnShadow = true;
                     Vector3 pos = ((Actor)obj).wmActor.pos;
-                    if (posObj.index == 8)
+                    if (posObj.index == Obj.OBJINDEX_NARCISS)
                         useOwnShadow = false;
-                    if ((posObj.index == 1 || posObj.index == 2) && ff9.w_moveCHRControl_No >= 1 && ff9.w_moveCHRControl_No <= 6)
+                    if (posObj.IsPlayerCharacterIndex && ff9.w_moveCHRControl_No >= 1 && ff9.w_moveCHRControl_No <= 6)
                         useOwnShadow = false;
                     Boolean displayShadow = useOwnShadow && ff9.w_moveCHRStatus[posObj.index].slice_height >= -0.01171875f;
                     ff9.w_FF9DisplayShadow(posObj, ref pos, 0, displayShadow);
                 }
                 else
                 {
-                    Vector3 pos2 = ((Actor)obj).wmActor.pos;
-                    ff9.w_FF9DisplayShadow(posObj, ref pos2, 0, false);
+                    Vector3 pos = ((Actor)obj).wmActor.pos;
+                    ff9.w_FF9DisplayShadow(posObj, ref pos, 0, false);
                 }
             }
         }
@@ -4949,17 +4871,17 @@ public static class ff9
         WMShadow wmshadow = ff9.world.GetShadow(chr);
         if (wmshadow == null)
         {
-            if (chr.index == 1 || chr.index == 2)
+            if (chr.IsPlayerCharacterIndex)
             {
                 Single scale = 0.8545044f;
                 wmshadow = ff9.world.AddShadow(chr, new Vector3(scale, scale, scale));
             }
-            else if (chr.index >= 3 && chr.index <= 7)
+            else if (chr.IsChocoboIndex)
             {
                 Single scale = 1.430598f;
                 wmshadow = ff9.world.AddShadow(chr, new Vector3(scale, scale, scale));
             }
-            else if (chr.index == 9 || chr.index == 10)
+            else if (chr.IsPlayerAirshipIndex)
             {
                 Single scale = 1.430598f;
                 wmshadow = ff9.world.AddShadow(chr, new Vector3(scale, scale, scale));
@@ -4983,7 +4905,7 @@ public static class ff9
             return;
         }
         ff9.s_moveCHRStatus s_moveCHRStatus = ff9.w_moveCHRStatus[chr.index];
-        if (chr.index != 14 && wmshadow)
+        if (chr.index != Obj.OBJINDEX_GARDEN_SHADOW && wmshadow)
         {
             Int32 num2 = (Int32)(s_moveCHRStatus.ground_height * 256f - chr.pos[1]);
             pos.y += ff9.S(num2);
@@ -4999,24 +4921,10 @@ public static class ff9
                 Int32 num5 = 32768 - sz >> 3;
                 num5 *= ff9.w_weatherColor.Color[16].fogAMP;
                 num5 >>= 12;
-                if (num5 < 0)
-                {
-                    num5 = 0;
-                }
-                if (num5 > 4095)
-                {
-                    num5 = 4095;
-                }
+                num5 = Mathf.Clamp(num5, 0, 4095);
                 num3 *= num5;
                 num3 >>= 12;
-                if (num3 > 255)
-                {
-                    num3 = 255;
-                }
-                if (num3 < 0)
-                {
-                    num3 = 0;
-                }
+                num3 = Mathf.Clamp(num3, 0, 255);
                 Single num6 = ff9.tweaker.ShadowScale;
                 num6 = 300f;
                 Single num7 = ff9.PsxScale(num4) * num6;
@@ -5024,10 +4932,8 @@ public static class ff9
                 Single value = 1f - num3 / 100f;
                 wmshadow.Material.SetFloat("_Amp", value);
                 Single num8 = 0.1f;
-                if (chr.index == 8 || chr.index == 9)
-                {
+                if (chr.IsPlayerAirshipIndex)
                     num8 = 0.6f;
-                }
                 wmshadow.transform.position = new Vector3(pos.x, s_moveCHRStatus.ground_height + num8, pos.z);
             }
         }
@@ -5056,17 +4962,10 @@ public static class ff9
                 if (ff9.objIsVisible(obj))
                 {
                     Byte index = posObj.index;
-                    if (index != 7)
-                    {
-                        if (index == 11)
-                        {
-                            ff9.w_moveMogPtr = ((Actor)posObj).wmActor;
-                        }
-                    }
-                    else
-                    {
-                        s_moveCHRStatus.flg_fly = (Byte)(ff9.w_moveCHRControl_No != 6 ? 0 : 1);
-                    }
+                    if (index == Obj.OBJINDEX_CHOCOBO_GOLD)
+                        s_moveCHRStatus.flg_fly = (Byte)(ff9.w_moveCHRControl_No == 6 ? 1 : 0);
+                    else if (index == Obj.OBJINDEX_MOOGLE)
+                        ff9.w_moveMogPtr = ((Actor)posObj).wmActor;
                     if ((Actor)posObj == ff9.w_moveActorPtr.originalActor && ff9.GetUserControl())
                     {
                         ff9.w_movementControl(s_moveCHRStatus);
@@ -5074,49 +4973,47 @@ public static class ff9
                     else
                     {
                         WMPhysics.UseInfiniteRaycast = true;
-                        WMPhysics.CastRayFromSky = (ff9.w_moveCHRStatus[(int)posObj.index].flg_fly != 0);
+                        WMPhysics.CastRayFromSky = ff9.w_moveCHRStatus[index].flg_fly != 0;
                         WMPhysics.IgnoreExceptions = true;
-                        s_moveCHRStatus = ff9.w_moveCHRStatus[(int)posObj.index];
-                        ff9.s_moveCHRCache s_moveCHRCache = ff9.w_moveCHRCache[(int)s_moveCHRStatus.cache];
+                        s_moveCHRStatus = ff9.w_moveCHRStatus[index];
+                        ff9.s_moveCHRCache s_moveCHRCache = ff9.w_moveCHRCache[s_moveCHRStatus.cache];
                         Vector3 pos = ((Actor)posObj).wmActor.pos;
-                        int num;
-                        float ground_height;
-                        ff9.w_cellHit(ref pos, ref s_moveCHRStatus.id, out num, null, out ground_height);
-                        if (num == -1 && !WMPhysics.CastRayFromSky)
+                        ff9.w_cellHit(ref pos, ref s_moveCHRStatus.id, out Int32 pno, null, out Single h);
+                        if (pno == -1 && !WMPhysics.CastRayFromSky)
                         {
                             WMPhysics.CastRayFromSky = true;
-                            ff9.w_cellHit(ref pos, ref s_moveCHRStatus.id, out num, null, out ground_height);
+                            ff9.w_cellHit(ref pos, ref s_moveCHRStatus.id, out pno, null, out h);
                         }
-                        if (posObj.index == 8)
+                        if (pno == -1)
+                            h = ((Actor)posObj).wmActor.pos1;
+                        if (index == Obj.OBJINDEX_NARCISS)
+                            h = 0f;
+                        if (s_moveCHRStatus.id == 0xFEE && (index == Obj.OBJINDEX_MOOGLE || (index >= Obj.OBJINDEX_ZIDANE && index <= Obj.OBJINDEX_CHOCOBO_BLUE) || (index == Obj.OBJINDEX_CHOCOBO_GOLD && s_moveCHRStatus.flg_fly == 0)))
                         {
-                            ground_height = 0f;
-                        }
-                        if (s_moveCHRStatus.id == 0xFEE && (posObj.index == 1 || posObj.index == 2 || posObj.index == 11 || posObj.index == 3 || posObj.index == 4 || posObj.index == 5 || posObj.index == 6 || (posObj.index == 7 && s_moveCHRStatus.flg_fly == 0)))
-                        {
-                            ground_height = ((Actor)posObj).wmActor.pos1;
+                            h = ((Actor)posObj).wmActor.pos1;
                             s_moveCHRStatus.id = 0xFD2;
                         }
-                        if (s_moveCHRStatus.id == 0x18EE && (posObj.index == 5 || posObj.index == 6 || (posObj.index == 7 && s_moveCHRStatus.flg_fly == 0)))
+                        if (s_moveCHRStatus.id == 0x18EE && (index == Obj.OBJINDEX_CHOCOBO_RED || index == Obj.OBJINDEX_CHOCOBO_BLUE || (index == Obj.OBJINDEX_CHOCOBO_GOLD && s_moveCHRStatus.flg_fly == 0)))
                         {
-                            ground_height = ((Actor)posObj).wmActor.pos1;
+                            h = ((Actor)posObj).wmActor.pos1;
                             s_moveCHRStatus.id = 0xC4;
                         }
-                        if (s_moveCHRStatus.id == 0x7EE && (posObj.index == 5 || posObj.index == 6 || (posObj.index == 7 && s_moveCHRStatus.flg_fly == 0)))
+                        if (s_moveCHRStatus.id == 0x7EE && (index == Obj.OBJINDEX_CHOCOBO_RED || index == Obj.OBJINDEX_CHOCOBO_BLUE || (index == Obj.OBJINDEX_CHOCOBO_GOLD && s_moveCHRStatus.flg_fly == 0)))
                         {
-                            ground_height = ((Actor)posObj).wmActor.pos1;
+                            h = ((Actor)posObj).wmActor.pos1;
                             s_moveCHRStatus.id = 0xC4;
                         }
-                        if (s_moveCHRStatus.id == 0x1BEE && (posObj.index == 1 || posObj.index == 2 || posObj.index == 11 || posObj.index == 3 || posObj.index == 4 || posObj.index == 5 || posObj.index == 6 || (posObj.index == 7 && s_moveCHRStatus.flg_fly == 0)))
+                        if (s_moveCHRStatus.id == 0x1BEE && (index == Obj.OBJINDEX_MOOGLE || (index >= Obj.OBJINDEX_ZIDANE && index <= Obj.OBJINDEX_CHOCOBO_BLUE) || (index == Obj.OBJINDEX_CHOCOBO_GOLD && s_moveCHRStatus.flg_fly == 0)))
                         {
-                            ground_height = ((Actor)posObj).wmActor.pos1;
+                            h = ((Actor)posObj).wmActor.pos1;
                             s_moveCHRStatus.id = 0x1B44;
                         }
-                        if (s_moveCHRStatus.id == 0x2CEE && (posObj.index == 1 || posObj.index == 2 || posObj.index == 11 || posObj.index == 3 || posObj.index == 4 || posObj.index == 5 || posObj.index == 6 || (posObj.index == 7 && s_moveCHRStatus.flg_fly == 0)))
+                        if (s_moveCHRStatus.id == 0x2CEE && (index == Obj.OBJINDEX_MOOGLE || (index >= Obj.OBJINDEX_ZIDANE && index <= Obj.OBJINDEX_CHOCOBO_BLUE) || (index == Obj.OBJINDEX_CHOCOBO_GOLD && s_moveCHRStatus.flg_fly == 0)))
                         {
-                            ground_height = ((Actor)posObj).wmActor.pos1;
+                            h = ((Actor)posObj).wmActor.pos1;
                             s_moveCHRStatus.id = 0x6C4C;
                         }
-                        s_moveCHRStatus.ground_height = ground_height;
+                        s_moveCHRStatus.ground_height = h;
                         ((Actor)posObj).wmActor.pos = pos;
                         WMPhysics.UseInfiniteRaycast = false;
                         WMPhysics.CastRayFromSky = false;
@@ -5131,9 +5028,7 @@ public static class ff9
             case 0:
             case 3:
                 if (ff9.w_blockReady)
-                {
                     ff9.w_movementHumanCamOperation();
-                }
                 break;
             case 1:
             case 2:
@@ -5141,69 +5036,33 @@ public static class ff9
                 break;
         }
         if (ff9.w_moveCHRControl_No >= 1 && ff9.w_moveCHRControl_No <= 6)
-        {
             ff9.w_moveCHRStatus[1].slice_height = ff9.w_moveCHRStatus[ff9.w_moveActorPtr.originalActor.index].slice_height;
-        }
         if (ff9.w_moveChocoboPtr)
         {
-            Vector3 rot = ff9.w_moveChocoboPtr.rot;
-            if (rot[2] > 180f)
-            {
-                Int32 index3;
-                Int32 index2 = index3 = 2;
-                Single num2 = rot[index3];
-                rot[index2] = num2 - 360f;
-            }
-            if (rot[2] < 0f)
-            {
-                Int32 index3;
-                Int32 index4 = index3 = 2;
-                Single num2 = rot[index3];
-                rot[index4] = num2 + ff9.PsxRot(10);
-            }
-            if (rot[2] > 0f)
-            {
-                Int32 index3;
-                Int32 index5 = index3 = 2;
-                Single num2 = rot[index3];
-                rot[index5] = num2 - ff9.PsxRot(10);
-            }
-            if (rot[2] < ff9.PsxRot(10) && rot[2] > ff9.PsxRot(-10))
-            {
-                rot[2] = 0f;
-            }
-            ff9.w_moveChocoboPtr.rot = rot;
+            Vector3 chocoboRot = ff9.w_moveChocoboPtr.rot;
+            if (chocoboRot[2] > 180f)
+                chocoboRot[2] -= 360f;
+            if (chocoboRot[2] < 0f)
+                chocoboRot[2] += ff9.PsxRot(10);
+            if (chocoboRot[2] > 0f)
+                chocoboRot[2] -= ff9.PsxRot(10);
+            if (chocoboRot[2] < ff9.PsxRot(10) && chocoboRot[2] > ff9.PsxRot(-10))
+                chocoboRot[2] = 0f;
+            ff9.w_moveChocoboPtr.rot = chocoboRot;
         }
         if (ff9.w_movePlanePtr)
         {
-            Vector3 rot2 = ff9.w_movePlanePtr.rot;
-            if (rot2[2] > 180f)
-            {
-                Int32 index3;
-                Int32 index6 = index3 = 2;
-                Single num2 = rot2[index3];
-                rot2[index6] = num2 - 360f;
-            }
-            Single num3 = ff9.PsxRot(14);
-            if (rot2[2] < num3)
-            {
-                Int32 index3;
-                Int32 index7 = index3 = 2;
-                Single num2 = rot2[index3];
-                rot2[index7] = num2 + ff9.PsxRot(10);
-            }
-            if (rot2[2] > num3)
-            {
-                Int32 index3;
-                Int32 index8 = index3 = 2;
-                Single num2 = rot2[index3];
-                rot2[index8] = num2 - ff9.PsxRot(10);
-            }
-            if (rot2[2] < num3 + ff9.PsxRot(10) && rot2[2] > num3 - ff9.PsxRot(10))
-            {
-                rot2[2] = num3;
-            }
-            ff9.w_movePlanePtr.rot = rot2;
+            Vector3 airshipRot = ff9.w_movePlanePtr.rot;
+            if (airshipRot[2] > 180f)
+                airshipRot[2] -= 360f;
+            Single destRot = ff9.PsxRot(14);
+            if (airshipRot[2] < destRot)
+                airshipRot[2] += ff9.PsxRot(10);
+            if (airshipRot[2] > destRot)
+                airshipRot[2] -= ff9.PsxRot(10);
+            if (airshipRot[2] < destRot + ff9.PsxRot(10) && airshipRot[2] > destRot - ff9.PsxRot(10))
+                airshipRot[2] = destRot;
+            ff9.w_movePlanePtr.rot = airshipRot;
         }
         if (ff9.GetControlChar() != null)
         {
@@ -5213,26 +5072,21 @@ public static class ff9
                 {
                     ff9.w_cameraRotAngle -= ff9.PsxRot(10);
                     if (ff9.w_cameraRotAngle < 0f)
-                    {
                         ff9.w_cameraRotAngle = 0f;
-                    }
                 }
                 if (ff9.w_cameraRotAngle < 0f)
                 {
                     ff9.w_cameraRotAngle += ff9.PsxRot(10);
                     if (ff9.w_cameraRotAngle > 0f)
-                    {
                         ff9.w_cameraRotAngle = 0f;
-                    }
                 }
             }
             ff9.s_moveCHRStatus s_moveCHRStatus = ff9.w_moveCHRStatus[ff9.w_moveActorPtr.originalActor.index];
             if (ff9.m_GetIDEvent(s_moveCHRStatus.id) != 0 && ff9.w_frameEventEnable)
             {
-                Int32 num4;
-                ff9.w_worldPos2Cell(ff9.w_moveActorPtr.RealPosition[0], ff9.w_moveActorPtr.RealPosition[2], out num4);
-                Int32 x = num4 % 48;
-                Int32 z = num4 / 48;
+                ff9.w_worldPos2Cell(ff9.w_moveActorPtr.RealPosition[0], ff9.w_moveActorPtr.RealPosition[2], out Int32 cellNum);
+                Int32 x = cellNum % 48;
+                Int32 z = cellNum / 48;
                 Int32 id = ff9.m_GetIDEvent(s_moveCHRStatus.id);
                 ff9.WorldEvent(x, z, id);
             }
@@ -5363,10 +5217,10 @@ public static class ff9
         if (ff9.w_blockReady)
         {
             ff9.s_moveCHRStatus s_moveCHRStatus = ff9.w_moveCHRStatus[chr.index];
+            WMActor actor = ((Actor)chr).wmActor;
             if (s_moveCHRStatus.cache != 10)
             {
-                Boolean flag = false;
-                Single num = ff9.w_movementGetSliceHeight(s_moveCHRStatus.slice_type, s_moveCHRStatus.id, ref flag);
+                Single sliceHeight = ff9.w_movementGetSliceHeight(s_moveCHRStatus.slice_type, s_moveCHRStatus.id, out Boolean inForest);
                 if (s_moveCHRStatus.flg_fly == 0)
                 {
                     if (s_moveCHRStatus.slice_type != 0)
@@ -5375,43 +5229,33 @@ public static class ff9
                         {
                             s_moveCHRStatus.slice_height = ff9.S(-180);
                         }
-                        else if (flag || ff9.UnityUnit(num) == 0)
+                        else if (inForest || ff9.UnityUnit(sliceHeight) == 0)
                         {
-                            s_moveCHRStatus.slice_height = num;
+                            s_moveCHRStatus.slice_height = sliceHeight;
                         }
                         else
                         {
-                            if (s_moveCHRStatus.slice_height < num - 0.08203125f)
-                            {
+                            if (s_moveCHRStatus.slice_height < sliceHeight - 0.08203125f)
                                 s_moveCHRStatus.slice_height += 0.078125f;
-                            }
-                            if (s_moveCHRStatus.slice_height > num + 0.08203125f)
-                            {
+                            if (s_moveCHRStatus.slice_height > sliceHeight + 0.08203125f)
                                 s_moveCHRStatus.slice_height -= 0.078125f;
-                            }
                         }
                     }
-                    ((Actor)chr).wmActor.pos1 = s_moveCHRStatus.ground_height + s_moveCHRStatus.slice_height;
+                    actor.pos1 = s_moveCHRStatus.ground_height + s_moveCHRStatus.slice_height;
                 }
                 else
                 {
-                    Single num2 = s_moveCHRStatus.ground_height + num;
-                    if (((Actor)chr).wmActor.pos1 < num2)
-                    {
-                        ((Actor)chr).wmActor.pos1 = num2;
-                    }
+                    Single newHeight = s_moveCHRStatus.ground_height + sliceHeight;
+                    if (actor.pos1 < newHeight)
+                        actor.pos1 = newHeight;
                     if (ff9.w_moveActorPtr != null && !ff9.w_cameraFixMode && ff9.w_moveActorPtr.pos[1] > 42.1875f && !ff9.w_cameraFixModeY)
-                    {
                         ff9.w_moveActorPtr.pos1 = 42.1875f;
-                    }
-                    s_moveCHRStatus.slice_height = ((Actor)chr).wmActor.pos1 - s_moveCHRStatus.ground_height;
+                    s_moveCHRStatus.slice_height = actor.pos1 - s_moveCHRStatus.ground_height;
                     if (s_moveCHRStatus.slice_height > 0f)
-                    {
                         s_moveCHRStatus.slice_height = 0f;
-                    }
                 }
             }
-            ((Actor)chr).wmActor.SetFogByHeight();
+            actor.SetFogByHeight();
         }
     }
 
@@ -5451,9 +5295,8 @@ public static class ff9
                     Single num5 = pos.x - ff9.w_moveActorPtr.lastx;
                     Single num6 = pos.y - ff9.w_moveActorPtr.lasty;
                     Single num7 = pos.z - ff9.w_moveActorPtr.lastz;
-                    Boolean flag2 = false;
                     Single num8;
-                    if (ff9.w_movementGetSliceHeight(status.slice_type, id, ref flag2) != 0f)
+                    if (ff9.w_movementGetSliceHeight(status.slice_type, id, out Boolean inForest) != 0f)
                     {
                         num8 = ff9.SquareRoot0(num5 * num5 + num7 * num7);
                     }
@@ -5518,50 +5361,40 @@ public static class ff9
         }
     }
 
-    public static Single w_movementGetSliceHeight(Int32 type, Int32 id, ref Boolean imd)
+    public static Single w_movementGetSliceHeight(Int32 type, Int32 id, out Boolean imd)
     {
-        Int32 num = ff9.m_GetIDTopograph(id);
-        Int32 num2;
-        switch (num)
+        Int32 sinkContext;
+        switch (ff9.m_GetIDTopograph(id))
         {
-            case 36:
+            case 36: // Forests
             case 37:
             case 38:
-                num2 = 0; break;
-            case 53:
-                num2 = 1; break;
-            case 54:
-                num2 = 2; break;
-            case 55:
-                num2 = 3; break;
-            case 56:
-                num2 = 4; break;
-            case 57:
-                num2 = 5; break;
-            case 51:
-                num2 = 6; break;
-            case 48:
-                num2 = 7; break;
-            case 49:
-            case 50:
-            case 52:
+                sinkContext = 0; break;
+            case 53: // Water (shore)
+                sinkContext = 1; break;
+            case 54: // Water (shallow)
+                sinkContext = 2; break;
+            case 55: // Cliff (shallow water)
+                sinkContext = 3; break;
+            case 56: // Cliff (deep sea)
+                sinkContext = 4; break;
+            case 57: // Water (deep)
+                sinkContext = 5; break;
+            case 51: // Water (river)
+                sinkContext = 6; break;
+            case 48: // Water (pond)
+                sinkContext = 7; break;
+            case 49: // Cliff (mountain)
+            case 50: // Water (waterfall)
+            case 52: // Ground (bridge)
             default:
-                num2 = 8; break;
+                sinkContext = 8; break;
         }
-        imd = (num2 <= 0);
-        Int32 num3 = ff9.w_movementSinkArray[type, num2];
-        if (ff9.w_moveActorPtr != null && ff9.w_moveActorPtr.originalActor != null)
-        {
-            ff9.s_moveCHRStatus s_moveCHRStatus = ff9.w_moveCHRStatus[ff9.w_moveActorPtr.originalActor.index];
-            if (s_moveCHRStatus.control == 5)
-            {
-            }
-        }
-        if (num3 != 0)
-        {
-            num3 -= 100;
-        }
-        return ff9.S(-num3);
+        imd = sinkContext == 0;
+        Int32 slice = ff9.w_movementSinkArray[type, sinkContext];
+        if (slice != 0)
+            slice -= 100;
+        return ff9.S(-slice);
     }
 
     public static Boolean w_movementRoundCheck(ref Vector3 pos, Single rotation, Int32 type, Single speed, ref Int32 id, ref Int32 polyno)
@@ -5633,7 +5466,6 @@ public static class ff9
         Single num = 1.953125f;
         Single[] array = new Single[2];
         Boolean flag = false;
-        Boolean flag2 = false;
         Vector3 vector = Vector3.zero;
         if (ff9.w_worldLocDistance[1] < 22 && ff9.m_GetIDTopograph(ff9.m_moveActorID) == 23)
         {
@@ -5793,7 +5625,7 @@ public static class ff9
             WMPhysics.UseInfiniteRaycast = false;
             if (flag)
             {
-                vector.y += ff9.w_movementGetSliceHeight(1, num2, ref flag2);
+                vector.y += ff9.w_movementGetSliceHeight(1, num2, out Boolean inForest);
                 pos = ff9.world.GetAbsolutePositionOf(vector);
                 return true;
             }
@@ -6284,7 +6116,7 @@ public static class ff9
             Boolean isAboveWater = ff9.w_movementCheckTopographID(ff9.w_movementWaterStatus, ff9.m_moveActorID);
             switch (ff9.w_moveActorPtr.originalActor.index)
             {
-                case 7:
+                case Obj.OBJINDEX_CHOCOBO_GOLD:
                 {
                     if (isAboveWater && ff9.abs(ff9.w_moveCHRControl_XZSpeed) > ff9.S(30) && ff9.w_moveActorPtr.pos[1] <= ff9.WH2)
                         ff9.w_effectRegist(ff9.w_moveActorPtr.pos[0], ff9.S(200), ff9.w_moveActorPtr.pos[2], SPSConst.WorldSPSEffect.MOVE_CHOCOBO_ABOVE_WATER, 19200);
@@ -6293,8 +6125,8 @@ public static class ff9
                         ff9.w_effectRegist(ff9.w_moveActorPtr.pos[0], ff9.w_moveActorPtr.pos[1] + ff9.S(-100), ff9.w_moveActorPtr.pos[2], SPSConst.WorldSPSEffect.MOVE_CHOCOBO_ABOVE_DESERT, 25600);
                     break;
                 }
-                case 9:
-                case 10:
+                case Obj.OBJINDEX_HILDA_GARDE_3:
+                case Obj.OBJINDEX_INVINCIBLE:
                 {
                     if (isAboveWater && ff9.abs(ff9.w_moveCHRControl_XZSpeed) > ff9.S(60) && ff9.w_moveActorPtr.pos[1] <= ff9.WH1)
                     {
@@ -7116,54 +6948,20 @@ public static class ff9
 
     public static void w_nwpChangeStat()
     {
-        ff9.w_nwbColor[0].w_nwbFarColor.r = (Byte)ff9.w_weatherColor.Color[16].fogDW.vx;
-        ff9.w_nwbColor[0].w_nwbFarColor.g = (Byte)ff9.w_weatherColor.Color[16].fogDW.vy;
-        ff9.w_nwbColor[0].w_nwbFarColor.b = (Byte)ff9.w_weatherColor.Color[16].fogDW.vz;
-        ff9.w_nwbColor[0].w_nwbFogValG = ff9.w_weatherColor.Color[16].goffsetdw;
-        ff9.w_nwbColor[0].w_nwbFogValT = ff9.w_weatherColor.Color[16].toffsetdw;
-        ff9.w_nwbColor[1].w_nwbFarColor.r = (Byte)ff9.w_weatherColor.Color[16].fogUP.vx;
-        ff9.w_nwbColor[1].w_nwbFarColor.g = (Byte)ff9.w_weatherColor.Color[16].fogUP.vy;
-        ff9.w_nwbColor[1].w_nwbFarColor.b = (Byte)ff9.w_weatherColor.Color[16].fogUP.vz;
-        ff9.w_nwbColor[1].w_nwbFogValG = ff9.w_weatherColor.Color[16].goffsetup;
-        ff9.w_nwbColor[1].w_nwbFogValT = ff9.w_weatherColor.Color[16].toffsetup;
-        ff9.w_nwbColorCloud.w_nwbFarColor.r = (Byte)ff9.w_weatherColor.Color[16].fogCL.vx;
-        ff9.w_nwbColorCloud.w_nwbFarColor.g = (Byte)ff9.w_weatherColor.Color[16].fogCL.vy;
-        ff9.w_nwbColorCloud.w_nwbFarColor.b = (Byte)ff9.w_weatherColor.Color[16].fogCL.vz;
-        ff9.w_nwbColorCloud.w_nwbFogValG = ff9.w_weatherColor.Color[16].goffsetcl;
-        ff9.w_nwbColorCloud.w_nwbFogValT = ff9.w_weatherColor.Color[16].toffsetcl;
-        Color32 c = new Color32
-        {
-            r = ff9.w_nwbColor[0].w_nwbFarColor.r,
-            g = ff9.w_nwbColor[0].w_nwbFarColor.g,
-            b = ff9.w_nwbColor[0].w_nwbFarColor.b
-        };
-        RenderSettings.fogColor = c;
-        ff9.w_frameCameraPtr.backgroundColor = c;
-        RenderSettings.ambientLight = new Color32
-        {
-            r = ff9.w_nwbColor[1].w_nwbFarColor.r,
-            g = ff9.w_nwbColor[1].w_nwbFarColor.g,
-            b = ff9.w_nwbColor[1].w_nwbFarColor.b
-        };
-        Single offsetX = ff9.w_weatherColor.Color[16].offsetX;
-        Single scaleY = ff9.w_weatherColor.Color[16].scaleY;
-        Color skyFogColor = ff9.w_weatherColor.Color[16].skyFogColor;
-        Material skyDowm_FogMaterial = ff9.world.SkyDowm_FogMaterial;
-        skyDowm_FogMaterial.SetColor("_Color", skyFogColor);
-        Color skyBgColor = ff9.w_weatherColor.Color[16].skyBgColor;
-        Material skyDowm_BgMaterial = ff9.world.SkyDowm_BgMaterial;
-        skyDowm_BgMaterial.SetColor("_Color", skyBgColor);
+        Color32 fogColor = new Color32((Byte)ff9.w_weatherColor.Color[16].fogDW.vx, (Byte)ff9.w_weatherColor.Color[16].fogDW.vy, (Byte)ff9.w_weatherColor.Color[16].fogDW.vz, 0);
+        RenderSettings.fogColor = fogColor;
+        ff9.w_frameCameraPtr.backgroundColor = fogColor;
+        RenderSettings.ambientLight = new Color32((Byte)ff9.w_weatherColor.Color[16].fogUP.vx, (Byte)ff9.w_weatherColor.Color[16].fogUP.vy, (Byte)ff9.w_weatherColor.Color[16].fogUP.vz, 0);
+        ff9.world.SkyDowm_FogMaterial.SetColor("_Color", ff9.w_weatherColor.Color[16].skyFogColor);
+        ff9.world.SkyDowm_BgMaterial.SetColor("_Color", ff9.w_weatherColor.Color[16].skyBgColor);
         ff9.angleTest += 0.1f;
         if (ff9.angleTest > 360f)
-        {
             ff9.angleTest -= 360f;
-        }
-        Single rotation = ff9.w_cameraSysDataCamera.rotation;
-        Single rotation2 = ff9.w_cameraSysDataCamera.rotation;
+        Single cameraRot = ff9.w_cameraSysDataCamera.rotation;
         Material skyDome_SkyMaterial = ff9.world.SkyDome_SkyMaterial;
         Vector2 mainTextureOffset = skyDome_SkyMaterial.mainTextureOffset;
-        mainTextureOffset.x += ff9.rsin(rotation2) * ff9.tweaker.CloudSpeed;
-        mainTextureOffset.y += -ff9.rcos(rotation2) * ff9.tweaker.CloudSpeed;
+        mainTextureOffset.x += ff9.rsin(cameraRot) * ff9.tweaker.CloudSpeed;
+        mainTextureOffset.y += -ff9.rcos(cameraRot) * ff9.tweaker.CloudSpeed;
         mainTextureOffset.x %= 1f;
         mainTextureOffset.y %= 1f;
         skyDome_SkyMaterial.mainTextureOffset = mainTextureOffset;
@@ -7183,27 +6981,20 @@ public static class ff9
     {
         id = 0;
         pno = -1;
-        Single result = 0f;
-        Vector3 origin = pos;
-        origin.y += ((!WMPhysics.CastRayFromSky) ? ff9.rayStartOffsetY : ff9.rayStartOffsetYFromSky);
-        Single distance = (!WMPhysics.UseInfiniteRaycast) ? ff9.rayDistance : Single.PositiveInfinity;
-        Vector3 down = Vector3.down;
         WMBlock absoluteBlock = ff9.world.GetAbsoluteBlock(pos);
         if (absoluteBlock == null)
-        {
             return ff9.defaultHeight;
-        }
         if (!absoluteBlock.IsReady)
-        {
             return ff9.defaultHeight;
-        }
-        Ray ray = new Ray(origin, down);
-        WMRaycastHit wmraycastHit;
-        Int32 num;
-        if (absoluteBlock.Raycast(ray, out wmraycastHit, distance, out num, cache))
+        Vector3 origin = pos;
+        origin.y += WMPhysics.CastRayFromSky ? ff9.rayStartOffsetYFromSky : ff9.rayStartOffsetY;
+        Single distance = WMPhysics.UseInfiniteRaycast ? Single.PositiveInfinity : ff9.rayDistance;
+        Ray ray = new Ray(origin, Vector3.down);
+        Single result = 0f;
+        if (absoluteBlock.Raycast(ray, out WMRaycastHit wmraycastHit, distance, out Int32 mapid, cache))
         {
             result = wmraycastHit.point.y;
-            id = num;
+            id = mapid;
             pno = 1000;
         }
         return result;
@@ -7214,25 +7005,18 @@ public static class ff9
         id = 0;
         pno = -1;
         height = 0f;
-        Vector3 origin = pos;
-        origin.y += ((!WMPhysics.CastRayFromSky) ? ff9.rayStartOffsetY : ff9.rayStartOffsetYFromSky);
-        Single distance = (!WMPhysics.UseInfiniteRaycast) ? ff9.rayDistance : Single.PositiveInfinity;
-        Vector3 down = Vector3.down;
         WMBlock absoluteBlock = ff9.world.GetAbsoluteBlock(pos);
         if (absoluteBlock == null)
-        {
             return false;
-        }
         if (!absoluteBlock.IsReady)
-        {
             return false;
-        }
-        Ray ray = new Ray(origin, down);
-        WMRaycastHit wmraycastHit;
-        Int32 num;
-        if (absoluteBlock.Raycast(ray, out wmraycastHit, distance, out num, cache))
+        Vector3 origin = pos;
+        origin.y += WMPhysics.CastRayFromSky ? ff9.rayStartOffsetYFromSky : ff9.rayStartOffsetY;
+        Single distance = WMPhysics.UseInfiniteRaycast ? Single.PositiveInfinity : ff9.rayDistance;
+        Ray ray = new Ray(origin, Vector3.down);
+        if (absoluteBlock.Raycast(ray, out WMRaycastHit wmraycastHit, distance, out Int32 mapid, cache))
         {
-            id = num;
+            id = mapid;
             height = wmraycastHit.point.y;
             pno = 1000;
             return true;
@@ -8966,9 +8750,9 @@ public static class ff9
         }
         for (Int32 i = 0; i < 3; i++)
         {
-            Int32 num = (ff9.UnityUnit(ff9.w_moveActorPtr.RealPosition[0]) >> 8) - (ff9.w_worldLocX[i] >> 8);
-            Int32 num2 = (ff9.UnityUnit(ff9.w_moveActorPtr.RealPosition[2]) >> 8) - (ff9.w_worldLocZ[i] >> 8);
-            ff9.w_worldLocDistance[i] = (Int32)ff9.SquareRoot0(num * num + num2 * num2);
+            Int32 dX = (ff9.UnityUnit(ff9.w_moveActorPtr.RealPosition[0]) >> 8) - (ff9.w_worldLocX[i] >> 8);
+            Int32 dZ = (ff9.UnityUnit(ff9.w_moveActorPtr.RealPosition[2]) >> 8) - (ff9.w_worldLocZ[i] >> 8);
+            ff9.w_worldLocDistance[i] = (Int32)ff9.SquareRoot0(dX * dX + dZ * dZ);
             if (!WorldConfiguration.UseWorldEffect(WorldEffect.SandStorm) && i == 0)
                 ff9.w_worldLocDistance[0] = 100;
             // Skip default SE if a custom sound is configured for this effect
@@ -8976,8 +8760,8 @@ public static class ff9
                 continue;
             if (i == 2 && !String.IsNullOrEmpty(WorldConfiguration.GetEffectSoundPath(WorldEffect.WaterShrine)))
                 continue;
-            Int32 num3 = ff9.w_worldLocDistance[i];
-            if (num3 < 63)
+            Int32 effectDist = ff9.w_worldLocDistance[i];
+            if (effectDist < 63)
             {
                 if (ff9.w_worldLocSEFlg[i] == 0)
                 {
@@ -8986,11 +8770,9 @@ public static class ff9
                 }
                 else
                 {
-                    Int64 num4 = 127 - num3 * 2;
-                    if (num4 > 0L)
-                    {
-                        ff9.w_musicSEVolume(ff9.w_worldLocSENum[i], (Byte)num4);
-                    }
+                    Int64 effectVolume = 127 - effectDist * 2;
+                    if (effectVolume > 0L)
+                        ff9.w_musicSEVolume(ff9.w_worldLocSENum[i], (Byte)effectVolume);
                 }
             }
             else if (ff9.w_worldLocSEFlg[i] == 1)
@@ -9001,29 +8783,26 @@ public static class ff9
         }
         if (ff9.w_worldLocDistance[2] < 40)
         {
-            Int32 num5 = 120 - ff9.w_worldLocDistance[2] * 3;
-            if (num5 != 0 && ff9.w_blockReady)
+            Int32 shakingRange = 120 - ff9.w_worldLocDistance[2] * 3;
+            if (shakingRange != 0 && ff9.w_blockReady)
             {
-                ff9.w_cameraWorldAim.y = ff9.w_cameraWorldAim.y + (UnityEngine.Random.Range(0f, ff9.S(num5)) - ff9.S(num5) / 2f);
-                ff9.w_cameraWorldAim.x = ff9.w_cameraWorldAim.x + (UnityEngine.Random.Range(0f, ff9.S(num5)) - ff9.S(num5) / 2f);
-                ff9.w_cameraWorldAim.z = ff9.w_cameraWorldAim.z + (UnityEngine.Random.Range(0f, ff9.S(num5)) - ff9.S(num5) / 2f);
+                ff9.w_cameraWorldAim.y = ff9.w_cameraWorldAim.y + (UnityEngine.Random.Range(0f, ff9.S(shakingRange)) - ff9.S(shakingRange) / 2f);
+                ff9.w_cameraWorldAim.x = ff9.w_cameraWorldAim.x + (UnityEngine.Random.Range(0f, ff9.S(shakingRange)) - ff9.S(shakingRange) / 2f);
+                ff9.w_cameraWorldAim.z = ff9.w_cameraWorldAim.z + (UnityEngine.Random.Range(0f, ff9.S(shakingRange)) - ff9.S(shakingRange) / 2f);
             }
         }
-        if (ff9.w_worldLocDistance[1] < 34 && ff9.GetUserControl() && ff9.m_GetIDTopograph(id) == 23 && index >= 1 && index <= 7)
+        if (ff9.w_worldLocDistance[1] < 34 && ff9.GetUserControl() && ff9.m_GetIDTopograph(id) == 23 && index >= Obj.OBJINDEX_ZIDANE && index <= Obj.OBJINDEX_CHOCOBO_GOLD)
         {
-            Vector3 pos = ff9.w_moveActorPtr.pos;
-            pos[2] += ff9.S((34 - ff9.w_worldLocDistance[1]) * 8);
-            ff9.w_moveActorPtr.pos = pos;
+            Vector3 repelledPos = ff9.w_moveActorPtr.pos;
+            repelledPos[2] += ff9.S((34 - ff9.w_worldLocDistance[1]) * 8);
+            ff9.w_moveActorPtr.pos = repelledPos;
             if (ff9.NearlyEqual(ff9.w_moveActorPtr.pos[0] - ff9.w_moveActorPtr.lastx, 0f) && ff9.NearlyEqual(ff9.w_moveActorPtr.pos[2] - ff9.w_moveActorPtr.lastz, 0f))
             {
                 global::Debug.LogWarning("Remove this if you see it 1!");
                 ff9.w_moveActorPtr.lastx += ff9.S(1);
             }
         }
-        Byte rainStrength;
-        Int32 rainSpeed;
-        String rainSoundPath;
-        WorldConfiguration.GetRainParameters(out rainStrength, out rainSpeed, out rainSoundPath);
+        WorldConfiguration.GetRainParameters(out Byte rainStrength, out Int32 rainSpeed, out String rainSoundPath);
         if (rainStrength > 0)
         {
             ff9.rainRenderer.SetRainParam(rainStrength, rainSpeed);
@@ -10288,17 +10067,7 @@ public static class ff9
 
     private static SByte lastTitleDrawState;
 
-    public static ff9.CVECTOR[] ggammawork;
-
     public static Byte[] w_nwpZDepth;
-
-    public static ff9.sNWBPage[] w_nwbAreaPage;
-
-    public static ff9.sNWBPage w_nwbAreaPagePtr;
-
-    public static ff9.sNWBColor[] w_nwbColor;
-
-    public static ff9.sNWBColor w_nwbColorCloud;
 
     public static Boolean w_nwbCache;
 
@@ -10404,17 +10173,6 @@ public static class ff9
         9012, // World Map/Event: Chocobo Treasure
     };
 
-    public struct VECTOR
-    {
-        public Int32 vx;
-
-        public Int32 vy;
-
-        public Int32 vz;
-
-        public Int32 pad;
-    }
-
     public struct SVECTOR
     {
         public SVECTOR(Int16 x, Int16 y, Int16 z, Int16 pad)
@@ -10442,17 +10200,6 @@ public static class ff9
         public Int16 vz;
 
         public Int16 pad;
-    }
-
-    public struct CVECTOR
-    {
-        public Byte r;
-
-        public Byte g;
-
-        public Byte b;
-
-        public Byte cd;
     }
 
     public class s_cameraElement
@@ -10669,32 +10416,6 @@ public static class ff9
         public Int32 tx;
 
         public Int32 ty;
-    }
-
-    public struct sNWBColor
-    {
-        public ff9.CVECTOR w_nwbFarColor;
-
-        public UInt16 w_nwbFogValG;
-
-        public UInt16 w_nwbFogValT;
-    }
-
-    public struct sNWBPage
-    {
-        public UInt16 tpage4;
-
-        public UInt16 clut4;
-
-        public Byte tex_u4;
-
-        public Byte tex_v4;
-
-        public UInt16 pad;
-
-        public UInt16 tpage8;
-
-        public UInt16 clut8;
     }
 
     public class sNWBCellHeader
