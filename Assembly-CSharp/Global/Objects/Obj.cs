@@ -181,6 +181,10 @@ public class Obj
         set => setByteToBuffer(19, value);
     }
 
+    public Boolean IsPlayerCharacterIndex => index == OBJINDEX_ZIDANE || index == OBJINDEX_GARNET;
+    public Boolean IsChocoboIndex => index >= OBJINDEX_CHOCOBO_YELLOW && index <= OBJINDEX_CHOCOBO_GOLD;
+    public Boolean IsPlayerAirshipIndex => index == OBJINDEX_HILDA_GARDE_3 || index == OBJINDEX_INVINCIBLE;
+
     public Int32 getIntFromBuffer(Int32 startID)
     {
         if (startID > (Int32)this.buffer.Length - 4)
@@ -481,6 +485,28 @@ public class Obj
     public const Int32 INDEX_POS = 17;
     public const Int32 STATE0_POS = 18;
     public const Int32 PAD2_POS = 19;
+
+    public const Byte OBJINDEX_ZIDANE = 1;
+    public const Byte OBJINDEX_GARNET = 2;
+    public const Byte OBJINDEX_CHOCOBO_YELLOW = 3;
+    public const Byte OBJINDEX_CHOCOBO_TEAL = 4;
+    public const Byte OBJINDEX_CHOCOBO_RED = 5;
+    public const Byte OBJINDEX_CHOCOBO_BLUE = 6;
+    public const Byte OBJINDEX_CHOCOBO_GOLD = 7;
+    public const Byte OBJINDEX_NARCISS = 8;
+    public const Byte OBJINDEX_HILDA_GARDE_3 = 9;
+    public const Byte OBJINDEX_INVINCIBLE = 10;
+    public const Byte OBJINDEX_MOOGLE = 11;
+    public const Byte OBJINDEX_CHEST = 12;
+    public const Byte OBJINDEX_TENT = 13;
+    public const Byte OBJINDEX_GARDEN_SHADOW = 14;
+    public const Byte OBJINDEX_CARGOSHIP = 15;
+    public const Byte OBJINDEX_HILDA_GARDE_1 = 16;
+    public const Byte OBJINDEX_AIRSHIP_C = 17;
+    public const Byte OBJINDEX_AIRSHIP_E = 18;
+    public const Byte OBJINDEX_AIRSHIP_D = 19;
+    public const Byte OBJINDEX_AIRSHIP_B = 20;
+    public const Byte OBJINDEX_AIRSHIP_A = 21;
 
     public Byte[] buffer;
     public Byte[] ebData;

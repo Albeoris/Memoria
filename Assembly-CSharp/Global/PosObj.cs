@@ -1,7 +1,6 @@
 ﻿using Memoria;
 using System;
 using UnityEngine;
-using Object = System.Object;
 
 public class PosObj : Obj
 {
@@ -128,9 +127,8 @@ public class PosObj : Obj
                 else
                     meshName = "long_hair";
             }
-            foreach (Object obj in this.go.transform)
+            foreach (Transform transform in this.go.transform)
             {
-                Transform transform = (Transform)obj;
                 if (transform.name == meshName)
                 {
                     foreach (Renderer renderer in transform.GetComponentsInChildren<Renderer>())
