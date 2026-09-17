@@ -161,11 +161,11 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 	
 <Mod>
 	<Name>Trance Seek</Name>
-	<Version>0.3.37.4</Version>
+	<Version>0.3.37.5</Version>
 	<Priority>4</Priority>
 	<InstallationPath>TranceSeek</InstallationPath>
 	<ReleaseDateOriginal>2022-01-28</ReleaseDateOriginal>
-	<ReleaseDate>2026-09-16</ReleaseDate>
+	<ReleaseDate>2026-09-17</ReleaseDate>
 	<MinimumMemoriaVersion>2025-05-17</MinimumMemoriaVersion>
 	<Author>DV</Author>
 	<IncompatibleWith>Alternate Fantasy, Amazing Abilities, Amazing Quina, Amazing Freya, Amazing Garnet, Amazing Steiner, Amazing Vivi, Artifacts, Beatrix Mod, Black Cat - Endgame Shop, Chocobo Hot and Cold QoL, David Bowie Edition, Doppelgängers, Ferny Fantasy IX, FernySupportTweaks, FernyTranceTweaks, FFIX: The Lost Chapters, Freya Game+, Garnet is Main Character, Hedgehog Skip Pack, Perfect Stats, Play As Kuja, Modern Labels +, No Cutscene, NoHardcodedBattles, Play As Ozma, Playable Character Pack, ReTrad FR, Tantalus, [Tsunamods] Four Shrines Revival, [Tsunamods] Scavenger 9, VVsRandomizer</IncompatibleWith>
@@ -196,6 +196,14 @@ Don't hesitate to try!
 Recommended language : Français / English (UK)
 Not supported language : Japanese (a lot of things get deleted... need to wait until full release... sorry !)</Description>
 	<PatchNotes>
+[0.3.37.5]
+
+- The "Auto Potion" SA no longer triggers if the target evades or negates the damage.
+- Fixed an issue where certain monsters (notably custom FBX models) caused a softlock with the "Scan" spell.
+- Fixed Field n°1423, where the "Back Attack" mechanic persisted after Amarant's sequence.
+- Fixed Ladybugs near Lindblum on Disc 3, which did not grant the correct item rewards.
+- Fixed Gnoll's rewards involving "Soul" type accessories.
+
 [0.3.37.4]
 
 - Adjustments to Necron mode:
