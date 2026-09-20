@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -108,7 +108,7 @@ namespace Memoria.Launcher
             if (ModListInstalled.Count == 0)
                 tabCtrlMain.SelectedIndex = 1;
             UpdateModDetails((Mod)null);
-            CheckOutdatedAndIncompatibleMods();
+            await CheckAllModUpdatesAsync();
 
             // add tooltip style to manager's buttons
             UiGrid.MakeTooltip(btnReorganize, "ModEditor.TooltipReorganize", "", "hand");
@@ -393,7 +393,7 @@ namespace Memoria.Launcher
                         // Refresh mods list and activate the mod
                         UpdateModListInstalled();
                         UpdateCatalogInstallationState();
-                        CheckOutdatedAndIncompatibleMods();
+                        await CheckAllModUpdatesAsync();
                         UpdateModSettings();
                         Mod installedMod = Mod.SearchMod(ModListInstalled, modInfo) ?? modInfo;
                         // TODO language:

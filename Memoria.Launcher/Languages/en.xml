@@ -345,6 +345,7 @@ IncompatibleWithMemoria = "Mod version is incompatible with the current Memoria&
 ApplyModPresetText = "Would you like to apply this mod preset?"
 ApplyModPresetCaption = "Apply preset"
 UpdateTooltip = "New version of this mod available in mod catalog: "
+ArchiveUpdateTooltip = "The mod has been updated online."
 TooltipMoveUp = "Move Up/Right-Click to Move to Top&#xA;(Mods that are higher take priority over lower ones)"
 TooltipMoveDown = "Move Down/Right-Click to Move to Bottom&#xA;(Mods that are higher take priority over lower ones)"
 TooltipCheckCompatibility = "Check Mod Compatibilities/Right-Click to Check All"

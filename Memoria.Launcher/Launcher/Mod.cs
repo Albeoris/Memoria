@@ -31,6 +31,7 @@ namespace Memoria.Launcher
         public String HasPriorityOverMods { get; set; }
         public String Category { get; set; }
         public String Website { get; set; }
+        public Boolean UseArchiveUpdateCheck { get; set; }
         public String DownloadUrl { get; set; }
         public String InstallationPath { get; set; }
         public String DownloadFormat { get; set; }
@@ -218,6 +219,7 @@ namespace Memoria.Launcher
                 Priority = 0;
             Category = modNode["Category"]?.InnerText;
             Website = modNode["Website"]?.InnerText;
+            UseArchiveUpdateCheck = Boolean.TryParse(modNode["UseArchiveUpdateCheck"]?.InnerText, out Boolean useArchiveUpdateCheck) && useArchiveUpdateCheck;
             DownloadUrl = modNode["DownloadUrl"]?.InnerText;
             DownloadFormat = modNode["DownloadFormat"]?.InnerText;
             PreviewFile = modNode["PreviewFile"]?.InnerText;
