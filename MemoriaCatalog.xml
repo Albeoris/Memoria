@@ -4670,60 +4670,74 @@ Features;
 <Mod>
 
 <Name>FFIX: The Lost Chapters</Name>
-<Version>1.1.7</Version>
+<Version>1.2.0</Version>
 <Author>CheddarBung</Author>
 <Category>Gameplay</Category>
-<PreviewFile>Png/banner2.png</PreviewFile>
+<PreviewFile>Png/Banner2.png</PreviewFile>
 <InstallationPath>The Lost Chapters</InstallationPath>
+<UseArchiveUpdateCheck>true</UseArchiveUpdateCheck>
 <DownloadUrl>https://github.com/robmcfarlane1120-sudo/FFIX-The-Lost-Chapters/releases/latest/download/FFIX.The.Lost.Chapters.zip</DownloadUrl>
 <PreviewFileUrl>https://github.com/robmcfarlane1120-sudo/FFIX-The-Lost-Chapters/blob/main/The%20Lost%20Chapters/Png/Banner%202.png?raw=true</PreviewFileUrl>
-
-<ReleaseDate>2026-09-04</ReleaseDate>
+<Website>https://www.nexusmods.com/finalfantasy9/mods/127</Website>
+<ReleaseDate>2026-09-18</ReleaseDate>
 <ReleaseDateOriginal>2026-08-12</ReleaseDateOriginal>
 
 <IncompatibleWith>Ferny Fantasy IX,No Cutscene,Trance Seek,KupoMail</IncompatibleWith>
+ 
+<PatchNotes>The Lost Chapters — v1.2.0 Changelog
 
-<Website>https://www.nexusmods.com/finalfantasy9/mods/127</Website>
+CORRUPTED ICE CAVERN
 
-<PatchNotes>The Lost Chapters — v1.1.7 Changelog
+- Added the Corrupted Ice Cavern, a new Lost Chapter featuring new story content, field events, dialogue, visuals, and a new boss encounter.
+- Added the Zombie Sea Lion as the sixth story-integrated Lost Chapters boss.
 
-Boss &amp; Battle Updates
+CORRUPTION SHARDS
 
-- Added a new Queen Brahne FBX model, fixing her fan placement so it is correctly held in her right hand.
-- Rebalanced boss encounters and moved standard boss stats into Hades Workshop (HWS) for cleaner, more consistent battle data.
-- Cleaned up BattlePatch.txt (BP.t) by removing unnecessary stat overrides.
-- Earth Eater Maul, Corailon, and Skorz'ma received approximately a 5% increase to HP and damage.
-- Omega Weapon HP increased from 100,000 to 130,000.
-- Now play as Freya, Vivi or Zidane during the festival of the hunt	
+- Added the experimental Corruption Shard equipment mechanic.
+- Corruption Shards can produce positive, neutral, or negative equipment outcomes, including destruction.
+- Equipment corruption fate is remembered across reloads.
+- Shards are available from several Lost Chapters bosses and can be purchased late-game in Daguerreo.
 
-Quest Fixes
+BATTLE &amp; COMPATIBILITY
 
-- Fixed MemoriaDictionary flags for Cinna's Goggles in the Trade Quest, correcting progression issues related to the item.
+- Improved Alternate Fantasy compatibility, including Beatrix support during the Queen Brahne encounter.
+- Removed Lost Chapters-specific AbilityFeatures.txt dependencies and moved battle rules into C# for improved compatibility.
+- Lost Chapters bosses now use dedicated custom battle IDs.
+- Improved persistent boss effect cleanup and custom battle behavior.
+- Added automatic SFX Rework configuration required by Lost Chapters battle sequences.
 
-Backend / Cleanup
+FIXES &amp; POLISH
 
-- General battle-data cleanup and organization to improve maintainability and compatibility.
+- Added additional animation and casting polish to the Queen Brahne encounter.
+- Various fixes to custom fields, battle backgrounds, SPS effects, text, audio, quests, and battle behavior.
+- Cleaned up runtime logging while retaining error and failure reporting.
 </PatchNotes>
+
 
 <Description>
 
 Now Compatible with Alternate Fantasy
 
-Final Fantasy IX: The Lost Chapters is a Vanilla+ expansion for Final Fantasy IX that integrates new boss encounters, story events, quests, and optional content into the original adventure.
+Final Fantasy IX: The Lost Chapters is a Vanilla+ expansion for Final Fantasy IX that integrates new boss encounters, Lost Chapters, story events, quests, mechanics, and optional content into the original adventure.
 
-Rather than redesigning the game, The Lost Chapters expands the world of Gaia with new challenges and meaningful rewards while remaining faithful to the characters and progression of the original Final Fantasy IX experience.
+Rather than redesigning the game, The Lost Chapters expands the world of Gaia with new challenges and meaningful rewards while remaining faithful to the characters, progression, and feel of the original Final Fantasy IX experience.
+
+More Final Fantasy IX. Not a different Final Fantasy IX.
 
 ════════════════════════════
 CURRENT CONTENT
 ════════════════════════════
 
-• Five story-integrated boss encounters
+• Six story-integrated boss encounters
+• Corrupted Ice Cavern — a new Lost Chapter
+• Experimental Corruption Shard equipment mechanic
 • Omega Artifact questline
 • Hidden Omega Weapon superboss
-• Zelda-inspired world-spanning Trade Quest
-• New key items
-• Live Updating Progression Journal for new content
+• 10-item Master Trader quest spanning Gaia
+• New key items and optional discoveries
+• Live-updating Lost Chapters progression Journal
 • Play as Freya, Vivi, or Zidane during the Festival of the Hunt
+• Dedicated Alternate Fantasy compatibility
 
 ════════════════════════════
 IMPORTANT
@@ -4732,7 +4746,8 @@ IMPORTANT
 • Must be played using the US language version.
 • Balanced around Vanilla Final Fantasy IX and Alternate Fantasy.
 • Not compatible with No Cutscenes / Skip Cutscenes mods. Several encounters use existing story events as trigger points.
-• Not currently compatible with Trance Seek, Ferny Fantasy, or KupoMail.
+• Not currently compatible with Trance Seek or Ferny Fantasy.
+• KupoMail is not currently compatible.
 
 ════════════════════════════
 FEEDBACK
@@ -4740,9 +4755,11 @@ FEEDBACK
 
 Feedback, bug reports, balance suggestions, and feature requests are always welcome on Discord.
 
+Corruption Shards are currently experimental. Feedback on their balance, availability, outcomes, and whether the mechanic should remain a permanent part of The Lost Chapters is especially welcome.
+
 Thank you for playing!
 
 </Description>
-
+	
 </Mod>
 </ModCatalog>
