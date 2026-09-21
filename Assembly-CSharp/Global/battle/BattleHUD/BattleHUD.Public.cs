@@ -395,306 +395,314 @@ public partial class BattleHUD : UIScene
 
     public void UpdateUserInterface(Boolean forceUpdate = false)
     {
-        BattleStateSystem battleState = FF9StateSystem.Battle;
-        if (battleState == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] FF9StateSystem.Battle is null. The battle state has not been initialized.");
-        
-        FF9StateBattleSystem battle = battleState.FF9Battle;
-        if (battle == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] FF9StateSystem.Battle.FF9Battle is null. The battle system has not been initialized.");
-        if (battle.btl_list == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] FF9StateSystem.Battle.FF9Battle.btl_list is null. The battle unit list has not been initialized.");
-        if (_targetPanel == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] _targetPanel is null. BattleHUD.Awake has not initialized the target panel.");
-        if (_partyDetail == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] _partyDetail is null. BattleHUD.Awake has not initialized the party panel.");
-        if (_statusPanel == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] _statusPanel is null. BattleHUD.Awake has not initialized the status panel.");
-        if (_commandPanel == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] _commandPanel is null. BattleHUD.Awake has not initialized the command panel.");
-        if (_abilityPanel == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] _abilityPanel is null. BattleHUD.Awake has not initialized the ability panel.");
-        if (_itemPanel == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] _itemPanel is null. BattleHUD.Awake has not initialized the item panel.");
-
-        IEnumerable<BattleUnit> battleUnits = battle.EnumerateBattleUnits();
-        
-        Int32 partyCount = battleUnits.Count(unit => unit.IsPlayer);
-        if (partyCount == _playerDetailCount && !forceUpdate)
-            return;
         try
         {
-            foreach (GONavigationButton button in _targetPanel.AllTargets)
-            {
-                if (NGUIText.readingDirection == UnicodeBIDI.LanguageReadingDirection.RightToLeft)
-                {
-                    button.Name.Label.leftAnchor.Set(0f, 0);
-                    button.Name.Label.rightAnchor.Set(1f, -35);
-                }
-                else
-                {
-                    button.Name.Label.leftAnchor.Set(0f, 35);
-                    button.Name.Label.rightAnchor.Set(1f, 0);
-                }
-            }
-            _playerDetailCount = partyCount;
-        }
-        catch (Exception err)
-        {
-            Log.Error("[BattleHUD.UpdateUserInterface] Fail at target buttons");
-            Log.Error(err);
-        }
-        
-        UI.ContainerStatus.PanelDetail<UI.ContainerStatus.ValueWidget> hp = _statusPanel.HP;
-        UI.ContainerStatus.PanelDetail<UI.ContainerStatus.ValueWidget> mp = _statusPanel.MP;
-        UI.ContainerStatus.PanelDetail<UI.ContainerStatus.IconsWidget> good = _statusPanel.GoodStatus;
-        UI.ContainerStatus.PanelDetail<UI.ContainerStatus.IconsWidget> bad = _statusPanel.BadStatus;
-        if (hp == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] _statusPanel.HP is null. The HP status panel has not been initialized.");
-        if (mp == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] _statusPanel.MP is null. The MP status panel has not been initialized.");
-        if (good == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] _statusPanel.GoodStatus is null. The positive status panel has not been initialized.");
-        if (bad == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] _statusPanel.BadStatus is null. The negative status panel has not been initialized.");
-        
-        if (!Configuration.Interface.IsEnabled)
-        {
+            BattleStateSystem battleState = FF9StateSystem.Battle;
+            if (battleState == null) Log.Error("[BattleHUD.UpdateUserInterface] FF9StateSystem.Battle is null. The battle state has not been initialized.");
+
+            FF9StateBattleSystem battle = battleState.FF9Battle;
+            if (battle == null) Log.Error("[BattleHUD.UpdateUserInterface] FF9StateSystem.Battle.FF9Battle is null. The battle system has not been initialized.");
+            if (battle.btl_list == null) Log.Error("[BattleHUD.UpdateUserInterface] FF9StateSystem.Battle.FF9Battle.btl_list is null. The battle unit list has not been initialized.");
+            if (_targetPanel == null) Log.Error("[BattleHUD.UpdateUserInterface] _targetPanel is null. BattleHUD.Awake has not initialized the target panel.");
+            if (_partyDetail == null) Log.Error("[BattleHUD.UpdateUserInterface] _partyDetail is null. BattleHUD.Awake has not initialized the party panel.");
+            if (_statusPanel == null) Log.Error("[BattleHUD.UpdateUserInterface] _statusPanel is null. BattleHUD.Awake has not initialized the status panel.");
+            if (_commandPanel == null) Log.Error("[BattleHUD.UpdateUserInterface] _commandPanel is null. BattleHUD.Awake has not initialized the command panel.");
+            if (_abilityPanel == null) Log.Error("[BattleHUD.UpdateUserInterface] _abilityPanel is null. BattleHUD.Awake has not initialized the ability panel.");
+            if (_itemPanel == null) Log.Error("[BattleHUD.UpdateUserInterface] _itemPanel is null. BattleHUD.Awake has not initialized the item panel.");
+
+            IEnumerable<BattleUnit> battleUnits = battle.EnumerateBattleUnits();
+
+            Int32 partyCount = battleUnits.Count(unit => unit.IsPlayer);
+            if (partyCount == _playerDetailCount && !forceUpdate)
+                return;
             try
             {
-                Single detailY = DefaultPartyPanelPosY - PartyItemHeight * (_partyDetail.Characters.Count - partyCount);
-                _partyDetail.Transform.SetY(detailY);
-                hp.Transform.SetY(detailY);
-                mp.Transform.SetY(detailY);
-                good.Transform.SetY(detailY);
-                bad.Transform.SetY(detailY);
-                hp.Caption.Content.Transform.localScale = new Vector3(1f, 0.25f * partyCount, 1f);
-                mp.Caption.Content.Transform.localScale = new Vector3(1f, 0.25f * partyCount, 1f);
-                good.Caption.Content.Transform.localScale = new Vector3(1f, 0.25f * partyCount, 1f);
-                bad.Caption.Content.Transform.localScale = new Vector3(1f, 0.25f * partyCount, 1f);
+                foreach (GONavigationButton button in _targetPanel.AllTargets)
+                {
+                    if (NGUIText.readingDirection == UnicodeBIDI.LanguageReadingDirection.RightToLeft)
+                    {
+                        button.Name.Label.leftAnchor.Set(0f, 0);
+                        button.Name.Label.rightAnchor.Set(1f, -35);
+                    }
+                    else
+                    {
+                        button.Name.Label.leftAnchor.Set(0f, 35);
+                        button.Name.Label.rightAnchor.Set(1f, 0);
+                    }
+                }
+                _playerDetailCount = partyCount;
             }
             catch (Exception err)
             {
-                Log.Error("[BattleHUD.UpdateUserInterface] Fail at [Interface] disabled");
+                Log.Error("[BattleHUD.UpdateUserInterface] Fail at target buttons");
                 Log.Error(err);
             }
-            return;
-        }
 
-        Vector2 menuPos = Configuration.Interface.BattleMenuPos;
-        Vector2 menuSize = Configuration.Interface.BattleMenuSize;
-        Vector2 detailPos = Configuration.Interface.BattleDetailPos;
-        Vector2 detailSize = Configuration.Interface.BattleDetailSize;
-        Single partyItemHeight = 0f;
-        try
-        {
-            partyItemHeight = detailSize.y / _partyDetail.Characters.Count;
-            detailPos.y -= partyItemHeight * (_partyDetail.Characters.Count - partyCount);
-        }
-        catch (Exception err)
-        {
-            Log.Error("[BattleHUD.UpdateUserInterface] Fail at partyItemHeight setup");
-            Log.Error(err);
-            return;
-        }
-        Int32 columnPerPage = Configuration.Interface.BattleColumnCount;
-        Int32 linePerPage = Configuration.Interface.BattleRowCount;
-        Int32 lineHeight = (Int32)Math.Round(menuSize.y / linePerPage);
-        Single lineFontFactor = (1f + (linePerPage - 5) * 0.15f) / columnPerPage;
-        Single cellWidth = (menuSize.x + 32f) / columnPerPage;
-        try
-        {
-            _partyDetail.Widget.SetRawRect(detailPos.x, detailPos.y, detailSize.x, detailSize.y);
-            _partyDetail.Captions.Widget.topAnchor.absolute = 20;
-            _partyDetail.Captions.Name.Label.SetAnchor(target: _partyDetail.Captions.Transform, relLeft: 0.01f, relRight: 0.38f, relBottom: 1f, bottom: -20f, top: 20f);
-            _partyDetail.Captions.HP.Label.SetAnchor(target: _partyDetail.Captions.Transform, relLeft: 0.4f, relRight: 0.565f, relBottom: 1f, bottom: -20f, top: 20f);
-            _partyDetail.Captions.MP.Label.SetAnchor(target: _partyDetail.Captions.Transform, relLeft: 0.59f, relRight: 0.71f, relBottom: 1f, bottom: -20f, top: 20f);
-            _partyDetail.Captions.ATB.Label.SetAnchor(target: _partyDetail.Captions.Transform, relLeft: 0.725f, relRight: 1f, relBottom: 1f, bottom: -20f, top: 20f);
-            for (Int32 i = 0; i < _partyDetail.Characters.Count; i++)
+            UI.ContainerStatus.PanelDetail<UI.ContainerStatus.ValueWidget> hp = _statusPanel.HP;
+            UI.ContainerStatus.PanelDetail<UI.ContainerStatus.ValueWidget> mp = _statusPanel.MP;
+            UI.ContainerStatus.PanelDetail<UI.ContainerStatus.IconsWidget> good = _statusPanel.GoodStatus;
+            UI.ContainerStatus.PanelDetail<UI.ContainerStatus.IconsWidget> bad = _statusPanel.BadStatus;
+            if (hp == null) Log.Error("[BattleHUD.UpdateUserInterface] _statusPanel.HP is null. The HP status panel has not been initialized.");
+            if (mp == null) Log.Error("[BattleHUD.UpdateUserInterface] _statusPanel.MP is null. The MP status panel has not been initialized.");
+            if (good == null) Log.Error("[BattleHUD.UpdateUserInterface] _statusPanel.GoodStatus is null. The positive status panel has not been initialized.");
+            if (bad == null) Log.Error("[BattleHUD.UpdateUserInterface] _statusPanel.BadStatus is null. The negative status panel has not been initialized.");
+
+            if (!Configuration.Interface.IsEnabled)
             {
-                var charDetail = _partyDetail.Characters[i];
-                if (charDetail.PlayerId < 0)
-                    continue;
-                charDetail.Transform.parent = _partyDetail.Transform;
-                charDetail.Widget.SetAnchor(target: _partyDetail.Transform, relBottom: 1f, bottom: (i + 1) * -partyItemHeight, top: i * -partyItemHeight);
-                charDetail.Name.Label.SetAnchor(target: charDetail.Transform, relLeft: 0.01f, relRight: 0.38f);
-                charDetail.HP.Label.SetAnchor(target: charDetail.Transform, relLeft: 0.4f, relRight: 0.565f);
-                charDetail.MP.Label.SetAnchor(target: charDetail.Transform, relLeft: 0.59f, relRight: 0.71f);
-                charDetail.ATBBar.Sprite.SetAnchor(target: charDetail.Transform, relLeft: 0.725f, relRight: 0.977f, relBottom: 0.55f, relTop: 0.78f);
-                charDetail.TranceBar.Sprite.SetAnchor(target: charDetail.Transform, relLeft: 0.748f, relRight: 1f, relBottom: 0.28f, relTop: 0.52f);
-                if (Configuration.Interface.ThickerATBBar)
+                try
                 {
-                    charDetail.ATBBar.Sprite.SetAnchor(charDetail.Transform, 0.725f, 0.65f, 0.975f, 0.8f, 0f, -5f, 0f, 10f); // made by Resinated
-                    charDetail.TranceBar.Sprite.SetAnchor(charDetail.Transform, 0.75f, 0.25f, 1f, 0.4f, 0f, -5f, 0f, 10f);
+                    Single detailY = DefaultPartyPanelPosY - PartyItemHeight * (_partyDetail.Characters.Count - partyCount);
+                    _partyDetail.Transform.SetY(detailY);
+                    hp.Transform.SetY(detailY);
+                    mp.Transform.SetY(detailY);
+                    good.Transform.SetY(detailY);
+                    bad.Transform.SetY(detailY);
+                    hp.Caption.Content.Transform.localScale = new Vector3(1f, 0.25f * partyCount, 1f);
+                    mp.Caption.Content.Transform.localScale = new Vector3(1f, 0.25f * partyCount, 1f);
+                    good.Caption.Content.Transform.localScale = new Vector3(1f, 0.25f * partyCount, 1f);
+                    bad.Caption.Content.Transform.localScale = new Vector3(1f, 0.25f * partyCount, 1f);
+                }
+                catch (Exception err)
+                {
+                    Log.Error("[BattleHUD.UpdateUserInterface] Fail at [Interface] disabled");
+                    Log.Error(err);
+                }
+                return;
+            }
+
+            Vector2 menuPos = Configuration.Interface.BattleMenuPos;
+            Vector2 menuSize = Configuration.Interface.BattleMenuSize;
+            Vector2 detailPos = Configuration.Interface.BattleDetailPos;
+            Vector2 detailSize = Configuration.Interface.BattleDetailSize;
+            Single partyItemHeight = 0f;
+            try
+            {
+                partyItemHeight = detailSize.y / _partyDetail.Characters.Count;
+                detailPos.y -= partyItemHeight * (_partyDetail.Characters.Count - partyCount);
+            }
+            catch (Exception err)
+            {
+                Log.Error("[BattleHUD.UpdateUserInterface] Fail at partyItemHeight setup");
+                Log.Error(err);
+                return;
+            }
+            Int32 columnPerPage = Configuration.Interface.BattleColumnCount;
+            Int32 linePerPage = Configuration.Interface.BattleRowCount;
+            Int32 lineHeight = (Int32)Math.Round(menuSize.y / linePerPage);
+            Single lineFontFactor = (1f + (linePerPage - 5) * 0.15f) / columnPerPage;
+            Single cellWidth = (menuSize.x + 32f) / columnPerPage;
+            try
+            {
+                _partyDetail.Widget.SetRawRect(detailPos.x, detailPos.y, detailSize.x, detailSize.y);
+                _partyDetail.Captions.Widget.topAnchor.absolute = 20;
+                _partyDetail.Captions.Name.Label.SetAnchor(target: _partyDetail.Captions.Transform, relLeft: 0.01f, relRight: 0.38f, relBottom: 1f, bottom: -20f, top: 20f);
+                _partyDetail.Captions.HP.Label.SetAnchor(target: _partyDetail.Captions.Transform, relLeft: 0.4f, relRight: 0.565f, relBottom: 1f, bottom: -20f, top: 20f);
+                _partyDetail.Captions.MP.Label.SetAnchor(target: _partyDetail.Captions.Transform, relLeft: 0.59f, relRight: 0.71f, relBottom: 1f, bottom: -20f, top: 20f);
+                _partyDetail.Captions.ATB.Label.SetAnchor(target: _partyDetail.Captions.Transform, relLeft: 0.725f, relRight: 1f, relBottom: 1f, bottom: -20f, top: 20f);
+                for (Int32 i = 0; i < _partyDetail.Characters.Count; i++)
+                {
+                    var charDetail = _partyDetail.Characters[i];
+                    if (charDetail.PlayerId < 0)
+                        continue;
+                    charDetail.Transform.parent = _partyDetail.Transform;
+                    charDetail.Widget.SetAnchor(target: _partyDetail.Transform, relBottom: 1f, bottom: (i + 1) * -partyItemHeight, top: i * -partyItemHeight);
+                    charDetail.Name.Label.SetAnchor(target: charDetail.Transform, relLeft: 0.01f, relRight: 0.38f);
+                    charDetail.HP.Label.SetAnchor(target: charDetail.Transform, relLeft: 0.4f, relRight: 0.565f);
+                    charDetail.MP.Label.SetAnchor(target: charDetail.Transform, relLeft: 0.59f, relRight: 0.71f);
+                    charDetail.ATBBar.Sprite.SetAnchor(target: charDetail.Transform, relLeft: 0.725f, relRight: 0.977f, relBottom: 0.55f, relTop: 0.78f);
+                    charDetail.TranceBar.Sprite.SetAnchor(target: charDetail.Transform, relLeft: 0.748f, relRight: 1f, relBottom: 0.28f, relTop: 0.52f);
+                    if (Configuration.Interface.ThickerATBBar)
+                    {
+                        charDetail.ATBBar.Sprite.SetAnchor(charDetail.Transform, 0.725f, 0.65f, 0.975f, 0.8f, 0f, -5f, 0f, 10f); // made by Resinated
+                        charDetail.TranceBar.Sprite.SetAnchor(charDetail.Transform, 0.75f, 0.25f, 1f, 0.4f, 0f, -5f, 0f, 10f);
+                    }
                 }
             }
-        }
-        catch (Exception err)
-        {
-            Log.Error("[BattleHUD.UpdateUserInterface] Fail at party details");
-            Log.Error(err);
-        }
-        try
-        {
-            _statusPanel.Transform.SetXY(detailPos.x, detailPos.y);
-            foreach (var statusSubPanel in new[] { hp, mp })
+            catch (Exception err)
             {
-                statusSubPanel.Widget.SetAnchor(target: null);
-                statusSubPanel.Widget.SetRawRect(0f, 0f, detailSize.x, detailSize.y);
-                statusSubPanel.Caption.Widget.SetAnchor(target: statusSubPanel.Transform, relLeft: 0.4f);
-                statusSubPanel.Caption.Body.Sprite.SetAnchor(target: statusSubPanel.Caption.Transform, relBottom: 1f - (Single)partyCount / _partyDetail.Characters.Count);
-                statusSubPanel.Caption.Content.Label.SetAnchor(target: statusSubPanel.Caption.Transform, relBottom: 1f, bottom: -13f, top: 50f);
-                for (Int32 i = 0; i < statusSubPanel.Array.Count; i++)
+                Log.Error("[BattleHUD.UpdateUserInterface] Fail at party details");
+                Log.Error(err);
+            }
+            try
+            {
+                _statusPanel.Transform.SetXY(detailPos.x, detailPos.y);
+                foreach (var statusSubPanel in new[] { hp, mp })
                 {
-                    var statusDetail = statusSubPanel.Array[i];
-                    statusDetail.Transform.parent = statusSubPanel.Transform;
-                    statusDetail.Widget.SetAnchor(target: statusSubPanel.Transform, relLeft: 0.4f, relBottom: 1f, bottom: (i + 1) * -partyItemHeight, top: i * -partyItemHeight);
-                    statusDetail.Value.Label.SetAnchor(target: statusDetail.Transform, relLeft: 0.04f, relRight: 0.32f);
-                    statusDetail.Slash.Label.SetAnchor(target: statusDetail.Transform, relLeft: 0.32f, relRight: 0.38f);
-                    statusDetail.MaxValue.Label.SetAnchor(target: statusDetail.Transform, relLeft: 0.38f, relRight: 0.64f);
-                    statusDetail.Background.Widget.SetAnchor(target: statusDetail.Transform);
-                    statusDetail.Background.Border.Sprite.SetAnchor(target: statusDetail.Background.Transform);
+                    statusSubPanel.Widget.SetAnchor(target: null);
+                    statusSubPanel.Widget.SetRawRect(0f, 0f, detailSize.x, detailSize.y);
+                    statusSubPanel.Caption.Widget.SetAnchor(target: statusSubPanel.Transform, relLeft: 0.4f);
+                    statusSubPanel.Caption.Body.Sprite.SetAnchor(target: statusSubPanel.Caption.Transform, relBottom: 1f - (Single)partyCount / _partyDetail.Characters.Count);
+                    statusSubPanel.Caption.Content.Label.SetAnchor(target: statusSubPanel.Caption.Transform, relBottom: 1f, bottom: -13f, top: 50f);
+                    for (Int32 i = 0; i < statusSubPanel.Array.Count; i++)
+                    {
+                        var statusDetail = statusSubPanel.Array[i];
+                        statusDetail.Transform.parent = statusSubPanel.Transform;
+                        statusDetail.Widget.SetAnchor(target: statusSubPanel.Transform, relLeft: 0.4f, relBottom: 1f, bottom: (i + 1) * -partyItemHeight, top: i * -partyItemHeight);
+                        statusDetail.Value.Label.SetAnchor(target: statusDetail.Transform, relLeft: 0.04f, relRight: 0.32f);
+                        statusDetail.Slash.Label.SetAnchor(target: statusDetail.Transform, relLeft: 0.32f, relRight: 0.38f);
+                        statusDetail.MaxValue.Label.SetAnchor(target: statusDetail.Transform, relLeft: 0.38f, relRight: 0.64f);
+                        statusDetail.Background.Widget.SetAnchor(target: statusDetail.Transform);
+                        statusDetail.Background.Border.Sprite.SetAnchor(target: statusDetail.Background.Transform);
+                    }
                 }
             }
-        }
-        catch (Exception err)
-        {
-            Log.Error("[BattleHUD.UpdateUserInterface] Fail at HP/MP panel");
-            Log.Error(err);
-        }
-        try
-        {
-            foreach (var statusSubPanel in new[] { good, bad })
+            catch (Exception err)
             {
-                statusSubPanel.Widget.SetAnchor(target: null);
-                statusSubPanel.Widget.SetRawRect(0f, 0f, detailSize.x, detailSize.y);
-                statusSubPanel.Caption.Widget.SetAnchor(target: statusSubPanel.Transform, relLeft: 0.4f);
-                statusSubPanel.Caption.Body.Sprite.SetAnchor(target: statusSubPanel.Caption.Transform, relBottom: 1f - (Single)partyCount / _partyDetail.Characters.Count);
-                statusSubPanel.Caption.Content.Label.SetAnchor(target: statusSubPanel.Caption.Transform, relBottom: 1f, bottom: -13f, top: 50f);
-                for (Int32 i = 0; i < statusSubPanel.Array.Count; i++)
+                Log.Error("[BattleHUD.UpdateUserInterface] Fail at HP/MP panel");
+                Log.Error(err);
+            }
+            try
+            {
+                foreach (var statusSubPanel in new[] { good, bad })
                 {
-                    var statusDetail = statusSubPanel.Array[i];
-                    statusDetail.Transform.parent = statusSubPanel.Transform;
-                    statusDetail.Widget.SetAnchor(target: statusSubPanel.Transform, relLeft: 0.4f, relBottom: 1f, bottom: (i + 1) * -partyItemHeight, top: i * -partyItemHeight);
-                    for (Int32 j = 0; j < statusDetail.Icons.Count; j++)
-                        statusDetail.Icons[j].Sprite.SetAnchor(target: statusDetail.Transform, relLeft: (Single)j / statusDetail.Icons.Count, relRight: (Single)(j + 1) / statusDetail.Icons.Count);
-                    statusDetail.Background.Widget.SetAnchor(target: statusDetail.Transform);
-                    statusDetail.Background.Border.Sprite.SetAnchor(target: statusDetail.Background.Transform);
+                    statusSubPanel.Widget.SetAnchor(target: null);
+                    statusSubPanel.Widget.SetRawRect(0f, 0f, detailSize.x, detailSize.y);
+                    statusSubPanel.Caption.Widget.SetAnchor(target: statusSubPanel.Transform, relLeft: 0.4f);
+                    statusSubPanel.Caption.Body.Sprite.SetAnchor(target: statusSubPanel.Caption.Transform, relBottom: 1f - (Single)partyCount / _partyDetail.Characters.Count);
+                    statusSubPanel.Caption.Content.Label.SetAnchor(target: statusSubPanel.Caption.Transform, relBottom: 1f, bottom: -13f, top: 50f);
+                    for (Int32 i = 0; i < statusSubPanel.Array.Count; i++)
+                    {
+                        var statusDetail = statusSubPanel.Array[i];
+                        statusDetail.Transform.parent = statusSubPanel.Transform;
+                        statusDetail.Widget.SetAnchor(target: statusSubPanel.Transform, relLeft: 0.4f, relBottom: 1f, bottom: (i + 1) * -partyItemHeight, top: i * -partyItemHeight);
+                        for (Int32 j = 0; j < statusDetail.Icons.Count; j++)
+                            statusDetail.Icons[j].Sprite.SetAnchor(target: statusDetail.Transform, relLeft: (Single)j / statusDetail.Icons.Count, relRight: (Single)(j + 1) / statusDetail.Icons.Count);
+                        statusDetail.Background.Widget.SetAnchor(target: statusDetail.Transform);
+                        statusDetail.Background.Border.Sprite.SetAnchor(target: statusDetail.Background.Transform);
+                    }
                 }
             }
+            catch (Exception err)
+            {
+                Log.Error("[BattleHUD.UpdateUserInterface] Fail at status panel");
+                Log.Error(err);
+            }
+            try
+            {
+                _commandPanel.Widget.SetAnchor(target: null);
+                if (Configuration.Interface.PSXBattleMenu)
+                    _commandPanel.Widget.SetRawRect(menuPos.x - menuSize.x * 0.25f, menuPos.y, menuSize.x * 0.5f, menuSize.y);
+                else
+                    _commandPanel.Widget.SetRawRect(menuPos.x, menuPos.y, menuSize.x, menuSize.y);
+                _commandPanel.Caption.Border.Sprite.SetAnchor(target: _commandPanel.Caption.Transform, left: -3f, bottom: -3f, right: 3f, top: 3f);
+                Transform commandPanelTransform = _commandPanel.Transform;
+                Boolean hasAccessMenuButton = _commandPanel.AccessMenu != null && Configuration.Battle.AccessMenus > 0;
+                Boolean wrapMenus = Configuration.Interface.PSXBattleMenu && Configuration.Control.WrapSomeMenus;
+                Single menuButtonHeight;
+                if (Configuration.Interface.PSXBattleMenu)
+                {
+                    Single buttonHeight = hasAccessMenuButton ? 0.2f : 0.25f;
+                    menuButtonHeight = buttonHeight * menuSize.y;
+                    _commandPanel.Change.KeyNavigation.constraint = UIKeyNavigation.Constraint.Vertical;
+                    _commandPanel.Defend.KeyNavigation.constraint = UIKeyNavigation.Constraint.Vertical;
+                    _commandPanel.Change.IsActive = _buttonSliding == _commandPanel.Change;
+                    _commandPanel.Defend.IsActive = _buttonSliding == _commandPanel.Defend;
+                    if (_commandPanel.AccessMenu != null)
+                        _commandPanel.AccessMenu.IsActive = hasAccessMenuButton;
+                    _commandPanel.Attack.Widget.SetAnchor(target: commandPanelTransform, relBottom: 1f - buttonHeight, relTop: 1f);
+                    _commandPanel.Skill1.Widget.SetAnchor(target: commandPanelTransform, relBottom: 1f - 2f * buttonHeight, relTop: 1f - buttonHeight);
+                    _commandPanel.Skill2.Widget.SetAnchor(target: commandPanelTransform, relBottom: 1f - 3f * buttonHeight, relTop: 1f - 2f * buttonHeight);
+                    _commandPanel.Item.Widget.SetAnchor(target: commandPanelTransform, relBottom: 1f - 4f * buttonHeight, relTop: 1f - 3f * buttonHeight);
+                    if (hasAccessMenuButton)
+                        _commandPanel.AccessMenu.Widget.SetAnchor(target: commandPanelTransform, relBottom: 0f, relTop: buttonHeight);
+                }
+                else
+                {
+                    menuButtonHeight = menuSize.y / 3f;
+                    _commandPanel.Defend.KeyNavigation.constraint = UIKeyNavigation.Constraint.None;
+                    _commandPanel.Change.KeyNavigation.constraint = UIKeyNavigation.Constraint.None;
+                    _commandPanel.Change.IsActive = true;
+                    _commandPanel.Defend.IsActive = true;
+                    if (_commandPanel.AccessMenu != null)
+                        _commandPanel.AccessMenu.IsActive = false;
+                    _commandPanel.Attack.Widget.SetAnchor(target: commandPanelTransform, relBottom: 0.6666667f, relTop: 1f, relLeft: 0f, relRight: 0.5f);
+                    _commandPanel.Defend.Widget.SetAnchor(target: commandPanelTransform, relBottom: 0.6666667f, relTop: 1f, relLeft: 0.5f, relRight: 1f);
+                    _commandPanel.Skill1.Widget.SetAnchor(target: commandPanelTransform, relBottom: 0.3333333f, relTop: 0.6666667f, relLeft: 0f, relRight: 0.5f);
+                    _commandPanel.Skill2.Widget.SetAnchor(target: commandPanelTransform, relBottom: 0.3333333f, relTop: 0.6666667f, relLeft: 0.5f, relRight: 1f);
+                    _commandPanel.Item.Widget.SetAnchor(target: commandPanelTransform, relBottom: 0f, relTop: 0.3333333f, relLeft: 0f, relRight: 0.5f);
+                    _commandPanel.Change.Widget.SetAnchor(target: commandPanelTransform, relBottom: 0f, relTop: 0.3333333f, relLeft: 0.5f, relRight: 1f);
+                }
+                foreach (GONavigationButton button in _commandPanel.EnumerateButtons(hasAccessMenuButton))
+                {
+                    button.KeyNavigation.wrapUpDown = wrapMenus;
+                    button.Name.Label.fontSize = (Int32)Math.Round(36f * menuButtonHeight / 79f);
+                }
+            }
+            catch (Exception err)
+            {
+                Log.Error("[BattleHUD.UpdateUserInterface] Fail at command panel");
+                Log.Error(err);
+            }
+            try
+            {
+                _abilityPanel.Widget.SetAnchor(target: null);
+                _abilityPanel.Widget.SetRawRect(menuPos.x - 1f, menuPos.y - 8f, cellWidth * columnPerPage, lineHeight * linePerPage);
+                _abilityPanel.SubPanel.ChangeDims(columnPerPage, linePerPage, cellWidth, lineHeight);
+                _abilityPanel.Background.Panel.Name.Label.SetAnchor(target: _abilityPanel.Background.Transform, relLeft: 0.1f, relBottom: 1f, bottom: -5f, top: 20f);
+                _abilityPanel.Background.Panel.Info.Label.SetAnchor(target: _abilityPanel.Background.Transform, relRight: 0.9f, relBottom: 1f, bottom: -5f, top: 20f);
+                _abilityPanel.SubPanel.ButtonPrefab.NameLabel.SetAnchor(target: _abilityPanel.SubPanel.ButtonPrefab.Transform, relLeft: 0.12f, relRight: 0.9f);
+                _abilityPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _abilityPanel.SubPanel.ButtonPrefab.Transform, relLeft: 0f, relRight: 0.9f);
+                _abilityPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(32f * lineHeight / 50f * lineFontFactor);
+                _abilityPanel.SubPanel.ButtonPrefab.NumberLabel.fontSize = (Int32)Math.Round(32f * lineHeight / 50f * lineFontFactor);
+                _itemPanel.Widget.SetAnchor(target: null);
+                _itemPanel.Widget.SetRawRect(menuPos.x - 1f, menuPos.y - 8f, cellWidth * columnPerPage, lineHeight * linePerPage);
+                _itemPanel.SubPanel.ChangeDims(columnPerPage, linePerPage, cellWidth, lineHeight);
+                _itemPanel.Background.Panel.Name.Label.SetAnchor(target: _itemPanel.Background.Transform, relLeft: 0.1f, relBottom: 1f, bottom: -5f, top: 20f);
+                _itemPanel.Background.Panel.Info.Label.SetAnchor(target: _itemPanel.Background.Transform, relRight: 0.9f, relBottom: 1f, bottom: -5f, top: 20f);
+                _itemPanel.SubPanel.ButtonPrefab.IconSprite.SetAnchor(target: _itemPanel.SubPanel.ButtonPrefab.Transform, relLeft: 0.1f, relRight: 0.1f, right: lineHeight);
+                _itemPanel.SubPanel.ButtonPrefab.NameLabel.SetAnchor(target: _itemPanel.SubPanel.ButtonPrefab.Transform, relLeft: 0.1f, relRight: 0.9f, left: lineHeight);
+                _itemPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _itemPanel.SubPanel.ButtonPrefab.Transform, relRight: 0.9f);
+                _itemPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(32f * lineHeight / 50f * lineFontFactor);
+                _itemPanel.SubPanel.ButtonPrefab.NumberLabel.fontSize = (Int32)Math.Round(32f * lineHeight / 50f * lineFontFactor);
+                _targetPanel.Widget.SetAnchor(target: null);
+                _targetPanel.Widget.SetRawRect(menuPos.x, menuPos.y, menuSize.x, menuSize.y);
+                _targetPanel.Captions.Border.Sprite.SetAnchor(target: _targetPanel.Captions.Transform, left: -3f, bottom: -3f, right: 3f, top: 3f);
+                _targetPanel.Captions.Caption1.Label.SetAnchor(target: _targetPanel.Captions.Transform, relLeft: 0.075f, relRight: 0.5f, relBottom: 1f, bottom: -26f, top: 14f);
+                _targetPanel.Captions.Caption2.Label.SetAnchor(target: _targetPanel.Captions.Transform, relLeft: 0.585f, relRight: 0.925f, relBottom: 1f, bottom: -26f, top: 14f);
+                Transform targetPanelTransform = _targetPanel.Transform;
+                for (Int32 entryIndex = 0; entryIndex < _targetPanel.Enemies.Count; entryIndex++)
+                {
+                    if (!_targetPanel.Enemies[entryIndex].IsActive)
+                        continue;
+                    _targetPanel.Enemies[entryIndex].Widget.SetAnchor(target: targetPanelTransform, relBottom: 0.75f - entryIndex * 0.25f, relTop: 1f - entryIndex * 0.25f, relLeft: 0f, relRight: 0.525f);
+                    _targetPanel.Enemies[entryIndex].Name.Label.fontSize = (Int32)Math.Round(32f * menuSize.y / 228f);
+                }
+                for (Int32 entryIndex = 0; entryIndex < _targetPanel.Players.Count; entryIndex++)
+                {
+                    if (!_targetPanel.Players[entryIndex].IsActive)
+                        continue;
+                    _targetPanel.Players[entryIndex].Widget.SetAnchor(target: targetPanelTransform, relBottom: 0.75f - entryIndex * 0.25f, relTop: 1f - entryIndex * 0.25f, relLeft: 0.525f, relRight: 1f);
+                    _targetPanel.Players[entryIndex].Highlight.Sprite.SetAnchor(target: _targetPanel.Players[entryIndex].Transform);
+                    _targetPanel.Players[entryIndex].Background.Widget.SetAnchor(target: _targetPanel.Players[entryIndex].Transform);
+                    _targetPanel.Players[entryIndex].Background.Border.Sprite.SetAnchor(target: _targetPanel.Players[entryIndex].Background.Transform);
+                    _targetPanel.Players[entryIndex].Name.Label.fontSize = (Int32)Math.Round(32f * menuSize.y / 228f);
+                }
+            }
+            catch (Exception err)
+            {
+                Log.Error("[BattleHUD.UpdateUserInterface] Fail at other panels");
+                Log.Error(err);
+            }
+            try
+            {
+                ButtonGroupState.SetOutsideLimitRectBehavior(PointerManager.LimitRectBehavior.None, CommandGroupButton);
+                ButtonGroupState.SetOutsideLimitRectBehavior(PointerManager.LimitRectBehavior.None, TargetGroupButton);
+                ButtonGroupState.SetPointerLimitRectToGroup(_abilityPanel.Widget, lineHeight, AbilityGroupButton);
+                ButtonGroupState.SetPointerLimitRectToGroup(_itemPanel.Widget, lineHeight, ItemGroupButton);
+                HelpDialog helpDialog = Singleton<HelpDialog>.Instance;
+                if (helpDialog == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] Singleton<HelpDialog>.Instance returned null.");
+                if (helpDialog.IsShown)
+                    helpDialog.ShowDialog();
+            }
+            catch (Exception err)
+            {
+                Log.Error("[BattleHUD.UpdateUserInterface] Fail at ButtonGroupState setup");
+                Log.Error(err);
+            }
         }
         catch (Exception err)
         {
-            Log.Error("[BattleHUD.UpdateUserInterface] Fail at status panel");
-            Log.Error(err);
-        }
-        try
-        {
-            _commandPanel.Widget.SetAnchor(target: null);
-            if (Configuration.Interface.PSXBattleMenu)
-                _commandPanel.Widget.SetRawRect(menuPos.x - menuSize.x * 0.25f, menuPos.y, menuSize.x * 0.5f, menuSize.y);
-            else
-                _commandPanel.Widget.SetRawRect(menuPos.x, menuPos.y, menuSize.x, menuSize.y);
-            _commandPanel.Caption.Border.Sprite.SetAnchor(target: _commandPanel.Caption.Transform, left: -3f, bottom: -3f, right: 3f, top: 3f);
-            Transform commandPanelTransform = _commandPanel.Transform;
-            Boolean hasAccessMenuButton = _commandPanel.AccessMenu != null && Configuration.Battle.AccessMenus > 0;
-            Boolean wrapMenus = Configuration.Interface.PSXBattleMenu && Configuration.Control.WrapSomeMenus;
-            Single menuButtonHeight;
-            if (Configuration.Interface.PSXBattleMenu)
-            {
-                Single buttonHeight = hasAccessMenuButton ? 0.2f : 0.25f;
-                menuButtonHeight = buttonHeight * menuSize.y;
-                _commandPanel.Change.KeyNavigation.constraint = UIKeyNavigation.Constraint.Vertical;
-                _commandPanel.Defend.KeyNavigation.constraint = UIKeyNavigation.Constraint.Vertical;
-                _commandPanel.Change.IsActive = _buttonSliding == _commandPanel.Change;
-                _commandPanel.Defend.IsActive = _buttonSliding == _commandPanel.Defend;
-                if (_commandPanel.AccessMenu != null)
-                    _commandPanel.AccessMenu.IsActive = hasAccessMenuButton;
-                _commandPanel.Attack.Widget.SetAnchor(target: commandPanelTransform, relBottom: 1f - buttonHeight, relTop: 1f);
-                _commandPanel.Skill1.Widget.SetAnchor(target: commandPanelTransform, relBottom: 1f - 2f * buttonHeight, relTop: 1f - buttonHeight);
-                _commandPanel.Skill2.Widget.SetAnchor(target: commandPanelTransform, relBottom: 1f - 3f * buttonHeight, relTop: 1f - 2f * buttonHeight);
-                _commandPanel.Item.Widget.SetAnchor(target: commandPanelTransform, relBottom: 1f - 4f * buttonHeight, relTop: 1f - 3f * buttonHeight);
-                if (hasAccessMenuButton)
-                    _commandPanel.AccessMenu.Widget.SetAnchor(target: commandPanelTransform, relBottom: 0f, relTop: buttonHeight);
-            }
-            else
-            {
-                menuButtonHeight = menuSize.y / 3f;
-                _commandPanel.Defend.KeyNavigation.constraint = UIKeyNavigation.Constraint.None;
-                _commandPanel.Change.KeyNavigation.constraint = UIKeyNavigation.Constraint.None;
-                _commandPanel.Change.IsActive = true;
-                _commandPanel.Defend.IsActive = true;
-                if (_commandPanel.AccessMenu != null)
-                    _commandPanel.AccessMenu.IsActive = false;
-                _commandPanel.Attack.Widget.SetAnchor(target: commandPanelTransform, relBottom: 0.6666667f, relTop: 1f, relLeft: 0f, relRight: 0.5f);
-                _commandPanel.Defend.Widget.SetAnchor(target: commandPanelTransform, relBottom: 0.6666667f, relTop: 1f, relLeft: 0.5f, relRight: 1f);
-                _commandPanel.Skill1.Widget.SetAnchor(target: commandPanelTransform, relBottom: 0.3333333f, relTop: 0.6666667f, relLeft: 0f, relRight: 0.5f);
-                _commandPanel.Skill2.Widget.SetAnchor(target: commandPanelTransform, relBottom: 0.3333333f, relTop: 0.6666667f, relLeft: 0.5f, relRight: 1f);
-                _commandPanel.Item.Widget.SetAnchor(target: commandPanelTransform, relBottom: 0f, relTop: 0.3333333f, relLeft: 0f, relRight: 0.5f);
-                _commandPanel.Change.Widget.SetAnchor(target: commandPanelTransform, relBottom: 0f, relTop: 0.3333333f, relLeft: 0.5f, relRight: 1f);
-            }
-            foreach (GONavigationButton button in _commandPanel.EnumerateButtons(hasAccessMenuButton))
-            {
-                button.KeyNavigation.wrapUpDown = wrapMenus;
-                button.Name.Label.fontSize = (Int32)Math.Round(36f * menuButtonHeight / 79f);
-            }
-        }
-        catch (Exception err)
-        {
-            Log.Error("[BattleHUD.UpdateUserInterface] Fail at command panel");
-            Log.Error(err);
-        }
-        try
-        {
-            _abilityPanel.Widget.SetAnchor(target: null);
-            _abilityPanel.Widget.SetRawRect(menuPos.x - 1f, menuPos.y - 8f, cellWidth * columnPerPage, lineHeight * linePerPage);
-            _abilityPanel.SubPanel.ChangeDims(columnPerPage, linePerPage, cellWidth, lineHeight);
-            _abilityPanel.Background.Panel.Name.Label.SetAnchor(target: _abilityPanel.Background.Transform, relLeft: 0.1f, relBottom: 1f, bottom: -5f, top: 20f);
-            _abilityPanel.Background.Panel.Info.Label.SetAnchor(target: _abilityPanel.Background.Transform, relRight: 0.9f, relBottom: 1f, bottom: -5f, top: 20f);
-            _abilityPanel.SubPanel.ButtonPrefab.NameLabel.SetAnchor(target: _abilityPanel.SubPanel.ButtonPrefab.Transform, relLeft: 0.12f, relRight: 0.9f);
-            _abilityPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _abilityPanel.SubPanel.ButtonPrefab.Transform, relLeft: 0f, relRight: 0.9f);
-            _abilityPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(32f * lineHeight / 50f * lineFontFactor);
-            _abilityPanel.SubPanel.ButtonPrefab.NumberLabel.fontSize = (Int32)Math.Round(32f * lineHeight / 50f * lineFontFactor);
-            _itemPanel.Widget.SetAnchor(target: null);
-            _itemPanel.Widget.SetRawRect(menuPos.x - 1f, menuPos.y - 8f, cellWidth * columnPerPage, lineHeight * linePerPage);
-            _itemPanel.SubPanel.ChangeDims(columnPerPage, linePerPage, cellWidth, lineHeight);
-            _itemPanel.Background.Panel.Name.Label.SetAnchor(target: _itemPanel.Background.Transform, relLeft: 0.1f, relBottom: 1f, bottom: -5f, top: 20f);
-            _itemPanel.Background.Panel.Info.Label.SetAnchor(target: _itemPanel.Background.Transform, relRight: 0.9f, relBottom: 1f, bottom: -5f, top: 20f);
-            _itemPanel.SubPanel.ButtonPrefab.IconSprite.SetAnchor(target: _itemPanel.SubPanel.ButtonPrefab.Transform, relLeft: 0.1f, relRight: 0.1f, right: lineHeight);
-            _itemPanel.SubPanel.ButtonPrefab.NameLabel.SetAnchor(target: _itemPanel.SubPanel.ButtonPrefab.Transform, relLeft: 0.1f, relRight: 0.9f, left: lineHeight);
-            _itemPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _itemPanel.SubPanel.ButtonPrefab.Transform, relRight: 0.9f);
-            _itemPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(32f * lineHeight / 50f * lineFontFactor);
-            _itemPanel.SubPanel.ButtonPrefab.NumberLabel.fontSize = (Int32)Math.Round(32f * lineHeight / 50f * lineFontFactor);
-            _targetPanel.Widget.SetAnchor(target: null);
-            _targetPanel.Widget.SetRawRect(menuPos.x, menuPos.y, menuSize.x, menuSize.y);
-            _targetPanel.Captions.Border.Sprite.SetAnchor(target: _targetPanel.Captions.Transform, left: -3f, bottom: -3f, right: 3f, top: 3f);
-            _targetPanel.Captions.Caption1.Label.SetAnchor(target: _targetPanel.Captions.Transform, relLeft: 0.075f, relRight: 0.5f, relBottom: 1f, bottom: -26f, top: 14f);
-            _targetPanel.Captions.Caption2.Label.SetAnchor(target: _targetPanel.Captions.Transform, relLeft: 0.585f, relRight: 0.925f, relBottom: 1f, bottom: -26f, top: 14f);
-            Transform targetPanelTransform = _targetPanel.Transform;
-            for (Int32 entryIndex = 0; entryIndex < _targetPanel.Enemies.Count; entryIndex++)
-            {
-                if (!_targetPanel.Enemies[entryIndex].IsActive)
-                    continue;
-                _targetPanel.Enemies[entryIndex].Widget.SetAnchor(target: targetPanelTransform, relBottom: 0.75f - entryIndex * 0.25f, relTop: 1f - entryIndex * 0.25f, relLeft: 0f, relRight: 0.525f);
-                _targetPanel.Enemies[entryIndex].Name.Label.fontSize = (Int32)Math.Round(32f * menuSize.y / 228f);
-            }
-            for (Int32 entryIndex = 0; entryIndex < _targetPanel.Players.Count; entryIndex++)
-            {
-                if (!_targetPanel.Players[entryIndex].IsActive)
-                    continue;
-                _targetPanel.Players[entryIndex].Widget.SetAnchor(target: targetPanelTransform, relBottom: 0.75f - entryIndex * 0.25f, relTop: 1f - entryIndex * 0.25f, relLeft: 0.525f, relRight: 1f);
-                _targetPanel.Players[entryIndex].Highlight.Sprite.SetAnchor(target: _targetPanel.Players[entryIndex].Transform);
-                _targetPanel.Players[entryIndex].Background.Widget.SetAnchor(target: _targetPanel.Players[entryIndex].Transform);
-                _targetPanel.Players[entryIndex].Background.Border.Sprite.SetAnchor(target: _targetPanel.Players[entryIndex].Background.Transform);
-                _targetPanel.Players[entryIndex].Name.Label.fontSize = (Int32)Math.Round(32f * menuSize.y / 228f);
-            }
-        }
-        catch (Exception err)
-        {
-            Log.Error("[BattleHUD.UpdateUserInterface] Fail at other panels");
-            Log.Error(err);
-        }
-        try
-        {
-            ButtonGroupState.SetOutsideLimitRectBehavior(PointerManager.LimitRectBehavior.None, CommandGroupButton);
-            ButtonGroupState.SetOutsideLimitRectBehavior(PointerManager.LimitRectBehavior.None, TargetGroupButton);
-            ButtonGroupState.SetPointerLimitRectToGroup(_abilityPanel.Widget, lineHeight, AbilityGroupButton);
-            ButtonGroupState.SetPointerLimitRectToGroup(_itemPanel.Widget, lineHeight, ItemGroupButton);
-            HelpDialog helpDialog = Singleton<HelpDialog>.Instance;
-            if (helpDialog == null) throw new NullReferenceException("[BattleHUD.UpdateUserInterface] Singleton<HelpDialog>.Instance returned null.");
-            if (helpDialog.IsShown)
-                helpDialog.ShowDialog();
-        }
-        catch (Exception err)
-        {
-            Log.Error("[BattleHUD.UpdateUserInterface] Fail at ButtonGroupState setup");
+            Log.Error("[BattleHUD.UpdateUserInterface] UpdateUserInterface aborted");
             Log.Error(err);
         }
     }
