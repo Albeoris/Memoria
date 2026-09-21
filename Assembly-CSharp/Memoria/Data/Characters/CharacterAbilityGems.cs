@@ -744,8 +744,18 @@ namespace Memoria.Data
                                 }
                             }
                         }
-                        UpdateUnitStatuses(caster, cCurStat, cAutoStat, cResistStat);
-                        UpdateUnitStatuses(target, tCurStat, tAutoStat, tResistStat);
+                        if (caster.Data == target.Data)
+                        {
+                            cCurStat = cCurStat & tCurStat | ~caster.CurrentStatus & (cCurStat | tCurStat);
+                            cAutoStat = cAutoStat & tAutoStat | ~caster.PermanentStatus & (cAutoStat | tAutoStat);
+                            cResistStat = cResistStat & tResistStat | ~caster.ResistStatus & (cResistStat | tResistStat);
+                            UpdateUnitStatuses(caster, cCurStat, cAutoStat, cResistStat);
+                        }
+                        else
+                        {
+                            UpdateUnitStatuses(caster, cCurStat, cAutoStat, cResistStat);
+                            UpdateUnitStatuses(target, tCurStat, tAutoStat, tResistStat);
+                        }
                         foreach (SupportAbility disSA in AbilityEffect[i].DisableSA)
                             context.DisabledSA.Add(disSA);
                     }

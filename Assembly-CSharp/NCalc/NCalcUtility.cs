@@ -91,6 +91,8 @@ namespace NCalc
                 args.Result = GameState.AbilityUsage((BattleAbilityId)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), 0));
             else if (name == "GetItemCount" && args.Parameters.Length == 1)
                 args.Result = GameState.ItemCount((RegularItem)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)RegularItem.NoItem));
+            else if (name == "GetCardCountOfType" && args.Parameters.Length == 1)
+                args.Result = GameState.GetCardCountOfType((TetraMasterCardId)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)TetraMasterCardId.NONE));
             else if (name == "HasKeyItem" && args.Parameters.Length == 1)
                 args.Result = GameState.HasKeyItem((Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), -1));
             else if (name == "GetItemProperty" && args.Parameters.Length == 2)
@@ -251,6 +253,7 @@ namespace NCalc
             else if (name == "TetraMasterLossCount") args.Result = (Int32)GameState.TetraMasterLoss;
             else if (name == "TetraMasterDrawCount") args.Result = (Int32)GameState.TetraMasterDraw;
             else if (name == "TetraMasterCardCount") args.Result = (Int32)GameState.TetraMasterCardCount;
+            else if (name == "TetraMasterCardTypeCount") args.Result = (Int32)GameState.TetraMasterCardTypeCount;
             else if (name == "TetraMasterPlayerPoints") args.Result = (Int32)GameState.TetraMasterPlayerPoints;
             else if (name == "TetraMasterPlayerRank") args.Result = (Int32)GameState.TetraMasterPlayerRank;
             else if (name == "TreasureHunterPoints") args.Result = (Int32)GameState.TreasureHunterPoints;
