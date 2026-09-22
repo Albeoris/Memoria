@@ -533,7 +533,7 @@ public partial class BattleHUD : UIScene
                     statusSubPanel.Caption.Widget.SetAnchor(target: statusSubPanel.Transform, relLeft: 0.4f);
                     statusSubPanel.Caption.Body.Sprite.SetAnchor(target: statusSubPanel.Caption.Transform, relBottom: 1f - (Single)partyCount / _partyDetail.Characters.Count);
                     statusSubPanel.Caption.Content.Label.SetAnchor(target: statusSubPanel.Caption.Transform, relBottom: 1f, bottom: -13f, top: 50f);
-                    for (Int32 i = 0; i < statusSubPanel.Array.Count; i++)
+                    for (Int32 i = 0; i < statusSubPanel.Array.Length; i++)
                     {
                         var statusDetail = statusSubPanel.Array[i];
                         statusDetail.Transform.parent = statusSubPanel.Transform;
@@ -560,7 +560,7 @@ public partial class BattleHUD : UIScene
                     statusSubPanel.Caption.Widget.SetAnchor(target: statusSubPanel.Transform, relLeft: 0.4f);
                     statusSubPanel.Caption.Body.Sprite.SetAnchor(target: statusSubPanel.Caption.Transform, relBottom: 1f - (Single)partyCount / _partyDetail.Characters.Count);
                     statusSubPanel.Caption.Content.Label.SetAnchor(target: statusSubPanel.Caption.Transform, relBottom: 1f, bottom: -13f, top: 50f);
-                    for (Int32 i = 0; i < statusSubPanel.Array.Count; i++)
+                    for (Int32 i = 0; i < statusSubPanel.Array.Length; i++)
                     {
                         var statusDetail = statusSubPanel.Array[i];
                         statusDetail.Transform.parent = statusSubPanel.Transform;
