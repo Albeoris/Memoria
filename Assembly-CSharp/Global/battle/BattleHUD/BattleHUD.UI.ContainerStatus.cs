@@ -38,54 +38,20 @@ public partial class BattleHUD : UIScene
                 {
                     GameObject table = obj.FindChild("Table");
                     GameObject background = obj.FindChild("Caption Background");
-                    if (background == null)
-                    {
-                        Log.Warning($"[BattleHUD.UI.ContainerStatus] Could not find the background frame for {obj}");
-                        UIManager.DebugLogComponents(obj);
-                        // These are not viable components, they are only created for avoiding null exceptions
-                        background = new GameObject("Caption Background");
-                        background.AddComponent<UIWidget>();
-                        background.transform.parent = obj.transform;
-                        GameObject caption = new GameObject("Caption");
-                        caption.AddComponent<UILabel>();
-                        caption.AddComponent<UILocalize>();
-                        caption.transform.parent = background.transform;
-                        GameObject body = new GameObject("Body");
-                        body.AddComponent<UISprite>();
-                        body.transform.parent = background.transform;
-                        GameObject border = new GameObject("Border");
-                        border.AddComponent<UISprite>();
-                        border.transform.parent = body.transform;
-                        GameObject topBorder = new GameObject("TopBorder");
-                        topBorder.AddComponent<UISprite>();
-                        topBorder.transform.parent = background.transform;
-                    }
-                    else if (background.transform.GetSiblingIndex() != 1)
-                    {
-                        Log.Warning($"[BattleHUD.UI.ContainerStatus] Unexpected background index {background.transform.GetSiblingIndex()} for {obj}");
-                        UIManager.DebugLogComponents(obj);
-                    }
                     try
                     {
                         Caption = new CaptionBackground<GOLocalizableLabel>(background);
                     }
                     catch (Exception err)
                     {
-                        Log.Error($"[BattleHUD.UI.ContainerStatus] {obj}: Background initialisation failed." + err);
+                        Log.Error($"[BattleHUD.UI.ContainerStatus] {obj}: Background initialisation failed.\n" + err);
                     }
                     if (table == null || table.transform.childCount == 0)
                     {
                         // Table entries are children of the panel (this should never be the case at BattleHUD.Awake time)
-                        try
-                        {
-                            Array = new T[obj.transform.childCount - 2];
-                            for (Int32 i = 0; i < obj.transform.childCount - 2; i++)
-                                Array[i] = Create<T>(obj.GetChild(i + 2));
-                        }
-                        catch (Exception err)
-                        {
-                            Log.Error($"[BattleHUD.UI.ContainerStatus] {obj}: Array initialisation failed." + err);
-                        }
+                        Array = new T[obj.transform.childCount - 2];
+                        for (Int32 i = 0; i < obj.transform.childCount - 2; i++)
+                            Array[i] = Create<T>(obj.GetChild(i + 2));
                     }
                     else
                     {
@@ -106,10 +72,21 @@ public partial class BattleHUD : UIScene
                     public CaptionBackground(GameObject obj)
                         : base(obj)
                     {
-                        Content = Create<T1>(obj.GetChild(0));
-                        Body = new GOSprite(obj.GetChild(1));
-                        Border = new GOSprite(obj.GetChild(1).GetChild(0));
-                        TopBorder = new GOSprite(obj.GetChild(2));
+                        GameObject contentGo = obj.FindChild("Caption");
+                        GameObject bodyGo = obj.FindChild("Body");
+                        GameObject borderGo = bodyGo?.FindChild("Border");
+                        GameObject topBorderGo = obj.FindChild("Top Border");
+                        if (contentGo == null)
+                        {
+                            Log.Error($"[BattleHUD.UI.ContainerStatus] Could not find Caption for {obj}");
+                            return;
+                        }
+                        if (contentGo.transform.GetSiblingIndex() != 0)
+                            Log.Warning($"[BattleHUD.UI.ContainerStatus] Unexpected caption index {contentGo.transform.GetSiblingIndex()} for {obj}");
+                        Content = Create<T1>(contentGo);
+                        Body = new GOSprite(bodyGo);
+                        Border = new GOSprite(bodyGo.GetChild(0));
+                        TopBorder = new GOSprite(topBorderGo);
                     }
                 }
             }
