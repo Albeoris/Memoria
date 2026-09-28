@@ -101,7 +101,6 @@ namespace Memoria.Launcher.Utils.Downloads
                     stagingPath = Path.Combine(destination.DirectoryPath, $".{Path.GetFileName(resolvedDestinationPath)}.{Guid.NewGuid():N}.download");
                     Int64 expectedBytes = response.Content.Headers.ContentLength ?? -1;
                     Int64 receivedBytes = await CopyResponseAsync(response, source, stagingPath, expectedBytes, progress, cancellationToken).ConfigureAwait(false);
-                    DownloadResponseValidator.ValidateContentLength(receivedBytes, expectedBytes, source);
 
                     Commit(stagingPath, resolvedDestinationPath);
                     stagingPath = String.Empty;
