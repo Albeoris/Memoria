@@ -204,6 +204,7 @@
     <Compile Include="Utils\Updates\LauncherUpdateMetadataClient.cs" />
     <Compile Include="Utils\Updates\LauncherUpdateService.cs" />
     <Compile Include="Utils\Updates\GitHubReleaseDescriptionParser.cs" />
+    <Compile Include="Utils\Updates\GitHubReleaseAssetDigest.cs" />
     <Compile Include="Utils\Updates\GitHubReleaseNotesClient.cs" />
     <Compile Include="Utils\Updates\InstalledBuildVersion.cs" />
     <Compile Include="Utils\Updates\InstalledReleaseNotesService.cs" />
@@ -214,6 +215,7 @@
     <Compile Include="Utils\Updates\UpdateBuildCatalog.cs" />
     <Compile Include="Utils\Updates\UpdateBuildInfo.cs" />
     <Compile Include="Utils\Updates\UpdateManifest.cs" />
+    <Compile Include="Utils\Updates\UpdatePackageVerifier.cs" />
     <Compile Include="Utils\Updates\UpdateDownloadWindow.cs" />
     <Compile Include="Utils\Updates\UpdateTimeFormatter.cs" />
     <Compile Include="Utils\Updates\UpdateVersionRelation.cs" />

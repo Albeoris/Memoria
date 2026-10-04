@@ -44,6 +44,7 @@ namespace Memoria.Launcher.Utils.Updates
                 using FileDownloader downloader = new FileDownloader();
                 await downloader.DownloadAsync(buildInfo.Build.Source, pendingPath, progress, cancellationToken).ConfigureAwait(false);
                 cancellationToken.ThrowIfCancellationRequested();
+                UpdatePackageVerifier.VerifySha256(pendingPath, buildInfo.Sha256Digest);
                 return new PendingUpdatePackage(pendingPath, targetPath);
             }
             catch (Exception exception) when (!(exception is OperationCanceledException && cancellationToken.IsCancellationRequested))
