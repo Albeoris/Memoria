@@ -63,11 +63,7 @@ Note: This is **not** affiliated with the Memoria Project, a 2023 Proof-of-conce
 
 > **PLEASE NOTE:**
 >
-> If you prefer to use an automated approach, this gist is also available:
->
-> ```bash
-> bash -c "$(curl -sL https://gist.githubusercontent.com/dotaxis/1ad1c64baa7ad9c1dabcb255ea6257ae/raw/memoria.sh)"
-> ```
+> If you prefer to use an automated approach, MateriaForge provides an easy way to install and run Memoria. See https://github.com/dotaxis/MateriaForge-rs
 
 - Download `Memoria.Patcher-linux-x64` from which ever release channel you prefer
 - Copy the file inside your game directory (next to `FF9_Launcher.exe` )
