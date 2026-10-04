@@ -349,6 +349,7 @@
                                                 </Button>
                                                 <TextBox
                                                     x:Name="txtSearchMods"
+                                                    Style="{StaticResource PlaceholderTextBoxStyle}"
                                                     Grid.Row="0"
                                                     Grid.Column="1"
                                                     Margin="6,0,0,6"
@@ -579,6 +580,7 @@
                                                 </StackPanel>
                                                 <TextBox
                                                     x:Name="txtSearchCatalog"
+                                                    Style="{StaticResource PlaceholderTextBoxStyle}"
                                                     Grid.Row="0"
                                                     Grid.Column="1"
                                                     Margin="6,0,0,6"
