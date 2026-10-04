@@ -7,6 +7,7 @@ using Memoria.Launcher.Utils.Mods;
 using Memoria.Launcher.Utils.ModValidation;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -34,6 +35,9 @@ namespace Memoria.Launcher
 {
     public partial class MainWindow : Window, IComponentConnector
     {
+        private const double ModUpdateIconSlotWidth = 30;
+        private const double ModIncompatibilityIconSlotWidth = 32;
+
         public static readonly String[] OutdatedModsVersions = // "ModName_Version"
         {
             "Alternate Fantasy_6.0",
@@ -158,9 +162,12 @@ namespace Memoria.Launcher
 
             // Set up the filter
             _modListInstalledView.Filter = ModFilter;
+            _modListInstalledView.CollectionChanged -= ModListInstalledView_CollectionChanged;
+            _modListInstalledView.CollectionChanged += ModListInstalledView_CollectionChanged;
 
             // Bind the view to the ListView
             lstMods.ItemsSource = _modListInstalledView;
+            UpdateMyModsIconColumnMinimumWidth();
         }
 
         private bool ModFilter(object obj)
@@ -194,6 +201,57 @@ namespace Memoria.Launcher
 
             // Bind the view to the ListView
             lstCatalogMods.ItemsSource = _modListCatalogView;
+        }
+
+        private void MyModsIconsHeader_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            double minimumWidth = GetMyModsIconColumnMinimumWidth();
+            if (e.NewSize.Width < minimumWidth)
+                colMyModsIcons.Width = minimumWidth;
+        }
+
+        private void ModListInstalledView_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            UpdateMyModsIconColumnMinimumWidth();
+        }
+
+        private double GetMyModsIconColumnMinimumWidth()
+        {
+            double maximumRowWidth = 0;
+            if (_modListInstalledView == null)
+                return 0;
+
+            foreach (object item in _modListInstalledView)
+            {
+                if (item is not Mod mod)
+                    continue;
+
+                double rowWidth = 0;
+                if (!String.IsNullOrEmpty(mod.UpdateIcon))
+                    rowWidth += ModUpdateIconSlotWidth;
+                if (!String.IsNullOrEmpty(mod.IncompIcon))
+                    rowWidth += ModIncompatibilityIconSlotWidth;
+
+                maximumRowWidth = Math.Max(maximumRowWidth, rowWidth);
+            }
+
+            return maximumRowWidth;
+        }
+
+        private void UpdateMyModsIconColumnMinimumWidth()
+        {
+            if (colMyModsIcons == null)
+                return;
+
+            double minimumWidth = GetMyModsIconColumnMinimumWidth();
+            if (colMyModsIcons.ActualWidth < minimumWidth)
+                colMyModsIcons.Width = minimumWidth;
+        }
+
+        private void RefreshMyModsIconColumnWidth()
+        {
+            if (colMyModsIcons != null)
+                colMyModsIcons.Width = GetMyModsIconColumnMinimumWidth();
         }
 
         private bool CatalogModFilter(object obj)
@@ -428,6 +486,7 @@ namespace Memoria.Launcher
             }
 
             lstMods.Items.Refresh();
+            UpdateMyModsIconColumnMinimumWidth();
         }
         private async Task StoreCurrentArchiveUpdateIdentityAsync(Mod catalogMod)
         {
@@ -550,6 +609,7 @@ namespace Memoria.Launcher
                 }
 
                 lstMods.Items.Refresh();
+                UpdateMyModsIconColumnMinimumWidth();
             }
             catch (Exception ex)
             {
@@ -850,7 +910,10 @@ namespace Memoria.Launcher
             if (lv == lstMods || lv == lstCatalogMods)
                 UpdateModDetails((Mod)lv.SelectedItem);
             else if (sender == tabCtrlMain && tabCtrlMain.SelectedIndex == 0)
+            {
+                RefreshMyModsIconColumnWidth();
                 UpdateModDetails((Mod)lstMods.SelectedItem);
+            }
             else if (sender == tabCtrlMain && tabCtrlMain.SelectedIndex == 1)
                 UpdateModDetails((Mod)lstCatalogMods.SelectedItem);
 
