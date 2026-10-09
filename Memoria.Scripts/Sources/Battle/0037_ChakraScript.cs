@@ -1,5 +1,3 @@
-using Memoria.Data;
-using Memoria.Prime;
 using System;
 
 namespace Memoria.Scripts.Battle
@@ -32,7 +30,6 @@ namespace Memoria.Scripts.Battle
             _v.Target.HpDamage = (Int32)(_v.Target.MaximumHp * _v.Command.Power / 100);
             _v.Target.MpDamage = (Int32)(_v.Target.MaximumMp * _v.Command.Power / 100);
 
-            BattleStatus status = _v.Command.ItemId != RegularItem.NoItem ? _v.Command.Item.Status : _v.Command.AbilityStatus;
             Single rateHP = _v.Target.HpDamage * BattleScriptDamageEstimate.RateHpMp((Int32)_v.Target.CurrentHp, (Int32)_v.Target.MaximumHp);
             Single rateMP = _v.Target.MpDamage * BattleScriptDamageEstimate.RateHpMp((Int32)_v.Target.CurrentMp, (Int32)_v.Target.MaximumMp) * 10;
 
@@ -40,8 +37,6 @@ namespace Memoria.Scripts.Battle
 
             if (!_v.Target.IsPlayer)
                 rate *= -1;
-
-            rate += BattleScriptStatusEstimate.RateStatuses(status);
 
             return rate;
         }
