@@ -600,9 +600,8 @@ public partial class BattleHUD : UIScene
                 cmdSent = SelectViviMagicInsteadOfAttack_AutoAttack(unit, enemy);
             if (!cmdSent)
             {
-                BattleCommandId CMDChoosen = BattleCommandId.Attack;
+                BattleCommandId CMDChoosen = GetCommandFromCommandIndex(BattleCommandMenu.Attack, playerIndex);
                 BattleAbilityId AAChoosen = BattleAbilityId.Attack;
-                CMDChoosen = BattleCommandHelper.Patch(BattleCommandId.Attack, BattleCommandMenu.Attack, unit.Player, unit);
 
                 if (CharacterCommands.Commands.TryGetValue(CMDChoosen, out CharacterCommand cmdData))
                 {

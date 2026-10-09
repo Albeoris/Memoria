@@ -1,4 +1,5 @@
 using Memoria.Data;
+using Memoria.Prime;
 using System;
 
 namespace Memoria.Scripts.Battle
@@ -7,7 +8,7 @@ namespace Memoria.Scripts.Battle
     /// Iai Strike
     /// </summary>
     [BattleScript(Id)]
-    public sealed class MiniScript : IBattleScript
+    public sealed class MiniScript : IBattleScript, IEstimateBattleScript
     {
         public const Int32 Id = 0109;
 
@@ -31,6 +32,17 @@ namespace Memoria.Scripts.Battle
             _v.PenaltyCommandDividedHitRate();
             if (_v.TryMagicHit())
                 _v.TryAlterCommandStatuses();
+        }
+
+        public Single RateTarget()
+        {
+            if (_v.Target.IsUnderAnyStatus(BattleStatusConst.ApplyReflect) && !_v.Command.IsReflectNull)
+                return 0;
+
+            if (_v.Target.CanBeAttacked() && _v.Target.IsUnderAnyStatus(BattleStatus.Mini))
+                return _v.Target.IsPlayer ? 20 : -20;
+
+            return 0;
         }
     }
 }
