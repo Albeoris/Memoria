@@ -2014,9 +2014,7 @@ public partial class BattleHUD : UIScene
 
     private void SelectBestTarget(TargetType targetType, CMD_DATA testCommand)
     {
-        if (!Configuration.Battle.SelectBestTarget || CurrentPlayerIndex < 0)
-            return;
-        if (targetType >= TargetType.All)
+        if (!Configuration.Battle.SelectBestTarget || CurrentPlayerIndex < 0 || targetType >= TargetType.All)
             return;
 
         Boolean allowAllies = targetType != TargetType.SingleEnemy && targetType != TargetType.ManyEnemy;
