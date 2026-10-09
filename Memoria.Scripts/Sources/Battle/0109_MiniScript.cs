@@ -38,10 +38,18 @@ namespace Memoria.Scripts.Battle
             if (_v.Target.IsUnderAnyStatus(BattleStatusConst.ApplyReflect) && !_v.Command.IsReflectNull)
                 return 0;
 
-            if (_v.Target.CanBeAttacked() && _v.Target.IsUnderAnyStatus(BattleStatus.Mini))
-                return _v.Target.IsPlayer ? 20 : -20;
-
-            return 0;
+            Int32 statusRate = BattleScriptStatusEstimate.RateStatuses(_v.Command.AbilityStatus);
+            Single accuracyRate = 1f;
+            Boolean clearStatus = _v.Target.IsUnderAnyStatus(BattleStatus.Mini) && (_v.Command.AbilityStatus & BattleStatus.Mini) != 0;
+            if (!_v.Target.IsUnderAnyStatus(BattleStatus.Mini))
+            {
+                accuracyRate = BattleScriptAccuracyEstimate.RatePlayerAttackEvade(_v.Context.Evade);
+                if (_v.Target.IsUnderAnyStatus(BattleStatus.Shell))
+                    accuracyRate *= BattleScriptAccuracyEstimate.RatePlayerAttackHit(_v.Context.HitRate >> 1);
+                else
+                    accuracyRate *= BattleScriptAccuracyEstimate.RatePlayerAttackHit(_v.Context.HitRate);
+            }
+            return accuracyRate * statusRate * (clearStatus ^ _v.Target.IsPlayer ? 1 : -1);
         }
     }
 }
