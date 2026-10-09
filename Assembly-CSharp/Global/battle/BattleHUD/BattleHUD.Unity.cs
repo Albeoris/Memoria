@@ -585,8 +585,8 @@ public partial class BattleHUD : UIScene
 
     private void SendAutoAttackCommand(Int32 playerIndex)
     {
-        BattleUnit player = FF9StateSystem.Battle.FF9Battle.GetUnit(playerIndex);
-        CMD_DATA cmd = player.Data.cmd[0];
+        BattleUnit unit = FF9StateSystem.Battle.FF9Battle.GetUnit(playerIndex);
+        CMD_DATA cmd = unit.Data.cmd[0];
         if (cmd != null && btl_cmd.CheckUsingCommand(cmd))
             return;
         CurrentPlayerIndex = playerIndex;
@@ -596,10 +596,21 @@ public partial class BattleHUD : UIScene
         if (enemy != null)
         {
             Boolean cmdSent = false;
-            if (Configuration.Battle.ViviAutoAttack && player.PlayerIndex == CharacterId.Vivi)
-                cmdSent = SelectViviMagicInsteadOfAttack_AutoAttack(player, enemy);
+            if (Configuration.Battle.ViviAutoAttack && unit.PlayerIndex == CharacterId.Vivi)
+                cmdSent = SelectViviMagicInsteadOfAttack_AutoAttack(unit, enemy);
             if (!cmdSent)
-                btl_cmd.SetCommand(player.Data.cmd[0], BattleCommandId.Attack, (Int32)BattleAbilityId.Attack, enemy.Id, 0U);
+            {
+                BattleCommandId CMDChoosen = GetCommandFromCommandIndex(BattleCommandMenu.Attack, playerIndex);
+                BattleAbilityId AAChoosen = BattleAbilityId.Attack;
+
+                if (CharacterCommands.Commands.TryGetValue(CMDChoosen, out CharacterCommand cmdData))
+                {
+                    BattleAbilityId abilId = cmdData.GetAbilityId(0);
+                    AAChoosen = BattleAbilityHelper.Patch(abilId, unit.Player);
+                }
+                btl_cmd.SetCommand(unit.ATBCommand, CMDChoosen, (Int32)AAChoosen, btl_util.GetRandomBtlID(0), 0u);
+            }
+
             InputFinishList.Add(CurrentPlayerIndex);
         }
         CurrentPlayerIndex = -1;
