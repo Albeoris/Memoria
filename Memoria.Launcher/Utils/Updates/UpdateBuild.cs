@@ -17,11 +17,15 @@ namespace Memoria.Launcher.Utils.Updates
             if (!source.IsAbsoluteUri)
                 throw new ArgumentException("The update URI must be absolute.", nameof(source));
             ManifestSource = new Uri(source, "manifest.json");
+            ReleaseApiSource = kind == UpdateBuildKind.Stable
+                ? new Uri("https://api.github.com/repos/Albeoris/Memoria/releases/latest")
+                : new Uri("https://api.github.com/repos/Albeoris/Memoria/releases/tags/canary");
         }
 
         public UpdateBuildKind Kind { get; }
         public Uri Source { get; }
         public Uri ManifestSource { get; }
+        public Uri ReleaseApiSource { get; }
         public String Name => Kind.ToString();
     }
 }

@@ -1,5 +1,6 @@
 using NLog;
 using System;
+using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,6 +18,18 @@ namespace Memoria.Launcher.Utils.Updates
         private readonly HttpClient _httpClient = ResilientHttpClient.CreateClient();
         private Boolean _disposed;
 
+        private sealed class BuildMetadata
+        {
+            public BuildMetadata(DateTime publishedAtUtc, Int64 contentLength)
+            {
+                PublishedAtUtc = publishedAtUtc;
+                ContentLength = contentLength;
+            }
+
+            public DateTime PublishedAtUtc { get; }
+            public Int64 ContentLength { get; }
+        }
+
         public async Task<UpdateBuildInfo> GetAsync(UpdateBuild build, CancellationToken cancellationToken)
         {
             if (build == null)
@@ -26,9 +39,10 @@ namespace Memoria.Launcher.Utils.Updates
 
             try
             {
+                BuildMetadata metadata;
                 try
                 {
-                    return await GetFromManifestAsync(build, cancellationToken).ConfigureAwait(false);
+                    metadata = await GetFromManifestAsync(build, cancellationToken).ConfigureAwait(false);
                 }
                 catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
                 {
@@ -37,9 +51,11 @@ namespace Memoria.Launcher.Utils.Updates
                 catch (Exception exception)
                 {
                     _log.Warn(exception, "Unable to read the update manifest; falling back to legacy HEAD metadata. Build: {Build}, ManifestUri: {ManifestUri}, PatcherUri: {PatcherUri}", build.Name, build.ManifestSource, build.Source);
+                    metadata = await GetFromLegacyHeadersAsync(build, cancellationToken).ConfigureAwait(false);
                 }
 
-                return await GetFromLegacyHeadersAsync(build, cancellationToken).ConfigureAwait(false);
+                String digest = await GetGitHubAssetDigestAsync(build, cancellationToken).ConfigureAwait(false);
+                return new UpdateBuildInfo(build, metadata.PublishedAtUtc, metadata.ContentLength, digest);
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
@@ -58,7 +74,21 @@ namespace Memoria.Launcher.Utils.Updates
             }
         }
 
-        private async Task<UpdateBuildInfo> GetFromManifestAsync(UpdateBuild build, CancellationToken cancellationToken)
+        private async Task<String> GetGitHubAssetDigestAsync(UpdateBuild build, CancellationToken cancellationToken)
+        {
+            using CancellationTokenSource requestCancellation = CreateRequestCancellation(cancellationToken);
+            using HttpResponseMessage response = await ResilientHttpClient.GetAsync(_httpClient, build.ReleaseApiSource, HttpCompletionOption.ResponseContentRead, requestCancellation.Token).ConfigureAwait(false);
+            if (!response.IsSuccessStatusCode)
+                throw FileDownloader.CreateHttpResponseException(build.ReleaseApiSource, response);
+
+            String json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            String assetName = Path.GetFileName(build.Source.AbsolutePath);
+            String digest = GitHubReleaseAssetDigest.Parse(json, assetName);
+            _log.Info("Update SHA-256 digest loaded from GitHub. Build: {Build}, Asset: {Asset}, Digest: {Digest}", build.Name, assetName, digest);
+            return digest;
+        }
+
+        private async Task<BuildMetadata> GetFromManifestAsync(UpdateBuild build, CancellationToken cancellationToken)
         {
             using CancellationTokenSource requestCancellation = CreateRequestCancellation(cancellationToken);
             using HttpResponseMessage response = await ResilientHttpClient.GetAsync(_httpClient, build.ManifestSource, HttpCompletionOption.ResponseContentRead, requestCancellation.Token).ConfigureAwait(false);
@@ -68,10 +98,10 @@ namespace Memoria.Launcher.Utils.Updates
             String json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             UpdateManifest manifest = UpdateManifest.Parse(json);
             _log.Info("Update metadata loaded from manifest. Build: {Build}, BuildTimeUtc: {BuildTimeUtc:O}, PatcherSize: {PatcherSize}, Uri: {Uri}", build.Name, manifest.BuildTime, manifest.PatcherSize, build.ManifestSource);
-            return new UpdateBuildInfo(build, manifest.BuildTime, manifest.PatcherSize);
+            return new BuildMetadata(manifest.BuildTime, manifest.PatcherSize);
         }
 
-        private async Task<UpdateBuildInfo> GetFromLegacyHeadersAsync(UpdateBuild build, CancellationToken cancellationToken)
+        private async Task<BuildMetadata> GetFromLegacyHeadersAsync(UpdateBuild build, CancellationToken cancellationToken)
         {
             using CancellationTokenSource requestCancellation = CreateRequestCancellation(cancellationToken);
             using HttpResponseMessage response = await ResilientHttpClient.SendAsync(_httpClient, HttpMethod.Head, build.Source, HttpCompletionOption.ResponseHeadersRead, requestCancellation.Token).ConfigureAwait(false);
@@ -84,7 +114,7 @@ namespace Memoria.Launcher.Utils.Updates
 
             DateTime buildTimeUtc = CorrectLegacyStableBuildTime(build, assetTimeUtc.Value);
             _log.Info("Update metadata loaded from legacy HEAD response. Build: {Build}, AssetTimeUtc: {AssetTimeUtc:O}, BuildTimeUtc: {BuildTimeUtc:O}, Uri: {Uri}", build.Name, assetTimeUtc.Value, buildTimeUtc, build.Source);
-            return new UpdateBuildInfo(build, buildTimeUtc, response.Content.Headers.ContentLength ?? -1);
+            return new BuildMetadata(buildTimeUtc, response.Content.Headers.ContentLength ?? -1);
         }
 
         private static DateTime CorrectLegacyStableBuildTime(UpdateBuild build, DateTime assetTimeUtc)

@@ -14,8 +14,6 @@ namespace Memoria.Launcher.Utils.Updates
     internal sealed class GitHubReleaseNotesClient : IDisposable
     {
         private static readonly TimeSpan RequestTimeout = TimeSpan.FromSeconds(20);
-        private static readonly Uri StableReleaseApi = new Uri("https://api.github.com/repos/Albeoris/Memoria/releases/latest");
-        private static readonly Uri CanaryReleaseApi = new Uri("https://api.github.com/repos/Albeoris/Memoria/releases/tags/canary");
         private readonly Logger _log = AppLogger.GetLogger(nameof(GitHubReleaseNotesClient));
         private readonly HttpClient _httpClient = ResilientHttpClient.CreateClient();
         private Boolean _disposed;
@@ -27,7 +25,7 @@ namespace Memoria.Launcher.Utils.Updates
             if (_disposed)
                 throw new ObjectDisposedException(nameof(GitHubReleaseNotesClient));
 
-            Uri source = build.Kind == UpdateBuildKind.Stable ? StableReleaseApi : CanaryReleaseApi;
+            Uri source = build.ReleaseApiSource;
             try
             {
                 using CancellationTokenSource requestCancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
