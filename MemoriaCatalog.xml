@@ -4762,4 +4762,32 @@ Thank you for playing!
 </Description>
 	
 </Mod>
+
+<Mod>
+    <Name>Treno Shop - All Equipment</Name>
+    <Version>1.0</Version>
+    <ReleaseDateOriginal>2026-10-10</ReleaseDateOriginal>
+    <ReleaseDate>2026-10-10</ReleaseDate>
+    <Author>Seriusaki</Author>
+    <InstallationPath>CustomTrenoShop</InstallationPath>
+    <Category>Gameplay</Category>
+    <DownloadUrl>https://github.com/Seriusaki/ffix-treno-shop-mod/releases/download/v1.0/CustomTrenoShop.zip</DownloadUrl>
+    <Website>https://github.com/Seriusaki/ffix-treno-shop-mod</Website>
+    <PatchNotes>Version 1.0: first release. Adds all weapons, armor, head, arm and accessory pieces to the Treno Disc 2 Weapons and Armor shop.</PatchNotes>
+    <MinimumMemoriaVersion>2025-07-13</MinimumMemoriaVersion>
+    <Description>Makes all the equipment in the game available for purchase at the Weapons and Armor shop in Treno (Disc 2). Every weapon, head piece, body armor, arm piece and accessory is added to that shop's stock, so you don't need to hunt for each one or wait for synthesis.
+
+What changes:
+- Shop 0004 (Treno Disc 2 Weapons and Armor Shop) now stocks 221 items: 85 weapons and 136 armor, head, arm and accessory pieces.
+- Only StreamingAssets/Data/Items/ShopItems.csv is modified. Other shops, item prices and your inventory are not affected.
+
+Notes:
+- Items are bought with gil. The mod does not give anything for free.
+- Prices are unchanged from the original game, so the high-end gear will still be expensive.
+- Tested on Steam with Memoria 2025-07-13.
+
+Why it exists:
+This was a learning project. I wanted to create a Memoria mod from scratch, with AI help, and understand how data mods work. I am a big Final Fantasy IX fan, so it was also a good excuse to spend more time in Gaia.</Description>
+</Mod>
+
 </ModCatalog>
