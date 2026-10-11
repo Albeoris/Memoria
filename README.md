@@ -128,7 +128,7 @@ See [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) for third-party software an
 Run from the repository root:
 
 - Deploy locally: `dotnet build FF9SpecialEffectPlugin/FF9SpecialEffectPlugin.csproj -c Release /p:DeploySpecialEffectPlugin=true`
-- Build a local patcher with the plugin (Visual Studio Developer PowerShell): `msbuild Memoria.Patcher/Memoria.Patcher.csproj /restore /t:Publish /p:Configuration=Release /p:PublishProfile=Win-x64 /p:IncludeSpecialEffectPlugin=true`
+- Build a local patcher with the plugin (Visual Studio Developer PowerShell): `msbuild Memoria.Patcher/Memoria.Patcher.csproj /restore /p:Configuration=Release /p:IncludeSpecialEffectPlugin=true`
 
 Both flags are off by default. To specify the game directory, add `/p:MemoriaGamePath="<game root>"` to the deployment command.
 
