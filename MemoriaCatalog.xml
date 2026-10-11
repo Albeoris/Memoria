@@ -4762,4 +4762,25 @@ Thank you for playing!
 </Description>
 	
 </Mod>
+
+<Mod>
+	<Name>Arabic Translation (الترجمة العربية)</Name>
+	<Version>1.0.0-beta</Version>
+	<Author>Enma</Author>
+	<InstallationPath>ArabicTranslation</InstallationPath>
+	<ReleaseDateOriginal>2026-10-11</ReleaseDateOriginal>
+	<ReleaseDate>2026-10-11</ReleaseDate>
+	<MinimumMemoriaVersion>2025-07-13</MinimumMemoriaVersion>
+	<Category>Translation</Category>
+	<Description>Arabic translation of Final Fantasy IX (beta): dialogue, battle text, menus, items, abilities, locations, character names, and the text images (title screen, place-name cards, continent titles, Tetra Master, ending).
+Select "English (US)" in the game's language menu: this mod replaces that language with Arabic.
+After installing, run FINAL FANTASY IX\ArabicTranslation\Font\Install-Font.bat once (installs the included font for all users; Windows asks for administrator permission).
+
+الترجمة العربية للعبة فاينل فانتسي IX (نسخة تجريبية): الحوارات ونصوص المعارك والقوائم والأدوات والقدرات والأماكن وأسماء الشخصيات، والصور النصية.
+اختر "English (US)" من قائمة اللغة في اللعبة، فهذا التعديل يستبدل تلك اللغة بالعربية.
+بعد التثبيت شغّل الملف FINAL FANTASY IX\ArabicTranslation\Font\Install-Font.bat مرة واحدة.</Description>
+	<DownloadUrl>https://github.com/faisalkindi/ffix-arabic-translation/releases/download/v1.0.0-beta/ArabicTranslation_v1.0.0-beta.zip</DownloadUrl>
+	<Website>https://github.com/faisalkindi/ffix-arabic-translation</Website>
+</Mod>
+
 </ModCatalog>
