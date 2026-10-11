@@ -94,6 +94,9 @@
     <Compile Include="Launcher\Window_NewPreset.xaml.cs">
       <DependentUpon>Window_NewPreset.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Launcher\Window_StartBattle.xaml.cs">
+      <DependentUpon>Window_StartBattle.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Launcher\SettingsGrid_Advanced3.cs" />
     <Compile Include="Launcher\SettingsGrid_Advanced2.cs" />
     <Compile Include="Launcher\SettingsGrid_Advanced.cs" />
@@ -104,6 +107,7 @@
     <Compile Include="Launcher\SettingsGrid_Main.cs" />
     <Compile Include="Launcher\Settings.cs" />
     <Compile Include="Launcher\SteamLauncherBootstrap.cs" />
+    <Compile Include="Launcher\GameLaunchOptions.cs" />
     <Compile Include="Launcher\SettingsGrid_Presets.cs" />
     <Compile Include="Launcher\SettingsGrid_VanillaDisplay.cs" />
     <Compile Include="Launcher\UiGrid.cs" />
@@ -239,6 +243,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Launcher\Window_NewPreset.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Launcher\Window_StartBattle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

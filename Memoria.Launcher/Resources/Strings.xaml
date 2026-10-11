@@ -12,6 +12,9 @@
     <system:String x:Key="Launcher.Changelog">Changelog</system:String>
 
     <system:String x:Key="Launcher.ModelViewer">Model Viewer</system:String>
+    <system:String x:Key="Launcher.StartBattle">Start Battle</system:String>
+    <system:String x:Key="Launcher.BattleId">Battle ID (ENCOUNT)</system:String>
+    <system:String x:Key="Launcher.BattleIdInvalid">Enter a whole number from 0 to 32767.</system:String>
     <system:String x:Key="Launcher.CopyLogButton">Copy Log</system:String>
 
     <system:String x:Key="Launcher.NewPreset">New Preset</system:String>

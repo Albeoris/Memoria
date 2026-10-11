@@ -8,19 +8,15 @@ namespace Memoria.Launcher
 {
     public abstract partial class UiLauncherButton
     {
-        public Boolean LaunchModelViewer = false;
-
         protected UiLauncherButton()
         {
             InitializeComponent();
         }
 
-        public new void Click(Boolean launchModelViewer = false)
+        public new void Click()
         {
             if (!IsEnabled)
                 return;
-
-            LaunchModelViewer = launchModelViewer;
 
             OnClick();
         }

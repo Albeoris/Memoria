@@ -498,6 +498,8 @@
     <Compile Include="Memoria\Assets\3DModel\AnimationClipReader.cs" />
     <Compile Include="Memoria\Assets\ModelViewer\BoneHierarchyNode.cs" />
     <Compile Include="Memoria\Assets\ModelViewer\ModelViewerScene.cs" />
+    <Compile Include="Memoria\Debugging\BattleLaunch.cs" />
+    <Compile Include="Memoria\Debugging\GameLaunchOptions.cs" />
     <Compile Include="Memoria\Assets\Text\Dialogs\DialogBoxSymbols.cs" />
     <Compile Include="Memoria\Assets\Text\Dialogs\FFIXTextTag.cs" />
     <Compile Include="Memoria\Assets\Text\Dialogs\FFIXTextTagCode.cs" />

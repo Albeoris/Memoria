@@ -12,6 +12,7 @@ namespace Memoria.Launcher
     {
         public SettingsGrid_Vanilla GameSettings { get; set; }
         public SettingsGrid_VanillaDisplay GameSettingsDisplay { get; set; }
+        public GameLaunchOptions LaunchOptions { get; set; }
 
         public UiLauncherPlayButton()
         {
@@ -21,7 +22,7 @@ namespace Memoria.Launcher
         protected override Task DoAction()
         {
             SetResourceReference(LabelProperty, "Launcher.Launching");
-            ApplyDebugSettingsSafe();
+            GameLaunchOptions options = LaunchOptions ?? App.LaunchOptions;
 
             Int32 monitor = GetActiveMonitorIndex();
             if (!DisplayService.Current.TryGetMonitor(monitor, out _))
@@ -36,12 +37,13 @@ namespace Memoria.Launcher
             String executablePath = PrepareExecutableAndData(workingDirectory);
             String arguments = $"-runbylauncher -single-instance -monitor {monitor.ToString(CultureInfo.InvariantCulture)} -screen-width {width.ToString(CultureInfo.InvariantCulture)} -screen-height {height.ToString(CultureInfo.InvariantCulture)} -screen-fullscreen {(GameSettingsDisplay.WindowMode == 1 ? "1" : "0")} {(GameSettingsDisplay.WindowMode >= 2 ? "-popupwindow" : "")}";
             String debugInjectorDestPath = Path.Combine(workingDirectory, "version.dll");
+            arguments += " " + options.ToGameArguments();
             String appidPath = Path.Combine(".\\", "steam_appid.txt");
 
             if (!File.Exists(appidPath))
                 File.WriteAllText(appidPath, "377840");
 
-            if (GameSettings.IsDebugMode)
+            if (UseDebugger(options))
                 File.Copy(Path.Combine(".\\Debugger", gameArch, "Memoria.Injection.dll"), debugInjectorDestPath, true);
             else if (File.Exists(debugInjectorDestPath))
                 File.Delete(debugInjectorDestPath);
@@ -50,27 +52,6 @@ namespace Memoria.Launcher
             StartGameProcess(executablePath, arguments);
             Application.Current.Shutdown();
             return Task.CompletedTask;
-        }
-
-        private void ApplyDebugSettingsSafe()
-        {
-            try
-            {
-                IniFile iniFile = IniFile.MemoriaIni;
-                if (LaunchModelViewer)
-                {
-                    iniFile.SetSetting("Debug", "Enabled", "1");
-                    iniFile.SetSetting("Debug", "StartModelViewer", "1");
-                }
-                else
-                {
-                    iniFile.SetSetting("Debug", "StartModelViewer", "0");
-                }
-                iniFile.Save();
-            }
-            catch
-            {
-            }
         }
 
         private Int32 GetActiveMonitorIndex()
@@ -112,7 +93,7 @@ namespace Memoria.Launcher
         private String PrepareExecutableAndData(String workingDirectory)
         {
             String executablePath = Path.Combine(workingDirectory, "FF9.exe");
-            if (!GameSettings.IsDebugMode)
+            if (!UseDebugger(LaunchOptions ?? App.LaunchOptions))
                 return executablePath;
 
             String unityPath = Path.Combine(workingDirectory, "Unity.exe");
@@ -150,6 +131,11 @@ namespace Memoria.Launcher
             FileInfo first = new FileInfo(firstPath);
             FileInfo second = new FileInfo(secondPath);
             return first.Length == second.Length && first.LastWriteTimeUtc == second.LastWriteTimeUtc;
+        }
+
+        private Boolean UseDebugger(GameLaunchOptions options)
+        {
+            return options.Debugger || (!options.HasStartupMode && GameSettings.IsDebugMode);
         }
 
         private static void StartGameProcess(String executablePath, String arguments)

@@ -1,0 +1,61 @@
+<UserControl x:Class="Memoria.Launcher.Window_StartBattle"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controller="clr-namespace:Memoria.Launcher.Controller"
+             HorizontalAlignment="Stretch"
+             VerticalAlignment="Stretch"
+             controller:GamepadNavigation.IsModalScope="True"
+             Loaded="OnLoaded"
+             PreviewKeyDown="OnPreviewKeyDown">
+    <Border Background="#6000">
+        <Border HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Background="#e000"
+                BorderBrush="#6666"
+                BorderThickness="1"
+                Padding="15">
+            <StackPanel Width="346">
+                <TextBlock Text="{DynamicResource Launcher.StartBattle}"
+                           Foreground="{StaticResource WhiteUI}"
+                           FontFamily="{StaticResource CenturyGothic}"
+                           FontSize="18"
+                           Margin="0,0,0,12"/>
+                <Label Content="{DynamicResource Launcher.BattleId}"
+                       Target="{Binding ElementName=BattleIdTextBox}"
+                       Foreground="{StaticResource WhiteUI}"
+                       FontSize="14"
+                       Padding="0"
+                       Margin="0,0,0,6"/>
+                <TextBox x:Name="BattleIdTextBox"
+                         controller:GamepadNavigation.IsDefaultFocus="True"
+                         Height="30"
+                         FontSize="14"
+                         Padding="3"
+                         VerticalContentAlignment="Center"
+                         Background="{StaticResource BrushLightColorNormal}"
+                         TextChanged="BattleId_TextChanged"/>
+                <TextBlock x:Name="ValidationMessage"
+                           Text="{DynamicResource Launcher.BattleIdInvalid}"
+                           Foreground="LightCoral"
+                           TextWrapping="Wrap"
+                           Margin="0,6,0,0"
+                           Visibility="Collapsed"/>
+                <UniformGrid Rows="1" Margin="0,10,0,0">
+                    <Button x:Name="Cancel"
+                            controller:GamepadNavigation.IsCancelAction="True"
+                            Content="{DynamicResource Launcher.Cancel}"
+                            Style="{StaticResource ButtonStyle}"
+                            Height="30"
+                            Margin="0,0,3,0"
+                            Click="Close"/>
+                    <Button x:Name="Ok"
+                            Content="{DynamicResource Launcher.StartBattle}"
+                            Style="{StaticResource ButtonStyle}"
+                            Height="30"
+                            Margin="3,0,0,0"
+                            Click="Ok_Click"/>
+                </UniformGrid>
+            </StackPanel>
+        </Border>
+    </Border>
+</UserControl>
