@@ -142,8 +142,13 @@ All functions:
 {
   "enabled": true,
   "log": "FF9SpecialEffectPlugin.trace.log",
-  "functions": ["*"]
+  "functions": ["*"],
+  "cap": {
+    "perFunction": 0,
+    "total": 0
+  }
 }
+
 ```
 
 **Tracing all functions generates hundreds of megabytes of logs within a few seconds.**

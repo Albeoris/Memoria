@@ -58,6 +58,8 @@ namespace Memoria.MSBuild
         private List<PackFileOperationArgs> packFileOperations = new List<PackFileOperationArgs>();
 
         private const string SignatureThumbprint = "316b51aca09ee3b93d0b9a75a48ecee278491ce2";
+        private const Int64 PackedDataMagic = 0x004149524F4D454D; // MEMORIA\0
+        private const Int32 PackedDataFooterSize = 3 * sizeof(Int64);
 
         public Boolean Execute()
         {
@@ -72,17 +74,16 @@ namespace Memoria.MSBuild
                 Debugger.Launch();
 
             Stopwatch sw = Stopwatch.StartNew();
-            using (FileStream executableFile = File.OpenWrite(TargetPath))
+            using (FileStream executableFile = File.Open(TargetPath, FileMode.Open, FileAccess.ReadWrite))
             {
-                Int64 compressedDataPosition = 0;
+                RemovePackedData(executableFile);
+                Int64 compressedDataPosition = executableFile.Length;
                 Int64 uncompressedDataSize = 0;
+                executableFile.Position = compressedDataPosition;
 
                 using (GZipStream compressStream = new GZipStream(executableFile, CompressionMode.Compress, true))
                 using (BinaryWriter bw = new BinaryWriter(compressStream))
                 {
-                    executableFile.Seek(0, SeekOrigin.End);
-                    compressedDataPosition = executableFile.Position;
-
                     Dictionary<String, UInt16> pathMap = new Dictionary<String, UInt16>(capacity: 400);
                     foreach (DeploymentFileDefinition file in DeploymentFileSet.Files)
                     {
@@ -107,7 +108,7 @@ namespace Memoria.MSBuild
 
                 using (BinaryWriter bw = new BinaryWriter(executableFile))
                 {
-                    bw.Write(0x004149524F4D454D); // MEMORIA\0
+                    bw.Write(PackedDataMagic);
                     bw.Write(uncompressedDataSize);
                     bw.Write(compressedDataPosition);
                 }
@@ -145,6 +146,42 @@ namespace Memoria.MSBuild
             process.WaitForExit();
 #endif
             return true;
+        }
+
+        private static void RemovePackedData(FileStream executableFile)
+        {
+            Int64 executableSize = executableFile.Length;
+            using (BinaryReader reader = new BinaryReader(executableFile, Encoding.UTF8, true))
+            {
+                // Incremental builds can keep the already packed executable. Follow all old
+                // footers so files bloated by earlier builds are restored to the original host.
+                while (executableSize >= PackedDataFooterSize)
+                {
+                    Int64 footerPosition = executableSize - PackedDataFooterSize;
+                    executableFile.Position = footerPosition;
+                    if (reader.ReadInt64() != PackedDataMagic)
+                    {
+                        break;
+                    }
+
+                    Int64 uncompressedDataSize = reader.ReadInt64();
+                    Int64 compressedDataPosition = reader.ReadInt64();
+                    if (uncompressedDataSize < 0 || compressedDataPosition <= 0 || compressedDataPosition > footerPosition - 3)
+                    {
+                        throw new InvalidDataException("Invalid existing Memoria payload footer.");
+                    }
+
+                    executableFile.Position = compressedDataPosition;
+                    if (reader.ReadByte() != 0x1F || reader.ReadByte() != 0x8B || reader.ReadByte() != 0x08)
+                    {
+                        throw new InvalidDataException("Invalid existing Memoria payload gzip header.");
+                    }
+
+                    executableSize = compressedDataPosition;
+                }
+            }
+
+            executableFile.SetLength(executableSize);
         }
 
         private void AddPackOptionalFile(String sourceFileRelativePath, String targetFileRelativePath, GZipStream output, BinaryWriter bw, Dictionary<String, UInt16> pathMap, ref Int64 uncompressedDataSize)
