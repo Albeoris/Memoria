@@ -1,0 +1,27 @@
+<Project>
+  <PropertyGroup>
+    <!-- Keep native artifacts outside the folders copied by the ordinary deployment set. -->
+    <MemoriaSpecialEffectPluginPublishDir>$(MSBuildThisFileDirectory)Output\Global\SpecialEffectPlugin\x64\</MemoriaSpecialEffectPluginPublishDir>
+  </PropertyGroup>
+
+  <Target Name="MemoriaPublishSpecialEffectPlugin" BeforeTargets="MemoriaPatcherAfterBuild;MemoriaPatcherAfterPublish" Condition="'$(MSBuildProjectName)' == 'Memoria.Patcher' and '$(IncludeSpecialEffectPlugin)' == 'true'">
+    <MSBuild Projects="$(MSBuildThisFileDirectory)FF9SpecialEffectPlugin\FF9SpecialEffectPlugin.csproj" Targets="Restore;Publish" RemoveProperties="PublishProfile;RuntimeIdentifiers;TargetFramework;OutputPath;BaseOutputPath;BaseIntermediateOutputPath;IntermediateOutputPath" Properties="Configuration=$(Configuration);RuntimeIdentifier=win-x64;PublishDir=$(MemoriaSpecialEffectPluginPublishDir);MemoriaNativePublish=true;DeploySpecialEffectPlugin=false;IncludeSpecialEffectPlugin=false;PublishSingleFile=false" />
+    <Error Text="FF9SpecialEffectPlugin native publish did not produce $(MemoriaSpecialEffectPluginPublishDir)FF9SpecialEffectPlugin.dll." Condition="!Exists('$(MemoriaSpecialEffectPluginPublishDir)FF9SpecialEffectPlugin.dll')" />
+  </Target>
+
+  <Target Name="MemoriaBuildSpecialEffectPlugin" AfterTargets="Build" Condition="'$(MSBuildProjectName)' == 'FF9SpecialEffectPlugin' and '$(MemoriaNativePublish)' != 'true'">
+    <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="Restore;Publish" RemoveProperties="PublishProfile;OutputPath;BaseOutputPath;BaseIntermediateOutputPath;IntermediateOutputPath" Properties="Configuration=$(Configuration);RuntimeIdentifier=win-x64;PublishDir=$(MemoriaSpecialEffectPluginPublishDir);MemoriaNativePublish=true;NoBuild=true;DeploySpecialEffectPlugin=false;IncludeSpecialEffectPlugin=false;PublishSingleFile=false" />
+    <Error Text="FF9SpecialEffectPlugin native publish did not produce $(MemoriaSpecialEffectPluginPublishDir)FF9SpecialEffectPlugin.dll." Condition="!Exists('$(MemoriaSpecialEffectPluginPublishDir)FF9SpecialEffectPlugin.dll')" />
+  </Target>
+
+  <Target Name="MemoriaDeploySpecialEffectPlugin" AfterTargets="MemoriaBuildSpecialEffectPlugin" Condition="'$(MSBuildProjectName)' == 'FF9SpecialEffectPlugin' and '$(DeploySpecialEffectPlugin)' == 'true' and '$(MemoriaNativePublish)' != 'true'">
+    <PropertyGroup>
+      <_SpecialEffectGamePath>$(MemoriaGamePath)</_SpecialEffectGamePath>
+      <_SpecialEffectGamePath Condition="'$(_SpecialEffectGamePath)' == ''">$([MSBuild]::GetRegistryValueFromView('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 377840', 'InstallLocation', null, RegistryView.Registry64, RegistryView.Registry32))</_SpecialEffectGamePath>
+      <_SpecialEffectGamePath Condition="'$(_SpecialEffectGamePath)' == ''">$([MSBuild]::GetRegistryValueFromView('HKEY_LOCAL_MACHINE\SOFTWARE\GOG.com\Games\1375008492', 'path', null, RegistryView.Registry64, RegistryView.Registry32))</_SpecialEffectGamePath>
+      <_SpecialEffectPluginGameDir>$(_SpecialEffectGamePath)\x64\FF9_Data\Plugins\</_SpecialEffectPluginGameDir>
+    </PropertyGroup>
+    <Error Text="DeploySpecialEffectPlugin requires a Windows x64 game installation. Set MemoriaGamePath to its root directory." Condition="'$(_SpecialEffectGamePath)' == '' or !Exists('$(_SpecialEffectGamePath)\x64\FF9_Data\Managed') or '$(RuntimeIdentifier)' != 'win-x64'" />
+    <Copy SourceFiles="$(MemoriaSpecialEffectPluginPublishDir)FF9SpecialEffectPlugin.dll" DestinationFolder="$(_SpecialEffectPluginGameDir)" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

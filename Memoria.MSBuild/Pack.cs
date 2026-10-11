@@ -32,6 +32,8 @@ namespace Memoria.MSBuild
         [Required]
         public String TargetName { get; set; }
 
+        public Boolean IncludeSpecialEffectPlugin { get; set; }
+
         private readonly TaskLoggingHelper _log;
 
         public Pack()
@@ -59,6 +61,13 @@ namespace Memoria.MSBuild
 
         public Boolean Execute()
         {
+            String specialEffectPluginPath = Path.Combine(TargetDir, DeploymentFileSet.SpecialEffectPlugin.SourceRelativePath);
+            if (IncludeSpecialEffectPlugin && !File.Exists(specialEffectPluginPath))
+            {
+                _log.LogError("The requested FF9SpecialEffectPlugin NativeAOT library was not found: {0}", specialEffectPluginPath);
+                return false;
+            }
+
             if (BuildEnvironment.IsDebug)
                 Debugger.Launch();
 
@@ -76,7 +85,13 @@ namespace Memoria.MSBuild
 
                     Dictionary<String, UInt16> pathMap = new Dictionary<String, UInt16>(capacity: 400);
                     foreach (DeploymentFileDefinition file in DeploymentFileSet.Files)
+                    {
                         AddPackDefinition(file, compressStream, bw, pathMap, ref uncompressedDataSize);
+                    }
+                    if (IncludeSpecialEffectPlugin)
+                    {
+                        AddPackDefinition(DeploymentFileSet.SpecialEffectPlugin, compressStream, bw, pathMap, ref uncompressedDataSize);
+                    }
 #if NEEDS_SIGNING
                     StartSigning();
 #endif

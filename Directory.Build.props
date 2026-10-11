@@ -5,5 +5,7 @@
         <EnableDefaultItems>false</EnableDefaultItems>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <Prefer32Bit>false</Prefer32Bit>
+        <DeploySpecialEffectPlugin Condition="'$(DeploySpecialEffectPlugin)' == ''">false</DeploySpecialEffectPlugin>
+        <IncludeSpecialEffectPlugin Condition="'$(IncludeSpecialEffectPlugin)' == ''">false</IncludeSpecialEffectPlugin>
     </PropertyGroup>
 </Project>

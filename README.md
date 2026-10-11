@@ -123,3 +123,39 @@ See [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) for third-party software an
 3. Open the file [`Memoria.sln`](Memoria.sln) in Visual Studio and click the build button
 4. Click on `Start` to launch the `Memoria.Launcher` in the game directory
 
+### FF9SpecialEffectPlugin
+
+Run from the repository root:
+
+- Deploy locally: `dotnet build FF9SpecialEffectPlugin/FF9SpecialEffectPlugin.csproj -c Release /p:DeploySpecialEffectPlugin=true`
+- Build a local patcher with the plugin (Visual Studio Developer PowerShell): `msbuild Memoria.Patcher/Memoria.Patcher.csproj /restore /t:Publish /p:Configuration=Release /p:PublishProfile=Win-x64 /p:IncludeSpecialEffectPlugin=true`
+
+Both flags are off by default. To specify the game directory, add `/p:MemoriaGamePath="<game root>"` to the deployment command.
+
+#### Call tracing
+
+Build and deploy with `-c Debug`, then place `FF9SpecialEffectPlugin.trace.json` beside the DLL in `<game root>/x64/FF9_Data/Plugins/`. Tracing is disabled in Release.
+
+All functions:
+
+```json
+{
+  "enabled": true,
+  "log": "FF9SpecialEffectPlugin.trace.log",
+  "functions": ["*"]
+}
+```
+
+**Tracing all functions generates hundreds of megabytes of logs within a few seconds.**
+
+Selected functions:
+
+```json
+{
+  "enabled": true,
+  "log": "FF9SpecialEffectPlugin.trace.log",
+  "functions": ["HostCallbackSend", "PsxClearOTagR"]
+}
+```
+
+Relative log paths resolve from the configuration file's directory.
