@@ -98,7 +98,7 @@ public static class battle
             case FF9StateBattleSystem.PHASE_MENU_ON:
                 if (battle.BattleIdleLoop(ff9, ff9Battle))
                 {
-                    if (ff9.btlMapNo == 336 && !battle.isAlreadyShowTutorial) // Masked Man
+                    if (ff9.btlMapNo == 336 && !battle.isAlreadyShowTutorial && !Configuration.Debug.StartBattle) // Masked Man
                     {
                         PersistenSingleton<UIManager>.Instance.TutorialScene.DisplayMode = TutorialUI.Mode.Battle;
                         PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.Tutorial);

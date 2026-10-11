@@ -131,6 +131,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         try
         {
             this.cameraController = GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>();
+            Memoria.Debugging.BattleLaunch.ApplyBattleSeed();
             this.InitBattleScene();
             FPSManager.SetTargetFPS(Configuration.Graphics.BattleFPS);
             FPSManager.SetMainLoopSpeed(Configuration.Graphics.BattleTPS);

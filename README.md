@@ -96,6 +96,19 @@ Note: This is **not** affiliated with the Memoria Project, a 2023 Proof-of-conce
 - Most crucial options and cheats are embedded in the game launcher
 - More in-depth configuration is available in the file `Memoria.ini` (in the game folder)
 
+### Automated launch (Windows / Steam)
+
+PowerShell examples (adjust the Steam path if needed):
+
+- Battle: `& "C:\Program Files (x86)\Steam\steam.exe" -applaunch 377840 -memoria-battle 336`
+- Model viewer: `& "C:\Program Files (x86)\Steam\steam.exe" -applaunch 377840 -memoria-model-viewer`
+- Field creator: `& "C:\Program Files (x86)\Steam\steam.exe" -applaunch 377840 -memoria-field-creator`
+- Continue from autosave: `& "C:\Program Files (x86)\Steam\steam.exe" -applaunch 377840 -memoria-autoload`
+
+`-memoria-autoload` automatically loads the autosave and resumes the saved game without selecting Continue in the title menu. If the autosave cannot be loaded, the game logs the error and exits.
+
+Battle launch always loads characters and the party from the autosave before entering the selected battle. Use `-memoria-party 0,1,3` to override the saved party after loading. If the autosave cannot be loaded, the game logs the error and exits. `-memoria-party` and `-memoria-seed` are optional battle launch parameters and can only be used with `-memoria-battle`. Launching a battle requires neither parameter. If several startup modes are supplied, model viewer takes priority, followed by field creator, battle, and standalone autoload.
+
 ## Third-party software
 
 See [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) for third-party software and license information.

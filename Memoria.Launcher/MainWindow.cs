@@ -77,6 +77,11 @@ namespace Memoria.Launcher
 
         private async void OnLoaded(Object sender, RoutedEventArgs e)
         {
+            if (App.LaunchOptions.HasStartupMode)
+            {
+                PlayButton.Click();
+                return;
+            }
             try
             {
                 _modFileSystem.DeleteTemporaryDirectory();
@@ -211,7 +216,18 @@ namespace Memoria.Launcher
         }
         private void ModelViewerButton_Click(object sender, RoutedEventArgs e)
         {
-            this.PlayButton.Click(true);
+            PlayButton.LaunchOptions = GameLaunchOptions.Parse(new String[] { "-memoria-model-viewer" });
+            PlayButton.Click();
+        }
+
+        private void BattleLaunchButton_Click(Object sender, RoutedEventArgs e)
+        {
+            Window_StartBattle battleWindow = new Window_StartBattle(options =>
+            {
+                PlayButton.LaunchOptions = options;
+                PlayButton.Click();
+            });
+            MainWindowGrid.Children.Add(battleWindow);
         }
 
         private void SavePreset_Click(object sender, RoutedEventArgs e)

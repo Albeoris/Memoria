@@ -1,4 +1,4 @@
-﻿<Window
+<Window
     x:Class="Memoria.Launcher.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -190,47 +190,55 @@
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top" />
 
-                        <Button Name="ModelViewerButton"
-                            Content="{DynamicResource Launcher.ModelViewer}"
-                            Style="{StaticResource ButtonStyle2}"
-                            Grid.Column="0"
-                            Height="35"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Bottom"
-                            Margin="20,0,0,20"
-                            Click="ModelViewerButton_Click"/>
-
-                        <Button Name="NewPresetButton"
-                            Content="{DynamicResource Launcher.CreatePreset}"
-                            Style="{StaticResource ButtonStyle2}"
-                            Grid.Column="1"
-                            Height="35"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Bottom"
-                            Margin="20,0,0,20"
-                            Click="SavePreset_Click"/>
-
-                        <StackPanel
-                            Orientation="Vertical"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Bottom"
-                            Grid.Column="2"
-                            Margin="20,0,0,20" >
-                            <TextBlock x:Name="CopyLogButton_StatusMessage"
-                                Visibility="Collapsed"
-                                HorizontalAlignment="Center"
-                                Background="Black"
-                                Padding="5"
-                                FontSize="14"
-                                TextWrapping="Wrap"
-                                Foreground="Green" />
-                            <Button Name="CopyLogButton"
-                                Content="{DynamicResource Launcher.CopyLogButton}"
+                        <UniformGrid Grid.ColumnSpan="3" Rows="1" VerticalAlignment="Bottom" Margin="0,0,0,20">
+                            <Button Name="ModelViewerButton"
+                                Content="{DynamicResource Launcher.ModelViewer}"
                                 Style="{StaticResource ButtonStyle2}"
                                 Height="35"
-                                Click="CopyLogButton_Click"/>
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Bottom"
+                                Margin="20,0,0,0"
+                                Click="ModelViewerButton_Click"/>
 
-                        </StackPanel>
+                            <Button Name="BattleLaunchButton"
+                                Content="{DynamicResource Launcher.StartBattle}"
+                                Style="{StaticResource ButtonStyle2}"
+                                Height="35"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Bottom"
+                                Margin="20,0,0,0"
+                                Click="BattleLaunchButton_Click"/>
+
+                            <Button Name="NewPresetButton"
+                                Content="{DynamicResource Launcher.CreatePreset}"
+                                Style="{StaticResource ButtonStyle2}"
+                                Height="35"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Bottom"
+                                Margin="20,0,0,0"
+                                Click="SavePreset_Click"/>
+
+                            <StackPanel
+                                Orientation="Vertical"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Bottom"
+                                Margin="20,0,0,0" >
+                                <TextBlock x:Name="CopyLogButton_StatusMessage"
+                                    Visibility="Collapsed"
+                                    HorizontalAlignment="Center"
+                                    Background="Black"
+                                    Padding="5"
+                                    FontSize="14"
+                                    TextWrapping="Wrap"
+                                    Foreground="Green" />
+                                <Button Name="CopyLogButton"
+                                    Content="{DynamicResource Launcher.CopyLogButton}"
+                                    Style="{StaticResource ButtonStyle2}"
+                                    Height="35"
+                                    Click="CopyLogButton_Click"/>
+
+                            </StackPanel>
+                        </UniformGrid>
                     </Grid>
                 </Border>
             </TabItem>
