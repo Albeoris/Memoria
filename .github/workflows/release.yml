@@ -5,6 +5,10 @@ on:
     tags:
       - 'v*'
 
+env:
+  # Keep the standalone native plugin out of patchers; set IncludeSpecialEffectPlugin=true to opt in.
+  MSBUILD_ARGS: /p:IncludeSpecialEffectPlugin=false /verbosity:minimal
+
 jobs:
   release:
     runs-on: windows-latest
@@ -53,10 +57,10 @@ jobs:
       run: nuget restore Memoria.sln
 
     - name: Build Memoria.MSBuild.csproj (Release)
-      run: msbuild Memoria.MSBuild/Memoria.MSBuild.csproj /t:Build /p:Configuration=Release /verbosity:minimal
+      run: msbuild Memoria.MSBuild/Memoria.MSBuild.csproj /t:Build /p:Configuration=Release ${{ env.MSBUILD_ARGS }}
 
     - name: Build main solution (Release)
-      run: msbuild Memoria.sln /t:Build /p:Configuration=Release /verbosity:minimal
+      run: msbuild Memoria.sln /t:Build /p:Configuration=Release ${{ env.MSBUILD_ARGS }}
 
     - name: Run launcher tests (Release)
       run: dotnet test Memoria.Launcher.Tests/Memoria.Launcher.Tests.csproj --configuration Release --no-build --no-restore --filter "Category!=CatalogIntegration" --logger "console;verbosity=normal"
@@ -79,17 +83,17 @@ jobs:
         }
 
     - name: Publish Memoria.Patcher (Win-x64)
-      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:Configuration=Release /p:PublishProfile=Win-x64 /verbosity:minimal
+      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:Configuration=Release /p:PublishProfile=Win-x64 ${{ env.MSBUILD_ARGS }}
 
     - name: Generate update manifest
       shell: pwsh
       run: .\.github\New-UpdateManifest.ps1 -AssemblyPath .\Output\Assembly-CSharp.dll -PatcherPath .\Output\win-x64\Memoria.Patcher.exe -OutputPath .\Output\manifest.json
 
     - name: Publish Memoria.Patcher (Linux-x64)
-      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:Configuration=Release /p:PublishProfile=Linux-x64 /verbosity:minimal
+      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:Configuration=Release /p:PublishProfile=Linux-x64 ${{ env.MSBUILD_ARGS }}
 
     - name: Publish Memoria.Patcher (Osx-x64)
-      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:Configuration=Release /p:PublishProfile=Osx-x64 /verbosity:minimal
+      run: msbuild Memoria.Patcher/Memoria.Patcher.csproj "/t:Clean;Publish" /p:Configuration=Release /p:PublishProfile=Osx-x64 ${{ env.MSBUILD_ARGS }}
 
     - name: Rename output files
       run: |

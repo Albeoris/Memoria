@@ -36,4 +36,5 @@
     <Copy SourceFiles="@(_FF9MissingDlls)" DestinationFolder="$(_ReferencesDir)" Condition="'@(_FF9MissingDlls)' != ''" />
     <Warning Text="[CopyGameReferences] FF9 game installation found and missing Reference DLLs have been copied over. Ready to build." Condition="'@(_FF9MissingDlls)' != '' and '$(CI)' != 'true'" />
   </Target>
+  <Import Project="Memoria.SpecialEffectPlugin.targets" />
 </Project>

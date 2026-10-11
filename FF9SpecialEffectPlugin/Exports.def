@@ -1,0 +1,14 @@
+EXPORTS
+    SFX_BeginRender @1
+    SFX_GetPrim @2
+    SFX_InitBattle @3
+    SFX_InitSystem @4
+    SFX_LateUpdate @5
+    SFX_MoveFreeCamera @6
+    SFX_Play @7
+    SFX_SendFloatData @8
+    SFX_SendIntData @9
+    SFX_SkipCameraAnimation @10
+    SFX_StartPlungeCamera @11
+    SFX_Update @12
+    SFX_UpdateCamera @13

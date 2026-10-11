@@ -1,0 +1,36 @@
+<Project>
+  <Target Name="StandaloneTracePolicy" BeforeTargets="CoreCompile">
+    <PropertyGroup>
+      <DefineConstants>$([System.Text.RegularExpressions.Regex]::Replace('$(DefineConstants)', '(^|;)RECOMP_TRACE(?=;|$)', ''))</DefineConstants>
+      <DefineConstants Condition="'$(Configuration)' == 'Debug'">$(DefineConstants);RECOMP_TRACE</DefineConstants>
+    </PropertyGroup>
+  </Target>
+  <UsingTask TaskName="StandalonePatchExports" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)/Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <Generated ParameterType="System.String" Required="true" />
+      <Contract ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Linq" />
+      <Using Namespace="System.Text.RegularExpressions" />
+      <Code Type="Fragment" Language="cs"><![CDATA[
+        string original = File.ReadAllText(Generated);
+        string contract = File.ReadAllText(Contract);
+        foreach (string line in File.ReadAllLines(Contract).Skip(1))
+        {
+            string symbol = line.Trim().Split(' ')[0];
+            if (symbol.Length != 0 && !Regex.IsMatch(original, @"(?m)^\s*" + Regex.Escape(symbol) + @"(?:\s|=|$)"))
+            {
+                Log.LogError("Missing native export: " + symbol);
+                return false;
+            }
+        }
+        File.WriteAllText(Generated, contract);
+      ]]></Code>
+    </Task>
+  </UsingTask>
+  <Target Name="StandaloneExportContract" AfterTargets="IlcCompile" BeforeTargets="LinkNative" Condition="'$(ExportsFile)' != '' and Exists('$(MSBuildProjectDirectory)/Exports.def')">
+    <StandalonePatchExports Generated="$(ExportsFile)" Contract="$(MSBuildProjectDirectory)/Exports.def" />
+  </Target>
+</Project>

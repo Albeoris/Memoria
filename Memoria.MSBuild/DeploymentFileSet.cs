@@ -26,6 +26,8 @@ namespace Memoria.MSBuild
 
     internal static class DeploymentFileSet
     {
+        public static readonly DeploymentFileDefinition SpecialEffectPlugin = new DeploymentFileDefinition(DeploymentItemKind.File, @"Global\SpecialEffectPlugin\x64\FF9SpecialEffectPlugin.dll", @"x64\FF9_Data\Plugins\FF9SpecialEffectPlugin.dll");
+
         public static readonly DeploymentFileDefinition[] Files =
         {
             new DeploymentFileDefinition(DeploymentItemKind.Folder, @"StreamingAssets", @"StreamingAssets"),

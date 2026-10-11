@@ -3801,10 +3801,10 @@
     </ProjectReference>
   </ItemGroup>
   <Target Name="MemoriaPatcherAfterBuild" AfterTargets="AfterBuild" Condition="'$(PublishSingleFile)' != 'true'">
-    <Pack SolutionDir="$(SolutionDir)" TargetPath="$(TargetDir)$(AssemblyName)$(_NativeExecutableExtension)" TargetDir="$(TargetDir)" TargetName="$(TargetName)" />
+    <Pack SolutionDir="$(SolutionDir)" TargetPath="$(TargetDir)$(AssemblyName)$(_NativeExecutableExtension)" TargetDir="$(TargetDir)" TargetName="$(TargetName)" IncludeSpecialEffectPlugin="$(IncludeSpecialEffectPlugin)" />
   </Target>
   <Target Name="MemoriaPatcherAfterPublish" AfterTargets="Publish" Condition="'$(PublishSingleFile)' == 'true'">
-    <Pack SolutionDir="$(SolutionDir)" TargetPath="$(PublishDir)$(AssemblyName)$(_NativeExecutableExtension)" TargetDir="$(TargetDir)" TargetName="$(TargetName)" />
+    <Pack SolutionDir="$(SolutionDir)" TargetPath="$(PublishDir)$(AssemblyName)$(_NativeExecutableExtension)" TargetDir="$(TargetDir)" TargetName="$(TargetName)" IncludeSpecialEffectPlugin="$(IncludeSpecialEffectPlugin)" />
   </Target>
   <Target Name="MemoriaPatcherDeployOutput" AfterTargets="Build" Condition="'$(CI)' != 'true'">
     <Deploy SolutionDir="$(SolutionDir)" OutputDir="$(SolutionDir)Output" GamePath="$(MemoriaGamePath)" />
