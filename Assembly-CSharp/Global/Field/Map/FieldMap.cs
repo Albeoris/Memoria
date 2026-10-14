@@ -352,7 +352,7 @@ public class FieldMap : HonoBehavior
                     component.geoTexAnimPlay(2);
             }
         }
-        fldmcf.ff9fieldMCFService();
+        fldmcf.FieldMCFService();
         if ((FF9StateSystem.Common.FF9.attr & 2u) == 0u)
         {
             for (Int32 i = 0; i < this.CharArray.Count; i++)

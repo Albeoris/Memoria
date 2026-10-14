@@ -346,11 +346,11 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         return ip != this.nil;
     }
 
-    public Boolean IsActuallyTalkable(Obj p)
+    public Boolean IsActuallyTalkable(Obj p, Int32 tagId = 3)
     {
         if (p == null)
             return false;
-        Int32 ip = this.GetIP(p.sid, 3, p.ebData);
+        Int32 ip = this.GetIP(p.sid, tagId, p.ebData);
         return ip != this.nil && ((EBin.event_code_binary)p.getByteFromCurrentByte(ip + 7) != EBin.event_code_binary.rsv04 || (EBin.event_code_binary)p.getByteFromCurrentByte(ip + 8) != EBin.event_code_binary.rsv04);
     }
 
@@ -366,9 +366,8 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         obj.ip = ip;
         obj.level = (Byte)level;
         obj.wait = 0;
-        if (additionCommand == null)
-            return;
-        obj.CallAdditionCommand(additionCommand);
+        if (additionCommand != null)
+            obj.CallAdditionCommand(additionCommand);
     }
 
     private Int32 getspw(Obj obj, Int32 id)

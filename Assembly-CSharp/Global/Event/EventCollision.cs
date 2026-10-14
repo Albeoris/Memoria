@@ -207,78 +207,64 @@ public class EventCollision
 
     public static void CollisionRequest(PosObj po)
     {
-        Boolean flag = false;
+        Boolean steamTalkIcon = false;
         EventEngine instance = PersistenSingleton<EventEngine>.Instance;
         Single nilFloat = instance.nilFloat;
-        Obj obj;
+        Obj interractObj;
         if (EventCollision.CheckNPCInput(po))
         {
             if (instance.gMode != 3)
                 return;
-            obj = EventCollision.Collision(instance, po, 2, ref nilFloat);
+            interractObj = EventCollision.Collision(instance, po, 2, ref nilFloat);
         }
         else
         {
-            obj = EventCollision.Collision(instance, po, 4, ref nilFloat);
-            if (obj != null)
+            interractObj = EventCollision.Collision(instance, po, 4, ref nilFloat);
+            if (interractObj != null)
             {
-                EventCollision.sSysAngle = EventCollision.CollisionAngle(po, obj);
+                EventCollision.sSysAngle = EventCollision.CollisionAngle(po, interractObj);
                 if (EventCollision.sSysAngle > -1024 && EventCollision.sSysAngle < 1024)
                 {
-                    if (EventCollision.IsNPCTalkable(obj))
-                        flag = EIcon.PollCollisionIcon(obj);
-                    if (!flag)
-                        obj = EventCollision.Collision(instance, po, 2, ref nilFloat);
+                    if (EventCollision.IsNPCTalkable(interractObj))
+                        steamTalkIcon = EIcon.PollCollisionIcon(interractObj);
+                    if (!steamTalkIcon)
+                        interractObj = EventCollision.Collision(instance, po, 2, ref nilFloat);
                 }
                 else
                 {
-                    obj = EventCollision.Collision(instance, po, 2, ref nilFloat);
+                    interractObj = EventCollision.Collision(instance, po, 2, ref nilFloat);
                 }
             }
             else
             {
-                obj = EventCollision.Collision(instance, po, 2, ref nilFloat);
-                if (instance.gMode == 3 && obj != null)
-                {
-                    WMActor wmActor = ((Actor)po).wmActor;
-                    if (wmActor.ControlNo == 0)
-                        flag = EIcon.PollCollisionIcon(obj);
-                }
+                interractObj = EventCollision.Collision(instance, po, 2, ref nilFloat);
+                if (instance.gMode == 3 && interractObj != null && ((Actor)po).wmActor.ControlNo == 0)
+                    steamTalkIcon = EIcon.PollCollisionIcon(interractObj);
             }
         }
-        if (obj != null && EventCollision.CheckNPCPush((PosObj)obj))
-            instance.Request(obj, 1, 2, false);
+        if (interractObj != null && EventCollision.CheckNPCPush((PosObj)interractObj))
+            instance.Request(interractObj, 1, 2, false);
         if (EventCollision.CheckQuadInput(po))
             return;
-        obj = instance.TreadQuad(po, 2);
-        if (obj != null)
+        interractObj = instance.TreadQuad(po, 2);
+        if (interractObj != null)
         {
-            Boolean flag2 = EventCollision.CheckQuadPush(po, obj) && instance.Request(obj, 1, 2, false);
-            if (flag2)
+            if (EventCollision.CheckQuadPush(po, interractObj) && instance.Request(interractObj, 1, 2, false))
             {
-                if (instance.GetIP((Int32)obj.sid, 8, obj.ebData) != instance.nil)
-                {
+                if (instance.GetIP(interractObj.sid, 8, interractObj.ebData) != instance.nil)
                     EIcon.PollFIcon(BubbleUI.IconType.ExclamationAndDuel);
-                }
-                else
-                {
-                    Int16 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
-                    if (fldMapNo == 2108)
-                    {
-                        if (EventCollision.CheckQuadTalk(po, obj))
-                            EIcon.PollFIcon(BubbleUI.IconType.Exclamation);
-                    }
-                }
+                else if (FF9StateSystem.Common.FF9.fldMapNo == 2108 && EventCollision.CheckQuadTalk(po, interractObj)) // Lindblum/Synthesist
+                    EIcon.PollFIcon(BubbleUI.IconType.Exclamation);
             }
         }
-        obj = instance.TreadQuad(po, 4);
-        if (obj != null && EventCollision.CheckQuadTalk(po, obj) && EventCollision.IsQuadTalkable(po, obj))
-            EIcon.PollCollisionIcon(obj);
-        if (instance.gMode == 3 && obj == null)
+        interractObj = instance.TreadQuad(po, 4);
+        if (interractObj != null && EventCollision.CheckQuadTalk(po, interractObj) && EventCollision.IsQuadTalkable(po, interractObj))
+            EIcon.PollCollisionIcon(interractObj);
+        if (instance.gMode == 3 && interractObj == null)
         {
             if (EventCollision.IsChocoboWalkingOrFlyingInForestArea())
                 EIcon.PollFIcon(BubbleUI.IconType.Exclamation);
-            else if (!flag && EMinigame.CheckBeachMinigame())
+            else if (!steamTalkIcon && EMinigame.CheckBeachMinigame())
                 EIcon.PollFIcon(BubbleUI.IconType.Beach);
         }
     }
@@ -334,34 +320,17 @@ public class EventCollision
 
     private static Boolean CheckQuadPush(PosObj ctrl, Obj quad)
     {
-        Boolean result = true;
         if (PersistenSingleton<EventEngine>.Instance.gMode == 1)
         {
             Int16 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
-            if (fldMapNo != 2108)
-            {
-                if (fldMapNo != 2802)
-                {
-                    if (fldMapNo == 2914)
-                    {
-                        Byte sid = quad.sid;
-                        if (sid == 13)
-                        {
-                            result = false;
-                        }
-                    }
-                }
-                else if (quad.sid == 24)
-                {
-                    result = false;
-                }
-            }
-            else if (quad.sid == 6)
-            {
-                result = EventCollision.IsQuadTalkable(ctrl, quad);
-            }
+            if (fldMapNo == 2914) // Memoria/Birth
+                return quad.sid != 13 || PersistenSingleton<EventEngine>.Instance.IsActuallyTalkable(quad, 2); // Hades's talk region
+            if (fldMapNo == 2802) // Daguerreo/Left Hall
+                return quad.sid != 24 || PersistenSingleton<EventEngine>.Instance.IsActuallyTalkable(quad, 2); // Librarian's talk region
+            if (fldMapNo == 2108) // Lindblum/Synthesist
+                return quad.sid != 6 || EventCollision.IsQuadTalkable(ctrl, quad); // Shop's talk region
         }
-        return result;
+        return true;
     }
 
     private static Boolean CheckQuadTalk(PosObj ctrl, Obj quad)

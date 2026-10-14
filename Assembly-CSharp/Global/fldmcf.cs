@@ -1,227 +1,253 @@
 ﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
-public class fldmcf
+public static class fldmcf
 {
-    public static DMSMapLight[] ff9fieldMCFGetLightDefault(DMSMapConf ObjPtr, ref DMSMapLight? DefaultPtr, ref DMSMapLight? LadderPtr)
+    public const SByte LIGHT_TYPE_FLOOR = 0;
+    public const SByte LIGHT_TYPE_DEFAULT = 1;
+    public const SByte LIGHT_TYPE_LADDER = 2;
+
+    public static Int32 SetCharColor(Int32 uid, Int32 ClrR, Int32 ClrG, Int32 ClrB)
     {
-        if (ObjPtr.lightUse == 0)
-        {
-            return null;
-        }
-        DMSMapLight[] dmsmapLight = ObjPtr.DMSMapLight;
-        Int32 num = (Int32)(ObjPtr.lightUse - 1);
-        do
-        {
-            DMSMapLight value = dmsmapLight[num];
-            if ((Int32)value.type == 1)
-            {
-                DefaultPtr = new DMSMapLight?(value);
-            }
-            else if ((Int32)value.type == 2)
-            {
-                LadderPtr = new DMSMapLight?(value);
-            }
-            num--;
-        }
-        while (num >= 0);
-        return dmsmapLight;
+        return fldmcf.SetCharColor(FF9StateSystem.Common.FF9.charArray[uid], ClrR, ClrG, ClrB);
     }
 
-    public static DMSMapChar? ff9fieldMCFGetCharByID(DMSMapConf ObjPtr, Int32 model)
+    public static void SetMCFDefaultLight(SByte type, Color32 col, SByte shadowIntensity, SByte shadowScale)
     {
-        model &= 65535;
-        if (ObjPtr.charUse == 0)
-        {
-            return null;
-        }
-        DMSMapChar[] dmsmapChar = ObjPtr.DMSMapChar;
-        Int32 num = (Int32)(ObjPtr.charUse - 1);
-        DMSMapChar value;
-        for (; ; )
-        {
-            value = dmsmapChar[num];
-            if (value.geoNo == (UInt16)model)
-            {
-                break;
-            }
-            num--;
-            if (num < 0)
-            {
-                goto Block_3;
-            }
-        }
-        return new DMSMapChar?(value);
-    Block_3:
-        return null;
+        EnsureLightConfig();
+        DMSMapConf lightConfig = FF9StateSystem.Field.FF9Field.loc.map.mcfPtr.Value;
+        DMSMapLight light = lightConfig.DMSMapLight[GetOrCreateLight(lightConfig, type, -1)];
+        light.clr = [(SByte)col.r, (SByte)col.g, (SByte)col.b];
+        light.shadowI = shadowIntensity;
+        light.shadowR = shadowScale;
     }
 
-    public static void ff9fieldMCFService()
+    public static void SetMCFFloorLight(SByte floorNdx, Color32 col, SByte shadowIntensity, SByte shadowScale)
     {
-        DMSMapConf? mcfPtr = FF9StateSystem.Field.FF9Field.loc.map.mcfPtr;
-        if (mcfPtr == null)
-        {
+        EnsureLightConfig();
+        DMSMapConf lightConfig = FF9StateSystem.Field.FF9Field.loc.map.mcfPtr.Value;
+        DMSMapLight light = lightConfig.DMSMapLight[GetOrCreateLight(lightConfig, LIGHT_TYPE_FLOOR, floorNdx)];
+        light.clr = [(SByte)col.r, (SByte)col.g, (SByte)col.b];
+        light.shadowI = shadowIntensity;
+        light.shadowR = shadowScale;
+    }
+
+    public static void SetMCFModelLight(UInt16 model, Color32 col, SByte shadowIntensity, SByte shadowScale)
+    {
+        EnsureLightConfig();
+        DMSMapConf lightConfig = FF9StateSystem.Field.FF9Field.loc.map.mcfPtr.Value;
+        DMSMapChar light = lightConfig.DMSMapChar[GetOrCreateCharLight(lightConfig, model)];
+        light.clr = [(SByte)col.r, (SByte)col.g, (SByte)col.b];
+        light.shadowI = shadowIntensity;
+        light.shadowR = shadowScale;
+    }
+
+    public static void FieldMCFService()
+    {
+        if (FF9StateSystem.Field.FF9Field.loc.map.mcfPtr == null)
             return;
-        }
-        DMSMapChar[] dmsmapChar = mcfPtr.Value.DMSMapChar;
-        if (dmsmapChar != null)
+        DMSMapConf lightConfig = FF9StateSystem.Field.FF9Field.loc.map.mcfPtr.Value;
+        DMSMapChar[] allCharLights = lightConfig.DMSMapChar;
+        if (allCharLights == null)
+            return;
+        DMSMapChar? defaultCharLight = fldmcf.GetCharLightByModelID(lightConfig, -1);
+        fldmcf.GetLightDefaults(lightConfig, out DMSMapLight? defaultLight, out DMSMapLight? ladderLight);
+        foreach (KeyValuePair<Int32, FF9Char> ch in FF9StateSystem.Common.FF9.charArray)
         {
-            DMSMapLight? dmsmapLight = null;
-            DMSMapLight? dmsmapLight2 = null;
-            DMSMapChar? dmsmapChar2 = fldmcf.ff9fieldMCFGetCharByID(mcfPtr.Value, -1);
-            fldmcf.ff9fieldMCFGetLightDefault(mcfPtr.Value, ref dmsmapLight, ref dmsmapLight2);
-            foreach (Int32 num in FF9StateSystem.Common.FF9.charArray.Keys)
+            Int32 charUID = ch.Key;
+            FF9Char character = ch.Value;
+            Actor charActor = PersistenSingleton<EventEngine>.Instance.getActiveActorByUID(charUID);
+            if (character != null && charActor != null)
             {
-                FF9Char ff9Char = FF9StateSystem.Common.FF9.charArray[num];
-                Actor activeActorByUID = PersistenSingleton<EventEngine>.Instance.getActiveActorByUID(num);
-                FF9StateFieldMap map = FF9StateSystem.Field.FF9Field.loc.map;
-                if (ff9Char != null && activeActorByUID != null)
+                FF9FieldCharState charState = FF9StateSystem.Field.FF9Field.loc.map.charStateArray[charUID];
+                DMSMapChar? charLight = fldmcf.GetCharLightByModelID(lightConfig, (Int32)charActor.model);
+                DMSMapLight? floorLight = fldmcf.GetLightByCharFloor(lightConfig, charUID, out Int16 charFloor);
+                UInt32 isUsingLadder = character.attr & 4u;
+                Boolean applyLight = (charState.floor & 0xFF) != (charFloor & 0xFF) || (isUsingLadder ^ (charState.attr & 4u)) != 0 || FF9Char.ff9charptr_attr_test(character, 0x100) == 0;
+                if (applyLight)
                 {
-                    FF9FieldCharState ff9FieldCharState = FF9StateSystem.Field.FF9Field.loc.map.charStateArray[num];
-                    Int16 num2 = 0;
-                    DMSMapChar? dmsmapChar3 = fldmcf.ff9fieldMCFGetCharByID(mcfPtr.Value, (Int32)activeActorByUID.model);
-                    DMSMapLight? dmsmapLight3 = fldmcf.ff9fieldMCFGetLightByCharFloor(mcfPtr.Value, num, ref num2);
-                    UInt32 num3 = (UInt32)(ff9Char.attr & 4u);
-                    Boolean flag = ((Int32)ff9FieldCharState.floor & 255) != (Int32)(num2 & 255) || ((Int64)num3 ^ (Int64)((UInt64)(ff9FieldCharState.attr & 4u))) != 0L || FF9Char.ff9charptr_attr_test(ff9Char, 256) == 0;
-                    if (flag)
+                    if (FF9Char.ff9charptr_attr_test(character, 0x400) == 0)
                     {
-                        if (FF9Char.ff9charptr_attr_test(ff9Char, 1024) == 0)
+                        SByte[] charColor = charLight != null ? charLight.Value.clr : defaultCharLight.Value.clr;
+                        SByte[] lightColor = [0, 0, 0];
+                        if (isUsingLadder != 0 && ladderLight != null)
+                            lightColor = ladderLight.Value.clr;
+                        else if (floorLight != null)
+                            lightColor = floorLight.Value.clr;
+                        else if (defaultLight != null)
+                            lightColor = defaultLight.Value.clr;
+                        charState.clr[0] = new FF9FieldCharColor
                         {
-                            SByte[] array = new SByte[4];
-                            SByte[] clr;
-                            if (dmsmapChar3 != null)
-                            {
-                                clr = dmsmapChar3.Value.clr;
-                            }
-                            else
-                            {
-                                clr = dmsmapChar2.Value.clr;
-                            }
-                            if (num3 != 0 && dmsmapLight2 != null)
-                            {
-                                array = dmsmapLight2.Value.clr;
-                            }
-                            else if (dmsmapLight3 != null)
-                            {
-                                array = dmsmapLight3.Value.clr;
-                            }
-                            else if (dmsmapLight != null)
-                            {
-                                array = dmsmapLight.Value.clr;
-                            }
-                            FF9FieldCharColor ff9FieldCharColor = default(FF9FieldCharColor);
-                            ff9FieldCharColor.r = (Byte)((Int32)clr[0] + (Int32)array[0] << 3);
-                            ff9FieldCharColor.g = (Byte)((Int32)clr[1] + (Int32)array[1] << 3);
-                            ff9FieldCharColor.b = (Byte)((Int32)clr[2] + (Int32)array[2] << 3);
-                            ff9FieldCharColor.active = true;
-                            ff9FieldCharState.clr[0] = (ff9FieldCharState.clr[1] = ff9FieldCharColor);
-                        }
-                        Int32 num4;
-                        Int32 num5;
-                        if (dmsmapChar3 != null)
-                        {
-                            num4 = (Int32)dmsmapChar3.Value.shadowI;
-                            num5 = (Int32)dmsmapChar3.Value.shadowR;
-                        }
-                        else
-                        {
-                            num4 = (Int32)dmsmapChar2.Value.shadowI;
-                            num5 = (Int32)dmsmapChar2.Value.shadowR;
-                        }
-                        if (dmsmapLight3 != null)
-                        {
-                            num4 += (Int32)dmsmapLight3.Value.shadowI;
-                            num5 += (Int32)dmsmapLight3.Value.shadowR;
-                        }
-                        else if (dmsmapLight != null)
-                        {
-                            num4 += (Int32)dmsmapLight.Value.shadowI;
-                            num5 += (Int32)dmsmapLight.Value.shadowR;
-                        }
-                        num4 <<= 3;
-                        ff9shadow.FF9ShadowSetAmpField(num, num4);
-                        ff9shadow.FF9ShadowSetScaleField(num, num5, num5);
-                        ff9FieldCharState.floor = (SByte)num2;
-                        ff9FieldCharState.attr = ((ff9FieldCharState.attr & 0xFFFFFFFF) | num3);
-                        FF9Char.ff9charptr_attr_set(ff9Char, 256);
+                            r = (Byte)(charColor[0] + lightColor[0] << 3),
+                            g = (Byte)(charColor[1] + lightColor[1] << 3),
+                            b = (Byte)(charColor[2] + lightColor[2] << 3),
+                            active = true
+                        };
+                        charState.clr[1] = charState.clr[0];
                     }
+                    Int32 shadowIntensity;
+                    Int32 shadowScale;
+                    if (charLight != null)
+                    {
+                        shadowIntensity = charLight.Value.shadowI;
+                        shadowScale = charLight.Value.shadowR;
+                    }
+                    else
+                    {
+                        shadowIntensity = defaultCharLight.Value.shadowI;
+                        shadowScale = defaultCharLight.Value.shadowR;
+                    }
+                    if (floorLight != null)
+                    {
+                        shadowIntensity += floorLight.Value.shadowI;
+                        shadowScale += floorLight.Value.shadowR;
+                    }
+                    else if (defaultLight != null)
+                    {
+                        shadowIntensity += defaultLight.Value.shadowI;
+                        shadowScale += defaultLight.Value.shadowR;
+                    }
+                    shadowIntensity <<= 3;
+                    ff9shadow.FF9ShadowSetAmpField(charUID, shadowIntensity);
+                    ff9shadow.FF9ShadowSetScaleField(charUID, shadowScale, shadowScale);
+                    charState.floor = (SByte)charFloor;
+                    charState.attr = (charState.attr & 0xFFFFFFFF) | isUsingLadder;
+                    FF9Char.ff9charptr_attr_set(character, 0x100);
                 }
             }
         }
     }
 
-    public static DMSMapChar[] ff9fieldMCFGetCharArray(DMSMapConf? ObjPtr)
+    private static void GetLightDefaults(DMSMapConf lightConfig, out DMSMapLight? defaultLight, out DMSMapLight? ladderLight)
     {
-        if (ObjPtr != null && ObjPtr.Value.charUse > 0)
+        defaultLight = null;
+        ladderLight = null;
+        if (lightConfig.lightUse == 0)
+            return;
+        foreach (DMSMapLight light in lightConfig.DMSMapLight)
         {
-            return ObjPtr.Value.DMSMapChar;
+            if (light.type == LIGHT_TYPE_DEFAULT)
+                defaultLight = light;
+            else if (light.type == LIGHT_TYPE_LADDER)
+                ladderLight = light;
         }
+    }
+
+    private static DMSMapChar? GetCharLightByModelID(DMSMapConf lightConfig, Int32 model)
+    {
+        model &= 0xFFFF;
+        if (lightConfig.charUse == 0)
+            return null;
+        foreach (DMSMapChar light in lightConfig.DMSMapChar)
+            if (light.geoNo == model)
+                return light;
         return null;
     }
 
-    public static DMSMapLight? ff9fieldMCFGetLightByCharFloor(DMSMapConf ObjPtr, Int32 uid, ref Int16 FloorNoPtr)
+    private static DMSMapLight? GetLightByCharFloor(DMSMapConf lightConfig, Int32 uid, out Int16 charFloor)
     {
-        Int16 num = 0;
-        BGI.BGI_charGetInfo(uid, ref num, ref FloorNoPtr);
-        if (ObjPtr.lightUse == 0)
-        {
+        charFloor = 0;
+        Int16 triIndex = 0;
+        BGI.BGI_charGetInfo(uid, ref triIndex, ref charFloor);
+        if (lightConfig.lightUse == 0)
             return null;
-        }
-        if ((FloorNoPtr & 255) == 255)
-        {
+        if ((charFloor & 0xFF) == 0xFF)
             return null;
-        }
-        DMSMapLight[] dmsmapLight = ObjPtr.DMSMapLight;
-        Int32 num2 = (Int32)(ObjPtr.lightUse - 1);
-        DMSMapLight value;
-        for (; ; )
-        {
-            value = dmsmapLight[num2];
-            if ((Int32)value.type == 0)
-            {
-                for (Int32 i = 3; i >= 0; i--)
-                {
-                    SByte b = value.floor[i];
-                    Int32 num3 = (Int32)b & 255;
-                    if (num3 == (Int32)FloorNoPtr)
-                    {
-                        goto Block_4;
-                    }
-                }
-            }
-            num2--;
-            if (num2 < 0)
-            {
-                goto Block_5;
-            }
-        }
-    Block_4:
-        return new DMSMapLight?(value);
-    Block_5:
+        foreach (DMSMapLight light in lightConfig.DMSMapLight)
+            if (light.type == LIGHT_TYPE_FLOOR)
+                for (Int32 i = 0; i < 4; i++)
+                    if ((light.floor[i] & 0xFF) == charFloor)
+                        return light;
         return null;
     }
 
-    public static Int32 FF9FieldMCFSetCharColor(Int32 uid, Int32 ClrR, Int32 ClrG, Int32 ClrB)
+    private static void EnsureLightConfig()
     {
-        FF9Char charPtr = FF9StateSystem.Common.FF9.charArray[uid];
-        return fldmcf.ff9fieldMCFSetCharColor(charPtr, ClrR, ClrG, ClrB);
+        if (FF9StateSystem.Field.FF9Field.loc.map.mcfPtr == null)
+        {
+            FF9StateSystem.Field.FF9Field.loc.map.mcfPtr = new DMSMapConf()
+            {
+                attr = 0,
+                version = 3,
+                bgNo = 0,
+                lightCount = 0,
+                lightUse = 0,
+                charCount = 0,
+                charUse = 0,
+                evtCount = 0,
+                evtUse = 0,
+                DMSMapLight = [],
+                DMSMapChar = []
+            };
+        }
     }
 
-    private static Int32 ff9fieldMCFSetCharColor(FF9Char CharPtr, Int32 ClrR, Int32 ClrG, Int32 ClrB)
+    private static Int32 GetOrCreateLight(DMSMapConf lightConfig, SByte type, SByte floorIndex)
     {
-        if (FF9Char.ff9charptr_attr_test(CharPtr, 2048) == 0)
+        if (lightConfig.DMSMapLight == null)
+            lightConfig.DMSMapLight = [];
+        Int32 lightIndex = -1;
+        for (Int32 i = 0; i < lightConfig.lightCount; i++)
         {
-            FF9FieldCharState ff9FieldCharState = FF9StateSystem.Field.FF9Field.loc.map.charStateArray[(Int32)CharPtr.evt.uid];
-            FF9FieldCharColor ff9FieldCharColor = default(FF9FieldCharColor);
-            ff9FieldCharColor.r = (Byte)ClrR;
-            ff9FieldCharColor.g = (Byte)ClrG;
-            ff9FieldCharColor.b = (Byte)ClrB;
-            ff9FieldCharColor.active = true;
-            ff9FieldCharState.clr[0] = (ff9FieldCharState.clr[1] = ff9FieldCharColor);
-            FF9Char.ff9charptr_attr_set(CharPtr, 1024);
-            FF9Char.ff9charptr_attr_set(CharPtr, 2048);
+            DMSMapLight light = lightConfig.DMSMapLight[i];
+            if (light.type == type)
+                for (Int32 j = 0; j < 4; j++)
+                    if ((light.floor[j] & 0xFF) == floorIndex)
+                        lightIndex = i;
+        }
+        if (lightIndex < 0)
+        {
+            lightIndex = lightConfig.lightCount;
+            lightConfig.lightCount++;
+            Array.Resize(ref lightConfig.DMSMapLight, lightConfig.lightCount);
+            lightConfig.DMSMapLight[lightIndex].type = type;
+            lightConfig.DMSMapLight[lightIndex].floor = [floorIndex, -1, -1, -1];
+            lightConfig.DMSMapLight[lightIndex].clr = [0, 0, 0];
+        }
+        return lightIndex;
+    }
+
+    private static Int32 GetOrCreateCharLight(DMSMapConf lightConfig, Int32 model)
+    {
+        if (lightConfig.DMSMapChar == null)
+            lightConfig.DMSMapChar = [];
+        Int32 lightIndex = -1;
+        for (Int32 i = 0; i < lightConfig.charCount; i++)
+        {
+            DMSMapChar light = lightConfig.DMSMapChar[i];
+            if (light.geoNo == model)
+                lightIndex = i;
+        }
+        if (lightIndex < 0)
+        {
+            lightIndex = lightConfig.charCount;
+            lightConfig.charCount++;
+            Array.Resize(ref lightConfig.DMSMapChar, lightConfig.charCount);
+            lightConfig.DMSMapChar[lightIndex].geoNo = (UInt16)model;
+            lightConfig.DMSMapChar[lightIndex].clr = [0, 0, 0];
+        }
+        return lightIndex;
+    }
+
+    private static Int32 SetCharColor(FF9Char CharPtr, Int32 ClrR, Int32 ClrG, Int32 ClrB)
+    {
+        if (FF9Char.ff9charptr_attr_test(CharPtr, 0x800) == 0)
+        {
+            FF9FieldCharState charState = FF9StateSystem.Field.FF9Field.loc.map.charStateArray[CharPtr.evt.uid];
+            charState.clr[0] = new FF9FieldCharColor
+            {
+                r = (Byte)ClrR,
+                g = (Byte)ClrG,
+                b = (Byte)ClrB,
+                active = true
+            };
+            charState.clr[1] = charState.clr[0];
+            FF9Char.ff9charptr_attr_set(CharPtr, 0x400);
+            FF9Char.ff9charptr_attr_set(CharPtr, 0x800);
             return 1;
         }
-        FF9Char.ff9charptr_attr_clear(CharPtr, 2048);
+        FF9Char.ff9charptr_attr_clear(CharPtr, 0x800);
         return 0;
     }
 }
