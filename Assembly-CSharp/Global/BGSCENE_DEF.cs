@@ -516,7 +516,7 @@ public class BGSCENE_DEF
         foreach (BGOVERLAY_DEF bgOverlay in this.overlayList)
         {
             bgsStr += $"OVERLAY\n";
-            bgsStr += ExportMemoriaBGXOverlay(bgOverlay, fileName);
+            bgsStr += ExportMemoriaBGXOverlay(bgOverlay, folder + fileName);
         }
         foreach (BGANIM_DEF bgAnim in this.animList)
         {
@@ -826,6 +826,37 @@ public class BGSCENE_DEF
             this.ReadMemoriaBGS(customBackgroundFilename, path);
         else
             this.LoadAtlasAndEBG(path, newName);
+    }
+
+    public void UpdateSceneImmediately()
+    {
+        String path = FieldMap.GetMapResourcePath(this.name);
+        String customBackgroundFilename = AssetManager.SearchAssetOnDisc(path + this.name + MemoriaBGXExtension, true, false);
+        if (!String.IsNullOrEmpty(customBackgroundFilename))
+        {
+            FieldMap fieldmap = PersistenSingleton<EventEngine>.Instance.fieldmap;
+            foreach (BGCAM_DEF bgCamera in this.cameraList)
+            {
+                if (bgCamera.transform != null)
+                    UnityEngine.Object.Destroy(bgCamera.transform.gameObject);
+                if (bgCamera.projectedWalkMesh != null)
+                    UnityEngine.Object.Destroy(bgCamera.projectedWalkMesh);
+            }
+            foreach (BGOVERLAY_DEF bgOverlay in this.overlayList)
+                if (bgOverlay.transform != null)
+                    UnityEngine.Object.Destroy(bgOverlay.transform.gameObject);
+            UnityEngine.Object.Destroy(fieldmap.transform.Find("Background"));
+            this.overlayList.Clear();
+            this.animList.Clear();
+            this.lightList.Clear();
+            this.cameraList.Clear();
+            this.ReadMemoriaBGS(customBackgroundFilename, path);
+            this.CreatePureMemoriaScene(fieldmap.transform);
+            Int32 camId = fieldmap.camIdx;
+            fieldmap.camIdx = -1;
+            fieldmap.SetCurrentCameraIndex(camId);
+            fieldmap.walkMesh.CreateProjectedWalkMesh();
+        }
     }
 
     private void LoadAtlasAndEBG(String path, String newName)

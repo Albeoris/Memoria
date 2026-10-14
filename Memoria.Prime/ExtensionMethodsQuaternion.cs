@@ -26,6 +26,54 @@ namespace Memoria.Prime
             return Mathf.Sqrt(q.Norm2());
         }
 
+        public static void SetSpecificCoordinate(this ref Quaternion q, Int32 coordType, Single coord)
+        {
+            if (coordType < 0 || coordType > 3)
+                return;
+            if (q.w < 0f)
+            {
+                q.x = -q.x;
+                q.y = -q.y;
+                q.z = -q.z;
+                q.w = -q.w;
+            }
+            coord = Mathf.Clamp(coord, -1f, 1f);
+            q[coordType] = coord;
+            Single targetW2 = 1f - q.x * q.x - q.y * q.y - q.z * q.z;
+            if (targetW2 >= 0f)
+            {
+                q.w = (Single)Math.Sqrt(targetW2);
+            }
+            else
+            {
+                q.w = 0f;
+                if (coordType != 0)
+                {
+                    Single targetX2 = 1f - q.y * q.y - q.z * q.z;
+                    if (targetX2 > 0f)
+                        q.x = Math.Sign(q.x) * (Single)Math.Sqrt(targetX2);
+                    else
+                        q.x = 0f;
+                }
+                if (coordType != 1)
+                {
+                    Single targetY2 = 1f - q.x * q.x - q.z * q.z;
+                    if (targetY2 > 0f)
+                        q.y = Math.Sign(q.y) * (Single)Math.Sqrt(targetY2);
+                    else
+                        q.y = 0f;
+                }
+                if (coordType != 2)
+                {
+                    Single targetZ2 = 1f - q.x * q.x - q.y * q.y;
+                    if (targetZ2 > 0f)
+                        q.z = Math.Sign(q.z) * (Single)Math.Sqrt(targetZ2);
+                    else
+                        q.z = 0f;
+                }
+            }
+        }
+
         public static void SetupFromEulerAngles(this ref Quaternion q, Vector3 eulerAngles, EulerRotationOrder order = EulerRotationOrder.EULER_ZXY)
         {
             const Double HalfDegToRad = Math.PI / 360.0;

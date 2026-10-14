@@ -226,6 +226,12 @@ namespace Memoria.Assets
                     ParsedTagList.Insert(i, tag);
                     return;
                 }
+                else if (ParsedTagList[i].TextOffset == pos && tag.Code == FFIXTextTagCode.Choice && (ParsedTagList[i].Code == FFIXTextTagCode.MoveCaret || ParsedTagList[i].Code == FFIXTextTagCode.Tab))
+                {
+                    tag.TextOffset = Math.Max(pos, 0);
+                    ParsedTagList.Insert(i, tag);
+                    return;
+                }
             }
             tag.TextOffset = Math.Max(pos, 0);
             ParsedTagList.Add(tag);

@@ -1999,7 +1999,7 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.CHRCOLOR: // 0x8F, "SetModelColor", "Change a 3D model's color."
             {
-                if (fldmcf.FF9FieldMCFSetCharColor((Int32)this.GetObj1().uid, this.getv1(), this.getv1(), this.getv1()) == 0) // arg1: entry associated with the model, 2-4: color in (Red, Green, Blue)
+                if (fldmcf.SetCharColor((Int32)this.GetObj1().uid, this.getv1(), this.getv1(), this.getv1()) == 0) // arg1: entry associated with the model, 2-4: color in (Red, Green, Blue)
                     return 0;
                 this.stay();
                 return EventEngine.FLOW_STATE_WAIT;
@@ -3175,6 +3175,33 @@ public partial class EventEngine
                 Int32 dictID = this.getv3(); // dictionary ID to clear
                 if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(dictID, out Dictionary<Int32, Int32> dict))
                     dict.Clear();
+                return 0;
+            }
+            case EBin.event_code_binary.MCF_DEFAULT: // "SetDefaultFieldLight" Change the light parameters of the field
+            {
+                SByte type = (SByte)this.getv3(); // 1: default light, 2: ladder light
+                Color32 col = new Color32((Byte)this.getv3(), (Byte)this.getv3(), (Byte)this.getv3(), 0xFF);
+                SByte shadowIntensity = (SByte)this.getv3();
+                SByte shadowScale = (SByte)this.getv3();
+                fldmcf.SetMCFDefaultLight(type, col, shadowIntensity, shadowScale);
+                return 0;
+            }
+            case EBin.event_code_binary.MCF_FLOOR: // "SetWalkpathLight" Change the light parameters of a specific walkpath
+            {
+                SByte floorNdx = (SByte)this.getv3();
+                Color32 col = new Color32((Byte)this.getv3(), (Byte)this.getv3(), (Byte)this.getv3(), 0xFF);
+                SByte shadowIntensity = (SByte)this.getv3();
+                SByte shadowScale = (SByte)this.getv3();
+                fldmcf.SetMCFFloorLight(floorNdx, col, shadowIntensity, shadowScale);
+                return 0;
+            }
+            case EBin.event_code_binary.MCF_MODEL: // "SetModelLight" Change the light parameters of a specific model ID
+            {
+                UInt16 modelId = (UInt16)this.getv3(); // Can be -1 to change the light parameters for all models
+                Color32 col = new Color32((Byte)this.getv3(), (Byte)this.getv3(), (Byte)this.getv3(), 0xFF);
+                SByte shadowIntensity = (SByte)this.getv3();
+                SByte shadowScale = (SByte)this.getv3();
+                fldmcf.SetMCFModelLight(modelId, col, shadowIntensity, shadowScale);
                 return 0;
             }
             case EBin.event_code_binary.SHADOWON: // 0x7F, "EnableShadow", "Enable the shadow for the entry's object."

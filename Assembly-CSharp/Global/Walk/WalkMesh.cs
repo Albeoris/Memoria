@@ -1,11 +1,8 @@
 ﻿using Memoria;
-using Memoria.Prime;
-using Memoria.Scenes;
 using Memoria.Scripts;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Object = System.Object;
 
 public class WalkMesh
 {
@@ -2247,15 +2244,7 @@ public class WalkMesh
             {
                 charDef.activeFloor = -1;
             }
-            global::Debug.Log(String.Concat(new Object[]
-            {
-                "000BGI_serviceChar: from : ",
-                charDef.charPos,
-                ", to : ",
-                charDef.lastPos,
-                " activeTri : ",
-                charDef.activeTri
-            }));
+            global::Debug.Log($"000BGI_serviceChar: from : {charDef.charPos}, to : {charDef.lastPos} activeTri : {charDef.activeTri}");
             this.DebugRenderTri(bgi.triList[(Int32)charDef.activeTri]);
             this.BGI_resetPos(charDef);
             num |= 1;
@@ -2281,15 +2270,7 @@ public class WalkMesh
                 {
                     charDef.activeFloor = -1;
                 }
-                global::Debug.Log(String.Concat(new Object[]
-                {
-                    "111BGI_serviceChar: from : ",
-                    charDef.charPos,
-                    ", to : ",
-                    charDef.lastPos,
-                    " activeTri : ",
-                    charDef.activeTri
-                }));
+                global::Debug.Log($"111BGI_serviceChar: from : {charDef.charPos}, to : {charDef.lastPos} activeTri: {charDef.activeTri}");
                 this.DebugRenderTri(bgi.triList[(Int32)charDef.activeTri]);
                 this.BGI_resetPos(charDef);
                 num |= 1;
@@ -2678,11 +2659,9 @@ public class WalkMesh
     }
 
     public List<WalkMeshTriangle>[] trisPerCamera;
-
     public List<WalkMeshTriangle> tris;
 
     public GameObject ProjectedWalkMesh;
-
     public GameObject OriginalWalkMesh;
 
     public Boolean useCachedBounds;
@@ -2692,11 +2671,8 @@ public class WalkMesh
     private Vector3 bgiCharPos;
 
     private Int32 BGIForceCount;
-
     private Vector3[] BGIForces;
-
     private Boolean[] BGIForceType;
-
     private Single[] BGIForceDist;
 
     private Byte attributeMask;

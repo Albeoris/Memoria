@@ -230,6 +230,15 @@ public class BGI_DEF
         this.dataSize = offset;
     }
 
+    public BGI_FLOOR_DEF GetFloorOfVertex(Int32 vertIndex)
+    {
+        foreach (BGI_FLOOR_DEF floor in floorList)
+            foreach (Int32 triIndex in floor.triNdxList)
+                if (triList[triIndex].vertexNdx[0] == vertIndex || triList[triIndex].vertexNdx[1] == vertIndex || triList[triIndex].vertexNdx[2] == vertIndex)
+                    return floor;
+        return null;
+    }
+
     public const Int32 MAGIC_SIZE = 4;
 
     public UInt16 dataSize;

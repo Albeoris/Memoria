@@ -2301,6 +2301,9 @@ public class EBin
         BGLMOVE_TIMED,
         ADD_STATUS,
         REMOVE_STATUS,
+        MCF_DEFAULT,
+        MCF_FLOOR,
+        MCF_MODEL,
     }
 
     public enum flexible_varfunc : ushort
