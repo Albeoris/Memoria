@@ -144,7 +144,9 @@ namespace Memoria.Launcher
             {
                 MakeTooltip(PresetsComboBox, Presets[PresetsComboBox.SelectedIndex].Description);
 
-                if (PresetsComboBox.ToolTip is ToolTip newToolTip && PresetsComboBox.IsMouseOver)
+                if (!Controller.GamepadNavigation.IsControllerInputActive(PresetsComboBox) &&
+                    PresetsComboBox.ToolTip is ToolTip newToolTip &&
+                    PresetsComboBox.IsMouseOver)
                     newToolTip.IsOpen = true;
             }
         }

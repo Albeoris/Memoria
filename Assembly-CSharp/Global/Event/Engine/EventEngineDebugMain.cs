@@ -9,7 +9,7 @@ public class EventEngineDebugMain : MonoBehaviour
         this.ee = PersistenSingleton<EventEngine>.Instance;
         this.ee.InitEvents();
         this.eBin = this.ee.eBin;
-        this.ee.StartEventsByEBFileName("CommonAsset/EventEngine/EventBinary/US/EVT_ALEX1_TS_CARGO_0.eb");
+        //this.ee.StartEventsByEBFileName("CommonAsset/EventEngine/EventBinary/US/EVT_ALEX1_TS_CARGO_0.eb");
     }
 
     private void Update()

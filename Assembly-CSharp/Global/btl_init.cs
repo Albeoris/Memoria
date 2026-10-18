@@ -31,9 +31,6 @@ public static class btl_init
     public static void InitEnemyData(FF9StateBattleSystem btlsys)
     {
         BTL_DATA monLastBtl = null;
-        ObjList objList = new ObjList();
-        if (!FF9StateSystem.Battle.isDebug)
-            objList = PersistenSingleton<EventEngine>.Instance.GetActiveObjList().next;
         Int32 monCount = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].MonsterCount;
         Int32 enemyIndex = 0;
         Int32 btlIndex = 4;
@@ -54,12 +51,10 @@ public static class btl_init
             {
                 btl_init.SetBattleModel(monBtl);
                 enemy.info.slave = 0;
-                if (!FF9StateSystem.Battle.isDebug)
-                    objList = objList.next;
             }
             monBtl.btl_id = (UInt16)(16 << enemyIndex);
             monBtl.bi.player = 0;
-            monBtl.bi.slot_no = (Byte)enemyIndex;
+            monBtl.bi.slot_no = enemyIndex;
             monBtl.bi.line_no = (Byte)(4 + enemyIndex);
             monBtl.bi.t_gauge = (Byte)((monParam.ResistStatus & BattleStatus.Trance) == 0 ? 1 : 0); // Enemies can have trance when they are not immune to it
             monBtl.bi.slave = enemy.info.slave;
@@ -78,7 +73,7 @@ public static class btl_init
                 if (feature.EnableAsEnemy)
                     monBtl.saMonster.Add(feature);
 
-            FF9BattleDBHeightAndRadius.TryFindHeightAndRadius(monParam.Geo, ref monBtl.height, ref monBtl.radius_effect);
+            FF9DBModelParameters.TryFindHeightAndRadius(monParam.Geo, ref monBtl.height, ref monBtl.radius_effect);
 
             if (monLastBtl != null)
                 monLastBtl.next = monBtl;
@@ -252,14 +247,10 @@ public static class btl_init
 
     public static void InitPlayerData(FF9StateBattleSystem btlsys)
     {
-        ObjList objList = new ObjList();
-        if (!FF9StateSystem.Battle.isDebug)
-            objList = PersistenSingleton<EventEngine>.Instance.GetActiveObjList().next;
         Int16 btlIndex = 0;
-        PLAYER player;
         for (Int32 memberIndex = 0; memberIndex < 4; memberIndex++)
         {
-            player = FF9StateSystem.Common.FF9.party.member[memberIndex];
+            PLAYER player = FF9StateSystem.Common.FF9.party.member[memberIndex];
             if (player != null)
             {
                 BTL_DATA btl = btlsys.btl_data[btlIndex];
@@ -282,8 +273,6 @@ public static class btl_init
                 {
                     GeoTexAnim.geoTexAnimPlay(btl.texanimptr, 2);
                 }
-                if (!FF9StateSystem.Battle.isDebug)
-                    objList = objList.next;
                 btlIndex++;
                 btl_sys.AddCharacter(btl);
                 if (btlsys.cmd_escape.regist == null)
@@ -375,11 +364,11 @@ public static class btl_init
         BONUS btl_bonus = battle.btl_bonus;
         btl_bonus.member_flag |= (Byte)(1 << cnt);
         btl.bi.player = 1;
-        btl.bi.slot_no = (Byte)p.info.slot_no;
+        btl.bi.slot_no = (Int32)p.info.slot_no;
         btl.bi.target = 1;
         btl.bi.line_no = (Byte)cnt;
         btl.bi.slave = 0;
-        if (battle.TRANCE_GAUGE_FLAG == 0 || (p.category & 16) != 0 || (btl.bi.slot_no == (Byte)CharacterId.Garnet && battle.GARNET_DEPRESS_FLAG != 0))
+        if (battle.TRANCE_GAUGE_FLAG == 0 || (p.category & 16) != 0 || ((CharacterId)btl.bi.slot_no == CharacterId.Garnet && battle.GARNET_DEPRESS_FLAG != 0))
         {
             btl.bi.t_gauge = 0;
             btl.trance = 0;
@@ -414,10 +403,14 @@ public static class btl_init
             ff9Char = new FF9Char();
         ff9Char.btl = btl;
         ff9Char.evt = btl.evt;
-        if (ff9play.CharacterIDToEventId(p.Index) >= 0)
-            FF9StateSystem.Common.FF9.charArray[ff9play.CharacterIDToEventId(p.Index)] = ff9Char;
-        else
-            FF9StateSystem.Common.FF9.charArray[9 + (Int32)p.Index] = ff9Char;
+        Int32 charUID = EventEngineUtils.GetEventCharacterSId(PersistenSingleton<EventEngine>.Instance.sObjTable, p.Index);
+        if (charUID < 0)
+        {
+            charUID = 9 + (Int32)p.Index;
+            while (!reinit && FF9StateSystem.Common.FF9.charArray.ContainsKey(charUID))
+                charUID++;
+        }
+        FF9StateSystem.Common.FF9.charArray[charUID] = ff9Char;
         btl_init.InitBattleData(btl, ff9Char);
         btl.mesh_banish = UInt16.MaxValue;
         btl_para.SetupATBCoef(btl, btl_para.GetATBCoef());
@@ -472,7 +465,7 @@ public static class btl_init
         btl.radius_effect = 0;
         btl.radius_collision = 256;
 
-        FF9BattleDBHeightAndRadius.TryFindHeightAndRadius(geoID, ref btl.height, ref btl.radius_effect);
+        FF9DBModelParameters.TryFindHeightAndRadius(geoID, ref btl.height, ref btl.radius_effect);
 
         if (btl.cur.hp == 0 && btl_stat.AlterStatus(unit, BattleStatusId.Death) == btl_stat.ALTER_SUCCESS)
         {
@@ -491,6 +484,7 @@ public static class btl_init
     {
         for (Int32 i = 0; i < BTL_SCENE.GetMonCount(); i++)
         {
+            SB2_PUT enemyPlacement = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].Monster[i];
             ENEMY_TYPE et = btlsys.enemy[i].et;
             BTL_DATA btl = btlsys.btl_data[4 + i];
             BattleUnit unit = new BattleUnit(btl);
@@ -518,8 +512,18 @@ public static class btl_init
                 btl.base_pos[0] = btl.evt.posBattle[0];
                 btl.base_pos[1] = btl.evt.posBattle[1];
                 btl.base_pos[2] = btl.evt.posBattle[2];
-                for (Int16 j = 0; j < btl.mot.Length; j++) // [DV] Check each anims if a clip exist, otherwise create them (if we don't that for custom anim, the battle is frozen).
+                for (Int32 j = 0; j < btl.mot.Length; j++)
                     AnimationFactory.AddAnimWithAnimatioName(btl.gameObject, btl.mot[j]);
+                for (Int32 j = 0; j < btlseq.instance.seq_work_set.SeqData.Length && j < FF9StateSystem.Battle.FF9Battle.enemy_attack.Count; j++)
+                {
+                    if (btlseq.instance.GetEnemyIndexOfSequence(j) == enemyPlacement.TypeNo)
+                    {
+                        Int32 animOffset = btlseq.instance.seq_work_set.AnmOfsList[j];
+                        foreach (Int32 animIndex in btlseq.instance.GetAnimationsOfSequence(j))
+                            if (animOffset + animIndex < btlseq.instance.seq_work_set.AnmAddrList.Length && FF9BattleDB.Animation.TryGetValue(btlseq.instance.seq_work_set.AnmAddrList[animOffset + animIndex], out String animName))
+                                AnimationFactory.AddAnimWithAnimatioName(btl.gameObject, animName);
+                    }
+                }
                 btl.currentAnimationName = btl.mot[btl.bi.def_idle];
                 btl.evt.animFrame = (Byte)(Comn.random8() % GeoAnim.geoAnimGetNumFrames(btl));
             }

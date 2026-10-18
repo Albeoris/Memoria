@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Threading;
 using Task = System.Threading.Tasks.Task;
 
 // ReSharper disable UnusedMember.Global
@@ -215,14 +214,12 @@ namespace Memoria.MSBuild
             private readonly String _sourceMdbPath;
             private readonly String _destinationMdbFileName;
             private readonly String _targetPathX64;
-            private readonly String _targetPathX86;
             private readonly String _rootDirectory;
             private readonly Boolean _hasX64;
-            private readonly Boolean _hasX86;
             private readonly String _outputDir;
             private readonly List<Task> _tasks;
 
-            private FileCopier(Deploy deployTask, String assemblyDirectoryX64, String assemblyDirectoryX86, String rootDirectory, Boolean hasX64, Boolean hasX86, String outputDir)
+            private FileCopier(Deploy deployTask, String assemblyDirectoryX64, String rootDirectory, Boolean hasX64, String outputDir)
             {
                 _deployTask = deployTask;
 
@@ -250,12 +247,6 @@ namespace Memoria.MSBuild
                         _targetPathX64 = Path.Combine(assemblyDirectoryX64, _destinationFileName);
                         estimatedTaskCount += EstimatedTaskCountPerPlatform;
                     }
-
-                    if (assemblyDirectoryX86 != null)
-                    {
-                        _targetPathX86 = Path.Combine(assemblyDirectoryX86, _destinationFileName);
-                        estimatedTaskCount += EstimatedTaskCountPerPlatform;
-                    }
                 }
                 else
                 {
@@ -268,7 +259,6 @@ namespace Memoria.MSBuild
 
                 _rootDirectory = rootDirectory;
                 _hasX64 = hasX64;
-                _hasX86 = hasX86;
                 _outputDir = outputDir;
                 _tasks = new List<Task>(estimatedTaskCount);
             }
@@ -293,7 +283,7 @@ namespace Memoria.MSBuild
             {
                 try
                 {
-                    GameLocationInfo gameLocation = null;
+                    GameLocationInfo gameLocation;
 
                     // Try explicit GamePath first if provided
                     if (!String.IsNullOrWhiteSpace(deployTask.GamePath))
@@ -325,22 +315,13 @@ namespace Memoria.MSBuild
                             return null;
                         }
 
-                        return new FileCopier(deployTask, gameLocation.RootDirectory, null, gameLocation.RootDirectory, Directory.Exists(gameLocation.ManagedPathX64), Directory.Exists(gameLocation.ManagedPathX86), outputDir);
+                        return new FileCopier(deployTask, gameLocation.RootDirectory, gameLocation.RootDirectory, Directory.Exists(gameLocation.ManagedPathX64), outputDir);
                     }
 
                     Boolean isX64Exists = Directory.Exists(gameLocation.ManagedPathX64);
-                    Boolean isX86Exists = Directory.Exists(gameLocation.ManagedPathX86);
 
                     if (isX64Exists)
-                    {
-                        return isX86Exists
-                            ? new FileCopier(deployTask, gameLocation.ManagedPathX64, gameLocation.ManagedPathX86, gameLocation.RootDirectory, isX64Exists, isX86Exists, outputDir)
-                            : new FileCopier(deployTask, gameLocation.ManagedPathX64, null, gameLocation.RootDirectory, isX64Exists, isX86Exists, outputDir);
-                    }
-                    if (isX86Exists)
-                    {
-                        return new FileCopier(deployTask, null, gameLocation.ManagedPathX86, gameLocation.RootDirectory, isX64Exists, isX86Exists, outputDir);
-                    }
+                        return new FileCopier(deployTask, gameLocation.ManagedPathX64, gameLocation.RootDirectory, isX64Exists, outputDir);
 
                     LogWarning(deployTask, $"Cannot find an assembly directory in the game folder [{gameLocation.RootDirectory}].");
                     return null;
@@ -487,9 +468,6 @@ namespace Memoria.MSBuild
                     if (_hasX64)
                         QueueCopyIfNotExists(sourceItem, Path.Combine(_rootDirectory, destinationRelativePath.Replace("{PLATFORM}", "x64")), logSuccess: true);
 
-                    if (_hasX86)
-                        QueueCopyIfNotExists(sourceItem, Path.Combine(_rootDirectory, destinationRelativePath.Replace("{PLATFORM}", "x86")), logSuccess: true);
-
                     return;
                 }
 
@@ -502,12 +480,7 @@ namespace Memoria.MSBuild
                 }
 
                 if (destinationRelativePath.StartsWith("x86\\", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (_hasX86)
-                        QueueCopyIfNotExists(sourceItem, Path.Combine(_rootDirectory, destinationRelativePath), logSuccess: true);
-
-                    return;
-                }
+                    throw new NotSupportedException("The Memoria mod engine no longer supports x86 platforms.");
 
                 QueueCopyIfNotExists(sourceItem, Path.Combine(_rootDirectory, destinationRelativePath), logSuccess: true);
             }
@@ -519,9 +492,6 @@ namespace Memoria.MSBuild
                     if (_hasX64)
                         QueueCopy(sourceItem, Path.Combine(_rootDirectory, destinationRelativePath.Replace("{PLATFORM}", "x64")), logSuccess: true);
 
-                    if (_hasX86)
-                        QueueCopy(sourceItem, Path.Combine(_rootDirectory, destinationRelativePath.Replace("{PLATFORM}", "x86")), logSuccess: true);
-
                     return;
                 }
 
@@ -534,12 +504,7 @@ namespace Memoria.MSBuild
                 }
 
                 if (destinationRelativePath.StartsWith("x86\\", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (_hasX86)
-                        QueueCopy(sourceItem, Path.Combine(_rootDirectory, destinationRelativePath), logSuccess: true);
-
-                    return;
-                }
+                    throw new NotSupportedException("The Memoria mod engine no longer supports x86 platforms.");
 
                 QueueCopy(sourceItem, Path.Combine(_rootDirectory, destinationRelativePath), logSuccess: true);
             }
@@ -549,12 +514,6 @@ namespace Memoria.MSBuild
                 if (_targetPathX64 != null)
                 {
                     String targetItem = Path.Combine(Path.GetDirectoryName(_targetPathX64), destinationFileName);
-                    QueueCopy(sourceItem, targetItem, logSuccess);
-                }
-
-                if (_targetPathX86 != null)
-                {
-                    String targetItem = Path.Combine(Path.GetDirectoryName(_targetPathX86), destinationFileName);
                     QueueCopy(sourceItem, targetItem, logSuccess);
                 }
             }
@@ -601,7 +560,7 @@ namespace Memoria.MSBuild
 
                     File.Copy(sourceItem, targetItem, true);
                     if (logSuccess)
-                        _deployTask._log.LogMessage(MessageImportance.High, "{0}Deployed [{1}]: {2}{0}", Environment.NewLine, Path.GetFileName(targetItem), targetItem);
+                        _deployTask._log.LogMessage(MessageImportance.High, "Deployed [{0}]: {1}", Path.GetFileName(targetItem), targetItem);
                 }
                 catch (Exception ex)
                 {

@@ -20,62 +20,54 @@ public class WMBeeChocobo : MonoBehaviour
         }
     }
 
-    public void SetType(Int32 status)
+    public void SetType(Int32 chocoboType)
     {
         if (!this.didInitialize)
         {
             this.Intialize();
             this.didInitialize = true;
         }
-        if (status < 3 || status > 7)
+        if (chocoboType < Obj.OBJINDEX_CHOCOBO_YELLOW || chocoboType > Obj.OBJINDEX_CHOCOBO_GOLD)
         {
             global::Debug.Log("Uh oh!");
+            return;
         }
-        switch (status)
+        this.Actor.originalActor.index = (Byte)chocoboType;
+        switch (chocoboType)
         {
-            case 3:
+            case Obj.OBJINDEX_CHOCOBO_YELLOW:
                 this.renderers[0].material = this.NormalChocoboMaterials[0];
                 this.renderers[1].material = this.NormalChocoboMaterials[1];
                 this.renderers[2].material = this.NormalChocoboMaterials[2];
-                this.Actor.originalActor.index = 3;
                 break;
-            case 4:
+            case Obj.OBJINDEX_CHOCOBO_TEAL:
                 this.renderers[0].material = this.AsaseChocoboMaterials[0];
                 this.renderers[1].material = this.AsaseChocoboMaterials[1];
                 this.renderers[2].material = this.AsaseChocoboMaterials[2];
-                this.Actor.originalActor.index = 4;
                 break;
-            case 5:
+            case Obj.OBJINDEX_CHOCOBO_RED:
                 this.renderers[0].material = this.YamaChocoboMaterials[0];
                 this.renderers[1].material = this.YamaChocoboMaterials[1];
                 this.renderers[2].material = this.YamaChocoboMaterials[2];
-                this.Actor.originalActor.index = 5;
                 break;
-            case 6:
+            case Obj.OBJINDEX_CHOCOBO_BLUE:
                 this.renderers[0].material = this.UmiChocoboMaterials[0];
                 this.renderers[1].material = this.UmiChocoboMaterials[1];
                 this.renderers[2].material = this.UmiChocoboMaterials[2];
-                this.Actor.originalActor.index = 6;
                 break;
-            case 7:
+            case Obj.OBJINDEX_CHOCOBO_GOLD:
                 this.renderers[0].material = this.SoraChocoboMaterials[0];
                 this.renderers[1].material = this.SoraChocoboMaterials[1];
                 this.renderers[2].material = this.SoraChocoboMaterials[2];
-                this.Actor.originalActor.index = 7;
                 break;
         }
     }
 
     public Material[] NormalChocoboMaterials;
-
     public Material[] AsaseChocoboMaterials;
-
     public Material[] YamaChocoboMaterials;
-
     public Material[] UmiChocoboMaterials;
-
     public Material[] SoraChocoboMaterials;
-
     public Renderer[] renderers;
 
     private Boolean didInitialize;

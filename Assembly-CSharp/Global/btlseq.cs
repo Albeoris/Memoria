@@ -1,15 +1,12 @@
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria;
-using Memoria.Assets;
 using Memoria.Data;
-using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
-using Object = System.Object;
 
 public class btlseq
 {
@@ -83,7 +80,7 @@ public class btlseq
         for (Int32 i = 0; i < 4; i++)
         {
             seqWork[i] = new SEQ_WORK();
-            seqWork[i].CmdPtr = (CMD_DATA)null;
+            seqWork[i].CmdPtr = null;
         }
     }
 
@@ -152,26 +149,26 @@ public class btlseq
     public static SEQ_WORK EntrySequence(CMD_DATA pCmd)
     {
         SEQ_WORK[] seqWork = instance.seq_work_set.SeqWork;
-        Int16 num;
-        for (num = 0; num < 4; num++)
-            if (seqWork[num].CmdPtr == null)
+        Int16 seqIndex;
+        for (seqIndex = 0; seqIndex < 4; seqIndex++)
+            if (seqWork[seqIndex].CmdPtr == null)
                 break;
-        if (num >= 4)
-            return (SEQ_WORK)null;
-        seqWork[num].Flags = new SeqFlag();
-        seqWork[num].CmdPtr = pCmd;
-        seqWork[num].CurPtr = instance.seq_work_set.SeqData[pCmd.sub_no];
-        seqWork[num].OldPtr = 0;
-        seqWork[num].IncCnt = 0;
-        seqWork[num].DecCnt = 0;
-        seqWork[num].AnmCnt = 0;
-        seqWork[num].AnmIDOfs = instance.seq_work_set.AnmOfsList[pCmd.sub_no];
-        seqWork[num].SfxTime = 0;
-        seqWork[num].TurnTime = 0;
-        seqWork[num].SVfxTime = 0;
-        seqWork[num].FadeTotal = 0;
+        if (seqIndex >= 4)
+            return null;
+        seqWork[seqIndex].Flags = new SeqFlag();
+        seqWork[seqIndex].CmdPtr = pCmd;
+        seqWork[seqIndex].CurPtr = instance.seq_work_set.SeqData[pCmd.sub_no];
+        seqWork[seqIndex].OldPtr = 0;
+        seqWork[seqIndex].IncCnt = 0;
+        seqWork[seqIndex].DecCnt = 0;
+        seqWork[seqIndex].AnmCnt = 0;
+        seqWork[seqIndex].AnmIDOfs = instance.seq_work_set.AnmOfsList[pCmd.sub_no];
+        seqWork[seqIndex].SfxTime = 0;
+        seqWork[seqIndex].TurnTime = 0;
+        seqWork[seqIndex].SVfxTime = 0;
+        seqWork[seqIndex].FadeTotal = 0;
         FF9StateSystem.Battle.FF9Battle.seq_work_set.CameraNo = 0;
-        return seqWork[num];
+        return seqWork[seqIndex];
     }
 
     public static void Sequencer()
@@ -413,7 +410,7 @@ public class btlseq
                         renderer.enabled = true;
                 }
             }
-            else if (btl.bi.player != 0 && btl.bi.slot_no == (Byte)CharacterId.Zidane && serialNumber == CharacterSerialNumber.ZIDANE_SWORD)
+            else if (btl.bi.player != 0 && (CharacterId)btl.bi.slot_no == CharacterId.Zidane && serialNumber == CharacterSerialNumber.ZIDANE_SWORD)
             {
                 btl.SetIsEnabledBattleModelRenderer(false);
             }
@@ -609,7 +606,8 @@ public class btlseq
             String animName = FF9BattleDB.Animation[instance.seq_work_set.AnmAddrList[animId]];
             if (pMe.gameObject.GetComponent<Animation>().GetClip(animName) == null)
                 AnimationFactory.AddAnimWithAnimatioName(pMe.gameObject, animName);
-            btl_mot.setMotion(pMe, animName);
+            if (pMe.gameObject.GetComponent<Animation>().GetClip(animName) != null)
+                btl_mot.setMotion(pMe, animName);
         }
         pMe.evt.animFrame = 0;
         pSeqWork.AnmCnt = 0;

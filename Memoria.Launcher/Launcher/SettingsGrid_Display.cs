@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using Application = System.Windows.Application;
+using Memoria.Launcher.Utils;
 
 namespace Memoria.Launcher
 {
@@ -18,7 +19,7 @@ namespace Memoria.Launcher
                 "Settings.FPSDropboxChoice3", // 90
                 "Settings.FPSDropboxChoice4"  // 120
             ];
-            CreateCombobox("FPSDropboxChoice", comboboxchoices, 50, "Settings.FPSDropboxChoice", "Settings.SharedFPS_Tooltip");
+            CreateCombobox("FPSDropboxChoice", ComboBoxOptions.Localized(comboboxchoices), 50, "Settings.FPSDropboxChoice", "Settings.SharedFPS_Tooltip");
 
             CreateCheckbox("WidescreenSupport", "Settings.Widescreen", "Settings.Widescreen_Tooltip");
 
@@ -33,7 +34,7 @@ namespace Memoria.Launcher
                 "Settings.ShaderDropboxChoice4",
                 "Settings.ShaderDropboxChoice5"
             ];
-            CreateCombobox("ShaderFieldChoice", comboboxchoices, 50, "Settings.FieldShader", "Settings.FieldShader_Tooltip", "shader_comparison2.jpg");
+            CreateCombobox("ShaderFieldChoice", ComboBoxOptions.Localized(comboboxchoices), 50, "Settings.FieldShader", "Settings.FieldShader_Tooltip", "shader_comparison2.jpg");
 
             comboboxchoices = [
                 "Settings.ShaderDropboxChoice0",
@@ -43,25 +44,14 @@ namespace Memoria.Launcher
                 "Settings.ShaderDropboxChoice4",
                 "Settings.ShaderDropboxChoice5"
             ];
-            CreateCombobox("ShaderBattleChoice", comboboxchoices, 50, "Settings.BattleShader", "Settings.BattleShader_Tooltip", "shader_comparison2.jpg");
+            CreateCombobox("ShaderBattleChoice", ComboBoxOptions.Localized(comboboxchoices), 50, "Settings.BattleShader", "Settings.BattleShader_Tooltip", "shader_comparison2.jpg");
 
             CreateCheckbox("UsePsxFont", "Settings.UsePsxFont", "Settings.UsePsxFont_Tooltip", 0, "", "alexandriaPreview.png");
 
-            List<String> fontNames = ["Final Fantasy IX PC", "Final Fantasy IX PSX"];
-            if (File.Exists("FontList"))
-            {
-                try
-                {
-                    String[] fonts = File.ReadAllLines("FontList");
-                    foreach (String s in fonts)
-                    {
-                        if (String.IsNullOrWhiteSpace(s)) continue;
-                        fontNames.Add(s);
-                    }
-                }
-                catch { }
-            }
-            CreateCombobox("FontChoice", fontNames, 45, "Settings.FontChoice", "Settings.FontChoice_Tooltip", "", true);
+            IEnumerable<String> fontNames = new[] { "Final Fantasy IX PC", "Final Fantasy IX PSX" }
+                .Concat(SystemFontService.Current.InstalledFontNames)
+                .Distinct(StringComparer.OrdinalIgnoreCase);
+            CreateCombobox("FontChoice", ComboBoxOptions.Literal(fontNames), 45, "Settings.FontChoice", "Settings.FontChoice_Tooltip", "", ComboBoxSelectionMode.Value);
 
         }
     }

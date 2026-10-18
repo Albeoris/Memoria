@@ -110,23 +110,23 @@ namespace FF9
 
         public static void geoAttach(GameObject sourceObject, GameObject targetObject, Int32 bone_index)
         {
-            Transform childByName = targetObject.transform.GetChildByName("bone" + bone_index.ToString("D3"));
+            Transform boneTransform = targetObject.transform.GetChildByName("bone" + bone_index.ToString("D3"));
             if (PersistenSingleton<EventEngine>.Instance.gMode == 2 || FF9StateSystem.Battle.isDebug)
             {
-                sourceObject.transform.parent = childByName;
+                sourceObject.transform.parent = boneTransform;
                 sourceObject.transform.localPosition = Vector3.zero;
                 sourceObject.transform.localRotation = Quaternion.identity;
                 sourceObject.transform.localScale = Vector3.one;
             }
             else if (PersistenSingleton<EventEngine>.Instance.gMode == 1)
             {
-                FieldMapActor component = sourceObject.GetComponent<FieldMapActor>();
-                FieldMapActor component2 = targetObject.GetComponent<FieldMapActor>();
-                if (component != (UnityEngine.Object)null && component2 != (UnityEngine.Object)null && childByName != (UnityEngine.Object)null)
+                FieldMapActor sourceActor = sourceObject.GetComponent<FieldMapActor>();
+                FieldMapActor targetActor = targetObject.GetComponent<FieldMapActor>();
+                if (sourceActor != null && targetActor != null && boneTransform != null)
                 {
-                    component.GeoAttach(component2, childByName);
-                    PosObj actor = component.actor;
-                    actor.attatchTargetUid = (int)component2.actor.uid;
+                    sourceActor.GeoAttach(targetActor, boneTransform);
+                    PosObj actor = sourceActor.actor;
+                    actor.attachTargetUid = targetActor.actor.uid;
                     actor.attachTargetBoneIndex = bone_index;
                 }
             }

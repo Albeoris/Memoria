@@ -122,6 +122,7 @@ public class TitleUI : UIScene
     private SlashScreen slashScreen;
 
     private Boolean IsJustLaunchApp = true;
+    private static Boolean autoloadStarted;
 
     private Single staffScrollingTime = 180f;
     private Boolean isStaffScene;
@@ -898,9 +899,28 @@ public class TitleUI : UIScene
     public void ShowMenuPanel()
     {
         AutoSplitterPipe.SignalLoadEnd();
-        if (Configuration.Debug.StartModelViewer || Configuration.Debug.StartFieldCreator)
+        if (Configuration.Debug.StartModelViewer)
         {
             OnNewGameButtonClick();
+            return;
+        }
+        else if (Configuration.Debug.StartFieldCreator)
+        {
+            OnNewGameButtonClick();
+            return;
+        }
+        else if (Memoria.Debugging.BattleLaunch.IsPending)
+        {
+            Memoria.Debugging.BattleLaunch.Start(action => this.Hide(delegate
+            {
+                action();
+            }));
+            return;
+        }
+        else if (Configuration.Debug.LaunchOptions.Autoload && !Configuration.Debug.StartBattle && !autoloadStarted)
+        {
+            autoloadStarted = true;
+            LoadAutosave(true);
             return;
         }
         this.MenuLanguageButton.GetChild(0).GetComponent<UILabel>().rawText = this.GetLanguageButtonLabel();
@@ -929,29 +949,41 @@ public class TitleUI : UIScene
         if (this.canContinue)
         {
             FF9Sfx.FF9SFX_Play(1261);
-            FF9StateSystem.Serializer.Autoload(null, delegate (DataSerializerErrorCode errNo, Boolean success)
-            {
-                if (!success)
-                    return;
-
-                FadingComponent.fadeInDuration = 2f;
-                this.Hide(delegate
-                {
-                    FadingComponent.fadeInDuration = 0.3f;
-                    EventEngine instance = PersistenSingleton<EventEngine>.Instance;
-                    instance.ReplaceLoadMap();
-                    this.SplashScreenEnabled = true;
-                    SoundLib.StopMovieMusic("FMV000", true);
-                    AchievementManager.ResyncNormalAchievements();
-                    FF9StateSystem.Settings.UpdateSetting();
-                    ff9.w_frameNewSession();
-                });
-            });
+            LoadAutosave();
         }
         else
         {
             FF9Sfx.FF9SFX_Play(102);
         }
+    }
+
+    private void LoadAutosave(Boolean isStartup = false)
+    {
+        FF9StateSystem.Serializer.Autoload(null, delegate (DataSerializerErrorCode errNo, Boolean success)
+        {
+            if (!success)
+            {
+                if (isStartup)
+                {
+                    Log.Error("[Autoload] Cannot load the autosave: " + errNo);
+                    Application.Quit();
+                }
+                return;
+            }
+
+            FadingComponent.fadeInDuration = 2f;
+            this.Hide(delegate
+            {
+                FadingComponent.fadeInDuration = 0.3f;
+                EventEngine instance = PersistenSingleton<EventEngine>.Instance;
+                instance.ReplaceLoadMap();
+                this.SplashScreenEnabled = true;
+                SoundLib.StopMovieMusic("FMV000", true);
+                AchievementManager.ResyncNormalAchievements();
+                FF9StateSystem.Settings.UpdateSetting();
+                ff9.w_frameNewSession();
+            });
+        });
     }
 
     private void OnNewGameButtonClick()
@@ -1366,16 +1398,6 @@ public class TitleUI : UIScene
 
     private void Start()
     {
-        try
-        {
-            File.WriteAllLines("FontList", Font.GetOSInstalledFontNames());
-        }
-        catch(Exception e)
-        {
-            Log.Error("Couldn't write the font list");
-            Log.Error(e);
-        }
-
         SiliconStudio.Social.InitializeSocialPlatform();
         PersistenSingleton<UIManager>.Instance.WorldHUDScene.EnableContinentTitle(false);
     }
@@ -1851,14 +1873,14 @@ public class TitleUI : UIScene
                     this.preMenuFadeIn();
                 });
             };
-            if (Configuration.Graphics.SkipIntros == 1 && kind == Type.Logo)
+            if (!Configuration.Debug.LaunchOptions.HasStartupMode && Configuration.Graphics.SkipIntros == 1 && kind == Type.Logo)
             {
                 postMenuFadeOut();
                 this.logoIndex = 2;
                 this.honoFading.Fade(0f, 1f, this.skipFadeInTime, 0f, this.honoFading.fadeOutCurve, this.onLogoFinish);
                 return;
             }
-            else if (Configuration.Graphics.SkipIntros > 0 && (kind == Type.SplashScreen || kind == Type.Logo))
+            else if ((Configuration.Debug.LaunchOptions.HasStartupMode || Configuration.Graphics.SkipIntros > 0) && (kind == Type.SplashScreen || kind == Type.Logo))
             {
                 postMenuFadeOut();
                 postIdleScreenFadeOut();

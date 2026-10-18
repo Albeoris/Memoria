@@ -8,40 +8,37 @@ namespace Memoria.Data
         public String Comment;
         public BattleAbilityId Id;
 
-        public AA_DATA ActionData;
+        public AA_DATA ActionData = new AA_DATA();
 
         public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
             Int32 index = 0;
-
             Comment = CsvParser.String(raw[index++]);
             Id = (BattleAbilityId)CsvParser.Int32(raw[index++]);
 
-            TargetDisplay menuWindow = CsvParser.EnumValue<TargetDisplay>(raw[index++]);
-            TargetType targets = CsvParser.EnumValue<TargetType>(raw[index++]);
-            Boolean defaultAlly = CsvParser.Boolean(raw[index++]);
-            Boolean forDead = CsvParser.Boolean(raw[index++]);
-            Boolean defaultOnDead = CsvParser.Boolean(raw[index++]);
-            Boolean defaultCamera = CsvParser.Boolean(raw[index++]);
-            Int16 animation1 = CsvParser.Int16(raw[index++]);
-            UInt16 animation2 = CsvParser.UInt16(raw[index++]);
-            Int32 scriptId = CsvParser.Int32(raw[index++]);
-            Int32 power = CsvParser.Int32(raw[index++]);
-            Byte elements = CsvParser.Byte(raw[index++]);
-            Int32 rate = CsvParser.Int32(raw[index++]);
-            Byte category = CsvParser.Byte(raw[index++]);
-            StatusSetId statusIndex = (StatusSetId)CsvParser.Int32(raw[index++]);
-            Int32 mp = CsvParser.Int32(raw[index++]);
-            Byte type = CsvParser.Byte(raw[index++]);
-
-            BattleCommandInfo cmd = new BattleCommandInfo(targets, defaultAlly, menuWindow, animation1, forDead, defaultCamera, defaultOnDead);
-            BTL_REF btl = new BTL_REF(scriptId, power, elements, rate);
-            ActionData = new AA_DATA(cmd, btl, category, statusIndex, mp, type, animation2);
-
-            if (metadata.HasOption($"Include{nameof(AA_DATA.CastingTitleType)}"))
-                ActionData.CastingTitleType = CsvParser.UInt32(raw[index++]);
-            else
-                ActionData.CastingTitleType = GetDefaultCastingTitleType(Id);
+            if (metadata.HasField("Display")) ActionData.Info.DisplayStats = CsvParser.EnumValue<TargetDisplay>(raw[index++]);
+            if (metadata.HasField("Targets")) ActionData.Info.Target = CsvParser.EnumValue<TargetType>(raw[index++]);
+            if (metadata.HasField("DefaultAlly")) ActionData.Info.DefaultAlly = CsvParser.Boolean(raw[index++]);
+            if (metadata.HasField("ForDead")) ActionData.Info.ForDead = CsvParser.Boolean(raw[index++]);
+            if (metadata.HasField("DefaultDead")) ActionData.Info.DefaultOnDead = CsvParser.Boolean(raw[index++]);
+            if (metadata.HasField("DefaultCamera")) ActionData.Info.DefaultCamera = CsvParser.Boolean(raw[index++]);
+            if (metadata.HasField("AnimationId")) ActionData.Info.VfxIndex = CsvParser.Int16(raw[index++]);
+            if (metadata.HasField("AnimationId2")) ActionData.Vfx2 = CsvParser.UInt16(raw[index++]);
+            if (metadata.HasField("ScriptId")) ActionData.Ref.ScriptId = CsvParser.Int32(raw[index++]);
+            if (metadata.HasField("Power")) ActionData.Ref.Power = CsvParser.Int32(raw[index++]);
+            if (metadata.HasField("Elements")) ActionData.Ref.Elements = CsvParser.Byte(raw[index++]);
+            if (metadata.HasField("Rate")) ActionData.Ref.Rate = CsvParser.Int32(raw[index++]);
+            if (metadata.HasField("Category")) ActionData.Category = CsvParser.Byte(raw[index++]);
+            if (metadata.HasField("AddStatus")) ActionData.AddStatusNo = (StatusSetId)CsvParser.Int32(raw[index++]);
+            if (metadata.HasField("MP")) ActionData.MP = CsvParser.Int32(raw[index++]);
+            if (metadata.HasField("Type")) ActionData.Type = CsvParser.Byte(raw[index++]);
+            if (metadata.HasField("CastingTitleType"))
+            {
+                if (metadata.HasOption($"Include{nameof(AA_DATA.CastingTitleType)}"))
+                    ActionData.CastingTitleType = CsvParser.UInt32(raw[index++]);
+                else
+                    ActionData.CastingTitleType = GetDefaultCastingTitleType(Id);
+            }
         }
 
         public void WriteEntry(CsvWriter sw, CsvMetaData metadata)

@@ -44,6 +44,7 @@ namespace Memoria
         public static Int32 TetraMasterCardCount => QuadMistDatabase.MiniGame_GetAllCardCount();
         public static Int32 TetraMasterPlayerPoints => QuadMistDatabase.MiniGame_GetPlayerPoints();
         public static Int32 TetraMasterPlayerRank => QuadMistDatabase.MiniGame_GetCollectorLevel();
+        public static Int32 TetraMasterCardTypeCount => QuadMistDatabase.MiniGame_GetCardKindCount();
         public static Int32 TreasureHunterPoints => FF9StateSystem.EventState.GetTreasureHunterPoints();
         public static Int32 GameTime => Convert.ToInt32(FF9StateSystem.Settings.time);
         public static Int32 AbilityUsage(BattleAbilityId index) => FF9StateSystem.EventState.GetAAUsageCounter(index);

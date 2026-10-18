@@ -66,6 +66,9 @@ namespace Memoria.Launcher
 
         private void HandleArguments(StartupEventArgs e)
         {
+            LaunchOptions = GameLaunchOptions.Parse(e.Args);
+            if (LaunchOptions.HasStartupMode)
+                AutoRunGame = true;
             for (Int32 i = 0; i < e.Args.Length; i++)
             {
                 switch (e.Args[i].ToLower())
@@ -80,5 +83,6 @@ namespace Memoria.Launcher
         }
 
         public static Boolean AutoRunGame = false;
+        public static GameLaunchOptions LaunchOptions = GameLaunchOptions.Parse(new String[0]);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -15,6 +16,17 @@ namespace Memoria.Launcher
         public static void Main()
         {
             AppDomain.CurrentDomain.AssemblyResolve += OnResolveAssembly;
+
+            try
+            {
+                if (!Debugger.IsAttached && SteamLauncherBootstrap.RestartIfNecessary(AppDomain.CurrentDomain.BaseDirectory))
+                    return;
+            }
+            catch (Exception exception)
+            {
+                AppLogger.GetLogger(nameof(SteamLauncherBootstrap)).Warn(exception, "Unable to restart the launcher through Steam. Continuing without the Steam launch context.");
+            }
+
             App.Main();
         }
 

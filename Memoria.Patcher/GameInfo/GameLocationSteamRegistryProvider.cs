@@ -1,5 +1,6 @@
 using Microsoft.Win32;
 using System;
+using System.Runtime.InteropServices;
 
 namespace Memoria.Patcher
 {
@@ -12,6 +13,9 @@ namespace Memoria.Patcher
 
         public static GameLocationInfo TryLoad()
         {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                return null;
+
             return TryLoadLocation(RegistryView.Registry64, SteamRegistyPath, SteamGamePathTag)
                    ?? TryLoadLocation(RegistryView.Registry32, SteamRegistyPath, SteamGamePathTag)
                    ?? TryLoadLocation(RegistryView.Registry64, GogRegistryPath, GogGamePathTag)
@@ -20,12 +24,18 @@ namespace Memoria.Patcher
 
         private static GameLocationInfo TryLoadLocation(RegistryView view, String registryPath, String gamePathTag)
         {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                return null;
+            
             using (RegistryKey localMachine = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view))
                 return TryLoadLocation(localMachine, registryPath, gamePathTag);
         }
 
         private static GameLocationInfo TryLoadLocation(RegistryKey localMachine, String registryPath, String gamePathTag)
         {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                return null;
+            
             using (RegistryKey registryKey = localMachine.OpenSubKey(registryPath))
             {
                 if (registryKey == null)
@@ -44,6 +54,9 @@ namespace Memoria.Patcher
 
         public static Boolean IsSteamOverlayFixed()
         {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                return false;
+
             try
             {
                 using (RegistryKey registryKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Default))

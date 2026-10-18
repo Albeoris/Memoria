@@ -60,7 +60,7 @@ public class BattleAchievement
     private static Boolean IsChallengingPlayerIsGarnet()
     {
         for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-            if (next.bi.player != 0 && next.bi.slot_no == (Byte)CharacterId.Garnet)
+            if (next.bi.player != 0 && (CharacterId)next.bi.slot_no == CharacterId.Garnet)
                 return true;
         return false;
     }

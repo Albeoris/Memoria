@@ -99,6 +99,13 @@ public class BGCAM_DEF
             this.t[i] = (Int32)matrix[i, 3];
     }
 
+    public void SetMatrixR(Matrix4x4 matrix)
+    {
+        for (Int32 i = 0; i < 3; i++)
+            for (Int32 j = 0; j < 3; j++)
+                this.r[i, j] = (Int16)(ROTATTION_FACTOR * matrix[i, j]);
+    }
+
     public Vector2 GetCenterOffset()
     {
         return new Vector2(this.centerOffset[0], this.centerOffset[1]);

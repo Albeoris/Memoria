@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using Memoria.Prime;
 using Memoria.Prime.CSV;
+using FF9;
 
 namespace Memoria.Data
 {
     public sealed class CharacterBattleParameter : ICsvEntry
     {
         public CharacterSerialNumber Id;
+        public CharacterBattleParameter Data;
+
         public String AvatarSprite;
         public String ModelId;
         public String TranceModelId;
@@ -37,6 +40,13 @@ namespace Memoria.Data
         public Single[] TranceWeaponOffsetPos = new Single[3];
         public Single[] TranceWeaponOffsetRot = new Single[3];
 
+        public static CharacterBattleParameter GetExisting(CharacterSerialNumber id)
+        {
+            if (btl_mot.BattleParameterList.TryGetValue(id, out CharacterBattleParameter result))
+                return result;
+            throw new NotSupportedException($"The option AppendMode must be used to patch existing entries but the entry {id} doesn't exist");
+        }
+
         public Vector3 GetWeaponRotationFixed(UInt16 weaponModel, Boolean trance = false)
         {
             Single[] rot = trance ? TranceWeaponOffsetRot : WeaponOffsetRot;
@@ -45,73 +55,87 @@ namespace Memoria.Data
             return rot.ToVector3(false);
         }
 
-        public void ParseEntry(String[] raw, CsvMetaData metadata)
+        public void ParseDataEntry(String[] raw, CsvMetaData metadata, ref Int32 index)
         {
-            Int32 rawIndex = 0;
-            Id = (CharacterSerialNumber)CsvParser.Int32(raw[rawIndex++]);
-            AvatarSprite = CsvParser.String(raw[rawIndex++]);
-            ModelId = CsvParser.String(raw[rawIndex++]);
-            TranceModelId = CsvParser.String(raw[rawIndex++]);
-            TranceGlowingColor = CsvParser.Int32Array(raw[rawIndex++]);
+            if (metadata.HasField("AvatarSprite")) AvatarSprite = CsvParser.String(raw[index++]);
+            if (metadata.HasField("ModelId")) ModelId = CsvParser.String(raw[index++]);
+            if (metadata.HasField("TranceModelId")) TranceModelId = CsvParser.String(raw[index++]);
+            if (metadata.HasField("TranceGlowingColor")) TranceGlowingColor = CsvParser.Int32Array(raw[index++]);
             if (TranceGlowingColor.Length < 3)
                 Array.Resize(ref TranceGlowingColor, 3);
-            for (Int32 i = 0; i < 34; i++)
-                AnimationId[i] = CsvParser.String(raw[rawIndex++]);
+            if (metadata.HasField("AnimationIds"))
+                for (Int32 i = 0; i < 34; i++)
+                    AnimationId[i] = CsvParser.String(raw[index++]);
             FlagDuplicateAnimations(AnimationId);
-            AttackSequence = (SpecialEffect)CsvParser.Int32(raw[rawIndex++]);
-            WeaponBone = CsvParser.Byte(raw[rawIndex++]);
-            ShadowData = CsvParser.ByteArray(raw[rawIndex++]);
+            if (metadata.HasField("AttackSequence")) AttackSequence = (SpecialEffect)CsvParser.Int32(raw[index++]);
+            if (metadata.HasField("WeaponBone")) WeaponBone = CsvParser.Byte(raw[index++]);
+            if (metadata.HasField("ShadowData")) ShadowData = CsvParser.ByteArray(raw[index++]);
             if (ShadowData.Length < 5)
                 Array.Resize(ref ShadowData, 5);
-            StatusBone = CsvParser.ByteArray(raw[rawIndex++]);
+            if (metadata.HasField("StatusBone")) StatusBone = CsvParser.ByteArray(raw[index++]);
             if (StatusBone.Length < 6)
                 Array.Resize(ref StatusBone, 6);
-            StatusOffsetY = CsvParser.SByteArray(raw[rawIndex++]);
+            if (metadata.HasField("StatusOffsetY")) StatusOffsetY = CsvParser.SByteArray(raw[index++]);
             if (StatusOffsetY.Length < 6)
                 Array.Resize(ref StatusOffsetY, 6);
-            StatusOffsetZ = CsvParser.SByteArray(raw[rawIndex++]);
+            if (metadata.HasField("StatusOffsetZ")) StatusOffsetZ = CsvParser.SByteArray(raw[index++]);
             if (StatusOffsetZ.Length < 6)
                 Array.Resize(ref StatusOffsetZ, 6);
 
-            if (metadata.HasOption($"Include{nameof(WeaponSound)}"))
-                WeaponSound = CsvParser.Int32Array(raw[rawIndex++]);
-            else if (FF9Snd.ff9battleSoundWeaponSndEffect02.TryGetValue(Id, out Int32[] sounds))
-                WeaponSound = sounds;
-
-            if (metadata.HasOption($"IncludeWeaponOffsets"))
+            if (metadata.HasField("WeaponSound"))
             {
-                WeaponSize = CsvParser.SingleArray(raw[rawIndex++]);
-                WeaponOffsetPos = CsvParser.SingleArray(raw[rawIndex++]);
-                WeaponOffsetRot = CsvParser.SingleArray(raw[rawIndex++]);
+                if (metadata.HasOption($"Include{nameof(WeaponSound)}"))
+                    WeaponSound = CsvParser.Int32Array(raw[index++]);
+                else if (FF9Snd.ff9battleSoundWeaponSndEffect02.TryGetValue(Id, out Int32[] sounds))
+                    WeaponSound = sounds;
             }
-            TranceParameters = metadata.HasOption($"Include{nameof(TranceParameters)}");
-            if (TranceParameters)
+
+            if (metadata.HasOption($"IncludeWeaponOffsets") && metadata.HasField("WeaponOffsets"))
             {
-                for (Int32 i = 0; i < 34; i++)
-                    TranceAnimationId[i] = CsvParser.String(raw[rawIndex++]);
-                FlagDuplicateAnimations(TranceAnimationId);
-                TranceAttackSequence = (SpecialEffect)CsvParser.Int32(raw[rawIndex++]);
-                TranceWeaponBone = CsvParser.Byte(raw[rawIndex++]);
-                TranceShadowData = CsvParser.ByteArray(raw[rawIndex++]);
-                if (TranceShadowData.Length < 5)
-                    Array.Resize(ref TranceShadowData, 5);
-                TranceStatusBone = CsvParser.ByteArray(raw[rawIndex++]);
-                if (TranceStatusBone.Length < 6)
-                    Array.Resize(ref TranceStatusBone, 6);
-                TranceStatusOffsetY = CsvParser.SByteArray(raw[rawIndex++]);
-                if (TranceStatusOffsetY.Length < 6)
-                    Array.Resize(ref TranceStatusOffsetY, 6);
-                TranceStatusOffsetZ = CsvParser.SByteArray(raw[rawIndex++]);
-                if (TranceStatusOffsetZ.Length < 6)
-                    Array.Resize(ref TranceStatusOffsetZ, 6);
-                TranceWeaponSound = CsvParser.Int32Array(raw[rawIndex++]);
-                if (metadata.HasOption($"IncludeWeaponOffsets"))
+                WeaponSize = CsvParser.SingleArray(raw[index++]);
+                WeaponOffsetPos = CsvParser.SingleArray(raw[index++]);
+                WeaponOffsetRot = CsvParser.SingleArray(raw[index++]);
+            }
+
+            if (metadata.HasField("TranceParameters"))
+            {
+                TranceParameters = metadata.HasOption($"Include{nameof(TranceParameters)}");
+                if (TranceParameters)
                 {
-                    TranceWeaponSize = CsvParser.SingleArray(raw[rawIndex++]);
-                    TranceWeaponOffsetPos = CsvParser.SingleArray(raw[rawIndex++]);
-                    TranceWeaponOffsetRot = CsvParser.SingleArray(raw[rawIndex++]);
+                    for (Int32 i = 0; i < 34; i++)
+                        TranceAnimationId[i] = CsvParser.String(raw[index++]);
+                    FlagDuplicateAnimations(TranceAnimationId);
+                    TranceAttackSequence = (SpecialEffect)CsvParser.Int32(raw[index++]);
+                    TranceWeaponBone = CsvParser.Byte(raw[index++]);
+                    TranceShadowData = CsvParser.ByteArray(raw[index++]);
+                    if (TranceShadowData.Length < 5)
+                        Array.Resize(ref TranceShadowData, 5);
+                    TranceStatusBone = CsvParser.ByteArray(raw[index++]);
+                    if (TranceStatusBone.Length < 6)
+                        Array.Resize(ref TranceStatusBone, 6);
+                    TranceStatusOffsetY = CsvParser.SByteArray(raw[index++]);
+                    if (TranceStatusOffsetY.Length < 6)
+                        Array.Resize(ref TranceStatusOffsetY, 6);
+                    TranceStatusOffsetZ = CsvParser.SByteArray(raw[index++]);
+                    if (TranceStatusOffsetZ.Length < 6)
+                        Array.Resize(ref TranceStatusOffsetZ, 6);
+                    TranceWeaponSound = CsvParser.Int32Array(raw[index++]);
+                    if (metadata.HasOption($"IncludeWeaponOffsets"))
+                    {
+                        TranceWeaponSize = CsvParser.SingleArray(raw[index++]);
+                        TranceWeaponOffsetPos = CsvParser.SingleArray(raw[index++]);
+                        TranceWeaponOffsetRot = CsvParser.SingleArray(raw[index++]);
+                    }
                 }
             }
+        }
+
+        public void ParseEntry(String[] raw, CsvMetaData metadata)
+        {
+            Int32 index = 0;
+            Id = (CharacterSerialNumber)CsvParser.Int32(raw[index++]);
+            Data = metadata.IsAppendMode ? GetExisting(Id) : this;
+            Data.ParseDataEntry(raw, metadata, ref index);
         }
 
         public void WriteEntry(CsvWriter writer, CsvMetaData metadata)

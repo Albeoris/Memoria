@@ -1,5 +1,6 @@
 using System;
 using Application = System.Windows.Application;
+using Memoria.Launcher.Utils;
 
 namespace Memoria.Launcher
 {
@@ -19,7 +20,7 @@ namespace Memoria.Launcher
                 "Settings.UIColumnsChoice1", // 3 columns
                 "Settings.UIColumnsChoice2"  // 4 columns
             ];
-            CreateCombobox("UIColumnsChoice", comboboxchoices, 50, "Settings.UIColumnsChoice", "Settings.UIColumnsChoice_Tooltip");
+            CreateCombobox("UIColumnsChoice", ComboBoxOptions.Localized(comboboxchoices), 50, "Settings.UIColumnsChoice", "Settings.UIColumnsChoice_Tooltip");
 
             CreateSlider("TextFadeDuration", "TextFadeDuration", 0, 200, 10, "{0}", 50, "Settings.TextFadeDuration", "Settings.TextFadeDuration_Tooltip", "text_fade.png");
 
@@ -30,7 +31,7 @@ namespace Memoria.Launcher
                 "Settings.BattleInterfaceType1",
                 "Settings.BattleInterfaceType2"
             ];
-            CreateCombobox("BattleInterface", comboboxchoices, 50, "Settings.BattleInterface", "Settings.BattleInterface_Tooltip");
+            CreateCombobox("BattleInterface", ComboBoxOptions.Localized(comboboxchoices), 50, "Settings.BattleInterface", "Settings.BattleInterface_Tooltip");
 
             comboboxchoices = [
                 "Settings.SpeedChoiceType0",
@@ -38,7 +39,7 @@ namespace Memoria.Launcher
                 "Settings.SpeedChoiceType2",
                 "Settings.SpeedChoiceType3"
             ];
-            CreateCombobox("ATBModeChoice", comboboxchoices, 50, "Settings.SpeedChoice", "Settings.SpeedChoice_Tooltip");
+            CreateCombobox("ATBModeChoice", ComboBoxOptions.Localized(comboboxchoices), 50, "Settings.SpeedChoice", "Settings.SpeedChoice_Tooltip");
 
             CreateSlider("BattleTPSDividedBy15", "BattleTPS", 15, 75, 3, "{0}x", 50, "Settings.BattleTPS", "Settings.BattleTPS_Tooltip");
 

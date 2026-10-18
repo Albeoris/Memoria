@@ -6,7 +6,7 @@ public class Seq : Obj
     {
     }
 
-    public Seq(Int32 sid, Int32 uid) : base(sid, uid, EventEngine.sizeOfObj, 0)
+    public Seq(Int32 sid, Int32 uid) : base(sid, uid, EventEngine.SIZE_OF_OBJ, 0)
     {
         base.cid = 1;
     }

@@ -112,16 +112,15 @@
                             Opacity="0"
                             CornerRadius="3">
                         </Border>
-                        <TextBlock
-                            TextWrapping="Wrap"
-                            Text="{TemplateBinding Content}"
-                            FontWeight="Normal"
-                            FontSize="18"
-                            FontFamily="{DynamicResource CenturyGothic}"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Center"
-                            Foreground="#FFFFFF">
-                        </TextBlock>
+                        <Viewbox Margin="6,2" Stretch="Uniform" StretchDirection="DownOnly">
+                            <TextBlock
+                                TextWrapping="NoWrap"
+                                Text="{TemplateBinding Content}"
+                                FontWeight="Normal"
+                                FontSize="18"
+                                FontFamily="{DynamicResource CenturyGothic}"
+                                Foreground="#FFFFFF"/>
+                        </Viewbox>
                     </Grid>
 
                     <ControlTemplate.Triggers>

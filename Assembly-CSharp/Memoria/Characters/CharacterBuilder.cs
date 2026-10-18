@@ -55,23 +55,21 @@ namespace Memoria
 
         private Int32 CreateEmptyEntry()
         {
-            Int32 characterId = _engine.sObjTable.Length;
+            Int32 characterId = _engine.sObjTable.Count;
 
-            Array.Resize(ref _engine.sObjTable, ++_engine.sSourceObjN);
+            _engine.sObjTable.Add(new ObjTable());
             ObjTable prevObjTable = _engine.sObjTable.Last(l => l != null);
 
-            _engine.sObjTable[_engine.sObjTable.Length - 1] = new ObjTable
+            _engine.sObjTable[characterId] = new ObjTable
             {
                 ofs = prevObjTable.ofs,
                 size = prevObjTable.size,
                 varn = prevObjTable.varn,
                 flags = prevObjTable.flags,
-                pad1 = prevObjTable.pad1,
-                pad2 = prevObjTable.pad2
+                pad = prevObjTable.pad
             };
 
-            Array.Resize(ref _engine.allObjsEBData, _engine.allObjsEBData.Length + 1);
-            _engine.allObjsEBData[_engine.allObjsEBData.Length - 1] = new Byte[0];
+            _engine.allObjsEBData.Add(new Byte[0]);
 
             return characterId;
         }
@@ -104,7 +102,7 @@ namespace Memoria
 
         private static Actor CreateActor(ICharacterDescriptor desc, Int32 characterId)
         {
-            return new Actor(characterId, characterId, EventEngine.sizeOfActor)
+            return new Actor(characterId, characterId)
             {
                 flags = (Byte)desc.ObjectFlags,
                 actf = (UInt16)desc.ActorFlags,

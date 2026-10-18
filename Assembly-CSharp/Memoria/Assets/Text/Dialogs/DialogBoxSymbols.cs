@@ -12,6 +12,23 @@ namespace Memoria.Assets
 {
     public static class DialogBoxSymbols
     {
+        // TODO: This was added to fix https://github.com/Albeoris/Memoria/issues/1265 (Quadmist Tutorial)
+        // Maybe check if it should be used elsewhere as well
+        public static Boolean GetSizeIfSpecified(String text, out Int32 width, out Int32 lineCount)
+        {
+            Int32 tagEndPos = 0;
+            FFIXTextTag tag = FFIXTextTag.TryRead(text, ref tagEndPos);
+            if (tag != null && tag.Code == FFIXTextTagCode.DialogSize)
+            {
+                width = tag.IntParam(0);
+                lineCount = tag.IntParam(1);
+                return true;
+            }
+            width = 0;
+            lineCount = 0;
+            return false;
+        }
+
         public static List<String> ParseTextSplitTags(String text)
         {
             List<String> pages = new List<String>();
@@ -57,7 +74,10 @@ namespace Memoria.Assets
                 case FFIXTextTagCode.Party:
                     return FF9StateSystem.Common.FF9.GetPlayer(PersistenSingleton<EventEngine>.Instance.GetEventPartyPlayer(tag.IntParam(0) - 1))?.Name;
                 case FFIXTextTagCode.Text:
-                    return ETb.GetStringFromTable(tag.UIntParam(0), tag.UIntParam(1));
+                    if (tag.ParamCount == 2)
+                        return ETb.GetStringFromTable(tag.UIntParam(0), tag.UIntParam(1));
+                    else
+                        return tag.StringParam(ETb.GetMesVarValue(tag.IntParam(0)) + 1);
                 case FFIXTextTagCode.Zidane:
                     return FF9StateSystem.Common.FF9.GetPlayer(CharacterId.Zidane).Name;
                 case FFIXTextTagCode.Vivi:
@@ -161,19 +181,19 @@ namespace Memoria.Assets
                 {
                     Int32 mesScriptId = tag.IntParam(0);
                     Int32 numbOffset = parser.ParsedTagList[i].TextOffset;
-                    Boolean isSelectedOverlay = tag.ParamCount >= 2 ? ETb.gMesValue[tag.IntParam(1)] == mesScriptId : dialog != null && dialog.OverlayMessageNumber == mesScriptId;
-                    parser.VariableMessageValues[mesScriptId] = ETb.gMesValue[mesScriptId];
+                    Boolean isSelectedOverlay = tag.ParamCount >= 2 ? ETb.GetMesVarValue(tag.IntParam(1)) == mesScriptId : dialog != null && dialog.OverlayMessageNumber == mesScriptId;
+                    parser.VariableMessageValues[mesScriptId] = ETb.GetMesVarValue(mesScriptId);
                     if (isSelectedOverlay)
-                        parser.ReplaceTag(i--, ETb.gMesValue[mesScriptId].ToString(), [new FFIXTextTag(FFIXTextTagCode.Pink), new FFIXTextTag(FFIXTextTagCode.ShadowToggle)], [new FFIXTextTag(FFIXTextTagCode.White), new FFIXTextTag(FFIXTextTagCode.ShadowToggle)]);
+                        parser.ReplaceTag(i--, ETb.GetMesVarValue(mesScriptId).ToString(), [new FFIXTextTag(FFIXTextTagCode.Pink), new FFIXTextTag(FFIXTextTagCode.ShadowToggle)], [new FFIXTextTag(FFIXTextTagCode.White), new FFIXTextTag(FFIXTextTagCode.ShadowToggle)]);
                     else
-                        parser.ReplaceTag(i--, ETb.gMesValue[mesScriptId].ToString());
+                        parser.ReplaceTag(i--, ETb.GetMesVarValue(mesScriptId).ToString());
                 }
                 else if (tag.Code == FFIXTextTagCode.Item)
                 {
                     Int32 mesScriptId = tag.IntParam(0);
                     Int32 itemOffset = parser.ParsedTagList[i].TextOffset;
-                    String itemName = ETb.GetItemName(ETb.gMesValue[mesScriptId]);
-                    parser.VariableMessageValues[mesScriptId] = ETb.gMesValue[mesScriptId];
+                    String itemName = ETb.GetItemName(ETb.GetMesVarValue(mesScriptId));
+                    parser.VariableMessageValues[mesScriptId] = ETb.GetMesVarValue(mesScriptId);
                     parser.ReplaceTag(i--, itemName, [new FFIXTextTag(FFIXTextTagCode.Yellow), new FFIXTextTag(FFIXTextTagCode.ShadowToggle)], [new FFIXTextTag(FFIXTextTagCode.White), new FFIXTextTag(FFIXTextTagCode.ShadowToggle)]);
                 }
             }
@@ -233,7 +253,7 @@ namespace Memoria.Assets
                     parser.RemovePart(linesToRemove[i].Key, linesToRemove[i].Value);
                 // Make sure that [CHOO] is kept in case the first choice line is disabled
                 if (!parser.ParsedTagList.Contains(choiceTag))
-                    parser.InsertTag(choiceTag, choicePos);
+                    parser.InsertTag(choiceTag, choiceTag.TextOffset);
             }
         }
 
@@ -380,7 +400,7 @@ namespace Memoria.Assets
                     insertImage = NGUIText.CreateIconImage(tag.IntParam(0));
                     return true;
                 case FFIXTextTagCode.IconEx:
-                    if (tag.ParamCount == 0 || (ETb.gMesValue[0] & (1 << tag.IntParam(0))) != 0)
+                    if (tag.ParamCount == 0 || (ETb.GetMesVarValue(0) & (1 << tag.IntParam(0))) != 0)
                         insertImage = NGUIText.CreateIconImage(FF9UIDataTool.NewIconId);
                     return true;
                 case FFIXTextTagCode.Mobile:
@@ -638,7 +658,7 @@ namespace Memoria.Assets
                     OnTailPosition(dialog, Dialog.TailPosition.DialogPosition);
                     return true;
                 case FFIXTextTagCode.DialogSize:
-                    OnDialogSize(dialog, tag.SingleParam(0), tag.SingleParam(1), tag.IntParam(2) > 0);
+                    OnDialogSize(dialog, tag.SingleParam(0), tag.SingleParam(1));
                     return true;
                 case FFIXTextTagCode.Position:
                     OnDialogPosition(dialog, tag);
@@ -881,7 +901,7 @@ namespace Memoria.Assets
                 dialog.Tail = tailPos;
         }
 
-        private static void OnDialogSize(Dialog dialog, Single width, Single lineNumber, Boolean forceSize)
+        private static void OnDialogSize(Dialog dialog, Single width, Single lineNumber)
         {
             if (dialog != null)
             {

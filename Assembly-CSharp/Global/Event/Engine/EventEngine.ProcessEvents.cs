@@ -103,18 +103,18 @@ public partial class EventEngine
         this._posUsed = false;
 
         // TODO Check Native: #147
-        Int32 result = 0;
+        Int32 codeFlowState = EventEngine.FLOW_STATE_EXEC;
         bool canProcessCode = true;
 
         if (_ff9.fldMapNo == 257) // Evil Forest/Nest
             canProcessCode = !Singleton<DialogManager>.Instance.Activate || Singleton<DialogManager>.Instance.CompletlyVisible;
 
         if (canProcessCode)
-            result = this.eBin.ProcessCode(this._context.activeObj);
+            codeFlowState = this.eBin.ProcessCode(this._context.activeObj);
 
         EventHUD.CheckUIMiniGameForMobile();
-        if (result == 6)
-            result = 0;
+        if (codeFlowState == EventEngine.FLOW_STATE_STOP)
+            codeFlowState = EventEngine.FLOW_STATE_EXEC;
         else
             this.gStopObj = null;
 
@@ -269,11 +269,11 @@ public partial class EventEngine
         if (this._encountReserved && !this._posUsed)
         {
             this._encountReserved = false;
-            result = 3;
+            codeFlowState = EventEngine.FLOW_STATE_JUMP_BATTLE;
         }
-        if ((result == 3 || result == 7) && this.gMode == 1)
+        if ((codeFlowState == EventEngine.FLOW_STATE_JUMP_BATTLE || codeFlowState == EventEngine.FLOW_STATE_QUADMIST) && this.gMode == 1)
             this.BackupPosObjData();
-        if (result == 7)
+        if (codeFlowState == EventEngine.FLOW_STATE_QUADMIST)
             this.sEventContext1.copy(this.sEventContext0);
         EMinigame.AllTreasureAchievement();
         EMinigame.AllSandyBeachAchievement();
@@ -438,7 +438,7 @@ public partial class EventEngine
             }
         }
         //this.printActorsInObjList(this.E.activeObj);
-        return result;
+        return codeFlowState;
     }
 
     private void ClearLookTalker()

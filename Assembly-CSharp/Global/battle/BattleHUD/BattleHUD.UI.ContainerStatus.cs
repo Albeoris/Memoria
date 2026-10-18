@@ -1,11 +1,11 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Data;
+using Memoria.Prime;
 using Memoria.Scenes;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Object = System.Object;
 
 public partial class BattleHUD : UIScene
 {
@@ -30,28 +30,63 @@ public partial class BattleHUD : UIScene
 
             internal sealed class PanelDetail<T> : GOWidget where T : GOBase
             {
-                public readonly GOArray<T> Array;
+                public readonly T[] Array;
                 public readonly CaptionBackground<GOLocalizableLabel> Caption;
 
                 public PanelDetail(GameObject obj)
                     : base(obj)
                 {
-                    Array = new GOArray<T>(obj.GetChild(0));
-                    Caption = new CaptionBackground<GOLocalizableLabel>(obj.GetChild(1));
+                    GameObject table = obj.FindChild("Table");
+                    GameObject background = obj.FindChild("Caption Background");
+                    try
+                    {
+                        Caption = new CaptionBackground<GOLocalizableLabel>(background);
+                    }
+                    catch (Exception err)
+                    {
+                        Log.Error($"[BattleHUD.UI.ContainerStatus] {obj}: Background initialisation failed.\n" + err);
+                    }
+                    if (table == null || table.transform.childCount == 0)
+                    {
+                        // Table entries are children of the panel (this should never be the case at BattleHUD.Awake time)
+                        Array = new T[obj.transform.childCount - 2];
+                        for (Int32 i = 0; i < obj.transform.childCount - 2; i++)
+                            Array[i] = Create<T>(obj.GetChild(i + 2));
+                    }
+                    else
+                    {
+                        // Table entries are children of the panel's table (they will be re-parented to the panel, if Configuration.Interface.IsEnabled is on)
+                        Array = new T[table.transform.childCount];
+                        for (Int32 i = 0; i < table.transform.childCount; i++)
+                            Array[i] = Create<T>(table.GetChild(i));
+                    }
                 }
 
                 internal sealed class CaptionBackground<T1> : GOWidget where T1 : GOBase
                 {
                     public readonly T1 Content;
                     public readonly GOSprite Body;
+                    public readonly GOSprite Border;
                     public readonly GOSprite TopBorder;
 
                     public CaptionBackground(GameObject obj)
                         : base(obj)
                     {
-                        Content = Create<T1>(obj.GetChild(0));
-                        Body = new GOSprite(obj.GetChild(1));
-                        TopBorder = new GOSprite(obj.GetChild(2));
+                        GameObject contentGo = obj.FindChild("Caption");
+                        GameObject bodyGo = obj.FindChild("Body");
+                        GameObject borderGo = bodyGo?.FindChild("Border");
+                        GameObject topBorderGo = obj.FindChild("Top Border");
+                        if (contentGo == null)
+                        {
+                            Log.Error($"[BattleHUD.UI.ContainerStatus] Could not find Caption for {obj}");
+                            return;
+                        }
+                        if (contentGo.transform.GetSiblingIndex() != 0)
+                            Log.Warning($"[BattleHUD.UI.ContainerStatus] Unexpected caption index {contentGo.transform.GetSiblingIndex()} for {obj}");
+                        Content = Create<T1>(contentGo);
+                        Body = new GOSprite(bodyGo);
+                        Border = new GOSprite(bodyGo.GetChild(0));
+                        TopBorder = new GOSprite(topBorderGo);
                     }
                 }
             }

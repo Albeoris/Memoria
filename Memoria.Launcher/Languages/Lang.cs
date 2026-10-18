@@ -55,11 +55,20 @@ namespace Memoria.Launcher
         public static Boolean LoadLanguageResources(String lang)
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
+            XmlElement fallback = XmlHelper.LoadEmbadedDocument(assembly, "Languages.en.xml");
+            if (fallback == null)
+                return false;
+            LoadLanguageResources(fallback);
+
+            if (String.Equals(lang, "en", StringComparison.OrdinalIgnoreCase))
+            {
+                LangName = "en";
+                return true;
+            }
+
             XmlElement element = XmlHelper.LoadEmbadedDocument(assembly, $"Languages.{lang}.xml");
             if (element == null)
-            {
                 return false;
-            }
             LoadLanguageResources(element);
             LangName = lang;
             return true;
@@ -67,8 +76,11 @@ namespace Memoria.Launcher
 
         private static void LoadLanguageResources(XmlElement rootElement)
         {
-            foreach (XmlElement node in rootElement)
+            foreach (XmlNode child in rootElement.ChildNodes)
             {
+                if (!(child is XmlElement node))
+                    continue;
+
                 foreach (XmlAttribute at in node.Attributes)
                 {
                     Application.Current.Resources[$"{node.Name}.{at.Name}"] = at.Value;

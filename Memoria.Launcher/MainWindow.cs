@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,12 +16,20 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using System.Windows.Threading;
+using Memoria.Launcher.Utils.Archives;
+using Memoria.Launcher.Utils.Mods;
+using Memoria.Launcher.Utils.Updates;
+using Memoria.Launcher.Controller;
 
 namespace Memoria.Launcher
 {
     public partial class MainWindow : Window, IComponentConnector
     {
         private static readonly NLog.Logger _log = AppLogger.GetLogger();
+        private readonly IDisposable _gamepadNavigation;
+        private readonly InstalledReleaseNotesService _releaseNotesService = new InstalledReleaseNotesService();
+        private Task<InstalledReleaseLookupResult> _releaseNotesLookupTask;
+        private Boolean _releaseNotesVisible;
 
         //public ModManagerWindow ModdingWindow;
         public static DateTime MemoriaAssemblyCompileDate;
@@ -31,6 +38,10 @@ namespace Memoria.Launcher
         {
             Lang.Initialize();
             String launcherDirectory = Directory.GetCurrentDirectory();
+            _modFileSystem = new ModInstallationFileSystem(launcherDirectory);
+            _modDescriptionFile = new ModDescriptionFile(_modFileSystem);
+            _singleFileModInstaller = new SingleFileModInstaller(_modFileSystem);
+            _archiveExtractor = new ArchiveExtractor(launcherDirectory);
             try
             {
                 // Official version since Aug 6, 2020:                          1.0.7141.27878
@@ -51,6 +62,8 @@ namespace Memoria.Launcher
 
             InitializeComponent();
 
+            _gamepadNavigation = GamepadNavigationService.Attach(this);
+
             PlayButton.GameSettings = GameSettings;
             PlayButton.GameSettingsDisplay = GameSettingsDisplay;
             Loaded += OnLoaded;
@@ -64,13 +77,16 @@ namespace Memoria.Launcher
 
         private async void OnLoaded(Object sender, RoutedEventArgs e)
         {
+            if (App.LaunchOptions.HasStartupMode)
+            {
+                PlayButton.Click();
+                return;
+            }
             try
             {
-                if (Directory.Exists(Mod.INSTALLATION_TMP))
-                    Directory.Delete(Mod.INSTALLATION_TMP, true);
+                _modFileSystem.DeleteTemporaryDirectory();
             }
             catch { }
-            UpdateLauncherTheme();
             HotfixForMoguriMod();
             Lang.Res["Settings.LauncherWindowTitle"] += " | v" + MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd");
             Lang.Res["Settings.MemoriaEngine"] += " v" + MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd");
@@ -84,6 +100,7 @@ namespace Memoria.Launcher
             LoadModSettings();
             CheckForValidModFolder();
             UpdateModListInstalled();
+            UpdateLauncherTheme();
             InitializeModsListView();
             InitializeCatalogListView();
             lstDownloads.ItemsSource = DownloadList;
@@ -92,11 +109,11 @@ namespace Memoria.Launcher
             lstCatalogMods.SelectionChanged += OnModListSelect;
             lstMods.SelectionChanged += OnModListSelect;
             tabCtrlMain.SelectionChanged += OnModListSelect;
-            ModOptionsHeaderButton.MouseUp += ModOptionsHeaderButton_MouseUp;
+            ModOptionsHeaderButton.Click += ModOptionsHeaderButton_Click;
             if (ModListInstalled.Count == 0)
                 tabCtrlMain.SelectedIndex = 1;
             UpdateModDetails((Mod)null);
-            CheckOutdatedAndIncompatibleMods();
+            await CheckAllModUpdatesAsync();
 
             // add tooltip style to manager's buttons
             UiGrid.MakeTooltip(btnReorganize, "ModEditor.TooltipReorganize", "", "hand");
@@ -107,10 +124,11 @@ namespace Memoria.Launcher
             UiGrid.MakeTooltip(btnCancel, "ModEditor.TooltipCancel", "", "hand");
 
             String version = IniFile.SettingsIni.GetSetting("Memoria", "Version", "2000.01.01");
+            String storedBuildTimestamp = IniFile.SettingsIni.GetSetting("Memoria", "BuildTimestamp", String.Empty);
+            Boolean installedBuildChanged = !InstalledBuildVersion.Matches(storedBuildTimestamp, MemoriaAssemblyCompileDate);
             DateTime currentVersion = DateTime.ParseExact(MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd"), "yyyy.MM.dd", CultureInfo.InvariantCulture);
             if (!DateTime.TryParseExact(version, "yyyy.MM.dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date) || date < currentVersion)
             {
-                ShowReleaseNotes(null, null);
                 // One time patches
                 if (date < new DateTime(2024, 11, 25))
                 {
@@ -141,7 +159,7 @@ namespace Memoria.Launcher
                     UpdateModSettings();
                     UpdateLauncherTheme();
                 }
-                else if(date < new DateTime(2025, 07, 13))
+                else if (date < new DateTime(2025, 07, 13))
                 {
                     // Make sure to use the new back-end
                     IniFile.MemoriaIni.SetSetting("Audio", "Backend", "1");
@@ -154,17 +172,30 @@ namespace Memoria.Launcher
                 IniFile.SettingsIni.SetSetting("Memoria", "Version", MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd"));
                 IniFile.SettingsIni.Save();
             }
-            else if (GameSettings.AutoRunGame)
+
+            Boolean releaseNotesShown = false;
+            if (installedBuildChanged)
+            {
+                InstalledReleaseLookupResult releaseLookup = await GetInstalledReleaseNotesAsync();
+                if (releaseLookup.Status == InstalledReleaseLookupStatus.Found)
+                {
+                    ShowReleaseNotes(releaseLookup.ReleaseNotes);
+                    releaseNotesShown = true;
+                }
+                if (releaseLookup.IsDefinitive)
+                {
+                    IniFile.SettingsIni.SetSetting("Memoria", "BuildTimestamp", InstalledBuildVersion.Serialize(MemoriaAssemblyCompileDate));
+                    IniFile.SettingsIni.Save();
+                }
+            }
+
+            if (GameSettings.AutoRunGame && !releaseNotesShown)
                 PlayButton.Click();
 
-            String checkUpdates = IniFile.SettingsIni.GetSetting("Memoria", "CheckUpdates", "True");
-            if (!Boolean.TryParse(checkUpdates, out Boolean result) || result)
-            {
-                await UiLauncherPlayButton.CheckUpdates((Window)this.GetRootElement(), new ManualResetEvent(false), GameSettings);
-            }
+            await UpdateBuildPanel.InitializeAsync(GameSettings, MemoriaAssemblyCompileDate);
         }
 
-        private void ModOptionsHeaderButton_MouseUp(Object sender, MouseButtonEventArgs e)
+        private void ModOptionsHeaderButton_Click(Object sender, RoutedEventArgs e)
         {
             Boolean collapsed = (String)ModOptionsHeaderArrow.Content == "▲";
             ModOptionsHeaderArrow.Content = collapsed ? "▼" : "▲";
@@ -185,7 +216,18 @@ namespace Memoria.Launcher
         }
         private void ModelViewerButton_Click(object sender, RoutedEventArgs e)
         {
-            this.PlayButton.Click(true);
+            PlayButton.LaunchOptions = GameLaunchOptions.Parse(new String[] { "-memoria-model-viewer" });
+            PlayButton.Click();
+        }
+
+        private void BattleLaunchButton_Click(Object sender, RoutedEventArgs e)
+        {
+            Window_StartBattle battleWindow = new Window_StartBattle(options =>
+            {
+                PlayButton.LaunchOptions = options;
+                PlayButton.Click();
+            });
+            MainWindowGrid.Children.Add(battleWindow);
         }
 
         private void SavePreset_Click(object sender, RoutedEventArgs e)
@@ -232,7 +274,9 @@ namespace Memoria.Launcher
                 if (!e.Data.GetDataPresent(DataFormats.FileDrop, true))
                     return;
 
-                string[] filenames = e.Data.GetData(DataFormats.FileDrop, true) as string[];
+                if (!(e.Data.GetData(DataFormats.FileDrop, true) is String[] filenames))
+                    return;
+
                 foreach (string filename in filenames)
                 {
                     String ext = Path.GetExtension(filename).ToLowerInvariant();
@@ -254,15 +298,13 @@ namespace Memoria.Launcher
                     }
 
                     // Check if it's a Mod
-                    if (!SupportedArchives.Contains(ext))
+                    if (!ArchiveFileExtensions.IsSupportedFile(filename))
                         continue;
 
-                    if (FindModRoot(filename) != null)
-                    {
-                        // TODO translate:
-                        dropLabel.Content = Lang.Res["Launcher.InstallMod"];
-                        dropBackground.Visibility = Visibility.Visible;
-                    }
+                    FindModRoot(filename);
+                    // TODO translate:
+                    dropLabel.Content = Lang.Res["Launcher.InstallMod"];
+                    dropBackground.Visibility = Visibility.Visible;
                 }
             }
             catch { }
@@ -291,7 +333,9 @@ namespace Memoria.Launcher
 
                 Activate();
 
-                String[] filenames = e.Data.GetData(DataFormats.FileDrop, true) as String[];
+                if (!(e.Data.GetData(DataFormats.FileDrop, true) is String[] filenames))
+                    return;
+
                 foreach (string filename in filenames)
                 {
                     String ext = Path.GetExtension(filename).ToLowerInvariant();
@@ -346,35 +390,42 @@ namespace Memoria.Launcher
                         continue;
                     }
 
-                    if (!SupportedArchives.Contains(ext))
+                    if (!ArchiveFileExtensions.IsSupportedFile(filename))
                         continue;
 
-                    // Extract the archive
-                    // TODO language:
-                    dropLabel.Content = $"Extracting '{Path.GetFileName(filename)}'";
-                    Mod modInfo = await InstallModFromArchive(filename, null, (progress) =>
+                    try
                     {
-                        Dispatcher.BeginInvoke(() =>
+                        // Extract the archive
+                        // TODO language:
+                        dropLabel.Content = $"Extracting '{Path.GetFileName(filename)}'";
+                        Mod modInfo = await InstallDroppedModFromArchive(filename, (progress) =>
                         {
-                            dropLabel.Content = $"Extracting '{Path.GetFileName(filename)}' - {progress}%";
+                            Dispatcher.BeginInvoke(() =>
+                            {
+                                dropLabel.Content = $"Extracting '{Path.GetFileName(filename)}' - {progress}%";
+                            });
                         });
-                    });
 
-                    // Refresh mods list and activate the mod
-                    UpdateModListInstalled();
-                    UpdateCatalogInstallationState();
-                    CheckOutdatedAndIncompatibleMods();
-                    UpdateModSettings();
-                    modInfo = Mod.SearchMod(ModListInstalled, modInfo);
-                    // TODO language:
-                    MessageBox.Show($"The mod '{modInfo.Name}{(modInfo.CurrentVersion != null ? " " + modInfo.CurrentVersion : "")}' has been successfully installed", "Mod installed", MessageBoxButton.OK, MessageBoxImage.Information);
+                        // Refresh mods list and activate the mod
+                        UpdateModListInstalled();
+                        UpdateCatalogInstallationState();
+                        await CheckAllModUpdatesAsync();
+                        UpdateModSettings();
+                        Mod installedMod = Mod.SearchMod(ModListInstalled, modInfo) ?? modInfo;
+                        // TODO language:
+                        MessageBox.Show(this, $"The mod '{installedMod.Name}{(installedMod.CurrentVersion != null ? " " + installedMod.CurrentVersion : "")}' has been successfully installed", "Mod installed", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    catch (TaskCanceledException) { }
+                    catch (Exception exception)
+                    {
+                        ShowArchiveInstallationFailure(filename, exception);
+                    }
                 }
             }
             catch (TaskCanceledException) { }
             catch (Exception err)
             {
-                // TODO language:
-                MessageBox.Show($"Failed to automatically install the mod\n{err.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(this, err.ToString(), "Installation failed", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {
@@ -480,9 +531,39 @@ namespace Memoria.Launcher
             SendMessage(new WindowInteropHelper(this).Handle, 161, 2, 0);
         }
 
-        private void ShowReleaseNotes(Object sender, MouseButtonEventArgs e)
+        private async void ShowReleaseNotes(Object sender, RoutedEventArgs e)
         {
-            var releaseWindow = new Window_ChangeLog();
+            try
+            {
+                InstalledReleaseLookupResult releaseLookup = await GetInstalledReleaseNotesAsync();
+                if (releaseLookup.Status == InstalledReleaseLookupStatus.Found)
+                    ShowReleaseNotes(releaseLookup.ReleaseNotes);
+            }
+            catch (Exception exception)
+            {
+                _log.Error(exception, "Unable to show release notes for the installed build {InstalledVersion:O}.", MemoriaAssemblyCompileDate);
+            }
+        }
+
+        private async Task<InstalledReleaseLookupResult> GetInstalledReleaseNotesAsync()
+        {
+            if (_releaseNotesLookupTask == null)
+                _releaseNotesLookupTask = _releaseNotesService.FindAsync(MemoriaAssemblyCompileDate);
+
+            InstalledReleaseLookupResult result = await _releaseNotesLookupTask;
+            if (result.Status == InstalledReleaseLookupStatus.Unavailable)
+                _releaseNotesLookupTask = null;
+            return result;
+        }
+
+        private void ShowReleaseNotes(ReleaseNotesDocument releaseNotes)
+        {
+            if (_releaseNotesVisible)
+                return;
+
+            Window_ChangeLog releaseWindow = new Window_ChangeLog(releaseNotes);
+            releaseWindow.Unloaded += (sender, args) => _releaseNotesVisible = false;
+            _releaseNotesVisible = true;
             MainWindowGrid.Children.Add(releaseWindow);
         }
 

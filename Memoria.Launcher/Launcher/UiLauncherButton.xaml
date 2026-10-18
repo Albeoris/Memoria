@@ -29,6 +29,12 @@
                     Opacity="0"
                     CornerRadius="7">
                 </Border>
+                <Border
+                    BorderBrush="White"
+                    BorderThickness="1"
+                    CornerRadius="7"
+                    IsHitTestVisible="False"
+                    SnapsToDevicePixels="True" />
                 <TextBlock TextWrapping="Wrap"
                     Text="{Binding Label, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type launcher:UiLauncherButton}}, FallbackValue='PLAY'}"
                     FontWeight="Normal"

@@ -29,18 +29,12 @@ public class MapConfiguration
         result.charUse = reader.ReadByte();
         result.evtCount = reader.ReadByte();
         result.evtUse = reader.ReadByte();
-        Int32 lightCount = (Int32)result.lightCount;
-        result.DMSMapLight = new DMSMapLight[(Int32)result.lightCount];
-        for (Int32 i = 0; i < lightCount; i++)
-        {
+        result.DMSMapLight = new DMSMapLight[result.lightCount];
+        result.DMSMapChar = new DMSMapChar[result.charCount];
+        for (Int32 i = 0; i < result.lightCount; i++)
             result.DMSMapLight[i].Read(reader);
-        }
-        Int32 charCount = (Int32)result.charCount;
-        result.DMSMapChar = new DMSMapChar[(Int32)result.charCount];
-        for (Int32 j = 0; j < charCount; j++)
-        {
-            result.DMSMapChar[j].Read(reader);
-        }
+        for (Int32 i = 0; i < result.charCount; i++)
+            result.DMSMapChar[i].Read(reader);
         return result;
     }
 

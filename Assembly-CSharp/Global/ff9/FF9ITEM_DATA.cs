@@ -3,6 +3,10 @@ using System;
 
 public class FF9ITEM_DATA
 {
+    public FF9ITEM_DATA()
+    {
+    }
+
     public FF9ITEM_DATA(UInt32 price, Int32 selling_price, UInt64 equip, Int32 shape, Int32 color, Single eq_lv, Int32 bonus, Int32[] ability, ItemType type, Single sort, String use_condition, Int32 weapon = -1, Int32 armor = -1, Int32 effect = -1)
     {
         this.price = price;

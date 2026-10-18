@@ -311,6 +311,12 @@ namespace Memoria.Launcher
             get => _elementssmoothtexture;
             set => SetProperty(ref _elementssmoothtexture, value);
         }
+        private Int16 _antiAliasingChoice;
+        public Int16 AntiAliasingChoice
+        {
+            get => _antiAliasingChoice;
+            set => SetProperty(ref _antiAliasingChoice, value);
+        }
 
 
         private Int16 _rightStickCamera;
@@ -871,6 +877,18 @@ namespace Memoria.Launcher
                     case nameof(DualLanguage):
                         iniFile.SetSetting("Lang", "DualLanguage", $"\"{LANG_CODES[DualLanguage]}\"");
                         break;
+                    case nameof(AntiAliasingChoice):
+                        string aaValue = AntiAliasingChoice switch
+                        {
+                            1 => "2",
+                            2 => "4",
+                            3 => "8",
+                            _ => "0"
+                        };
+                        iniFile.SetSetting("Graphics", "AntiAliasing", aaValue);
+                        if (AntiAliasingChoice > 0)
+                            iniFile.SetSetting("Graphics", "Enabled", "1");
+                        break;
                 }
                 iniFile.Save();
             }
@@ -1196,6 +1214,17 @@ namespace Memoria.Launcher
                 }
                 _dualLanguage = value1;
                 Refresh(nameof(DualLanguage));
+
+                value = iniFile.GetSetting("Graphics", "AntiAliasing");
+                value1isInt = Int16.TryParse(value, out value1);
+                _antiAliasingChoice = (Int16)(value1 switch
+                {
+                    2 => 1,
+                    4 => 2,
+                    8 => 3,
+                    _ => 0
+                });
+                Refresh(nameof(AntiAliasingChoice));
             }
             catch (Exception ex)
             {

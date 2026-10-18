@@ -1,5 +1,6 @@
 using System;
 using Application = System.Windows.Application;
+using Memoria.Launcher.Utils;
 
 namespace Memoria.Launcher
 {
@@ -25,7 +26,7 @@ namespace Memoria.Launcher
                 "Settings.AccessBattleMenuType2",
                 "Settings.AccessBattleMenuType3"
             };
-            CreateCombobox("AccessBattleMenu", accessmenuchoices, 50, "Settings.AccessBattleMenu", "Settings.AccessBattleMenu_Tooltip");
+            CreateCombobox("AccessBattleMenu", ComboBoxOptions.Localized(accessmenuchoices), 50, "Settings.AccessBattleMenu", "Settings.AccessBattleMenu_Tooltip");
 
 
 

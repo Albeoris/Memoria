@@ -70,10 +70,6 @@
       <HintPath>..\References\UnityEngine.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="XInputDotNetPure">
-      <HintPath>..\References\XInputDotNetPure.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

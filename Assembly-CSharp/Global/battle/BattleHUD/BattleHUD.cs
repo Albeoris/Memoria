@@ -2014,13 +2014,11 @@ public partial class BattleHUD : UIScene
 
     private void SelectBestTarget(TargetType targetType, CMD_DATA testCommand)
     {
-        if (!Configuration.Battle.SelectBestTarget)
-            return;
-        if ((targetType != TargetType.SingleAny && targetType != TargetType.SingleAlly && targetType != TargetType.SingleEnemy) || CurrentPlayerIndex < 0)
+        if (!Configuration.Battle.SelectBestTarget || CurrentPlayerIndex < 0 || targetType >= TargetType.All)
             return;
 
-        Boolean allowAllies = targetType != TargetType.SingleEnemy;
-        Boolean allowEnemies = targetType != TargetType.SingleAlly;
+        Boolean allowAllies = targetType != TargetType.SingleEnemy && targetType != TargetType.ManyEnemy;
+        Boolean allowEnemies = targetType != TargetType.SingleAlly && targetType != TargetType.ManyAlly;
         Single bestRating = 0;
         if (testCommand.ScriptId == 9) // Magic attack, not yet supported
             return;

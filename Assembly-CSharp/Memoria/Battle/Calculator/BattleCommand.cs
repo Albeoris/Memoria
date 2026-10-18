@@ -123,6 +123,7 @@ namespace Memoria
         public Int32 CommandMPCost => Data.GetCommandMPCost(); // This takes AA features into account but not increased summon cost early on or player MP cost factor
         public BattleCommandMenu CommandMenu => Data.info.cmdMenu;
         public command_mode_index ExecutionStep => Data.info.mode;
+        public UnifiedBattleSequencer.BattleAction SFXAction => UnifiedBattleSequencer.runningActions.Find(action => action.cmd == Data);
 
         public Boolean IsDevided => IsManyTarget && Data.aa.Info.Target >= TargetType.ManyAny && Data.aa.Info.Target <= TargetType.ManyEnemy;
 

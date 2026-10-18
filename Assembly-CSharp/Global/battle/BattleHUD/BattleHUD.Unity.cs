@@ -74,12 +74,12 @@ public partial class BattleHUD : UIScene
         _allTargetToggle = AllTargetButton.GetComponent<UIToggle>();
         _autoBattleToggle.validator = OnAutoToggleValidate;
         _allTargetToggle.validator = OnAllTargetToggleValidate;
-        _commandPanel = new UI.PanelCommand(this, CommandPanel);
-        _targetPanel = new UI.PanelTarget(this, TargetPanel);
-        _abilityPanel = new GOScrollablePanel(AbilityPanel);
-        _itemPanel = new GOScrollablePanel(ItemPanel);
-        _abilityScrollList = _abilityPanel.SubPanel.RecycleListPopulator;
-        _itemScrollList = _itemPanel.SubPanel.RecycleListPopulator;
+        try { _commandPanel = new UI.PanelCommand(this, CommandPanel); } catch (Exception err) { Log.Error($"[BattleHUD.Awake] _commandPanel not initialised: " + err); }
+        try { _targetPanel = new UI.PanelTarget(this, TargetPanel); } catch (Exception err) { Log.Error($"[BattleHUD.Awake] _targetPanel not initialised: " + err); }
+        try { _abilityPanel = new GOScrollablePanel(AbilityPanel); } catch (Exception err) { Log.Error($"[BattleHUD.Awake] _abilityPanel not initialised: " + err); }
+        try { _itemPanel = new GOScrollablePanel(ItemPanel); } catch (Exception err) { Log.Error($"[BattleHUD.Awake] _itemPanel not initialised: " + err); }
+        _abilityScrollList = _abilityPanel?.SubPanel?.RecycleListPopulator;
+        _itemScrollList = _itemPanel?.SubPanel?.RecycleListPopulator;
 
         if (FF9StateSystem.MobilePlatform)
         {
@@ -92,18 +92,22 @@ public partial class BattleHUD : UIScene
         }
 
         _battleDialogWidget = BattleDialogGameObject.GetComponent<UIWidget>();
-        _battleDialogLabel = BattleDialogGameObject.GetChild(1).GetComponent<UILabel>();
+        try { _battleDialogLabel = BattleDialogGameObject.GetChild(1).GetComponent<UILabel>(); } catch (Exception err) { Log.Error($"[BattleHUD.Awake] _battleDialogLabel not initialised: " + err); }
+
+        try { _statusPanel = new UI.ContainerStatus(this, StatusContainer); } catch (Exception err) { Log.Error($"[BattleHUD.Awake] _statusPanel not initialised: " + err); }
+        //_itemTransition = TransitionGameObject.GetChild(0).GetComponent<HonoTweenClipping>();
+        //_abilityTransition = TransitionGameObject.GetChild(1).GetComponent<HonoTweenClipping>();
+        //_targetTransition = TransitionGameObject.GetChild(2).GetComponent<HonoTweenClipping>();
+        _onResumeFromQuit = GeneratedAwake;
+
+        if (_abilityScrollList == null) Log.Error($"[BattleHUD.Awake] _abilityScrollList is null!");
+        if (_itemScrollList == null) Log.Error($"[BattleHUD.Awake] _itemScrollList is null!");
+        if (_battleDialogWidget == null) Log.Error($"[BattleHUD.Awake] _battleDialogWidget is null!");
 
         _targetPanel.Buttons.Player.EventListener.Click += OnAllTargetClick;
         _targetPanel.Buttons.Player.EventListener.Hover += OnAllTargetHover;
         _targetPanel.Buttons.Enemy.EventListener.Click += OnAllTargetClick;
         _targetPanel.Buttons.Enemy.EventListener.Hover += OnAllTargetHover;
-
-        _statusPanel = new UI.ContainerStatus(this, StatusContainer);
-        //_itemTransition = TransitionGameObject.GetChild(0).GetComponent<HonoTweenClipping>();
-        //_abilityTransition = TransitionGameObject.GetChild(1).GetComponent<HonoTweenClipping>();
-        //_targetTransition = TransitionGameObject.GetChild(2).GetComponent<HonoTweenClipping>();
-        _onResumeFromQuit = GeneratedAwake;
 
         if (Configuration.Control.WrapSomeMenus)
             foreach (GONavigationButton button in _targetPanel.AllTargets)
@@ -581,8 +585,8 @@ public partial class BattleHUD : UIScene
 
     private void SendAutoAttackCommand(Int32 playerIndex)
     {
-        BattleUnit player = FF9StateSystem.Battle.FF9Battle.GetUnit(playerIndex);
-        CMD_DATA cmd = player.Data.cmd[0];
+        BattleUnit unit = FF9StateSystem.Battle.FF9Battle.GetUnit(playerIndex);
+        CMD_DATA cmd = unit.Data.cmd[0];
         if (cmd != null && btl_cmd.CheckUsingCommand(cmd))
             return;
         CurrentPlayerIndex = playerIndex;
@@ -592,10 +596,21 @@ public partial class BattleHUD : UIScene
         if (enemy != null)
         {
             Boolean cmdSent = false;
-            if (Configuration.Battle.ViviAutoAttack && player.PlayerIndex == CharacterId.Vivi)
-                cmdSent = SelectViviMagicInsteadOfAttack_AutoAttack(player, enemy);
+            if (Configuration.Battle.ViviAutoAttack && unit.PlayerIndex == CharacterId.Vivi)
+                cmdSent = SelectViviMagicInsteadOfAttack_AutoAttack(unit, enemy);
             if (!cmdSent)
-                btl_cmd.SetCommand(player.Data.cmd[0], BattleCommandId.Attack, (Int32)BattleAbilityId.Attack, enemy.Id, 0U);
+            {
+                BattleCommandId CMDChoosen = GetCommandFromCommandIndex(BattleCommandMenu.Attack, playerIndex);
+                BattleAbilityId AAChoosen = BattleAbilityId.Attack;
+
+                if (CharacterCommands.Commands.TryGetValue(CMDChoosen, out CharacterCommand cmdData))
+                {
+                    BattleAbilityId abilId = cmdData.GetAbilityId(0);
+                    AAChoosen = BattleAbilityHelper.Patch(abilId, unit.Player);
+                }
+                btl_cmd.SetCommand(unit.ATBCommand, CMDChoosen, (Int32)AAChoosen, btl_util.GetRandomBtlID(0), 0u);
+            }
+
             InputFinishList.Add(CurrentPlayerIndex);
         }
         CurrentPlayerIndex = -1;

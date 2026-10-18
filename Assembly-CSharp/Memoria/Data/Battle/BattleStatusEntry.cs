@@ -16,7 +16,7 @@ namespace Memoria.Data
             Comment = CsvParser.String(raw[0]);
             Id = (StatusSetId)CsvParser.Int32(raw[1]);
 
-            Value = ParseBattleStatus(raw[2], metadata);
+            Value = BattleStatusEntry.ParseBattleStatus(raw[2], metadata, false);
         }
 
         public void WriteEntry(CsvWriter sw, CsvMetaData metadata)
@@ -24,10 +24,10 @@ namespace Memoria.Data
             sw.String(Comment);
             sw.Int32((Int32)Id);
 
-            WriteBattleStatus(sw, metadata, Value);
+            BattleStatusEntry.WriteBattleStatus(sw, metadata, Value, false);
         }
 
-        public static BattleStatus ParseBattleStatus(String raw, CsvMetaData metadata)
+        public static BattleStatus ParseBattleStatus(String raw, CsvMetaData metadata, Boolean defaultIsUnshifted = true)
         {
             BattleStatus result = 0;
             String[] tokens = raw.Split(',');
@@ -37,7 +37,7 @@ namespace Memoria.Data
                 if (String.IsNullOrEmpty(tok))
                     continue;
 
-                if (metadata.HasOption("UnshiftStatuses"))
+                if (defaultIsUnshifted || metadata.HasOption("UnshiftStatuses"))
                     result |= CsvParser.EnumValue<BattleStatusId>(tok).ToBattleStatus();
                 else
                     result |= CsvParser.EnumValue<BattleStatusIdOldVersion>(tok).ToBattleStatus();
@@ -45,10 +45,10 @@ namespace Memoria.Data
             return result;
         }
 
-        public static void WriteBattleStatus(CsvWriter sw, CsvMetaData metadata, BattleStatus status)
+        public static void WriteBattleStatus(CsvWriter sw, CsvMetaData metadata, BattleStatus status, Boolean defaultIsUnshifted = true)
         {
             List<String> statusStr = new List<String>();
-            if (metadata.HasOption("UnshiftStatuses"))
+            if (defaultIsUnshifted || metadata.HasOption("UnshiftStatuses"))
             {
                 foreach (BattleStatusId statusId in status.ToStatusList())
                     statusStr.Add($"{statusId}({(Int32)statusId})");

@@ -221,16 +221,28 @@ public class btl_cmd
                 {
                     first_tar_id = tar_id;
                     if (!second_aa.Info.DefaultAlly)
-                        second_tar_id = 0xF0;
-                    else
+                        second_tar_id = tar_id;
+                    else if (second_aa.Info.Target == TargetType.ManyAlly)
                         second_tar_id = 0xF;
+                    else if (second_aa.Info.Target == TargetType.ManyEnemy)
+                        second_tar_id = 0xF0;
+                    else if (second_aa.Info.Target == TargetType.ManyAny)
+                        second_tar_id = 0xF;
+                    else
+                        second_tar_id = (UInt16)Comn.randomID(0xF);
                 }
                 else
                 {
-                    if (!first_aa.Info.DefaultAlly)
+                    if (first_aa.Info.DefaultAlly)
+                        first_tar_id = tar_id;
+                    else if (first_aa.Info.Target == TargetType.ManyAlly)
+                        first_tar_id = 0xF;
+                    else if (first_aa.Info.Target == TargetType.ManyEnemy)
+                        first_tar_id = 0xF0;
+                    else if (first_aa.Info.Target == TargetType.ManyAny)
                         first_tar_id = 0xF0;
                     else
-                        first_tar_id = 0xF;
+                        first_tar_id = (UInt16)Comn.randomID(0xF0);
                     second_tar_id = tar_id;
                 }
             }
@@ -1156,7 +1168,7 @@ public class btl_cmd
 
     public static void ClearSysPhantom(BTL_DATA btl)
     {
-        if (btl.bi.player == 0 || btl.bi.slot_no != (Byte)CharacterId.Garnet)
+        if (btl.bi.player == 0 || (CharacterId)btl.bi.slot_no != CharacterId.Garnet)
             return;
         KillSpecificCommand(btl, BattleCommandId.SysPhantom);
         FF9StateSystem.Battle.FF9Battle.cmd_status &= 0xFFF3;

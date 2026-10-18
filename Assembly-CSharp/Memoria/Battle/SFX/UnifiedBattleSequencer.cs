@@ -518,7 +518,10 @@ public static class UnifiedBattleSequencer
                         {
                             changeAnim = code.TryGetArgAnimation("Anim", btl, out tmpStr);
                             if (changeAnim)
+                            {
+                                AnimationFactory.AddAnimWithAnimatioName(btl.gameObject, tmpStr);
                                 btl_mot.setMotion(btl, tmpStr);
+                            }
                         }
                         if (changeAnim || setFrame)
                         {
@@ -587,6 +590,7 @@ public static class UnifiedBattleSequencer
                             continue;
                         if (code.TryGetArgAnimation("Anim", btl, out tmpStr))
                         {
+                            AnimationFactory.AddAnimWithAnimatioName(btl.gameObject, tmpStr);
                             tmpInt = (Int32)Math.Max(1, Math.Ceiling(GeoAnim.getAnimationLoopFrame(btl, tmpStr) / btl.animSpeedStatusFactor));
                             btl_mot.setMotion(btl, tmpStr);
                             btl.evt.animFrame = 0;
@@ -624,6 +628,7 @@ public static class UnifiedBattleSequencer
                             dest = btl.pos + tmpVec;
                         if (code.TryGetArgAnimation("Anim", btl, out tmpStr))
                         {
+                            AnimationFactory.AddAnimWithAnimatioName(btl.gameObject, tmpStr);
                             tmpInt = (Int32)Math.Max(1, Math.Ceiling(GeoAnim.getAnimationLoopFrame(btl, tmpStr) / btl.animSpeedStatusFactor));
                             btl_mot.setMotion(btl, tmpStr);
                             btl.evt.animFrame = 0;

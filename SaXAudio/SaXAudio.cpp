@@ -128,7 +128,10 @@ namespace SaXAudio
     void SaXAudio::Release()
     {
         if (!m_XAudio)
+        {
+            PrepareForShutdown();
             return;
+        }
 
         m_XAudio->StopEngine();
         m_XAudio->Release();
@@ -149,10 +152,17 @@ namespace SaXAudio
             m_voicePool.pop();
         }
 
-        StopLogging();
+        PrepareForShutdown();
 
         m_voices.clear();
         m_masteringBus.voice = nullptr;
+    }
+
+    void SaXAudio::PrepareForShutdown()
+    {
+        // A joinable std::thread invokes std::terminate when its destructor runs.
+        // Join the debug logger before the CRT destroys the DLL's static objects.
+        StopLogging();
     }
 
     void SaXAudio::StopEngine()

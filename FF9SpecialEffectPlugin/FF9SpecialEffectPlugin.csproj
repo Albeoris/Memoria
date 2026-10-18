@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk" TreatAsLocalProperty="DefineConstants">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AssemblyName>FF9SpecialEffectPlugin</AssemblyName>
+    <RootNamespace>Recompiled.FF9SpecialEffectPlugin</RootNamespace>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>latest</LangVersion>
+    <PublishAot>true</PublishAot>
+    <NativeLib>Shared</NativeLib>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <UseSystemResourceKeys>true</UseSystemResourceKeys>
+    <IlcGenerateStackTraceData>false</IlcGenerateStackTraceData>
+    <OptimizationPreference>Speed</OptimizationPreference>
+    <StripSymbols>false</StripSymbols>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <NoWin32Manifest>true</NoWin32Manifest>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RecompStandalone>true</RecompStandalone>
+    <EnableDefaultItems>true</EnableDefaultItems>
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+    <BaseOutputPath>bin/</BaseOutputPath>
+    <OutputPath>bin/$(Configuration)/</OutputPath>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Win32Resource>Resources/FF9SpecialEffectPlugin.res</Win32Resource>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ModuleData.bin" LogicalName="ModuleData.bin" />
+  </ItemGroup>
+  <Import Project="Standalone.Build.targets" />
+</Project>

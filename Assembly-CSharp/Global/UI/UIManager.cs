@@ -538,13 +538,13 @@ public class UIManager : PersistenSingleton<UIManager>
 
     public void MenuOpenEvent()
     {
+        EventEngine instance = PersistenSingleton<EventEngine>.Instance;
         if (this.UnityScene == UIManager.Scene.World)
         {
-            EventEngine instance = PersistenSingleton<EventEngine>.Instance;
             Int32 worldLocationId = PersistenSingleton<EventEngine>.Instance.GetSysvar(192);
             FF9StateSystem.Common.FF9.mapNameStr = FF9TextTool.WorldLocationText(worldLocationId);
-            instance.Request(instance.FindObjByUID(0), 1, 4, false);
         }
+        instance.Request(instance.FindObjByUID(0), 1, 4, false);
     }
 
     public void HideAllHUD()

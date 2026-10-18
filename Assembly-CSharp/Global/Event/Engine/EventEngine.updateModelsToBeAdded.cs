@@ -51,7 +51,7 @@ public partial class EventEngine
         this.requiredAddActor = false;
         foreach (Int32 uidRestore in this.toBeAddedObjUIDList)
         {
-            Obj objUid = this.GetObjUID(uidRestore);
+            Obj objUid = this.FindObjByUID(uidRestore);
             Boolean isPlayer = uidRestore == playerUID;
             if (this.gMode == 1)
             {

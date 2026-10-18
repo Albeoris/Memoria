@@ -498,6 +498,8 @@
     <Compile Include="Memoria\Assets\3DModel\AnimationClipReader.cs" />
     <Compile Include="Memoria\Assets\ModelViewer\BoneHierarchyNode.cs" />
     <Compile Include="Memoria\Assets\ModelViewer\ModelViewerScene.cs" />
+    <Compile Include="Memoria\Debugging\BattleLaunch.cs" />
+    <Compile Include="Memoria\Debugging\GameLaunchOptions.cs" />
     <Compile Include="Memoria\Assets\Text\Dialogs\DialogBoxSymbols.cs" />
     <Compile Include="Memoria\Assets\Text\Dialogs\FFIXTextTag.cs" />
     <Compile Include="Memoria\Assets\Text\Dialogs\FFIXTextTagCode.cs" />
@@ -698,7 +700,7 @@
     <Compile Include="Global\ff9\Battle\FF9BattleDB.GEO.cs" />
     <Compile Include="Global\ff9\Battle\FF9BattleDB.SceneData.cs" />
     <Compile Include="Global\ff9\Battle\FF9BattleDB.cs" />
-    <Compile Include="Global\ff9\Battle\FF9BattleDBHeightAndRadius.cs" />
+    <Compile Include="Global\ff9\FF9DBModelParameters.cs" />
     <Compile Include="Global\ff9\Battle\FF9BattleLoadState.cs" />
     <Compile Include="Global\ff9\ff9.cs" />
     <Compile Include="Global\ff9\FF9BatteSoundWeaponSndEffectType.cs" />
@@ -1380,6 +1382,8 @@
     <Compile Include="Memoria\World\WorldConfiguration.cs" />
     <Compile Include="Memoria\World\WorldEffect.cs" />
     <Compile Include="Memoria\World\WorldPlace.cs" />
+    <Compile Include="Memoria\World\WorldSoundPlayer.cs" />
+    <Compile Include="Memoria\World\WorldSoundService.cs" />
     <Compile Include="NCalc\Evaluant.Calculator\Domain\BinaryExpression.cs" />
     <Compile Include="NCalc\Evaluant.Calculator\Domain\EvaluationVisitor.cs" />
     <Compile Include="NCalc\Evaluant.Calculator\Domain\Function.cs" />
@@ -1445,17 +1449,17 @@
     <Compile Include="Unity\IO\Compression\SR.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Memoria.Prime\Memoria.Prime.csproj">
-      <Project>{110f557e-abff-44c5-886a-c7c7f0614558}</Project>
-      <Name>Memoria.Prime</Name>
+    <ProjectReference Include="..\Memoria.Prime\Memoria.Prime.csproj" />
+    <ProjectReference Include="..\Memoria.XInputDotNetPure\Memoria.XInputDotNetPure.csproj" />
+    <ProjectReference Include="..\UnityEngine.UI\UnityEngine.UI.csproj" />
+    <ProjectReference Include="..\FF9SpecialEffectPlugin\FF9SpecialEffectPlugin.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Properties>Configuration=$(Configuration)</Properties>
+      <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
     </ProjectReference>
-    <ProjectReference Include="..\Memoria.XInputDotNetPure\Memoria.XInputDotNetPure.csproj">
-      <Project>{952700cd-a384-43a4-ac4b-52256f83836e}</Project>
-      <Name>Memoria.XInputDotNetPure</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\UnityEngine.UI\UnityEngine.UI.csproj">
-      <Project>{cbc800df-4de1-4cbc-9c97-98cbb375204f}</Project>
-      <Name>UnityEngine.UI</Name>
+    <ProjectReference Include="..\SaXAudio\SaXAudio.vcxproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Properties>Configuration=$(Configuration);Platform=x64</Properties>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -1467,22 +1471,12 @@
     <Content Include="Global\Sound\SaXAudio\x64\XAudio2_9.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Global\Sound\SaXAudio\x86\XAudio2_9.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Global\Sound\SoLoud\x64\soloud.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Global\Sound\SoLoud\x86\soloud.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
-  <Target Name="AssemblyCSharpBuildSaXAudio" BeforeTargets="Build" Condition="'$(DesignTimeBuild)' != 'true'">
-    <MSBuild Projects="..\SaXAudio\SaXAudio.vcxproj" Properties="Configuration=$(Configuration);Platform=Win32" RunEachTargetSeparately="true" />
-    <MSBuild Projects="..\SaXAudio\SaXAudio.vcxproj" Properties="Configuration=$(Configuration);Platform=x64" RunEachTargetSeparately="true" />
-  </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

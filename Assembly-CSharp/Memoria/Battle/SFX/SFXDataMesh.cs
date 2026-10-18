@@ -728,6 +728,7 @@ public abstract class SFXDataMesh
                     sprite.vertex = copysprite.vertex;
                     sprite.index = copysprite.index;
                     sprite.useScreenSize = copysprite.useScreenSize;
+                    sprite.useScreenCoordinates = copysprite.useScreenCoordinates;
                     seq.spriteList.Add(sprite);
                 }
                 copy.model.Add(seq);
@@ -1018,34 +1019,32 @@ public abstract class SFXDataMesh
                     sprite.baseMovement.LoadFromJSON(objectNode["Movement"]);
                 if (objectNode["ScreenSize"] != null)
                     sprite.useScreenSize = objectNode["ScreenSize"].AsBool;
+                if (objectNode["ScreenCoordinates"] != null)
+                    sprite.useScreenCoordinates = objectNode["ScreenCoordinates"].AsBool;
                 if (objectNode["Material"] != null)
                     sprite.material = EffectMaterial.LoadMaterial(objectNode["Material"] as JSONClass, modelSeq.defaultFolder);
-                if (objectNode["Vertices"] != null && objectNode["Vertices"] is JSONArray)
+                if (objectNode["Vertices"] != null && objectNode["Vertices"] is JSONArray vertNode)
                 {
-                    JSONArray vertNode = objectNode["Vertices"] as JSONArray;
                     sprite.vertex = new Vector2[vertNode.Count];
                     for (Int32 i = 0; i < vertNode.Count; i++)
                         sprite.vertex[i] = vertNode[i].AsVector;
                 }
-                if (objectNode["Indices"] != null && objectNode["Indices"] is JSONArray)
+                if (objectNode["Indices"] != null && objectNode["Indices"] is JSONArray indexNode)
                 {
-                    JSONArray indexNode = objectNode["Indices"] as JSONArray;
                     sprite.index = new Int32[indexNode.Count];
                     for (Int32 i = 0; i < indexNode.Count; i++)
                         sprite.index[i] = indexNode[i].AsInt;
                 }
-                if (objectNode["UV"] != null && objectNode["UV"] is JSONArray)
+                if (objectNode["UV"] != null && objectNode["UV"] is JSONArray uv)
                 {
-                    JSONArray uvArray = objectNode["UV"] as JSONArray;
-                    sprite.uv[0] = new Vector2[uvArray.Count];
-                    for (Int32 i = 0; i < uvArray.Count; i++)
-                        sprite.uv[0][i] = uvArray[i].AsVector;
+                    sprite.uv[0] = new Vector2[uv.Count];
+                    for (Int32 i = 0; i < uv.Count; i++)
+                        sprite.uv[0][i] = uv[i].AsVector;
                 }
                 if (objectNode["TextureInterpolation"] != null)
                 {
-                    if (objectNode["TextureInterpolation"] is JSONArray)
+                    if (objectNode["TextureInterpolation"] is JSONArray interpArray)
                     {
-                        JSONArray interpArray = objectNode["TextureInterpolation"] as JSONArray;
                         sprite.uvInterpolateType = new ParametricMovement.InterpolateType[interpArray.Count];
                         for (Int32 i = 0; i < interpArray.Count; i++)
                             ParametricMovement.TryParseInterpolateType(interpArray[i], out sprite.uvInterpolateType[i]);
@@ -1055,27 +1054,24 @@ public abstract class SFXDataMesh
                         ParametricMovement.TryParseInterpolateType(objectNode["TextureInterpolation"], out sprite.uvInterpolateType[0]);
                     }
                 }
-                if (objectNode["TextureAnimation"] != null && objectNode["TextureAnimation"] is JSONArray)
-                    foreach (JSONNode uvNode in objectNode["TextureAnimation"] as JSONArray)
-                        if (uvNode["Frame"] != null && uvNode["UV"] != null && uvNode["UV"] is JSONArray)
+                if (objectNode["TextureAnimation"] != null && objectNode["TextureAnimation"] is JSONArray uvAnimArray)
+                    foreach (JSONNode uvNode in uvAnimArray)
+                        if (uvNode["Frame"] != null && uvNode["UV"] != null && uvNode["UV"] is JSONArray uvArray)
                         {
-                            JSONArray uvArray = uvNode["UV"] as JSONArray;
                             sprite.uv[uvNode["Frame"].AsInt] = new Vector2[uvArray.Count];
                             for (Int32 i = 0; i < uvArray.Count; i++)
                                 sprite.uv[uvNode["Frame"].AsInt][i] = uvArray[i].AsVector;
                         }
-                if (objectNode["VertexColors"] != null && objectNode["VertexColors"] is JSONArray)
+                if (objectNode["VertexColors"] != null && objectNode["VertexColors"] is JSONArray color)
                 {
-                    JSONArray colorArray = objectNode["VertexColors"] as JSONArray;
-                    sprite.vertexColor[0] = new Color32[colorArray.Count];
-                    for (Int32 i = 0; i < colorArray.Count; i++)
-                        sprite.vertexColor[0][i] = (Color)colorArray[i].AsVector;
+                    sprite.vertexColor[0] = new Color32[color.Count];
+                    for (Int32 i = 0; i < color.Count; i++)
+                        sprite.vertexColor[0][i] = (Color)color[i].AsVector;
                 }
                 if (objectNode["ColorInterpolation"] != null)
                 {
-                    if (objectNode["ColorInterpolation"] is JSONArray)
+                    if (objectNode["ColorInterpolation"] is JSONArray interpArray)
                     {
-                        JSONArray interpArray = objectNode["ColorInterpolation"] as JSONArray;
                         sprite.colorInterpolateType = new ParametricMovement.InterpolateType[interpArray.Count];
                         for (Int32 i = 0; i < interpArray.Count; i++)
                             ParametricMovement.TryParseInterpolateType(interpArray[i], out sprite.colorInterpolateType[i]);
@@ -1085,26 +1081,25 @@ public abstract class SFXDataMesh
                         ParametricMovement.TryParseInterpolateType(objectNode["ColorInterpolation"], out sprite.colorInterpolateType[0]);
                     }
                 }
-                if (objectNode["ColorAnimation"] != null && objectNode["ColorAnimation"] is JSONArray)
-                    foreach (JSONNode colorNode in objectNode["ColorAnimation"] as JSONArray)
-                        if (colorNode["Frame"] != null && colorNode["VertexColors"] != null && colorNode["VertexColors"] is JSONArray)
+                if (objectNode["ColorAnimation"] != null && objectNode["ColorAnimation"] is JSONArray colorAnimArray)
+                    foreach (JSONNode colorNode in colorAnimArray)
+                        if (colorNode["Frame"] != null && colorNode["VertexColors"] != null && colorNode["VertexColors"] is JSONArray colorArray)
                         {
-                            JSONArray colorArray = colorNode["VertexColors"] as JSONArray;
                             sprite.vertexColor[colorNode["Frame"].AsInt] = new Color32[colorArray.Count];
                             for (Int32 i = 0; i < colorArray.Count; i++)
                                 sprite.vertexColor[colorNode["Frame"].AsInt][i] = (Color)colorArray[i].AsVector;
                         }
                 if (objectNode["Emission"] != null)
                 {
-                    if (objectNode["Emission"] is JSONArray)
+                    if (objectNode["Emission"] is JSONArray emArray)
                     {
-                        foreach (JSONNode emNode in objectNode["Emission"] as JSONArray)
+                        foreach (JSONNode emNode in emArray)
                         {
                             List<Int32> frameList = new List<Int32>();
                             if (emNode["Frame"] != null)
                             {
-                                if (emNode["Frame"] is JSONArray)
-                                    foreach (JSONNode frameNode in emNode["Frame"] as JSONArray)
+                                if (emNode["Frame"] is JSONArray frameArray)
+                                    foreach (JSONNode frameNode in frameArray)
                                         frameList.Add(frameNode.AsInt);
                                 else
                                     frameList.Add(emNode["Frame"].AsInt);
@@ -1119,9 +1114,9 @@ public abstract class SFXDataMesh
                             Dictionary<Int32, Single> emFPMin = new Dictionary<Int32, Single>();
                             Dictionary<Int32, Single> emFPMax = new Dictionary<Int32, Single>();
                             Int32 paramKey, paramIntValue;
-                            if (emNode is JSONClass)
+                            if (emNode is JSONClass emClass)
                             {
-                                foreach (KeyValuePair<String, JSONNode> p in (emNode as JSONClass).Dict)
+                                foreach (KeyValuePair<String, JSONNode> p in emClass.Dict)
                                 {
                                     if (p.Key.StartsWith("ParameterMin") && Int32.TryParse(p.Key.Substring(12), out paramKey))
                                     {
@@ -1163,18 +1158,16 @@ public abstract class SFXDataMesh
                     }
                     else if (objectNode["Emission"].Value.StartsWith("Follow "))
                     {
-                        Int32 spriteLink;
-                        if (Int32.TryParse(objectNode["Emission"].Value.Substring(7), out spriteLink))
+                        if (Int32.TryParse(objectNode["Emission"].Value.Substring(7), out Int32 spriteLink))
                             sprite.spriteEmissionLink.Add(spriteLink);
                     }
                 }
                 if (objectNode["Scale"] != null)
-                    sprite.scaling[0] = objectNode["Scale"].AsFloat;
+                    sprite.scaling[0] = objectNode["Scale"].AsVector;
                 if (objectNode["ScaleInterpolation"] != null)
                 {
-                    if (objectNode["ScaleInterpolation"] is JSONArray)
+                    if (objectNode["ScaleInterpolation"] is JSONArray interpArray)
                     {
-                        JSONArray interpArray = objectNode["ScaleInterpolation"] as JSONArray;
                         sprite.scalingInterpolateType = new ParametricMovement.InterpolateType[interpArray.Count];
                         for (Int32 i = 0; i < interpArray.Count; i++)
                             ParametricMovement.TryParseInterpolateType(interpArray[i], out sprite.scalingInterpolateType[i]);
@@ -1184,10 +1177,10 @@ public abstract class SFXDataMesh
                         ParametricMovement.TryParseInterpolateType(objectNode["ScaleInterpolation"], out sprite.scalingInterpolateType[0]);
                     }
                 }
-                if (objectNode["ScaleAnimation"] != null && objectNode["ScaleAnimation"] is JSONArray)
-                    foreach (JSONNode scaleNode in objectNode["ScaleAnimation"] as JSONArray)
+                if (objectNode["ScaleAnimation"] != null && objectNode["ScaleAnimation"] is JSONArray scaleNodeArray)
+                    foreach (JSONNode scaleNode in scaleNodeArray)
                         if (scaleNode["Frame"] != null && scaleNode["Scale"] != null)
-                            sprite.scaling[scaleNode["Frame"].AsInt] = scaleNode["Scale"].AsFloat;
+                            sprite.scaling[scaleNode["Frame"].AsInt] = scaleNode["Scale"].AsVector;
                 if (sprite.emission.Count == 0 && sprite.spriteEmissionLink.Count == 0)
                 {
                     sprite.emission.Add(new Sprite.Emission());
@@ -1225,7 +1218,7 @@ public abstract class SFXDataMesh
             public List<Int32> spriteEmissionLink = new List<Int32>();
             public Dictionary<Int32, Vector2[]> uv = new Dictionary<Int32, Vector2[]>();
             public Dictionary<Int32, Color32[]> vertexColor = new Dictionary<Int32, Color32[]>();
-            public Dictionary<Int32, Single> scaling = new Dictionary<Int32, Single>();
+            public Dictionary<Int32, Vector4> scaling = new Dictionary<Int32, Vector4>();
             public ParametricMovement.InterpolateType[] uvInterpolateType = new ParametricMovement.InterpolateType[] { ParametricMovement.InterpolateType.Constant };
             public ParametricMovement.InterpolateType[] colorInterpolateType = new ParametricMovement.InterpolateType[] { ParametricMovement.InterpolateType.Constant };
             public ParametricMovement.InterpolateType[] scalingInterpolateType = new ParametricMovement.InterpolateType[] { ParametricMovement.InterpolateType.Linear };
@@ -1234,6 +1227,7 @@ public abstract class SFXDataMesh
             public Int32[] index = new Int32[] { 0, 1, 2, 1, 3, 2 };
             public Int32 lastFrameRendered = -1;
             public Boolean useScreenSize = false;
+            public Boolean useScreenCoordinates = false;
 
             public List<Particle> particle = new List<Particle>();
 
@@ -1246,13 +1240,16 @@ public abstract class SFXDataMesh
                 foreach (Particle p in particle)
                 {
                     Vector3 basePos = p.movement.GetPosition(frame - p.frameStart, p.param, caster, target, averageTarget);
-                    basePos = camera.WorldToScreenPoint(basePos); // World -> Screen
-                    Single scale = GetScalingFactor(frame - p.frameStart);
+                    if (useScreenCoordinates)
+                        basePos = camera.ViewportToScreenPoint(basePos); // Viewport -> Screen
+                    else
+                        basePos = camera.WorldToScreenPoint(basePos); // World -> Screen
+                    Vector4 scale = GetScalingFactor(frame - p.frameStart);
                     Vector2[] uv = GetTimedUV(frame - p.frameStart);
                     Color32[] col = GetTimedColor(frame - p.frameStart);
                     for (Int32 i = 0; i < vertex.Length; i++)
                     {
-                        Vector2 vLocalPos = scale * vertex[i];
+                        Vector2 vLocalPos = new Vector2(scale.x * vertex[i].x, scale.y * vertex[i].y);
                         if (!useScreenSize)
                         {
                             if (basePos.z >= 0f)
@@ -1283,9 +1280,9 @@ public abstract class SFXDataMesh
                 }
             }
 
-            public Single GetScalingFactor(Int32 frame)
+            public Vector4 GetScalingFactor(Int32 frame)
             {
-                return ParametricMovement.GetInterpolatedDictionaryValue((a, b, c, d) => a * b + c * d, scaling, frame, 1f, scalingInterpolateType[0], scalingInterpolateType);
+                return ParametricMovement.GetInterpolatedDictionaryValue(ScaleInterpolateCombination, scaling, frame, Vector4.one, scalingInterpolateType[0], scalingInterpolateType);
             }
 
             public Vector2[] GetTimedUV(Int32 frame)
@@ -1296,6 +1293,15 @@ public abstract class SFXDataMesh
             public Color32[] GetTimedColor(Int32 frame)
             {
                 return ParametricMovement.GetInterpolatedDictionaryValue(ColorInterpolateCombination, vertexColor, frame, null, colorInterpolateType[0], colorInterpolateType);
+            }
+
+            private Vector4 ScaleInterpolateCombination(Single a, Vector4 origin, Single b, Vector4 dest)
+            {
+                if (a >= 1f)
+                    return origin;
+                if (b >= 1f)
+                    return dest;
+                return a * origin + b * dest;
             }
 
             private Vector2[] UVInterpolateCombination(Single a, Vector2[] origin, Single b, Vector2[] dest)

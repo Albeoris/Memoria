@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
 
@@ -13,3 +14,4 @@ using System.Windows;
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: AssemblyFileVersion("2.0.0.0")]
 [assembly: AssemblyVersion("2.0.0.0")]
+[assembly: InternalsVisibleTo("Memoria.Launcher.Tests")]

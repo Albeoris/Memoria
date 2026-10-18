@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" InitialTargets="ResolveGamePathForIDE" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <UsingTask AssemblyFile="$(SolutionDir)\References\Memoria.MSBuild.dll" TaskName="Memoria.MSBuild.Deploy" />
+  <UsingTask AssemblyFile="$(SolutionDir)\References\Memoria.MSBuild.dll" TaskName="Memoria.MSBuild.Deploy" Runtime="CLR4" TaskFactory="TaskHostFactory" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -55,10 +55,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationFramework" />
-    <Reference Include="PresentationFramework.Aero2" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Web.Extensions" />
@@ -75,12 +75,27 @@
     <Compile Include="Languages\Lang.cs" />
     <Compile Include="Languages\XmlDocumentExm.cs" />
     <Compile Include="Languages\XmlHelper.cs" />
+    <Compile Include="Controller\ControllerInput.cs" />
+    <Compile Include="Controller\ControllerControlInteractor.cs" />
+    <Compile Include="Controller\ControllerFocusManager.cs" />
+    <Compile Include="Controller\ControllerFocusNavigator.cs" />
+    <Compile Include="Controller\ControllerInputModeManager.cs" />
+    <Compile Include="Controller\ControllerTextInputOverlay.cs" />
+    <Compile Include="Controller\ControllerTooltipPresenter.cs" />
+    <Compile Include="Controller\GamepadNavigation.cs" />
+    <Compile Include="Controller\NativeDialogControllerBridge.cs" />
+    <Compile Include="Controller\SpatialNavigation.cs" />
+    <Compile Include="Controller\VisualTree.cs" />
+    <Compile Include="Controller\XInputControllerInputSource.cs" />
     <Compile Include="Launcher\ALChColor.cs" />
     <Compile Include="Launcher\Window_ModDescription.xaml.cs">
       <DependentUpon>Window_ModDescription.xaml</DependentUpon>
     </Compile>
     <Compile Include="Launcher\Window_NewPreset.xaml.cs">
       <DependentUpon>Window_NewPreset.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Launcher\Window_StartBattle.xaml.cs">
+      <DependentUpon>Window_StartBattle.xaml</DependentUpon>
     </Compile>
     <Compile Include="Launcher\SettingsGrid_Advanced3.cs" />
     <Compile Include="Launcher\SettingsGrid_Advanced2.cs" />
@@ -91,6 +106,8 @@
     <Compile Include="Launcher\SettingsGrid_Main2.cs" />
     <Compile Include="Launcher\SettingsGrid_Main.cs" />
     <Compile Include="Launcher\Settings.cs" />
+    <Compile Include="Launcher\SteamLauncherBootstrap.cs" />
+    <Compile Include="Launcher\GameLaunchOptions.cs" />
     <Compile Include="Launcher\SettingsGrid_Presets.cs" />
     <Compile Include="Launcher\SettingsGrid_VanillaDisplay.cs" />
     <Compile Include="Launcher\UiGrid.cs" />
@@ -102,8 +119,110 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Launcher\SettingsGrid_Vanilla.cs" />
     <Compile Include="Launcher\AppLogger.cs" />
-    <Compile Include="Launcher\HttpClients.cs" />
     <Compile Include="Launcher\Utils.cs" />
+    <Compile Include="Utils\Archives\ArchiveExtractionException.cs" />
+    <Compile Include="Utils\Archives\ArchiveFailureMessageBuilder.cs" />
+    <Compile Include="Utils\Archives\ArchiveEntryPathPolicy.cs" />
+    <Compile Include="Utils\Archives\ArchiveExtractionBackend.cs" />
+    <Compile Include="Utils\Archives\ArchiveExtractor.cs" />
+    <Compile Include="Utils\Archives\ArchiveFileExtensions.cs" />
+    <Compile Include="Utils\Archives\EmbeddedSevenZipExecutable.cs" />
+    <Compile Include="Utils\Archives\IArchiveExtractor.cs" />
+    <Compile Include="Utils\Archives\SevenZipExitCode.cs" />
+    <Compile Include="Utils\Archives\SevenZipFailure.cs" />
+    <Compile Include="Utils\Archives\SevenZipExtractor.cs" />
+    <Compile Include="Utils\Archives\SevenZipProcessRunner.cs" />
+    <Compile Include="Utils\Archives\SharpCompressRarExtractor.cs" />
+    <Compile Include="Utils\Catalog\MemoriaCatalogEndpoints.cs" />
+    <Compile Include="Utils\ExceptionDetailsFormatter.cs" />
+    <Compile Include="Utils\Downloads\DownloadException.cs" />
+    <Compile Include="Utils\Downloads\DownloadDestination.cs" />
+    <Compile Include="Utils\Downloads\DownloadedFile.cs" />
+    <Compile Include="Utils\Downloads\DownloadFailureKind.cs" />
+    <Compile Include="Utils\Downloads\DownloadFileOperation.cs" />
+    <Compile Include="Utils\Downloads\DownloadOperationEventArgs.cs" />
+    <Compile Include="Utils\Downloads\DownloadOperationState.cs" />
+    <Compile Include="Utils\Downloads\DownloadProgress.cs" />
+    <Compile Include="Utils\Downloads\DownloadResponseValidator.cs" />
+    <Compile Include="Utils\Downloads\FileDownloader.cs" />
+    <Compile Include="Utils\Downloads\RemoteFileNameResolver.cs" />
+    <Compile Include="Utils\Downloads\ResilientHttpClient.cs" />
+    <Compile Include="Utils\Fonts\SystemFontService.cs" />
+    <Compile Include="Utils\IO\FileSystemAccessProbe.cs" />
+    <Compile Include="Utils\IO\DirectoryTreeDeleter.cs" />
+    <Compile Include="Utils\IO\GameRootDirectory.cs" />
+    <Compile Include="Utils\IO\PathSegmentMatcher.cs" />
+    <Compile Include="Utils\IO\SafeRelativePath.cs" />
+    <Compile Include="Utils\Localization\ComboBoxOption.cs" />
+    <Compile Include="Utils\Localization\ComboBoxOptions.cs" />
+    <Compile Include="Utils\Localization\ComboBoxSelectionMode.cs" />
+    <Compile Include="Utils\Mods\ModDownloadFormat.cs" />
+    <Compile Include="Utils\Mods\ExtractedModArchive.cs" />
+    <Compile Include="Utils\Mods\ModDownloadPlan.cs" />
+    <Compile Include="Utils\Mods\ModContentManifest.cs" />
+    <Compile Include="Utils\Mods\ModDescriptionFile.cs" />
+    <Compile Include="Utils\Mods\ModInstallationFileSystem.cs" />
+    <Compile Include="Utils\Mods\ModInstallationNameResolver.cs" />
+    <Compile Include="Utils\Mods\ModUninstallFailureMessageBuilder.cs" />
+    <Compile Include="Utils\Mods\ModArchiveInspector.cs" />
+    <Compile Include="Utils\Mods\ModArchiveRoot.cs" />
+    <Compile Include="Utils\Mods\ModPackageType.cs" />
+    <Compile Include="Utils\Mods\SingleFileModInstaller.cs" />
+    <Compile Include="Utils\ModValidation\IModFileFixer.cs" />
+    <Compile Include="Utils\ModValidation\IModFileValidator.cs" />
+    <Compile Include="Utils\ModValidation\ModFileFixCoordinator.cs" />
+    <Compile Include="Utils\ModValidation\ModFileFixOutcome.cs" />
+    <Compile Include="Utils\ModValidation\ModFileFixResult.cs" />
+    <Compile Include="Utils\ModValidation\ModFixChange.cs" />
+    <Compile Include="Utils\ModValidation\ModFixChangelogEntry.cs" />
+    <Compile Include="Utils\ModValidation\ModFixChangelogStore.cs" />
+    <Compile Include="Utils\ModValidation\ModFixService.cs" />
+    <Compile Include="Utils\ModValidation\ModValidationDiagnosticSeverity.cs" />
+    <Compile Include="Utils\ModValidation\ModValidationFile.cs" />
+    <Compile Include="Utils\ModValidation\ModValidationDiagnostic.cs" />
+    <Compile Include="Utils\ModValidation\ModValidationProgress.cs" />
+    <Compile Include="Utils\ModValidation\ModValidationReport.cs" />
+    <Compile Include="Utils\ModValidation\ModValidationResult.cs" />
+    <Compile Include="Utils\ModValidation\ModValidationService.cs" />
+    <Compile Include="Utils\ModValidation\ModValidationStatus.cs" />
+    <Compile Include="Utils\ModValidation\ModValidationTreeNode.cs" />
+    <Compile Include="Utils\ModValidation\ModValidationWindow.xaml.cs">
+      <DependentUpon>ModValidationWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\ModValidation\Shaders\D3D9ShaderProgram.cs" />
+    <Compile Include="Utils\ModValidation\Shaders\D3D9ShaderProgramReader.cs" />
+    <Compile Include="Utils\ModValidation\Shaders\D3D9ShaderValidator.cs" />
+    <Compile Include="Utils\ModValidation\Shaders\D3D9X5213AddFixer.cs" />
+    <Compile Include="Utils\ModValidation\Shaders\D3D9X5213BinaryOperationFixer.cs" />
+    <Compile Include="Utils\ModValidation\Shaders\D3D9X5213MultiplyFixer.cs" />
+    <Compile Include="Utils\ModValidation\Shaders\D3DShaderAssemblyResult.cs" />
+    <Compile Include="Utils\ModValidation\Shaders\ID3DShaderAssembler.cs" />
+    <Compile Include="Utils\ModValidation\Shaders\SystemD3DShaderAssembler.cs" />
+    <Compile Include="Utils\ModValidation\ValidationDisplayNode.cs" />
+    <Compile Include="Utils\Resolution\DisplayBounds.cs" />
+    <Compile Include="Utils\Resolution\DisplayMonitor.cs" />
+    <Compile Include="Utils\Resolution\DisplayResolution.cs" />
+    <Compile Include="Utils\Resolution\DisplayService.cs" />
+    <Compile Include="Utils\Resolution\NativeDisplayMethods.cs" />
+    <Compile Include="Utils\Updates\LauncherUpdateInstaller.cs" />
+    <Compile Include="Utils\Updates\LauncherUpdateMetadataClient.cs" />
+    <Compile Include="Utils\Updates\LauncherUpdateService.cs" />
+    <Compile Include="Utils\Updates\GitHubReleaseDescriptionParser.cs" />
+    <Compile Include="Utils\Updates\GitHubReleaseAssetDigest.cs" />
+    <Compile Include="Utils\Updates\GitHubReleaseNotesClient.cs" />
+    <Compile Include="Utils\Updates\InstalledBuildVersion.cs" />
+    <Compile Include="Utils\Updates\InstalledReleaseNotesService.cs" />
+    <Compile Include="Utils\Updates\PendingUpdatePackage.cs" />
+    <Compile Include="Utils\Updates\ReleaseNotesDocument.cs" />
+    <Compile Include="Utils\Updates\UiLauncherUpdatePanel.cs" />
+    <Compile Include="Utils\Updates\UpdateBuild.cs" />
+    <Compile Include="Utils\Updates\UpdateBuildCatalog.cs" />
+    <Compile Include="Utils\Updates\UpdateBuildInfo.cs" />
+    <Compile Include="Utils\Updates\UpdateManifest.cs" />
+    <Compile Include="Utils\Updates\UpdatePackageVerifier.cs" />
+    <Compile Include="Utils\Updates\UpdateDownloadWindow.cs" />
+    <Compile Include="Utils\Updates\UpdateTimeFormatter.cs" />
+    <Compile Include="Utils\Updates\UpdateVersionRelation.cs" />
     <Compile Include="Launcher\UiLauncherPlayButton.cs" />
     <Compile Include="Launcher\UiLauncherButton.xaml.cs">
       <DependentUpon>UiLauncherButton.xaml</DependentUpon>
@@ -124,6 +243,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Launcher\Window_NewPreset.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Launcher\Window_StartBattle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -157,6 +280,10 @@
     </Page>
     <Page Include="Resources\TabItemStyle.xaml">
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Utils\ModValidation\ModValidationWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Resources\TextBoxStyle.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -210,6 +337,23 @@
     <EmbeddedResource Include="7za.exe">
       <TargetPath>7za.exe</TargetPath>
     </EmbeddedResource>
+    <Content Include="..\THIRD-PARTY-NOTICES.md">
+      <Link>THIRD-PARTY-NOTICES.md</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>THIRD-PARTY-NOTICES.md</TargetPath>
+    </Content>
+    <Content Include="ThirdParty\7-Zip\License.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Licenses\7-Zip\License.txt</TargetPath>
+    </Content>
+    <Content Include="ThirdParty\7-Zip\COPYING.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Licenses\7-Zip\COPYING.txt</TargetPath>
+    </Content>
+    <Content Include="ThirdParty\7-Zip\unRarLicense.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Licenses\7-Zip\unRarLicense.txt</TargetPath>
+    </Content>
     <Resource Include="Fonts\centurygothic-bold.ttf" />
     <Resource Include="Fonts\centurygothic.ttf" />
     <Resource Include="Fonts\notoemoji.ttf" />
@@ -284,6 +428,33 @@
     <PackageReference Include="NLog" Version="6.1.3" />
     <PackageReference Include="SharpCompress" Version="0.48.1" />
   </ItemGroup>
+  <ItemGroup>
+      <ProjectReference Include="..\Assembly-CSharp\Assembly-CSharp.csproj">
+          <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+          <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+      </ProjectReference>
+      <ProjectReference Include="..\Memoria.Compiler\Memoria.Compiler.csproj">
+          <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+          <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+      </ProjectReference>
+      <ProjectReference Include="..\Memoria.Injection\Memoria.Injection.vcxproj">
+          <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+          <SetPlatform>Platform=x64</SetPlatform>
+      </ProjectReference>
+      <ProjectReference Include="..\Memoria.MSBuild\Memoria.MSBuild.csproj">
+          <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+          <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+      </ProjectReference>
+      <ProjectReference Include="..\Memoria.Scripts\Memoria.Scripts.csproj">
+          <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+          <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+      </ProjectReference>
+      <ProjectReference Include="..\Memoria.SteamFix\Memoria.SteamFix.csproj">
+          <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+          <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+          <SetTargetFramework>TargetFramework=net48</SetTargetFramework>
+      </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="Memoria.Launcher.targets" />
   <Target Name="AfterResolveReferences">
@@ -293,11 +464,7 @@
       </EmbeddedResource>
     </ItemGroup>
   </Target>
-  <Target Name="BeforeBuild">
-    <MSBuild Projects="..\Memoria.Injection\Memoria.Injection.vcxproj" Properties="Platform=Win32" RunEachTargetSeparately="true" />
-    <MSBuild Projects="..\Memoria.Injection\Memoria.Injection.vcxproj" Properties="Platform=x64" RunEachTargetSeparately="true" />
-  </Target>
-  <Target Name="AfterBuild">
+  <Target Name="AfterBuild" Condition="'$(CI)' != 'true'">
     <Deploy SolutionDir="$(SolutionDir)" TargetPath="$(TargetPath)" TargetDir="$(TargetDir)" TargetName="$(TargetName)" SourceFileName="$(TargetFileName)" DestinationFileName="FF9_Launcher.exe" CopyMdbSymbols="false" DeployToRootDirectory="true" />
   </Target>
 </Project>

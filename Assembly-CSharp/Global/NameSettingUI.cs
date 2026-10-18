@@ -45,9 +45,21 @@ public sealed class NameSettingUI : UIScene
     {
         SceneDirector.FadeEventSetColor(FadeMode.Sub, Color.black);
         base.Show(afterFinished);
-        SetData();
-        NameInputField.isSelected = true;
-        Warning.SetActive(false);
+        try
+        {
+            SetData();
+            NameInputField.isSelected = true;
+            Warning.SetActive(false);
+        }
+        catch (Exception err)
+        {
+            GameObject toplevelGo = gameObject;
+            while (toplevelGo.transform.parent != null)
+                toplevelGo = toplevelGo.GetParent();
+            Memoria.Prime.Log.Error($"[NameSettingUI] Fail! Logging the whole UI Root hierarchy:");
+            UIManager.DebugLogComponents(toplevelGo);
+            Memoria.Prime.Log.Error(err);
+        }
         PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(true);
         PersistenSingleton<HonoInputManager>.Instance.DisablePrimaryKey = true;
     }
@@ -191,6 +203,16 @@ public sealed class NameSettingUI : UIScene
 
     private void Awake()
     {
+        if (NameInputField == null)
+        {
+            GameObject toplevelGo = gameObject;
+            while (toplevelGo.transform.parent != null)
+                toplevelGo = toplevelGo.GetParent();
+            Memoria.Prime.Log.Warning($"[NameSettingUI] NameInputField not registered. Logging the whole UI Root hierarchy:");
+            UIManager.DebugLogComponents(toplevelGo);
+            NameInputField = gameObject.FindChild("Name Input Field")?.GetComponent<UIInput>();
+            Memoria.Prime.Log.Message($"[NameSettingUI] NameInputField recovered: {NameInputField != null}");
+        }
         FadingComponent = ScreenFadeGameObject.GetComponent<HonoFading>();
         NameInputField.characterLimit = 12;
         Warning.transform.AddX(-50f);

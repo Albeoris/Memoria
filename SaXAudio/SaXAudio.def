@@ -1,6 +1,7 @@
 EXPORTS
 	Create
 	Release
+	PrepareForShutdown
 
 	StopEngine
 	StartEngine

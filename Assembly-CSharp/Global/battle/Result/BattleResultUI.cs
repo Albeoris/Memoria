@@ -18,6 +18,8 @@ public class BattleResultUI : UIScene
         if (afterFinished != null)
             afterShow += afterFinished;
         base.Show(afterShow);
+        foreach (CharacterBattleResultInfoHUD hud in this.characterBRInfoHudList)
+            hud.ExpCaptionLabel.rawText = Localization.Get("EXP"); // ExpCaptionLabel is not a UILocalize for some reason, so we update it when it's shown
         SceneDirector.FF9Wipe_FadeInEx(12);
         PersistenSingleton<UIManager>.Instance.SetGameCameraEnable(false);
         this.isTimerDisplay = TimerUI.GetDisplay();
@@ -374,14 +376,10 @@ public class BattleResultUI : UIScene
     private void InitialEvent()
     {
         this.currentState = BattleResultUI.ResultState.None;
-        FF9StateBattleMap map = FF9StateSystem.Battle.FF9Battle.map;
-        if (map.evtPtr != null)
-        {
-            this.AllPanel.SetActive(false);
-            PersistenSingleton<EventEngine>.Instance.StartEvents(map.evtPtr);
-            if (this.isTimerDisplay && TimerUI.Enable)
-                TimerUI.SetDisplay(false);
-        }
+        this.AllPanel.SetActive(false);
+        PersistenSingleton<EventEngine>.Instance.StartEvents();
+        if (this.isTimerDisplay && TimerUI.Enable)
+            TimerUI.SetDisplay(false);
     }
 
     private void InitialNone()
@@ -828,7 +826,13 @@ public class BattleResultUI : UIScene
             characterHUD.ExpCaptionLabel.fixedAlignment = true;
             characterHUD.NextLvCaptionLabel.Label.fixedAlignment = true;
         }
+        this.GilAndItemPhrasePanel.GetChild(0).GetChild(1).GetChild(0).GetComponent<UILabel>().leftAnchor.Set(0f, 32);
         this.GilAndItemPhrasePanel.GetChild(0).GetChild(1).GetChild(0).GetComponent<UILabel>().rightAnchor.Set(1f, -32);
+        this.GilAndItemPhrasePanel.GetChild(0).GetChild(1).GetChild(0).GetComponent<UILabel>().topAnchor.Set(1f, 16);
+        this.GilAndItemPhrasePanel.GetChild(0).GetChild(1).GetChild(0).GetComponent<UILabel>().bottomAnchor.Set(1f, -24);
+        this.GilAndItemPhrasePanel.GetChild(0).GetChild(1).GetChild(0).GetComponent<UILabel>().preventWrapping = true;
+        this.ItemListPanel.GetChild(1).GetChild(3).GetComponent<UILabel>().bottomAnchor.Set(1f, -20);
+        this.ItemListPanel.GetChild(1).GetChild(3).GetComponent<UILabel>().fixedAlignment = true;
         this.ReceiveGilPanel.GetChild(0).GetComponent<UILabel>().fixedAlignment = true;
         this.CurrentGilPanel.GetChild(0).GetComponent<UILabel>().fixedAlignment = true;
         this.AllPanel.GetChild(3).GetChild(1).GetChild(3).GetComponent<UILabel>().rightAnchor.Set(1f, -40);

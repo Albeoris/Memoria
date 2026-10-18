@@ -18,42 +18,50 @@
                     <Grid Width="169" Margin="0,0,2,0">
                         <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="15,15,0,0" BorderThickness="0,2,0,0" BorderBrush="#6666" >
                             <Border >
-                                <StackPanel x:Name="contentwrap" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <Image x:Name="IncompatImage" Source="/images/alert_incompat.png" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type TabItem}}, Path=Tag}" Height="16" Margin="0" Visibility="Collapsed" />
-                                    <TextBlock x:Name="UpdateEmoji"
-                                               Text="⏫"
-                                               FontFamily="{DynamicResource NotoEmoji}"
-                                               FontSize="18"
-                                               Foreground="#efd525"
-                                               Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type TabItem}}, Path=Tag}"
-                                               Height="22"
-                                               LineHeight="22"
-                                               TextAlignment="Center"
-                                               VerticalAlignment="Center"
-                                               Margin="3,0,0,0"
-                                               Visibility="Collapsed" />
-                                    <TextBlock x:Name="NewEmoji"
-                                               Text="🆕"
-                                               FontFamily="{DynamicResource NotoEmoji}"
-                                               FontSize="18"
-                                               Foreground="#efd525"
-                                               Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type TabItem}}, Path=Tag}"
-                                               Height="22"
-                                               LineHeight="22"
-                                               TextAlignment="Center"
-                                               VerticalAlignment="Center"
-                                               Margin="3,0,0,0"
-                                               Visibility="Collapsed" />
-                                    <ContentPresenter x:Name="content" 
+                                <Grid x:Name="contentwrap" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel x:Name="NotificationIcons" Grid.Column="0" Orientation="Horizontal" Margin="0,0,6,0" Visibility="Collapsed">
+                                        <Image x:Name="IncompatImage" Source="/images/alert_incompat.png" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type TabItem}}, Path=Tag}" Height="16" Margin="0" Visibility="Collapsed" />
+                                        <TextBlock x:Name="UpdateEmoji"
+                                                   Text="⏫"
+                                                   FontFamily="{DynamicResource NotoEmoji}"
+                                                   FontSize="18"
+                                                   Foreground="#efd525"
+                                                   Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type TabItem}}, Path=Tag}"
+                                                   Height="22"
+                                                   LineHeight="22"
+                                                   TextAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   Margin="3,0,0,0"
+                                                   Visibility="Collapsed" />
+                                        <TextBlock x:Name="NewEmoji"
+                                                   Text="🆕"
+                                                   FontFamily="{DynamicResource NotoEmoji}"
+                                                   FontSize="18"
+                                                   Foreground="#efd525"
+                                                   Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type TabItem}}, Path=Tag}"
+                                                   Height="22"
+                                                   LineHeight="22"
+                                                   TextAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   Margin="3,0,0,0"
+                                                   Visibility="Collapsed" />
+                                    </StackPanel>
+                                    <ContentPresenter x:Name="content"
+                                        Grid.Column="1"
                                         ContentSource="Header"
-                                        Margin="0,0,0,0"
                                         VerticalAlignment="Center"
                                         TextBlock.FontSize="{TemplateBinding FontSize}"
                                         TextBlock.FontFamily="{DynamicResource CenturyGothic}"
                                         TextBlock.FontWeight="{TemplateBinding FontWeight}"
                                         TextBlock.Foreground="#aaa">
                                     </ContentPresenter>
-                                </StackPanel>
+                                    <Border x:Name="NotificationBalance" Grid.Column="2" Width="{Binding ActualWidth, ElementName=NotificationIcons}" Margin="6,0,0,0" Visibility="Collapsed" />
+                                </Grid>
                             </Border>
                         </Border>
                         <Rectangle x:Name="underline"
@@ -69,29 +77,36 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding AreThereModIncompatibilies}" Value="True" />
+                                <Condition Binding="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}" Value="22" />
                             </MultiDataTrigger.Conditions>
                             <MultiDataTrigger.Setters>
                                 <Setter TargetName="IncompatImage" Property="Visibility" Value="Visible" />
+                                <Setter TargetName="NotificationIcons" Property="Visibility" Value="Visible" />
+                                <Setter TargetName="NotificationBalance" Property="Visibility" Value="Visible" />
                             </MultiDataTrigger.Setters>
                         </MultiDataTrigger>
 
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding AreThereModUpdates}" Value="True" />
+                                <Condition Binding="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}" Value="22" />
                             </MultiDataTrigger.Conditions>
                             <MultiDataTrigger.Setters>
                                 <Setter TargetName="UpdateEmoji" Property="Visibility" Value="Visible" />
-                                <Setter TargetName="content" Property="Margin" Value="6,0,0,0" />
+                                <Setter TargetName="NotificationIcons" Property="Visibility" Value="Visible" />
+                                <Setter TargetName="NotificationBalance" Property="Visibility" Value="Visible" />
                             </MultiDataTrigger.Setters>
                         </MultiDataTrigger>
 
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding AreThereNewMods}" Value="True" />
+                                <Condition Binding="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}" Value="22" />
                             </MultiDataTrigger.Conditions>
                             <MultiDataTrigger.Setters>
                                 <Setter TargetName="NewEmoji" Property="Visibility" Value="Visible" />
-                                <Setter TargetName="content" Property="Margin" Value="6,0,0,0" />
+                                <Setter TargetName="NotificationIcons" Property="Visibility" Value="Visible" />
+                                <Setter TargetName="NotificationBalance" Property="Visibility" Value="Visible" />
                             </MultiDataTrigger.Setters>
                         </MultiDataTrigger>
 

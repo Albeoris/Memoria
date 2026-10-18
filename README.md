@@ -63,11 +63,7 @@ Note: This is **not** affiliated with the Memoria Project, a 2023 Proof-of-conce
 
 > **PLEASE NOTE:**
 >
-> If you prefer to use an automated approach, this gist is also available:
->
-> ```bash
-> bash -c "$(curl -sL https://gist.githubusercontent.com/dotaxis/1ad1c64baa7ad9c1dabcb255ea6257ae/raw/memoria.sh)"
-> ```
+> If you prefer to use an automated approach, MateriaForge provides an easy way to install and run Memoria. See https://github.com/dotaxis/MateriaForge-rs
 
 - Download `Memoria.Patcher-linux-x64` from which ever release channel you prefer
 - Copy the file inside your game directory (next to `FF9_Launcher.exe` )
@@ -100,6 +96,23 @@ Note: This is **not** affiliated with the Memoria Project, a 2023 Proof-of-conce
 - Most crucial options and cheats are embedded in the game launcher
 - More in-depth configuration is available in the file `Memoria.ini` (in the game folder)
 
+### Automated launch (Windows / Steam)
+
+PowerShell examples (adjust the Steam path if needed):
+
+- Battle: `& "C:\Program Files (x86)\Steam\steam.exe" -applaunch 377840 -memoria-battle 336`
+- Model viewer: `& "C:\Program Files (x86)\Steam\steam.exe" -applaunch 377840 -memoria-model-viewer`
+- Field creator: `& "C:\Program Files (x86)\Steam\steam.exe" -applaunch 377840 -memoria-field-creator`
+- Continue from autosave: `& "C:\Program Files (x86)\Steam\steam.exe" -applaunch 377840 -memoria-autoload`
+
+`-memoria-autoload` automatically loads the autosave and resumes the saved game without selecting Continue in the title menu. If the autosave cannot be loaded, the game logs the error and exits.
+
+Battle launch always loads characters and the party from the autosave before entering the selected battle. Use `-memoria-party 0,1,3` to override the saved party after loading. If the autosave cannot be loaded, the game logs the error and exits. `-memoria-party` and `-memoria-seed` are optional battle launch parameters and can only be used with `-memoria-battle`. Launching a battle requires neither parameter. If several startup modes are supplied, model viewer takes priority, followed by field creator, battle, and standalone autoload.
+
+## Third-party software
+
+See [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) for third-party software and license information.
+
 ## 🚀 Build
 
 ### Visual Studio
@@ -110,3 +123,44 @@ Note: This is **not** affiliated with the Memoria Project, a 2023 Proof-of-conce
 3. Open the file [`Memoria.sln`](Memoria.sln) in Visual Studio and click the build button
 4. Click on `Start` to launch the `Memoria.Launcher` in the game directory
 
+### FF9SpecialEffectPlugin
+
+Run from the repository root:
+
+- Deploy locally: `dotnet build FF9SpecialEffectPlugin/FF9SpecialEffectPlugin.csproj -c Release /p:DeploySpecialEffectPlugin=true`
+- Build a local patcher with the plugin (Visual Studio Developer PowerShell): `msbuild Memoria.Patcher/Memoria.Patcher.csproj /restore /p:Configuration=Release /p:IncludeSpecialEffectPlugin=true`
+
+Both flags are off by default. To specify the game directory, add `/p:MemoriaGamePath="<game root>"` to the deployment command.
+
+#### Call tracing
+
+Build and deploy with `-c Debug`, then place `FF9SpecialEffectPlugin.trace.json` beside the DLL in `<game root>/x64/FF9_Data/Plugins/`. Tracing is disabled in Release.
+
+All functions:
+
+```json
+{
+  "enabled": true,
+  "log": "FF9SpecialEffectPlugin.trace.log",
+  "functions": ["*"],
+  "cap": {
+    "perFunction": 0,
+    "total": 0
+  }
+}
+
+```
+
+**Tracing all functions generates hundreds of megabytes of logs within a few seconds.**
+
+Selected functions:
+
+```json
+{
+  "enabled": true,
+  "log": "FF9SpecialEffectPlugin.trace.log",
+  "functions": ["HostCallbackSend", "PsxClearOTagR"]
+}
+```
+
+Relative log paths resolve from the configuration file's directory.

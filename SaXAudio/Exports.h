@@ -35,6 +35,11 @@ namespace SaXAudio
     /// Release everything
     /// </summary>
     EXPORT void Release();
+    /// <summary>
+    /// Stop background services that must finish before the DLL is unloaded,
+    /// without releasing audio resources that Windows will reclaim at process exit.
+    /// </summary>
+    EXPORT void PrepareForShutdown();
 
     /// <summary>
     /// Resume playing all voices

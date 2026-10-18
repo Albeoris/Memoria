@@ -75,6 +75,7 @@ namespace SaXAudio
         BOOL Init();
 
         void Release();
+        void PrepareForShutdown();
 
         void StopEngine();
         void StartEngine();

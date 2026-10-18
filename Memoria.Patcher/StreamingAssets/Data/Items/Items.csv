@@ -4,7 +4,7 @@
 # This file contains a set of game items.
 # You must set at least 256 different items.
 # -----------------------------------------------
-# Id;WeaponId;ArmorId;EffectId;Price;SellingPrice;GraphicsId;ColorId;Quality;BonusId;AbilityIds;Weapon;Armlet;Helmet;Armor;Accessory;Item;Gem;Usable;Order;Zidane;Vivi;Garnet;Steiner;Freya;Quina;Eiko;Amarant;Cinna;Marcus;Blank;Beatrix
+# Id;WeaponId;ArmorId;EffectId;Price;SellingPrice;GraphicsId;ColorId;Quality;BonusId;AbilityIds;TypeMask(Weapon; Armlet; Helmet; Armor; Accessory; Item; Gem; Usable);Order;UseCondition;CharacterMask(Zidane; Vivi; Garnet; Steiner; Freya; Quina; Eiko; Amarant; Cinna; Marcus; Blank; Beatrix)
 # Int32;Int32;Int32;Int32;UInt32;Int32;UInt8;UInt8;Single;Int32;Ability[];Bit;Bit;Bit;Bit;Bit;Bit;Bit;Bit;Single;Bit;Bit;Bit;Bit;Bit;Bit;Bit;Bit;Bit;Bit;Bit;Bit
 # -----------------------------------------------
 0;0;-1;-1;250;125;0;0;1;0;0;1;0;0;0;0;0;0;0;21;0;0;0;0;0;0;0;0;1;0;0;0;# 000 - Hammer

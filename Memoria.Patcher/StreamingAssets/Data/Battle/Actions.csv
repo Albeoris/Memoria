@@ -2,7 +2,7 @@
 # This file contains character actions.
 # You must set at least 192 different items.
 # -----------------------------------------------
-# Comment;id;menuWindow;targets;defaultAlly;forDead;defaultOnDead;defaultCamera;animationId1;animationId2;scriptId;power;elements;rate;category;statusIndex;mp;type;commandTitle
+# Comment;Id;Display;Targets;DefaultAlly;ForDead;DefaultDead;DefaultCamera;AnimationId;AnimationId2;ScriptId;Power;Elements;Rate;Category;AddStatus;MP;Type;CastingTitleType
 # ;Int32;UInt8;UInt8;Boolean;Boolean;Boolean;Boolean;Int16;UInt16;Int32;Int32;UInt8;Int32;UInt8;Int32;Int32;UInt8;UInt8
 # -----------------------------------------------
 Void;0;None(0);SingleAny(0);0;0;0;0;0;10;0;0;0;0;0;0;0;0;0;# Void

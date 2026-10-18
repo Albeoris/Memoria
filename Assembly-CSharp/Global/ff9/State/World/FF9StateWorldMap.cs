@@ -10,10 +10,6 @@ public class FF9StateWorldMap
     }
 
     public UInt32 attr;
-
-    public Byte[] evtPtr;
-
     public Byte nextMode;
-
     public Int16 nextMapNo;
 }

@@ -26,6 +26,8 @@ namespace Memoria.MSBuild
 
     internal static class DeploymentFileSet
     {
+        public static readonly DeploymentFileDefinition SpecialEffectPlugin = new DeploymentFileDefinition(DeploymentItemKind.File, @"Global\SpecialEffectPlugin\x64\FF9SpecialEffectPlugin.dll", @"x64\FF9_Data\Plugins\FF9SpecialEffectPlugin.dll");
+
         public static readonly DeploymentFileDefinition[] Files =
         {
             new DeploymentFileDefinition(DeploymentItemKind.Folder, @"StreamingAssets", @"StreamingAssets"),
@@ -36,6 +38,10 @@ namespace Memoria.MSBuild
             new DeploymentFileDefinition(DeploymentItemKind.ManagedDll, @"UnityEngine.UI.dll", @"{PLATFORM}\FF9_Data\Managed\UnityEngine.UI.dll"),
             new DeploymentFileDefinition(DeploymentItemKind.File, @"Launcher\Memoria.Launcher.exe", @"FF9_Launcher.exe"),
             new DeploymentFileDefinition(DeploymentItemKind.File, @"Launcher\Memoria.Launcher.exe.config", @"FF9_Launcher.exe.config"),
+            new DeploymentFileDefinition(DeploymentItemKind.File, @"Launcher\THIRD-PARTY-NOTICES.md", @"THIRD-PARTY-NOTICES.md"),
+            new DeploymentFileDefinition(DeploymentItemKind.File, @"Launcher\Licenses\7-Zip\License.txt", @"Licenses\7-Zip\License.txt"),
+            new DeploymentFileDefinition(DeploymentItemKind.File, @"Launcher\Licenses\7-Zip\COPYING.txt", @"Licenses\7-Zip\COPYING.txt"),
+            new DeploymentFileDefinition(DeploymentItemKind.File, @"Launcher\Licenses\7-Zip\unRarLicense.txt", @"Licenses\7-Zip\unRarLicense.txt"),
             new DeploymentFileDefinition(DeploymentItemKind.File, @"Launcher\Memoria.SteamFix.exe", @"Memoria.SteamFix.exe"),
             new DeploymentFileDefinition(DeploymentItemKind.File, @"Launcher\Ae.Dns.Client.dll", @"Ae.Dns.Client.dll"),
             new DeploymentFileDefinition(DeploymentItemKind.File, @"Launcher\Ae.Dns.Protocol.dll", @"Ae.Dns.Protocol.dll"),
@@ -48,13 +54,9 @@ namespace Memoria.MSBuild
             new DeploymentFileDefinition(DeploymentItemKind.File, @"Newtonsoft.Json.dll", @"{PLATFORM}\FF9_Data\Managed\Newtonsoft.Json.dll"),
             new DeploymentFileDefinition(DeploymentItemKind.File, @"System.Runtime.Serialization.dll", @"{PLATFORM}\FF9_Data\Managed\System.Runtime.Serialization.dll"),
             new DeploymentFileDefinition(DeploymentItemKind.File, @"JoyShockLibrary\x64\JoyShockLibrary.dll", @"x64\FF9_Data\Plugins\JoyShockLibrary.dll"),
-            new DeploymentFileDefinition(DeploymentItemKind.File, @"JoyShockLibrary\x86\JoyShockLibrary.dll", @"x86\FF9_Data\Plugins\JoyShockLibrary.dll"),
             new DeploymentFileDefinition(DeploymentItemKind.File, @"Global\Sound\SoLoud\x64\soloud.dll", @"x64\FF9_Data\Plugins\soloud.dll"),
-            new DeploymentFileDefinition(DeploymentItemKind.File, @"Global\Sound\SoLoud\x86\soloud.dll", @"x86\FF9_Data\Plugins\soloud.dll"),
             new DeploymentFileDefinition(DeploymentItemKind.File, @"Global\Sound\SaXAudio\x64\SaXAudio.dll", @"x64\FF9_Data\Plugins\SaXAudio.dll"),
-            new DeploymentFileDefinition(DeploymentItemKind.File, @"Global\Sound\SaXAudio\x86\SaXAudio.dll", @"x86\FF9_Data\Plugins\SaXAudio.dll"),
             new DeploymentFileDefinition(DeploymentItemKind.File, @"Global\Sound\SaXAudio\x64\XAudio2_9.dll", @"x64\XAudio2_9.dll"),
-            new DeploymentFileDefinition(DeploymentItemKind.File, @"Global\Sound\SaXAudio\x86\XAudio2_9.dll", @"x86\XAudio2_9.dll"),
         };
     }
 }

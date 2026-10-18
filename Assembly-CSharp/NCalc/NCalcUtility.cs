@@ -91,6 +91,8 @@ namespace NCalc
                 args.Result = GameState.AbilityUsage((BattleAbilityId)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), 0));
             else if (name == "GetItemCount" && args.Parameters.Length == 1)
                 args.Result = GameState.ItemCount((RegularItem)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)RegularItem.NoItem));
+            else if (name == "GetCardCountOfType" && args.Parameters.Length == 1)
+                args.Result = GameState.GetCardCountOfType((TetraMasterCardId)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)TetraMasterCardId.NONE));
             else if (name == "HasKeyItem" && args.Parameters.Length == 1)
                 args.Result = GameState.HasKeyItem((Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), -1));
             else if (name == "GetItemProperty" && args.Parameters.Length == 2)
@@ -251,6 +253,7 @@ namespace NCalc
             else if (name == "TetraMasterLossCount") args.Result = (Int32)GameState.TetraMasterLoss;
             else if (name == "TetraMasterDrawCount") args.Result = (Int32)GameState.TetraMasterDraw;
             else if (name == "TetraMasterCardCount") args.Result = (Int32)GameState.TetraMasterCardCount;
+            else if (name == "TetraMasterCardTypeCount") args.Result = (Int32)GameState.TetraMasterCardTypeCount;
             else if (name == "TetraMasterPlayerPoints") args.Result = (Int32)GameState.TetraMasterPlayerPoints;
             else if (name == "TetraMasterPlayerRank") args.Result = (Int32)GameState.TetraMasterPlayerRank;
             else if (name == "TreasureHunterPoints") args.Result = (Int32)GameState.TreasureHunterPoints;
@@ -306,6 +309,29 @@ namespace NCalc
         {
             if (name == "WorldDisc") args.Result = (Int32)ff9.w_frameDisc;
         };
+
+        public static void InitializeExpressionScene(ref Expression expr, BTL_SCENE scene)
+        {
+            expr.Parameters["StartType"] = (Int32)scene.Info.StartType;
+            expr.Parameters["IsSpecialStart"] = scene.Info.SpecialStart;
+            expr.Parameters["IsBackAttack"] = scene.Info.BackAttack;
+            expr.Parameters["IsNoGameOver"] = scene.Info.NoGameOver;
+            expr.Parameters["IsNoExp"] = scene.Info.NoExp;
+            expr.Parameters["IsWinPose"] = scene.Info.WinPose;
+            expr.Parameters["IsRunaway"] = scene.Info.Runaway;
+            expr.Parameters["IsNoNeighboring"] = scene.Info.NoNeighboring;
+            expr.Parameters["IsNoMagical"] = scene.Info.NoMagical;
+            expr.Parameters["IsReverseAttack"] = scene.Info.ReverseAttack;
+            expr.Parameters["IsFixedCamera1"] = scene.Info.FixedCamera1;
+            expr.Parameters["IsFixedCamera2"] = scene.Info.FixedCamera2;
+            expr.Parameters["IsAfterEvent"] = scene.Info.AfterEvent;
+            expr.Parameters["IsFieldBGM"] = scene.Info.FieldBGM;
+            expr.Parameters["IsPreemptive"] = scene.Info.Preemptive;
+            expr.Parameters["BattleBackground"] = scene.Info.BattleBackground;
+            expr.Parameters["SceneEnemyTypeCount"] = (Int32)scene.header.TypCount;
+            expr.Parameters["SceneAttackCount"] = (Int32)scene.header.AtkCount;
+            expr.Parameters["ScenePatternCount"] = (Int32)scene.header.PatCount;
+        }
 
         public static void InitializeExpressionPlayer(ref Expression expr, PLAYER play)
         {

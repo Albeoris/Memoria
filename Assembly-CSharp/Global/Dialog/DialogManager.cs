@@ -82,6 +82,7 @@ public class DialogManager : Singleton<DialogManager>
             dialogFromPool.Reset();
             dialogFromPool.IsETbDialog = false;
             dialogFromPool.Width = width;
+            dialogFromPool.WidthHint = width;
             dialogFromPool.LineNumber = lineCount;
             dialogFromPool.Style = style;
             dialogFromPool.Tail = tailPos;

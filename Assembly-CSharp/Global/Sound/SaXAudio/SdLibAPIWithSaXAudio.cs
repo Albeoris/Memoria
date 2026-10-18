@@ -52,9 +52,9 @@ namespace Global.Sound.SaXAudio
         public override void SdSoundSystem_Release()
         {
             SoundLib.Log("Release");
-            // Release is only called when the game closes which at this point the DLL might already be unloaded,
-            // leading to an unnecessary crash. Let Windows do the clean-up.
-            //SaXAudio.Release();
+            // Full audio cleanup is intentionally left to Windows because Unity can call this late in shutdown.
+            // The native logging thread must still be joined before the DLL's static objects are destroyed.
+            SaXAudio.PrepareForShutdown();
         }
 
         public override Int32 SdSoundSystem_Suspend()

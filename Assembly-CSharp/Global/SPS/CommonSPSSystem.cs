@@ -233,7 +233,8 @@ public class CommonSPSSystem
         }
         else if (ParmType == SPSConst.OPERATION_CHAR)
         {
-            Obj objUID = PersistenSingleton<EventEngine>.Instance.GetObjUID(Arg0);
+            EventEngine ee = PersistenSingleton<EventEngine>.Instance;
+            Obj objUID = ee.GetObjByUID(Arg0, ee.GetObjectModIndex(ee.gCur));
             sps.charNo = Arg0;
             sps.boneNo = Arg1;
             sps.charTran = objUID.go.transform;

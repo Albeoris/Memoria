@@ -131,6 +131,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         try
         {
             this.cameraController = GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>();
+            Memoria.Debugging.BattleLaunch.ApplyBattleSeed();
             this.InitBattleScene();
             FPSManager.SetTargetFPS(Configuration.Graphics.BattleFPS);
             FPSManager.SetMainLoopSpeed(Configuration.Graphics.BattleTPS);
@@ -189,8 +190,8 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         {
             String ebFileName = "EVT_BATTLE_" + battleSceneName;
             FF9StateBattleMap ff9StateBattleMap = FF9StateSystem.Battle.FF9Battle.map;
-            ff9StateBattleMap.evtPtr = EventEngineUtils.loadEventData(ebFileName, "Battle/");
-            PersistenSingleton<EventEngine>.Instance.StartEvents(ff9StateBattleMap.evtPtr);
+            EventEngineUtils.loadEventData(ebFileName, EventEngineUtils.EB_SUBFOLDER_BATTLE);
+            PersistenSingleton<EventEngine>.Instance.StartEvents();
             ETb.InitMessage();
         }
         this.CreateBattleData(FF9);

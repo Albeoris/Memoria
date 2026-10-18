@@ -139,6 +139,7 @@ public class SFXDataMeshConverter
                 spriteCount--;
                 jsonSprite += WriteIndent(indentCount) + $"\"Duration\":\"{mesh.spriteMesh.duration}\",\n";
                 jsonSprite += WriteIndent(indentCount) + $"\"ScreenSize\":\"{mesh.spriteMesh.useScreenSize}\",\n";
+                jsonSprite += WriteIndent(indentCount) + $"\"ScreenCoordinates\":\"{mesh.spriteMesh.useScreenCoordinates}\",\n";
                 jsonSprite += WriteIndent(indentCount) + "\"Material\":\n";
                 jsonSprite += WriteIndent(indentCount++) + "{\n";
                 jsonSprite += WriteIndent(indentCount) + $"\"Key\":\"{mesh.key:X8}\",\n";
@@ -190,10 +191,10 @@ public class SFXDataMeshConverter
                 jsonSprite += WriteIndent(indentCount) + "\"ScaleAnimation\":\n";
                 jsonSprite += WriteIndent(indentCount) + "[\n";
                 Int32 sclAnimCount = mesh.spriteMesh.scaling.Count;
-                foreach (KeyValuePair<Int32, Single> scl in mesh.spriteMesh.scaling)
+                foreach (KeyValuePair<Int32, Vector4> scl in mesh.spriteMesh.scaling)
                 {
                     sclAnimCount--;
-                    jsonSprite += WriteIndent(indentCount + 1) + "{ \"Frame\":\"" + scl.Key + "\", \"Scale\":\"" + scl.Value + "\"";
+                    jsonSprite += WriteIndent(indentCount + 1) + "{ \"Frame\":\"" + scl.Key + "\", \"Scale\":\"" + ConvertToString(new Vector2(scl.Value.x, scl.Value.y)) + "\"";
                     jsonSprite += sclAnimCount > 0 ? " },\n" : " }\n";
                 }
                 jsonSprite += WriteIndent(indentCount) + "],\n";

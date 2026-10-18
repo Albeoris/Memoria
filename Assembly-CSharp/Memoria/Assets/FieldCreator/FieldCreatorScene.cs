@@ -29,11 +29,13 @@ namespace Memoria.Assets
         private static Int32 controlLastActivePanel;
         private static Int32 controlInformationPanel;
         private static Int32 controlSetupCameraPanel;
+        private static Int32 controlMoveCameraPanel;
         private static Int32 controlSetupOverlayPanel;
         private static Int32 controlSetupAnimationPanel;
         private static Int32 controlSetupWalkmeshPanel;
         private static UILabel controlInformationLabel;
         private static UILabel controlSetupCameraHelp;
+        private static UILabel controlMoveCameraHelp;
         private static UILabel controlSetupOverlayHelp;
         private static ControlList<String> controlLoadInternal;
         private static ControlList<String> controlLoadCustom;
@@ -52,7 +54,15 @@ namespace Memoria.Assets
         private static ControlInput controlSaveFileName;
         private static ControlSlider controlCameraDistance;
         private static ControlSlider controlOverlayDepth;
+        private static ControlSlider controlMoveCameraViewDistance;
+        private static ControlSlider controlMoveCameraPosX;
+        private static ControlSlider controlMoveCameraPosY;
+        private static ControlSlider controlMoveCameraPosZ;
+        private static ControlSlider controlMoveCameraAngleX;
+        private static ControlSlider controlMoveCameraAngleY;
+        private static ControlSlider controlMoveCameraAngleZ;
         private static ControlHitBox controlSetupCamera;
+        private static ControlHitBox controlMoveCamera;
         private static ControlHitBox controlSetupOverlay;
         private static ControlHitBox controlSetupAnimation;
         private static ControlHitBox controlSetupWalkmesh;
@@ -81,6 +91,7 @@ namespace Memoria.Assets
         private static GameObject dummyGo;
         private static Vector3 dummyPosition;
         private static Single scalingFactor = 1f;
+        private static Quaternion cameraOrientation = Quaternion.identity;
 
         private static List<GameObject> anchorWalkmeshGo;
         private static List<GameObject> anchorScreenGo;
@@ -168,6 +179,26 @@ namespace Memoria.Assets
             controlPanel.PanelAddRow(controlSetupCameraPanel);
             controlSetupCameraHelp = controlPanel.AddSimpleLabel(SetupCameraHelp, NGUIText.Alignment.Left, 9, controlSetupCameraPanel);
             controlSetupCamera = controlPanel.AddHitBoxOption("Setup Cameras", () => controlPanel.SetActivePanel(true, controlSetupCameraPanel));
+            controlPanel.PanelAddRow();
+            // Move Cameras panel
+            controlMoveCameraPanel = controlPanel.CreateSubPanel("Move Camera");
+            controlPanel.PanelAddRow(controlMoveCameraPanel);
+            controlMoveCameraViewDistance = controlPanel.AddSlider("View Distance", 100f, val => ControlSlider.LinearScaleIn(val, 10f, 1000f), t => ControlSlider.LinearScaleOut(t, 10f, 1000f), val => SetCameraViewDistance(val), controlMoveCameraPanel);
+            controlPanel.PanelAddRow(controlMoveCameraPanel);
+            controlMoveCameraPosX = controlPanel.AddSlider("X", 0f, val => ControlSlider.LinearScaleIn(val, -20000f, 20000f), t => ControlSlider.LinearScaleOut(t, -20000f, 20000f), val => SetCameraPosition(0, val), controlMoveCameraPanel);
+            controlPanel.PanelAddRow(controlMoveCameraPanel);
+            controlMoveCameraPosY = controlPanel.AddSlider("Y", 0f, val => ControlSlider.LinearScaleIn(val, -20000f, 20000f), t => ControlSlider.LinearScaleOut(t, -20000f, 20000f), val => SetCameraPosition(1, val), controlMoveCameraPanel);
+            controlPanel.PanelAddRow(controlMoveCameraPanel);
+            controlMoveCameraPosZ = controlPanel.AddSlider("Z", 0f, val => ControlSlider.LinearScaleIn(val, -20000f, 20000f), t => ControlSlider.LinearScaleOut(t, -20000f, 20000f), val => SetCameraPosition(2, val), controlMoveCameraPanel);
+            controlPanel.PanelAddRow(controlMoveCameraPanel);
+            controlMoveCameraAngleX = controlPanel.AddSlider("Angle X", 0f, val => ControlSlider.LinearScaleIn(val, -180f, 180f), t => ControlSlider.LinearScaleOut(t, -180f, 180f), val => SetCameraOrientationAngle(0, val / 180f), controlMoveCameraPanel);
+            controlPanel.PanelAddRow(controlMoveCameraPanel);
+            controlMoveCameraAngleY = controlPanel.AddSlider("Angle Y", 0f, val => ControlSlider.LinearScaleIn(val, -180f, 180f), t => ControlSlider.LinearScaleOut(t, -180f, 180f), val => SetCameraOrientationAngle(1, val / 180f), controlMoveCameraPanel);
+            controlPanel.PanelAddRow(controlMoveCameraPanel);
+            controlMoveCameraAngleZ = controlPanel.AddSlider("Angle Z", 0f, val => ControlSlider.LinearScaleIn(val, -180f, 180f), t => ControlSlider.LinearScaleOut(t, -180f, 180f), val => SetCameraOrientationAngle(2, val / 180f), controlMoveCameraPanel);
+            controlPanel.PanelAddRow(controlMoveCameraPanel);
+            controlMoveCameraHelp = controlPanel.AddSimpleLabel(MoveCameraHelp, NGUIText.Alignment.Left, 9, controlMoveCameraPanel);
+            controlMoveCamera = controlPanel.AddHitBoxOption("Move Camera manually", () => controlPanel.SetActivePanel(true, controlMoveCameraPanel));
             controlPanel.PanelAddRow();
             // Setup Overlays panel
             controlSetupOverlayPanel = controlPanel.CreateSubPanel("Setup Overlays");
@@ -263,6 +294,20 @@ namespace Memoria.Assets
                     StartAnchors(false);
                 controlPanel.SetActivePanel(false);
             }
+            if (ButtonGroupState.ActiveGroup.StartsWith("ControlList."))
+            {
+                if (Input.GetKeyDown(KeyCode.PageUp) || Input.GetKeyDown(KeyCode.PageDown))
+                {
+                    RecycleListPopulator populator = ButtonGroupState.ActiveButton.transform.parent?.parent?.GetComponent<RecycleListPopulator>();
+                    if (populator != null)
+                    {
+                        if (Input.GetKeyDown(KeyCode.PageUp))
+                            populator.JumpToIndex(0);
+                        else
+                            populator.JumpToIndex(populator.ItemCount - 1);
+                    }
+                }
+            }
             if (Input.mouseScrollDelta.y != 0f)
             {
                 ScaleCameraView(cameraTarget, Input.mouseScrollDelta.y);
@@ -305,12 +350,51 @@ namespace Memoria.Assets
                 if (mouseRightWasPressed)
                 {
                     Vector3 mouseDelta = Input.mousePosition - mousePreviousPosition;
-                    if (controlPanel.ActivePanelIndex != controlSetupOverlayPanel || (!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.RightShift)))
+                    if (controlPanel.ActivePanelIndex == controlMoveCameraPanel)
+                    {
+                        BGCAM_DEF bgCamera = scene.cameraList[cameraSelection];
+                        if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.LeftAlt))
+                        {
+                            Vector3 rot = bgCamera.GetMatrixR().ToQuaternion().eulerAngles;
+                            if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                                SetCameraOrientationAngle(2, Mathf.Clamp(cameraOrientation.z + mouseDelta.y / 180f, -1f, 1f));
+                            else if (Math.Abs(mouseDelta.x) > Math.Abs(mouseDelta.y))
+                                SetCameraOrientationAngle(1, Mathf.Clamp(cameraOrientation.y + mouseDelta.x / 180f, -1f, 1f));
+                            else
+                                SetCameraOrientationAngle(0, Mathf.Clamp(cameraOrientation.x + mouseDelta.y / 180f, -1f, 1f));
+                        }
+                        else
+                        {
+                            if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                            {
+                                Single posY = bgCamera.t[1] - 10f * mouseDelta.y;
+                                SetCameraPosition(1, posY);
+                                controlMoveCameraPosY.Value = posY;
+                            }
+                            else
+                            {
+                                Single posX = bgCamera.t[0] + 10f * mouseDelta.x;
+                                Single posZ = bgCamera.t[2] + 10f * mouseDelta.y;
+                                SetCameraPosition(0, posX);
+                                SetCameraPosition(2, posZ);
+                                controlMoveCameraPosX.Value = posX;
+                                controlMoveCameraPosZ.Value = posZ;
+                            }
+                        }
+                    }
+                    else if (controlPanel.ActivePanelIndex != controlSetupOverlayPanel || (!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.RightShift)))
                         MoveCameraView(-0.5f * (mouseDelta.y * GetCamera().transform.up + mouseDelta.x * GetCamera().transform.right));
                     else
                         MoveOverlayXY(overlaySelection, (Int16)(0.5f * mouseDelta.x), (Int16)(-0.5f * mouseDelta.y));
                 }
                 mouseRightPressed = true;
+            }
+            if (controlPanel.ActivePanelIndex == controlMoveCameraPanel && Input.mouseScrollDelta.y != 0f)
+            {
+                BGCAM_DEF bgCamera = scene.cameraList[cameraSelection];
+                Single dist = Mathf.Max(1f, bgCamera.proj + 10f * Input.mouseScrollDelta.y);
+                SetCameraViewDistance(dist);
+                controlMoveCameraViewDistance.Value = dist;
             }
             mousePreviousPosition = Input.mousePosition;
             if (controlLastActivePanel != controlPanel.ActivePanelIndex)
@@ -332,6 +416,8 @@ namespace Memoria.Assets
                 ShowWalkmesh(controlShowWalkmesh.IsToggled);
             else if (currentPanel == controlSetupWalkmeshPanel)
                 ShowWalkmesh(true);
+            else if (currentPanel == controlMoveCameraPanel)
+                InitMoveCameraPanel();
             if (previousPanel == controlSetupOverlayPanel || currentPanel == controlSetupOverlayPanel)
                 ChangeOverlaySelection(overlaySelection);
             if (previousPanel == controlSetupWalkmeshPanel || currentPanel == controlSetupWalkmeshPanel)
@@ -656,6 +742,23 @@ namespace Memoria.Assets
             File.WriteAllText(ControlFilePath, controlFile);
         }
 
+        private static void InitMoveCameraPanel()
+        {
+            BGCAM_DEF bgCamera = scene.cameraList[cameraSelection];
+            controlMoveCameraViewDistance.Value = bgCamera.proj;
+            controlMoveCameraPosX.Value = bgCamera.t[0];
+            controlMoveCameraPosY.Value = bgCamera.t[1];
+            controlMoveCameraPosZ.Value = bgCamera.t[2];
+            cameraOrientation = bgCamera.GetMatrixR().ToQuaternion();
+            Vector3 rot = cameraOrientation.eulerAngles;
+            if (rot.x > 180f) rot.x -= 360f;
+            if (rot.y > 180f) rot.y -= 360f;
+            if (rot.z > 180f) rot.z -= 360f;
+            controlMoveCameraAngleX.Value = rot.x;
+            controlMoveCameraAngleY.Value = rot.y;
+            controlMoveCameraAngleZ.Value = rot.z;
+        }
+
         private static void ShowWalkmesh(Boolean show)
         {
             if (show == walkmeshIsShown)
@@ -713,6 +816,62 @@ namespace Memoria.Assets
                 controlWalkpathActiveOption.IsEnabled = false;
             }
             UpdateSelection();
+        }
+
+        private static void SetCameraViewDistance(Single dist)
+        {
+            UInt16 distInt = (UInt16)Math.Round(dist);
+            BGCAM_DEF bgCamera = scene.cameraList[cameraSelection];
+            bgCamera.proj = distInt;
+            Shader.SetGlobalFloat("_ViewDistance", bgCamera.GetViewDistance());
+            shouldRefreshWalkmesh = true;
+        }
+
+        private static void SetCameraPosition(Int32 coordType, Single coord)
+        {
+            Int32 coordInt = (Int32)Math.Round(coord);
+            BGCAM_DEF bgCamera = scene.cameraList[cameraSelection];
+            bgCamera.t[coordType] = coordInt;
+            Matrix4x4 matrix = bgCamera.GetMatrixRT();
+            matrix.m03 *= scalingFactor;
+            matrix.m13 *= scalingFactor;
+            matrix.m23 *= scalingFactor;
+            Shader.SetGlobalMatrix("_MatrixRT", matrix);
+            if (freeCameraMode)
+            {
+                cameraPosition = 10 * bgCamera.GetCamPos();
+                cameraPosition.z *= -1;
+                Camera camera = GetCamera();
+                camera.orthographicSize = bgCamera.GetViewDistance();
+                camera.farClipPlane = 100000f;
+                camera.transform.position = cameraPosition;
+                camera.transform.LookAt(cameraTarget);
+            }
+            else
+            {
+                cameraPosition = bgCamera.GetCenterOffset();
+                Camera camera = GetCamera();
+                camera.transform.position = cameraPosition;
+                camera.transform.localRotation = Quaternion.identity;
+                camera.orthographicSize = FieldMap.HalfFieldHeight;
+            }
+            shouldRefreshWalkmesh = true;
+        }
+
+        private static void SetCameraOrientationAngle(Int32 coordType, Single coord)
+        {
+            BGCAM_DEF bgCamera = scene.cameraList[cameraSelection];
+            cameraOrientation.SetSpecificCoordinate(coordType, coord);
+            Matrix4x4 matrix = Matrix4x4.TRS(bgCamera.GetCamPos(), cameraOrientation, Vector3.one);
+            bgCamera.SetMatrixR(matrix);
+            matrix.m03 *= scalingFactor;
+            matrix.m13 *= scalingFactor;
+            matrix.m23 *= scalingFactor;
+            Shader.SetGlobalMatrix("_MatrixRT", matrix);
+            controlMoveCameraAngleX.Value = cameraOrientation.x * 180f;
+            controlMoveCameraAngleY.Value = cameraOrientation.y * 180f;
+            controlMoveCameraAngleZ.Value = cameraOrientation.z * 180f;
+            shouldRefreshWalkmesh = true;
         }
 
         private static void ChangeCameraSelection(Int32 newSelection, Boolean refreshPosition = true)
@@ -1036,6 +1195,13 @@ RIGHT MOUSE: move view";
 (3) Select the corresponding background point
 (4) Do over for 5 points
 (5) Adjust the camera distance";
+
+        private const String MoveCameraHelp =
+@"Adjust camera with numerical inputs:
+RIGHT MOUSE: move position X/Z
+SHIFT + RIGHT MOUSE: move position Y
+WHEEL: change viewing distance
+ALT + RIGHT MOUSE: rotate orientation";
 
         private const String SetupOverlayHelp =
 @"RIGHT MOUSE: move view

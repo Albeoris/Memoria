@@ -821,7 +821,8 @@ public class Dialog : MonoBehaviour
         {
             // Epilogue: Stage
             DialogManager.Instance.ForceControlByEvent(false);
-            yield break;
+            if (!this.TypeEffect) // Fix #1237: that dialog in french is the only one that doesn't have [IMME] for some reason
+                yield break;
         }
         else if (FF9StateSystem.Common.FF9.fldMapNo == 3010)
         {
@@ -1398,7 +1399,7 @@ public class Dialog : MonoBehaviour
     private Boolean HasMessageValueChanged()
     {
         foreach (KeyValuePair<Int32, Int32> messPair in this.CurrentParser.VariableMessageValues)
-            if (ETb.gMesValue[messPair.Key] != messPair.Value)
+            if (ETb.GetMesVarValue(messPair.Key) != messPair.Value)
                 return true;
         return false;
     }

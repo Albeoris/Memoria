@@ -1,7 +1,7 @@
 # This file contains a set of game armors.
 # You must set at least 136 different items.
 # -----------------------------------------------
-# Comment;Id;P.Def;P.Eva;M.Def;M.Eva
+# Comment;Id;PhysicalDefence;PhysicalEvade;MagicalDefence;MagicalEvade
 # ;Int32;Int32;Int32;Int32;Int32
 # -----------------------------------------------
 Wrist;0;0;5;0;3

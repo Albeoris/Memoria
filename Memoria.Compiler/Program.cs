@@ -7,7 +7,6 @@ namespace Memoria.Compiler
     internal static class Program
     {
         private const String DefaultReferencesPath64 = "../../../x64/FF9_Data/Managed/";
-        private const String DefaultReferencesPath86 = "../../../x86/FF9_Data/Managed/";
         private const String DefaultSourcesPath = "../Sources/";
         private const String DefaultOutputPath = "../";
         private const String DefaultOutputName = "Memoria.Scripts.dll";
@@ -44,8 +43,6 @@ namespace Memoria.Compiler
             String referencesDirectoryPath;
             if (Directory.Exists(DefaultReferencesPath64))
                 referencesDirectoryPath = Path.GetFullPath(DefaultReferencesPath64);
-            else if (Directory.Exists(DefaultReferencesPath86))
-                referencesDirectoryPath = Path.GetFullPath(DefaultReferencesPath86);
             else
                 throw new DirectoryNotFoundException("Cannot find the directory \"FF9_Data/Managed/\"");
 

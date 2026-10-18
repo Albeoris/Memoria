@@ -131,7 +131,7 @@ public class WMScriptDirector : HonoBehavior
 
     public void HonoUpdate20FPS()
     {
-        bool flag;
+        bool validateBattle;
         if ((this.FF9.attr & 256U) == 0U)
         {
             if (ff9.w_frameCounter >= 5)
@@ -142,19 +142,19 @@ public class WMScriptDirector : HonoBehavior
 
             if (this.FF9WorldMap.nextMode == 2)
             {
-                flag = false;
+                validateBattle = false;
             }
             else
             {
-                flag = true;
+                validateBattle = true;
                 switch (ff9.w_frameMainRoutine())
                 {
-                    case 3:
+                    case EventEngine.FLOW_STATE_JUMP_BATTLE:
                         this.FF9WorldMap.nextMode = 2;
                         ff9.ff9worldInternalBattleEncountStart();
                         PersistenSingleton<HonoInputManager>.Instance.IgnoreCheckingDirectionSources = false;
                         break;
-                    case 4:
+                    case EventEngine.FLOW_STATE_JUMP_FIELD:
                         this.FF9WorldMap.nextMode = 1;
                         PersistenSingleton<HonoInputManager>.Instance.IgnoreCheckingDirectionSources = false;
                         this.FF9Sys.attr |= 4096U;
@@ -185,7 +185,7 @@ public class WMScriptDirector : HonoBehavior
         }
         else
         {
-            flag = false;
+            validateBattle = false;
         }
 
         if ((this.FF9Sys.attr & 12289U) != 0U || (this.FF9Sys.attr & 4097U) != 0U)
@@ -203,7 +203,7 @@ public class WMScriptDirector : HonoBehavior
             else if (this.FF9Sys.mode == 2)
             {
                 EventInput.IsProcessingInput = false;
-                if (flag)
+                if (validateBattle)
                 {
                     Int32 btlMusicid = FF9SndMetaData.GetMusicForBattle(FF9SndMetaData.BtlBgmMapperForWorldMap, FF9StateSystem.Common.FF9.wldMapNo, FF9StateSystem.World.FF9World.map.nextMapNo);
                     Int32 currentMusicId = FF9Snd.GetCurrentMusicId();
@@ -243,12 +243,12 @@ public class WMScriptDirector : HonoBehavior
             }
         }
 
-        for (ObjList objList2 = this.World.ActorList; objList2 != null; objList2 = objList2.next)
+        for (ObjList objList = this.World.ActorList; objList != null; objList = objList.next)
         {
-            if (objList2.obj.cid == 4)
+            if (objList.obj.cid == 4)
             {
-                WMActor wmActor2 = ((Actor)objList2.obj).wmActor;
-                wmActor2.LateUpdateFunction();
+                WMActor wmActor = ((Actor)objList.obj).wmActor;
+                wmActor.LateUpdateFunction();
             }
         }
     }

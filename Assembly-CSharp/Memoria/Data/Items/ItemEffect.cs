@@ -8,67 +8,45 @@ namespace Memoria.Data
     public sealed class ItemEffect : ICsvEntry
     {
         public Int32 Id;
+        public ITEM_DATA Data;
 
-        public TargetType Targets;
-        public Boolean DefaultAlly;
-        public TargetDisplay Display;
-        public Int16 AnimationId;
-        public Boolean Dead;
-        public Boolean DefaultDead;
-
-        public Int32 ScriptId;
-        public Int32 Power;
-        public Int32 Rate;
-        public EffectElement Element;
-
-        public BattleStatus Status;
-
-        public static ItemEffect FromItemData(ITEM_DATA data)
+        public static ITEM_DATA GetExisting(Int32 id)
         {
-            return new ItemEffect
-            {
-                Id = -1,
-                Targets = data.info.Target,
-                DefaultAlly = data.info.DefaultAlly,
-                Display = data.info.DisplayStats,
-                AnimationId = data.info.VfxIndex,
-                Dead = data.info.ForDead,
-                DefaultDead = data.info.DefaultOnDead,
-
-                ScriptId = data.Ref.ScriptId,
-                Power = data.Ref.Power,
-                Element = (EffectElement)data.Ref.Elements,
-                Rate = data.Ref.Rate,
-
-                Status = data.status
-            };
+            if (ff9item._FF9Item_Info.TryGetValue(id, out ITEM_DATA result))
+                return result;
+            throw new NotSupportedException($"The option AppendMode must be used to patch existing entries but the entry {id} doesn't exist");
         }
 
         public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
             Int32 index = 0;
 
-            if (metadata.HasOption($"Include{nameof(Id)}"))
+            if (metadata.HasOption($"IncludeId") || metadata.IsAppendMode)
                 Id = CsvParser.Int32(raw[index++]);
             else
                 Id = -1;
 
-            Targets = (TargetType)CsvParser.Byte(raw[index++]);
-            DefaultAlly = CsvParser.Boolean(raw[index++]);
-            Display = (TargetDisplay)CsvParser.Byte(raw[index++]);
-            AnimationId = CsvParser.Int16(raw[index++]);
-            Dead = CsvParser.Boolean(raw[index++]);
-            DefaultDead = CsvParser.Boolean(raw[index++]);
+            Data = metadata.IsAppendMode ? GetExisting(Id) : new ITEM_DATA(new BattleCommandInfo(), new BTL_REF(), 0);
 
-            ScriptId = CsvParser.Int32(raw[index++]);
-            Power = CsvParser.Int32(raw[index++]);
-            Rate = CsvParser.Int32(raw[index++]);
-            Element = (EffectElement)CsvParser.Byte(raw[index++]);
+            if (metadata.HasField("Targets")) Data.info.Target = (TargetType)CsvParser.Byte(raw[index++]);
+            if (metadata.HasField("DefaultAlly")) Data.info.DefaultAlly = CsvParser.Boolean(raw[index++]);
+            if (metadata.HasField("Display")) Data.info.DisplayStats = (TargetDisplay)CsvParser.Byte(raw[index++]);
+            if (metadata.HasField("AnimationId")) Data.info.VfxIndex = CsvParser.Int16(raw[index++]);
+            if (metadata.HasField("ForDead")) Data.info.ForDead = CsvParser.Boolean(raw[index++]);
+            if (metadata.HasField("DefaultDead")) Data.info.DefaultOnDead = CsvParser.Boolean(raw[index++]);
 
-            if (metadata.HasOption($"UseStatusList"))
-                Status = ParseBattleStatus(raw[index]);
-            else
-                Status = (BattleStatus)CsvParser.UInt64(raw[index]);
+            if (metadata.HasField("ScriptId")) Data.Ref.ScriptId = CsvParser.Int32(raw[index++]);
+            if (metadata.HasField("Power")) Data.Ref.Power = CsvParser.Int32(raw[index++]);
+            if (metadata.HasField("Rate")) Data.Ref.Rate = CsvParser.Int32(raw[index++]);
+            if (metadata.HasField("Elements")) Data.Ref.Elements = CsvParser.Byte(raw[index++]);
+
+            if (metadata.HasField("Status"))
+            {
+                if (metadata.HasOption($"UseStatusList"))
+                    Data.status = BattleStatusEntry.ParseBattleStatus(raw[index++], metadata, true);
+                else
+                    Data.status = (BattleStatus)CsvParser.UInt64(raw[index++]);
+            }
         }
 
         public void WriteEntry(CsvWriter sw, CsvMetaData metadata)
@@ -76,51 +54,22 @@ namespace Memoria.Data
             if (metadata.HasOption($"Include{nameof(Id)}"))
                 sw.Int32(Id);
 
-            sw.Byte((Byte)Targets);
-            sw.Boolean(DefaultAlly);
-            sw.Byte((Byte)Display);
-            sw.Int16(AnimationId);
-            sw.Boolean(Dead);
-            sw.Boolean(DefaultDead);
+            sw.Byte((Byte)Data.info.Target);
+            sw.Boolean(Data.info.DefaultAlly);
+            sw.Byte((Byte)Data.info.DisplayStats);
+            sw.Int16(Data.info.VfxIndex);
+            sw.Boolean(Data.info.ForDead);
+            sw.Boolean(Data.info.DefaultOnDead);
 
-            sw.Int32(ScriptId);
-            sw.Int32(Power);
-            sw.Int32(Rate);
-            sw.Byte((Byte)Element);
+            sw.Int32(Data.Ref.ScriptId);
+            sw.Int32(Data.Ref.Power);
+            sw.Int32(Data.Ref.Rate);
+            sw.Byte(Data.Ref.Elements);
 
             if (metadata.HasOption($"UseStatusList"))
-                WriteBattleStatus(sw, Status);
+                BattleStatusEntry.WriteBattleStatus(sw, metadata, Data.status, true);
             else
-                sw.UInt64((UInt64)Status);
-        }
-
-        public ITEM_DATA ToItemData()
-        {
-            return new ITEM_DATA(
-                new BattleCommandInfo(Targets, DefaultAlly, Display, AnimationId, Dead, false, DefaultDead),
-                new BTL_REF(ScriptId, Power, (Byte)Element, Rate),
-                Status);
-        }
-
-        public static BattleStatus ParseBattleStatus(String raw)
-        {
-            BattleStatus result = 0;
-            String[] tokens = raw.Split(',');
-            for (Int32 i = 0; i < tokens.Length; i++)
-            {
-                String tok = tokens[i].Trim();
-                if (!String.IsNullOrEmpty(tok))
-                    result |= CsvParser.EnumValue<BattleStatusId>(tok).ToBattleStatus();
-            }
-            return result;
-        }
-
-        public static void WriteBattleStatus(CsvWriter sw, BattleStatus status)
-        {
-            List<String> statusStr = new List<String>();
-            foreach (BattleStatusId statusId in status.ToStatusList())
-                statusStr.Add($"{statusId}({(Int32)statusId})");
-            sw.String(String.Join(", ", statusStr.ToArray()));
+                sw.UInt64((UInt64)Data.status);
         }
     }
 }

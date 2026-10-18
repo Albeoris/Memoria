@@ -6,68 +6,92 @@ namespace Memoria.Data
     public class ItemInfo : ICsvEntry
     {
         public RegularItem Id;
-        public UInt32 Price;
-        public Int32 SellingPrice;
-        public ItemCharacter CharacterMask;
-        public Int32 GraphicsId;
-        public Int32 ColorId;
-        public Single Quality;
-        public Int32 BonusId;
-        public Int32[] AbilityIds;
-        public ItemType TypeMask;
-        public Single Order;
-        public String UseCondition;
-        public Int32 WeaponId;
-        public Int32 ArmorId;
-        public Int32 EffectId;
+        public FF9ITEM_DATA Data;
+
+        public Int32 WeaponId
+        {
+            get => Data.weapon_id;
+            set => Data.weapon_id = value;
+        }
+
+        public Int32 ArmorId
+        {
+            get => Data.armor_id;
+            set => Data.armor_id = value;
+        }
+
+        public Int32 EffectId
+        {
+            get => Data.effect_id;
+            set => Data.effect_id = value;
+        }
+
+        public static FF9ITEM_DATA GetExisting(RegularItem id)
+        {
+            if (ff9item._FF9Item_Data.TryGetValue(id, out FF9ITEM_DATA result))
+                return result;
+            throw new NotSupportedException($"The option AppendMode must be used to patch existing entries but the entry {id} doesn't exist");
+        }
 
         public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
             Int32 index = 0;
             Boolean hasAuxIds = metadata.HasOption($"IncludeAuxiliaryIds");
 
-            Id = metadata.HasOption($"Include{nameof(Id)}") ? (RegularItem)CsvParser.Int32(raw[index++]) : (RegularItem)(-1);
-            WeaponId = hasAuxIds || metadata.HasOption($"Include{nameof(WeaponId)}") ? CsvParser.Int32(raw[index++]) : -1;
-            ArmorId = hasAuxIds || metadata.HasOption($"Include{nameof(ArmorId)}") ? CsvParser.Int32(raw[index++]) : -1;
-            EffectId = hasAuxIds || metadata.HasOption($"Include{nameof(EffectId)}") ? CsvParser.Int32(raw[index++]) : -1;
-
-            Price = CsvParser.UInt32(raw[index++]);
-            if (metadata.HasOption($"Include{nameof(SellingPrice)}"))
-                SellingPrice = CsvParser.Int32(raw[index++]);
+            if (metadata.HasOption($"IncludeId") || metadata.IsAppendMode)
+                Id = (RegularItem)CsvParser.Int32(raw[index++]);
             else
-                SellingPrice = (Int32)(Price / 2);
-            GraphicsId = CsvParser.Int32(raw[index++]);
-            ColorId = CsvParser.Int32(raw[index++]);
-            Quality = CsvParser.Single(raw[index++]);
-            BonusId = CsvParser.Int32(raw[index++]);
-            AbilityIds = CsvParser.AnyAbilityArray(raw[index++]);
+                Id = (RegularItem)(-1);
 
-            Byte type = 0;
-            for (Int32 i = 0; i < 8; i++)
+            Data = metadata.IsAppendMode ? GetExisting(Id) : new FF9ITEM_DATA();
+
+            if (metadata.HasField("WeaponId")) WeaponId = hasAuxIds || metadata.HasOption($"IncludeWeaponId") ? CsvParser.Int32(raw[index++]) : -1;
+            if (metadata.HasField("ArmorId")) ArmorId = hasAuxIds || metadata.HasOption($"IncludeArmorId") ? CsvParser.Int32(raw[index++]) : -1;
+            if (metadata.HasField("EffectId")) EffectId = hasAuxIds || metadata.HasOption($"IncludeEffectId") ? CsvParser.Int32(raw[index++]) : -1;
+
+            if (metadata.HasField("Price")) Data.price = CsvParser.UInt32(raw[index++]);
+            if (!metadata.HasOption($"IncludeSellingPrice"))
+                Data.selling_price = (Int32)(Data.price / 2);
+            else if (metadata.HasField("SellingPrice"))
+                Data.selling_price = CsvParser.Int32(raw[index++]);
+
+            if (metadata.HasField("GraphicsId")) Data.shape = CsvParser.Int32(raw[index++]);
+            if (metadata.HasField("ColorId")) Data.color = CsvParser.Int32(raw[index++]);
+            if (metadata.HasField("Quality")) Data.eq_lv = CsvParser.Single(raw[index++]);
+            if (metadata.HasField("BonusId")) Data.bonus = CsvParser.Int32(raw[index++]);
+            if (metadata.HasField("AbilityIds")) Data.ability = CsvParser.AnyAbilityArray(raw[index++]);
+
+            if (metadata.HasField("TypeMask"))
             {
-                type <<= 1;
-                type |= CsvParser.Byte(raw[index++]);
+                Byte type = 0;
+                for (Int32 i = 0; i < 8; i++)
+                {
+                    type <<= 1;
+                    type |= CsvParser.Byte(raw[index++]);
+                }
+                Data.type = (ItemType)type;
             }
-            TypeMask = (ItemType)type;
 
-            Order = CsvParser.Single(raw[index++]);
+            if (metadata.HasField("Order")) Data.sort = CsvParser.Single(raw[index++]);
 
-            if (metadata.HasOption($"Include{nameof(UseCondition)}"))
-                UseCondition = CsvParser.String(raw[index++]);
+            if (metadata.HasOption($"IncludeUseCondition") && metadata.HasField("UseCondition"))
+                Data.use_condition = CsvParser.String(raw[index++]);
             else
-                UseCondition = String.Empty;
+                Data.use_condition = String.Empty;
 
-            UInt64 equippable = 0;
-            for (Int32 i = 0; i < 12; i++)
+            if (metadata.HasField("CharacterMask"))
             {
-                equippable <<= 1;
-                equippable |= CsvParser.Byte(raw[index++]);
+                UInt64 equippable = 0;
+                for (Int32 i = 0; i < 12; i++)
+                {
+                    equippable <<= 1;
+                    equippable |= CsvParser.Byte(raw[index++]);
+                }
+                for (Int32 i = 12; index < raw.Length; i++)
+                    if (CsvParser.Byte(raw[index++]) != 0)
+                        equippable |= 1ul << i;
+                Data.equip = equippable;
             }
-            for (Int32 i = 12; index < raw.Length; i++)
-                if (CsvParser.Byte(raw[index++]) != 0)
-                    equippable |= 1ul << i;
-
-            CharacterMask = (ItemCharacter)equippable;
         }
 
         public void WriteEntry(CsvWriter writer, CsvMetaData metadata)
@@ -75,21 +99,21 @@ namespace Memoria.Data
             Boolean hasAuxIds = metadata.HasOption($"IncludeAuxiliaryIds");
             if (metadata.HasOption($"Include{nameof(Id)}"))
                 writer.Int32((Int32)Id);
-            if (hasAuxIds || metadata.HasOption($"Include{nameof(WeaponId)}"))
-                writer.Int32(WeaponId);
-            if (hasAuxIds || metadata.HasOption($"Include{nameof(ArmorId)}"))
-                writer.Int32(ArmorId);
-            if (hasAuxIds || metadata.HasOption($"Include{nameof(EffectId)}"))
-                writer.Int32(EffectId);
+            if (hasAuxIds || metadata.HasOption($"IncludeWeaponId"))
+                writer.Int32(Data.weapon_id);
+            if (hasAuxIds || metadata.HasOption($"IncludeArmorId"))
+                writer.Int32(Data.armor_id);
+            if (hasAuxIds || metadata.HasOption($"IncludeEffectId"))
+                writer.Int32(Data.effect_id);
 
-            writer.UInt32(Price);
-            if (metadata.HasOption($"Include{nameof(SellingPrice)}"))
-                writer.Int32(SellingPrice);
-            writer.Int32(GraphicsId);
-            writer.Int32(ColorId);
-            writer.Single(Quality);
-            writer.Int32(BonusId);
-            writer.AnyAbilityArray(AbilityIds);
+            writer.UInt32(Data.price);
+            if (metadata.HasOption($"IncludeSellingPrice"))
+                writer.Int32(Data.selling_price);
+            writer.Int32(Data.shape);
+            writer.Int32(Data.color);
+            writer.Single(Data.eq_lv);
+            writer.Int32(Data.bonus);
+            writer.AnyAbilityArray(Data.ability);
 
             writer.Boolean(Weapon);
             writer.Boolean(Armlet);
@@ -100,10 +124,10 @@ namespace Memoria.Data
             writer.Boolean(Gem);
             writer.Boolean(Usable);
 
-            writer.Single(Order);
+            writer.Single(Data.sort);
 
-            if (metadata.HasOption($"Include{nameof(UseCondition)}"))
-                writer.String(UseCondition);
+            if (metadata.HasOption($"IncludeUseCondition"))
+                writer.String(Data.use_condition);
 
             writer.Boolean(Zidane);
             writer.Boolean(Vivi);
@@ -119,20 +143,16 @@ namespace Memoria.Data
             writer.Boolean(Beatrix);
         }
 
-        public FF9ITEM_DATA ToItemData()
-        {
-            return new FF9ITEM_DATA(Price, SellingPrice, (UInt64)CharacterMask, GraphicsId, ColorId, Quality, BonusId, AbilityIds, TypeMask, Order, UseCondition, WeaponId, ArmorId, EffectId);
-        }
+        public Boolean Weapon => (Data.type & ItemType.Weapon) == ItemType.Weapon;
+        public Boolean Armlet => (Data.type & ItemType.Armlet) == ItemType.Armlet;
+        public Boolean Helmet => (Data.type & ItemType.Helmet) == ItemType.Helmet;
+        public Boolean Armor => (Data.type & ItemType.Armor) == ItemType.Armor;
+        public Boolean Accessory => (Data.type & ItemType.Accessory) == ItemType.Accessory;
+        public Boolean Item => (Data.type & ItemType.Item) == ItemType.Item;
+        public Boolean Gem => (Data.type & ItemType.Gem) == ItemType.Gem;
+        public Boolean Usable => (Data.type & ItemType.Usable) == ItemType.Usable;
 
-        public Boolean Weapon => (TypeMask & ItemType.Weapon) == ItemType.Weapon;
-        public Boolean Armlet => (TypeMask & ItemType.Armlet) == ItemType.Armlet;
-        public Boolean Helmet => (TypeMask & ItemType.Helmet) == ItemType.Helmet;
-        public Boolean Armor => (TypeMask & ItemType.Armor) == ItemType.Armor;
-        public Boolean Accessory => (TypeMask & ItemType.Accessory) == ItemType.Accessory;
-        public Boolean Item => (TypeMask & ItemType.Item) == ItemType.Item;
-        public Boolean Gem => (TypeMask & ItemType.Gem) == ItemType.Gem;
-        public Boolean Usable => (TypeMask & ItemType.Usable) == ItemType.Usable;
-
+        public ItemCharacter CharacterMask => (ItemCharacter)Data.equip;
         public Boolean Zidane => (CharacterMask & ItemCharacter.Zidane) == ItemCharacter.Zidane;
         public Boolean Vivi => (CharacterMask & ItemCharacter.Vivi) == ItemCharacter.Vivi;
         public Boolean Garnet => (CharacterMask & ItemCharacter.Garnet) == ItemCharacter.Garnet;

@@ -44,6 +44,7 @@ public class UIKeyTrigger : MonoBehaviour
     private Boolean F9Key => UnityXInput.Input.GetKey(KeyCode.F9);
     private Boolean F1KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F1);
     private Boolean F2KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F2);
+    private Boolean F3KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F3);
     private Boolean F4KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F4);
     private Boolean F5KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F5);
     private Boolean F9KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F9);
@@ -61,12 +62,12 @@ public class UIKeyTrigger : MonoBehaviour
         && UIManager.Input.GetKey(Control.RightBumper) && UIManager.Input.GetKey(Control.RightTrigger) && UIManager.Input.GetKey(Control.Pause) && UIManager.Input.GetKey(Control.Select);
 
     private Boolean SoftResetKeyPSXForPause => // L1 + R1 + L2 + R2 + select
-    PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftBumper) && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftTrigger)
-    && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.RightBumper) && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.RightTrigger)
-    && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Select)
-    || keyCommand == Control.LeftBumper && keyCommand == Control.LeftTrigger && keyCommand == Control.RightBumper && keyCommand == Control.RightTrigger
-    && keyCommand == Control.Select || UIManager.Input.GetKey(Control.LeftBumper) && UIManager.Input.GetKey(Control.LeftTrigger)
-    && UIManager.Input.GetKey(Control.RightBumper) && UIManager.Input.GetKey(Control.RightTrigger) && UIManager.Input.GetKey(Control.Select);
+        PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftBumper) && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftTrigger)
+        && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.RightBumper) && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.RightTrigger)
+        && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Select)
+        || keyCommand == Control.LeftBumper && keyCommand == Control.LeftTrigger && keyCommand == Control.RightBumper && keyCommand == Control.RightTrigger
+        && keyCommand == Control.Select || UIManager.Input.GetKey(Control.LeftBumper) && UIManager.Input.GetKey(Control.LeftTrigger)
+        && UIManager.Input.GetKey(Control.RightBumper) && UIManager.Input.GetKey(Control.RightTrigger) && UIManager.Input.GetKey(Control.Select);
 
     public UIKeyTrigger()
     {
@@ -692,6 +693,15 @@ public class UIKeyTrigger : MonoBehaviour
             {
                 OnPartySceneCommandDetected(sceneFromState);
                 return true;
+            }
+            if (F3KeyDown)
+            {
+                BGSCENE_DEF scene = PersistenSingleton<EventEngine>.Instance?.fieldmap?.scene;
+                if (scene != null && PersistenSingleton<EventEngine>.Instance.gMode == 1)
+                {
+                    scene.UpdateSceneImmediately();
+                    return true;
+                }
             }
             if (F4KeyDown)
             {
