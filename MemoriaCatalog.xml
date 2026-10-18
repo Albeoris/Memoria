@@ -161,11 +161,11 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 	
 <Mod>
 	<Name>Trance Seek</Name>
-	<Version>0.3.37.5</Version>
+	<Version>0.3.37.6</Version>
 	<Priority>4</Priority>
 	<InstallationPath>TranceSeek</InstallationPath>
 	<ReleaseDateOriginal>2022-01-28</ReleaseDateOriginal>
-	<ReleaseDate>2026-09-17</ReleaseDate>
+	<ReleaseDate>2026-10-11</ReleaseDate>
 	<MinimumMemoriaVersion>2025-05-17</MinimumMemoriaVersion>
 	<Author>DV</Author>
 	<IncompatibleWith>Alternate Fantasy, Amazing Abilities, Amazing Quina, Amazing Freya, Amazing Garnet, Amazing Steiner, Amazing Vivi, Artifacts, Beatrix Mod, Black Cat - Endgame Shop, Chocobo Hot and Cold QoL, David Bowie Edition, Doppelgängers, Ferny Fantasy IX, FernySupportTweaks, FernyTranceTweaks, FFIX: The Lost Chapters, Freya Game+, Garnet is Main Character, Hedgehog Skip Pack, Perfect Stats, Play As Kuja, Modern Labels +, No Cutscene, NoHardcodedBattles, Play As Ozma, Playable Character Pack, ReTrad FR, Tantalus, [Tsunamods] Four Shrines Revival, [Tsunamods] Scavenger 9, VVsRandomizer</IncompatibleWith>
@@ -196,73 +196,10 @@ Don't hesitate to try!
 Recommended language : Français / English (UK)
 Not supported language : Japanese (a lot of things get deleted... need to wait until full release... sorry !)</Description>
 	<PatchNotes>
-[0.3.37.5]
+[0.3.37.6]
 
-- The "Auto Potion" SA no longer triggers if the target evades or negates the damage.
-- Fixed an issue where certain monsters (notably custom FBX models) caused a softlock with the "Scan" spell.
-- Fixed Field n°1423, where the "Back Attack" mechanic persisted after Amarant's sequence.
-- Fixed Ladybugs near Lindblum on Disc 3, which did not grant the correct item rewards.
-- Fixed Gnoll's rewards involving "Soul" type accessories.
-
-[0.3.37.4]
-
-- Adjustments to Necron mode:
-HP bonus: 50% -> 75%
-Gil penalty: -90% -> -75% (which corresponds to Gil / 4 instead of Gil / 10)
-- 4 new accessories at the mysterious Treno's NPC.
-- Readjusted drop rate for "Soul" type rings.
-- A visual effect is now displayed if the effect of a "Soul" type ring succeeds.
-If the effect is green, it was successful.
-If the effect is red, the effect cannot work on the monster.
-- "Freya" can no longer inflict "Dragon" if her attack misses.
-- Fixed the "Stellar Circle 5" spell, whose effect could trigger if Zidane's MP ended in 0.
-- The "Cave Imp" monster is now also found alongside "Feather Circles" (Mantas) on the "Lost Continent".
-- The "Ladybug" (Miskoxy) monster is now also found alongside "Serpions" (Maidor) on the "Mist Continent (Disc 3)".
-- The "Cave Imp" monster now has the "Humanoid" category.
-- The "Grenade" monster gains +2 Defense.
-- Fixed the magic attacks of "Magic Vice", which were all "Fire" elemental.
-- Fixed a softlock on "Valia Pira".
-- Adjustments to Lani 2's AI and stats.
-- Fixed the "Black Waltz 3 (Disc 2)" battle, whose mechanics no longer worked :(
-- Fixed the AI of "Tantarian": multi-hit attacks (such as Zidane's daggers) are now fully counted towards the "page" counter.
-- Fixed the AI of "Yeti".
-- Fixed the AI of "Ladybug".
-- Fixed the AI of "Hilgigars".
-- Fixed the AI of "Frimoires".
-- Fixed the AI of "Feather Circle", which conflicted with "Turn-based" mode (Vanilla AI).
-- Fixed the AI of Group 101 (Skeleton + Hornet).
-- Modified the AI and stats of the "Dragonfly" monster.
-- Fixed an attack from "Hilgigars" that ignored the "Locomotion" (Imperturbable) SA.
-- "SOS" type SAs are now properly triggered when a character is revived with the "Auto-Life" buff.
-- Slight change to Dagger's animation when summoning a full-length Eidolon.
-- Fixed the effect of the "Ghost Halo" item.
-- Mog will no longer use "Mog AutoLife" if Eiko has "Ghost Halo" equipped.
-- Fixed the price of "Sea Spear".
-- Fixed the effect of the "Nymph Flower" item, which could heal the bearer while under "KO" or "Petrify".
-- Fixed a bug with the "Mini" spell, which could miss if the character had the "Abundance" SA equipped.
-- Fixed a bug where "Stardust Rod" used the "Drain" SFX instead of "Dark+".
-- Fixed a bug where Dagger improperly held a weapon (wielded like a rod).
-- Fixed a bug where Zidane improperly held a weapon (wielded like a dagger).
-- Fixed a visual bug on Zidane when switching weapons while under "Vanish".
-- Fixed a bug with "Vanish" under a very specific condition when a character enters and exits Trance.
-- Fixed a bug where a character under "Berserk" did not trigger their weapon's special strike effect (e.g. rods).
-- Minor fix to the "Invigorating" SA.
-- Fixed the "Flash" AA.
-- Fixed the "Blessing" SA, which used an incorrect formula.
-- The "Appetite" SA is now considered a physical attack.
-- The "Gluttony" SA is now considered a physical attack.
-- The "Steal Gil" SA will now steal at least 1 Gil.
-- New description for the "Add Status" SA.
-- The "EnemyMugScript" script no longer works on targets under "Vanish".
-- Fixed field #1460 in English (US) and Japanese.
-- Changes to Battle Spot #149 (more Bandersnatches relative to Mandragoras and Bombs).
-- Corrected a few text strings.
-- The "Conde Petie" shop is now blacklisted by the "AutoSorterShop" feature.
-- Fixed a display bug on stacks of certain status anomalies like "Strength↓" when EEM is enabled.
-- "TranceSeekCheckBattleStat" is now more responsive when fast-forwarding the game.
-- More additional fixes to the "Followers" feature:
-Additionally, the code will now hide "Followers" by default if the leader is not grounded on a "WalkPath".
-For example, when riding the Air-Cab in Lindblum or riding a gargant in Fossil Roo.
+Too heavy... please check the changelog file inside the mod,
+or in this link => https://github.com/Albeoris/Memoria/pull/1538
 	</PatchNotes>
 <Header>QoL Miscellaneous</Header>
 	<SubMod>
@@ -4788,6 +4725,25 @@ Notes:
 
 Why it exists:
 This was a learning project. I wanted to create a Memoria mod from scratch, with AI help, and understand how data mods work. I am a big Final Fantasy IX fan, so it was also a good excuse to spend more time in Gaia.</Description>
+</Mod>
+  <Mod>
+  <Name>Arabic Translation (الترجمة العربية)</Name>
+	<Version>1.0.2</Version>
+	<Author>Enma</Author>
+	<InstallationPath>ArabicTranslation</InstallationPath>
+	<ReleaseDateOriginal>2026-10-11</ReleaseDateOriginal>
+	<ReleaseDate>2026-10-12</ReleaseDate>
+	<MinimumMemoriaVersion>2025-07-13</MinimumMemoriaVersion>
+	<Category>Translation</Category>
+	<Description>Arabic translation of Final Fantasy IX (beta): dialogue, battle text, menus, items, abilities, locations, character names, and the text images (title screen, place-name cards, continent titles, Tetra Master, ending).
+Select "English (US)" in the game's language menu: this mod replaces that language with Arabic.
+The Arabic font is included in the mod; nothing else to install.
+
+الترجمة العربية للعبة فاينل فانتسي IX (نسخة تجريبية): الحوارات ونصوص المعارك والقوائم والأدوات والقدرات والأماكن وأسماء الشخصيات، والصور النصية.
+اختر "English (US)" من قائمة اللغة في اللعبة، فهذا التعديل يستبدل تلك اللغة بالعربية.
+الخط العربي مضمَّن في التعديل، ولا حاجة إلى تثبيت أي شيء آخر.</Description>
+	<DownloadUrl>https://github.com/faisalkindi/ffix-arabic-translation/releases/latest/download/ArabicTranslation.zip</DownloadUrl>
+	<Website>https://github.com/faisalkindi/ffix-arabic-translation</Website>
 </Mod>
 
 </ModCatalog>
