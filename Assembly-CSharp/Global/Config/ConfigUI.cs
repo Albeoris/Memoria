@@ -187,6 +187,7 @@ public class ConfigUI : UIScene
     private GameObject controlTutorialGameObject;
     [NonSerialized]
     private GameObject combatTutorialGameObject;
+    private GameObject controllerBindGameObject;
     private GameObject toTitleGameObject;
     [NonSerialized]
     private GameObject quitGameGameObject;
@@ -739,12 +740,6 @@ public class ConfigUI : UIScene
                         ButtonGroupState.HoldActiveStateOnGroup(ConfigGroupButton);
                     });
                 }
-                if (config?.Configurator == Configurator.ControllerBind)
-                {
-                    FF9Sfx.FF9SFX_Play(103);
-                    StartBindingSequence();
-                    return true;
-                }
                 else if (config?.Configurator == Configurator.CombatTutorial)
                 {
                     if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Battle)
@@ -762,6 +757,17 @@ public class ConfigUI : UIScene
                         PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.Tutorial);
                         ButtonGroupState.HoldActiveStateOnGroup(ConfigGroupButton);
                     });
+                }
+                else if (config?.Configurator == Configurator.ControllerBind)
+                {
+                    if (!PersistenSingleton<HonoInputManager>.Instance.IsControllerConnect)
+                    {
+                        FF9Sfx.FF9SFX_Play(102);
+                        return true;
+                    }
+                    FF9Sfx.FF9SFX_Play(103);
+                    StartBindingSequence();
+                    return true;
                 }
                 else if (config?.Configurator == Configurator.QuitGame)
                 {
@@ -1008,7 +1014,7 @@ public class ConfigUI : UIScene
                 else if (key == KeyCode.RightArrow)
                     setConfigValue(configField.ConfigParent, configField.Value + 1f / step, false);
             }
-            else if (configField.Configurator != Configurator.CombatTutorial && configField.Configurator != Configurator.ControlTutorial && configField.Configurator != Configurator.Title && configField.Configurator != Configurator.QuitGame && (key == KeyCode.LeftArrow || key == KeyCode.RightArrow))
+            else if (configField.Configurator != Configurator.CombatTutorial && configField.Configurator != Configurator.ControlTutorial && configField.Configurator != Configurator.ControllerBind && configField.Configurator != Configurator.Title && configField.Configurator != Configurator.QuitGame && (key == KeyCode.LeftArrow || key == KeyCode.RightArrow))
             {
                 setConfigValue(configField.ConfigParent, ((Int32)configField.Value + 1) % 2, false);
             }
@@ -1433,6 +1439,19 @@ public class ConfigUI : UIScene
             vib.VIB_actuatorReset(0);
             vib.VIB_actuatorReset(1);
         }
+
+        if (controllerBindGameObject != null)
+        {
+            Boolean isControllerConnected = PersistenSingleton<HonoInputManager>.Instance.IsControllerConnect;
+            controllerBindGameObject.GetChild(0).GetComponent<UILabel>().color = isControllerConnected ? FF9TextTool.White : FF9TextTool.Gray;
+
+            if (isBindingMode && !isControllerConnected) // Disable L3R3 menu if player disconnect the controller.
+            {
+                FF9Sfx.FF9SFX_Play(102);
+                EndBindingSequence();
+                return;
+            }
+        }
         if (isBindingMode)
         {
             UpdateBindingLogic();
@@ -1618,31 +1637,36 @@ public class ConfigUI : UIScene
         ButtonGroupState.ActiveGroup = ConfigGroupButton;
     }
 
-    private void CreateButtonFromExisting(Transform listParent, Configurator newId, String keyName, Configurator templateId, Configurator placeAfterId)
+    private GameObject CreateButtonFromExisting(Transform listParent, Configurator newId, String keyName, Configurator templateId, Configurator placeAfterId)
     {
         GameObject template = null;
-        int targetIndex = -1;
+        Int32 targetIndex = -1;
 
-        for (int i = 0; i < listParent.childCount; i++)
+        for (Int32 i = 0; i < listParent.childCount; i++)
         {
-            var nav = listParent.GetChild(i).GetComponent<ScrollItemKeyNavigation>();
-            if (nav == null) continue;
+            ScrollItemKeyNavigation nav = listParent.GetChild(i).GetComponent<ScrollItemKeyNavigation>();
+            if (nav == null)
+                continue;
 
-            if (nav.ID == (int)templateId)
+            if (nav.ID == (Int32)templateId)
                 template = listParent.GetChild(i).gameObject;
 
-            if (nav.ID == (int)placeAfterId)
+            if (nav.ID == (Int32)placeAfterId)
                 targetIndex = i + 1;
         }
 
         if (template != null && targetIndex != -1)
         {
             GameObject go = Instantiate(template);
-            go.name = $"{newId} Panel - Button";
+            go.name = $"{newId} - Custom Panel";
             go.transform.SetParent(listParent, false);
+            go.transform.localPosition = template.transform.localPosition;
+            go.transform.localScale = template.transform.localScale;
             go.transform.SetSiblingIndex(targetIndex);
 
-            go.GetComponent<ScrollItemKeyNavigation>().ID = (int)newId;
+            go.GetComponent<ScrollItemKeyNavigation>().ID = (Int32)newId;
+            if (targetIndex <= fieldMessageConfigIndex)
+                fieldMessageConfigIndex++;
 
             UILabel lbl = go.GetComponentInChildren<UILabel>();
             if (lbl != null)
@@ -1650,12 +1674,13 @@ public class ConfigUI : UIScene
                 UILocalize loc = lbl.GetComponent<UILocalize>();
                 if (loc == null) loc = lbl.gameObject.AddComponent<UILocalize>();
                 loc.key = keyName;
+                loc.OnLocalize();
             }
+            return go;
         }
-        else
-        {
-            Log.Error("[ConfigUI] Impossible de trouver le template ou l'index cible.");
-        }
+
+        Log.Error("[ConfigUI] Unable to find the template or the target index.");
+        return null;
     }
 
     private void Awake()
@@ -1681,7 +1706,7 @@ public class ConfigUI : UIScene
         if (PersistenSingleton<HonoInputManager>.Instance.IsControllerConnect)
         {
             Transform listParent = ConfigList.GetChild(1).GetChild(0).transform;
-            CreateButtonFromExisting(listParent, Configurator.ControllerBind, "MenuBoutonL3R3", Configurator.ControlTutorial, Configurator.Vibration);
+            CreateButtonFromExisting(listParent, Configurator.ControllerBind, "MenuConfigL3R3", Configurator.ControlTutorial, Configurator.Vibration);
         }
 
         foreach (Transform trans in ConfigList.GetChild(1).GetChild(0).transform)
@@ -1736,6 +1761,11 @@ public class ConfigUI : UIScene
             else if (configField.Configurator == Configurator.QuitGame)
             {
                 quitGameGameObject = configTopObj;
+                UIEventListener.Get(configTopObj).onClick += onClick;
+            }
+            else if (configField.Configurator == Configurator.ControllerBind)
+            {
+                controllerBindGameObject = configTopObj;
                 UIEventListener.Get(configTopObj).onClick += onClick;
             }
             else
