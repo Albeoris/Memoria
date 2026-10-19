@@ -205,7 +205,6 @@ public class ConfigUI : UIScene
     private UILabel masterSkillLabel;
     private UILabel lvMaxLabel;
     private UILabel gilMaxLabel;
-    private UILabel L3R3BindLabel;
 
     private HonoTweenClipping warningTransition;
 
@@ -220,11 +219,6 @@ public class ConfigUI : UIScene
     private Int32 vibe_tick;
 
     private Boolean helpEnable;
-
-    private Boolean isBindingMode = false;
-    private Int32 bindingStage = 0;
-    private Single bindingTimer = 0f;
-    private Dialog bindingDialog;
 
     [NonSerialized]
     private Int32 fieldMessageConfigIndex = (Int32)Configurator.FieldMessage;
@@ -1514,52 +1508,6 @@ public class ConfigUI : UIScene
         slider.value = 0f;
     }
 
-    private GameObject CreateButtonFromExisting(Transform listParent, Configurator newId, String keyName, Configurator templateId, Configurator placeAfterId)
-    {
-        GameObject template = null;
-        Int32 targetIndex = -1;
-
-        for (Int32 i = 0; i < listParent.childCount; i++)
-        {
-            ScrollItemKeyNavigation nav = listParent.GetChild(i).GetComponent<ScrollItemKeyNavigation>();
-            if (nav == null)
-                continue;
-
-            if (nav.ID == (Int32)templateId)
-                template = listParent.GetChild(i).gameObject;
-
-            if (nav.ID == (Int32)placeAfterId)
-                targetIndex = i + 1;
-        }
-
-        if (template != null && targetIndex != -1)
-        {
-            GameObject go = Instantiate(template);
-            go.name = $"{newId} - Custom Panel";
-            go.transform.SetParent(listParent, false);
-            go.transform.localPosition = template.transform.localPosition;
-            go.transform.localScale = template.transform.localScale;
-            go.transform.SetSiblingIndex(targetIndex);
-
-            go.GetComponent<ScrollItemKeyNavigation>().ID = (Int32)newId;
-            if (targetIndex <= fieldMessageConfigIndex)
-                fieldMessageConfigIndex++;
-
-            UILabel lbl = go.GetComponentInChildren<UILabel>();
-            if (lbl != null)
-            {
-                UILocalize loc = lbl.GetComponent<UILocalize>();
-                if (loc == null) loc = lbl.gameObject.AddComponent<UILocalize>();
-                loc.key = keyName;
-                loc.OnLocalize();
-            }
-            return go;
-        }
-
-        Log.Error("[ConfigUI] Unable to find the template or the target index.");
-        return null;
-    }
-
     private void Awake()
     {
         FadingComponent = ScreenFadeGameObject.GetComponent<HonoFading>();
@@ -1579,6 +1527,7 @@ public class ConfigUI : UIScene
         }
 
         CreateATBModeSlider(sliderTemplate, Configurator.ATBMode, 9);
+
         foreach (Transform trans in ConfigList.GetChild(1).GetChild(0).transform)
         {
             ConfigField configField = new ConfigField();

@@ -938,16 +938,12 @@ public class UIKeyTrigger : MonoBehaviour
     {
         if (HonoInputManager.Instance.IsL3Pressed())
         {
-            String l3 = Configuration.Control.L3BindCheat;
-            if (String.Equals(l3, cheatName, StringComparison.OrdinalIgnoreCase) ||
-                (cheatName == "HighSpeedMode" && String.Equals(l3, "SpeedMode", StringComparison.OrdinalIgnoreCase)))
+            if (String.Equals(Configuration.Control.L3BindCheat, cheatName, StringComparison.OrdinalIgnoreCase))
                 return true;
         }
         if (HonoInputManager.Instance.IsR3Pressed())
         {
-            String r3 = Configuration.Control.R3BindCheat;
-            if (String.Equals(r3, cheatName, StringComparison.OrdinalIgnoreCase) ||
-                (cheatName == "HighSpeedMode" && String.Equals(r3, "SpeedMode", StringComparison.OrdinalIgnoreCase)))
+            if (String.Equals(Configuration.Control.R3BindCheat, cheatName, StringComparison.OrdinalIgnoreCase))
                 return true;
         }
         return false;
