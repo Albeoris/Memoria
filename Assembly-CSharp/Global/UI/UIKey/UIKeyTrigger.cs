@@ -197,7 +197,7 @@ public class UIKeyTrigger : MonoBehaviour
             return;
         if (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Title || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.PreEnding || (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Ending || !MBG.IsNull && !MBG.Instance.IsFinishedForDisableBooster()))
             return;
-        if (UnityXInput.Input.GetKeyDown(KeyCode.F1) || triggerType == BoosterType.HighSpeedMode || HonoInputManager.Instance.IsL3Pressed()) 
+        if (UnityXInput.Input.GetKeyDown(KeyCode.F1) || triggerType == BoosterType.HighSpeedMode || IsStickCheatTriggered("HighSpeedMode")) 
         {
             if (!Configuration.Cheats.SpeedMode)
             {
@@ -211,7 +211,7 @@ public class UIKeyTrigger : MonoBehaviour
             PersistenSingleton<UIManager>.Instance.Booster.SetBoosterHudIcon(BoosterType.HighSpeedMode, flag);
             PersistenSingleton<UIManager>.Instance.Booster.SetBoosterButton(BoosterType.HighSpeedMode, flag);
         }
-        if (UnityXInput.Input.GetKeyDown(KeyCode.F2) || triggerType == BoosterType.BattleAssistance)
+        if (UnityXInput.Input.GetKeyDown(KeyCode.F2) || triggerType == BoosterType.BattleAssistance || IsStickCheatTriggered("BattleAssistance"))
         {
             if (!Configuration.Cheats.BattleAssistance)
             {
@@ -227,7 +227,7 @@ public class UIKeyTrigger : MonoBehaviour
             PersistenSingleton<UIManager>.Instance.Booster.SetBoosterHudIcon(BoosterType.BattleAssistance, flag);
             PersistenSingleton<UIManager>.Instance.Booster.SetBoosterButton(BoosterType.BattleAssistance, flag);
         }
-        if (UnityXInput.Input.GetKeyDown(KeyCode.F3) || triggerType == BoosterType.Attack9999)
+        if (UnityXInput.Input.GetKeyDown(KeyCode.F3) || triggerType == BoosterType.Attack9999 || IsStickCheatTriggered("Attack9999"))
         {
             if (!Configuration.Cheats.Attack9999)
             {
@@ -241,7 +241,7 @@ public class UIKeyTrigger : MonoBehaviour
             PersistenSingleton<UIManager>.Instance.Booster.SetBoosterHudIcon(BoosterType.Attack9999, flag);
             PersistenSingleton<UIManager>.Instance.Booster.SetBoosterButton(BoosterType.Attack9999, flag);
         }
-        if (UnityXInput.Input.GetKeyDown(KeyCode.F4) || triggerType == BoosterType.NoRandomEncounter)
+        if (UnityXInput.Input.GetKeyDown(KeyCode.F4) || triggerType == BoosterType.NoRandomEncounter || IsStickCheatTriggered("NoRandomEncounter"))
         {
             if (!Configuration.Cheats.NoRandomEncounter)
             {
@@ -352,13 +352,9 @@ public class UIKeyTrigger : MonoBehaviour
             SceneDirector.Replace("Title", SceneTransition.FadeOutToBlack_FadeIn, true);
             return;
         }
-        if ((UnityXInput.Input.GetKeyDown(KeyCode.F9) || HonoInputManager.Instance.IsR3Pressed()) && Configuration.Control.TurboDialog)
-        {
-            if (TurboKey)
-                TurboKey = false;
-            else
-                TurboKey = true;
-        }
+
+        if ((UnityXInput.Input.GetKeyDown(KeyCode.F9) || IsStickCheatTriggered("TurboDialog")) && Configuration.Control.TurboDialog)
+            TurboKey = !TurboKey;
     }
 
     [DllImport("user32.dll")]
@@ -934,6 +930,25 @@ public class UIKeyTrigger : MonoBehaviour
                 ETb.sKey &= ~EventInput.GetKeyMaskFromControl(Control.Confirm);
                 EventInput.ReceiveInput(EventInput.GetKeyMaskFromControl(Control.Confirm));
             }
+        }
+        return false;
+    }
+
+    private Boolean IsStickCheatTriggered(String cheatName)
+    {
+        if (HonoInputManager.Instance.IsL3Pressed())
+        {
+            String l3 = Configuration.Control.L3BindCheat;
+            if (String.Equals(l3, cheatName, StringComparison.OrdinalIgnoreCase) ||
+                (cheatName == "HighSpeedMode" && String.Equals(l3, "SpeedMode", StringComparison.OrdinalIgnoreCase)))
+                return true;
+        }
+        if (HonoInputManager.Instance.IsR3Pressed())
+        {
+            String r3 = Configuration.Control.R3BindCheat;
+            if (String.Equals(r3, cheatName, StringComparison.OrdinalIgnoreCase) ||
+                (cheatName == "HighSpeedMode" && String.Equals(r3, "SpeedMode", StringComparison.OrdinalIgnoreCase)))
+                return true;
         }
         return false;
     }

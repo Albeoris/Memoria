@@ -39,8 +39,8 @@ namespace Memoria
             public readonly IniValue<Boolean> PSXMovementMethod;
             public readonly IniValue<Boolean> AlwaysCaptureGamepad;
             public readonly IniValue<Boolean> SwapConfirmCancel;
-            public readonly IniValue<Int32> KeyCodeLeftStick;
-            public readonly IniValue<Int32> KeyCodeRightStick;
+            public readonly IniValue<String> L3BindCheat;
+            public readonly IniValue<String> R3BindCheat;
 
             public ControlSection() : base(nameof(ControlSection), true)
             {
@@ -55,8 +55,8 @@ namespace Memoria
                 PSXMovementMethod = BindBoolean(nameof(PSXMovementMethod), false);
                 AlwaysCaptureGamepad = BindBoolean(nameof(AlwaysCaptureGamepad), true);
                 SwapConfirmCancel = BindBoolean(nameof(SwapConfirmCancel), false);
-                KeyCodeLeftStick = BindInt32(nameof(KeyCodeLeftStick), -1);
-                KeyCodeRightStick = BindInt32(nameof(KeyCodeRightStick), -1);
+                L3BindCheat = BindString(nameof(L3BindCheat), "HighSpeedMode");
+                R3BindCheat = BindString(nameof(R3BindCheat), "TurboDialog");
             }
         }
     }

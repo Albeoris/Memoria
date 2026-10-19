@@ -915,6 +915,22 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
         return this.isInputUp[indexInt];
     }
 
+    /// <summary>
+    /// [DV] L3 and R3 are working with XInputDotNetPure if Steam Input is activated ! (need to simulate a XBOX controller)
+    /// </summary>
+    
+    public Boolean IsL3Pressed()
+    {
+        return UnityXInput.XInputManager.Instance.CurrentState.Buttons.LeftStick == ButtonState.Pressed
+            && UnityXInput.XInputManager.Instance.PreviousState.Buttons.LeftStick == ButtonState.Released;
+    }
+
+    public Boolean IsR3Pressed()
+    {
+        return UnityXInput.XInputManager.Instance.CurrentState.Buttons.RightStick == ButtonState.Pressed
+            && UnityXInput.XInputManager.Instance.PreviousState.Buttons.RightStick == ButtonState.Released;
+    }
+
     public Vector2 GetAxis()
     {
         return this.AxisValue();
@@ -1140,59 +1156,6 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
     private Single GetRightAnalogVerticalNavigation()
     {
         return UnityXInput.Input.GetAxis(this.SpecificPlatformRightAnlogVerticalKey);
-    }
-    public bool IsBindingInput { get; set; } = false;
-    public bool IsL3Pressed()
-    {
-        if (IsBindingInput || Configuration.Control.LeftStick == -1) return false;
-
-        if (Input.GetKeyDown((KeyCode)Configuration.Control.LeftStick))
-            return true;
-
-        return false;
-    }
-
-    public bool IsR3Pressed()
-    {
-        if (IsBindingInput || Configuration.Control.RightStick == -1) return false;
-
-        if (Input.GetKeyDown((KeyCode)Configuration.Control.RightStick))
-            return true;
-
-        return false;
-    }
-
-    private void DebugControllerInput() // Debug to check input from joystick
-    {
-        for (int i = 0; i < 20; i++)
-        {
-            KeyCode key = KeyCode.JoystickButton0 + i;
-            if (UnityEngine.Input.GetKey(key))
-            {
-                Log.Message("[DEBUG INPUT] Unity Key Pressed: " + key.ToString() + " (ID: " + (int)key + ")");
-            }
-        }
-
-        float triggerLeft = UnityEngine.Input.GetAxis("LeftTrigger");
-        if (triggerLeft > 0.1f)
-        {
-            Log.Message("[DEBUG INPUT] Unity Axis LeftTrigger: " + triggerLeft);
-        }
-
-        try
-        {
-            GamePadState state = XInputDotNetPure.GamePad.GetState(PlayerIndex.One);
-
-            if (state.Buttons.LeftStick == ButtonState.Pressed)
-                Log.Message("[DEBUG INPUT] XInput: LeftStick (L3) PRESSED");
-
-            if (state.Buttons.RightStick == ButtonState.Pressed)
-                Log.Message("[DEBUG INPUT] XInput: RightStick (R3) PRESSED");
-
-            if (state.Triggers.Left > 0.0f)
-                Log.Message("[DEBUG INPUT] XInput: LeftTrigger (L2) Value: " + state.Triggers.Left);
-        }
-        catch { }
     }
 
     public const Single TriggerThreshold = 0.19f;

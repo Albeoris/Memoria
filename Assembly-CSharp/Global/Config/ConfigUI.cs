@@ -70,8 +70,7 @@ public class ConfigUI : UIScene
         MovieVolume,
         VoiceVolume,
         ATBMode,
-        AutoText,
-        ControllerBind
+        AutoText
     }
 
     public enum ATBMode
@@ -187,7 +186,6 @@ public class ConfigUI : UIScene
     private GameObject controlTutorialGameObject;
     [NonSerialized]
     private GameObject combatTutorialGameObject;
-    private GameObject controllerBindGameObject;
     private GameObject toTitleGameObject;
     [NonSerialized]
     private GameObject quitGameGameObject;
@@ -207,6 +205,7 @@ public class ConfigUI : UIScene
     private UILabel masterSkillLabel;
     private UILabel lvMaxLabel;
     private UILabel gilMaxLabel;
+    private UILabel L3R3BindLabel;
 
     private HonoTweenClipping warningTransition;
 
@@ -758,17 +757,6 @@ public class ConfigUI : UIScene
                         ButtonGroupState.HoldActiveStateOnGroup(ConfigGroupButton);
                     });
                 }
-                else if (config?.Configurator == Configurator.ControllerBind)
-                {
-                    if (!PersistenSingleton<HonoInputManager>.Instance.IsControllerConnect)
-                    {
-                        FF9Sfx.FF9SFX_Play(102);
-                        return true;
-                    }
-                    FF9Sfx.FF9SFX_Play(103);
-                    StartBindingSequence();
-                    return true;
-                }
                 else if (config?.Configurator == Configurator.QuitGame)
                 {
                     FF9Sfx.FF9SFX_Play(103);
@@ -1014,7 +1002,7 @@ public class ConfigUI : UIScene
                 else if (key == KeyCode.RightArrow)
                     setConfigValue(configField.ConfigParent, configField.Value + 1f / step, false);
             }
-            else if (configField.Configurator != Configurator.CombatTutorial && configField.Configurator != Configurator.ControlTutorial && configField.Configurator != Configurator.ControllerBind && configField.Configurator != Configurator.Title && configField.Configurator != Configurator.QuitGame && (key == KeyCode.LeftArrow || key == KeyCode.RightArrow))
+            else if (configField.Configurator != Configurator.CombatTutorial && configField.Configurator != Configurator.ControlTutorial && configField.Configurator != Configurator.Title && configField.Configurator != Configurator.QuitGame && (key == KeyCode.LeftArrow || key == KeyCode.RightArrow))
             {
                 setConfigValue(configField.ConfigParent, ((Int32)configField.Value + 1) % 2, false);
             }
@@ -1316,7 +1304,7 @@ public class ConfigUI : UIScene
                 if (configField.Value == previousValue)
                     playSound = false;
             }
-            else if (configField.Configurator != Configurator.Title && configField.Configurator != Configurator.QuitGame && configField.Configurator != Configurator.ControlTutorial && configField.Configurator != Configurator.CombatTutorial && configField.Configurator != Configurator.ControllerBind)
+            else if (configField.Configurator != Configurator.Title && configField.Configurator != Configurator.QuitGame && configField.Configurator != Configurator.ControlTutorial && configField.Configurator != Configurator.CombatTutorial)
             {
                 GameObject child = configField.ConfigChoice[0].GetChild(0);
                 GameObject child2 = configField.ConfigChoice[1].GetChild(0);
@@ -1439,24 +1427,6 @@ public class ConfigUI : UIScene
             vib.VIB_actuatorReset(0);
             vib.VIB_actuatorReset(1);
         }
-
-        if (controllerBindGameObject != null)
-        {
-            Boolean isControllerConnected = PersistenSingleton<HonoInputManager>.Instance.IsControllerConnect;
-            controllerBindGameObject.GetChild(0).GetComponent<UILabel>().color = isControllerConnected ? FF9TextTool.White : FF9TextTool.Gray;
-
-            if (isBindingMode && !isControllerConnected) // Disable L3R3 menu if player disconnect the controller.
-            {
-                FF9Sfx.FF9SFX_Play(102);
-                EndBindingSequence();
-                return;
-            }
-        }
-        if (isBindingMode)
-        {
-            UpdateBindingLogic();
-            return;
-        }
     }
 
     private GameObject CreateChoice(GameObject template, Configurator id, String choice1, String choice2, int siblingIndex)
@@ -1544,99 +1514,6 @@ public class ConfigUI : UIScene
         slider.value = 0f;
     }
 
-    private void StartBindingSequence()
-    {
-        PersistenSingleton<HonoInputManager>.Instance.IsBindingInput = true;
-        isBindingMode = true;
-        bindingStage = 1;
-        bindingTimer = Time.realtimeSinceStartup + 0.5f;
-
-        string text = Localization.Get("ConfigBindL3"); // Don't refresh the text with dual language.
-        UpdateBindingDialogText(text);
-
-        ButtonGroupState.DisableAllGroup(true);
-    }
-
-    private void UpdateBindingDialogText(string newText)
-    {
-        if (bindingDialog != null)
-            Singleton<DialogManager>.Instance.Close(bindingDialog.Id);
-
-        bindingDialog = Singleton<DialogManager>.Instance.AttachDialog(
-            newText,
-            0,
-            0,
-            Dialog.TailPosition.Center,
-            Dialog.WindowStyle.WindowStylePlain,
-            Vector2.zero,
-            Dialog.CaptionType.None
-        );
-    }
-
-    private void UpdateBindingLogic()
-    {
-        if (!isBindingMode || Time.realtimeSinceStartup < bindingTimer) return;
-
-        if (Mathf.Abs(Input.GetAxis("Horizontal")) > 0.5f || Input.GetKey(KeyCode.Escape))
-        {
-            FF9Sfx.FF9SFX_Play(102);
-
-            if (bindingStage == 1) // L3
-            {
-                Configuration.Control.SaveLeftStick(-1);
-                UpdateBindingDialogText(Localization.Get("ConfigBindL3DisabledThenR3")); // Don't refresh the text with dual language.
-                bindingStage = 2;
-                bindingTimer = Time.realtimeSinceStartup + 0.5f;
-            }
-            else if (bindingStage == 2) // R3
-            {
-                Configuration.Control.SaveRightStick(-1);
-                EndBindingSequence();
-            }
-            return;
-        }
-
-        for (int i = 0; i < 20; i++)
-        {
-            KeyCode key = (KeyCode)((int)KeyCode.JoystickButton0 + i);
-            if (Input.GetKeyDown(key))
-            {
-                FF9Sfx.FF9SFX_Play(1044);
-                int rawID = (int)key;
-
-                if (bindingStage == 1) // L3
-                {
-                    Configuration.Control.SaveLeftStick(rawID);
-                    UpdateBindingDialogText(Localization.Get("ConfigBindR3")); // Don't refresh the text with dual language.
-                    bindingStage = 2;
-                    bindingTimer = Time.realtimeSinceStartup + 0.5f;
-                }
-                else if (bindingStage == 2)
-                {
-                    Configuration.Control.SaveRightStick(rawID);
-                    EndBindingSequence();
-                }
-                return;
-            }
-        }
-    }
-
-    private void EndBindingSequence()
-    {
-        isBindingMode = false;
-        bindingStage = 0;
-        PersistenSingleton<HonoInputManager>.Instance.IsBindingInput = false;
-
-        if (bindingDialog != null)
-        {
-            Singleton<DialogManager>.Instance.Close(bindingDialog.Id);
-            bindingDialog = null;
-        }
-
-        ButtonGroupState.DisableAllGroup(false);
-        ButtonGroupState.ActiveGroup = ConfigGroupButton;
-    }
-
     private GameObject CreateButtonFromExisting(Transform listParent, Configurator newId, String keyName, Configurator templateId, Configurator placeAfterId)
     {
         GameObject template = null;
@@ -1702,13 +1579,6 @@ public class ConfigUI : UIScene
         }
 
         CreateATBModeSlider(sliderTemplate, Configurator.ATBMode, 9);
-
-        if (PersistenSingleton<HonoInputManager>.Instance.IsControllerConnect)
-        {
-            Transform listParent = ConfigList.GetChild(1).GetChild(0).transform;
-            CreateButtonFromExisting(listParent, Configurator.ControllerBind, "MenuConfigL3R3", Configurator.ControlTutorial, Configurator.Vibration);
-        }
-
         foreach (Transform trans in ConfigList.GetChild(1).GetChild(0).transform)
         {
             ConfigField configField = new ConfigField();
@@ -1754,18 +1624,9 @@ public class ConfigUI : UIScene
                 combatTutorialGameObject = configTopObj;
                 UIEventListener.Get(configTopObj).onClick += onClick;
             }
-            else if (configField.Configurator == Configurator.ControllerBind)
-            {
-                UIEventListener.Get(configTopObj).onClick += onClick;
-            }
             else if (configField.Configurator == Configurator.QuitGame)
             {
                 quitGameGameObject = configTopObj;
-                UIEventListener.Get(configTopObj).onClick += onClick;
-            }
-            else if (configField.Configurator == Configurator.ControllerBind)
-            {
-                controllerBindGameObject = configTopObj;
                 UIEventListener.Get(configTopObj).onClick += onClick;
             }
             else
