@@ -203,7 +203,7 @@ namespace FF9
             coverBy.pos[0] = target.pos[0];
             coverBy.pos[2] = target.pos[2];
 
-            target.pos[2] -= 400f;
+            target.pos[2] += target.bi.player != 0 ? -400f : 400f;
 
             //btl_mot.setMotion(coverBy.Data, BattlePlayerCharacter.PlayerMotionIndex.MP_COVER);
             //coverBy.Data.evt.animFrame = 0;
