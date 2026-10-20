@@ -512,6 +512,17 @@ namespace Memoria.Assets
                     { "IT", "Resistente: [FFCC00]%[FFFFFF]" }
                 }
             },
+            { "MobLoot", new Dictionary<String, String>()
+                {
+                    { "US", "Rewards" },
+                    { "UK", "Rewards" },
+                    { "JP", "報酬" },
+                    { "ES", "Recompensas" },
+                    { "FR", "Récompenses" },
+                    { "GR", "Belohnungen" },
+                    { "IT", "Ricompense" }
+                }
+            },
             { "AttackList", new Dictionary<String, String>()
                 {
                     { "US", "[b]Abilities[/b]" },
@@ -522,7 +533,7 @@ namespace Memoria.Assets
                     { "GR", "[b]Fähigkeiten[/b]" },
                     { "IT", "[b]Abilità[/b]" }
                 }
-            },
+            }
         };
     }
 }
