@@ -366,10 +366,10 @@ namespace XInputDotNetPure
                         if ((jslState.buttons & (int)JSL.Button.Options) != 0) rawState.Gamepad.wButtons |= (ushort)ButtonsConstants.Start;
                         if ((jslState.buttons & (int)JSL.Button.TouchpadClick) != 0) rawState.Gamepad.wButtons |= (ushort)ButtonsConstants.Back;
                         if ((jslState.buttons & (int)JSL.Button.Minus) != 0) rawState.Gamepad.wButtons |= (ushort)ButtonsConstants.Back;
-                        if ((jslState.buttons & (int)JSL.Button.ZL) != 0) rawState.Gamepad.wButtons |= (ushort)ButtonsConstants.LeftThumb;
-                        if ((jslState.buttons & (int)JSL.Button.ZR) != 0) rawState.Gamepad.wButtons |= (ushort)ButtonsConstants.RightThumb;
-                        if ((jslState.buttons & (int)JSL.Button.L) != 0) rawState.Gamepad.wButtons |= (ushort)ButtonsConstants.LeftShoulder;
-                        if ((jslState.buttons & (int)JSL.Button.R) != 0) rawState.Gamepad.wButtons |= (ushort)ButtonsConstants.RightShoulder;
+                        if ((jslState.buttons & (int)JSL.Button.L) != 0) rawState.Gamepad.wButtons |= (ushort)ButtonsConstants.LeftShoulder; // L1
+                        if ((jslState.buttons & (int)JSL.Button.R) != 0) rawState.Gamepad.wButtons |= (ushort)ButtonsConstants.RightShoulder; // R1
+                        if ((jslState.buttons & (int)JSL.Button.LClick) != 0) rawState.Gamepad.wButtons |= (ushort)ButtonsConstants.LeftThumb; // L3
+                        if ((jslState.buttons & (int)JSL.Button.RClick) != 0) rawState.Gamepad.wButtons |= (ushort)ButtonsConstants.RightThumb; // R3
                         if ((jslState.buttons & (int)JSL.Button.PS) != 0) rawState.Gamepad.wButtons |= (ushort)ButtonsConstants.Guide;
                         if ((jslState.buttons & (int)JSL.Button.S) != 0) rawState.Gamepad.wButtons |= (ushort)ButtonsConstants.A;
                         if ((jslState.buttons & (int)JSL.Button.E) != 0) rawState.Gamepad.wButtons |= (ushort)ButtonsConstants.B;
@@ -387,8 +387,8 @@ namespace XInputDotNetPure
                         rawState.Gamepad.sThumbRX = (short)Utils.Clamp((int)(jslState.stickRX * short.MaxValue + rawState.Gamepad.sThumbRX), short.MinValue, short.MaxValue);
                         rawState.Gamepad.sThumbRY = (short)Utils.Clamp((int)(jslState.stickRY * short.MaxValue + rawState.Gamepad.sThumbRY), short.MinValue, short.MaxValue);
 
-                        rawState.Gamepad.bLeftTrigger = (byte)Utils.Clamp((int)(jslState.lTrigger * byte.MaxValue + rawState.Gamepad.bLeftTrigger), byte.MinValue, byte.MaxValue);
-                        rawState.Gamepad.bRightTrigger = (byte)Utils.Clamp((int)(jslState.rTrigger * byte.MaxValue + rawState.Gamepad.bRightTrigger), byte.MinValue, byte.MaxValue);
+                        rawState.Gamepad.bLeftTrigger = (byte)Utils.Clamp((int)(jslState.lTrigger * byte.MaxValue + rawState.Gamepad.bLeftTrigger), byte.MinValue, byte.MaxValue); // L2
+                        rawState.Gamepad.bRightTrigger = (byte)Utils.Clamp((int)(jslState.rTrigger * byte.MaxValue + rawState.Gamepad.bRightTrigger), byte.MinValue, byte.MaxValue); // R2
                     }
                     result = Utils.Success;
                 }
