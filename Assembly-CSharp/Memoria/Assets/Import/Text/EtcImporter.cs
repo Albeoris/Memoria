@@ -66,17 +66,13 @@ namespace Memoria.Assets
 
         protected override Boolean LoadInternal()
         {
-            String[] strings = EmbadedSentenseLoader.LoadSentense(_embadedPath);
-
-            FF9TextTool.ImportArrayToDictionary(strings, _setter);
+            FF9TextTool.ImportWithCumulativeModFiles<Int32>(_embadedPath, _setter);
             return true;
         }
 
         protected override void ProcessEntries(TxtEntry[] entreis)
         {
-            String[] strings;
-            EtcFormatter.Parse(entreis, out strings);
-
+            EtcFormatter.Parse(entreis, out String[] strings);
             FF9TextTool.ImportArrayToDictionary(strings, _setter);
         }
     }
