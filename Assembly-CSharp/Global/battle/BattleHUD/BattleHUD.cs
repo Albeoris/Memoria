@@ -162,10 +162,10 @@ public partial class BattleHUD : UIScene
             case LibraInformation.MP:
                 return [FF9TextTool.BattleLibraText(12) + unit.CurrentMp + FF9TextTool.BattleLibraText(13) + unit.MaximumMp];
             case LibraInformation.Stats:
-                messages.Add("[FFCC00]" + Localization.GetWithDefault("Speed") + "[FFFFFF] : " + unit.Dexterity + " / " + "[FFCC00]" + Localization.GetWithDefault("DefenseStats") + "[FFFFFF] : " + unit.PhysicalDefence);
-                messages.Add("[FFCC00]" + Localization.GetWithDefault("Strength") + "[FFFFFF] : " + unit.Strength + " / " + "[FFCC00]" + Localization.GetWithDefault("Evade") + "[FFFFFF] : " + unit.PhysicalEvade);
-                messages.Add("[FFCC00]" + Localization.GetWithDefault("Magic") + "[FFFFFF] : " + unit.Magic + " / " + "[FFCC00]" + Localization.GetWithDefault("MagicDef") + "[FFFFFF] : " + unit.MagicDefence);
-                messages.Add("[FFCC00]" + Localization.GetWithDefault("Spirit") + "[FFFFFF] : " + unit.Will + " / " + "[FFCC00]" + Localization.GetWithDefault("MagicEva") + "[FFFFFF] : " + unit.MagicEvade);
+                messages.Add("[FFCC00]" + Localization.Get("Speed") + "[FFFFFF] : " + unit.Dexterity + " / " + "[FFCC00]" + Localization.Get("DefenseStats") + "[FFFFFF] : " + unit.PhysicalDefence);
+                messages.Add("[FFCC00]" + Localization.Get("Strength") + "[FFFFFF] : " + unit.Strength + " / " + "[FFCC00]" + Localization.Get("Evade") + "[FFFFFF] : " + unit.PhysicalEvade);
+                messages.Add("[FFCC00]" + Localization.Get("Magic") + "[FFFFFF] : " + unit.Magic + " / " + "[FFCC00]" + Localization.Get("MagicDef") + "[FFFFFF] : " + unit.MagicDefence);
+                messages.Add("[FFCC00]" + Localization.Get("Spirit") + "[FFFFFF] : " + unit.Will + " / " + "[FFCC00]" + Localization.Get("MagicEva") + "[FFFFFF] : " + unit.MagicEvade);
                 return messages;
             case LibraInformation.Category:
                 if (!unit.IsPlayer)
@@ -240,6 +240,8 @@ public partial class BattleHUD : UIScene
                     foreach (RegularItem itemId in enemy.StealableItems)
                         if (itemId != RegularItem.NoItem)
                             messages.Add(Localization.CurrentDisplaySymbol != "JP" ? FF9TextTool.BattleLibraText(8) + "[FFCC00]" + FF9TextTool.ItemName(itemId) + "[FFFFFF]" : "[FFCC00]" + FF9TextTool.ItemName(itemId) + "[FFFFFF]" + FF9TextTool.BattleLibraText(8));
+                    if (messages.Count == 1)
+                        messages.Add(FF9TextTool.BattleLibraText(9));
                 }
                 return messages;
             case LibraInformation.ItemBonus:
@@ -250,6 +252,8 @@ public partial class BattleHUD : UIScene
                     foreach (RegularItem itemId in enemy.DroppableItems)
                         if (itemId != RegularItem.NoItem)
                             messages.Add(Localization.CurrentDisplaySymbol != "JP" ? FF9TextTool.BattleLibraText(8) + "[00DBDB]" + FF9TextTool.ItemName(itemId) + "[FFFFFF]" : "[00DBDB]" + FF9TextTool.ItemName(itemId) + "[FFFFFF]" + FF9TextTool.BattleLibraText(8));
+                    if (messages.Count == 1)
+                        messages.Add(FF9TextTool.BattleLibraText(9));
                 }
                 return messages;
             case LibraInformation.BlueLearn:
@@ -298,33 +302,35 @@ public partial class BattleHUD : UIScene
     {
         _currentLibraMessageCount = 0;
         _currentLibraMessageNumber++;
-        while (_currentLibraMessageNumber < 14)
+        while (_currentLibraMessageNumber < 15)
         {
             if (_currentLibraMessageNumber == 1 && (_libraEnabledMessage & LibraInformation.NameLevel) != 0)
                 return;
             if (_currentLibraMessageNumber == 2 && (_libraEnabledMessage & LibraInformation.HPMP) != 0)
                 return;
-            if (_currentLibraMessageNumber == 3 && (_libraEnabledMessage & LibraInformation.Category) != 0)
+            if (_currentLibraMessageNumber == 3 && (_libraEnabledMessage & LibraInformation.Stats) != 0)
                 return;
-            if (_currentLibraMessageNumber == 4 && (_libraEnabledMessage & LibraInformation.ElementWeak) != 0)
+            if (_currentLibraMessageNumber == 4 && (_libraEnabledMessage & LibraInformation.Category) != 0)
                 return;
-            if (_currentLibraMessageNumber == 5 && (_libraEnabledMessage & LibraInformation.ElementResist) != 0)
+            if (_currentLibraMessageNumber == 5 && (_libraEnabledMessage & LibraInformation.ElementWeak) != 0)
                 return;
-            if (_currentLibraMessageNumber == 6 && (_libraEnabledMessage & LibraInformation.ElementImmune) != 0)
+            if (_currentLibraMessageNumber == 6 && (_libraEnabledMessage & LibraInformation.ElementResist) != 0)
                 return;
-            if (_currentLibraMessageNumber == 7 && (_libraEnabledMessage & LibraInformation.ElementAbsorb) != 0)
+            if (_currentLibraMessageNumber == 7 && (_libraEnabledMessage & LibraInformation.ElementImmune) != 0)
                 return;
-            if (_currentLibraMessageNumber == 8 && (_libraEnabledMessage & LibraInformation.StatusAuto) != 0)
+            if (_currentLibraMessageNumber == 8 && (_libraEnabledMessage & LibraInformation.ElementAbsorb) != 0)
                 return;
-            if (_currentLibraMessageNumber == 9 && (_libraEnabledMessage & LibraInformation.StatusImmune) != 0)
+            if (_currentLibraMessageNumber == 9 && (_libraEnabledMessage & LibraInformation.StatusAuto) != 0)
                 return;
-            if (_currentLibraMessageNumber == 10 && (_libraEnabledMessage & LibraInformation.ItemSteal) != 0)
+            if (_currentLibraMessageNumber == 10 && (_libraEnabledMessage & LibraInformation.StatusImmune) != 0)
                 return;
-            if (_currentLibraMessageNumber == 11 && (_libraEnabledMessage & LibraInformation.ItemBonus) != 0)
+            if (_currentLibraMessageNumber == 11 && (_libraEnabledMessage & LibraInformation.ItemSteal) != 0)
                 return;
-            if (_currentLibraMessageNumber == 12 && (_libraEnabledMessage & LibraInformation.BlueLearn) != 0)
+            if (_currentLibraMessageNumber == 12 && (_libraEnabledMessage & LibraInformation.ItemBonus) != 0)
                 return;
-            if (_currentLibraMessageNumber == 13 && (_libraEnabledMessage & LibraInformation.AttackList) != 0)
+            if (_currentLibraMessageNumber == 13 && (_libraEnabledMessage & LibraInformation.BlueLearn) != 0)
+                return;
+            if (_currentLibraMessageNumber == 14 && (_libraEnabledMessage & LibraInformation.AttackList) != 0)
                 return;
             _currentLibraMessageNumber++;
         }
@@ -359,26 +365,28 @@ public partial class BattleHUD : UIScene
             return true;
         }
         if (_currentLibraMessageNumber == 3)
-            multiMessages = GetLibraMessages(_libraBtlData, LibraInformation.Category);
+            multiMessages = GetLibraMessages(_libraBtlData, LibraInformation.Stats);
         else if (_currentLibraMessageNumber == 4)
-            multiMessages = GetLibraMessages(_libraBtlData, LibraInformation.ElementWeak);
+            multiMessages = GetLibraMessages(_libraBtlData, LibraInformation.Category);
         else if (_currentLibraMessageNumber == 5)
-            multiMessages = GetLibraMessages(_libraBtlData, LibraInformation.ElementResist);
+            multiMessages = GetLibraMessages(_libraBtlData, LibraInformation.ElementWeak);
         else if (_currentLibraMessageNumber == 6)
-            multiMessages = GetLibraMessages(_libraBtlData, LibraInformation.ElementImmune);
+            multiMessages = GetLibraMessages(_libraBtlData, LibraInformation.ElementResist);
         else if (_currentLibraMessageNumber == 7)
-            multiMessages = GetLibraMessages(_libraBtlData, LibraInformation.ElementAbsorb);
+            multiMessages = GetLibraMessages(_libraBtlData, LibraInformation.ElementImmune);
         else if (_currentLibraMessageNumber == 8)
-            multiMessages = GetLibraMessages(_libraBtlData, LibraInformation.StatusAuto);
+            multiMessages = GetLibraMessages(_libraBtlData, LibraInformation.ElementAbsorb);
         else if (_currentLibraMessageNumber == 9)
-            multiMessages = GetLibraMessages(_libraBtlData, LibraInformation.StatusImmune);
+            multiMessages = GetLibraMessages(_libraBtlData, LibraInformation.StatusAuto);
         else if (_currentLibraMessageNumber == 10)
-            multiMessages = GetLibraMessages(_libraBtlData, LibraInformation.ItemSteal);
+            multiMessages = GetLibraMessages(_libraBtlData, LibraInformation.StatusImmune);
         else if (_currentLibraMessageNumber == 11)
-            multiMessages = GetLibraMessages(_libraBtlData, LibraInformation.ItemBonus);
+            multiMessages = GetLibraMessages(_libraBtlData, LibraInformation.ItemSteal);
         else if (_currentLibraMessageNumber == 12)
-            multiMessages = GetLibraMessages(_libraBtlData, LibraInformation.BlueLearn);
+            multiMessages = GetLibraMessages(_libraBtlData, LibraInformation.ItemBonus);
         else if (_currentLibraMessageNumber == 13)
+            multiMessages = GetLibraMessages(_libraBtlData, LibraInformation.BlueLearn);
+        else if (_currentLibraMessageNumber == 14)
             multiMessages = GetLibraMessages(_libraBtlData, LibraInformation.AttackList);
         if (multiMessages != null && _currentLibraMessageCount < multiMessages.Count)
         {
@@ -386,7 +394,7 @@ public partial class BattleHUD : UIScene
             return true;
         }
         AdvanceLibraMessageNumber();
-        if (_currentLibraMessageNumber >= 14)
+        if (_currentLibraMessageNumber >= 15)
         {
             _libraBtlData = null;
             _currentLibraMessageCount = 0;
