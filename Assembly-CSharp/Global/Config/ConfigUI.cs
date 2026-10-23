@@ -813,7 +813,7 @@ public class ConfigUI : UIScene
                 if (Configuration.Cheats.MasterSkill)
                 {
                     FF9Sfx.FF9SFX_Play(103);
-                    PersistenSingleton<UIManager>.Instance.Booster.ShowWaringDialog(BoosterType.MasterSkill, AfterBoosterFinish);
+                    PersistenSingleton<UIManager>.Instance.Booster.ShowWarningDialog(BoosterType.MasterSkill, AfterBoosterFinish);
                     hitpointScreenButton.KeyCommand = Control.None;
                     WarningDialogHitPoint.SetActive(true);
                 }
@@ -836,7 +836,7 @@ public class ConfigUI : UIScene
             if (Configuration.Cheats.LvMax)
             {
                 FF9Sfx.FF9SFX_Play(103);
-                PersistenSingleton<UIManager>.Instance.Booster.ShowWaringDialog(BoosterType.LvMax, AfterBoosterFinish);
+                PersistenSingleton<UIManager>.Instance.Booster.ShowWarningDialog(BoosterType.LvMax, AfterBoosterFinish);
                 hitpointScreenButton.KeyCommand = Control.None;
                 WarningDialogHitPoint.SetActive(true);
             }
@@ -851,7 +851,7 @@ public class ConfigUI : UIScene
             if (Configuration.Cheats.GilMax)
             {
                 FF9Sfx.FF9SFX_Play(103);
-                PersistenSingleton<UIManager>.Instance.Booster.ShowWaringDialog(BoosterType.GilMax, AfterBoosterFinish);
+                PersistenSingleton<UIManager>.Instance.Booster.ShowWarningDialog(BoosterType.GilMax, AfterBoosterFinish);
                 hitpointScreenButton.KeyCommand = Control.None;
                 WarningDialogHitPoint.SetActive(true);
             }
