@@ -17,6 +17,11 @@ namespace Memoria
             UIManager.Battle.SetBattleFollowMessage(message, UIManager.Battle.BtlGetAttrName((Int32)element));
         }
 
+        public static void SetBattleFollowMessage(BattleMesages message, ElementToken element)
+        {
+            UIManager.Battle.SetBattleFollowMessage(message, FF9TextTool.ElementName(element));
+        }
+
         public static void SetBattleFollowFormatMessage(BattleMesages message, params Object[] args)
         {
             UIManager.Battle.SetBattleFollowMessage(message, args != null && args.Length > 0 ? args[0] : null);
@@ -31,7 +36,7 @@ namespace Memoria
     public static class GameState
     {
         public static Int16 Frogs => FF9StateSystem.Common.FF9.Frogs.Number;
-        public static Int16[] CategoryKillCount => FF9StateSystem.Common.FF9.categoryKillCount;
+        public static Int16 CategoryKillCountEx(EnemyCategoryToken category) => FF9StateSystem.Common.FF9.categoryKillCount[category];
         public static Int16 ModelKillCount(Int16 modelId) => FF9StateSystem.Common.FF9.modelKillCount[modelId];
         public static Int32 TotalKillCount => FF9StateSystem.Common.FF9.modelKillCount.Values.Sum(count => count);
         public static Byte Tonberies => battle.TONBERI_COUNT;
@@ -67,6 +72,24 @@ namespace Memoria
         {
             get { return FF9StateSystem.Common.FF9.steal_no; }
             set { FF9StateSystem.Common.FF9.steal_no = Math.Min((Int16)9999, value); }
+        }
+
+        /// <summary>Deprecated: use the method CategoryKillCountEx instead</summary>
+        public static Int16[] CategoryKillCount
+        {
+            get
+            {
+                return [
+                    FF9StateSystem.Common.FF9.categoryKillCount[EnemyCategoryToken.Humanoid],
+                    FF9StateSystem.Common.FF9.categoryKillCount[EnemyCategoryToken.Beast],
+                    FF9StateSystem.Common.FF9.categoryKillCount[EnemyCategoryToken.Devil],
+                    FF9StateSystem.Common.FF9.categoryKillCount[EnemyCategoryToken.Dragon],
+                    FF9StateSystem.Common.FF9.categoryKillCount[EnemyCategoryToken.Undead],
+                    FF9StateSystem.Common.FF9.categoryKillCount[EnemyCategoryToken.Stone],
+                    FF9StateSystem.Common.FF9.categoryKillCount[EnemyCategoryToken.Soul],
+                    FF9StateSystem.Common.FF9.categoryKillCount[EnemyCategoryToken.Flight]
+                ];
+            }
         }
     }
 
@@ -260,12 +283,12 @@ namespace Memoria
 
         public Boolean CanAttackElementalCommand()
         {
-            return /*Caster.HasSupportAbility(SupportAbility2.MagElemNull) || */ Target.CanAttackElement(Command.Element);
+            return /*Caster.HasSupportAbility(SupportAbility2.MagElemNull) || */ Target.CanAttackElement(Command.ElementEx);
         }
 
         public Boolean CanAttackWeaponElementalCommand()
         {
-            return Target.CanAttackElement(Caster.WeaponElement);
+            return Target.CanAttackElement(Caster.WeaponElementEx);
         }
 
         public Boolean CanUseCommandForFlight()
@@ -585,19 +608,19 @@ namespace Memoria
         public void BonusKillerAbilities()
         {
             // Dummied
-            var hasCategory = new Func<ENEMY_TYPE, EnemyCategory, Boolean>((enemy, category) => (enemy.category & (Int16)category) != 0);
+            var hasCategory = new Func<ENEMY_TYPE, EnemyCategoryToken, Boolean>((enemy, category) => enemy.category.Contains(category));
 
             if (!Target.IsPlayer)
             {
                 ENEMY_TYPE enemy = btl_util.getEnemyTypePtr(Target.Data);
-                if (Caster.HasSupportAbility(SupportAbility1.BirdKiller) && hasCategory(enemy, EnemyCategory.Flight) ||
-                    Caster.HasSupportAbility(SupportAbility1.BugKiller) && hasCategory(enemy, EnemyCategory.Soul) ||
-                    Caster.HasSupportAbility(SupportAbility1.StoneKiller) && hasCategory(enemy, EnemyCategory.Stone) ||
-                    Caster.HasSupportAbility(SupportAbility1.UndeadKiller) && hasCategory(enemy, EnemyCategory.Undead) ||
-                    Caster.HasSupportAbility(SupportAbility1.DragonKiller) && hasCategory(enemy, EnemyCategory.Dragon) ||
-                    Caster.HasSupportAbility(SupportAbility1.DevilKiller) && hasCategory(enemy, EnemyCategory.Devil) ||
-                    Caster.HasSupportAbility(SupportAbility1.BeastKiller) && hasCategory(enemy, EnemyCategory.Beast) ||
-                    Caster.HasSupportAbility(SupportAbility1.ManEater) && hasCategory(enemy, EnemyCategory.Humanoid))
+                if (Caster.HasSupportAbility(SupportAbility1.BirdKiller) && hasCategory(enemy, EnemyCategoryToken.Flight) ||
+                    Caster.HasSupportAbility(SupportAbility1.BugKiller) && hasCategory(enemy, EnemyCategoryToken.Soul) ||
+                    Caster.HasSupportAbility(SupportAbility1.StoneKiller) && hasCategory(enemy, EnemyCategoryToken.Stone) ||
+                    Caster.HasSupportAbility(SupportAbility1.UndeadKiller) && hasCategory(enemy, EnemyCategoryToken.Undead) ||
+                    Caster.HasSupportAbility(SupportAbility1.DragonKiller) && hasCategory(enemy, EnemyCategoryToken.Dragon) ||
+                    Caster.HasSupportAbility(SupportAbility1.DevilKiller) && hasCategory(enemy, EnemyCategoryToken.Devil) ||
+                    Caster.HasSupportAbility(SupportAbility1.BeastKiller) && hasCategory(enemy, EnemyCategoryToken.Beast) ||
+                    Caster.HasSupportAbility(SupportAbility1.ManEater) && hasCategory(enemy, EnemyCategoryToken.Humanoid))
                     ++Context.DamageModifierCount;
             }
         }
@@ -725,6 +748,7 @@ namespace Memoria
             }
         }
 
+        /// <summary>Deprecated: use the version with ElementSet instead of EffectElement</summary>
         public Boolean ApplyElementFullStack(EffectElement element, EffectElement elementForBonus)
         {
             if ((element & Target.GuardElement) != 0)
@@ -741,9 +765,25 @@ namespace Memoria
             return true;
         }
 
+        public Boolean ApplyElementFullStack(ElementSet element, ElementSet elementForBonus)
+        {
+            if (Target.IsGuardElement(element))
+            {
+                Context.Flags |= BattleCalcFlags.Guard;
+                return false;
+            }
+            if (Target.IsAbsorbElement(element))
+                Context.Flags |= BattleCalcFlags.Absorb;
+
+            Context.DamageModifierCount += ElementSet.CountCommonElements(Caster.BonusElementEx, elementForBonus);
+            Context.DamageModifierCount += ElementSet.CountCommonElements(Target.WeakElementEx, element);
+            Context.DamageModifierCount -= ElementSet.CountCommonElements(Target.HalfElementEx, element);
+            return true;
+        }
+
         public void BonusElement()
         {
-            if ((Command.ElementForBonus & Caster.BonusElement) != 0)
+            if (ElementSet.CountCommonElements(Command.ElementForBonusEx, Caster.BonusElementEx) > 0)
                 ++Context.DamageModifierCount;
         }
 

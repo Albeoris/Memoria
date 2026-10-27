@@ -335,8 +335,8 @@ namespace FF9
                             if (!btl_util.IsBtlBusy(btl, btl_util.BusyMode.ANY_CURRENT))
                             {
                                 FF9StateGlobal ff = FF9StateSystem.Common.FF9;
-                                for (Int32 category = 0; category < 8; category++)
-                                    if (btl_util.CheckEnemyCategory(btl, (Byte)(1 << category)) && ff.categoryKillCount[category] < 9999)
+                                foreach (EnemyCategoryToken category in btl_util.getEnemyTypePtr(btl).category)
+                                    if (ff.categoryKillCount[category] < 9999)
                                         ff.categoryKillCount[category]++;
                                 if (btl.dms_geo_id >= 0)
                                     ff.modelKillCount[btl.dms_geo_id]++;

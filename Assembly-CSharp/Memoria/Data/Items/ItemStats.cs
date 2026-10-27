@@ -1,5 +1,6 @@
-﻿using Memoria.Prime.CSV;
-using System;
+﻿using System;
+using Memoria.Data;
+using Memoria.Prime.CSV;
 
 namespace FF9
 {
@@ -13,7 +14,7 @@ namespace FF9
         public Byte str;
         public Byte mgc;
         public Byte wpr;
-        public Byte p_up_attr;
+        public ElementSet p_up_attr;
         public DEF_ATTR def_attr = new DEF_ATTR();
 
         public static ItemStats GetExisting(Int32 id)
@@ -30,12 +31,22 @@ namespace FF9
             if (metadata.HasField("Magic")) mgc = CsvParser.Byte(raw[index++]);
             if (metadata.HasField("Spirit")) wpr = CsvParser.Byte(raw[index++]);
 
-            if (metadata.HasField("BonusElement")) p_up_attr = CsvParser.Byte(raw[index++]);
-
-            if (metadata.HasField("GuardElement")) def_attr.invalid = CsvParser.Byte(raw[index++]);
-            if (metadata.HasField("AbsorbElement")) def_attr.absorb = CsvParser.Byte(raw[index++]);
-            if (metadata.HasField("HalfElement")) def_attr.half = CsvParser.Byte(raw[index++]);
-            if (metadata.HasField("WeakElement")) def_attr.weak = CsvParser.Byte(raw[index++]);
+            if (metadata.HasOption($"UseElementList"))
+            {
+                if (metadata.HasField("BonusElement")) p_up_attr = BattleStatusEntry.ParseElementList(raw[index++]);
+                if (metadata.HasField("GuardElement")) def_attr.invalid = BattleStatusEntry.ParseElementList(raw[index++]);
+                if (metadata.HasField("AbsorbElement")) def_attr.absorb = BattleStatusEntry.ParseElementList(raw[index++]);
+                if (metadata.HasField("HalfElement")) def_attr.half = BattleStatusEntry.ParseElementList(raw[index++]);
+                if (metadata.HasField("WeakElement")) def_attr.weak = BattleStatusEntry.ParseElementList(raw[index++]);
+            }
+            else
+            {
+                if (metadata.HasField("BonusElement")) p_up_attr = new ElementSet((EffectElement)CsvParser.Byte(raw[index++]));
+                if (metadata.HasField("GuardElement")) def_attr.invalid = new ElementSet((EffectElement)CsvParser.Byte(raw[index++]));
+                if (metadata.HasField("AbsorbElement")) def_attr.absorb = new ElementSet((EffectElement)CsvParser.Byte(raw[index++]));
+                if (metadata.HasField("HalfElement")) def_attr.half = new ElementSet((EffectElement)CsvParser.Byte(raw[index++]));
+                if (metadata.HasField("WeakElement")) def_attr.weak = new ElementSet((EffectElement)CsvParser.Byte(raw[index++]));
+            }
         }
 
         public void ParseEntry(String[] raw, CsvMetaData metadata)
@@ -57,12 +68,11 @@ namespace FF9
             sw.Byte(mgc);
             sw.Byte(wpr);
 
-            sw.Byte(p_up_attr);
-
-            sw.Byte(def_attr.invalid);
-            sw.Byte(def_attr.absorb);
-            sw.Byte(def_attr.half);
-            sw.Byte(def_attr.weak);
+            BattleStatusEntry.WriteElementList(sw, p_up_attr);
+            BattleStatusEntry.WriteElementList(sw, def_attr.invalid);
+            BattleStatusEntry.WriteElementList(sw, def_attr.absorb);
+            BattleStatusEntry.WriteElementList(sw, def_attr.half);
+            BattleStatusEntry.WriteElementList(sw, def_attr.weak);
         }
     }
 }

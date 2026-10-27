@@ -114,10 +114,7 @@ namespace NCalc
             else if (name == "GetCategoryKillCount" && args.Parameters.Length == 1)
             {
                 Int32 index = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), -1);
-                if (index >= 0 && index < GameState.CategoryKillCount.Length)
-                    args.Result = (Int32)GameState.CategoryKillCount[index];
-                else
-                    args.Result = 0;
+                args.Result = (Int32)GameState.CategoryKillCountEx((EnemyCategoryToken)index);
             }
             else if (name == "GetModelKillCount" && args.Parameters.Length == 1)
             {
@@ -697,8 +694,8 @@ namespace NCalc
             expr.Parameters["Power"] = aa.Ref.Power;
             expr.Parameters["Accuracy"] = aa.Ref.Rate;
             expr.Parameters["AbilityStatus"] = (UInt32)(FF9BattleDB.StatusSets.TryGetValue(aa.AddStatusNo, out BattleStatusEntry stat) ? stat.Value : 0);
-            expr.Parameters["AbilityElement"] = (Int32)aa.Ref.Elements;
-            expr.Parameters["AbilityElementForBonus"] = (Int32)aa.Ref.Elements;
+            expr.Parameters["AbilityElement"] = aa.Ref.Elements.ToEffectElement();
+            expr.Parameters["AbilityElementForBonus"] = aa.Ref.Elements.ToEffectElement();
             expr.Parameters["SpecialEffectId"] = (Int32)aa.Info.VfxIndex;
             expr.Parameters["TargetType"] = (Int32)aa.Info.Target;
             expr.Parameters["AbilityCategory"] = (Int32)aa.Category;

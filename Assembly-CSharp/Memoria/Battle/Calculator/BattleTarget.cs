@@ -22,26 +22,26 @@ namespace Memoria
         // Remove these fields the next time compatibility has to be broken anyway
         public EffectElement GuardElement
         {
-            get { return (EffectElement)Data.def_attr.invalid; }
-            set { Data.def_attr.invalid = (Byte)value; }
+            get { return Data.def_attr.invalid.ToEffectElement(); }
+            set { Data.def_attr.invalid = new ElementSet(value); }
         }
 
         public EffectElement HalfElement
         {
-            get { return (EffectElement)Data.def_attr.half; }
-            set { Data.def_attr.half = (Byte)value; }
+            get { return Data.def_attr.half.ToEffectElement(); }
+            set { Data.def_attr.half = new ElementSet(value); }
         }
 
         public EffectElement AbsorbElement
         {
-            get { return (EffectElement)Data.def_attr.absorb; }
-            set { Data.def_attr.absorb = (Byte)value; }
+            get { return Data.def_attr.absorb.ToEffectElement(); }
+            set { Data.def_attr.absorb = new ElementSet(value); }
         }
 
         public EffectElement WeakElement
         {
-            get { return (EffectElement)Data.def_attr.weak; }
-            set { Data.def_attr.weak = (Byte)value; }
+            get { return Data.def_attr.weak.ToEffectElement(); }
+            set { Data.def_attr.weak = new ElementSet(value); }
         }
 
         public void SetMagicDefense()
@@ -103,6 +103,13 @@ namespace Memoria
                 _context.Evade = 0;
         }
 
+        private void BonusSleepOrMiniAttack()
+        {
+            if (IsUnderAnyStatus(BattleStatus.Sleep | BattleStatus.Mini))
+                ++_context.DamageModifierCount;
+        }
+
+        #region LEGACY ELEMENTS API
         public void PenaltyHalfElement(EffectElement element)
         {
             if (IsHalfElement(element))
@@ -118,12 +125,6 @@ namespace Memoria
         public void BonusWeakElement(EffectElement element)
         {
             if (IsWeakElement(element))
-                ++_context.DamageModifierCount;
-        }
-
-        private void BonusSleepOrMiniAttack()
-        {
-            if (IsUnderAnyStatus(BattleStatus.Sleep | BattleStatus.Mini))
                 ++_context.DamageModifierCount;
         }
 
@@ -147,11 +148,6 @@ namespace Memoria
             return (WeakElement & element) != 0;
         }
 
-        public Boolean IsRunningAway()
-        {
-            return IsPlayer && FF9StateSystem.Battle.FF9Battle.btl_escape_key != 0;
-        }
-
         public Boolean CanGuardElement(EffectElement element)
         {
             if (IsGuardElement(element))
@@ -170,6 +166,108 @@ namespace Memoria
                 return true;
             }
             return false;
+        }
+
+        public Boolean CanAttackElement(EffectElement element)
+        {
+            if (CanGuardElement(element))
+                return false;
+            PenaltyHalfElement(element);
+            PenaltyAbsorbElement(element);
+            BonusWeakElement(element);
+            AlterStatuses(element);
+            return true;
+        }
+
+        public void AlterStatuses(EffectElement element)
+        {
+            if ((element & (EffectElement.Cold | EffectElement.Aqua)) != 0)
+                RemoveStatus(BattleStatus.Heat);
+            if ((element & EffectElement.Fire) != 0)
+                RemoveStatus(BattleStatus.Freeze);
+        }
+        #endregion
+
+        public void PenaltyHalfElement(ElementSet element)
+        {
+            if (IsHalfElement(element))
+                --_context.DamageModifierCount;
+        }
+
+        public void PenaltyAbsorbElement(ElementSet element)
+        {
+            if (CanAbsorbElement(element))
+                _context.DefensePower = 0;
+        }
+
+        public void BonusWeakElement(ElementSet element)
+        {
+            if (IsWeakElement(element))
+                ++_context.DamageModifierCount;
+        }
+
+        public Boolean IsGuardElement(ElementSet element)
+        {
+            return ElementSet.CountCommonElements(GuardElementEx, element) > 0;
+        }
+
+        public Boolean IsHalfElement(ElementSet element)
+        {
+            return ElementSet.CountCommonElements(HalfElementEx, element) > 0;
+        }
+
+        public Boolean IsAbsorbElement(ElementSet element)
+        {
+            return ElementSet.CountCommonElements(AbsorbElementEx, element) > 0;
+        }
+
+        public Boolean IsWeakElement(ElementSet element)
+        {
+            return ElementSet.CountCommonElements(WeakElementEx, element) > 0;
+        }
+
+        public Boolean CanGuardElement(ElementSet element)
+        {
+            if (IsGuardElement(element))
+            {
+                _context.Flags |= BattleCalcFlags.Guard;
+                return true;
+            }
+            return false;
+        }
+
+        public Boolean CanAbsorbElement(ElementSet element)
+        {
+            if (IsAbsorbElement(element))
+            {
+                _context.Flags |= BattleCalcFlags.Absorb;
+                return true;
+            }
+            return false;
+        }
+
+        public Boolean CanAttackElement(ElementSet element)
+        {
+            if (CanGuardElement(element))
+                return false;
+            PenaltyHalfElement(element);
+            PenaltyAbsorbElement(element);
+            BonusWeakElement(element);
+            AlterStatuses(element);
+            return true;
+        }
+
+        public void AlterStatuses(ElementSet element)
+        {
+            if (element.Contains(ElementToken.Cold) || element.Contains(ElementToken.Aqua))
+                RemoveStatus(BattleStatus.Heat);
+            if (element.Contains(ElementToken.Fire))
+                RemoveStatus(BattleStatus.Freeze);
+        }
+
+        public Boolean IsRunningAway()
+        {
+            return IsPlayer && FF9StateSystem.Battle.FF9Battle.btl_escape_key != 0;
         }
 
         public void TryAlterStatuses(BattleStatus status, Boolean changeContext, BattleUnit inflicter = null)
@@ -198,28 +296,6 @@ namespace Memoria
                 else if (result == btl_stat.ALTER_INVALID)
                     _context.Flags |= BattleCalcFlags.Miss;
             }
-        }
-
-        public void AlterStatuses(EffectElement element)
-        {
-            if ((element & (EffectElement.Cold | EffectElement.Aqua)) != 0)
-                RemoveStatus(BattleStatus.Heat);
-
-            if ((element & EffectElement.Fire) != 0)
-                RemoveStatus(BattleStatus.Freeze);
-        }
-
-        public Boolean CanAttackElement(EffectElement element)
-        {
-            if (CanGuardElement(element))
-                return false;
-
-            PenaltyHalfElement(element);
-            PenaltyAbsorbElement(element);
-            BonusWeakElement(element);
-            AlterStatuses(element);
-
-            return true;
         }
 
         public Boolean CanBeAttacked()

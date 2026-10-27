@@ -43,7 +43,7 @@ namespace Memoria.Assets
                     total++;
                 if (x.Info.DefaultOnDead != y.Info.DefaultOnDead)
                     total++;
-                if (x.Ref.Elements != y.Ref.Elements)
+                if (x.Ref.Elements.ToEffectElement() != y.Ref.Elements.ToEffectElement())
                     total++;
                 if (x.Ref.ScriptId != y.Ref.ScriptId)
                     total++;

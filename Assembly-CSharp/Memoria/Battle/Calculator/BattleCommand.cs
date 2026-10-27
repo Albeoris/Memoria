@@ -25,6 +25,7 @@ namespace Memoria
         public Int32 HitRate => _data.Ref.Rate;
         public Int32 Power => _data.Ref.Power;
         public BattleStatus Status => _data.status;
+        public ElementSet ElementEx => _data.Ref.Elements;
 
         public static void AddToInventory(RegularItem itemId)
         {
@@ -129,6 +130,7 @@ namespace Memoria
 
         public BattleItem Item => BattleItem.Find(ItemId);
         public BattleStatus ItemStatus => Item.Status;
+        public ElementSet ItemElementEx => Item.ElementEx;
         public Weapon Weapon => Weapon.Find(ItemId);
 
         public Boolean IsHeat => HasElement(EffectElement.Fire);
@@ -162,10 +164,20 @@ namespace Memoria
         }
         public EffectElement Element
         {
+            get => Data.Element.ToEffectElement();
+            set => Data.Element = new ElementSet(value);
+        }
+        public EffectElement ElementForBonus
+        {
+            get => Data.ElementForBonus.ToEffectElement();
+            set => Data.ElementForBonus = new ElementSet(value);
+        }
+        public ElementSet ElementEx
+        {
             get => Data.Element;
             set => Data.Element = value;
         }
-        public EffectElement ElementForBonus
+        public ElementSet ElementForBonusEx
         {
             get => Data.ElementForBonus;
             set => Data.ElementForBonus = value;
@@ -186,9 +198,15 @@ namespace Memoria
             set => Data.AbilityType = value;
         }
 
+        /// <summary>Deprecated: use the version with ElementSet instead of EffectElement</summary>
         public Boolean HasElement(EffectElement element)
         {
             return (Element & element) != 0;
+        }
+
+        public Boolean HasElement(ElementSet element)
+        {
+            return ElementSet.CountCommonElements(ElementEx, element) > 0;
         }
 
         public Int32 GetReflectMultiplierOnTarget(UInt16 targetId)

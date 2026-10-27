@@ -171,7 +171,7 @@ public partial class BattleHUD : UIScene
         while ((pAttr >>= 1) != 0)
             ++id;
 
-        return FF9TextTool.BattleFollowText(id);
+        return FF9TextTool.ElementName((ElementToken)id);
     }
 
     public void SetBattleLibra(BattleUnit pBtl, LibraInformation infos = LibraInformation.Default)

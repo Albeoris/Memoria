@@ -38,8 +38,14 @@ namespace Memoria.Data
             if (metadata.HasField("ScriptId")) Data.Ref.ScriptId = CsvParser.Int32(raw[index++]);
             if (metadata.HasField("Power")) Data.Ref.Power = CsvParser.Int32(raw[index++]);
             if (metadata.HasField("Rate")) Data.Ref.Rate = CsvParser.Int32(raw[index++]);
-            if (metadata.HasField("Elements")) Data.Ref.Elements = CsvParser.Byte(raw[index++]);
 
+            if (metadata.HasField("Elements"))
+            {
+                if (metadata.HasOption($"UseElementList"))
+                    Data.Ref.Elements = BattleStatusEntry.ParseElementList(raw[index++]);
+                else
+                    Data.Ref.Elements = new ElementSet((EffectElement)CsvParser.Byte(raw[index++]));
+            }
             if (metadata.HasField("Status"))
             {
                 if (metadata.HasOption($"UseStatusList"))
@@ -64,7 +70,7 @@ namespace Memoria.Data
             sw.Int32(Data.Ref.ScriptId);
             sw.Int32(Data.Ref.Power);
             sw.Int32(Data.Ref.Rate);
-            sw.Byte(Data.Ref.Elements);
+            BattleStatusEntry.WriteElementList(sw, Data.Ref.Elements);
 
             if (metadata.HasOption($"UseStatusList"))
                 BattleStatusEntry.WriteBattleStatus(sw, metadata, Data.status, true);

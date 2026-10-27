@@ -1,4 +1,5 @@
 ﻿using System;
+using Memoria.Data;
 
 namespace FF9
 {
@@ -6,13 +7,13 @@ namespace FF9
     {
         public DEF_ATTR()
         {
-            this.invalid = 0;
-            this.absorb = 0;
-            this.half = 0;
-            this.weak = 0;
+            this.invalid = new ElementSet();
+            this.absorb = new ElementSet();
+            this.half = new ElementSet();
+            this.weak = new ElementSet();
         }
 
-        public DEF_ATTR(Byte invalid, Byte absorb, Byte half, Byte weak)
+        public DEF_ATTR(ElementSet invalid, ElementSet absorb, ElementSet half, ElementSet weak)
         {
             this.invalid = invalid;
             this.absorb = absorb;
@@ -20,12 +21,9 @@ namespace FF9
             this.weak = weak;
         }
 
-        public Byte invalid;
-
-        public Byte absorb;
-
-        public Byte half;
-
-        public Byte weak;
+        public ElementSet invalid;
+        public ElementSet absorb;
+        public ElementSet half;
+        public ElementSet weak;
     }
 }

@@ -3197,7 +3197,7 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.MCF_MODEL: // "SetModelLight" Change the light parameters of a specific model ID
             {
-                UInt16 modelId = (UInt16)this.getv3(); // Can be -1 to change the light parameters for all models
+                Int32 modelId = this.getv3(); // Can be -1 to change the light parameters for all models
                 Color32 col = new Color32((Byte)this.getv3(), (Byte)this.getv3(), (Byte)this.getv3(), 0xFF);
                 SByte shadowIntensity = (SByte)this.getv3();
                 SByte shadowScale = (SByte)this.getv3();

@@ -17,7 +17,8 @@ public static class fldmcf
     {
         EnsureLightConfig();
         DMSMapConf lightConfig = FF9StateSystem.Field.FF9Field.loc.map.mcfPtr.Value;
-        DMSMapLight light = lightConfig.DMSMapLight[GetOrCreateLight(lightConfig, type, -1)];
+        Int32 lightIndex = GetOrCreateLight(lightConfig, type, -1);
+        DMSMapLight light = lightConfig.DMSMapLight[lightIndex];
         light.clr = [(SByte)col.r, (SByte)col.g, (SByte)col.b];
         light.shadowI = shadowIntensity;
         light.shadowR = shadowScale;
@@ -27,17 +28,19 @@ public static class fldmcf
     {
         EnsureLightConfig();
         DMSMapConf lightConfig = FF9StateSystem.Field.FF9Field.loc.map.mcfPtr.Value;
-        DMSMapLight light = lightConfig.DMSMapLight[GetOrCreateLight(lightConfig, LIGHT_TYPE_FLOOR, floorNdx)];
+        Int32 lightIndex = GetOrCreateLight(lightConfig, LIGHT_TYPE_FLOOR, floorNdx);
+        DMSMapLight light = lightConfig.DMSMapLight[lightIndex];
         light.clr = [(SByte)col.r, (SByte)col.g, (SByte)col.b];
         light.shadowI = shadowIntensity;
         light.shadowR = shadowScale;
     }
 
-    public static void SetMCFModelLight(UInt16 model, Color32 col, SByte shadowIntensity, SByte shadowScale)
+    public static void SetMCFModelLight(Int32 model, Color32 col, SByte shadowIntensity, SByte shadowScale)
     {
         EnsureLightConfig();
         DMSMapConf lightConfig = FF9StateSystem.Field.FF9Field.loc.map.mcfPtr.Value;
-        DMSMapChar light = lightConfig.DMSMapChar[GetOrCreateCharLight(lightConfig, model)];
+        Int32 lightIndex = GetOrCreateCharLight(lightConfig, model);
+        DMSMapChar light = lightConfig.DMSMapChar[lightIndex];
         light.clr = [(SByte)col.r, (SByte)col.g, (SByte)col.b];
         light.shadowI = shadowIntensity;
         light.shadowR = shadowScale;

@@ -42,7 +42,13 @@ namespace Memoria.Data
 
             if (metadata.HasField("ScriptId")) Ref.ScriptId = CsvParser.Int32(raw[index++]);
             if (metadata.HasField("Power")) Ref.Power = CsvParser.Int32(raw[index++]);
-            if (metadata.HasField("Elements")) Ref.Elements = CsvParser.Byte(raw[index++]);
+            if (metadata.HasField("Elements"))
+            {
+                if (metadata.HasOption($"UseElementList"))
+                    Ref.Elements = BattleStatusEntry.ParseElementList(raw[index++]);
+                else
+                    Ref.Elements = new ElementSet((EffectElement)CsvParser.Byte(raw[index++]));
+            }
             if (metadata.HasField("Rate")) Ref.Rate = CsvParser.Int32(raw[index++]);
 
             if (metadata.HasField("Offset1")) Offset1 = Int16.Parse(raw[index++]);
@@ -87,7 +93,7 @@ namespace Memoria.Data
             BTL_REF btl = Ref;
             sw.Int32(btl.ScriptId);
             sw.Int32(btl.Power);
-            sw.Byte(btl.Elements);
+            BattleStatusEntry.WriteElementList(sw, btl.Elements);
             sw.Int32(btl.Rate);
 
             sw.Int16(Offset1);

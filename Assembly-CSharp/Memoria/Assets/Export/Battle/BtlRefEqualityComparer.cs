@@ -12,7 +12,7 @@ namespace Memoria.Assets
             if (ReferenceEquals(x, y)) return true;
             if (ReferenceEquals(x, null)) return false;
             if (ReferenceEquals(y, null)) return false;
-            return x.ScriptId == y.ScriptId && x.Power == y.Power && x.Elements == y.Elements && x.Rate == y.Rate;
+            return x.ScriptId == y.ScriptId && x.Power == y.Power && x.Elements.ToEffectElement() == y.Elements.ToEffectElement() && x.Rate == y.Rate;
         }
 
         public Int32 GetHashCode(BTL_REF obj)

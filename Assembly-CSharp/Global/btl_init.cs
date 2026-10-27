@@ -153,11 +153,11 @@ public static class btl_init
         pBtl.uiColorHP = FF9TextTool.White;
         pBtl.uiColorMP = FF9TextTool.White;
         pBtl.uiSpriteATB = BattleHUD.ATENormal;
-        pBtl.def_attr.invalid = pParm.GuardElement;
-        pBtl.def_attr.absorb = pParm.AbsorbElement;
-        pBtl.def_attr.half = pParm.HalfElement;
-        pBtl.def_attr.weak = pParm.WeakElement;
-        pBtl.p_up_attr = pParm.BonusElement;
+        pBtl.def_attr.invalid = new ElementSet(pParm.GuardElement);
+        pBtl.def_attr.absorb = new ElementSet(pParm.AbsorbElement);
+        pBtl.def_attr.half = new ElementSet(pParm.HalfElement);
+        pBtl.def_attr.weak = new ElementSet(pParm.WeakElement);
+        pBtl.p_up_attr = new ElementSet(pParm.BonusElement);
         pBtl.mesh_current = pParm.Mesh[0];
         pBtl.mesh_banish = pParm.Mesh[1];
         pBtl.tar_bone = pParm.Bone[3];
@@ -226,7 +226,7 @@ public static class btl_init
     public static void SetMonsterParameter(SB2_MON_PARM pParm, ENEMY_TYPE pType)
     {
         pType.radius = pParm.Radius;
-        pType.category = pParm.Category;
+        pType.category = new EnemyCategorySet(pParm.Category);
         pType.level = pParm.Level;
         pType.blue_magic_no = pParm.BlueMagic;
         pType.max.hp = pParm.MaxHP;
@@ -546,10 +546,10 @@ public static class btl_init
 
     public static void IncrementDefAttr(DEF_ATTR d, DEF_ATTR s)
     {
-        d.invalid = (Byte)(d.invalid | s.invalid);
-        d.absorb = (Byte)(d.absorb | s.absorb);
-        d.half = (Byte)(d.half | s.half);
-        d.weak = (Byte)(d.weak | s.weak);
+        d.invalid.Add(s.invalid);
+        d.absorb.Add(s.absorb);
+        d.half.Add(s.half);
+        d.weak.Add(s.weak);
     }
 
     public static void InitBattleData(BTL_DATA btl, FF9Char ff9char)

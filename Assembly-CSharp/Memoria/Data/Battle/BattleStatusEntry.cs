@@ -70,5 +70,26 @@ namespace Memoria.Data
             }
             sw.String(String.Join(", ", statusStr.ToArray()));
         }
+
+        public static ElementSet ParseElementList(String raw)
+        {
+            ElementSet result = new ElementSet();
+            String[] tokens = raw.Split(',');
+            for (Int32 i = 0; i < tokens.Length; i++)
+            {
+                String tok = tokens[i].Trim();
+                if (!String.IsNullOrEmpty(tok))
+                    result.Add(CsvParser.EnumValue<ElementToken>(tok));
+            }
+            return result;
+        }
+
+        public static void WriteElementList(CsvWriter sw, ElementSet elements)
+        {
+            List<String> elementStr = new List<String>();
+            foreach (ElementToken elem in elements)
+                elementStr.Add($"{elem}({(Int32)elem})");
+            sw.String(String.Join(", ", elementStr.ToArray()));
+        }
     }
 }

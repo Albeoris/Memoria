@@ -26,7 +26,13 @@ namespace Memoria.Data
             if (metadata.HasField("AnimationId2")) ActionData.Vfx2 = CsvParser.UInt16(raw[index++]);
             if (metadata.HasField("ScriptId")) ActionData.Ref.ScriptId = CsvParser.Int32(raw[index++]);
             if (metadata.HasField("Power")) ActionData.Ref.Power = CsvParser.Int32(raw[index++]);
-            if (metadata.HasField("Elements")) ActionData.Ref.Elements = CsvParser.Byte(raw[index++]);
+            if (metadata.HasField("Elements"))
+            {
+                if (metadata.HasOption($"UseElementList"))
+                    ActionData.Ref.Elements = BattleStatusEntry.ParseElementList(raw[index++]);
+                else
+                    ActionData.Ref.Elements = new ElementSet((EffectElement)CsvParser.Byte(raw[index++]));
+            }
             if (metadata.HasField("Rate")) ActionData.Ref.Rate = CsvParser.Int32(raw[index++]);
             if (metadata.HasField("Category")) ActionData.Category = CsvParser.Byte(raw[index++]);
             if (metadata.HasField("AddStatus")) ActionData.AddStatusNo = (StatusSetId)CsvParser.Int32(raw[index++]);
@@ -58,7 +64,7 @@ namespace Memoria.Data
             sw.UInt16(ActionData.Vfx2);
             sw.Int32(btlRef.ScriptId);
             sw.Int32(btlRef.Power);
-            sw.Byte(btlRef.Elements);
+            BattleStatusEntry.WriteElementList(sw, btlRef.Elements);
             sw.Int32(btlRef.Rate);
             sw.Byte(ActionData.Category);
             sw.Int32((Int32)ActionData.AddStatusNo);

@@ -437,14 +437,21 @@ public class EBin
                 _calcStack.push(encodeTypeAndVarClass(VariableSource.Null, VariableType.Dictionary));
                 return;
             case flexible_varfunc.CATEGORY_KILL_COUNT:
-                _calcValue = args[0] >= 0 && args[0] < FF9StateSystem.Common.FF9.categoryKillCount.Length ? FF9StateSystem.Common.FF9.categoryKillCount[(Int16)args[0]] : 0;
+            {
+                if (FF9StateSystem.Common.FF9.categoryKillCount.TryGetValue((EnemyCategoryToken)args[0], out Int16 count))
+                    _calcValue = count;
+                else
+                    _calcValue = 0;
                 break;
+            }
             case flexible_varfunc.MODEL_KILL_COUNT:
+            {
                 if (FF9StateSystem.Common.FF9.modelKillCount.TryGetValue((Int16)args[0], out Int16 count))
                     _calcValue = count;
                 else
                     _calcValue = 0;
                 break;
+            }
             case flexible_varfunc.ABILITY_USE_COUNT:
                 _calcValue = FF9StateSystem.EventState.GetAAUsageCounter((BattleAbilityId)args[0]);
                 break;

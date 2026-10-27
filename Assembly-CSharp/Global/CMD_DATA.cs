@@ -26,8 +26,8 @@ public class CMD_DATA
     public Int32 HitRate;
     public Int32 Power;
     public Int32 ScriptId;
-    public EffectElement Element;
-    public EffectElement ElementForBonus;
+    public ElementSet Element;
+    public ElementSet ElementForBonus;
     public BattleStatus AbilityStatus;
     public Byte AbilityCategory;
     public Byte AbilityType;
@@ -44,8 +44,8 @@ public class CMD_DATA
             HitRate = aa.Ref.Rate;
             Power = aa.Ref.Power;
             ScriptId = aa.Ref.ScriptId;
-            Element = (EffectElement)aa.Ref.Elements;
-            ElementForBonus = Element;
+            Element = new ElementSet(aa.Ref.Elements);
+            ElementForBonus = new ElementSet(Element);
             AbilityStatus = FF9StateSystem.Battle.FF9Battle.add_status[aa.AddStatusNo].Value;
             AbilityCategory = aa.Category;
             AbilityType = aa.Type;

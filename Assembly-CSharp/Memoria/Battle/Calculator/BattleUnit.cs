@@ -224,7 +224,8 @@ namespace Memoria
 
         public Int32 WeaponRate => Data.weapon != null ? Data.weapon.Ref.Rate : 0;
         public Int32 WeaponPower => Data.weapon != null ? Data.weapon.Ref.Power : 0;
-        public EffectElement WeaponElement => (EffectElement)(Data.weapon != null ? Data.weapon.Ref.Elements : 0);
+        public EffectElement WeaponElement => Data.weapon != null ? Data.weapon.Ref.Elements.ToEffectElement() : 0;
+        public ElementSet WeaponElementEx => Data.weapon != null ? Data.weapon.Ref.Elements : new ElementSet();
         public BattleStatus WeaponStatus => Data.weapon != null ? FF9StateSystem.Battle.FF9Battle.add_status[Data.weapon.StatusIndex].Value : 0;
         public Int32 GetWeaponPower(BattleCommand cmd)
         {
@@ -240,7 +241,8 @@ namespace Memoria
         public PLAYER Player => FF9StateSystem.Common.FF9.GetPlayer(PlayerIndex);
         public CharacterSerialNumber SerialNumber => btl_util.getSerialNumber(Data);
         public CharacterCategory PlayerCategory => IsPlayer ? Player.Category : 0;
-        public EnemyCategory Category => IsPlayer ? EnemyCategory.Humanoid : (EnemyCategory)btl_util.getEnemyTypePtr(Data).category;
+        public EnemyCategory Category => IsPlayer ? EnemyCategory.Humanoid : btl_util.getEnemyTypePtr(Data).category.ToEnemyCategory();
+        public EnemyCategorySet CategoryEx => IsPlayer ? new EnemyCategorySet(EnemyCategory.Humanoid) : btl_util.getEnemyTypePtr(Data).category;
         public WeaponCategory WeapCategory => Data.weapon != null ? Data.weapon.Category : 0;
         public BattleEnemy Enemy => new BattleEnemy(btl_util.getEnemyPtr(Data));
         public ENEMY_TYPE EnemyType => btl_util.getEnemyTypePtr(Data);
@@ -289,29 +291,35 @@ namespace Memoria
 
         public EffectElement BonusElement
         {
-            get => (EffectElement)Data.p_up_attr;
-            set => Data.p_up_attr = (Byte)value;
+            get => Data.p_up_attr.ToEffectElement();
+            set => Data.p_up_attr = new ElementSet(value);
         }
         public EffectElement WeakElement
         {
-            get => (EffectElement)Data.def_attr.weak;
-            set => Data.def_attr.weak = (Byte)value;
+            get => Data.def_attr.weak.ToEffectElement();
+            set => Data.def_attr.weak = new ElementSet(value);
         }
         public EffectElement GuardElement
         {
-            get => (EffectElement)Data.def_attr.invalid;
-            set => Data.def_attr.invalid = (Byte)value;
+            get => Data.def_attr.invalid.ToEffectElement();
+            set => Data.def_attr.invalid = new ElementSet(value);
         }
         public EffectElement AbsorbElement
         {
-            get => (EffectElement)Data.def_attr.absorb;
-            set => Data.def_attr.absorb = (Byte)value;
+            get => Data.def_attr.absorb.ToEffectElement();
+            set => Data.def_attr.absorb = new ElementSet(value);
         }
         public EffectElement HalfElement
         {
-            get => (EffectElement)Data.def_attr.half;
-            set => Data.def_attr.half = (Byte)value;
+            get => Data.def_attr.half.ToEffectElement();
+            set => Data.def_attr.half = new ElementSet(value);
         }
+
+        public ElementSet BonusElementEx => Data.p_up_attr;
+        public ElementSet WeakElementEx => Data.def_attr.weak;
+        public ElementSet GuardElementEx => Data.def_attr.weak;
+        public ElementSet AbsorbElementEx => Data.def_attr.weak;
+        public ElementSet HalfElementEx => Data.def_attr.weak;
 
         public Boolean IsLevitate => HasCategory(EnemyCategory.Flight) || IsUnderAnyStatus(BattleStatus.Float);
         public Boolean IsZombie => HasCategory(EnemyCategory.Undead) || IsUnderAnyStatus(BattleStatusConst.ZombieEffect);
@@ -488,9 +496,19 @@ namespace Memoria
             return (PlayerCategory & category) != 0;
         }
 
+        /// <summary>Legacy enemy category API</summary>
         public Boolean HasCategory(EnemyCategory category)
         {
-            return btl_util.CheckEnemyCategory(Data, (Byte)category);
+            foreach (EnemyCategoryToken tok in new EnemyCategorySet(category))
+                if (btl_util.CheckEnemyCategory(Data, tok))
+                    return true;
+            return false;
+        }
+
+        /// <summary>Extended enemy category API</summary>
+        public Boolean HasCategory(EnemyCategoryToken category)
+        {
+            return btl_util.CheckEnemyCategory(Data, category);
         }
 
         public Boolean HasCategory(WeaponCategory category)
@@ -725,10 +743,10 @@ namespace Memoria
             }
             if (updateElement)
             {
-                Data.def_attr.invalid = monsterParam.GuardElement;
-                Data.def_attr.absorb = monsterParam.AbsorbElement;
-                Data.def_attr.half = monsterParam.HalfElement;
-                Data.def_attr.weak = monsterParam.WeakElement;
+                Data.def_attr.invalid = new ElementSet(monsterParam.GuardElement);
+                Data.def_attr.absorb = new ElementSet(monsterParam.AbsorbElement);
+                Data.def_attr.half = new ElementSet(monsterParam.HalfElement);
+                Data.def_attr.weak = new ElementSet(monsterParam.WeakElement);
             }
             Data.mesh_current = monsterParam.Mesh[0];
             Data.mesh_banish = monsterParam.Mesh[1];
