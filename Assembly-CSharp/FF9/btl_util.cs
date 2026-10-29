@@ -303,9 +303,9 @@ namespace FF9
             return num;
         }
 
-        public static Boolean CheckEnemyCategory(BTL_DATA btl, Byte category)
+        public static Boolean CheckEnemyCategory(BTL_DATA btl, EnemyCategoryToken category)
         {
-            return btl.bi.player == 0 && (btl_util.getEnemyTypePtr(btl).category & category) != 0;
+            return btl.bi.player == 0 && btl_util.getEnemyTypePtr(btl).category.Contains(category);
         }
 
         public static Boolean IsAttackShortRange(CMD_DATA cmd)

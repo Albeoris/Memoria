@@ -26,6 +26,8 @@ namespace Memoria.Assets
         private const String WorldLocationsPath = "/ETC/worldloc.mes";
         private const String ChocoboPath = "/ETC/ff9choco.mes";
         private const String LocationNamesPath = "/Location/loc_name.mes";
+        private const String ElementNamesPath = "/ETC/elementnames.mes";
+        private const String EnemyCategoryNamesPath = "/ETC/enemycategorynames.mes";
 
         public static String AbilityNames => GetCurrentPath(AbilityNamesPath);
         public static String AbilityHelps => GetCurrentPath(AbilityHelpsPath);
@@ -47,6 +49,8 @@ namespace Memoria.Assets
         public static String WorldLocations => GetCurrentPath(WorldLocationsPath);
         public static String Chocobo => GetCurrentPath(ChocoboPath);
         public static String LocationNames => GetCurrentPath(LocationNamesPath);
+        public static String ElementNames => GetCurrentPath(ElementNamesPath);
+        public static String EnemyCategoryNames => GetCurrentPath(EnemyCategoryNamesPath);
 
         public static String GetCurrentPath(String relativePath)
         {

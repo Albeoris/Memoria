@@ -3197,11 +3197,36 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.MCF_MODEL: // "SetModelLight" Change the light parameters of a specific model ID
             {
-                UInt16 modelId = (UInt16)this.getv3(); // Can be -1 to change the light parameters for all models
+                Int32 modelId = this.getv3(); // Can be -1 to change the light parameters for all models
                 Color32 col = new Color32((Byte)this.getv3(), (Byte)this.getv3(), (Byte)this.getv3(), 0xFF);
                 SByte shadowIntensity = (SByte)this.getv3();
                 SByte shadowScale = (SByte)this.getv3();
                 fldmcf.SetMCFModelLight(modelId, col, shadowIntensity, shadowScale);
+                return 0;
+            }
+            case EBin.event_code_binary.ELEMENT_AFFINITY: // "ChangeElementalAffinity" Modify an elemental affinity for a specific element
+            {
+                UInt16 targetId = (UInt16)this.getv3(); // Unit(s) whose affinity changes
+                Int32 affinityKind = this.getv3(); // The kind of affinity to change
+                ElementToken elementId = (ElementToken)this.getv3(); // The element ID
+                Boolean add = this.getv3() != 0; // Whether it should be added or removed
+                if (this.gMode != 2)
+                    return 0;
+                foreach (BTL_DATA btl in btl_util.findAllBtlData(targetId))
+                {
+                    ElementSet affinity = affinityKind == 0 ? btl.def_attr.invalid :
+                                            affinityKind == 1 ? btl.def_attr.absorb :
+                                            affinityKind == 2 ? btl.def_attr.half :
+                                            affinityKind == 3 ? btl.def_attr.weak :
+                                            affinityKind == 4 ? btl.p_up_attr : null;
+                    if (affinity != null)
+                    {
+                        if (add)
+                            affinity.Add(elementId);
+                        else
+                            affinity.Remove(elementId);
+                    }
+                }
                 return 0;
             }
             case EBin.event_code_binary.SHADOWON: // 0x7F, "EnableShadow", "Enable the shadow for the entry's object."

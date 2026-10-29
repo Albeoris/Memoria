@@ -74,21 +74,21 @@ public class SB2_MON_PARM
     public SB2_ELEMENT Element;
 
     [Memoria.PatchableFieldAttribute]
-    public Byte GuardElement;
+    public ElementSet GuardElement;
     [Memoria.PatchableFieldAttribute]
-    public Byte AbsorbElement;
+    public ElementSet AbsorbElement;
     [Memoria.PatchableFieldAttribute]
-    public Byte HalfElement;
+    public ElementSet HalfElement;
     [Memoria.PatchableFieldAttribute]
-    public Byte WeakElement;
+    public ElementSet WeakElement;
     [Memoria.PatchableFieldAttribute]
-    public Byte BonusElement;
+    public ElementSet BonusElement;
 
     [Memoria.PatchableFieldAttribute]
     public Byte Level;
 
     [Memoria.PatchableFieldAttribute]
-    public Byte Category;
+    public EnemyCategorySet Category;
 
     [Memoria.PatchableFieldAttribute]
     public Int32 HitRate;

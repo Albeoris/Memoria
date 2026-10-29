@@ -1,4 +1,5 @@
 using System;
+using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
 {
@@ -20,7 +21,7 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             _v.Target.Flags |= CalcFlag.HpAlteration;
-            _v.Target.HpDamage = GameState.CategoryKillCount[3] * GameState.CategoryKillCount[3];
+            _v.Target.HpDamage = GameState.CategoryKillCountEx(EnemyCategoryToken.Dragon) * GameState.CategoryKillCountEx(EnemyCategoryToken.Dragon);
         }
     }
 }

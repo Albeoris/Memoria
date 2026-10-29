@@ -181,10 +181,10 @@ namespace Memoria.Assets
             hashCode = (hashCode * 397) ^ enemy.Element.cur_capa;
             hashCode = (hashCode * 397) ^ enemy.Element.max_capa;
 
-            GetHashCode(ref hashCode, new Byte[] { enemy.GuardElement, enemy.AbsorbElement, enemy.HalfElement, enemy.WeakElement });
+            GetHashCode(ref hashCode, new Byte[] { (Byte)enemy.GuardElement.ToEffectElement(), (Byte)enemy.AbsorbElement.ToEffectElement(), (Byte)enemy.HalfElement.ToEffectElement(), (Byte)enemy.WeakElement.ToEffectElement() });
 
             hashCode = (hashCode * 397) ^ enemy.Level;
-            hashCode = (hashCode * 397) ^ enemy.Category;
+            hashCode = (hashCode * 397) ^ (Byte)enemy.Category.ToEnemyCategory();
             hashCode = (hashCode * 397) ^ enemy.HitRate;
             hashCode = (hashCode * 397) ^ enemy.PhysicalDefence;
             hashCode = (hashCode * 397) ^ enemy.PhysicalEvade;

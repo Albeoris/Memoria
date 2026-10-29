@@ -846,7 +846,7 @@ public partial class FF9StateGlobal
         this.charArray = new Dictionary<Int32, FF9Char>();
         this.Frogs = new FrogHandler();
         this.steal_no = 0;
-        this.categoryKillCount = new Int16[8] { 0, 0, 0, 0, 0, 0, 0, 0 };
+        this.categoryKillCount = new EntryCollection<EnemyCategoryToken, Int16>(0);
         this.modelKillCount = new EntryCollection<Int16, Int16>(0);
     }
 
@@ -963,7 +963,7 @@ public partial class FF9StateGlobal
 
     public FrogHandler Frogs;
     public Int16 steal_no;
-    public Int16[] categoryKillCount;
+    public EntryCollection<EnemyCategoryToken, Int16> categoryKillCount;
     public EntryCollection<Int16, Int16> modelKillCount;
 
     public Byte btl_result; // FF9.battle_result

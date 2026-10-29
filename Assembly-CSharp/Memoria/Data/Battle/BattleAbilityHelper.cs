@@ -260,8 +260,8 @@ namespace Memoria.Data
                     Int64 element = NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
                     if (element >= 0)
                     {
-                        cmd.Element = (EffectElement)element;
-                        cmd.ElementForBonus = cmd.Element;
+                        cmd.Element = new ElementSet((EffectElement)element);
+                        cmd.ElementForBonus = new ElementSet(cmd.Element);
                     }
                 }
                 if (!String.IsNullOrEmpty(AbilityStatusPatch))

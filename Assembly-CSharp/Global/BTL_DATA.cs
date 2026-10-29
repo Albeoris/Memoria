@@ -148,7 +148,7 @@ public partial class BTL_DATA
 
     public Byte trance;
 
-    public Byte p_up_attr;
+    public ElementSet p_up_attr = new ElementSet();
 
     public Byte level;
 

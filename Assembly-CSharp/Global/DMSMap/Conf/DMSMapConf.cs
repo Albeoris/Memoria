@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 
-public struct DMSMapConf
+public class DMSMapConf
 {
     public UInt16 attr;
     public UInt16 version;
@@ -13,6 +14,6 @@ public struct DMSMapConf
     public Byte evtCount;
     public Byte evtUse;
 
-    public DMSMapLight[] DMSMapLight;
-    public DMSMapChar[] DMSMapChar;
+    public List<DMSMapLight> DMSMapLight;
+    public List<DMSMapChar> DMSMapChar;
 }
