@@ -15,6 +15,9 @@ namespace NCalc
 {
     public static class NCalcUtility
     {
+        public const String ELEMENT_TYPE = "Element_";
+        public const String ENEMY_CATEGORY_TYPE = "Category_"; // Cannot be "EnemyCategory_" to avoid confusion with typeof(EnemyCategory)
+
         public static readonly Type[] UsableEnumTypes = new Type[]
         {
             typeof(CharacterId),
@@ -67,6 +70,24 @@ namespace NCalc
             return noChangeValue;
         }
 
+        public static ElementSet ConvertNCalcResult(Object obj, ElementSet noChangeValue)
+        {
+            if (obj is ElementSet) return new ElementSet((ElementSet)obj);
+            Int64 asNum = ConvertNCalcResult(obj, -1);
+            if (asNum >= 0)
+                noChangeValue.Add((ElementToken)asNum);
+            return noChangeValue;
+        }
+
+        public static EnemyCategorySet ConvertNCalcResult(Object obj, EnemyCategorySet noChangeValue)
+        {
+            if (obj is EnemyCategorySet) return new EnemyCategorySet((EnemyCategorySet)obj);
+            Int64 asNum = ConvertNCalcResult(obj, -1);
+            if (asNum >= 0)
+                noChangeValue.Add((EnemyCategoryToken)asNum);
+            return noChangeValue;
+        }
+
         public static Boolean EvaluateNCalcCondition(Object obj, Boolean defaultResult = false)
         {
             if (obj is Boolean) return (Boolean)obj;
@@ -113,8 +134,8 @@ namespace NCalc
                 args.Result = FF9StateSystem.Common.FF9.party.IsInParty((CharacterId)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int64)CharacterId.NONE));
             else if (name == "GetCategoryKillCount" && args.Parameters.Length == 1)
             {
-                Int32 index = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), -1);
-                args.Result = (Int32)GameState.CategoryKillCountEx((EnemyCategoryToken)index);
+                UInt64 index = (UInt64)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), -1);
+                args.Result = index == 0 ? 0 : (Int32)GameState.CategoryKillCountEx((EnemyCategoryToken)Comn.firstBitSetIndex(index));
             }
             else if (name == "GetModelKillCount" && args.Parameters.Length == 1)
             {
@@ -151,21 +172,38 @@ namespace NCalc
                         args.Result = result;
                 }
             }
-            else if ((name == "CheckAnyStatus" || name == "CheckAllStatus") && args.Parameters.Length >= 2) // operators & and | are only working with UInt16 and smaller types in NCalc...
+            else if ((name == "CheckAnyStatus" || name == "CheckAllStatus" || name == "CombineStatuses" || name == "RemoveStatuses") && args.Parameters.Length >= 2) // operators & and | are only working with UInt32 and smaller types in NCalc...
             {
                 UInt64 v1 = (UInt64)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), 0);
                 UInt64 v2 = (UInt64)NCalcUtility.ConvertNCalcResult(args.Parameters[1].Evaluate(), 0);
                 for (Int32 i = 2; i < args.Parameters.Length; i++)
                     v2 |= (UInt64)NCalcUtility.ConvertNCalcResult(args.Parameters[i].Evaluate(), 0);
-                args.Result = name == "CheckAnyStatus" ? (v1 & v2) != 0 : (v1 & v2) == v2;
+                if (name == "CheckAnyStatus") args.Result = (v1 & v2) != 0;
+                else if (name == "CheckAllStatus") args.Result = (v1 & v2) == v2;
+                else if (name == "CombineStatuses") args.Result = v1 | v2;
+                else args.Result = v1 & ~v2;
             }
-            else if ((name == "CombineStatuses" || name == "RemoveStatuses") && args.Parameters.Length >= 2) // operators & and | are only working with UInt16 and smaller types in NCalc...
+            else if ((name == "CheckAnyElement" || name == "CheckAllElements" || name == "CombineElements" || name == "RemoveElements") && args.Parameters.Length >= 2)
             {
-                UInt64 v1 = (UInt64)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), 0);
-                UInt64 v2 = (UInt64)NCalcUtility.ConvertNCalcResult(args.Parameters[1].Evaluate(), 0);
+                ElementSet e1 = NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), new ElementSet());
+                ElementSet e2 = NCalcUtility.ConvertNCalcResult(args.Parameters[1].Evaluate(), new ElementSet());
                 for (Int32 i = 2; i < args.Parameters.Length; i++)
-                    v2 |= (UInt64)NCalcUtility.ConvertNCalcResult(args.Parameters[i].Evaluate(), 0);
-                args.Result = name == "CombineStatuses" ? v1 | v2 : v1 & ~v2;
+                    e2.AddMultiple(NCalcUtility.ConvertNCalcResult(args.Parameters[i].Evaluate(), new ElementSet()));
+                if (name == "CheckAnyElement") args.Result = ElementSet.CountCommon(e1, e2) > 0;
+                else if (name == "CheckAllElements") args.Result = e2.IsSubsetOf(e1);
+                else if (name == "CombineElements") args.Result = ElementSet.Combine(e1, e2);
+                else args.Result = ElementSet.Disjoin(e1, e2);
+            }
+            else if ((name == "CheckAnyEnemyCategory" || name == "CheckAllEnemyCategories" || name == "CombineEnemyCategories" || name == "RemoveEnemyCategories") && args.Parameters.Length >= 2)
+            {
+                EnemyCategorySet e1 = NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), new EnemyCategorySet());
+                EnemyCategorySet e2 = NCalcUtility.ConvertNCalcResult(args.Parameters[1].Evaluate(), new EnemyCategorySet());
+                for (Int32 i = 2; i < args.Parameters.Length; i++)
+                    e2.AddMultiple(NCalcUtility.ConvertNCalcResult(args.Parameters[i].Evaluate(), new EnemyCategorySet()));
+                if (name == "CheckAnyEnemyCategory") args.Result = EnemyCategorySet.CountCommon(e1, e2) > 0;
+                else if (name == "CheckAllEnemyCategories") args.Result = e2.IsSubsetOf(e1);
+                else if (name == "CombineEnemyCategories") args.Result = EnemyCategorySet.Combine(e1, e2);
+                else args.Result = EnemyCategorySet.Disjoin(e1, e2);
             }
             else if (name == "HasKilledCharacter" && args.Parameters.Length >= 2)
             {
@@ -298,6 +336,16 @@ namespace NCalc
                         args.Result = Convert.ToInt32(Enum.Parse(t, enumValueStr));
                         return;
                     }
+                }
+                if (name.StartsWith(ELEMENT_TYPE))
+                {
+                    String enumValueStr = name.Substring(ELEMENT_TYPE.Length);
+                    args.Result = Convert.ToInt32(Enum.Parse(typeof(ElementToken), enumValueStr));
+                }
+                else if (name.StartsWith(ENEMY_CATEGORY_TYPE))
+                {
+                    String enumValueStr = name.Substring(ENEMY_CATEGORY_TYPE.Length);
+                    args.Result = Convert.ToInt32(Enum.Parse(typeof(EnemyCategoryToken), enumValueStr));
                 }
             }
         };
@@ -440,14 +488,20 @@ namespace NCalc
             expr.Parameters[prefix + "CurrentStatus"] = (UInt64)unit.CurrentStatus;
             expr.Parameters[prefix + "PermanentStatus"] = (UInt64)unit.PermanentStatus;
             expr.Parameters[prefix + "ResistStatus"] = (UInt64)unit.ResistStatus;
-            expr.Parameters[prefix + "HalfElement"] = (Int32)unit.HalfElement;
-            expr.Parameters[prefix + "GuardElement"] = (Int32)unit.GuardElement;
-            expr.Parameters[prefix + "AbsorbElement"] = (Int32)unit.AbsorbElement;
-            expr.Parameters[prefix + "WeakElement"] = (Int32)unit.WeakElement;
-            expr.Parameters[prefix + "BonusElement"] = (Int32)unit.BonusElement;
-            expr.Parameters[prefix + "WeaponPower"] = (Int32)unit.WeaponPower;
-            expr.Parameters[prefix + "WeaponRate"] = (Int32)unit.WeaponRate;
-            expr.Parameters[prefix + "WeaponElement"] = (Int32)unit.WeaponElement;
+            expr.Parameters[prefix + "HalfElement"] = unit.HalfElementEx.ToUInt32();
+            expr.Parameters[prefix + "GuardElement"] = unit.GuardElementEx.ToUInt32();
+            expr.Parameters[prefix + "AbsorbElement"] = unit.AbsorbElementEx.ToUInt32();
+            expr.Parameters[prefix + "WeakElement"] = unit.WeakElementEx.ToUInt32();
+            expr.Parameters[prefix + "BonusElement"] = unit.BonusElementEx.ToUInt32();
+            expr.Parameters[prefix + "WeaponElement"] = unit.WeaponElementEx.ToUInt32();
+            expr.Parameters[prefix + "HalfElementEx"] = unit.HalfElementEx;
+            expr.Parameters[prefix + "GuardElementEx"] = unit.GuardElementEx;
+            expr.Parameters[prefix + "AbsorbElementEx"] = unit.AbsorbElementEx;
+            expr.Parameters[prefix + "WeakElementEx"] = unit.WeakElementEx;
+            expr.Parameters[prefix + "BonusElementEx"] = unit.BonusElementEx;
+            expr.Parameters[prefix + "WeaponElementEx"] = unit.WeaponElementEx;
+            expr.Parameters[prefix + "WeaponPower"] = unit.WeaponPower;
+            expr.Parameters[prefix + "WeaponRate"] = unit.WeaponRate;
             expr.Parameters[prefix + "WeaponStatus"] = (UInt64)unit.WeaponStatus;
             expr.Parameters[prefix + "WeaponCategory"] = (Int32)unit.WeapCategory;
             expr.Parameters[prefix + "SerialNumber"] = (Int32)unit.SerialNumber;
@@ -469,7 +523,8 @@ namespace NCalc
             expr.Parameters[prefix + "MagicDefence"] = unit.MagicDefence;
             expr.Parameters[prefix + "MagicEvade"] = unit.MagicEvade;
             expr.Parameters[prefix + "PlayerCategory"] = (Int32)unit.PlayerCategory;
-            expr.Parameters[prefix + "Category"] = (Int32)unit.Category;
+            expr.Parameters[prefix + "Category"] = unit.CategoryEx.ToUInt32();
+            expr.Parameters[prefix + "CategoryEx"] = unit.CategoryEx;
             expr.Parameters[prefix + "CharacterIndex"] = (Int32)unit.PlayerIndex;
             expr.Parameters[prefix + "IsAlternateStand"] = unit.Data.bi.def_idle == 1 && (!unit.IsPlayer || unit.IsMonsterTransform);
             expr.Parameters[prefix + "CriticalRateBonus"] = (Int32)unit.CriticalRateBonus;
@@ -555,9 +610,15 @@ namespace NCalc
             expr.Parameters[prefix + "AbsorbElement"] = 0;
             expr.Parameters[prefix + "WeakElement"] = 0;
             expr.Parameters[prefix + "BonusElement"] = 0;
+            expr.Parameters[prefix + "WeaponElement"] = 0;
+            expr.Parameters[prefix + "HalfElementEx"] = EmptyElementSet;
+            expr.Parameters[prefix + "GuardElementEx"] = EmptyElementSet;
+            expr.Parameters[prefix + "AbsorbElementEx"] = EmptyElementSet;
+            expr.Parameters[prefix + "WeakElementEx"] = EmptyElementSet;
+            expr.Parameters[prefix + "BonusElementEx"] = EmptyElementSet;
+            expr.Parameters[prefix + "WeaponElementEx"] = EmptyElementSet;
             expr.Parameters[prefix + "WeaponPower"] = 0;
             expr.Parameters[prefix + "WeaponRate"] = 0;
-            expr.Parameters[prefix + "WeaponElement"] = 0;
             expr.Parameters[prefix + "WeaponStatus"] = 0;
             expr.Parameters[prefix + "WeaponCategory"] = 0;
             expr.Parameters[prefix + "SerialNumber"] = 0;
@@ -580,6 +641,7 @@ namespace NCalc
             expr.Parameters[prefix + "MagicEvade"] = 0;
             expr.Parameters[prefix + "PlayerCategory"] = 0;
             expr.Parameters[prefix + "Category"] = 0;
+            expr.Parameters[prefix + "CategoryEx"] = EmptyEnemyCategorySet;
             expr.Parameters[prefix + "CharacterIndex"] = 0;
             expr.Parameters[prefix + "IsAlternateStand"] = false;
             expr.Parameters[prefix + "CriticalRateBonus"] = 0;
@@ -659,8 +721,10 @@ namespace NCalc
             expr.Parameters["Power"] = command.Power;
             expr.Parameters["Accuracy"] = command.HitRate;
             expr.Parameters["AbilityStatus"] = (UInt64)command.AbilityStatus;
-            expr.Parameters["AbilityElement"] = (Int32)command.Element;
-            expr.Parameters["AbilityElementForBonus"] = (Int32)command.ElementForBonus;
+            expr.Parameters["AbilityElement"] = command.ElementEx.ToUInt32();
+            expr.Parameters["AbilityElementForBonus"] = command.ElementForBonusEx.ToUInt32();
+            expr.Parameters["AbilityElementEx"] = command.ElementEx;
+            expr.Parameters["AbilityElementForBonusEx"] = command.ElementForBonusEx;
             expr.Parameters["ItemUseId"] = (Int32)command.ItemId;
             expr.Parameters["WeaponThrowShape"] = command.Id == BattleCommandId.Throw ? ff9item._FF9Item_Data[command.ItemId].shape : -1;
             expr.Parameters["SpecialEffectId"] = (Int32)command.SpecialEffect;
@@ -694,13 +758,18 @@ namespace NCalc
             expr.Parameters["Power"] = aa.Ref.Power;
             expr.Parameters["Accuracy"] = aa.Ref.Rate;
             expr.Parameters["AbilityStatus"] = (UInt32)(FF9BattleDB.StatusSets.TryGetValue(aa.AddStatusNo, out BattleStatusEntry stat) ? stat.Value : 0);
-            expr.Parameters["AbilityElement"] = aa.Ref.Elements.ToEffectElement();
-            expr.Parameters["AbilityElementForBonus"] = aa.Ref.Elements.ToEffectElement();
+            expr.Parameters["AbilityElement"] = aa.Ref.Elements.ToUInt32();
+            expr.Parameters["AbilityElementForBonus"] = aa.Ref.Elements.ToUInt32();
+            expr.Parameters["AbilityElementEx"] = aa.Ref.Elements;
+            expr.Parameters["AbilityElementForBonusEx"] = aa.Ref.Elements;
             expr.Parameters["SpecialEffectId"] = (Int32)aa.Info.VfxIndex;
             expr.Parameters["TargetType"] = (Int32)aa.Info.Target;
             expr.Parameters["AbilityCategory"] = (Int32)aa.Category;
             expr.Parameters["MPCost"] = (Int32)aa.MP;
             expr.Parameters["AbilityFlags"] = (Int32)aa.Type;
         }
+
+        private static ElementSet EmptyElementSet = new ElementSet();
+        private static EnemyCategorySet EmptyEnemyCategorySet = new EnemyCategorySet();
     }
 }

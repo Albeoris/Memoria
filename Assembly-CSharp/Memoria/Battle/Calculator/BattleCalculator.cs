@@ -775,15 +775,15 @@ namespace Memoria
             if (Target.IsAbsorbElement(element))
                 Context.Flags |= BattleCalcFlags.Absorb;
 
-            Context.DamageModifierCount += ElementSet.CountCommonElements(Caster.BonusElementEx, elementForBonus);
-            Context.DamageModifierCount += ElementSet.CountCommonElements(Target.WeakElementEx, element);
-            Context.DamageModifierCount -= ElementSet.CountCommonElements(Target.HalfElementEx, element);
+            Context.DamageModifierCount += ElementSet.CountCommon(Caster.BonusElementEx, elementForBonus);
+            Context.DamageModifierCount += ElementSet.CountCommon(Target.WeakElementEx, element);
+            Context.DamageModifierCount -= ElementSet.CountCommon(Target.HalfElementEx, element);
             return true;
         }
 
         public void BonusElement()
         {
-            if (ElementSet.CountCommonElements(Command.ElementForBonusEx, Caster.BonusElementEx) > 0)
+            if (ElementSet.CountCommon(Command.ElementForBonusEx, Caster.BonusElementEx) > 0)
                 ++Context.DamageModifierCount;
         }
 

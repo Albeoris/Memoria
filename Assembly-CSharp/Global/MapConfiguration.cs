@@ -1,25 +1,25 @@
 using System;
 using System.IO;
-using UnityEngine;
+using System.Collections.Generic;
 
 public class MapConfiguration
 {
-    public static DMSMapConf? LoadMapConfigData(String fileName)
+    public static DMSMapConf LoadMapConfigData(String fileName)
     {
         Byte[] binAsset = AssetManager.LoadBytes("CommonAsset/MapConfigData/" + fileName, true);
         if (binAsset == null)
             return null;
         MemoryStream memoryStream = new MemoryStream(binAsset);
         BinaryReader binaryReader = new BinaryReader(memoryStream);
-        DMSMapConf value = MapConfiguration.DMSParseMapConfFile(binaryReader);
+        DMSMapConf lightConfig = MapConfiguration.DMSParseMapConfFile(binaryReader);
         binaryReader.Close();
         memoryStream.Close();
-        return new DMSMapConf?(value);
+        return lightConfig;
     }
 
     public static DMSMapConf DMSParseMapConfFile(BinaryReader reader)
     {
-        DMSMapConf result = default(DMSMapConf);
+        DMSMapConf result = new DMSMapConf();
         result.attr = reader.ReadUInt16();
         result.version = reader.ReadUInt16();
         result.bgNo = reader.ReadUInt16();
@@ -29,46 +29,52 @@ public class MapConfiguration
         result.charUse = reader.ReadByte();
         result.evtCount = reader.ReadByte();
         result.evtUse = reader.ReadByte();
-        result.DMSMapLight = new DMSMapLight[result.lightCount];
-        result.DMSMapChar = new DMSMapChar[result.charCount];
+        result.DMSMapLight = new List<DMSMapLight>(result.lightCount);
+        result.DMSMapChar = new List<DMSMapChar>(result.charCount);
         for (Int32 i = 0; i < result.lightCount; i++)
-            result.DMSMapLight[i].Read(reader);
+        {
+            DMSMapLight light = new DMSMapLight();
+            light.Read(reader);
+            result.DMSMapLight.Add(light);
+        }
         for (Int32 i = 0; i < result.charCount; i++)
-            result.DMSMapChar[i].Read(reader);
+        {
+            DMSMapChar light = new DMSMapChar();
+            light.Read(reader);
+            result.DMSMapChar.Add(light);
+        }
         return result;
     }
 
-    public static Int32 DMSGetMapConfSize(DMSMapConf? ObjPtr)
+    public static Int32 DMSGetMapConfSize(DMSMapConf lightConfig)
     {
-        if (ObjPtr != null)
-        {
-            return 12 + 12 * MapConfiguration.DMSGetMapConfMember(ObjPtr.Value, DMSMapConfMember.DMS_MAPCONF_LIGHTCOUNT) + 8 * MapConfiguration.DMSGetMapConfMember(ObjPtr.Value, DMSMapConfMember.DMS_MAPCONF_CHARCOUNT) + 2 * MapConfiguration.DMSGetMapConfMember(ObjPtr.Value, DMSMapConfMember.DMS_MAPCONF_EVTCOUNT);
-        }
+        if (lightConfig != null)
+            return 12 + 12 * MapConfiguration.DMSGetMapConfMember(lightConfig, DMSMapConfMember.DMS_MAPCONF_LIGHTCOUNT) + 8 * MapConfiguration.DMSGetMapConfMember(lightConfig, DMSMapConfMember.DMS_MAPCONF_CHARCOUNT) + 2 * MapConfiguration.DMSGetMapConfMember(lightConfig, DMSMapConfMember.DMS_MAPCONF_EVTCOUNT);
         return -1;
     }
 
-    public static Int32 DMSGetMapConfMember(DMSMapConf ObjPtr, DMSMapConfMember ObjMember)
+    public static Int32 DMSGetMapConfMember(DMSMapConf lightConfig, DMSMapConfMember ObjMember)
     {
         switch (ObjMember)
         {
             case DMSMapConfMember.DMS_MAPCONF_ATTR:
-                return (Int32)ObjPtr.attr;
+                return (Int32)lightConfig.attr;
             case DMSMapConfMember.DMS_MAPCONF_VERSION:
-                return (Int32)ObjPtr.version;
+                return (Int32)lightConfig.version;
             case DMSMapConfMember.DMS_MAPCONF_BGNO:
-                return (Int32)ObjPtr.bgNo;
+                return (Int32)lightConfig.bgNo;
             case DMSMapConfMember.DMS_MAPCONF_LIGHTCOUNT:
-                return (Int32)ObjPtr.lightCount;
+                return (Int32)lightConfig.lightCount;
             case DMSMapConfMember.DMS_MAPCONF_LIGHTUSE:
-                return (Int32)ObjPtr.lightUse;
+                return (Int32)lightConfig.lightUse;
             case DMSMapConfMember.DMS_MAPCONF_CHARCOUNT:
-                return (Int32)ObjPtr.charCount;
+                return (Int32)lightConfig.charCount;
             case DMSMapConfMember.DMS_MAPCONF_CHARUSE:
-                return (Int32)ObjPtr.charUse;
+                return (Int32)lightConfig.charUse;
             case DMSMapConfMember.DMS_MAPCONF_EVTCOUNT:
-                return (Int32)ObjPtr.evtCount;
+                return (Int32)lightConfig.evtCount;
             case DMSMapConfMember.DMS_MAPCONF_EVTUSE:
-                return (Int32)ObjPtr.evtUse;
+                return (Int32)lightConfig.evtUse;
             default:
                 global::Debug.LogError(new ArgumentNullException("Null DMSMapConfMember"));
                 return -1;

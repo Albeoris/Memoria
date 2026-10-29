@@ -41,14 +41,11 @@ namespace Memoria.Data
 
     public class ElementSet : HashSet<ElementToken>
     {
-        public ElementSet() { }
+        public ElementSet() : base() { }
 
-        public ElementSet(HashSet<ElementToken> hash)
-        {
-            UnionWith(hash);
-        }
+        public ElementSet(HashSet<ElementToken> hash) : base(hash) { }
 
-        public ElementSet(EffectElement elem)
+        public ElementSet(EffectElement elem) : base()
         {
             if ((elem & EffectElement.Fire) != 0)       Add(ElementToken.Fire);
             if ((elem & EffectElement.Cold) != 0)       Add(ElementToken.Cold);
@@ -76,11 +73,15 @@ namespace Memoria.Data
 
         // These UInt32 conversions are currently used by NCalc to allow the use of up to 32 elements instead of 8 using the legacy operations
         // They may be removed in the future
-        public ElementSet(UInt32 elem)
+        public void SetFromUInt32(UInt32 elem)
         {
             for (Int32 i = 0; i < 32; i++)
+            {
                 if ((elem & (1u << i)) != 0)
                     Add((ElementToken)i);
+                else
+                    Remove((ElementToken)i);
+            }
         }
 
         public UInt32 ToUInt32()
@@ -88,11 +89,11 @@ namespace Memoria.Data
             UInt32 val = 0;
             for (Int32 i = 0; i < 32; i++)
                 if (Contains((ElementToken)i))
-                    val |= (1u << i);
+                    val |= 1u << i;
             return val;
         }
 
-        public static Int32 CountCommonElements(params ElementSet[] elems)
+        public static Int32 CountCommon(params ElementSet[] elems)
         {
             if (elems.Length == 0)
                 return 0;
@@ -104,10 +105,10 @@ namespace Memoria.Data
 
         public static ElementSet Combine(params ElementSet[] elems)
         {
-            HashSet<ElementToken> hash = new HashSet<ElementToken>();
+            ElementSet comb = new ElementSet();
             foreach (ElementSet elem in elems)
-                hash.UnionWith(elem);
-            return new ElementSet(hash);
+                comb.UnionWith(elem);
+            return comb;
         }
 
         public static ElementSet Combine(ElementSet elem, params ElementToken[] tokens)
@@ -115,16 +116,44 @@ namespace Memoria.Data
             return [.. elem, .. tokens];
         }
 
-        public void Add(params ElementToken[] tokens)
+        public static ElementSet Disjoin(ElementSet elem, params ElementSet[] remove)
+        {
+            ElementSet disjoined = new ElementSet(elem);
+            foreach (ElementSet elemset in remove)
+                disjoined.RemoveMultiple(elemset);
+            return disjoined;
+        }
+
+        public static ElementSet Disjoin(ElementSet elem, params ElementToken[] remove)
+        {
+            ElementSet disjoined = new ElementSet(elem);
+            foreach (ElementToken elemset in remove)
+                disjoined.Remove(elemset);
+            return disjoined;
+        }
+
+        public void AddMultiple(params ElementToken[] tokens)
         {
             foreach (ElementToken tok in tokens)
                 Add(tok);
         }
 
-        public void Add(ElementSet other)
+        public void AddMultiple(ElementSet other)
         {
             foreach (ElementToken tok in other)
                 Add(tok);
+        }
+
+        public void RemoveMultiple(params ElementToken[] tokens)
+        {
+            foreach (ElementToken tok in tokens)
+                Remove(tok);
+        }
+
+        public void RemoveMultiple(ElementSet other)
+        {
+            foreach (ElementToken tok in other)
+                Remove(tok);
         }
 
         public static ElementSet ReadBinary(BinaryReader reader)

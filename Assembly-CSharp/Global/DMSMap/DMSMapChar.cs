@@ -1,49 +1,33 @@
 ﻿using System;
 using System.IO;
 
-public struct DMSMapChar
+public class DMSMapChar
 {
     public void Read(BinaryReader reader)
     {
         this.geoNo = reader.ReadUInt16();
-        this.shadowI = reader.ReadSByte();
+        this.shadowI = (Int16)(reader.ReadSByte() << 3);
         this.shadowR = reader.ReadSByte();
-        this.clr = new SByte[3];
+        this.clr = new Int16[3];
         for (Int32 i = 0; i < 3; i++)
-        {
-            this.clr[i] = reader.ReadSByte();
-        }
+            this.clr[i] = (Int16)(reader.ReadSByte() << 3);
         this.shadowZ = reader.ReadSByte();
     }
 
     public override String ToString()
     {
-        String text = String.Empty;
-        text = text + "geoNo : " + this.geoNo;
-        text = text + "\nshadowI : " + this.shadowI;
-        text = text + "\nshadowR : " + this.shadowR;
+        String text = "geoNo : " + this.geoNo;
+        text += "\nshadowI : " + this.shadowI;
+        text += "\nshadowR : " + this.shadowR;
         for (Int32 i = 0; i < 3; i++)
-        {
-            String text2 = text;
-            text = String.Concat(new Object[]
-            {
-                text2,
-                "\nclr[",
-                i,
-                "] : ",
-                this.clr[i]
-            });
-        }
+            text += $"\nclr[{i}] : {this.clr[i]}";
         return text;
     }
 
     public UInt16 geoNo;
 
-    public SByte shadowI;
-
+    public Int16 shadowI;
     public SByte shadowR;
-
-    public SByte[] clr;
-
+    public Int16[] clr;
     public SByte shadowZ;
 }

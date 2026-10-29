@@ -172,16 +172,8 @@ namespace Memoria
             get => Data.ElementForBonus.ToEffectElement();
             set => Data.ElementForBonus = new ElementSet(value);
         }
-        public ElementSet ElementEx
-        {
-            get => Data.Element;
-            set => Data.Element = value;
-        }
-        public ElementSet ElementForBonusEx
-        {
-            get => Data.ElementForBonus;
-            set => Data.ElementForBonus = value;
-        }
+        public ElementSet ElementEx => Data.Element;
+        public ElementSet ElementForBonusEx => Data.ElementForBonus;
         public BattleStatus AbilityStatus
         {
             get => Data.AbilityStatus;
@@ -198,7 +190,7 @@ namespace Memoria
             set => Data.AbilityType = value;
         }
 
-        /// <summary>Deprecated: use the version with ElementSet instead of EffectElement</summary>
+        /// <summary>Deprecated: use the version with ElementSet instead of EffectElement, or ElementEx.Contains(ElementToken)</summary>
         public Boolean HasElement(EffectElement element)
         {
             return (Element & element) != 0;
@@ -206,7 +198,7 @@ namespace Memoria
 
         public Boolean HasElement(ElementSet element)
         {
-            return ElementSet.CountCommonElements(ElementEx, element) > 0;
+            return ElementSet.CountCommon(ElementEx, element) > 0;
         }
 
         public Int32 GetReflectMultiplierOnTarget(UInt16 targetId)

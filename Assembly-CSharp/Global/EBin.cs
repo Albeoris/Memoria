@@ -2311,6 +2311,7 @@ public class EBin
         MCF_DEFAULT,
         MCF_FLOOR,
         MCF_MODEL,
+        ELEMENT_AFFINITY,
     }
 
     public enum flexible_varfunc : ushort

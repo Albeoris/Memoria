@@ -317,9 +317,9 @@ namespace Memoria
 
         public ElementSet BonusElementEx => Data.p_up_attr;
         public ElementSet WeakElementEx => Data.def_attr.weak;
-        public ElementSet GuardElementEx => Data.def_attr.weak;
-        public ElementSet AbsorbElementEx => Data.def_attr.weak;
-        public ElementSet HalfElementEx => Data.def_attr.weak;
+        public ElementSet GuardElementEx => Data.def_attr.invalid;
+        public ElementSet AbsorbElementEx => Data.def_attr.absorb;
+        public ElementSet HalfElementEx => Data.def_attr.half;
 
         public Boolean IsLevitate => HasCategory(EnemyCategory.Flight) || IsUnderAnyStatus(BattleStatus.Float);
         public Boolean IsZombie => HasCategory(EnemyCategory.Undead) || IsUnderAnyStatus(BattleStatusConst.ZombieEffect);

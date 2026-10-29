@@ -23,7 +23,7 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Command.ElementEx.Count == 0)
                 return;
-            _v.Target.WeakElementEx.Add(_v.Command.ElementEx);
+            _v.Target.WeakElementEx.AddMultiple(_v.Command.ElementEx);
             _v.Target.GuardElementEx.ExceptWith(_v.Command.ElementEx);
             _v.Target.AbsorbElementEx.ExceptWith(_v.Command.ElementEx);
             _v.Target.HalfElementEx.ExceptWith(_v.Command.ElementEx);

@@ -41,14 +41,14 @@ namespace Memoria.Data
 
             if (metadata.HasField("Elements"))
             {
-                if (metadata.HasOption($"UseElementList"))
+                if (metadata.HasOption("UseElementList"))
                     Data.Ref.Elements = BattleStatusEntry.ParseElementList(raw[index++]);
                 else
                     Data.Ref.Elements = new ElementSet((EffectElement)CsvParser.Byte(raw[index++]));
             }
             if (metadata.HasField("Status"))
             {
-                if (metadata.HasOption($"UseStatusList"))
+                if (metadata.HasOption("UseStatusList"))
                     Data.status = BattleStatusEntry.ParseBattleStatus(raw[index++], metadata, true);
                 else
                     Data.status = (BattleStatus)CsvParser.UInt64(raw[index++]);
@@ -72,7 +72,7 @@ namespace Memoria.Data
             sw.Int32(Data.Ref.Rate);
             BattleStatusEntry.WriteElementList(sw, Data.Ref.Elements);
 
-            if (metadata.HasOption($"UseStatusList"))
+            if (metadata.HasOption("UseStatusList"))
                 BattleStatusEntry.WriteBattleStatus(sw, metadata, Data.status, true);
             else
                 sw.UInt64((UInt64)Data.status);

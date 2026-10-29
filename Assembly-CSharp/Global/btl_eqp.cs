@@ -22,7 +22,7 @@ public static class btl_eqp
             if (p.equip[i] != RegularItem.NoItem)
             {
                 btl_init.IncrementDefAttr(btl.def_attr, ff9equip.ItemStatsData[ff9item._FF9Item_Data[p.equip[i]].bonus].def_attr);
-                btl.p_up_attr.Add(ff9equip.ItemStatsData[ff9item._FF9Item_Data[p.equip[i]].bonus].p_up_attr);
+                btl.p_up_attr.AddMultiple(ff9equip.ItemStatsData[ff9item._FF9Item_Data[p.equip[i]].bonus].p_up_attr);
             }
         }
     }

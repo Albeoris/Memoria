@@ -28,7 +28,7 @@ namespace Memoria.Data
             if (metadata.HasField("Power")) ActionData.Ref.Power = CsvParser.Int32(raw[index++]);
             if (metadata.HasField("Elements"))
             {
-                if (metadata.HasOption($"UseElementList"))
+                if (metadata.HasOption("UseElementList"))
                     ActionData.Ref.Elements = BattleStatusEntry.ParseElementList(raw[index++]);
                 else
                     ActionData.Ref.Elements = new ElementSet((EffectElement)CsvParser.Byte(raw[index++]));

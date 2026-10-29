@@ -546,10 +546,10 @@ public static class btl_init
 
     public static void IncrementDefAttr(DEF_ATTR d, DEF_ATTR s)
     {
-        d.invalid.Add(s.invalid);
-        d.absorb.Add(s.absorb);
-        d.half.Add(s.half);
-        d.weak.Add(s.weak);
+        d.invalid.AddMultiple(s.invalid);
+        d.absorb.AddMultiple(s.absorb);
+        d.half.AddMultiple(s.half);
+        d.weak.AddMultiple(s.weak);
     }
 
     public static void InitBattleData(BTL_DATA btl, FF9Char ff9char)

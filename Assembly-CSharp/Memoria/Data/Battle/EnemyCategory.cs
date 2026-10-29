@@ -35,14 +35,11 @@ namespace Memoria.Data
 
     public class EnemyCategorySet : HashSet<EnemyCategoryToken>
     {
-        public EnemyCategorySet() { }
+        public EnemyCategorySet() : base() { }
 
-        public EnemyCategorySet(HashSet<EnemyCategoryToken> hash)
-        {
-            UnionWith(hash);
-        }
+        public EnemyCategorySet(HashSet<EnemyCategoryToken> hash) : base(hash) { }
 
-        public EnemyCategorySet(EnemyCategory category)
+        public EnemyCategorySet(EnemyCategory category) : base()
         {
             if ((category & EnemyCategory.Humanoid) != 0)   Add(EnemyCategoryToken.Humanoid);
             if ((category & EnemyCategory.Beast) != 0)      Add(EnemyCategoryToken.Beast);
@@ -70,11 +67,15 @@ namespace Memoria.Data
 
         // These UInt32 conversions are currently used by NCalc to allow the use of up to 32 categories instead of 8 using the legacy operations
         // They may be removed in the future
-        public EnemyCategorySet(UInt32 category)
+        public void SetFromUInt32(UInt32 category)
         {
             for (Int32 i = 0; i < 32; i++)
+            {
                 if ((category & (1u << i)) != 0)
                     Add((EnemyCategoryToken)i);
+                else
+                    Remove((EnemyCategoryToken)i);
+            }
         }
 
         public UInt32 ToUInt32()
@@ -82,8 +83,18 @@ namespace Memoria.Data
             UInt32 val = 0;
             for (Int32 i = 0; i < 32; i++)
                 if (Contains((EnemyCategoryToken)i))
-                    val |= (1u << i);
+                    val |= 1u << i;
             return val;
+        }
+
+        public static Int32 CountCommon(params EnemyCategorySet[] elems)
+        {
+            if (elems.Length == 0)
+                return 0;
+            HashSet<EnemyCategoryToken> hash = new HashSet<EnemyCategoryToken>(elems[0]);
+            for (Int32 i = 1; i < elems.Length; i++)
+                hash.IntersectWith(elems[i]);
+            return hash.Count;
         }
 
         public static EnemyCategorySet Combine(params EnemyCategorySet[] categories)
@@ -99,16 +110,44 @@ namespace Memoria.Data
             return [.. category, .. tokens];
         }
 
-        public void Add(params EnemyCategoryToken[] tokens)
+        public static EnemyCategorySet Disjoin(EnemyCategorySet elem, params EnemyCategorySet[] remove)
+        {
+            EnemyCategorySet disjoined = new EnemyCategorySet(elem);
+            foreach (EnemyCategorySet elemset in remove)
+                disjoined.RemoveMultiple(elemset);
+            return disjoined;
+        }
+
+        public static EnemyCategorySet Disjoin(EnemyCategorySet elem, params EnemyCategoryToken[] remove)
+        {
+            EnemyCategorySet disjoined = new EnemyCategorySet(elem);
+            foreach (EnemyCategoryToken elemset in remove)
+                disjoined.Remove(elemset);
+            return disjoined;
+        }
+
+        public void AddMultiple(params EnemyCategoryToken[] tokens)
         {
             foreach (EnemyCategoryToken tok in tokens)
                 Add(tok);
         }
 
-        public void Add(EnemyCategorySet other)
+        public void AddMultiple(EnemyCategorySet other)
         {
             foreach (EnemyCategoryToken tok in other)
                 Add(tok);
+        }
+
+        public void RemoveMultiple(params EnemyCategoryToken[] tokens)
+        {
+            foreach (EnemyCategoryToken tok in tokens)
+                Remove(tok);
+        }
+
+        public void RemoveMultiple(EnemyCategorySet other)
+        {
+            foreach (EnemyCategoryToken tok in other)
+                Remove(tok);
         }
 
         public static EnemyCategorySet ReadBinary(BinaryReader reader)

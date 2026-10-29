@@ -31,7 +31,7 @@ namespace FF9
             if (metadata.HasField("Magic")) mgc = CsvParser.Byte(raw[index++]);
             if (metadata.HasField("Spirit")) wpr = CsvParser.Byte(raw[index++]);
 
-            if (metadata.HasOption($"UseElementList"))
+            if (metadata.HasOption("UseElementList"))
             {
                 if (metadata.HasField("BonusElement")) p_up_attr = BattleStatusEntry.ParseElementList(raw[index++]);
                 if (metadata.HasField("GuardElement")) def_attr.invalid = BattleStatusEntry.ParseElementList(raw[index++]);

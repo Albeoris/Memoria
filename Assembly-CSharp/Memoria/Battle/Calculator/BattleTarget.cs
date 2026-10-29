@@ -208,22 +208,22 @@ namespace Memoria
 
         public Boolean IsGuardElement(ElementSet element)
         {
-            return ElementSet.CountCommonElements(GuardElementEx, element) > 0;
+            return ElementSet.CountCommon(GuardElementEx, element) > 0;
         }
 
         public Boolean IsHalfElement(ElementSet element)
         {
-            return ElementSet.CountCommonElements(HalfElementEx, element) > 0;
+            return ElementSet.CountCommon(HalfElementEx, element) > 0;
         }
 
         public Boolean IsAbsorbElement(ElementSet element)
         {
-            return ElementSet.CountCommonElements(AbsorbElementEx, element) > 0;
+            return ElementSet.CountCommon(AbsorbElementEx, element) > 0;
         }
 
         public Boolean IsWeakElement(ElementSet element)
         {
-            return ElementSet.CountCommonElements(WeakElementEx, element) > 0;
+            return ElementSet.CountCommon(WeakElementEx, element) > 0;
         }
 
         public Boolean CanGuardElement(ElementSet element)
