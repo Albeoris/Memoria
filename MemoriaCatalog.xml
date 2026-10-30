@@ -4607,59 +4607,62 @@ Features;
 <Mod>
 
 <Name>FFIX: The Lost Chapters</Name>
-<Version>1.2.0</Version>
+<Version>1.3.0</Version>
 <Author>CheddarBung</Author>
 <Category>Gameplay</Category>
-<PreviewFile>Png/Banner2.png</PreviewFile>
+<PreviewFile>Png/banner2.png</PreviewFile>
 <InstallationPath>The Lost Chapters</InstallationPath>
 <UseArchiveUpdateCheck>true</UseArchiveUpdateCheck>
 <DownloadUrl>https://github.com/robmcfarlane1120-sudo/FFIX-The-Lost-Chapters/releases/latest/download/FFIX.The.Lost.Chapters.zip</DownloadUrl>
 <PreviewFileUrl>https://github.com/robmcfarlane1120-sudo/FFIX-The-Lost-Chapters/blob/main/The%20Lost%20Chapters/Png/Banner%202.png?raw=true</PreviewFileUrl>
-<Website>https://www.nexusmods.com/finalfantasy9/mods/127</Website>
-<ReleaseDate>2026-09-18</ReleaseDate>
+<Website>https://discord.gg/mNRq58BRej</Website>
+<ReleaseDate>2026-10-30</ReleaseDate>
 <ReleaseDateOriginal>2026-08-12</ReleaseDateOriginal>
 
 <IncompatibleWith>Ferny Fantasy IX,No Cutscene,Trance Seek,KupoMail</IncompatibleWith>
  
-<PatchNotes>The Lost Chapters — v1.2.0 Changelog
+<PatchNotes>
+THE LOST CHAPTERS — VERSION 1.3.0
+================================
 
-CORRUPTED ICE CAVERN
+NEW — ENCHANTING &amp; CRAFTING
+--------------------------
+- Added repeatable Enchanting, allowing one enchantment per item. Discover weapon effects, defensive bonuses, and stat enhancements.
+- Expanded Corruption with secondary stat mutations and up to three attempts per item. Each equipment copy retains its own outcomes across saves.
+- Added Crafting Bases with unique Equip Abilities and additional customization potential.
+- Meet Kumot, a Terran Moogle merchant offering crafting equipment, shards, and additional enchantment options.
+- Added equipment renaming, rainbow names for exceptional Corruption results, and new weapon effects in battle.
+- Added introductory crafting tutorials and guaranteed shard rewards from selected bosses.
 
-- Added the Corrupted Ice Cavern, a new Lost Chapter featuring new story content, field events, dialogue, visuals, and a new boss encounter.
-- Added the Zombie Sea Lion as the sixth story-integrated Lost Chapters boss.
+BATTLE &amp; BALANCE
+----------------
+- Rebalanced Omega Weapon for the new crafting systems, with updated mechanics and stronger counterplay to passive defenses.
+- Adjusted defensive enchantments, crafting equipment, and shard prices and availability.
 
-CORRUPTION SHARDS
+VISUALS &amp; QUALITY OF LIFE
+-------------------------
+- Added custom textures for Omega Weapon and Evil Zidane battle backgrounds and updated the Chocobo's Forest encounter scenery.
+- Improved crafting menus, descriptions, inventory updates, and equipment previews.
+- Added journal completion notifications.
 
-- Added the experimental Corruption Shard equipment mechanic.
-- Corruption Shards can produce positive, neutral, or negative equipment outcomes, including destruction.
-- Equipment corruption fate is remembered across reloads.
-- Shards are available from several Lost Chapters bosses and can be purchased late-game in Daguerreo.
-
-BATTLE &amp; COMPATIBILITY
-
-- Improved Alternate Fantasy compatibility, including Beatrix support during the Queen Brahne encounter.
-- Removed Lost Chapters-specific AbilityFeatures.txt dependencies and moved battle rules into C# for improved compatibility.
-- Lost Chapters bosses now use dedicated custom battle IDs.
-- Improved persistent boss effect cleanup and custom battle behavior.
-- Added automatic SFX Rework configuration required by Lost Chapters battle sequences.
-
-FIXES &amp; POLISH
-
-- Added additional animation and casting polish to the Queen Brahne encounter.
-- Various fixes to custom fields, battle backgrounds, SPS effects, text, audio, quests, and battle behavior.
-- Cleaned up runtime logging while retaining error and failure reporting.
+FIXES &amp; COMPATIBILITY
+---------------------
+- Fixed crafted equipment stat persistence and recalculation issues across saves, equipment changes, and abilities.
+- Fixed various crafting menu, inventory, transformation, battle animation, and audio issues.
+- Improved Alternate Fantasy compatibility and support for newer Memoria builds.
 </PatchNotes>
 
 
 <Description>
 
-Now Compatible with Alternate Fantasy
+Discord: https://discord.gg/mNRq58BRej
 
-Final Fantasy IX: The Lost Chapters is a Vanilla+ expansion for Final Fantasy IX that integrates new boss encounters, Lost Chapters, story events, quests, mechanics, and optional content into the original adventure.
+Compatible with Alternate Fantasy
+
+Final Fantasy IX: The Lost Chapters is a Vanilla+ expansion for Final Fantasy IX that integrates new boss encounters, Lost Chapters, story events, quests, crafting mechanics, and optional content into the original adventure.
 
 Rather than redesigning the game, The Lost Chapters expands the world of Gaia with new challenges and meaningful rewards while remaining faithful to the characters, progression, and feel of the original Final Fantasy IX experience.
 
-More Final Fantasy IX. Not a different Final Fantasy IX.
 
 ════════════════════════════
 CURRENT CONTENT
@@ -4667,7 +4670,9 @@ CURRENT CONTENT
 
 • Six story-integrated boss encounters
 • Corrupted Ice Cavern — a new Lost Chapter
-• Experimental Corruption Shard equipment mechanic
+• Repeatable Enchanting with unique combat effects and stat enhancements
+• Expanded Corruption with secondary mutations and multiple attempts
+• Crafting Bases, equipment renaming, and Kumot the Terran Moogle
 • Omega Artifact questline
 • Hidden Omega Weapon superboss
 • 10-item Master Trader quest spanning Gaia
@@ -4682,6 +4687,7 @@ IMPORTANT
 
 • Must be played using the US language version.
 • Balanced around Vanilla Final Fantasy IX and Alternate Fantasy.
+• Place The Lost Chapters above Alternate Fantasy in the Memoria mod list.
 • Not compatible with No Cutscenes / Skip Cutscenes mods. Several encounters use existing story events as trigger points.
 • Not currently compatible with Trance Seek or Ferny Fantasy.
 • KupoMail is not currently compatible.
@@ -4692,12 +4698,12 @@ FEEDBACK
 
 Feedback, bug reports, balance suggestions, and feature requests are always welcome on Discord.
 
-Corruption Shards are currently experimental. Feedback on their balance, availability, outcomes, and whether the mechanic should remain a permanent part of The Lost Chapters is especially welcome.
+Feedback on Corruption, Enchanting, crafting balance, and shard availability is especially welcome.
 
 Thank you for playing!
 
 </Description>
-	
+
 </Mod>
 
 <Mod>
