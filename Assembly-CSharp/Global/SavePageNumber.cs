@@ -10,18 +10,15 @@ public static class SavePageNamer
     static SavePageNamer()
     {
         if (string.IsNullOrEmpty(SharedDataBytesStorage.MetaData.DirPath))
-        {
             SharedDataBytesStorage.SetPCPath();
-        }
 
         string saveFolder = SharedDataBytesStorage.MetaData.DirPath;
 
         if (string.IsNullOrEmpty(saveFolder))
-        {
             saveFolder = Application.persistentDataPath + "/EncryptedSavedData";
-        }
 
-        if (!Directory.Exists(saveFolder)) Directory.CreateDirectory(saveFolder);
+        if (!Directory.Exists(saveFolder))
+            Directory.CreateDirectory(saveFolder);
 
         filePath = Path.Combine(saveFolder, "ExtraSave.ini");
         Load();
@@ -30,7 +27,8 @@ public static class SavePageNamer
     public static void Load()
     {
         pageNames.Clear();
-        if (!File.Exists(filePath)) return;
+        if (!File.Exists(filePath))
+            return;
 
         string[] lines = File.ReadAllLines(filePath);
 
@@ -59,7 +57,6 @@ public static class SavePageNamer
         if (pageNames.ContainsKey(pageIndex) && !string.IsNullOrEmpty(pageNames[pageIndex]))
             return pageNames[pageIndex];
 
-        int startSlot = (pageIndex * 10) + 1;
         return $"Page {pageIndex + 1}";
     }
 
