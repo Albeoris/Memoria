@@ -157,7 +157,7 @@ public partial class WMActor : MonoBehaviour
         if (!anim.IsPlaying(animName))
         {
             if (anim.GetClip(animName) == null)
-                return;
+                AnimationFactory.AddAnimWithAnimatioName(go, animName);
             anim.Play(animName);
         }
         AnimationState animState = anim[animName];
