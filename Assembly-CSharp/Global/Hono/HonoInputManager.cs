@@ -915,6 +915,22 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
         return this.isInputUp[indexInt];
     }
 
+    /// <summary>
+    /// [DV] L3 and R3 are working with XInputDotNetPure if Steam Input is activated ! (need to simulate a XBOX controller)
+    /// </summary>
+    
+    public Boolean IsL3Pressed()
+    {
+        return UnityXInput.XInputManager.Instance.CurrentState.Buttons.LeftStick == ButtonState.Pressed
+            && UnityXInput.XInputManager.Instance.PreviousState.Buttons.LeftStick == ButtonState.Released;
+    }
+
+    public Boolean IsR3Pressed()
+    {
+        return UnityXInput.XInputManager.Instance.CurrentState.Buttons.RightStick == ButtonState.Pressed
+            && UnityXInput.XInputManager.Instance.PreviousState.Buttons.RightStick == ButtonState.Released;
+    }
+
     public Vector2 GetAxis()
     {
         return this.AxisValue();
