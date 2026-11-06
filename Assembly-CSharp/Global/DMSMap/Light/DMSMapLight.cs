@@ -1,69 +1,40 @@
 ﻿using System;
 using System.IO;
 
-public struct DMSMapLight
+public class DMSMapLight
 {
     public void Read(BinaryReader reader)
     {
         this.type = reader.ReadSByte();
         this.no = reader.ReadSByte();
-        this.shadowI = reader.ReadSByte();
+        this.shadowI = (Int16)(reader.ReadSByte() << 3);
         this.shadowR = reader.ReadSByte();
-        this.clr = new SByte[4];
+        this.clr = new Int16[4];
         this.floor = new SByte[4];
         for (Int32 i = 0; i < 4; i++)
-        {
-            this.clr[i] = reader.ReadSByte();
-        }
-        for (Int32 j = 0; j < 4; j++)
-        {
-            this.floor[j] = reader.ReadSByte();
-        }
+            this.clr[i] = (Int16)(reader.ReadSByte() << 3);
+        for (Int32 i = 0; i < 4; i++)
+            this.floor[i] = reader.ReadSByte();
     }
 
     public override String ToString()
     {
-        String text = String.Empty;
-        text = text + "type : " + this.type;
-        text = text + "\nno : " + this.no;
-        text = text + "\nshadowI : " + this.shadowI;
-        text = text + "\nshadowR : " + this.shadowR;
+        String text = "type : " + this.type;
+        text += "\nno : " + this.no;
+        text += "\nshadowI : " + this.shadowI;
+        text += "\nshadowR : " + this.shadowR;
         for (Int32 i = 0; i < 4; i++)
-        {
-            String text2 = text;
-            text = String.Concat(new Object[]
-            {
-                text2,
-                "\nclr[",
-                i,
-                "] : ",
-                this.clr[i]
-            });
-        }
-        for (Int32 j = 0; j < 4; j++)
-        {
-            String text2 = text;
-            text = String.Concat(new Object[]
-            {
-                text2,
-                "\nfloor[",
-                j,
-                "] : ",
-                this.floor[j]
-            });
-        }
+            text += $"\nclr[{i}] : {this.clr[i]}";
+        for (Int32 i = 0; i < 4; i++)
+            text += $"\nfloor[{i}] : {this.floor[i]}";
         return text;
     }
 
     public SByte type;
-
     public SByte no;
 
-    public SByte shadowI;
-
+    public Int16 shadowI;
     public SByte shadowR;
-
-    public SByte[] clr;
-
+    public Int16[] clr;
     public SByte[] floor;
 }

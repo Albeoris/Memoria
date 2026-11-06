@@ -20,7 +20,8 @@ namespace Memoria
         public UInt16 ModelId => _data.ModelId;
         public Int32 ScriptId => _data.Ref.ScriptId;
         public Int32 Power => _data.Ref.Power;
-        public EffectElement Element => (EffectElement)_data.Ref.Elements;
+        public EffectElement Element => _data.Ref.Elements.ToEffectElement();
+        public ElementSet ElementEx => _data.Ref.Elements;
         public Int32 HitRate => _data.Ref.Rate;
 
         public static Weapon Find(RegularItem weaponId)

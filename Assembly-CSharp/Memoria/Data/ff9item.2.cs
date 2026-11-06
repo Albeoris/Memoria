@@ -563,7 +563,7 @@ public class ff9item
             case "WeaponModelId": return hasWeapon ? (Int32)GetItemWeapon(itemId).ModelId : -1;
             case "WeaponScriptId": return hasWeapon ? GetItemWeapon(itemId).Ref.ScriptId : 0;
             case "WeaponPower": return hasWeapon ? GetItemWeapon(itemId).Ref.Power : 0;
-            case "WeaponElement": return hasWeapon ? (Int32)GetItemWeapon(itemId).Ref.Elements : 0;
+            case "WeaponElement": return hasWeapon ? (Int32)GetItemWeapon(itemId).Ref.Elements.ToEffectElement() : 0;
             case "WeaponStatusRate": return hasWeapon ? GetItemWeapon(itemId).Ref.Rate : 0;
             case "WeaponOffset1": return hasWeapon ? (Int32)GetItemWeapon(itemId).Offset1 : 0;
             case "WeaponOffset2": return hasWeapon ? (Int32)GetItemWeapon(itemId).Offset2 : 0;
@@ -581,7 +581,7 @@ public class ff9item
             case "EffectDefaultOnDead": return hasEffect ? GetItemEffect(itemId).info.DefaultOnDead : false;
             case "EffectScriptId": return hasEffect ? GetItemEffect(itemId).Ref.ScriptId : 0;
             case "EffectPower": return hasEffect ? GetItemEffect(itemId).Ref.Power : 0;
-            case "EffectElement": return hasEffect ? (Int32)GetItemEffect(itemId).Ref.Elements : 0;
+            case "EffectElement": return hasEffect ? (Int32)GetItemEffect(itemId).Ref.Elements.ToEffectElement() : 0;
             case "EffectRate": return hasEffect ? GetItemEffect(itemId).Ref.Rate : 0;
             case "EffectStatus": return hasEffect ? (UInt64)GetItemEffect(itemId).status : 0;
         }

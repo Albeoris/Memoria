@@ -613,6 +613,16 @@ namespace Assets.Sources.Scripts.UI.Common
             return DisplayBatch.cmdTitleText.TryGetValue(id, out String result) ? result : String.Empty;
         }
 
+        public static String ElementName(ElementToken id)
+        {
+            return DisplayBatch.elementNames.TryGetValue(id, out String result) ? result : String.Empty;
+        }
+
+        public static String EnemyCategoryName(EnemyCategoryToken id)
+        {
+            return DisplayBatch.enemyCategoryNames.TryGetValue(id, out String result) ? result : String.Empty;
+        }
+
         public static String WorldLocationText(Int32 id)
         {
             if (!DisplayBatch.worldLocationText.TryGetValue(id, out String result))
@@ -769,6 +779,16 @@ namespace Assets.Sources.Scripts.UI.Common
             DisplayBatch.libraText[id] = value;
         }
 
+        public static void SetElementName(ElementToken id, String value)
+        {
+            DisplayBatch.elementNames[id] = value;
+        }
+
+        public static void SetEnemyCategoryName(EnemyCategoryToken id, String value)
+        {
+            DisplayBatch.enemyCategoryNames[id] = value;
+        }
+
         public static void SetWorldLocationText(Int32 id, String value)
         {
             DisplayBatch.worldLocationText[id] = value;
@@ -878,6 +898,9 @@ namespace Assets.Sources.Scripts.UI.Common
             public Dictionary<Int32, String> cmdTitleText = new Dictionary<Int32, String>();
             public Dictionary<Int32, String> libraText = new Dictionary<Int32, String>();
             public Dictionary<Int32, String> worldLocationText = new Dictionary<Int32, String>();
+
+            public Dictionary<ElementToken, String> elementNames = new Dictionary<ElementToken, String>();
+            public Dictionary<EnemyCategoryToken, String> enemyCategoryNames = new Dictionary<EnemyCategoryToken, String>();
 
             public Dictionary<UInt32, String[]> tableText = new Dictionary<UInt32, String[]>();
             public Dictionary<Int32, String> locationName = new Dictionary<Int32, String>();

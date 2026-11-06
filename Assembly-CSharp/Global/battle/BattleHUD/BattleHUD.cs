@@ -169,25 +169,36 @@ public partial class BattleHUD : UIScene
                 return messages;
             case LibraInformation.Category:
                 if (!unit.IsPlayer)
-                {
-                    Int32 enemyCategory = unit.Enemy.Data.et.category;
-                    for (Int32 i = 0; i < 8; i++)
-                        if ((enemyCategory & (1 << i)) != 0)
-                            messages.Add(FF9TextTool.BattleLibraText(i));
-                }
+                    foreach (EnemyCategoryToken category in unit.Enemy.Data.et.category)
+                        messages.Add(FF9TextTool.EnemyCategoryName(category));
                 return messages;
             case LibraInformation.ElementWeak:
             case LibraInformation.ElementResist:
             case LibraInformation.ElementImmune:
             case LibraInformation.ElementAbsorb:
             {
-                EffectElement element = info == LibraInformation.ElementWeak ? unit.WeakElement & ~unit.GuardElement :
-                                        info == LibraInformation.ElementResist ? unit.HalfElement & ~unit.GuardElement :
-                                        info == LibraInformation.ElementImmune ? unit.GuardElement :
-                                        unit.AbsorbElement & ~unit.GuardElement;
-                for (Int32 i = 0; i < 8; i++)
-                    if ((element & (EffectElement)(1 << i)) != 0)
-                        messages.Add(Localization.GetWithDefault(info.ToString()).Replace("%", BtlGetAttrName(1 << i)));
+                ElementSet element;
+                if (info == LibraInformation.ElementWeak)
+                {
+                    element = new ElementSet(unit.WeakElementEx);
+                    element.ExceptWith(unit.GuardElementEx);
+                }
+                else if (info == LibraInformation.ElementResist)
+                {
+                    element = new ElementSet(unit.HalfElementEx);
+                    element.ExceptWith(unit.GuardElementEx);
+                }
+                else if (info == LibraInformation.ElementImmune)
+                {
+                    element = unit.GuardElementEx;
+                }
+                else
+                {
+                    element = new ElementSet(unit.AbsorbElementEx);
+                    element.ExceptWith(unit.GuardElementEx);
+                }
+                foreach (ElementToken elem in element)
+                    messages.Add(Localization.GetWithDefault(info.ToString()).Replace("%", FF9TextTool.ElementName(elem)));
                 return messages;
             }
             case LibraInformation.StatusAuto:

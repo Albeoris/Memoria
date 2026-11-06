@@ -25,7 +25,7 @@ public class FF9StateFieldMap
     private Int32 attr;
 
     public Int16 nextMapNo;
-    public DMSMapConf? mcfPtr;
+    public DMSMapConf mcfPtr;
     public Dictionary<Int32, FF9Shadow> shadowArray = new Dictionary<Int32, FF9Shadow>();
     public Int32 charOTOffset;
     public Byte encStatus;

@@ -71,7 +71,7 @@ namespace Memoria
 
         public void BonusWeaponElement()
         {
-            if ((WeaponElement & BonusElement) != 0)
+            if (ElementSet.CountCommon(WeaponElementEx, BonusElementEx) > 0)
                 ++_context.DamageModifierCount;
         }
     }

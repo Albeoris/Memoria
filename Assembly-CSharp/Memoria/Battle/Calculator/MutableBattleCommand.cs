@@ -91,13 +91,13 @@ namespace Memoria
         public new EffectElement Element
         {
             get => base.Element;
-            set => Data.Element = value;
+            set => base.Element = value;
         }
 
         public new EffectElement ElementForBonus
         {
             get => base.ElementForBonus;
-            set => Data.ElementForBonus = value;
+            set => base.ElementForBonus = value;
         }
 
         public new SpecialEffect SpecialEffect

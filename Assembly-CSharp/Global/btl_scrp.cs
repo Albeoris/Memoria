@@ -82,7 +82,7 @@ public class btl_scrp
             case 1007: return (UInt16)cmd.info.cover;
             case 1008: return (UInt16)cmd.ScriptId;
             case 1009: return (UInt16)cmd.Power;
-            case 1010: return (UInt16)cmd.Element;
+            case 1010: return (UInt16)cmd.Element.ToEffectElement();
             case 1011: return (UInt16)cmd.HitRate;
             case 1012: return (UInt16)cmd.AbilityCategory;
             case 1013: return (UInt16)0;
@@ -112,7 +112,7 @@ public class btl_scrp
             case 7: return (UInt16)(cmd.aa.Info.DefaultOnDead ? 1 : 0);
             case 8: return (UInt16)cmd.aa.Ref.ScriptId;
             case 9: return (UInt16)cmd.aa.Ref.Power;
-            case 10: return (UInt16)cmd.aa.Ref.Elements;
+            case 10: return (UInt16)cmd.aa.Ref.Elements.ToEffectElement();
             case 11: return (UInt16)cmd.aa.Ref.Rate;
             case 12: return (UInt16)cmd.aa.Category;
             case 13: return (UInt16)cmd.aa.AddStatusNo;
@@ -148,7 +148,7 @@ public class btl_scrp
             case 1007: cmd.info.cover = (Byte)val; return;
             case 1008: cmd.ScriptId = val; return;
             case 1009: cmd.Power = val; return;
-            case 1010: cmd.Element = (EffectElement)val; return;
+            case 1010: cmd.Element = new ElementSet((EffectElement)val); return;
             case 1011: cmd.HitRate = val; return;
             case 1012: cmd.AbilityCategory = (Byte)val; return;
             case 1013: return;
@@ -178,7 +178,7 @@ public class btl_scrp
             case 7: cmd.aa.Info.DefaultOnDead = val != 0; return;
             case 8: cmd.aa.Ref.ScriptId = val; return;
             case 9: cmd.aa.Ref.Power = val; return;
-            case 10: cmd.aa.Ref.Elements = (Byte)val; return;
+            case 10: cmd.aa.Ref.Elements = new ElementSet((EffectElement)val); return;
             case 11: cmd.aa.Ref.Rate = val; return;
             case 12: cmd.aa.Category = (Byte)val; return;
             case 13: cmd.aa.AddStatusNo = (StatusSetId)val; return;
@@ -240,16 +240,16 @@ public class btl_scrp
                 result = (Int32)((UInt64)btl.stat.cur & 0xFFFFFFu);
                 break;
             case 48u: // [ELEMENT_IMMUNE]
-                result = btl.def_attr.invalid;
+                result = (Byte)btl.def_attr.invalid.ToEffectElement();
                 break;
             case 49u: // [ELEMENT_ABSORB]
-                result = btl.def_attr.absorb;
+                result = (Byte)btl.def_attr.absorb.ToEffectElement();
                 break;
             case 50u: // [ELEMENT_HALF]
-                result = btl.def_attr.half;
+                result = (Byte)btl.def_attr.half.ToEffectElement();
                 break;
             case 51u: // [ELEMENT_WEAK]
-                result = btl.def_attr.weak;
+                result = (Byte)btl.def_attr.weak.ToEffectElement();
                 break;
             case 52u: // [TARGETABLE]
                 result = btl.bi.target;
@@ -276,7 +276,7 @@ public class btl_scrp
                 result = btl_util.getPlayerPtr(btl).category;
                 break;
             case 68u: // [CLASS]
-                result = btl_util.getEnemyTypePtr(btl).category;
+                result = (Byte)btl_util.getEnemyTypePtr(btl).category.ToEnemyCategory();
                 break;
             case 69u: // [STAND_ANIMATION]
                 result = btl.bi.def_idle;
@@ -355,7 +355,7 @@ public class btl_scrp
                 break;
             case 113u:
                 if (btl.bi.player == 0)
-                    result = btl_util.getEnemyTypePtr(btl).category;
+                    result = (Byte)btl_util.getEnemyTypePtr(btl).category.ToEnemyCategory();
                 else
                     result = (Int32)EnemyCategory.Humanoid;
                 break;
@@ -479,16 +479,16 @@ public class btl_scrp
                 btl_stat.AlterStatuses(unit, (BattleStatus)((UInt64)val & 0x0000000000FFFFFFul));
                 break;
             case 48u:
-                btl.def_attr.invalid = (Byte)val;
+                btl.def_attr.invalid = new ElementSet((EffectElement)val);
                 break;
             case 49u:
-                btl.def_attr.absorb = (Byte)val;
+                btl.def_attr.absorb = new ElementSet((EffectElement)val);
                 break;
             case 50u:
-                btl.def_attr.half = (Byte)val;
+                btl.def_attr.half = new ElementSet((EffectElement)val);
                 break;
             case 51u:
-                btl.def_attr.weak = (Byte)val;
+                btl.def_attr.weak = new ElementSet((EffectElement)val);
                 break;
             case 52u:
                 if (ff9Battle.btl_phase == FF9StateBattleSystem.PHASE_ENTER)
@@ -621,7 +621,7 @@ public class btl_scrp
                 break;
             case 113u:
                 if (btl.bi.player == 0)
-                    btl_util.getEnemyTypePtr(btl).category = (byte)val;
+                    btl_util.getEnemyTypePtr(btl).category = new EnemyCategorySet((EnemyCategory)val);
                 break;
             case 114u:
             {
@@ -731,11 +731,11 @@ public class btl_scrp
                 break;
             case 38:
                 if (curCmd != null && curCmd.regist != null && curCmd.regist.weapon != null)
-                    result = curCmd.regist.weapon.Ref.Elements;
+                    result = (Byte)curCmd.regist.weapon.Ref.Elements.ToEffectElement();
                 break;
             case 39:
                 if (curCmd != null && curCmd.regist != null)
-                    result = (UInt32)curCmd.Element;
+                    result = (UInt32)curCmd.Element.ToEffectElement();
                 break;
             case 40:
                 result = ff9Battle.btl_load_status;
@@ -838,8 +838,8 @@ public class btl_scrp
                     ff.party.gil = 9999999u;
                 break;
             case 39u:
-                if (ff.categoryKillCount[3] < 9999)
-                    ff.categoryKillCount[3]++; // Manually increase the counter of dragons killed
+                if (ff.categoryKillCount[EnemyCategoryToken.Dragon] < 9999)
+                    ff.categoryKillCount[EnemyCategoryToken.Dragon]++; // Manually increase the counter of dragons killed
                 break;
             case 40u:
             {

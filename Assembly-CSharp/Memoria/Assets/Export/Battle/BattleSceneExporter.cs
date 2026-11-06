@@ -282,14 +282,14 @@ namespace Memoria.Assets
                 writer.EndObject();
 
                 writer.BeginObject("attributes");
-                writer.WriteByte("invalid", enemy.GuardElement);
-                writer.WriteByte("absorb", enemy.AbsorbElement);
-                writer.WriteByte("half", enemy.HalfElement);
-                writer.WriteByte("weak", enemy.WeakElement);
+                writer.WriteByte("invalid", (Byte)enemy.GuardElement.ToEffectElement());
+                writer.WriteByte("absorb", (Byte)enemy.AbsorbElement.ToEffectElement());
+                writer.WriteByte("half", (Byte)enemy.HalfElement.ToEffectElement());
+                writer.WriteByte("weak", (Byte)enemy.WeakElement.ToEffectElement());
                 writer.EndObject();
 
                 writer.WriteByte("level", enemy.Level);
-                writer.WriteByte("category", enemy.Category);
+                writer.WriteByte("category", (Byte)enemy.Category.ToEnemyCategory());
                 writer.WriteByte("hitRate", (Byte)enemy.HitRate);
                 writer.WriteInt32("pdp", enemy.PhysicalDefence);
                 writer.WriteInt32("pav", enemy.PhysicalEvade);
@@ -351,7 +351,7 @@ namespace Memoria.Assets
                 writer.WriteUInt16("animationId2", action.Vfx2);
                 writer.WriteInt32("scriptId", action.Ref.ScriptId);
                 writer.WriteInt32("power", action.Ref.Power);
-                writer.WriteFlags("elements", (EffectElement)action.Ref.Elements);
+                writer.WriteFlags("elements", action.Ref.Elements.ToEffectElement());
                 writer.WriteInt32("rate", action.Ref.Rate);
                 writer.WriteByte("category", action.Category);
                 writer.WriteEnum("addNo", action.AddStatusNo);
@@ -574,21 +574,21 @@ namespace Memoria.Assets
                             if (baseValue.GuardElement != enemy.GuardElement || baseValue.AbsorbElement != enemy.AbsorbElement || baseValue.HalfElement != enemy.HalfElement || baseValue.WeakElement != enemy.WeakElement)
                             {
                                 writer.BeginObject("attributes");
-                                if (baseValue.GuardElement != enemy.GuardElement)
-                                    writer.WriteByte("invalid", enemy.GuardElement);
-                                if (baseValue.AbsorbElement != enemy.AbsorbElement)
-                                    writer.WriteByte("absorb", enemy.AbsorbElement);
-                                if (baseValue.HalfElement != enemy.HalfElement)
-                                    writer.WriteByte("half", enemy.HalfElement);
-                                if (baseValue.WeakElement != enemy.WeakElement)
-                                    writer.WriteByte("weak", enemy.WeakElement);
+                                if (baseValue.GuardElement.IsSubsetOf(enemy.GuardElement) && enemy.GuardElement.IsSubsetOf(baseValue.GuardElement))
+                                    writer.WriteByte("invalid", (Byte)enemy.GuardElement.ToEffectElement());
+                                if (baseValue.AbsorbElement.IsSubsetOf(enemy.AbsorbElement) && enemy.AbsorbElement.IsSubsetOf(baseValue.AbsorbElement))
+                                    writer.WriteByte("absorb", (Byte)enemy.AbsorbElement.ToEffectElement());
+                                if (baseValue.HalfElement.IsSubsetOf(enemy.HalfElement) && enemy.HalfElement.IsSubsetOf(baseValue.HalfElement))
+                                    writer.WriteByte("half", (Byte)enemy.HalfElement.ToEffectElement());
+                                if (baseValue.WeakElement.IsSubsetOf(enemy.WeakElement) && enemy.WeakElement.IsSubsetOf(baseValue.WeakElement))
+                                    writer.WriteByte("weak", (Byte)enemy.WeakElement.ToEffectElement());
                                 writer.EndObject();
                             }
 
                             if (baseValue.Level != enemy.Level)
                                 writer.WriteByte("level", enemy.Level);
-                            if (baseValue.Category != enemy.Category)
-                                writer.WriteByte("category", enemy.Category);
+                            if (baseValue.Category.IsSubsetOf(enemy.Category) && enemy.Category.IsSubsetOf(baseValue.Category))
+                                writer.WriteByte("category", (Byte)enemy.Category.ToEnemyCategory());
                             if (baseValue.HitRate != enemy.HitRate)
                                 writer.WriteByte("hitRate", (Byte)enemy.HitRate);
                             if (baseValue.PhysicalDefence != enemy.PhysicalDefence)
@@ -686,7 +686,7 @@ namespace Memoria.Assets
                 foreach (KeyValuePair<Dictionary<String, String>, AA_DATA> key in Actions.Where(a => a.Value.Locations.Count < 2).Select(a => a.Key).ToArray())
                     Actions.Remove(key);
 
-                foreach (var group in Actions.Keys.OrderByDescending(v => v.Value.Ref.Elements)
+                foreach (var group in Actions.Keys.OrderByDescending(v => v.Value.Ref.Elements.ToEffectElement())
                     .ThenBy(v => v.Value.Ref.ScriptId == 64)
                     .ThenBy(v => v.Value.Ref.ScriptId < 9)
                     .ThenByDescending(v => v.Value.MP > 0)
@@ -733,8 +733,8 @@ namespace Memoria.Assets
                                 writer.WriteInt32("scriptId", action.Ref.ScriptId);
                             if (baseItem.Value.Ref.Power != action.Ref.Power)
                                 writer.WriteInt32("power", action.Ref.Power);
-                            if (baseItem.Value.Ref.Elements != action.Ref.Elements)
-                                writer.WriteFlags("elements", (EffectElement)action.Ref.Elements);
+                            if (baseItem.Value.Ref.Elements.ToEffectElement() != action.Ref.Elements.ToEffectElement())
+                                writer.WriteFlags("elements", action.Ref.Elements.ToEffectElement());
                             if (baseItem.Value.Ref.Rate != action.Ref.Rate)
                                 writer.WriteInt32("rate", action.Ref.Rate);
 
@@ -807,7 +807,7 @@ namespace Memoria.Assets
                 sw.UInt16(_aaData.Vfx2);
                 sw.Int32(btlRef.ScriptId);
                 sw.Int32(btlRef.Power);
-                sw.Byte(btlRef.Elements);
+                sw.Byte((Byte)btlRef.Elements.ToEffectElement());
                 sw.Int32(btlRef.Rate);
                 sw.Byte(_aaData.Category);
                 sw.EnumValue(_aaData.AddStatusNo);
@@ -895,13 +895,13 @@ namespace Memoria.Assets
                 sw.Byte(_enData.Element.Magic);
                 sw.Byte(_enData.Element.Spirit);
 
-                sw.Byte(_enData.GuardElement);
-                sw.Byte(_enData.AbsorbElement);
-                sw.Byte(_enData.HalfElement);
-                sw.Byte(_enData.WeakElement);
+                sw.Byte((Byte)_enData.GuardElement.ToEffectElement());
+                sw.Byte((Byte)_enData.AbsorbElement.ToEffectElement());
+                sw.Byte((Byte)_enData.HalfElement.ToEffectElement());
+                sw.Byte((Byte)_enData.WeakElement.ToEffectElement());
 
                 sw.Byte(_enData.Level);
-                sw.Byte(_enData.Category);
+                sw.Byte((Byte)_enData.Category.ToEnemyCategory());
                 sw.Byte((Byte)_enData.HitRate);
                 sw.Int32(_enData.PhysicalDefence);
                 sw.Int32(_enData.PhysicalEvade);

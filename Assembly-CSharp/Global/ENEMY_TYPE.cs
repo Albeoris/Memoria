@@ -14,7 +14,7 @@ public class ENEMY_TYPE
     }
 
     public String name;
-    public Byte category;
+    public EnemyCategorySet category;
     public Byte level;
     public POINTS max;
     public String[] mot;
