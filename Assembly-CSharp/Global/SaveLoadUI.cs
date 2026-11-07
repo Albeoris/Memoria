@@ -296,6 +296,7 @@ public class SaveLoadUI : UIScene
         }
         return true;
     }
+
     public override GameObject OnKeyNavigate(KeyCode direction, GameObject currentObj, GameObject nextObj)
     {
         if (this.IsRenaming)
@@ -685,7 +686,7 @@ public class SaveLoadUI : UIScene
 
     private void OnFinishedSaveFile(DataSerializerErrorCode errNo, Int32 slotID, Int32 saveID, Boolean isSuccess, SharedDataPreviewSlot data)
     {
-        if (Configuration.SaveFile.SaveOnCloud && SharedDataBytesStorage.CurrentSavePage == 0 && isSuccess && errNo == DataSerializerErrorCode.Success) // Upload only the first page on the Cloud.
+        if (Configuration.SaveFile.SaveOnCloud && isSuccess && errNo == DataSerializerErrorCode.Success)
             FF9StateSystem.Serializer.UploadToCloud(null, OnFinishedUploadToCloud);
         else
             base.StartCoroutine(this.OnFinishedSaveFile_delay(errNo, slotID, saveID, isSuccess, data));
@@ -760,7 +761,6 @@ public class SaveLoadUI : UIScene
     {
         base.FadingComponent = this.ScreenFadeGameObject.GetComponent<HonoFading>();
         this.helpSlotLabel = this.HelpPanel.GetChild(1).GetChild(0).GetComponent<UILabel>();
-
 
         GameObject newObj = NGUITools.AddChild(this.gameObject, this.helpSlotLabel.gameObject);
 
@@ -857,6 +857,7 @@ public class SaveLoadUI : UIScene
     private Single timeCounter;
     private Dialog noSaveDataDialog;
 
+    [NonSerialized]
     private UIInput bottomPageInput;
     private bool IsRenaming => this.bottomPageInput != null && this.bottomPageInput.isSelected;
 
