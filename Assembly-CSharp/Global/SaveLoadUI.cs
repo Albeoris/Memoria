@@ -525,6 +525,7 @@ public class SaveLoadUI : UIScene
         ButtonGroupState.ActiveGroup = group;
         yield break;
     }
+
     private void DisplaySlot(Boolean updateActive)
     {
         Int32 slotID = 0;
@@ -550,7 +551,8 @@ public class SaveLoadUI : UIScene
         if (this.bottomPageInput != null)
             this.bottomPageInput.value = SavePageNamer.GetPageName(SharedDataBytesStorage.CurrentSavePage);
 
-        FF9UIDataTool.DisplayTextLocalize(this.HelpTitleLabel, "SaveHelpSlot");
+        if (!FileListPanel.activeSelf)
+            FF9UIDataTool.DisplayTextLocalize(this.HelpTitleLabel, "SaveHelpSlot");
     }
 
     private void DisplayOverWriteDialog()
@@ -775,9 +777,7 @@ public class SaveLoadUI : UIScene
         namepageUI.transform.localPosition = new Vector3(0f, -470f, 0f);
         namepageUI.color = Color.white;
         namepageUI.maxLineCount = 1;
-
-        NGUITools.AddWidgetCollider(newObj);
-
+        NGUITools.AddWidgetCollider(newObj); // To enable interaction.
         this.bottomPageInput = newObj.AddComponent<UIInput>();
         this.bottomPageInput.label = namepageUI;
         this.bottomPageInput.activeTextColor = Color.white;
