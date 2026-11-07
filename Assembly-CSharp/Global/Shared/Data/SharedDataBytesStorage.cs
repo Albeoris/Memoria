@@ -80,13 +80,14 @@ public class SharedDataBytesStorage : ISharedDataStorage
     }
 
     public static int CurrentSavePage = 0;
+    public const int MaximumSavePage = 10; // [DV], With 10 pages, you have 1500 save slots (15 x 10 x 10). Maybe a config for Memoria.ini ? But i think it's enough rn.
 
     public static void UpdatePathForPage()
     {
         MetaData.FilePath = null;
         SetPCPath();
 
-        if (CurrentSavePage > 0)
+        if (CurrentSavePage > 0) // Extra save slot (otherwise, stay on SetPCPath)
         {
             // Eg : EncryptedSavedData/ExtraSave_1/SavedData_ww.dat
             string extraFolder = "ExtraSave_" + CurrentSavePage;
@@ -750,7 +751,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
     {
         int cachedPage = CurrentSavePage;
 
-        if (cachedPage != 0)
+        if (cachedPage != 0) // SavedData_ww_Memoria_Autosave.dat is on page n°0 so we need to get back on default folder.
         {
             CurrentSavePage = 0;
             MetaData.FilePath = null;
@@ -772,7 +773,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
     {
         int cachedPage = CurrentSavePage;
 
-        if (cachedPage != 0)
+        if (cachedPage != 0) // SavedData_ww_Memoria_Autosave.dat is on page n°0 so we need to get back on default folder.
         {
             CurrentSavePage = 0;
             MetaData.FilePath = null;
@@ -794,7 +795,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
     {
         int cachedPage = CurrentSavePage;
 
-        if (cachedPage != 0)
+        if (cachedPage != 0) // SavedData_ww_Memoria_Autosave.dat is on page n°0 so we need to get back on default folder.
         {
             CurrentSavePage = 0;
             MetaData.FilePath = null;

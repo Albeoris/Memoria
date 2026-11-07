@@ -57,7 +57,7 @@ public static class SavePageNamer
         if (pageNames.ContainsKey(pageIndex) && !string.IsNullOrEmpty(pageNames[pageIndex]))
             return pageNames[pageIndex];
 
-        return $"Page {pageIndex + 1}";
+        return $"Page n°{pageIndex + 1}";
     }
 
     public static void SetPageName(int pageIndex, string name)
