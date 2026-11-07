@@ -79,6 +79,28 @@ public class SharedDataBytesStorage : ISharedDataStorage
         MetaData.FilePath = Application.persistentDataPath + saveFolder + "/" + fileName;
     }
 
+    public static int CurrentSavePage = 0;
+    public const int MaximumSavePage = 10; // [DV], With 10 pages, you have 1500 save slots (15 x 10 x 10). Maybe a config for Memoria.ini ? But i think it's enough rn.
+
+    public static void UpdatePathForPage()
+    {
+        MetaData.FilePath = null;
+        SetPCPath();
+
+        if (CurrentSavePage > 0) // Extra save slot (otherwise, stay on SetPCPath)
+        {
+            // Eg : EncryptedSavedData/ExtraSave_1/SavedData_ww.dat
+            string extraFolder = "ExtraSave_" + CurrentSavePage;
+            string newDir = Path.Combine(MetaData.DirPath, extraFolder);
+
+            if (!Directory.Exists(newDir))
+                Directory.CreateDirectory(newDir);
+
+            string fileName = Path.GetFileName(MetaData.FilePath);
+            MetaData.FilePath = Path.Combine(newDir, fileName);
+        }
+    }
+
     private void SetOtherPlatformPath()
     {
         MetaData.FilePath = AssetManagerUtil.GetPersistentDataPath() + "/EncryptedSavedData/SavedData.dat";
@@ -727,19 +749,67 @@ public class SharedDataBytesStorage : ISharedDataStorage
 
     public override void Autoload(ISharedDataStorage.OnAutoloadFinish onFinishDelegate)
     {
-        JSONClass rootNode = this.Load(true, -1, -1);
+        int cachedPage = CurrentSavePage;
+
+        if (cachedPage != 0) // SavedData_ww_Memoria_Autosave.dat is on page n°0 so we need to get back on default folder.
+        {
+            CurrentSavePage = 0;
+            MetaData.FilePath = null;
+            SetPCPath();
+        }
+
+        JSONClass rootNode = Load(true, -1, -1);
+
+        if (cachedPage != 0)
+        {
+            CurrentSavePage = cachedPage;
+            UpdatePathForPage();
+        }
+
         onFinishDelegate(rootNode);
     }
 
     public override void Autosave(JSONClass rootNode, ISharedDataStorage.OnAutosaveFinish onFinishDelegate)
     {
-        Boolean isSuccess = this.Save(true, -1, -1, rootNode);
+        int cachedPage = CurrentSavePage;
+
+        if (cachedPage != 0) // SavedData_ww_Memoria_Autosave.dat is on page n°0 so we need to get back on default folder.
+        {
+            CurrentSavePage = 0;
+            MetaData.FilePath = null;
+            SetPCPath();
+        }
+
+        Boolean isSuccess = Save(true, -1, -1, rootNode);
+
+        if (cachedPage != 0)
+        {
+            CurrentSavePage = cachedPage;
+            UpdatePathForPage();
+        }
+
         onFinishDelegate(isSuccess);
     }
 
     public override void HasAutoload(ISharedDataStorage.OnHasAutoloadFinish onFinishDelegate)
     {
-        JSONClass a = this.Load(true, -1, -1);
+        int cachedPage = CurrentSavePage;
+
+        if (cachedPage != 0) // SavedData_ww_Memoria_Autosave.dat is on page n°0 so we need to get back on default folder.
+        {
+            CurrentSavePage = 0;
+            MetaData.FilePath = null;
+            SetPCPath();
+        }
+
+        JSONClass a = Load(true, -1, -1);
+
+        if (cachedPage != 0)
+        {
+            CurrentSavePage = cachedPage;
+            UpdatePathForPage();
+        }
+
         onFinishDelegate(a != null);
     }
 
