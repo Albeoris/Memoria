@@ -82,7 +82,7 @@ namespace Memoria
                         }
                         if ((command.AbilityType & 0x10) != 0 && caster.bi.player != 0) // Use weapon properties
                         {
-                            v.ApplyElementFullStack(v.Caster.WeaponElement, v.Caster.WeaponElement);
+                            v.ApplyElementFullStack(v.Caster.WeaponElementEx, v.Caster.WeaponElementEx);
                         }
                         if ((v.Context.Flags & (BattleCalcFlags.Miss | BattleCalcFlags.Guard)) != 0)
                         {

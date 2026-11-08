@@ -10,6 +10,7 @@ public class BTL_SCENE
     private const Byte VERSION_VANILLA = 7;
     private const Byte VERSION_EXTENDED = 8;
     private const Byte VERSION_SEQPATH = 9;
+    private const Byte VERSION_ELEMCLASSEX = 10;
 
     public void ReadBattleScene(String name)
     {
@@ -126,14 +127,28 @@ public class BTL_SCENE
                 monStats.trans = binaryReader.ReadByte();
                 monStats.cur_capa = binaryReader.ReadByte();
                 monStats.max_capa = binaryReader.ReadByte();
-                monParam.GuardElement = binaryReader.ReadByte();
-                monParam.AbsorbElement = binaryReader.ReadByte();
-                monParam.HalfElement = binaryReader.ReadByte();
-                monParam.WeakElement = binaryReader.ReadByte();
+                if (header.Ver >= VERSION_ELEMCLASSEX)
+                {
+                    monParam.GuardElement = ElementSet.ReadBinary(binaryReader);
+                    monParam.AbsorbElement = ElementSet.ReadBinary(binaryReader);
+                    monParam.HalfElement = ElementSet.ReadBinary(binaryReader);
+                    monParam.WeakElement = ElementSet.ReadBinary(binaryReader);
+                }
+                else
+                {
+                    monParam.GuardElement = new ElementSet((EffectElement)binaryReader.ReadByte());
+                    monParam.AbsorbElement = new ElementSet((EffectElement)binaryReader.ReadByte());
+                    monParam.HalfElement = new ElementSet((EffectElement)binaryReader.ReadByte());
+                    monParam.WeakElement = new ElementSet((EffectElement)binaryReader.ReadByte());
+                }
+                monParam.BonusElement = new ElementSet();
                 if (header.Ver > VERSION_VANILLA)
                 {
                     monParam.Level = (Byte)binaryReader.ReadUInt32();
-                    monParam.Category = binaryReader.ReadByte();
+                    if (header.Ver >= VERSION_ELEMCLASSEX)
+                        monParam.Category = EnemyCategorySet.ReadBinary(binaryReader);
+                    else
+                        monParam.Category = new EnemyCategorySet((EnemyCategory)binaryReader.ReadByte());
                     monParam.HitRate = binaryReader.ReadInt32();
                     monParam.PhysicalDefence = binaryReader.ReadInt32();
                     monParam.PhysicalEvade = binaryReader.ReadInt32();
@@ -144,7 +159,7 @@ public class BTL_SCENE
                 else
                 {
                     monParam.Level = binaryReader.ReadByte();
-                    monParam.Category = binaryReader.ReadByte();
+                    monParam.Category = new EnemyCategorySet((EnemyCategory)binaryReader.ReadByte());
                     monParam.HitRate = binaryReader.ReadByte();
                     monParam.PhysicalDefence = binaryReader.ReadByte();
                     monParam.PhysicalEvade = binaryReader.ReadByte();
@@ -207,7 +222,10 @@ public class BTL_SCENE
                 {
                     abilRef.ScriptId = binaryReader.ReadInt32();
                     abilRef.Power = binaryReader.ReadInt32();
-                    abilRef.Elements = binaryReader.ReadByte();
+                    if (header.Ver >= VERSION_ELEMCLASSEX)
+                        abilRef.Elements = ElementSet.ReadBinary(binaryReader);
+                    else
+                        abilRef.Elements = new ElementSet((EffectElement)binaryReader.ReadByte());
                     abilRef.Rate = binaryReader.ReadInt32();
                     monAbility.Category = binaryReader.ReadByte();
                     monAbility.AddStatusNo = (StatusSetId)binaryReader.ReadInt32();
@@ -219,7 +237,7 @@ public class BTL_SCENE
                 {
                     abilRef.ScriptId = binaryReader.ReadByte();
                     abilRef.Power = binaryReader.ReadByte();
-                    abilRef.Elements = binaryReader.ReadByte();
+                    abilRef.Elements = new ElementSet((EffectElement)binaryReader.ReadByte());
                     abilRef.Rate = binaryReader.ReadByte();
                     monAbility.Category = binaryReader.ReadByte();
                     monAbility.AddStatusNo = (StatusSetId)binaryReader.ReadByte();

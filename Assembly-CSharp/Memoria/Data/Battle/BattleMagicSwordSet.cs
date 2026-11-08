@@ -29,7 +29,7 @@ namespace Memoria.Data
             if (metadata.HasField("BaseAbilities")) BaseAbilities = CsvParser.AnyAbilityArray(raw[index++]);
             if (metadata.HasField("UnlockedAbilities")) UnlockedAbilities = CsvParser.AnyAbilityArray(raw[index++]);
 
-            if (metadata.HasOption($"IncludeStatusBlockers"))
+            if (metadata.HasOption("IncludeStatusBlockers"))
             {
                 if (metadata.HasField("SupporterBlockingStatus")) SupporterBlockingStatus = BattleStatusEntry.ParseBattleStatus(raw[index++], metadata, true);
                 if (metadata.HasField("BeneficiaryBlockingStatus")) BeneficiaryBlockingStatus = BattleStatusEntry.ParseBattleStatus(raw[index++], metadata, true);
@@ -56,7 +56,7 @@ namespace Memoria.Data
             sw.Int32((Int32)Beneficiary);
             sw.AnyAbilityArray(BaseAbilities);
             sw.AnyAbilityArray(UnlockedAbilities);
-            if (metadata.HasOption($"IncludeStatusBlockers"))
+            if (metadata.HasOption("IncludeStatusBlockers"))
             {
                 BattleStatusEntry.WriteBattleStatus(sw, metadata, SupporterBlockingStatus, true);
                 BattleStatusEntry.WriteBattleStatus(sw, metadata, BeneficiaryBlockingStatus, true);

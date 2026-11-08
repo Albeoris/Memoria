@@ -1,5 +1,6 @@
 using Memoria.Data;
 using System;
+using System.Linq;
 
 namespace Memoria.Scripts.Battle
 {
@@ -20,12 +21,14 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            _v.Target.WeakElement |= _v.Command.Element;
-            _v.Target.GuardElement &= ~_v.Command.Element;
-            _v.Target.AbsorbElement &= ~_v.Command.Element;
-            _v.Target.HalfElement &= ~_v.Command.Element;
+            if (_v.Command.ElementEx.Count == 0)
+                return;
+            _v.Target.WeakElementEx.AddMultiple(_v.Command.ElementEx);
+            _v.Target.GuardElementEx.ExceptWith(_v.Command.ElementEx);
+            _v.Target.AbsorbElementEx.ExceptWith(_v.Command.ElementEx);
+            _v.Target.HalfElementEx.ExceptWith(_v.Command.ElementEx);
 
-            UiState.SetBattleFollowMessage(BattleMesages.BecameWeakAgainst, _v.Command.Element);
+            UiState.SetBattleFollowMessage(BattleMesages.BecameWeakAgainst, _v.Command.ElementEx.First());
         }
     }
 }

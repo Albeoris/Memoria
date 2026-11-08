@@ -90,7 +90,7 @@ namespace Memoria.Data
                     WeaponSound = sounds;
             }
 
-            if (metadata.HasOption($"IncludeWeaponOffsets") && metadata.HasField("WeaponOffsets"))
+            if (metadata.HasOption("IncludeWeaponOffsets") && metadata.HasField("WeaponOffsets"))
             {
                 WeaponSize = CsvParser.SingleArray(raw[index++]);
                 WeaponOffsetPos = CsvParser.SingleArray(raw[index++]);
@@ -120,7 +120,7 @@ namespace Memoria.Data
                     if (TranceStatusOffsetZ.Length < 6)
                         Array.Resize(ref TranceStatusOffsetZ, 6);
                     TranceWeaponSound = CsvParser.Int32Array(raw[index++]);
-                    if (metadata.HasOption($"IncludeWeaponOffsets"))
+                    if (metadata.HasOption("IncludeWeaponOffsets"))
                     {
                         TranceWeaponSize = CsvParser.SingleArray(raw[index++]);
                         TranceWeaponOffsetPos = CsvParser.SingleArray(raw[index++]);
@@ -155,7 +155,7 @@ namespace Memoria.Data
             
             if (metadata.HasOption($"Include{nameof(WeaponSound)}"))
                 writer.Int32Array(WeaponSound);
-            if (metadata.HasOption($"IncludeWeaponOffsets"))
+            if (metadata.HasOption("IncludeWeaponOffsets"))
             {
                 writer.SingleArray(WeaponSize);
                 writer.SingleArray(WeaponOffsetPos);
@@ -174,7 +174,7 @@ namespace Memoria.Data
                     writer.SByteArray(TranceStatusOffsetY);
                     writer.SByteArray(TranceStatusOffsetZ);
                     writer.Int32Array(TranceWeaponSound);
-                    if (metadata.HasOption($"IncludeWeaponOffsets"))
+                    if (metadata.HasOption("IncludeWeaponOffsets"))
                     {
                         writer.SingleArray(TranceWeaponSize);
                         writer.SingleArray(TranceWeaponOffsetPos);
@@ -192,7 +192,7 @@ namespace Memoria.Data
                     writer.SByteArray(StatusOffsetY);
                     writer.SByteArray(StatusOffsetZ);
                     writer.Int32Array(WeaponSound);
-                    if (metadata.HasOption($"IncludeWeaponOffsets"))
+                    if (metadata.HasOption("IncludeWeaponOffsets"))
                     {
                         writer.SingleArray(WeaponSize);
                         writer.SingleArray(WeaponOffsetPos);

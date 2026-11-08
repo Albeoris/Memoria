@@ -25,7 +25,7 @@ namespace Memoria.Data
 
         public void ParseDataEntry(String[] raw, CsvMetaData metadata, ref Int32 index)
         {
-            if (metadata.HasOption($"IncludeFullSet") || metadata.IsAppendMode)
+            if (metadata.HasOption("IncludeFullSet") || metadata.IsAppendMode)
             {
                 if (metadata.HasField("Attack")) Regular[0] = (BattleCommandId)CsvParser.Int32(raw[index++]);
                 if (metadata.HasField("Defend")) Regular[1] = (BattleCommandId)CsvParser.Int32(raw[index++]);
@@ -68,7 +68,7 @@ namespace Memoria.Data
         {
             if (metadata.HasOption($"Include{nameof(Id)}"))
                 sw.Int32((Int32)Id);
-            if (metadata.HasOption($"IncludeFullSet"))
+            if (metadata.HasOption("IncludeFullSet"))
             {
                 for (Int32 i = 0; i < Regular.Length; i++)
                     sw.Int32((Int32)Regular[i]);

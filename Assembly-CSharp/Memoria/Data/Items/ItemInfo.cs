@@ -50,7 +50,7 @@ namespace Memoria.Data
             if (metadata.HasField("EffectId")) EffectId = hasAuxIds || metadata.HasOption($"IncludeEffectId") ? CsvParser.Int32(raw[index++]) : -1;
 
             if (metadata.HasField("Price")) Data.price = CsvParser.UInt32(raw[index++]);
-            if (!metadata.HasOption($"IncludeSellingPrice"))
+            if (!metadata.HasOption("IncludeSellingPrice"))
                 Data.selling_price = (Int32)(Data.price / 2);
             else if (metadata.HasField("SellingPrice"))
                 Data.selling_price = CsvParser.Int32(raw[index++]);
@@ -74,7 +74,7 @@ namespace Memoria.Data
 
             if (metadata.HasField("Order")) Data.sort = CsvParser.Single(raw[index++]);
 
-            if (metadata.HasOption($"IncludeUseCondition") && metadata.HasField("UseCondition"))
+            if (metadata.HasOption("IncludeUseCondition") && metadata.HasField("UseCondition"))
                 Data.use_condition = CsvParser.String(raw[index++]);
             else
                 Data.use_condition = String.Empty;
@@ -96,18 +96,18 @@ namespace Memoria.Data
 
         public void WriteEntry(CsvWriter writer, CsvMetaData metadata)
         {
-            Boolean hasAuxIds = metadata.HasOption($"IncludeAuxiliaryIds");
+            Boolean hasAuxIds = metadata.HasOption("IncludeAuxiliaryIds");
             if (metadata.HasOption($"Include{nameof(Id)}"))
                 writer.Int32((Int32)Id);
-            if (hasAuxIds || metadata.HasOption($"IncludeWeaponId"))
+            if (hasAuxIds || metadata.HasOption("IncludeWeaponId"))
                 writer.Int32(Data.weapon_id);
-            if (hasAuxIds || metadata.HasOption($"IncludeArmorId"))
+            if (hasAuxIds || metadata.HasOption("IncludeArmorId"))
                 writer.Int32(Data.armor_id);
-            if (hasAuxIds || metadata.HasOption($"IncludeEffectId"))
+            if (hasAuxIds || metadata.HasOption("IncludeEffectId"))
                 writer.Int32(Data.effect_id);
 
             writer.UInt32(Data.price);
-            if (metadata.HasOption($"IncludeSellingPrice"))
+            if (metadata.HasOption("IncludeSellingPrice"))
                 writer.Int32(Data.selling_price);
             writer.Int32(Data.shape);
             writer.Int32(Data.color);
@@ -126,7 +126,7 @@ namespace Memoria.Data
 
             writer.Single(Data.sort);
 
-            if (metadata.HasOption($"IncludeUseCondition"))
+            if (metadata.HasOption("IncludeUseCondition"))
                 writer.String(Data.use_condition);
 
             writer.Boolean(Zidane);

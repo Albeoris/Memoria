@@ -1,15 +1,43 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class AnimationFactory
+public static class AnimationFactory
 {
     public static void LoadAnimationUseInEvent(String animationEventData)
     {
-        AnimationFactory.animationEventClip.Clear();
-        AnimationFactory.animationMapping.Clear();
-        String animDB = AssetManager.LoadString("CommonAsset/EventEngine/EventAnimation/" + animationEventData + ".txt");
+        if (!commonLoaded)
+        {
+            // Allow the use of a "Common.txt" event animation file to preload animations used in pretty much any scene
+            commonLoaded = true;
+            LoadAnimationUseInEvent("Common");
+            AnimationFactory.commonAnimationClipName = new HashSet<String>(AnimationFactory.animationEventClip.Keys);
+            foreach (KeyValuePair<String, List<String>> kvp in AnimationFactory.animationMapping)
+                AnimationFactory.commonAnimationMapping[kvp.Key] = kvp.Value.Count;
+        }
+        else if (AnimationFactory.commonAnimationClipName.Count == 0 && AnimationFactory.commonAnimationMapping.Count == 0)
+        {
+            AnimationFactory.animationEventClip.Clear();
+            AnimationFactory.animationMapping.Clear();
+        }
+        else
+        {
+            List<String> mappingToFlush = new List<String>();
+            foreach (String str in AnimationFactory.animationEventClip.Keys.Where(name => !AnimationFactory.commonAnimationClipName.Contains(name)).ToArray())
+                AnimationFactory.animationEventClip.Remove(str);
+            foreach (KeyValuePair<String, List<String>> kvp in AnimationFactory.animationMapping)
+            {
+                if (AnimationFactory.commonAnimationMapping.TryGetValue(kvp.Key, out Int32 animCount))
+                    kvp.Value.RemoveRange(animCount, kvp.Value.Count - animCount);
+                else
+                    mappingToFlush.Add(kvp.Key);
+            }
+            foreach (String str in mappingToFlush)
+                AnimationFactory.animationMapping.Remove(str);
+        }
+        String animDB = AssetManager.LoadString("CommonAsset/EventEngine/EventAnimation/" + animationEventData + ".txt", true);
         if (animDB == null)
             return;
         animDB = animDB.Replace("\r", String.Empty);
@@ -36,8 +64,13 @@ public class AnimationFactory
             {
                 String modelName = modelAnimDB.Split(':')[0];
                 modelAnimDB = modelAnimDB.Replace(modelName + ":", String.Empty);
-                String[] animNames = modelAnimDB.Split(',');
-                AnimationFactory.animationMapping.Add(modelName, animNames);
+                if (!AnimationFactory.animationMapping.TryGetValue(modelName, out List<String> animList))
+                {
+                    animList = new List<String>();
+                    AnimationFactory.animationMapping.Add(modelName, animList);
+                }
+                foreach (String animName in modelAnimDB.Split(','))
+                    animList.Add(animName);
             }
         }
     }
@@ -45,10 +78,10 @@ public class AnimationFactory
     private static String GetAnimationFolder(String animationName)
     {
         String[] nameToken = animationName.Split('_');
-        String animPath = $"GEO_{nameToken[1]}_{nameToken[2]}_{nameToken[3]}";
-        if (AnimationFactory.animationMapping.ContainsKey(animPath))
-            animPath = AnimationFactory.animationPathTable[animPath];
-        return animPath;
+        String modelName = $"GEO_{nameToken[1]}_{nameToken[2]}_{nameToken[3]}";
+        if (AnimationFactory.animationPathTable.TryGetValue(modelName, out String renamedModelName))
+            modelName = renamedModelName;
+        return modelName;
     }
 
     public static void AddAnimWithAnimatioName(GameObject go, String animationName)
@@ -68,12 +101,10 @@ public class AnimationFactory
     public static void AddAnimToGameObject(GameObject go, String modelName, Boolean addAutoAnim = false)
     {
         Animation goAnimations = go.GetComponent<Animation>();
-        if (AnimationFactory.animationMapping.ContainsKey(modelName))
+        if (AnimationFactory.animationMapping.TryGetValue(modelName, out List<String> animNameList))
         {
-            String[] animNameList = AnimationFactory.animationMapping[modelName];
-            for (Int32 i = 0; i < animNameList.Length; i++)
+            foreach (String animName in animNameList)
             {
-                String animName = animNameList[i];
                 if (goAnimations.GetClip(animName) == null)
                 {
                     AnimationClip clip = AnimationFactory.animationEventClip[animName];
@@ -264,7 +295,9 @@ public class AnimationFactory
     };*/
 
     private static Dictionary<String, AnimationClip> animationEventClip = new Dictionary<String, AnimationClip>();
-    private static Dictionary<String, String[]> animationMapping = new Dictionary<String, String[]>();
+    private static Dictionary<String, List<String>> animationMapping = new Dictionary<String, List<String>>();
 
-    public static Int64 timeUse;
+    private static HashSet<String> commonAnimationClipName = new HashSet<String>();
+    private static Dictionary<String, Int32> commonAnimationMapping = new Dictionary<String, Int32>();
+    private static Boolean commonLoaded = false;
 }

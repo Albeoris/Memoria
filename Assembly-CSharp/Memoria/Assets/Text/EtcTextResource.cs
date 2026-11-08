@@ -8,6 +8,7 @@ namespace Memoria.Assets
         BattleMessages,
         Libra,
         WorldLocations,
-        Chocobo
+        Chocobo,
+        // ElementNames and EnemyCategoryNames are optional resources handled separately
     }
 }

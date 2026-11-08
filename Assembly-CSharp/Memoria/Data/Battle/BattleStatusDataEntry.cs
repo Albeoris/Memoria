@@ -42,7 +42,7 @@ namespace Memoria.Data
             if (metadata.HasField("ClearOnApply")) ClearOnApply = BattleStatusEntry.ParseBattleStatus(raw[index++], metadata);
             if (metadata.HasField("ImmunityProvided")) ImmunityProvided = BattleStatusEntry.ParseBattleStatus(raw[index++], metadata);
 
-            if (metadata.HasOption($"IncludeVisuals"))
+            if (metadata.HasOption("IncludeVisuals"))
             {
                 Single[] arrayf;
                 if (metadata.HasField("SPSEffect"))
@@ -190,7 +190,7 @@ namespace Memoria.Data
             BattleStatusEntry.WriteBattleStatus(sw, metadata, ClearOnApply);
             BattleStatusEntry.WriteBattleStatus(sw, metadata, ImmunityProvided);
 
-            if (metadata.HasOption($"IncludeVisuals"))
+            if (metadata.HasOption("IncludeVisuals"))
             {
                 sw.Int32(SPSEffect);
                 sw.Int32(SPSAttach);
