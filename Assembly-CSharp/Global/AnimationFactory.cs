@@ -53,8 +53,9 @@ public static class AnimationFactory
                 String animationFolder = AnimationFactory.GetAnimationFolder(animName);
                 String animPath = "Animations/" + animationFolder + "/" + animName;
                 animPath = AnimationFactory.GetRenameAnimationPath(animPath);
-                AnimationClip value = AssetManager.Load<AnimationClip>(animPath, false);
-                AnimationFactory.animationEventClip.Add(animName, value);
+                AnimationClip clip = AssetManager.Load<AnimationClip>(animPath, false);
+                if (clip != null)
+                    AnimationFactory.animationEventClip.Add(animName, clip);
             }
         }
         for (Int32 i = 1; i < allLines.Length; i++)
@@ -102,16 +103,9 @@ public static class AnimationFactory
     {
         Animation goAnimations = go.GetComponent<Animation>();
         if (AnimationFactory.animationMapping.TryGetValue(modelName, out List<String> animNameList))
-        {
             foreach (String animName in animNameList)
-            {
-                if (goAnimations.GetClip(animName) == null)
-                {
-                    AnimationClip clip = AnimationFactory.animationEventClip[animName];
+                if (goAnimations.GetClip(animName) == null && AnimationFactory.animationEventClip.TryGetValue(animName, out AnimationClip clip))
                     goAnimations.AddClip(clip, animName);
-                }
-            }
-        }
         if (addAutoAnim)
         {
             String animPath = "Animations/" + modelName;
@@ -179,8 +173,11 @@ public static class AnimationFactory
         return animationPath;
     }
 
+    // This rename path table adds issues; it used to be discarded because of a weird lookup condition but doesn't lead to correct animation paths sometimes (eg. Animations/234/4521 for Lani's Axe)
+    // TODO: check which rename paths are actually relevant (provided that it concerns animation preloading anyways)
     public static Dictionary<String, String> animationPathTable = new Dictionary<String, String>
     {
+        /*
         { "GEO_MAIN_F1_GRN", "GEO_MAIN_F0_GRN" },
         { "GEO_MAIN_F1_STN", "GEO_MAIN_F0_STN" },
         { "GEO_MAIN_F3_GRN", "GEO_MAIN_F4_GRN" },
@@ -283,16 +280,8 @@ public static class AnimationFactory
         { "GEO_MON_F0_EEE", "GEO_MON_F0_EFM" },
         { "GEO_MON_F0_FFF", "GEO_MON_F0_EFM" },
         { "GEO_MON_F0_WWW", "GEO_MON_F0_EFM" }
+        */
     };
-
-    /*private static String[] defaultAnimation = new String[]
-    {
-        "IDLE",
-        "WALK",
-        "RUN",
-        "TURN_L",
-        "TURN_R"
-    };*/
 
     private static Dictionary<String, AnimationClip> animationEventClip = new Dictionary<String, AnimationClip>();
     private static Dictionary<String, List<String>> animationMapping = new Dictionary<String, List<String>>();
