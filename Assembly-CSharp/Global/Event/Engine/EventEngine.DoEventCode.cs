@@ -1510,7 +1510,7 @@ public partial class EventEngine
                     {
                         if (this.gMode == 1)
                         {
-                            if (this.gCur.sid == 8 && mapNo == 62 || this.gCur.sid == 2 && mapNo == 3010)
+                            if (this.gCur.sid == 8 && mapNo == 62 || this.gCur.sid == 2 && mapNo == 3010) // Theater, King Leo's sword attached to bone 19 instead of 14
                                 bone_index = 19;
                             geo.geoAttach(attachedGo, carryingGo, bone_index);
                         }
