@@ -4578,6 +4578,24 @@ Check them out at https://www.nexusmods.com/finalfantasy9/mods/</Description>
 	<MinimumMemoriaVersion>2024-12-04</MinimumMemoriaVersion>
 </Mod>
 
+
+<Mod>
+	<Name>CanaryMod</Name>
+	<Version>1.5</Version>
+	<Author>stroduces</Author>
+	<Website>https://www.mediafire.com/file/ve42pxswdlr1k8r/CanaryMod+1.5-121-1-5-1770030137.zip/file</Website>
+	<InstallationPath>CanaryMod</InstallationPath>
+	<ReleaseDate>2026-05-04</ReleaseDate>
+	<ReleaseDateOriginal>2025-12-09</ReleaseDateOriginal>
+	<Category>Gameplay</Category>
+	<Description>
+	CanaryMod. Subjobs. New Trances. New Scenes. Hunts Menu. Misc Tweaks. Full details here: https://www.nexusmods.com/finalfantasy9/mods/121?tab=description
+	</Description>
+	<PreviewFile>121-1765298400-592120289.png</PreviewFile>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/121/121-1765298400-592120289.png</PreviewFileUrl>
+</Mod>
+
+	
 <Mod>
 	<Name>VVsRandomizer</Name>
 	<Version>6.3</Version>
