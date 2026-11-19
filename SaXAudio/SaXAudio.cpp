@@ -1,4 +1,4 @@
-﻿// MIT License
+// MIT License
 // 
 // Copyright(c) 2025 SamsamTS
 // 
@@ -31,6 +31,169 @@ namespace SaXAudio
 #define CHAIN_ECHO 2
 #define POOL_SIZE_VOICES 50
 
+    // -------------------------------------------------------------------------
+    // Persistent Mono-safe Worker Thread for Callbacks & Voice Cleanup
+    // Prevents ephemeral C++ threads from calling mono_jit_thread_attach
+    // -------------------------------------------------------------------------
+    enum class WorkerJobType
+    {
+        RemoveVoice,
+        VoiceFinishedCallback,
+        BankDecodedCallback
+    };
+
+    struct WorkerJob
+    {
+        WorkerJobType type;
+        INT32 id = 0;
+        ::SaXAudio::OnDecodedCallback decodedCallback = nullptr;
+        const BYTE* oggBuffer = nullptr;
+        ::SaXAudio::OnFinishedCallback finishedCallback = nullptr;
+    };
+
+    static mutex g_workerMutex;
+    static condition_variable g_workerCv;
+    static queue<WorkerJob> g_workerQueue;
+    static atomic<bool> g_workerRunning{ false };
+    static thread g_workerThread;
+    static void (*g_removeVoiceFn)(INT32) = nullptr;
+
+    typedef void* (__cdecl* mono_get_root_domain_fn)(void);
+    typedef void* (__cdecl* mono_thread_attach_fn)(void* domain);
+    typedef void* (__cdecl* mono_thread_current_fn)(void);
+    typedef void(__cdecl* mono_thread_detach_fn)(void* thread);
+
+    static void CallbackWorkerLoop()
+    {
+        HMODULE hMono = GetModuleHandleW(L"mono.dll");
+        if (!hMono)
+            hMono = GetModuleHandleW(L"mono-2.0-bdwgc.dll");
+
+        mono_get_root_domain_fn p_mono_get_root_domain = nullptr;
+        mono_thread_attach_fn p_mono_thread_attach = nullptr;
+        mono_thread_current_fn p_mono_thread_current = nullptr;
+        mono_thread_detach_fn p_mono_thread_detach = nullptr;
+
+        void* monoThread = nullptr;
+
+        if (hMono)
+        {
+            p_mono_get_root_domain = reinterpret_cast<mono_get_root_domain_fn>(GetProcAddress(hMono, "mono_get_root_domain"));
+            p_mono_thread_attach = reinterpret_cast<mono_thread_attach_fn>(GetProcAddress(hMono, "mono_thread_attach"));
+            p_mono_thread_current = reinterpret_cast<mono_thread_current_fn>(GetProcAddress(hMono, "mono_thread_current"));
+            p_mono_thread_detach = reinterpret_cast<mono_thread_detach_fn>(GetProcAddress(hMono, "mono_thread_detach"));
+
+            // Attach once on a pure native C++ stack before any JIT reverse P/Invoke wrapper runs
+            if (p_mono_get_root_domain && p_mono_thread_attach)
+            {
+                void* rootDomain = p_mono_get_root_domain();
+                if (rootDomain)
+                    monoThread = p_mono_thread_attach(rootDomain);
+            }
+        }
+
+        while (true)
+        {
+            WorkerJob job{};
+            {
+                unique_lock<mutex> lock(g_workerMutex);
+                g_workerCv.wait(lock, [] { return !g_workerQueue.empty() || !g_workerRunning.load(); });
+
+                if (g_workerQueue.empty() && !g_workerRunning.load())
+                    break;
+
+                job = g_workerQueue.front();
+                g_workerQueue.pop();
+            }
+
+            switch (job.type)
+            {
+            case WorkerJobType::RemoveVoice:
+                if (g_removeVoiceFn)
+                    g_removeVoiceFn(job.id);
+                break;
+            case WorkerJobType::VoiceFinishedCallback:
+                if (job.finishedCallback)
+                    (*job.finishedCallback)(job.id);
+                break;
+            case WorkerJobType::BankDecodedCallback:
+                if (job.decodedCallback)
+                    (*job.decodedCallback)(job.id, job.oggBuffer);
+                break;
+            }
+        }
+
+        if (monoThread && p_mono_thread_detach)
+        {
+            if (p_mono_thread_current)
+                monoThread = p_mono_thread_current();
+            if (monoThread)
+                p_mono_thread_detach(monoThread);
+        }
+    }
+
+    static void StartCallbackWorker(void (*removeVoiceFn)(INT32))
+    {
+        lock_guard<mutex> lock(g_workerMutex);
+        g_removeVoiceFn = removeVoiceFn;
+        if (!g_workerRunning.load())
+        {
+            g_workerRunning = true;
+            g_workerThread = thread(CallbackWorkerLoop);
+        }
+    }
+
+    static void StopCallbackWorker()
+    {
+        {
+            lock_guard<mutex> lock(g_workerMutex);
+            g_workerRunning = false;
+        }
+        g_workerCv.notify_all();
+
+        if (g_workerThread.joinable())
+            g_workerThread.join();
+    }
+
+    void EnqueueRemoveVoice(const INT32 voiceID)
+    {
+        if (!g_workerRunning.load())
+            return;
+        {
+            lock_guard<mutex> lock(g_workerMutex);
+            g_workerQueue.push({ WorkerJobType::RemoveVoice, voiceID, nullptr, nullptr, nullptr });
+        }
+        g_workerCv.notify_one();
+    }
+
+    static void EnqueueFinishedCallback(const INT32 voiceID, const ::SaXAudio::OnFinishedCallback callback)
+    {
+        if (!callback || !g_workerRunning.load())
+            return;
+        {
+            lock_guard<mutex> lock(g_workerMutex);
+            g_workerQueue.push({ WorkerJobType::VoiceFinishedCallback, voiceID, nullptr, nullptr, callback });
+        }
+        g_workerCv.notify_one();
+    }
+
+    static void EnqueueDecodedCallback(const INT32 bankID, const ::SaXAudio::OnDecodedCallback callback, const BYTE* oggBuffer)
+    {
+        if (!callback)
+            return;
+        if (!g_workerRunning.load())
+        {
+            (*callback)(bankID, oggBuffer);
+            return;
+        }
+        {
+            lock_guard<mutex> lock(g_workerMutex);
+            g_workerQueue.push({ WorkerJobType::BankDecodedCallback, bankID, callback, oggBuffer, nullptr });
+        }
+        g_workerCv.notify_one();
+    }
+    // -------------------------------------------------------------------------
+
     static DOUBLE SamplesToMiB(const UINT64 samples)
     {
         return (DOUBLE)(samples * sizeof(FLOAT)) / (1024.0 * 1024.0);
@@ -44,6 +207,7 @@ namespace SaXAudio
             return true;
 
         StartLogging();
+        StartCallbackWorker([](INT32 voiceID) { SaXAudio::Instance.RemoveVoice(voiceID); });
 
         HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
         switch (hr)
@@ -161,7 +325,8 @@ namespace SaXAudio
     void SaXAudio::PrepareForShutdown()
     {
         // A joinable std::thread invokes std::terminate when its destructor runs.
-        // Join the debug logger before the CRT destroys the DLL's static objects.
+        // Join background threads before the CRT destroys the DLL's static objects.
+        StopCallbackWorker();
         StopLogging();
     }
 
@@ -189,6 +354,7 @@ namespace SaXAudio
             return;
         Log(0, 0, "[PauseAll]");
 
+        lock_guard<mutex> lock(m_voiceMutex);
         for (auto& it : m_voices)
         {
             if (!it.second->IsProtected && (busID == 0 || it.second->BusID == busID))
@@ -202,6 +368,7 @@ namespace SaXAudio
             return;
         Log(0, 0, "[ResumeAll]");
 
+        lock_guard<mutex> lock(m_voiceMutex);
         for (auto& it : m_voices)
         {
             if (!it.second->IsProtected && (busID == 0 || it.second->BusID == busID))
@@ -215,6 +382,7 @@ namespace SaXAudio
             return;
         Log(0, 0, "[StopAll]");
 
+        lock_guard<mutex> lock(m_voiceMutex);
         for (auto& it : m_voices)
         {
             if (!it.second->IsProtected && (busID == 0 || it.second->BusID == busID))
@@ -238,7 +406,7 @@ namespace SaXAudio
         }
     }
 
-    INT32 SaXAudio::AddBankEntry(const OnDecodedCallback callback)
+    INT32 SaXAudio::AddBankEntry(const ::SaXAudio::OnDecodedCallback callback)
     {
         if (!m_XAudio)
             return 0;
@@ -252,41 +420,53 @@ namespace SaXAudio
 
     void SaXAudio::RemoveBankEntry(const INT32 bankID)
     {
-        lock_guard<mutex> lock(m_bankMutex);
+        ::SaXAudio::OnDecodedCallback callbackToCall = nullptr;
+        const BYTE* oggBufferToFree = nullptr;
 
-        BankData* data = GetEntry(data, m_bank, bankID);
-        if (!data) return;
-        data->autoRemove = true;
-        data->disposed = true;
-
-        if (m_XAudio)
         {
-            // Let voices finish before removing
-            for (auto& it : m_voices)
+            lock_guard<mutex> lock(m_bankMutex);
+
+            BankData* data = GetEntry(data, m_bank, bankID);
+            if (!data) return;
+            data->autoRemove = true;
+            data->disposed = true;
+
+            if (m_XAudio)
             {
-                if (it.second->BankID == bankID)
+                lock_guard<mutex> voiceLock(m_voiceMutex);
+                // Let voices finish before removing
+                for (auto& it : m_voices)
                 {
-                    // We let autoRemove delete the bankID
-                    Log(bankID, 0, "[RemoveBankEntry] Waiting for voices to finish");
-                    return;
+                    if (it.second->BankID == bankID)
+                    {
+                        // We let autoRemove delete the bankID
+                        Log(bankID, 0, "[RemoveBankEntry] Waiting for voices to finish");
+                        return;
+                    }
                 }
             }
+
+            if (data->buffer.Data)
+            {
+                delete[] data->buffer.Data;
+                Log(bankID, 0, "[RemoveBankEntry] Freed buffer samples: " + to_string(data->buffer.Size) + " reason=no-cache");
+                data->buffer = { 0 };
+            }
+
+            // onDecodedCallback guaranteed to be called
+            if (data->onDecodedCallback)
+            {
+                callbackToCall = data->onDecodedCallback;
+                oggBufferToFree = data->Oggbuffer;
+                data->onDecodedCallback = nullptr;
+            }
+            m_bank.erase(bankID);
         }
 
-        if (data->buffer.Data)
+        if (callbackToCall)
         {
-            delete[] data->buffer.Data;
-            Log(bankID, 0, "[RemoveBankEntry] Freed buffer samples: " + to_string(data->buffer.Size) + " reason=no-cache");
-            data->buffer = { 0 };
+            EnqueueDecodedCallback(bankID, callbackToCall, oggBufferToFree);
         }
-
-        // onDecodedCallback guarantied to be called
-        if (data->onDecodedCallback)
-        {
-            (*data->onDecodedCallback)(bankID, data->Oggbuffer);
-            data->onDecodedCallback = nullptr;
-        }
-        m_bank.erase(bankID);
     }
 
     void SaXAudio::AutoRemoveBank(const INT32 bankID)
@@ -340,10 +520,13 @@ namespace SaXAudio
         BusData* bus = GetEntry(bus, m_buses, busID);
         if (!bus) return;
 
-        for (auto& it : m_voices)
         {
-            if (it.second->BusID == busID)
-                it.second->Stop();
+            lock_guard<mutex> voiceLock(m_voiceMutex);
+            for (auto& it : m_voices)
+            {
+                if (it.second->BusID == busID)
+                    it.second->Stop();
+            }
         }
 
         for (UINT32 i = 0; i < 3; i++)
@@ -471,7 +654,11 @@ namespace SaXAudio
 
         lock_guard<mutex> bankLock(m_bankMutex);
         BankData* data = GetEntry(data, m_bank, bankID);
-        if (!data) return FALSE;
+        if (!data)
+        {
+            stb_vorbis_close(vorbis);
+            return FALSE;
+        }
 
         data->Oggbuffer = buffer;
 
@@ -482,6 +669,7 @@ namespace SaXAudio
 
         // Get total samples count and allocate the buffer
         data->totalSamples = stb_vorbis_stream_length_in_samples(vorbis);
+        data->decodedSamples = 0;
         data->buffer = GetBuffer(data->totalSamples * data->channels);
 
         thread decode(DecodeOgg, bankID, vorbis);
@@ -532,8 +720,8 @@ namespace SaXAudio
 
         if (bus && bus->voice)
         {
-            XAUDIO2_SEND_DESCRIPTOR sendDesc { 0, bus->voice };
-            XAUDIO2_VOICE_SENDS sends { 1, &sendDesc };
+            XAUDIO2_SEND_DESCRIPTOR sendDesc{ 0, bus->voice };
+            XAUDIO2_VOICE_SENDS sends{ 1, &sendDesc };
 
             hr = m_XAudio->CreateSourceVoice(&voice->SourceVoice, &wfx, 0, XAUDIO2_MAX_FREQ_RATIO, voice, &sends, nullptr);
         }
@@ -545,6 +733,7 @@ namespace SaXAudio
         if (FAILED(hr))
         {
             voice->Reset();
+            m_voicePool.push(voice);
             Log(bankID, m_voiceCounter, "Failed to create voice on bus " + to_string(busID), hr);
             return nullptr;
         }
@@ -985,7 +1174,8 @@ namespace SaXAudio
         };
 
         INT64 context = isBus ? -voiceID : voiceID;
-        Fader::Instance.StartFadeMulti(12, current, targets, fade, OnFadeEcho, context);
+        // Fixed heap buffer overflow: count is 3, not 12
+        Fader::Instance.StartFadeMulti(3, current, targets, fade, OnFadeEcho, context);
     }
 
     void SaXAudio::RemoveEcho(const INT32 voiceID, const BOOL isBus, const FLOAT fade)
@@ -1004,14 +1194,14 @@ namespace SaXAudio
             return;
         }
 
-        FLOAT* current = new FLOAT[12]
+        FLOAT* current = new FLOAT[3]
         {
             data->echo.WetDryMix,
             data->echo.Feedback,
             data->echo.Delay
         };
 
-        FLOAT* targets = new FLOAT[12] { 0 };
+        FLOAT* targets = new FLOAT[3]{ 0 };
 
         INT64 context = isBus ? -voiceID : voiceID;
         Fader::Instance.StartFadeMulti(3, current, targets, fade, OnFadeEchoDisable, context);
@@ -1054,72 +1244,79 @@ namespace SaXAudio
 
     void SaXAudio::DecodeOgg(const INT32 bankID, stb_vorbis* vorbis)
     {
-        // Reset file position
-        stb_vorbis_seek_start(vorbis);
-
         UINT32 samplesTotal = 0;
         UINT32 samplesDecoded = 0;
         UINT32 bufferSize = 4096;
 
-        auto it = SaXAudio::Instance.m_bank.find(bankID);
-        if (it != SaXAudio::Instance.m_bank.end())
         {
-            BankData* data = &it->second;
-            if (data)
+            lock_guard<mutex> lock(SaXAudio::Instance.m_bankMutex);
+            auto it = SaXAudio::Instance.m_bank.find(bankID);
+            if (it != SaXAudio::Instance.m_bank.end() && !it->second.disposed)
             {
+                stb_vorbis_seek_start(vorbis);
+                BankData* data = &it->second;
                 data->decodedSamples = 0;
                 samplesTotal = data->totalSamples;
             }
         }
 
-        while (samplesTotal - samplesDecoded > 0)
+        while (samplesTotal > samplesDecoded)
         {
-            if (bufferSize > samplesTotal)
-                bufferSize = samplesTotal;
+            UINT32 samplesToRead = samplesTotal - samplesDecoded;
+            if (samplesToRead > bufferSize)
+                samplesToRead = bufferSize;
 
             lock_guard<mutex> lock(SaXAudio::Instance.m_bankMutex);
 
             BankData* data = nullptr;
-            it = SaXAudio::Instance.m_bank.find(bankID);
+            auto it = SaXAudio::Instance.m_bank.find(bankID);
             if (it != SaXAudio::Instance.m_bank.end())
                 data = &it->second;
 
             // BankEntry removed
-            if (!data || data->disposed) break;
+            if (!data || data->disposed || !data->buffer.Data)
+                break;
 
             {
-                lock_guard<mutex> lock(data->decodingMutex);
+                lock_guard<mutex> decodingLock(data->decodingMutex);
 
-                // Read samples
+                // Read samples safely within allocated bounds
                 FLOAT* pBuffer = &data->buffer.Data[data->decodedSamples * data->channels];
-                UINT32 decoded = stb_vorbis_get_samples_float_interleaved(vorbis, data->channels, pBuffer, bufferSize * data->channels);
+                UINT32 decoded = stb_vorbis_get_samples_float_interleaved(vorbis, data->channels, pBuffer, samplesToRead * data->channels);
                 samplesDecoded += decoded;
                 data->decodedSamples = samplesDecoded;
 
                 if (decoded == 0)
                 {
-                    // Less samples decoded than expected
-                    // we update the total samples to match
+                    // Less samples decoded than expected: update both data->totalSamples and local samplesTotal to exit loop
                     data->totalSamples = samplesDecoded;
+                    samplesTotal = samplesDecoded;
                 }
 
-                data->decodingPerform.notify_one();
+                data->decodingPerform.notify_all();
             }
         }
 
         // Close the Vorbis file
         stb_vorbis_close(vorbis);
 
+        ::SaXAudio::OnDecodedCallback callbackToCall = nullptr;
+        const BYTE* oggBufferToFree = nullptr;
         {
-            // Calling back
             lock_guard<mutex> lock(SaXAudio::Instance.m_bankMutex);
 
             BankData* data = GetEntry(data, SaXAudio::Instance.m_bank, bankID);
             if (data && data->onDecodedCallback)
             {
-                (*data->onDecodedCallback)(bankID, data->Oggbuffer);
+                callbackToCall = data->onDecodedCallback;
+                oggBufferToFree = data->Oggbuffer;
                 data->onDecodedCallback = nullptr;
             }
+        }
+
+        if (callbackToCall)
+        {
+            EnqueueDecodedCallback(bankID, callbackToCall, oggBufferToFree);
         }
 
         Log(bankID, 0, "[DecodeOgg] Decoding complete");
@@ -1129,24 +1326,26 @@ namespace SaXAudio
     {
         BOOL autoRemove = false;
         INT32 bankID = 0;
+        ::SaXAudio::OnFinishedCallback finishedCallbackToCall = nullptr;
+
         {
-            lock_guard<mutex> lock(m_voiceMutex);
+            // Lock m_bankMutex then m_voiceMutex in the same order as CreateVoice to prevent AB-BA deadlocks
+            lock_guard<mutex> bankLock(m_bankMutex);
+            lock_guard<mutex> voiceLock(m_voiceMutex);
 
             AudioVoice* voice = nullptr;
             auto it_voice = m_voices.find(voiceID);
             if (it_voice != m_voices.end())
                 voice = it_voice->second;
             if (!voice) return;
+
             bankID = voice->BankID;
             voice->BankID = 0;
+            BOOL wasPlaying = voice->IsPlaying;
 
-            // Stop the voice
-            if (voice->SourceVoice)
-            {
-                Log(bankID, voiceID, "[RemoveVoice] Stopping voice");
-                voice->SourceVoice->DestroyVoice();
-                voice->SourceVoice = nullptr;
-            }
+            // Stop active fades before destroying the XAudio2 voice
+            IXAudio2SourceVoice* sourceVoice = voice->SourceVoice;
+            voice->SourceVoice = nullptr;
 
             for (UINT32 i = 0; i < 3; i++)
             {
@@ -1159,21 +1358,26 @@ namespace SaXAudio
             voice->EffectData.effectChain.pEffectDescriptors = nullptr;
             voice->EffectData.effectChain.EffectCount = 0;
 
-            // Callback
-            if (voice->IsPlaying && OnFinishedCallback != nullptr)
+            voice->Reset();
+
+            if (sourceVoice)
             {
-                thread onFinished(*OnFinishedCallback, voiceID);
-                onFinished.detach();
+                Log(bankID, voiceID, "[RemoveVoice] Stopping voice");
+                sourceVoice->DestroyVoice();
             }
 
-            // Auto remove
+            if (wasPlaying && this->OnFinishedCallback != nullptr)
+            {
+                finishedCallbackToCall = this->OnFinishedCallback;
+            }
+
+            // Auto remove check
             BankData* data = GetEntry(data, m_bank, bankID);
             if (data && data->autoRemove)
             {
                 autoRemove = true;
                 for (auto& it : m_voices)
                 {
-                    // Look if any other voice is still playing the bank entry
                     if (it.second->BankID == bankID)
                     {
                         autoRemove = false;
@@ -1183,12 +1387,14 @@ namespace SaXAudio
             }
 
             // Voice ready to be reused
-            voice->Reset();
             m_voicePool.push(voice);
             m_voices.erase(voiceID);
 
-            Log(voice->BankID, voiceID, "[RemoveVoice] Deleted voice");
+            Log(bankID, voiceID, "[RemoveVoice] Deleted voice");
         }
+
+        if (finishedCallbackToCall)
+            EnqueueFinishedCallback(voiceID, finishedCallbackToCall);
 
         if (autoRemove)
             RemoveBankEntry(bankID);
@@ -1224,7 +1430,6 @@ namespace SaXAudio
             Log(0, 0, "Failed to set effect chain", hr);
         }
     }
-
 
     void SaXAudio::OnFadeReverb(INT64 context, UINT32 count, FLOAT* newValues, BOOL hasFinished)
     {

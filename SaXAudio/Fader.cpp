@@ -59,7 +59,10 @@ namespace SaXAudio
                 lock_guard<mutex> lock(Instance.m_jobsMutex);
 
                 if (!Instance.m_running || Instance.m_jobs.empty())
+                {
+                    Instance.m_running = false;
                     break;
+                }
 
                 for (auto it = Instance.m_jobs.begin(); it != Instance.m_jobs.end(); it++)
                 {
@@ -91,8 +94,6 @@ namespace SaXAudio
             }
         }
         while (Instance.m_running);
-
-        Instance.m_running = false;
     }
 
     UINT32 Fader::StartFade(FLOAT currentValue, FLOAT target, const FLOAT duration, const OnFadeCallback onFade, INT64 context)
