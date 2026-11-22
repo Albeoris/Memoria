@@ -273,6 +273,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
         {
             if (soundProfile != null)
             {
+                // We stop the music immediately if it's paused. Otherwise it can be "stuck" (and never been used anymore).
                 Boolean isPaused = ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsPaused(soundProfile.SoundID) != 0;
                 ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, isPaused ? 0 : MINIMUM_SONG_FADE_MS);
                 if (isPaused)
@@ -1180,6 +1181,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
             {
                 if (soundProfile != null)
                 {
+                    // We stop the music and clear it.
                     if (soundProfile.SoundID != 0 && soundProfile.SoundID != this.suspendBgmID)
                     {
                         ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, 0);
