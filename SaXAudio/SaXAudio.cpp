@@ -90,9 +90,9 @@ namespace SaXAudio
 
             // Check if the worker find mono.dll or not
             if (monoThread)
-                Log("[CallbackWorker] Attached to mono.dll successfully");
+                Log(0, 0, "[CallbackWorker] Attached to mono.dll successfully");
             else
-                Log("[CallbackWorker] Warning: mono.dll found, but failed to attach thread");
+                Log(0, 0, "[CallbackWorker] Warning: mono.dll found, but failed to attach thread");
         }
 
         while (true)
