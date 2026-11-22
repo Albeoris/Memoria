@@ -197,6 +197,11 @@ public class AllSoundDispatchPlayer : SoundPlayer
             }
             this.CreateSoundProfileIfNotExist(ObjNo, SoundProfileType.Music, delegate (SoundProfile soundProfile)
             {
+                if (soundProfile.SoundID > 0 && ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) != 0)
+                {
+                    ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, 0);
+                    soundProfile.SoundID = 0;
+                }
                 this.CreateSound(soundProfile);
                 soundProfile.SoundVolume = AllSoundDispatchPlayer.NormalizeVolume(vol);
                 ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * SoundLib.MusicPlayer.Volume, 0);
@@ -268,10 +273,19 @@ public class AllSoundDispatchPlayer : SoundPlayer
         {
             if (soundProfile != null)
             {
-                ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, MINIMUM_SONG_FADE_MS);
+                Boolean isPaused = ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsPaused(soundProfile.SoundID) != 0;
+                ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, isPaused ? 0 : MINIMUM_SONG_FADE_MS);
+                if (isPaused)
+                {
+                    soundProfile.SoundID = 0;
+                }
             }
             if (ObjNo == this.suspendBgmNo)
             {
+                if (this.suspendBgmID != 0 && (soundProfile == null || soundProfile.SoundID != this.suspendBgmID))
+                {
+                    ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(this.suspendBgmID, 0);
+                }
                 this.suspendBgmNo = -1;
                 this.suspendBgmID = 0;
             }
@@ -1156,7 +1170,30 @@ public class AllSoundDispatchPlayer : SoundPlayer
 
     public void ClearSuspendedSounds()
     {
-        this.FF9SOUND_SONG_STOP(this.suspendBgmNo);
+        if (this.suspendBgmNo != -1)
+        {
+            if (this.suspendBgmID != 0)
+            {
+                ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(this.suspendBgmID, 0);
+            }
+            this.GetSoundProfileIfExist(this.suspendBgmNo, SoundProfileType.Music, delegate (SoundProfile soundProfile)
+            {
+                if (soundProfile != null)
+                {
+                    if (soundProfile.SoundID != 0 && soundProfile.SoundID != this.suspendBgmID)
+                    {
+                        ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, 0);
+                    }
+                    soundProfile.SoundID = 0;
+                }
+            });
+            if (this.currentMusicID == this.suspendBgmNo)
+            {
+                this.currentMusicID = -1;
+            }
+            this.suspendBgmNo = -1;
+            this.suspendBgmID = 0;
+        }
         for (Int32 i = 0; i < (Int32)this.sfxResSlot.Length; i++)
         {
             this.sfxResSlot[i] = (AllSoundDispatchPlayer.PlayingSfx)null;
