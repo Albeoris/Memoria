@@ -94,6 +94,10 @@ namespace SaXAudio
             else
                 Log(0, 0, "[CallbackWorker] Warning: mono.dll found, but failed to attach thread");
         }
+        else
+        {
+			Log(0, 0, "[CallbackWorker] !! CRITICAL !! => mono.dll not found, callbacks will not be executed");
+        }
 
         while (true)
         {
