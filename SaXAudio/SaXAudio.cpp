@@ -66,9 +66,6 @@ namespace SaXAudio
     static void CallbackWorkerLoop()
     {
         HMODULE hMono = GetModuleHandleW(L"mono.dll");
-        if (!hMono)
-            hMono = GetModuleHandleW(L"mono-2.0-bdwgc.dll");
-
         mono_get_root_domain_fn p_mono_get_root_domain = nullptr;
         mono_thread_attach_fn p_mono_thread_attach = nullptr;
         mono_thread_current_fn p_mono_thread_current = nullptr;
@@ -90,6 +87,12 @@ namespace SaXAudio
                 if (rootDomain)
                     monoThread = p_mono_thread_attach(rootDomain);
             }
+
+            // Check if the worker find mono.dll or not
+            if (monoThread)
+                Log("[CallbackWorker] Attached to mono.dll successfully");
+            else
+                Log("[CallbackWorker] Warning: mono.dll found, but failed to attach thread");
         }
 
         while (true)
