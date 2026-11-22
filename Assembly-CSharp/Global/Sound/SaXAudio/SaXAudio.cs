@@ -76,10 +76,12 @@ namespace Global.Sound.SaXAudio
             public EchoParameters() { }
         }
 
+        private static readonly OnFinishedDelegate s_onFinishedCallback = TriggerOnFinished;
+
         public static Boolean Init()
         {
             Boolean result = Create();
-            SetOnFinishedCallback(TriggerOnFinished);
+            SetOnFinishedCallback(s_onFinishedCallback);
             return result;
         }
 

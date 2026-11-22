@@ -249,6 +249,7 @@ namespace Global.Sound.SaXAudio
             fieldIDPresets.Clear();
             battleIDPresets.Clear();
             battleBgIDPresets.Clear();
+            resourceIDPresets.Clear();
             conditionalPresets.Clear();
             unlistedPresets.Clear();
 
@@ -260,31 +261,44 @@ namespace Global.Sound.SaXAudio
                     foreach (var preset in presets.Values)
                     {
                         Boolean listed = false;
-                        foreach (Int32 fieldID in preset.FieldIDs)
+                        if (preset.FieldIDs != null)
                         {
-                            fieldIDPresets[fieldID] = preset;
-                            fieldIDPresets[fieldID].RemoveIDs();
-                            listed = true;
+                            foreach (Int32 fieldID in preset.FieldIDs)
+                            {
+                                fieldIDPresets[fieldID] = preset;
+                                listed = true;
+                            }
                         }
-                        foreach (Int32 battleID in preset.BattleIDs)
+                        if (preset.BattleIDs != null)
                         {
-                            battleIDPresets[battleID] = preset;
-                            battleIDPresets[battleID].RemoveIDs();
-                            listed = true;
+                            foreach (Int32 battleID in preset.BattleIDs)
+                            {
+                                battleIDPresets[battleID] = preset;
+                                listed = true;
+                            }
                         }
-                        foreach (Int32 battleBgID in preset.BattleBgIDs)
+                        if (preset.BattleBgIDs != null)
                         {
-                            battleBgIDPresets[battleBgID] = preset;
-                            battleBgIDPresets[battleBgID].RemoveIDs();
-                            listed = true;
+                            foreach (Int32 battleBgID in preset.BattleBgIDs)
+                            {
+                                battleBgIDPresets[battleBgID] = preset;
+                                listed = true;
+                            }
                         }
-                        foreach (String resourceID in preset.ResourceIDs)
+                        if (preset.ResourceIDs != null)
                         {
-                            resourceIDPresets[resourceID] = preset;
-                            resourceIDPresets[resourceID].RemoveIDs();
-                            listed = true;
+                            foreach (String resourceID in preset.ResourceIDs)
+                            {
+                                resourceIDPresets[resourceID] = preset;
+                                listed = true;
+                            }
                         }
-                        if (!listed)
+
+                        if (listed)
+                        {
+                            preset.RemoveIDs();
+                        }
+                        else
                         {
                             if (!String.IsNullOrEmpty(preset.Condition))
                                 conditionalPresets.Add(preset);

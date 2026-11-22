@@ -1,4 +1,4 @@
-﻿// MIT License
+// MIT License
 // 
 // Copyright(c) 2025 SamsamTS
 // 
@@ -25,6 +25,8 @@
 
 namespace SaXAudio
 {
+    void EnqueueRemoveVoice(const INT32 voiceID);
+
     BOOL AudioVoice::Start(const UINT32 atSample, BOOL flush)
     {
         if (!SourceVoice || !BankData) return false;
@@ -74,7 +76,7 @@ namespace SaXAudio
         if (FAILED(hr))
         {
             Log(BankID, VoiceID, "[Start] Failed to submit buffer", hr);
-            SaXAudio::Instance.RemoveVoice(VoiceID);
+            EnqueueRemoveVoice(VoiceID);
             return false;
         }
 
@@ -95,7 +97,7 @@ namespace SaXAudio
         else if (FAILED(hr = SourceVoice->Start()))
         {
             Log(BankID, VoiceID, "[Start] FAILED starting", hr);
-            SaXAudio::Instance.RemoveVoice(VoiceID);
+            EnqueueRemoveVoice(VoiceID);
             return false;
         }
         return IsPlaying;
@@ -103,31 +105,55 @@ namespace SaXAudio
 
     void AudioVoice::WaitForDecoding(AudioVoice* voice)
     {
-        Log(voice->BankID, voice->VoiceID, "[Start] Waiting for decoded data");
-        unique_lock<mutex> lock(voice->BankData->decodingMutex);
-        if (voice->BankData->decodedSamples == 0)
+        if (!voice) return;
+
+        INT32 voiceID = voice->VoiceID;
+        INT32 bankID = voice->BankID;
+        UINT32 playBegin = voice->Buffer.PlayBegin;
+        struct BankData* bankData = voice->BankData;
+
+        if (!bankData || voiceID <= 0)
+            return;
+
+        Log(bankID, voiceID, "[Start] Waiting for decoded data");
         {
-            if (!voice->BankData->decodingPerform.wait_for(lock, chrono::milliseconds(500), [voice] { return voice->BankData->decodedSamples > voice->Buffer.PlayBegin; }))
+            unique_lock<mutex> lock(bankData->decodingMutex);
+            if (bankData->decodedSamples <= playBegin)
             {
-                Log(voice->BankID, voice->VoiceID, " ERROR | [Start] Failed waiting for decoded data, timed out");
-                SaXAudio::Instance.RemoveVoice(voice->VoiceID);
+                if (!bankData->decodingPerform.wait_for(lock, chrono::milliseconds(500), [bankData, playBegin] {
+                    return bankData->disposed || bankData->decodedSamples > playBegin;
+                }))
+                {
+                    Log(bankID, voiceID, " ERROR | [Start] Failed waiting for decoded data, timed out");
+                    EnqueueRemoveVoice(voiceID);
+                    return;
+                }
+            }
+            if (bankData->disposed)
+            {
+                EnqueueRemoveVoice(voiceID);
                 return;
             }
         }
 
-        // Sound has been paused while we were waiting
-        if (voice->m_pauseStack > 0) return;
+        AudioVoice* activeVoice = SaXAudio::Instance.GetVoice(voiceID);
+        if (!activeVoice || !activeVoice->IsPlaying || !activeVoice->SourceVoice)
+            return;
 
-        HRESULT hr = voice->SourceVoice->Start();
+        // Sound has been paused while we were waiting
+        if (activeVoice->m_pauseStack > 0)
+            return;
+
+        HRESULT hr = activeVoice->SourceVoice->Start();
         if (FAILED(hr))
         {
-            Log(voice->BankID, voice->VoiceID, "[Start] Failed starting", hr);
-            SaXAudio::Instance.RemoveVoice(voice->VoiceID);
+            Log(bankID, voiceID, "[Start] Failed starting", hr);
+            EnqueueRemoveVoice(voiceID);
         }
         else
         {
-            voice->m_tempFlush = 0;
-            Log(voice->BankID, voice->VoiceID, "[Start] Successfully waited for decoded data");
+            activeVoice->m_tempFlush = 0;
+            Log(bankID, voiceID, "[Start] Successfully waited for decoded data");
         }
     }
 
@@ -224,11 +250,13 @@ namespace SaXAudio
 
     UINT64 AudioVoice::CalculateCurrentPosition()
     {
+        if (!SourceVoice) return 0;
+
         XAUDIO2_VOICE_STATE state;
         SourceVoice->GetState(&state);
 
         UINT64 position = state.SamplesPlayed + m_positionOffset;
-        if (Looping && position > LoopStart)
+        if (Looping && position > LoopStart && LoopEnd > LoopStart)
         {
             // We are somewhere in the loop
             position = LoopStart + ((position - LoopStart) % (UINT64)(LoopEnd - LoopStart));
@@ -543,13 +571,18 @@ namespace SaXAudio
         LoopEnd = 0;
         Looping = false;
         IsPlaying = false;
+        IsProtected = false;
     }
 
     void AudioVoice::OnFadeVolume(INT64 voiceID, UINT32 count, FLOAT* newValues, BOOL hasFinished)
     {
         AudioVoice* voice = SaXAudio::Instance.GetVoice((INT32)voiceID);
         if (!voice) return;
-        voice->SourceVoice->SetVolume(newValues[0]);
+
+        IXAudio2SourceVoice* sourceVoice = voice->SourceVoice;
+        if (!sourceVoice) return;
+
+        sourceVoice->SetVolume(newValues[0]);
 
         if (hasFinished)
         {
@@ -560,7 +593,7 @@ namespace SaXAudio
                 if (voice->m_pauseStack > 0)
                 {
                     // Pause
-                    voice->SourceVoice->Stop();
+                    sourceVoice->Stop();
                     Log(voice->BankID, voice->VoiceID, "[OnFadeVolume] Pause");
                 }
                 else
@@ -580,8 +613,8 @@ namespace SaXAudio
             if (!voice->IsPlaying)
             {
                 voice->m_tempFlush = 0;
-                voice->SourceVoice->Stop();
-                voice->SourceVoice->FlushSourceBuffers();
+                sourceVoice->Stop();
+                sourceVoice->FlushSourceBuffers();
                 Log(voice->BankID, voice->VoiceID, "[OnFadeVolume] Stop");
             }
         }
@@ -591,8 +624,12 @@ namespace SaXAudio
     {
         AudioVoice* voice = SaXAudio::Instance.GetVoice((INT32)voiceID);
         if (!voice) return;
+
+        IXAudio2SourceVoice* sourceVoice = voice->SourceVoice;
+        if (!sourceVoice) return;
+
         voice->Speed = newValues[0];
-        voice->SourceVoice->SetFrequencyRatio(newValues[0]);
+        sourceVoice->SetFrequencyRatio(newValues[0]);
 
         if (hasFinished)
             voice->m_speedFadeID = 0;
@@ -601,7 +638,8 @@ namespace SaXAudio
     void AudioVoice::OnFadePanning(INT64 voiceID, UINT32 count, FLOAT* newValues, BOOL hasFinished)
     {
         AudioVoice* voice = SaXAudio::Instance.GetVoice((INT32)voiceID);
-        if (!voice) return;
+        if (!voice || !voice->SourceVoice) return;
+
         voice->Panning = newValues[0];
         voice->SetOutputMatrix(newValues[0]);
 
@@ -620,10 +658,6 @@ namespace SaXAudio
         }
         Log(BankID, VoiceID, "[OnBufferEnd] Voice finished playing");
 
-        INT32 voiceID = VoiceID;
-        thread cleanupThread([voiceID]() {
-            SaXAudio::Instance.RemoveVoice(voiceID);
-            });
-        cleanupThread.detach();
+        EnqueueRemoveVoice(VoiceID);
     }
 }
