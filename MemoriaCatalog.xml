@@ -4770,4 +4770,28 @@ The Arabic font is included in the mod; nothing else to install.
 	<Website>https://github.com/faisalkindi/ffix-arabic-translation</Website>
 </Mod>
 
+<Mod>
+	<Name>FF9 Coop</Name>
+	<Version>0.9.0</Version>
+	<Author>Bergaffe</Author>
+	<InstallationPath>FF9Coop</InstallationPath>
+	<ReleaseDateOriginal>2026-11-26</ReleaseDateOriginal>
+	<ReleaseDate>2026-11-26</ReleaseDate>
+	<MinimumMemoriaVersion>2025-07-13</MinimumMemoriaVersion>
+	<Category>Gameplay</Category>
+	<Description>Co-op multiplayer for FF9 (beta, 2-4 players).
+- Battle: every character belongs to a player, only that player's controller (or the keyboard) can enter its commands
+- Field and world map: the second player walks around as a visible party member, can talk to NPCs, open chests, shop and play Tetra Master
+- Leader swap (also lets the companion player enter towns on the world map), "who plays?" choice in solo story sections, player-coloured markers
+- In-game co-op menu (K or L3+R3) for all assignments
+Play locally with several controllers or online via Steam Remote Play Together / Parsec (only the host needs the game and mods).
+Compatible with Moguri Mod and gameplay mods like Alternate Fantasy.
+English and German.</Description>
+	<Website>https://github.com/Bergaffe/ff9-coop</Website>
+	<DownloadUrl>https://github.com/Bergaffe/ff9-coop/releases/download/v0.9.0/FF9Coop-0.9.0.zip</DownloadUrl>
+	<DownloadFormat>Zip</DownloadFormat>
+	<PreviewFile>title.png</PreviewFile>
+	<PreviewFileUrl>https://raw.githubusercontent.com/Bergaffe/ff9-coop/main/docs/images/title.png</PreviewFileUrl>
+</Mod>
+
 </ModCatalog>
